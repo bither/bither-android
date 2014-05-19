@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg"
+    android:baselineAligned="true"
+    android:orientation="horizontal"
+    android:paddingBottom="2dp"
+    android:paddingTop="2dp" >
+
+    <TextView
+        android:id="@+id/transaction_row_confidence_circular"
+        android:layout_width="14sp"
+        android:layout_height="14sp"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:id="@+id/transaction_row_confidence_textual"
+        android:layout_width="14sp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:gravity="center_horizontal"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/transaction_row_fromto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/transaction_row_coinbase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        android:baselineAlignBottom="true"
+        android:src="@drawable/no_address_image"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/transaction_row_address"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:singleLine="true"
+        android:textSize="14sp" />
+
+    <net.bither.ui.base.CurrencyTextView
+        android:id="@+id/transaction_row_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginLeft="8dp"
+        android:textSize="14sp" />
+
+</LinearLayout>

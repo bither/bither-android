@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="card_padding">10dp</dimen>
+    <dimen name="card_padding_bottom">12dp</dimen>
+    <dimen name="title_bar_height">52dp</dimen>
+    <dimen name="title_bar_below_margin">49dp</dimen>
+    <dimen name="vertical_margin">10dp</dimen>
+    <dimen name="card_list_padding">6dp</dimen>
+    <dimen name="horizontal_edge_padding">25dp</dimen>
+    <dimen name="avatar_size_in_list">40dp</dimen>
+    <dimen name="address_detail_list_item_padding">10dp</dimen>
+
+</resources>

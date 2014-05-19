@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/card_list_padding"
+    android:paddingRight="@dimen/card_list_padding" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical" >
+
+        <net.bither.ui.base.MarkerListHeader
+            android:id="@+id/v_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="1" >
+
+            <net.bither.ui.base.OverScrollableListView
+                android:id="@+id/lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:divider="@color/list_cell_divider"
+                android:dividerHeight="1px"
+                android:drawSelectorOnTop="false"
+                android:fadingEdgeLength="0dp"
+                android:scrollbars="none" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:background="@drawable/global_shadow_down" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <include layout="@layout/layout_card_foreground_single" />
+
+</FrameLayout>

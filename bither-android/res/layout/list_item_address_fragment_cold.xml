@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg"
+    android:paddingLeft="@dimen/card_list_padding"
+    android:paddingRight="@dimen/card_list_padding" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="16dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp" >
+
+        <FrameLayout
+            android:id="@+id/fl_address"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/ui_touchable_bg"
+            android:focusable="true"
+            android:foreground="@drawable/dropdown_ic_arrow_selector"
+            android:foregroundGravity="bottom|right" >
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:textColor="@color/text_field_text_color"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <net.bither.ui.base.QrCodeImageView
+            android:id="@+id/iv_qrcode"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/qrcode_frame" />
+    </LinearLayout>
+
+    <include layout="@layout/layout_card_foreground_single" />
+
+</FrameLayout>

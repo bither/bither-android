@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<net.bither.ui.base.OverScrollableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg"
+            android:paddingLeft="@dimen/card_list_padding"
+            android:paddingRight="@dimen/card_list_padding" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingBottom="6dp"
+                android:paddingTop="10dp" >
+
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_currency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_market"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_transaction_fee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_wifi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/btn_check_private_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ui_touchable_bg"
+                    android:drawableRight="@drawable/check_button_icon"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="@string/check_private_key_button"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="18sp" />
+
+                <include layout="@layout/layout_vertical_seperator" />
+
+                <Button
+                    android:id="@+id/btn_donate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ui_touchable_bg"
+                    android:drawableRight="@drawable/donate_button_icon"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="@string/donate_button"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <include layout="@layout/layout_card_foreground_single" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/setting_footer_logo" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="3dp"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bither Hot"
+                    android:textColor="#ffc2c2c2"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#ffc2c2c2"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_website"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="5dp"
+                android:text="http://Bither.net"
+                android:textColor="#ffc2c2c2"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</net.bither.ui.base.OverScrollableScrollView>

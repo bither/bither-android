@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg"
+    android:baselineAligned="true"
+    android:orientation="horizontal"
+    android:paddingBottom="14dp"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
+    android:paddingTop="14dp" >
+
+    <View
+        android:layout_width="14sp"
+        android:layout_height="14sp"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:id="@+id/transaction_row_warning_message"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/tab_text_color_selector"
+        android:textSize="14sp" />
+
+</LinearLayout>

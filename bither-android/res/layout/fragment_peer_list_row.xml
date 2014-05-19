@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp" >
+
+    <TextView
+        android:id="@+id/peer_list_row_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+          android:textColor="@color/text_field_text_color"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/peer_list_row_version"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+              android:textColor="@color/text_field_text_color"
+            android:layout_weight="1"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/peer_list_row_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+              android:textColor="@color/text_field_text_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/peer_list_row_protocol"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+              android:textColor="@color/text_field_text_color"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/peer_list_row_ping"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_field_text_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

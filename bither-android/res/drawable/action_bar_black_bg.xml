@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap android:src="@drawable/action_bar_black_bg_tile_horizontal" android:tileMode="repeat"
+  xmlns:android="http://schemas.android.com/apk/res/android" />

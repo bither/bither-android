@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp" >
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="5dp"
+        android:layout_weight="1"
+        android:background="@drawable/add_address_text_field_disabled"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@color/text_field_text_color"
+        android:textSize="12sp" />
+
+    <ImageButton
+        android:id="@+id/ibtn_delete"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="1dp"
+        android:background="@drawable/transparent"
+        android:src="@drawable/delete_button_normal" />
+
+</LinearLayout>

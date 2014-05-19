@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/title_bar_below_margin" >
+
+        <net.bither.ui.base.OverScrollableViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include layout="@layout/layout_dropdown_message" />
+
+        <FrameLayout
+            android:id="@+id/fl_add_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="30dp"
+            android:paddingTop="5dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="false"
+                android:duplicateParentState="true"
+                android:src="@drawable/add_address_selector" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/title_bar_bg"
+        android:orientation="horizontal"
+        android:paddingBottom="3dp" >
+
+        <net.bither.ui.base.TabButton
+            android:id="@+id/tbtn_message"
+            android:layout_width="93dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/tab_button_background" />
+
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/title_bar_seperator" />
+
+        <net.bither.ui.base.TabButton
+            android:id="@+id/tbtn_main"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:background="@drawable/tab_button_background" />
+
+        <ImageView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/title_bar_seperator" />
+
+        <net.bither.ui.base.TabButton
+            android:id="@+id/tbtn_me"
+            android:layout_width="93dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/tab_button_background" />
+    </LinearLayout>
+
+</RelativeLayout>

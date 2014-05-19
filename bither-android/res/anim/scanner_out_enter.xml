@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="true"
+    android:zAdjustment="top" >
+
+    <translate
+        android:duration="500"
+        android:fromYDelta="-100%p"
+        android:toYDelta="0" />
+
+    <scale
+        android:duration="300"
+        android:fromXScale="1.2"
+        android:fromYScale="1.2"
+        android:toXScale="1"
+        android:toYScale="1" />
+
+</set>

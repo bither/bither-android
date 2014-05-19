@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">比太</string>
+    <string name="market_trading_amount">交易量</string>
+    <string name="market_price_high">最高</string>
+    <string name="market_price_low">最低</string>
+    <string name="market_price_open">開盤</string>
+    <string name="market_price_close">收盤</string>
+    <string name="market_name_huobi">火幣網</string>
+    <string name="market_name_chbtc">中國比特幣</string>
+    <string name="market_name_btcchina">比特幣中國</string>
+    <string name="activity_name_address_detail">詳情</string>
+    <string name="activity_name_address_sign_tx">簽名交易</string>
+    <string name="activity_name_qr_code">二維碼</string>
+    <string name="activity_name_generate_unsigned_tx">餘額:</string>
+    <string name="activity_name_add_cold_address">生成新私鑰</string>
+    <string name="OK">確認</string>
+    <string name="cancel">取消</string>
+    <string name="close">返回</string>
+    <string name="operate">設置</string>
+    <string name="address_option_delete">停止監控</string>
+    <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
+    <string name="address_delete_confirmation">確認停止監控這個地址?</string>
+    <string name="address_monitor_failed">監控失敗</string>
+    <string name="address_monitor_failed_too_much_tx">不能監控交易過多的地址</string>
+    <string name="address_monitor_failed_multiple_address">不能監控此類多簽名地址</string>
+    <string name="total_btc_prefix">總計:</string>
+    <string name="total_address_prefix">私鑰數:</string>
+    <string name="please_wait">請稍候…</string>
+    <string name="address_group_watch_only">地址(監控)</string>
+    <string name="address_group_private">地址(有私鑰)</string>
+    <string name="network_or_connection_error">網絡錯誤</string>
+    <string name="high_api_is_too_old">請等待服務器數據更新</string>
+    <string name="find_browser_error">您的手機上未安裝瀏覽器</string>
+
+    <!-- Address Detail -->
+    <string name="address_balance">餘額</string>
+    <string name="address_total_incoming">總收入</string>
+    <string name="address_total_outgoing">總支出</string>
+    <string name="address_detail_balance_detail_transaction_count">交易數</string>
+    <string name="address_total_transaction_count">交易:</string>
+    <string name="address_first_seen_time">最早出現時間</string>
+    <string name="input_coinbase">挖礦</string>
+    <string name="address_cannot_be_parsed">地址不詳</string>
+    <string name="copy_address">複製</string>
+    <string name="qr_code">二​​維碼</string>
+    <string name="copy_address_success">地址已復制</string>
+    <string name="confirmations_postfix">確認</string>
+    <string name="confirmation_postfix">確認</string>
+    <string name="unconfirmed">未確認</string>
+    <string name="address_detail_send">發送</string>
+    <string name="address_detail_unsigned_transaction">未簽名交易</string>
+    <string name="address_detail_send_balance_zero">餘額為零, 無法發送</string>
+    <string name="address_detail_no_transactions">沒有找到這個地址的交易, 它可能還沒有在網絡上使用過.</string>
+    <string name="address_detail_monitor_failed">無法監控交易量過大的地址.</string>
+    <string name="address_detail_cancel_monitor">停止監控</string>
+    <string name="address_detail_transaction_confidence_dialog_prefix">確認:</string>
+    <string name="address_detail_stop_monitoring_progress_dialog">正在停止監控…</string>
+    <string name="address_detail_cannot_stop_monitoring">一分鐘內只能停止監控一個地址.</string>
+    <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
+
+    <!-- add address -->
+    <string name="add_address_tab_watch_only">監控</string>
+    <string name="add_address_tab_private_key">私鑰</string>
+    <string name="add_address_scan">二維碼</string>
+    <string name="add_address_delete">刪除</string>
+    <string name="add_address_watch_only_hint">比特幣地址</string>
+    <string name="add_address_already_watched">這個地址已經被監控了</string>
+    <string name="add_address_generate_address_with_private_key">生成</string>
+    <string name="add_address_generate_address_password_label">請輸入密碼</string>
+    <string name="add_address_generate_address_password_lengh_note">6&#8211;20位數字</string>
+    <string name="add_address_generate_address_password_set_label">請設置密碼</string>
+    <string name="add_address_generate_address_password_hint">密碼</string>
+    <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
+    <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
+    <string name="password_checking">正在檢查密碼</string>
+    <string name="password_wrong">密碼錯誤</string>
+
+    <!-- send -->
+    <string name="send_progress_dialog_message">發送中</string>
+    <string name="send_success">發送成功</string>
+    <string name="send_failed">發送失敗</string>
+    <string name="send_failed_not_enough_available">發送失敗. 可用餘額不足.</string>
+    <string name="send_failed_missing_btc">發送失敗. 可用餘額中缺少%s BTC.</string>
+    <string name="send_failed_dust_out_put">發送失敗. 這樣小額的交易會被忽略.</string>
+    <string name="send_failed_pendding">%s BTC 正在等待確認.</string>
+    <string name="send_failed_waiting_for_another_confirmation">請等待一個新的確認後再交易.</string>
+    <string name="send_failed_not_enough_for_fee">發送失敗. 可用餘額不足以支付手續費.</string>
+    <string name="send_coins_fragment_sending_address_label">從</string>
+    <string name="send_coins_fragment_receiving_address_label">發送給</string>
+    <string name="send_coins_fragment_amount_label">金額</string>
+    <string name="send_result_sent_to">已被發給了</string>
+    <string name="send_result_with_fee">手續費</string>
+    <string name="send_confirm_address">將要發送給:</string>
+    <string name="send_confirm_amount">金額:</string>
+    <string name="send_confirm_fee">手續費:</string>
+    <string name="send_confirm_low_priority_warn">交易中有小於0.01BTC的支出,\n手續費較低.\n<b>確認時間可能很長</b>.</string>
+
+    <!-- market -->
+    <string name="market_sell">賣一:</string>
+    <string name="market_buy">買一:</string>
+    <string name="market_height">最高:</string>
+    <string name="market_low">最低:</string>
+    <string name="market_line_one_minute">1分鐘</string>
+    <string name="market_line_five_minute">5分鐘</string>
+    <string name="market_line_one_hour">1小時</string>
+    <string name="market_line_one_day">1天</string>
+    <string name="market_detail_new_price">最新價</string>
+    <string name="market_detail_sell_price">賣一價</string>
+    <string name="market_detail_buy_price">買一價</string>
+    <string name="market_detail_high_price">最高價</string>
+    <string name="market_detail_low_price">最低價</string>
+    <string name="market_detail_depth">市場深度</string>
+    <string name="market_share_button">分享</string>
+    <string name="market_web_button_prefix">訪問</string>
+    <string name="market_share_failed">分享失敗</string>
+    <string name="kline">K線圖</string>
+    <string name="ten_line">10均線: </string>
+    <string name="thirty_line">30均線: </string>
+    <string name="kline_high">最高: </string>
+    <string name="kline_low">最低: </string>
+    <string name="kline_open">開盤: </string>
+    <string name="kline_close">收盤: </string>
+    <string name="kline_amount">交易量: </string>
+
+    <!-- setting -->
+    <string name="setting_name_currency">默認貨幣</string>
+    <string name="setting_name_market">默認交易所</string>
+    <string name="setting_name_wifi">網絡設置</string>
+    <string name="setting_name_wifi_yes">只在wifi下同步</string>
+    <string name="setting_name_wifi_no">一直同步</string>
+    <string name="setting_name_transaction_fee">默認手續費</string>
+    <string name="setting_name_transaction_fee_normal">正常</string>
+    <string name="setting_name_transaction_fee_low">較低</string>
+    <string name="setting_name_transaction_fee_normal_note">較快確認</string>
+    <string name="setting_name_transaction_fee_low_note">較慢確認</string>
+    <string name="donate_button">捐贈</string>
+    <string name="donate_thanks">謝謝您的捐贈</string>
+    <string name="buy_order">買單</string>
+    <string name="sell_order">賣單</string>
+    <string name="setting_name_transaction_fee_low_warn">確認默認使用低手續費模式?\n這會導致較慢的交易確認</string>
+    <string name="backup_again">一個小時內剛剛進行過備份，確認要再次備份嗎?</string>
+
+    <!-- Input parser -->
+    <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
+    <string name="input_parser_invalid_bitcoin_uri">比特幣 URI 無效:\n%s</string>
+    <string name="input_parser_invalid_address">取得無效比特幣地址!\n(是否 Mainnet/Testnet 混用?)</string>
+    <string name="input_parser_invalid_transaction">無效交易:\n%s</string>
+
+    <!-- feed -->
+    <string name="feed_send_btc">發送:</string>
+    <string name="feed_received_btc">收到:</string>
+    <string name="freshnews_title">新鮮事</string>
+
+    <!-- mode -->
+    <string name="choose_mode_cold_desctription">冷錢包 : 離線, 安全!</string>
+    <string name="choose_mode_warm_desctription">熱錢包 : 聯機, 易用!</string>
+    <string name="choose_mode_warm_waiting">正在創建錢包…</string>
+    <string name="choose_mode_warm_retry">重試</string>
+    <string name="choose_mode_cold_confirm">模式設置後不能切換.\n冷錢包應該運行在離線的備用手機上.\n確定以冷錢包模式運行?</string>
+    <string name="choose_mode_warm_confirm">模式設置後不能切換.\n熱錢包可以方便的在線發送交易.\n確定以熱錢包模式運行?</string>
+
+    <!-- warning -->
+    <string name="cold_warning">警告</string>
+    <string name="safe_your_wallet">爲了您的冷錢包安全, 請關閉網絡</string>
+
+    <!-- cold wallet -->
+    <string name="check_now">立即檢查</string>
+    <string name="check_network">檢查網絡</string>
+    <string name="check_address">檢查地址</string>
+    <string name="cold_wallet_init_check_label">請關閉網絡</string>
+    <string name="wifi_is_close">WIFI已關閉</string>
+    <string name="threeg_is_close">數據網絡已關閉</string>
+    <string name="bluetooth_is_close">藍牙已關閉</string>
+    <string name="wifi_not_close">WIFI未關閉</string>
+    <string name="threeg_not_close">數據網絡未關閉</string>
+    <string name="bluetooth_not_close">藍牙未關閉</string>
+    <string name="wifi_is_close_checking">正在檢查WIFI…</string>
+    <string name="threeg_is_close_checking">正在檢查數據網絡…</string>
+    <string name="bluetooth_is_close_checking">正在檢查藍牙…</string>
+    <string name="check_address_private_key_title">%s 的私鑰</string>
+    <string name="check_address_password">密碼正確</string>
+    <string name="check_private_key_safe">您的私鑰很安全</string>
+    <string name="checking_private_key">正在檢查私鑰</string>
+    <string name="check_private_key_button">一鍵檢查私鑰安全</string>
+    <string name="check_points">分</string>
+    <string name="private_key_is_empty">你還沒有添加私鑰, 請先添加私鑰</string>
+    <string name="next_page">下壹張</string>
+    <string name="can_not_find_private_key">沒有找到對應的私鑰</string>
+    <string name="scan_watch_only_address_error">二維碼不符合比特幣地址格式</string>
+    <string name="sign_transaction">簽名交易</string>
+    <string name="scan_qr_transport_init_label">請掃描比太提供的第1張二維碼</string>
+    <string name="scan_qr_transport_page_label">請掃描第%1$d張二維​​碼, 共%2$d張</string>
+    <string name="signing_transaction">正在簽名</string>
+    <string name="signed_transaction_qr_code_title">用熱錢包掃描以簽名交易</string>
+    <string name="qr_code_page">第%1$d張, 共%2$d張</string>
+    <string name="complete">完成</string>
+    <string name="scan_unsigned_transaction_title">掃描熱錢包上的未簽名交易</string>
+    <string name="clone_to_button">冷錢包克隆二維碼</string>
+    <string name="clone_to_title">用要克隆到的錢包掃描</string>
+    <string name="clone_from_button">冷錢包克隆</string>
+    <string name="clone_from_title">掃描克隆源上的二維碼</string>
+    <string name="clone_from_waiting">正在克隆…</string>
+    <string name="clone_from_success">克隆成功</string>
+    <string name="clone_from_failed">克隆失敗</string>
+    <string name="clone_from_password">輸入克隆源的密碼</string>
+    <string name="qr_code_for_all_addresses">冷錢包監控二維碼</string>
+    <string name="qr_code_for_all_addresses_title">使用熱錢包掃描來監控冷錢包</string>
+    <string name="no_sd_card_of_back_up">沒有SD卡，無法自動備份</string>
+    <string name="last_time_of_back_up">上一次備份時間: %s </string>
+    <string name="just_now">剛剛</string>
+    <string name="private_key_count_limit">已達私鑰數量上限</string>
+    <string name="watch_only_address_count_limit">已達到監控地址上限</string>
+    <string name="generate_address_count_label">生成多少個私鑰?</string>
+
+    <!-- warm wallet -->
+    <string name="prepare_tx">初始化交易</string>
+    <string name="generate_unsigned_tx_button">未簽名交易二維碼</string>
+    <string name="get_sign_hash">得到簽名信息</string>
+    <string name="unsigned_transaction_qr_code_title">使用包含此地址私鑰的冷錢包掃描</string>
+    <string name="unsigned_transaction_qr_code_complete">掃描冷錢包以簽名</string>
+    <string name="unsigned_transaction_sign_failed">簽名失敗</string>
+    <string name="scan_transaction_signature_title">掃描冷錢包上的簽名信息</string>
+    <string name="scan_for_all_addresses_in_bither_cold">一鍵監控冷錢包</string>
+    <string name="scan_for_all_addresses_in_bither_cold_title">掃描冷錢包的二維碼</string>
+    <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功</string>
+    <string name="scan_for_all_addresses_in_bither_cold_failed">監控冷錢包失敗</string>
+
+    <!-- select address to send -->
+    <string name="select_address_to_send">請選擇從哪個地址發送</string>
+    <string name="select_address_to_send_no_address_fount">您沒有一個擁有足夠餘額的地址</string>
+
+    <!-- donate -->
+    <string name="select_address_to_donate">請選擇用來捐贈的地址</string>
+    <string name="donate_no_address">沒有可以用來捐贈的地址</string>
+    <string name="donate_receiving_address_label">捐贈給開發者</string>
+    <string name="donate_sending_verb">捐贈</string>
+    <string name="donate_unsigned_transaction_verb">未簽名捐贈二維碼</string>
+
+</resources>

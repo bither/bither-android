@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/iv_no_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:scaleType="centerInside"
+        android:src="@drawable/no_address_image"
+        android:visibility="gone" />
+
+    <net.bither.ui.base.PinnedHeaderAddressExpandableListView
+        android:id="@+id/lv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:childDivider="@drawable/transparent"
+        android:divider="#fddd"
+        android:dividerHeight="0.5dp"
+        android:drawSelectorOnTop="false"
+        android:fadingEdgeLength="0dp"
+        android:fastScrollEnabled="false"
+        android:groupIndicator="@drawable/list_item_address_group_indicator_selector"
+        android:indicatorLeft="5dp"
+        android:smoothScrollbar="true" />
+
+</FrameLayout>

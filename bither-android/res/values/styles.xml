@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="BitherTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorBackground">@color/bg</item>
+    </style>
+
+    <style name="BitherTransparentBgTheme" parent="@style/BitherTheme">
+        <item name="android:windowBackground">@drawable/transparent</item>
+        <item name="android:colorBackground">@color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="tipsDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!-- android2。1 不认 color/tansparent -->
+        <item name="android:windowBackground">@drawable/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="activity_name_text">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/activity_name_color</item>
+    </style>
+
+    <style name="card_style">
+        <item name="android:paddingTop">@dimen/card_padding</item>
+        <item name="android:paddingBottom">@dimen/card_padding</item>
+        <item name="android:paddingLeft">@dimen/card_padding</item>
+        <item name="android:paddingRight">@dimen/card_padding</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="card_bottom_style" parent="card_style">
+        <item name="android:paddingBottom">@dimen/card_padding_bottom</item>
+    </style>
+
+    <style name="list_seperator">
+        <item name="android:background">@color/card_bg_pressed</item>
+    </style>
+
+</resources>

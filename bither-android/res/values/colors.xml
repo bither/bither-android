@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="darker_transparent">#33000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="bg">#ff425e7a</color>
+    <color name="card_bg">#ffffffff</color>
+    <color name="card_bg_pressed">#22000000</color>
+    <color name="card_foreground_pressed">#4b000000</color>
+    <color name="activity_name_color">#ffffffff</color>
+    <color name="button_text_white_disable_color">#ffd0d0d0</color>
+    <color name="text_field_hint_color">#ffcccccc</color>
+    <color name="text_field_text_color">#ff333333</color>
+    <color name="text_field_light_text_color">#ff888888</color>
+    <color name="text_unselected_color">#ffb4b4b4</color>
+    <color name="gender_female_color">#ffec96be</color>
+    <color name="gender_male_color">#ff85c3ec</color>
+    <color name="button_disable_bg_color">#ffa3a3a3</color>
+    <color name="blue">#ff1a78ac</color>
+    <color name="blue_dark">#ff15608a</color>
+    <color name="dropdown_message_background_color">#e1ffba26</color>
+    <color name="card_separator_color">#ffcccccc</color>
+    <color name="card_room_extra_bg_color">#ffE1EBF2</color>
+    <color name="white">#ffffffff</color>
+    <color name="yellow">#ffffff00</color>
+    <color name="red">#ffbd362f</color>
+    <color name="green">#ff51a351</color>
+    <color name="orange">#fff19149</color>
+    <color name="confidence_blue">#ff1a78ac</color>
+    <color name="address_group_pressed">#ffCEE2F5</color>
+    <color name="address_group">#ffE1EBF2</color>
+    <color name="list_cell_divider">#11000000</color>
+
+    <!-- market color -->
+    <color name="market_color_bitstamp">#ff3bbf59</color>
+    <color name="market_color_btcchina">#fff93c25</color>
+    <color name="market_color_okcoin">#ff1587c6</color>
+    <color name="market_color_chbtc">#ff5b469d</color>
+    <color name="market_color_huobi">#ffff9329</color>
+    <color name="market_color_btce">#ff25bebc</color>
+
+    <!-- scanner -->
+    <color name="scan_mask">#60000000</color>
+    <color name="scan_laser">#cc0000</color>
+    <color name="scan_dot">#ff6600</color>
+    <color name="scan_result_view">#b0000000</color>
+    <color name="scan_result_dots">#c099cc00</color>
+
+    <!-- mode -->
+    <color name="choose_mode_gradient_center">#ff8881a2</color>
+    <color name="choose_mode_gradient_cold">#ff10a0df</color>
+    <color name="choose_mode_gradient_warm">#fffc6463</color>
+
+    <!-- check -->
+    <color name="check_points_begin">#ffea1010</color>
+    <color name="check_points_end">#ff3bbf59</color>
+    <color name="check_points_middle">#fffdd201</color>
+
+    <!-- bitcoin wallet foreground -->
+    <color name="fg_significant">#ff000000</color>
+    <color name="fg_less_significant">#ff666666</color>
+    <color name="fg_insignificant">#ffcccccc</color>
+    <color name="fg_error">#ffff0000</color>
+    <!-- k-line -->
+    <color name="kline_string">#fff72940</color>
+    <color name="ten_kline">#ffd9d500</color>
+    <color name="thrity_kline">#ff8495a7</color>
+
+</resources>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">比太</string>
+    <string name="market_trading_amount">交易量</string>
+    <string name="market_price_high">最高</string>
+    <string name="market_price_low">最低</string>
+    <string name="market_price_open">开盘</string>
+    <string name="market_price_close">收盘</string>
+    <string name="market_name_huobi">火币网</string>
+    <string name="market_name_chbtc">中国比特币</string>
+    <string name="market_name_btcchina">比特币中国</string>
+    <string name="activity_name_address_detail">详情</string>
+    <string name="activity_name_address_sign_tx">签名交易</string>
+    <string name="activity_name_qr_code">二维码</string>
+    <string name="activity_name_generate_unsigned_tx">余额:</string>
+    <string name="activity_name_add_cold_address">生成新私钥</string>
+    <string name="OK">确认</string>
+    <string name="cancel">取消</string>
+    <string name="close">返回</string>
+    <string name="operate">设置</string>
+    <string name="address_option_delete">停止监控</string>
+    <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
+    <string name="address_delete_confirmation">确认停止监控这个地址?</string>
+    <string name="address_monitor_failed">监控失败</string>
+    <string name="address_monitor_failed_too_much_tx">不能监控交易过多的地址</string>
+    <string name="address_monitor_failed_multiple_address">不能监控此类多签名地址</string>
+    <string name="total_btc_prefix">总计:</string>
+    <string name="total_address_prefix">私钥数:</string>
+    <string name="please_wait">请稍候…</string>
+    <string name="address_group_watch_only">地址 (监控)</string>
+    <string name="address_group_private">地址 (有私钥)</string>
+    <string name="network_or_connection_error">网络错误</string>
+    <string name="high_api_is_too_old">请等待服务器数据更新</string>
+    <string name="find_browser_error">您的手机上未安装浏览器</string>
+
+    <!-- address detail -->
+    <string name="address_balance">余额</string>
+    <string name="address_total_incoming">总收入</string>
+    <string name="address_total_outgoing">总支出</string>
+    <string name="address_detail_balance_detail_transaction_count">交易数</string>
+    <string name="address_total_transaction_count">交易:</string>
+    <string name="address_first_seen_time">最早出现时间</string>
+    <string name="input_coinbase">挖矿</string>
+    <string name="address_cannot_be_parsed">地址不详</string>
+    <string name="copy_address">复制</string>
+    <string name="qr_code">二维码</string>
+    <string name="copy_address_success">地址已复制</string>
+    <string name="confirmations_postfix">确认</string>
+    <string name="confirmation_postfix">确认</string>
+    <string name="unconfirmed">未确认</string>
+    <string name="address_detail_send">发送</string>
+    <string name="address_detail_unsigned_transaction">未签名交易</string>
+    <string name="address_detail_send_balance_zero">余额为零, 无法发送</string>
+    <string name="address_detail_no_transactions">没有找到这个地址的交易, 它可能还没有在网络上使用过.</string>
+    <string name="address_detail_monitor_failed">无法监控交易量过大的地址.</string>
+    <string name="address_detail_cancel_monitor">停止监控</string>
+    <string name="address_detail_transaction_confidence_dialog_prefix">确认:</string>
+    <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
+    <string name="address_detail_cannot_stop_monitoring">一分钟内只能停止监控一个地址.</string>
+    <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
+
+    <!-- add address -->
+    <string name="add_address_tab_watch_only">监控</string>
+    <string name="add_address_tab_private_key">私钥</string>
+    <string name="add_address_scan">二维码</string>
+    <string name="add_address_delete">删除</string>
+    <string name="add_address_watch_only_hint">比特币地址</string>
+    <string name="add_address_already_watched">这个地址已经被监控了</string>
+    <string name="add_address_generate_address_with_private_key">生成</string>
+    <string name="add_address_generate_address_password_label">请输入密码</string>
+    <string name="add_address_generate_address_password_lengh_note">6&#8211;20位数字</string>
+    <string name="add_address_generate_address_password_set_label">请设置密码</string>
+    <string name="add_address_generate_address_password_hint">密码</string>
+    <string name="add_address_generate_address_password_confirm_hint">确认密码</string>
+    <string name="add_address_generate_address_password_not_same">两次输入的密码不符</string>
+    <string name="password_checking">正在检查密码</string>
+    <string name="password_wrong">密码错误</string>
+
+    <!-- send -->
+    <string name="send_progress_dialog_message">发送中</string>
+    <string name="send_success">发送成功</string>
+    <string name="send_failed">发送失败</string>
+    <string name="send_failed_not_enough_available">发送失败. 可用余额不足.</string>
+    <string name="send_failed_missing_btc">发送失败. 可用余额中缺少 %s BTC.</string>
+    <string name="send_failed_dust_out_put">发送失败. 这样小额的交易会被忽略.</string>
+    <string name="send_failed_pendding">%s BTC 正在等待确认.</string>
+    <string name="send_failed_waiting_for_another_confirmation">请等待一个新的确认后再交易.</string>
+    <string name="send_failed_not_enough_for_fee">发送失败. 可用余额不足以支付手续费.</string>
+    <string name="send_coins_fragment_sending_address_label">从</string>
+    <string name="send_coins_fragment_receiving_address_label">发送给</string>
+    <string name="send_coins_fragment_amount_label">金额</string>
+    <string name="send_result_sent_to">已被发给了</string>
+    <string name="send_result_with_fee">手续费</string>
+    <string name="send_confirm_address">将要发送给:</string>
+    <string name="send_confirm_amount">金额:</string>
+    <string name="send_confirm_fee">手续费:</string>
+    <string name="send_confirm_low_priority_warn">交易中有小于0.01BTC的支出,\n手续费较低.\n<b>确认时间可能很长</b>.</string>
+
+    <!-- market -->
+    <string name="market_sell">卖一:</string>
+    <string name="market_buy">买一:</string>
+    <string name="market_height">最高:</string>
+    <string name="market_low">最低:</string>
+    <string name="market_line_one_minute">1分钟</string>
+    <string name="market_line_five_minute">5分钟</string>
+    <string name="market_line_one_hour">1小时</string>
+    <string name="market_line_one_day">1天</string>
+    <string name="market_detail_new_price">最新价</string>
+    <string name="market_detail_sell_price">卖一价</string>
+    <string name="market_detail_buy_price">买一价</string>
+    <string name="market_detail_high_price">最高价</string>
+    <string name="market_detail_low_price">最低价</string>
+    <string name="market_detail_depth">市场深度</string>
+    <string name="buy_order">买单</string>
+    <string name="sell_order">卖单</string>
+    <string name="market_share_button">分享</string>
+    <string name="market_web_button_prefix">访问</string>
+    <string name="market_share_failed">分享失败</string>
+    <string name="kline">K线图</string>
+    <string name="ten_line">10均线: </string>
+    <string name="thirty_line">30均线: </string>
+    <string name="kline_amount">交易量: </string>
+    <string name="kline_high">最高: </string>
+    <string name="kline_low">最低: </string>
+    <string name="kline_open">开盘: </string>
+    <string name="kline_close">收盘: </string>
+
+    <!-- setting -->
+    <string name="setting_name_currency">默认货币</string>
+    <string name="setting_name_market">默认交易所</string>
+    <string name="setting_name_wifi">网络设置</string>
+    <string name="setting_name_wifi_yes">只在wifi下同步</string>
+    <string name="setting_name_wifi_no">一直同步</string>
+    <string name="setting_name_transaction_fee">默认手续费</string>
+    <string name="setting_name_transaction_fee_normal">正常</string>
+    <string name="setting_name_transaction_fee_low">较低</string>
+    <string name="setting_name_transaction_fee_normal_note">较快确认</string>
+    <string name="setting_name_transaction_fee_low_note">较慢确认</string>
+    <string name="donate_button">捐赠</string>
+    <string name="donate_thanks">谢谢您的捐赠</string>
+    <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
+    <string name="backup_again">一个小时内刚刚进行过备份，确认要再次备份吗?</string>
+
+    <!-- Input parser -->
+    <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
+    <string name="input_parser_invalid_bitcoin_uri">比特币URI 无效:\n%s</string>
+    <string name="input_parser_invalid_address">取得无效比特币地址!\n(是否Mainnet/Testnet 混用?)</string>
+    <string name="input_parser_invalid_transaction">无效交易:\n%s</string>
+
+    <!-- feed -->
+    <string name="feed_send_btc">发送:</string>
+    <string name="feed_received_btc">收到:</string>
+    <string name="freshnews_title">新鲜事</string>
+
+    <!-- mode -->
+    <string name="choose_mode_cold_desctription">冷钱包 : 离线, 安全!</string>
+    <string name="choose_mode_warm_desctription">热钱包 : 联机, 易用!</string>
+    <string name="choose_mode_warm_waiting">正在创建钱包…</string>
+    <string name="choose_mode_warm_retry">重试</string>
+    <string name="choose_mode_cold_confirm">模式设置后不能切换.\n冷钱包应该运行在离线的备用手机上.\n确定以冷钱包模式运行?</string>
+    <string name="choose_mode_warm_confirm">模式设置后不能切换.\n热钱包可以方便的在线发送交易.\n确定以热钱包模式运行?</string>
+
+    <!-- warning -->
+    <string name="cold_warning">警告</string>
+    <string name="safe_your_wallet">为了您的冷钱包安全, 请关闭网络</string>
+
+    <!-- cold wallet -->
+    <string name="check_now">立即体检</string>
+    <string name="check_network">检查网络</string>
+    <string name="check_address">检查地址</string>
+    <string name="cold_wallet_init_check_label">请关闭网络</string>
+    <string name="wifi_is_close">WIFI已关闭</string>
+    <string name="threeg_is_close">数据网络已关闭</string>
+    <string name="bluetooth_is_close">蓝牙已关闭</string>
+    <string name="wifi_not_close">WIFI未关闭</string>
+    <string name="threeg_not_close">数据网络未关闭</string>
+    <string name="bluetooth_not_close">蓝牙未关闭</string>
+    <string name="wifi_is_close_checking">正在检查WIFI…</string>
+    <string name="threeg_is_close_checking">正在检查数据网络…</string>
+    <string name="bluetooth_is_close_checking">正在检查蓝牙…</string>
+    <string name="check_address_private_key_title">%s 的私钥</string>
+    <string name="check_address_password">密码正确</string>
+    <string name="check_private_key_safe">您的私钥很安全</string>
+    <string name="checking_private_key">正在检查私钥</string>
+    <string name="check_private_key_button">一键检查私钥安全</string>
+    <string name="check_points">分</string>
+    <string name="private_key_is_empty">你还没有添加私钥, 请先添加私钥</string>
+    <string name="next_page">下一张</string>
+    <string name="can_not_find_private_key">没有找到对应的私钥</string>
+    <string name="scan_watch_only_address_error">二维码不符合比特币地址格式</string>
+    <string name="sign_transaction">签名交易</string>
+    <string name="scan_qr_transport_init_label">请扫描比太提供的第1张二维码</string>
+    <string name="scan_qr_transport_page_label">请扫描第%1$d张二维码, 共%2$d张</string>
+    <string name="signing_transaction">正在签名</string>
+    <string name="signed_transaction_qr_code_title">用热钱包扫描以签名交易</string>
+    <string name="qr_code_page">第%1$d张, 共%2$d张</string>
+    <string name="complete">完成</string>
+    <string name="scan_unsigned_transaction_title">扫描热钱包上的未签名交易</string>
+    <string name="clone_to_button">冷钱包克隆二维码</string>
+    <string name="clone_to_title">用要克隆到的钱包扫描</string>
+    <string name="clone_from_button">冷钱包克隆</string>
+    <string name="clone_from_title">扫描克隆源上的二维码</string>
+    <string name="clone_from_waiting">正在克隆…</string>
+    <string name="clone_from_success">克隆成功</string>
+    <string name="clone_from_failed">克隆失败</string>
+    <string name="clone_from_password">输入克隆源的密码</string>
+    <string name="qr_code_for_all_addresses">冷钱包监控二维码</string>
+    <string name="qr_code_for_all_addresses_title">使用热钱包扫描来监控冷钱包</string>
+    <string name="no_sd_card_of_back_up">没有SD卡，无法自动备份</string>
+    <string name="last_time_of_back_up">上一次备份时间: %s </string>
+    <string name="just_now">刚刚</string>
+    <string name="private_key_count_limit">已达私钥数量上限</string>
+    <string name="watch_only_address_count_limit">已达到监控地址上限</string>
+    <string name="generate_address_count_label">生成多少个私钥?</string>
+
+    <!-- warm wallet -->
+    <string name="prepare_tx">初始化交易</string>
+    <string name="generate_unsigned_tx_button">未签名交易二维码</string>
+    <string name="get_sign_hash">得到签名信息</string>
+    <string name="unsigned_transaction_qr_code_title">使用包含此地址私钥的冷钱包扫描</string>
+    <string name="unsigned_transaction_qr_code_complete">扫描冷钱包以签名</string>
+    <string name="unsigned_transaction_sign_failed">签名失败</string>
+    <string name="scan_transaction_signature_title">扫描冷钱包上的签名信息</string>
+    <string name="scan_for_all_addresses_in_bither_cold">一键监控冷钱包</string>
+    <string name="scan_for_all_addresses_in_bither_cold_title">扫描冷钱包的二维码</string>
+    <string name="scan_for_all_addresses_in_bither_cold_success">监控冷钱包成功</string>
+    <string name="scan_for_all_addresses_in_bither_cold_failed">监控冷钱包失败</string>
+
+    <!-- select address to send -->
+    <string name="select_address_to_send">请选择从哪个地址发送</string>
+    <string name="select_address_to_send_no_address_fount">您没有一个拥有足够余额的地址</string>
+
+    <!-- donate -->
+    <string name="select_address_to_donate">请选择用来捐赠的地址</string>
+    <string name="donate_no_address">没有可以用来捐赠的地址</string>
+    <string name="donate_receiving_address_label">捐赠给开发者</string>
+    <string name="donate_sending_verb">捐赠</string>
+    <string name="donate_unsigned_transaction_verb">未签名捐赠二维码</string>
+
+</resources>

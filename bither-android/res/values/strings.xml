@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bither</string>
+    <string name="bitcoin_balance_label">BTC</string>
+    <string name="bitcoin_symbol">BTC</string>
+    <string name="market_trading_amount">Volume</string>
+    <string name="market_price_high">High</string>
+    <string name="market_price_low">Low</string>
+    <string name="market_price_open">Open</string>
+    <string name="market_price_close">Close</string>
+    <string name="market_name_huobi">HUOBI</string>
+    <string name="market_name_bitstamp">Bitstamp</string>
+    <string name="market_name_btce">BTC-E</string>
+    <string name="market_name_okcoin">OKCoin</string>
+    <string name="market_name_chbtc">CHBTC</string>
+    <string name="market_name_btcchina">BTCChina</string>
+    <string name="activity_name_address_detail">Detail</string>
+    <string name="activity_name_address_sign_tx">Sign Transaction</string>
+    <string name="activity_name_qr_code">QR Code</string>
+    <string name="activity_name_generate_unsigned_tx">Balance:</string>
+    <string name="activity_name_add_cold_address">Generate New Private Keys</string>
+    <string name="OK">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Cancel</string>
+    <string name="operate">Set</string>
+    <string name="address_option_delete">Stop monitoring</string>
+    <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
+    <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
+    <string name="address_monitor_failed">Monitor failed</string>
+    <string name="address_monitor_failed_too_much_tx">Can not monitor address with too much TXs</string>
+    <string name="address_monitor_failed_multiple_address">Can not monitor special MultiSig address</string>
+    <string name="total_btc_prefix">Total:</string>
+    <string name="total_address_prefix">Private Key Count:</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="address_group_watch_only">Address (Watch Only)</string>
+    <string name="address_group_private">Address (With Private Key)</string>
+    <string name="network_or_connection_error">Network failure.</string>
+    <string name="high_api_is_too_old">Service data is too old ,Please wait</string>
+    <string name="find_browser_error">You don\'t have a browser</string>
+
+    <!-- address detail -->
+    <string name="address_balance">Balance</string>
+    <string name="address_total_incoming">Received</string>
+    <string name="address_total_outgoing">Sent</string>
+    <string name="address_detail_balance_detail_transaction_count">Transaction</string>
+    <string name="address_total_transaction_count">tx:</string>
+    <string name="address_first_seen_time">Birth Time</string>
+    <string name="input_coinbase">Minning</string>
+    <string name="address_cannot_be_parsed">Unknown Address </string>
+    <string name="copy_address">Copy</string>
+    <string name="qr_code">QR Code</string>
+    <string name="copy_address_success">Address copied</string>
+    <string name="confirmations_postfix">Confirmations</string>
+    <string name="confirmation_postfix">Confirmation</string>
+    <string name="unconfirmed">Unconfirmed</string>
+    <string name="address_detail_send">Send</string>
+    <string name="address_detail_unsigned_transaction">Unsigned TX</string>
+    <string name="address_detail_send_balance_zero">You have no coins to send</string>
+    <string name="address_detail_no_transactions">No transactions found for this address, it has probably not been used on the network yet.</string>
+    <string name="address_detail_monitor_failed">Cannot monitor address with large amount of transactions.</string>
+    <string name="address_detail_cancel_monitor">Stop Monitoring</string>
+    <string name="address_detail_transaction_confidence_dialog_prefix">Confirmation:</string>
+    <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
+    <string name="address_detail_cannot_stop_monitoring">You can only stop monitoring one address in a minute.</string>
+    <string name="address_detail_empty_address_list_notice">You can\'t empty address list.</string>
+
+    <!-- add address -->
+    <string name="add_address_tab_watch_only">Watch Only</string>
+    <string name="add_address_tab_private_key">Private Key</string>
+    <string name="add_address_coming_soon">Coming Soon…</string>
+    <string name="add_address_scan">Scan</string>
+    <string name="add_address_delete">Delete</string>
+    <string name="add_address_watch_only_hint">Bitcoin Address</string>
+    <string name="add_address_already_watched">This address is already monitored</string>
+    <string name="add_address_generate_address_with_private_key">Generate</string>
+    <string name="add_address_generate_address_password_label">Enter password</string>
+    <string name="add_address_generate_address_password_lengh_note">6&#8211;20 digits</string>
+    <string name="add_address_generate_address_password_set_label">Set password</string>
+    <string name="add_address_generate_address_password_hint">Password</string>
+    <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
+    <string name="add_address_generate_address_password_not_same">Passwords not same</string>
+    <string name="password_checking">Checking password</string>
+    <string name="password_wrong">Wrong Password</string>
+
+    <!-- send -->
+    <string name="send_progress_dialog_message">Sending</string>
+    <string name="send_success">Send success</string>
+    <string name="send_failed">Send failed</string>
+    <string name="send_failed_not_enough_available">Send failed. You don\'t have enough coins available. </string>
+    <string name="send_failed_missing_btc">Send failed. Lack of %s BTC. </string>
+    <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be igored.</string>
+    <string name="send_failed_pendding">%s BTC to be confirmed.</string>
+    <string name="send_failed_waiting_for_another_confirmation">Please wait for another confirmation.</string>
+    <string name="send_failed_not_enough_for_fee">Send failed. You don\'t have enough coins available for transaction fee. </string>
+    <string name="send_coins_fragment_sending_address_label">From</string>
+    <string name="send_coins_fragment_receiving_address_label">Pay to</string>
+    <string name="send_coins_fragment_amount_label">Amount to pay</string>
+    <string name="send_result_sent_to">will be sent to</string>
+    <string name="send_result_with_fee">with fee</string>
+    <string name="send_confirm_address">You will send to:</string>
+    <string name="send_confirm_amount">Amount:</string>
+    <string name="send_confirm_fee">Fee:</string>
+    <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction fee is low.\n<b>Confirmation may be very slow</b>.</string>
+
+    <!-- market -->
+    <string name="market_sell">Sell:</string>
+    <string name="market_buy">Buy:</string>
+    <string name="market_height">H:</string>
+    <string name="market_low">L:</string>
+    <string name="market_line_one_minute">1min</string>
+    <string name="market_line_five_minute">5mins</string>
+    <string name="market_line_one_hour">1hour</string>
+    <string name="market_line_one_day">1day</string>
+    <string name="market_detail_new_price">Price</string>
+    <string name="market_detail_sell_price">Sell</string>
+    <string name="market_detail_buy_price">Buy</string>
+    <string name="market_detail_high_price">High</string>
+    <string name="market_detail_low_price">Low</string>
+    <string name="market_detail_depth">Market Depth</string>
+    <string name="buy_order">Buy</string>
+    <string name="sell_order">Sell</string>
+    <string name="market_share_button">Share</string>
+    <string name="market_web_button_prefix">Visit</string>
+    <string name="market_share_failed">Share failed.</string>
+    <string name="kline">K-line</string>
+    <string name="ten_line">10 line: </string>
+    <string name="thirty_line">30 line: </string>
+    <string name="kline_high">High: </string>
+    <string name="kline_low">Low: </string>
+    <string name="kline_open">Open: </string>
+    <string name="kline_close">Close: </string>
+    <string name="kline_amount">Volume: </string>
+
+    <!-- setting -->
+    <string name="setting_name_currency">Default Currency</string>
+    <string name="setting_name_market">Default Exchange</string>
+    <string name="setting_name_wifi">Network Setting</string>
+    <string name="setting_name_wifi_yes">Sync over wifi only</string>
+    <string name="setting_name_wifi_no">Sync always</string>
+    <string name="setting_name_transaction_fee">Default Transaction Fee</string>
+    <string name="setting_name_transaction_fee_normal">Normal</string>
+    <string name="setting_name_transaction_fee_low">Low</string>
+    <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
+    <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
+    <string name="donate_button">Donate</string>
+    <string name="donate_thanks">Thank you for donating.</string>
+    <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
+    <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
+
+    <!-- Input parser -->
+    <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
+    <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>
+    <string name="input_parser_invalid_address">Got invalid bitcoin address!\n(Mixing up Mainnet/Testnet?)</string>
+    <string name="input_parser_invalid_transaction">Invalid transaction:\n%s</string>
+
+    <!-- feed -->
+    <string name="feed_send_btc">Send:</string>
+    <string name="feed_received_btc">Received:</string>
+    <string name="freshnews_title">News</string>
+    <string name="btc_donate">Bitcoin Donate:</string>
+
+    <!-- mode -->
+    <string name="choose_mode_cold_desctription">Bither Cold : Offline &amp; Secure.</string>
+    <string name="choose_mode_warm_desctription">Bither Hot : Online &amp; Simple.</string>
+    <string name="choose_mode_warm_waiting">Building Wallet…</string>
+    <string name="choose_mode_warm_retry">Retry</string>
+    <string name="choose_mode_cold_confirm">Once mode is set, it can\'t be changed.\nBither Cold need to be run on a offline phone.\nSet this phone as Bither Cold?</string>
+    <string name="choose_mode_warm_confirm">Once mode is set, it can\'t be changed.\nBither Hot is an online bitcoin wallet.\nSet this phone as Bither Hot?</string>
+
+    <!-- warning -->
+    <string name="cold_warning">Warning</string>
+    <string name="safe_your_wallet">Please turn off the network!</string>
+
+    <!-- cold wallet -->
+    <string name="check_now">Check Now</string>
+    <string name="check_network">Check Network</string>
+    <string name="check_address">Check Address</string>
+    <string name="cold_wallet_init_check_label">Please turn off network</string>
+    <string name="wifi_is_close">WIFI Off</string>
+    <string name="threeg_is_close">Cellular Data Off</string>
+    <string name="bluetooth_is_close">Bluetooth Off</string>
+    <string name="wifi_not_close">WIFI Not Off</string>
+    <string name="threeg_not_close">Cellular Data Not Off</string>
+    <string name="bluetooth_not_close">Bluetooth Not Off</string>
+    <string name="wifi_is_close_checking">Checking WIFI…</string>
+    <string name="threeg_is_close_checking">Checking Cellular Data…</string>
+    <string name="bluetooth_is_close_checking">Checking Bluetooth…</string>
+    <string name="check_address_private_key_title">Private key of %s</string>
+    <string name="check_address_password">Password is correct</string>
+    <string name="check_private_key_safe">Private keys are safe.</string>
+    <string name="checking_private_key">Checking private keys</string>
+    <string name="check_private_key_button">Check Private Keys</string>
+    <string name="check_points">Points</string>
+    <string name="private_key_is_empty">You don\'t have any private key, please add some</string>
+    <string name="next_page">Next page</string>
+    <string name="can_not_find_private_key">Can not find private key </string>
+    <string name="scan_watch_only_address_error">QR Code contains no bitcoin address</string>
+    <string name="sign_transaction">Sign Transaction</string>
+    <string name="scan_qr_transport_init_label">Scan QR code No.1 provided by Bither</string>
+    <string name="scan_qr_transport_page_label">Scan QR code No.%1$d, total %2$d</string>
+    <string name="signing_transaction">Signing Transaction</string>
+    <string name="signed_transaction_qr_code_title">Scan with Bither Hot to sign transaction.</string>
+    <string name="qr_code_page">Page %1$d, Total %2$d</string>
+    <string name="complete">Complete</string>
+    <string name="scan_unsigned_transaction_title">Scan QR Code on Bither Hot</string>
+    <string name="clone_to_button">Cold Wallet Clone QR Code</string>
+    <string name="clone_to_title">Scan by the clone destination to clone</string>
+    <string name="clone_from_button">Bither Cold Wallet Clone</string>
+    <string name="clone_from_title">Scan from the clone source</string>
+    <string name="clone_from_waiting">Cloning…</string>
+    <string name="clone_from_success">Clone success</string>
+    <string name="clone_from_failed">Clone failed</string>
+    <string name="clone_from_password">Type in source password</string>
+    <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
+    <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
+    <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>
+    <string name="last_time_of_back_up">The last backup: %s </string>
+    <string name="just_now">Just now</string>
+    <string name="private_key_count_limit">Reached private key count limit</string>
+    <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
+    <string name="generate_address_count_label">How many private keys to generate?</string>
+
+    <!-- warm wallet -->
+    <string name="prepare_tx">Init Transaction</string>
+    <string name="generate_unsigned_tx_button">Unsigned TX QR Code</string>
+    <string name="get_sign_hash">Get sign </string>
+    <string name="unsigned_transaction_qr_code_title">Scan with Bither Cold to sign transaction</string>
+    <string name="unsigned_transaction_qr_code_complete">Scan to sign</string>
+    <string name="unsigned_transaction_sign_failed">Sign failed</string>
+    <string name="scan_transaction_signature_title">Scan QR Code on Bither Cold</string>
+    <string name="prompt_block_height">Block Height : %d</string>
+    <string name="prompt_wallet_height">Wallet Height : %d</string>
+    <string name="scan_for_all_addresses_in_bither_cold">Monitor Bither Cold</string>
+    <string name="scan_for_all_addresses_in_bither_cold_title">Scan Qr Code to watch Bither Cold</string>
+    <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success</string>
+    <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
+
+    <!-- select address to send -->
+    <string name="select_address_to_send">Select an address to send</string>
+    <string name="select_address_to_send_no_address_fount">You don\'t have any address with enough available bitcoin</string>
+
+    <!-- donate -->
+    <string name="select_address_to_donate">Select an address to donate</string>
+    <string name="donate_no_address">No address to donate</string>
+    <string name="donate_receiving_address_label">Donate to developers</string>
+    <string name="donate_sending_verb">Donate</string>
+    <string name="donate_unsigned_transaction_verb">Donation QR Code</string>
+
+    <!-- bitcoin wallet -->
+    <string name="network_monitor_activity_title">Network Monitor</string>
+    <string name="network_monitor_peer_list_title">Peers</string>
+    <string name="network_monitor_block_list_title">Blocks</string>
+    <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
+
+</resources>
