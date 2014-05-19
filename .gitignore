@@ -9,7 +9,7 @@ wheel/gen
 wheel/.classpath
 wheel/.settings
 
-Android-Charts-master/bin
-Android-Charts-master/gen
-Android-Charts-master/.classpath
-Android-Charts-master/.settings
+android-charts/bin
+android-charts/gen
+android-charts/.classpath
+android-charts/.settings
