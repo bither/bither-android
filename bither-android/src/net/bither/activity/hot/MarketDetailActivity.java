@@ -133,8 +133,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		llContent = (LinearLayout) findViewById(R.id.ll_content);
 		chartKline = (MACandleStickChart) findViewById(R.id.macandlestickchart);
 		chartDepth = (MarketDepthChart) findViewById(R.id.marketdepthchart);
-		chartDepth.setViewTouchEventResponse(marketDepthViewTouchResponse);
-		chartKline.setViewTouchEventResponse(kLineTouchResponse);
+		chartDepth.setTouchEventResponse(marketDepthViewTouchResponse);
+		chartKline.setTouchEventResponse(kLineTouchResponse);
 		marketDepthDetailView = (MarketDepthDetailView) findViewById(R.id.market_depth_detail);
 		marketDepthParams = (FrameLayout.LayoutParams) marketDepthDetailView
 				.getLayoutParams();
@@ -381,6 +381,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		@Override
 		public void notifyTouchPointMove(int x, int y) {
 			handler.removeCallbacks(disappearMarketDepthRunnable);
+
 			marketDepthDetailView.notifyViewMove(marketDepthParams, x, y,
 					chartDepth.getWidth());
 			handler.postDelayed(disappearMarketDepthRunnable, DISAPPEAR_TIME);
@@ -402,7 +403,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 
 		@Override
 		public void clearTounchPoint() {
-			marketDepthDetailView.setVisibility(View.INVISIBLE);
+			marketDepthDetailView.hide();
 
 		}
 	};

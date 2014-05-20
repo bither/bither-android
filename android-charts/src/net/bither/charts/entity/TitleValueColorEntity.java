@@ -21,6 +21,8 @@
 
 package net.bither.charts.entity;
 
+import android.graphics.Color;
+
 /**
  * <p>
  * Entity data which its value is titled and with color

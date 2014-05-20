@@ -859,7 +859,7 @@ public class GridChart extends BaseChart {
 	 */
 	private float clickPostY;
 
-	private ITouchEventResponse iViewTouchEventResponse;
+	private ITouchEventResponse iTouchEventResponse;
 
 	/*
 	 * (non-Javadoc)
@@ -2199,13 +2199,13 @@ public class GridChart extends BaseChart {
 		this.graduation = graduation;
 	}
 
-	public ITouchEventResponse getViewTouchEventResponse() {
-		return iViewTouchEventResponse;
+	public ITouchEventResponse getTouchEventResponse() {
+		return iTouchEventResponse;
 	}
 
-	public void setViewTouchEventResponse(
+	public void setTouchEventResponse(
 			ITouchEventResponse iViewTouchEventResponse) {
-		this.iViewTouchEventResponse = iViewTouchEventResponse;
+		this.iTouchEventResponse = iViewTouchEventResponse;
 	}
 
 	protected float getAxisXPrecentage(float clickPostX) {
@@ -2216,8 +2216,8 @@ public class GridChart extends BaseChart {
 	// TODO Do not move view when onDraw
 	public void clearTounch() {
 		this.clickPostX = 0;
-		if (getViewTouchEventResponse() != null) {
-			getViewTouchEventResponse().clearTounchPoint();
+		if (getTouchEventResponse() != null) {
+			getTouchEventResponse().clearTounchPoint();
 		}
 	}
 
