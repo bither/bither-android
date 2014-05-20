@@ -74,7 +74,7 @@ public class MarketDepthDetailView extends LinearLayout {
 	public void setContent(String order, String price, String volume) {
 		this.tvOrder.setText(order);
 		this.tvPrice.setText(price);
-		this.tvVolume.setText(volume);
+		this.tvVolume.setText(" " + volume);
 		this.ivSymbolBtc.setImageBitmap(btcBit);
 		this.tvSymbol.setText(AppSharedPreference.getInstance()
 				.getDefaultExchangeRate().getSymbol());
