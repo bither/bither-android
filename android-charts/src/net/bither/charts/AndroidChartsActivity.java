@@ -908,7 +908,7 @@ public class AndroidChartsActivity extends Activity implements
 	private void initMACandleStickChart() {
 		this.macandlestickchart = (MACandleStickChart) findViewById(R.id.macandlestickchart);
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
-		this.macandlestickchart.setViewTouchEventResponse(this);
+		this.macandlestickchart.setTouchEventResponse(this);
 
 		// // 计算5日均线
 		// LineEntity<DateValueEntity> MA5 = new LineEntity<DateValueEntity>();

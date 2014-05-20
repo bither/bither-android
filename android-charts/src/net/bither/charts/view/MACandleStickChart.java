@@ -174,10 +174,7 @@ public class MACandleStickChart extends CandleStickChart {
 		}
 	}
 
-	private String formatDoubleToMoneyString(double num) {
-		java.text.DecimalFormat formate = new DecimalFormat("0.00");
-		return formate.format(num);
-	}
+
 
 	@Override
 	protected void drawAxisXgraduate(Canvas canvas, float clickPostX) {
@@ -208,8 +205,8 @@ public class MACandleStickChart extends CandleStickChart {
 		BitherOHLCEntity bitherOHLCEntity = (BitherOHLCEntity) stickData
 				.get(index);
 
-		if (getViewTouchEventResponse() != null) {
-			getViewTouchEventResponse().notifyTouchPointMove((int) clickPostX,
+		if (getTouchEventResponse() != null) {
+			getTouchEventResponse().notifyTouchPointMove((int) clickPostX,
 					moveToY);
 
 			Object[] objs = new Object[] {
@@ -221,7 +218,7 @@ public class MACandleStickChart extends CandleStickChart {
 					formatDoubleToMoneyString(tenDateValueEntity.getValue()),
 					formatDoubleToMoneyString(thirtyDateValueEntity.getValue()),
 					formatDoubleToMoneyString(bitherOHLCEntity.getVolume()) };
-			getViewTouchEventResponse().notifyTouchContentChange(objs);
+			getTouchEventResponse().notifyTouchContentChange(objs);
 		}
 	}
 

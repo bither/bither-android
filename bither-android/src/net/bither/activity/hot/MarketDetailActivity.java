@@ -56,7 +56,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -88,10 +87,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 	private DialogProgress dp;
 
 	private MarketDepthDetailView marketDepthDetailView;
-	private FrameLayout.LayoutParams marketDepthParams;
 
 	private KlineDetailView mKLineDetailView;
-	private FrameLayout.LayoutParams klineLayoutParams;
 
 	private MarketType marketType = null;
 	private boolean isRefresh = false;
@@ -133,14 +130,10 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		llContent = (LinearLayout) findViewById(R.id.ll_content);
 		chartKline = (MACandleStickChart) findViewById(R.id.macandlestickchart);
 		chartDepth = (MarketDepthChart) findViewById(R.id.marketdepthchart);
-		chartDepth.setViewTouchEventResponse(marketDepthViewTouchResponse);
-		chartKline.setViewTouchEventResponse(kLineTouchResponse);
+		chartDepth.setTouchEventResponse(marketDepthViewTouchResponse);
+		chartKline.setTouchEventResponse(kLineTouchResponse);
 		marketDepthDetailView = (MarketDepthDetailView) findViewById(R.id.market_depth_detail);
-		marketDepthParams = (FrameLayout.LayoutParams) marketDepthDetailView
-				.getLayoutParams();
 		mKLineDetailView = (KlineDetailView) findViewById(R.id.klinedetailview);
-		klineLayoutParams = (FrameLayout.LayoutParams) mKLineDetailView
-				.getLayoutParams();
 
 		rg = (RadioGroup) findViewById(R.id.rg);
 		rg.setOnCheckedChangeListener(this);
@@ -381,8 +374,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		@Override
 		public void notifyTouchPointMove(int x, int y) {
 			handler.removeCallbacks(disappearMarketDepthRunnable);
-			marketDepthDetailView.notifyViewMove(marketDepthParams, x, y,
-					chartDepth.getWidth());
+
+			marketDepthDetailView.notifyViewMove(x, y, chartDepth.getWidth());
 			handler.postDelayed(disappearMarketDepthRunnable, DISAPPEAR_TIME);
 
 		}
@@ -402,7 +395,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 
 		@Override
 		public void clearTounchPoint() {
-			marketDepthDetailView.setVisibility(View.INVISIBLE);
+			marketDepthDetailView.hide();
 
 		}
 	};
@@ -411,8 +404,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		@Override
 		public void notifyTouchPointMove(int x, int y) {
 			handler.removeCallbacks(disappearKlineRunnable);
-			mKLineDetailView.notifyViewMove(klineLayoutParams, x, y,
-					chartKline.getWidth(), chartKline.getHeight());
+			mKLineDetailView.notifyViewMove(x, y, chartKline.getWidth(),
+					chartKline.getHeight());
 			handler.postDelayed(disappearKlineRunnable, DISAPPEAR_TIME);
 		}
 

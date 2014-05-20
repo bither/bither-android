@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.bither.charts.entity.DateValueEntity;
 import net.bither.charts.entity.LineEntity;
+import net.bither.charts.event.ITouchEventResponse;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -58,17 +59,17 @@ public class MarketDepthChart extends SlipLineChart {
 		paint.setAntiAlias(true);
 		canvas.drawCircle(clickPostX, valueY, 8, paint);
 		int moveToY = (int) (((value - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
-		if (getViewTouchEventResponse() != null) {
-			getViewTouchEventResponse().notifyTouchPointMove((int) clickPostX,
-					moveToY);
+		ITouchEventResponse touchEventResponse = getTouchEventResponse();
+		if (touchEventResponse != null) {
+			touchEventResponse.notifyTouchPointMove((int) clickPostX, moveToY);
 			boolean isBuyOrder = index < splitIndex;
 			String price = dataValueEntities.get(index).getTitle();
-			Object[] objs = new Object[] { isBuyOrder, price, value };
-			getViewTouchEventResponse().notifyTouchContentChange(objs);
+			Object[] objs = new Object[] { isBuyOrder, price,
+					formatDoubleToMoneyString(value) };
+			touchEventResponse.notifyTouchContentChange(objs);
+
 		}
 	}
-
-	
 
 	protected void drawAreas(Canvas canvas) {
 		if (null == linesData) {

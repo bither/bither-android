@@ -17,12 +17,12 @@
 package net.bither.ui.base;
 
 import net.bither.R;
+import net.bither.util.AnimationUtil;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,19 +52,6 @@ public class KlineDetailView extends LinearLayout {
 		initView();
 	}
 
-	public void setContent(String time, String open, String high, String low,
-			String close, String tenLine, String thirtyLine, String volume) {
-		this.tvTime.setText(time);
-		this.tvOpen.setText(open);
-		this.tvHigh.setText(high);
-		this.tvLow.setText(low);
-		this.tvClose.setText(close);
-		this.tvTenLine.setText(tenLine);
-		this.tvThirtyLine.setText(thirtyLine);
-		this.tvVolume.setText(volume);
-
-	}
-
 	private void initView() {
 		removeAllViews();
 		addView(LayoutInflater.from(getContext()).inflate(
@@ -81,60 +68,72 @@ public class KlineDetailView extends LinearLayout {
 
 	}
 
-	public void notifyViewMove(FrameLayout.LayoutParams marketDepthParams,
-			int x, int y, int parentWidth, int parentHight) {
-		if (getVisibility() == View.GONE) {
-			setVisibility(View.INVISIBLE);
+	public void setContent(String time, String open, String high, String low,
+			String close, String tenLine, String thirtyLine, String volume) {
+		this.tvTime.setText(time);
+		this.tvOpen.setText(open);
+		this.tvHigh.setText(high);
+		this.tvLow.setText(low);
+		this.tvClose.setText(close);
+		this.tvTenLine.setText(tenLine);
+		this.tvThirtyLine.setText(thirtyLine);
+		this.tvVolume.setText(volume);
+
+	}
+
+	public void hide() {
+		AnimationUtil.fadeIn(KlineDetailView.this);
+	}
+
+	public void notifyViewMove(int x, int y, int parentWidth, int parentHight) {
+		clearAnimation();
+		if (getVisibility() != View.VISIBLE) {
+			setVisibility(View.VISIBLE);
 			if (x > parentWidth / 2) {
-				moveViewDelayed(marketDepthParams, x, y, parentWidth,
-						parentHight);
+				moveViewDelayed(x, y, parentWidth, parentHight);
 			} else {
-				moveView(marketDepthParams, x, y, parentWidth, parentHight);
+				moveView(x, y, parentWidth, parentHight);
 			}
 
 		} else {
-			moveView(marketDepthParams, x, y, parentWidth, parentHight);
+			moveView(x, y, parentWidth, parentHight);
 		}
 	}
 
-	private void moveViewDelayed(
-			final FrameLayout.LayoutParams marketDepthParams, final int x,
-			final int y, final int parentWidth, final int parentHight) {
+	private void moveViewDelayed(final int x, final int y,
+			final int parentWidth, final int parentHight) {
 		if (getWidth() != 0) {
-			moveView(marketDepthParams, x, y, parentWidth, parentHight);
+			moveView(x, y, parentWidth, parentHight);
 		} else {
 			new Handler().postDelayed(new Runnable() {
 
 				@Override
 				public void run() {
-					moveViewDelayed(marketDepthParams, x, y, parentWidth,
-							parentHight);
+					moveViewDelayed(x, y, parentWidth, parentHight);
 				}
 			}, 30);
 		}
 	}
 
-	private void moveView(FrameLayout.LayoutParams marketDepthParams, int x,
-			int y, int parentWidth, int parentHight) {
+	private void moveView(int x, int y, int parentWidth, int parentHight) {
+		int leftMargin = 0;
+		int bottomMargin = 0;
 		if (x > parentWidth / 2) {
-			marketDepthParams.leftMargin = x - getWidth();
+			leftMargin = x - getWidth();
 		} else {
-			marketDepthParams.leftMargin = x;
+			leftMargin = x;
 		}
 		if (getHeight() == 0) {
-			marketDepthParams.bottomMargin = 10;
+			bottomMargin = 10;
 		} else {
 			if (y + getHeight() > parentHight) {
-				marketDepthParams.bottomMargin = parentHight - getHeight() - 10;
+				bottomMargin = parentHight - getHeight() - 10;
 			} else {
-				marketDepthParams.bottomMargin = y;
+				bottomMargin = y;
 			}
 		}
-		setLayoutParams(marketDepthParams);
-		if (getVisibility() != View.VISIBLE) {
-			setVisibility(View.VISIBLE);
-		}
-
+		AnimationUtil.moveMarginAnimation(KlineDetailView.this, leftMargin,
+				bottomMargin);
 	}
 
 }
