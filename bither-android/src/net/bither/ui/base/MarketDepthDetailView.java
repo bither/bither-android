@@ -26,7 +26,6 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -86,39 +85,36 @@ public class MarketDepthDetailView extends LinearLayout {
 
 	}
 
-	public void notifyViewMove(FrameLayout.LayoutParams marketDepthParams,
-			int x, int y, int parentWidth) {
+	public void notifyViewMove(int x, int y, int parentWidth) {
 		clearAnimation();
 		if (getVisibility() != View.VISIBLE) {
+			setVisibility(View.VISIBLE);
 			if (x > parentWidth / 2) {
-				moveViewDelayed(marketDepthParams, x, y, parentWidth);
+				moveViewDelayed(x, y, parentWidth);
 			} else {
-				moveView(marketDepthParams, x, y, parentWidth);
+				moveView(x, y, parentWidth);
 			}
 
 		} else {
-			moveView(marketDepthParams, x, y, parentWidth);
+			moveView(x, y, parentWidth);
 		}
 	}
 
-	private void moveViewDelayed(
-			final FrameLayout.LayoutParams marketDepthParams, final int x,
-			final int y, final int parentWidth) {
+	private void moveViewDelayed(final int x, final int y, final int parentWidth) {
 		if (getWidth() != 0) {
-			moveView(marketDepthParams, x, y, parentWidth);
+			moveView(x, y, parentWidth);
 		} else {
 			new Handler().postDelayed(new Runnable() {
 
 				@Override
 				public void run() {
-					moveViewDelayed(marketDepthParams, x, y, parentWidth);
+					moveViewDelayed(x, y, parentWidth);
 				}
 			}, 30);
 		}
 	}
 
-	private void moveView(FrameLayout.LayoutParams marketDepthParams, int x,
-			int y, int parentWidth) {
+	private void moveView(int x, int y, int parentWidth) {
 		int leftMargin = 0;
 		if (x > parentWidth / 2) {
 			leftMargin = x - getWidth();
@@ -127,12 +123,6 @@ public class MarketDepthDetailView extends LinearLayout {
 		}
 		AnimationUtil.moveMarginAnimation(MarketDepthDetailView.this,
 				leftMargin, y);
-		// marketDepthParams.bottomMargin = y;
-		// setLayoutParams(marketDepthParams);
-
-		if (getVisibility() != View.VISIBLE) {
-			setVisibility(View.VISIBLE);
-		}
 	}
 
 }
