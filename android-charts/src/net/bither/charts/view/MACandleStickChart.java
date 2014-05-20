@@ -21,7 +21,8 @@
 
 package net.bither.charts.view;
 
-import java.text.DecimalFormat;
+import static net.bither.charts.utils.Utils.formatDoubleToString;
+
 import java.util.List;
 
 import net.bither.charts.entity.BitherOHLCEntity;
@@ -174,8 +175,6 @@ public class MACandleStickChart extends CandleStickChart {
 		}
 	}
 
-
-
 	@Override
 	protected void drawAxisXgraduate(Canvas canvas, float clickPostX) {
 		float prepcentage = getAxisXPrecentage(clickPostX);
@@ -209,15 +208,14 @@ public class MACandleStickChart extends CandleStickChart {
 			getTouchEventResponse().notifyTouchPointMove((int) clickPostX,
 					moveToY);
 
-			Object[] objs = new Object[] {
-					bitherOHLCEntity.getDate(),
-					formatDoubleToMoneyString(bitherOHLCEntity.getOpen()),
-					formatDoubleToMoneyString(bitherOHLCEntity.getHigh()),
-					formatDoubleToMoneyString(bitherOHLCEntity.getLow()),
-					formatDoubleToMoneyString(bitherOHLCEntity.getClose()),
-					formatDoubleToMoneyString(tenDateValueEntity.getValue()),
-					formatDoubleToMoneyString(thirtyDateValueEntity.getValue()),
-					formatDoubleToMoneyString(bitherOHLCEntity.getVolume()) };
+			Object[] objs = new Object[] { bitherOHLCEntity.getDate(),
+					formatDoubleToString(bitherOHLCEntity.getOpen()),
+					formatDoubleToString(bitherOHLCEntity.getHigh()),
+					formatDoubleToString(bitherOHLCEntity.getLow()),
+					formatDoubleToString(bitherOHLCEntity.getClose()),
+					formatDoubleToString(tenDateValueEntity.getValue()),
+					formatDoubleToString(thirtyDateValueEntity.getValue()),
+					formatDoubleToString(bitherOHLCEntity.getVolume()) };
 			getTouchEventResponse().notifyTouchContentChange(objs);
 		}
 	}

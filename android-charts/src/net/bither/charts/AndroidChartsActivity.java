@@ -31,6 +31,7 @@ import net.bither.charts.entity.IStickEntity;
 import net.bither.charts.entity.LineEntity;
 import net.bither.charts.entity.ListChartData;
 import net.bither.charts.entity.MACDEntity;
+import net.bither.charts.entity.MarketDepthEntity;
 import net.bither.charts.entity.OHLCEntity;
 import net.bither.charts.entity.StickEntity;
 import net.bither.charts.entity.TitleValueColorEntity;
@@ -63,7 +64,6 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import cn.limc.androidcharts.R;
 
 public class AndroidChartsActivity extends Activity implements
 		ITouchEventResponse {
@@ -1811,8 +1811,8 @@ public class AndroidChartsActivity extends Activity implements
 		marketDepthChart.setAxisXTitleQuadrantHeight(20);
 		marketDepthChart.setAxisXPosition(GridChart.AXIS_X_POSITION_BOTTOM);
 		marketDepthChart.setAxisYPosition(GridChart.AXIS_Y_POSITION_RIGHT);
-
-		marketDepthChart.setLinesData(lines);
+		MarketDepthEntity marketDepthEntity = new MarketDepthEntity(lines, 100);
+		marketDepthChart.setMareketDepthEntity(marketDepthEntity);
 	}
 
 	private void initOHLC() {

@@ -21,6 +21,7 @@
 
 package net.bither.charts.view;
 
+import net.bither.charts.R;
 import net.bither.charts.entity.IMeasurable;
 import net.bither.charts.entity.OHLCEntity;
 import android.content.Context;
@@ -28,7 +29,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import cn.limc.androidcharts.R;
 
 /**
  * 

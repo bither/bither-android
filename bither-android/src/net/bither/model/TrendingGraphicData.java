@@ -17,9 +17,6 @@
 package net.bither.model;
 
 import static com.google.common.base.Preconditions.checkState;
-
-import java.util.Random;
-
 import net.bither.util.ExchangeUtil;
 import net.bither.util.TrendingGraphicUtil;
 
@@ -128,24 +125,6 @@ public class TrendingGraphicData {
 			EmptyData = new TrendingGraphicData(1, 0, prices);
 		}
 		return EmptyData;
-	}
-
-	public static TrendingGraphicData getRandom() {
-		Random random = new Random();
-		int length = TrendingGraphicUtil.TRENDING_GRAPIC_COUNT;
-		double[] prices = new double[length];
-		double high = Double.MIN_VALUE;
-		double low = Double.MAX_VALUE;
-		for (int i = 0; i < length; i++) {
-			prices[i] = random.nextDouble();
-			if (prices[i] > high) {
-				high = prices[i];
-			}
-			if (prices[i] < low) {
-				low = prices[i];
-			}
-		}
-		return new TrendingGraphicData(high, low, prices);
 	}
 
 }

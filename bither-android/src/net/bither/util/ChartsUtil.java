@@ -32,6 +32,7 @@ import net.bither.charts.entity.DateValueEntity;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.charts.entity.LineEntity;
 import net.bither.charts.entity.ListChartData;
+import net.bither.charts.entity.MarketDepthEntity;
 import net.bither.charts.entity.OHLCEntity;
 import net.bither.charts.view.GridChart;
 import net.bither.charts.view.MACandleStickChart;
@@ -82,10 +83,12 @@ public class ChartsUtil {
 
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
 		LineEntity<DateValueEntity> MALineData = new LineEntity<DateValueEntity>();
-		MALineData.setTitle("LOW");
-		MALineData.setLineColor(Color.RED);
 		MALineData.setLineData(depth.getDateValueEntities());
 		lines.add(MALineData);
+		MarketDepthEntity marketDepthEntity = new MarketDepthEntity(lines,
+				depth.getSplitIndex());
+		marketDepthChart.setMareketDepthEntity(marketDepthEntity);
+
 		int lineColor = Color.argb(30, 255, 255, 255);
 
 		marketDepthChart.setLongitudeFontSize(14);
@@ -116,7 +119,6 @@ public class ChartsUtil {
 		marketDepthChart.setAxisXPosition(GridChart.AXIS_X_POSITION_BOTTOM);
 		marketDepthChart.setAxisYPosition(GridChart.AXIS_Y_POSITION_RIGHT);
 
-		marketDepthChart.setLinesData(lines);
 		marketDepthChart.invalidate();
 	}
 
@@ -124,12 +126,6 @@ public class ChartsUtil {
 			MACandleStickChart macandlestickchart, List<IStickEntity> ohlc,
 			boolean isRefresh) {
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
-
-		// LineEntity<DateValueEntity> MA5 = new LineEntity<DateValueEntity>();
-		// MA5.setTitle("MA5");
-		// MA5.setLineColor(Color.WHITE);
-		// MA5.setLineData(initMA(ohlc, 5));
-		// lines.add(MA5);
 
 		LineEntity<DateValueEntity> MA10 = new LineEntity<DateValueEntity>();
 		MA10.setTitle("MA10");
