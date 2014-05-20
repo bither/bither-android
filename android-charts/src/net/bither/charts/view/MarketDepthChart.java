@@ -61,12 +61,13 @@ public class MarketDepthChart extends SlipLineChart {
 		int moveToY = (int) (((value - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
 		ITouchEventResponse touchEventResponse = getTouchEventResponse();
 		if (touchEventResponse != null) {
+			touchEventResponse.notifyTouchPointMove((int) clickPostX, moveToY);
 			boolean isBuyOrder = index < splitIndex;
 			String price = dataValueEntities.get(index).getTitle();
-			Object[] objs = new Object[] { isBuyOrder, price, value };
+			Object[] objs = new Object[] { isBuyOrder, price,
+					formatDoubleToMoneyString(value) };
 			touchEventResponse.notifyTouchContentChange(objs);
 
-			touchEventResponse.notifyTouchPointMove((int) clickPostX, moveToY);
 		}
 	}
 

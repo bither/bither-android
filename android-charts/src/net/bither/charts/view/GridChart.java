@@ -21,6 +21,7 @@
 
 package net.bither.charts.view;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import net.bither.charts.event.ITouchEventResponse;
@@ -2221,4 +2222,8 @@ public class GridChart extends BaseChart {
 		}
 	}
 
+	protected String formatDoubleToMoneyString(double num) {
+		java.text.DecimalFormat formate = new DecimalFormat("0.00");
+		return formate.format(num);
+	}
 }
