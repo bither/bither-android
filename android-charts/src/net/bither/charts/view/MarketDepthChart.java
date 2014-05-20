@@ -50,32 +50,48 @@ public class MarketDepthChart extends SlipLineChart {
 	}
 
 	@Override
-	protected void drawAxisXgraduate(Canvas canvas, float clickPostX) {
-		float prepcentage = getAxisXPrecentage(clickPostX);
-		List<DateValueEntity> dataValueEntities = linesData.get(0)
-				.getLineData();
-		int index = (int) (dataValueEntities.size() * prepcentage);
+	protected void beginRedrawOnTouch(float clickPostX) {
+		super.beginRedrawOnTouch(clickPostX);
 
-		float value = dataValueEntities.get(index).getValue();
-		// calculate Y
-		float valueY = (float) ((1f - (value - minValue)
-				/ (maxValue - minValue)) * getDataQuadrantPaddingHeight())
-				+ getDataQuadrantPaddingStartY();
-		Paint paint = new Paint();
-		paint.setColor(Color.GREEN);
-		paint.setAlpha(70);
-		paint.setAntiAlias(true);
-		canvas.drawCircle(clickPostX, valueY, 8, paint);
-		int moveToY = (int) (((value - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
-		ITouchEventResponse touchEventResponse = getTouchEventResponse();
-		if (touchEventResponse != null) {
-			touchEventResponse.notifyTouchPointMove((int) clickPostX, moveToY);
-			boolean isBuyOrder = index < splitIndex;
-			String price = dataValueEntities.get(index).getTitle();
-			Object[] objs = new Object[] { isBuyOrder, price,
-					formatDoubleToString(value) };
-			touchEventResponse.notifyTouchContentChange(objs);
+		for (LineEntity<DateValueEntity> lineDateEntity : linesData) {
+			List<DateValueEntity> dataValueEntities = lineDateEntity
+					.getLineData();
+			int index = (int) (dataValueEntities.size() * getTounchPrepcentage());
+			float value = dataValueEntities.get(index).getValue();
+			int moveToY = (int) (((value - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
+			ITouchEventResponse touchEventResponse = getTouchEventResponse();
+			if (touchEventResponse != null) {
+				touchEventResponse.notifyTouchPointMove((int) clickPostX,
+						moveToY);
+				boolean isBuyOrder = index < splitIndex;
+				String price = dataValueEntities.get(index).getTitle();
+				Object[] objs = new Object[] { isBuyOrder, price,
+						formatDoubleToString(value) };
+				touchEventResponse.notifyTouchContentChange(objs);
 
+			}
+
+		}
+
+	}
+
+	@Override
+	protected void drawPointOfLine(Canvas canvas, float clickPostX) {
+		super.drawPointOfLine(canvas, clickPostX);
+		for (LineEntity<DateValueEntity> lineDateEntity : linesData) {
+			List<DateValueEntity> dataValueEntities = lineDateEntity
+					.getLineData();
+			int index = (int) (dataValueEntities.size() * getTounchPrepcentage());
+			float value = dataValueEntities.get(index).getValue();
+			// calculate Y
+			float valueY = (float) ((1f - (value - minValue)
+					/ (maxValue - minValue)) * getDataQuadrantPaddingHeight())
+					+ getDataQuadrantPaddingStartY();
+			Paint paint = new Paint();
+			paint.setColor(Color.GREEN);
+			paint.setAlpha(70);
+			paint.setAntiAlias(true);
+			canvas.drawCircle(clickPostX, valueY, 8, paint);
 		}
 	}
 

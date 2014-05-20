@@ -860,6 +860,7 @@ public class GridChart extends BaseChart {
 	private float clickPostY;
 
 	private ITouchEventResponse iTouchEventResponse;
+	private float tounchPrepcentage = 0;
 
 	/*
 	 * (non-Javadoc)
@@ -934,14 +935,8 @@ public class GridChart extends BaseChart {
 		if (clickPostX <= 0) {
 			return;
 		}
-		drawAxisXgraduate(canvas, clickPostX);
-		// if (displayCrossXOnTouch || displayCrossYOnTouch) {
-		//
-		// // drawWithFingerClick(canvas);
-		// // drawHorizontalLine(canvas);
-		// drawVerticalLine(canvas);
-		//
-		// }
+		drawPointOfLine(canvas, clickPostX);
+
 	}
 
 	/*
@@ -976,7 +971,7 @@ public class GridChart extends BaseChart {
 
 			PointF point = new PointF(clickPostX, clickPostY);
 			touchPoint = point;
-
+			beginRedrawOnTouch(clickPostX);
 			// redraw
 			super.invalidate();
 
@@ -984,6 +979,12 @@ public class GridChart extends BaseChart {
 		}
 
 		return super.onTouchEvent(event);
+	}
+
+	protected void beginRedrawOnTouch(float clickPostX) {
+		float prepcentage = getAxisXPrecentage(clickPostX);
+		setTounchPrepcentage(prepcentage);
+
 	}
 
 	protected float getDataQuadrantWidth() {
@@ -1127,7 +1128,7 @@ public class GridChart extends BaseChart {
 				.valueOf(valueLength / this.getDataQuadrantPaddingHeight());
 	}
 
-	protected void drawAxisXgraduate(Canvas canvas, float clickPostX) {
+	protected void drawPointOfLine(Canvas canvas, float clickPostX) {
 
 	}
 
@@ -2221,5 +2222,12 @@ public class GridChart extends BaseChart {
 		}
 	}
 
-	
+	public float getTounchPrepcentage() {
+		return tounchPrepcentage;
+	}
+
+	public void setTounchPrepcentage(float tounchPrepcentage) {
+		this.tounchPrepcentage = tounchPrepcentage;
+	}
+
 }

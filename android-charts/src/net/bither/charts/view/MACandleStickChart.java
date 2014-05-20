@@ -176,14 +176,47 @@ public class MACandleStickChart extends CandleStickChart {
 	}
 
 	@Override
-	protected void drawAxisXgraduate(Canvas canvas, float clickPostX) {
-		float prepcentage = getAxisXPrecentage(clickPostX);
-		List<DateValueEntity> dataValueEntities = linesData.get(0)
-				.getLineData();
-		int index = (int) (dataValueEntities.size() * prepcentage);
+	protected void beginRedrawOnTouch(float clickPostX) {
+		super.beginRedrawOnTouch(clickPostX);
+		int index = (int) (stickData.size() * getTounchPrepcentage());
+		BitherOHLCEntity bitherOHLCEntity = (BitherOHLCEntity) stickData
+				.get(index);
+		double close = bitherOHLCEntity.getClose();
+		int moveToY = (int) (((close - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
+		String tenLine = "";
+		String thirtyLine = "";
+		for (int i = 0; i < linesData.size(); i++) {
+			LineEntity<DateValueEntity> line = (LineEntity<DateValueEntity>) linesData
+					.get(i);
+			DateValueEntity dateValueEntity = line.getLineData().get(index);
+			if (i == 0) {
+				tenLine = formatDoubleToString(dateValueEntity.getValue());
+			} else if (i == 1) {
+				thirtyLine = formatDoubleToString(dateValueEntity.getValue());
+			}
 
-		int moveToY = 0;
-		// calculate Y
+		}
+
+		if (getTouchEventResponse() != null) {
+			getTouchEventResponse().notifyTouchPointMove((int) clickPostX,
+					moveToY);
+
+			Object[] objs = new Object[] { bitherOHLCEntity.getDate(),
+					formatDoubleToString(bitherOHLCEntity.getOpen()),
+					formatDoubleToString(bitherOHLCEntity.getHigh()),
+					formatDoubleToString(bitherOHLCEntity.getLow()),
+					formatDoubleToString(bitherOHLCEntity.getClose()), tenLine,
+					thirtyLine,
+					formatDoubleToString(bitherOHLCEntity.getVolume()) };
+			getTouchEventResponse().notifyTouchContentChange(objs);
+		}
+
+	}
+
+	@Override
+	protected void drawPointOfLine(Canvas canvas, float clickPostX) {
+		super.drawPointOfLine(canvas, clickPostX);
+		int index = (int) (stickData.size() * getTounchPrepcentage());
 		for (int i = 0; i < linesData.size(); i++) {
 			LineEntity<DateValueEntity> line = (LineEntity<DateValueEntity>) linesData
 					.get(i);
@@ -195,28 +228,6 @@ public class MACandleStickChart extends CandleStickChart {
 			paint.setColor(line.getLineColor());
 			paint.setAntiAlias(true);
 			canvas.drawCircle(clickPostX, valueY, 8, paint);
-			moveToY = (int) (((value - minValue) / (maxValue - minValue)) * getDataQuadrantPaddingHeight());
-		}
-
-		DateValueEntity tenDateValueEntity = dataValueEntities.get(index);
-		DateValueEntity thirtyDateValueEntity = linesData.get(1).getLineData()
-				.get(index);
-		BitherOHLCEntity bitherOHLCEntity = (BitherOHLCEntity) stickData
-				.get(index);
-
-		if (getTouchEventResponse() != null) {
-			getTouchEventResponse().notifyTouchPointMove((int) clickPostX,
-					moveToY);
-
-			Object[] objs = new Object[] { bitherOHLCEntity.getDate(),
-					formatDoubleToString(bitherOHLCEntity.getOpen()),
-					formatDoubleToString(bitherOHLCEntity.getHigh()),
-					formatDoubleToString(bitherOHLCEntity.getLow()),
-					formatDoubleToString(bitherOHLCEntity.getClose()),
-					formatDoubleToString(tenDateValueEntity.getValue()),
-					formatDoubleToString(thirtyDateValueEntity.getValue()),
-					formatDoubleToString(bitherOHLCEntity.getVolume()) };
-			getTouchEventResponse().notifyTouchContentChange(objs);
 		}
 	}
 

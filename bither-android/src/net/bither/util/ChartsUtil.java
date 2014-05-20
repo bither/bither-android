@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import net.bither.BitherApplication;
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
@@ -38,6 +35,10 @@ import net.bither.charts.view.GridChart;
 import net.bither.charts.view.MACandleStickChart;
 import net.bither.charts.view.MarketDepthChart;
 import net.bither.model.Depth;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.graphics.Color;
 
 public class ChartsUtil {
@@ -79,7 +80,7 @@ public class ChartsUtil {
 	}
 
 	public static synchronized void initMarketDepth(
-			MarketDepthChart marketDepthChart, Depth depth) {
+			MarketDepthChart marketDepthChart, Depth depth, boolean isRefresh) {
 
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
 		LineEntity<DateValueEntity> MALineData = new LineEntity<DateValueEntity>();
@@ -118,8 +119,9 @@ public class ChartsUtil {
 		marketDepthChart.setAxisXTitleQuadrantHeight(20);
 		marketDepthChart.setAxisXPosition(GridChart.AXIS_X_POSITION_BOTTOM);
 		marketDepthChart.setAxisYPosition(GridChart.AXIS_Y_POSITION_RIGHT);
-
-		marketDepthChart.invalidate();
+		if (isRefresh) {
+			marketDepthChart.invalidate();
+		}
 	}
 
 	public synchronized static void initMACandleStickChart(

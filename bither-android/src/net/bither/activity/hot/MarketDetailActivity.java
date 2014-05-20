@@ -91,7 +91,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 	private KlineDetailView mKLineDetailView;
 
 	private MarketType marketType = null;
-	private boolean isRefresh = false;
+	private boolean isKlineRefresh = false;
+	private boolean isMarketDepthRefresh = false;
 	private Handler handler = new Handler();
 
 	@Override
@@ -209,7 +210,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 			case HandlerMessage.MSG_SUCCESS_FROM_CACHE:
 				if (msg.obj != null) {
 					Depth depth = (Depth) msg.obj;
-					ChartsUtil.initMarketDepth(chartDepth, depth);
+					ChartsUtil.initMarketDepth(chartDepth, depth,
+							isMarketDepthRefresh);
+					isMarketDepthRefresh = true;
 					pbDepth.setVisibility(View.GONE);
 					tvDepthError.setVisibility(View.GONE);
 					chartDepth.setVisibility(View.VISIBLE);
@@ -217,7 +220,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 				break;
 			case HandlerMessage.MSG_SUCCESS:
 				Depth depth = (Depth) msg.obj;
-				ChartsUtil.initMarketDepth(chartDepth, depth);
+				ChartsUtil.initMarketDepth(chartDepth, depth,
+						isMarketDepthRefresh);
+				isMarketDepthRefresh = true;
 				pbDepth.setVisibility(View.GONE);
 				tvDepthError.setVisibility(View.GONE);
 				chartDepth.setVisibility(View.VISIBLE);
@@ -242,9 +247,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 				if (msg.obj != null) {
 					KLine kLine = (KLine) msg.obj;
 					ChartsUtil.initMACandleStickChart(chartKline,
-							kLine.getStickEntities(), isRefresh);
-					if (!isRefresh) {
-						isRefresh = true;
+							kLine.getStickEntities(), isKlineRefresh);
+					if (!isKlineRefresh) {
+						isKlineRefresh = true;
 					}
 					tvKlineError.setVisibility(View.GONE);
 					pbKline.setVisibility(View.GONE);
@@ -255,9 +260,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 			case HandlerMessage.MSG_SUCCESS:
 				KLine kLine = (KLine) msg.obj;
 				ChartsUtil.initMACandleStickChart(chartKline,
-						kLine.getStickEntities(), isRefresh);
-				if (!isRefresh) {
-					isRefresh = true;
+						kLine.getStickEntities(), isKlineRefresh);
+				if (!isKlineRefresh) {
+					isKlineRefresh = true;
 				}
 				pbKline.setVisibility(View.GONE);
 				tvKlineError.setVisibility(View.GONE);
