@@ -3,6 +3,9 @@ bither-android/bin
 bither-android/gen
 bither-android/.classpath
 bither-android/.settings
+bither-android/.idea
+bither-android/classes
+*.iml
 
 wheel/bin
 wheel/gen
