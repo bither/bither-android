@@ -233,7 +233,7 @@
 
     <!-- donate -->
     <string name="select_address_to_donate">請選擇用來捐贈的地址</string>
-    <string name="donate_no_address">沒有可以用來捐贈的地址</string>
+    <string name="donate_no_address">您沒有可以用來捐贈的比特幣</string>
     <string name="donate_receiving_address_label">捐贈給開發者</string>
     <string name="donate_sending_verb">捐贈</string>
     <string name="donate_unsigned_transaction_verb">未簽名捐贈二維碼</string>

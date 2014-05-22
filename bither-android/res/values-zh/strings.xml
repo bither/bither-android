@@ -233,7 +233,7 @@
 
     <!-- donate -->
     <string name="select_address_to_donate">请选择用来捐赠的地址</string>
-    <string name="donate_no_address">没有可以用来捐赠的地址</string>
+    <string name="donate_no_address">您没有可以用来捐赠的比特币</string>
     <string name="donate_receiving_address_label">捐赠给开发者</string>
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">未签名捐赠二维码</string>
