@@ -23,6 +23,8 @@ import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.pi.common.util.NativeUtil;
+
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.BitherSetting.AppMode;
@@ -152,18 +154,8 @@ public class FileUtil {
     public static Uri saveShareImage(Bitmap bmp) {
         File dir = getDiskDir(IMAGE_CACHE_DIR, true);
         File jpg = new File(dir, IMAGE_SHARE_FILE_NAME);
-        if (jpg.exists()) {
-            jpg.delete();
-        }
-        try {
-            jpg.createNewFile();
-            FileOutputStream out;
-            out = new FileOutputStream(jpg);
-            bmp.compress(CompressFormat.JPEG, 80, out);
-            return Uri.fromFile(jpg);
-        } catch (Exception e) {
-            return null;
-        }
+        NativeUtil.compressBitmap(bmp, 95, jpg.getAbsolutePath(), true);
+        return Uri.fromFile(jpg);
     }
 
     public static File getExternalCacheDir(Context context) {
@@ -349,8 +341,9 @@ public class FileUtil {
         Object object = new Object();
         FileInputStream fos = null;
         try {
-            if (!file.exists())
+            if (!file.exists()) {
                 return null;
+            }
             fos = new FileInputStream(file);
             ObjectInputStream ois;
             ois = new ObjectInputStream(fos);
@@ -362,8 +355,9 @@ public class FileUtil {
 
         } finally {
             try {
-                if (fos != null)
+                if (fos != null) {
                     fos.close();
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -396,12 +390,13 @@ public class FileUtil {
         Arrays.sort(fs, new Comparator<File>() {
             public int compare(File f1, File f2) {
                 long diff = f1.lastModified() - f2.lastModified();
-                if (diff > 0)
+                if (diff > 0) {
                     return 1;
-                else if (diff == 0)
+                } else if (diff == 0) {
                     return 0;
-                else
+                } else {
                     return -1;
+                }
             }
 
             public boolean equals(Object obj) {
@@ -439,7 +434,9 @@ public class FileUtil {
         } else if (src.isDirectory()) {
             File[] files = src.listFiles();
             tar.mkdir();
-            for (int i = 0; i < files.length; i++) {
+            for (int i = 0;
+                 i < files.length;
+                 i++) {
                 copyFile(files[i].getAbsoluteFile(),
                         new File(tar.getAbsoluteFile() + File.separator
                                 + files[i].getName())
@@ -478,7 +475,9 @@ public class FileUtil {
             return;
         }
         File temp = null;
-        for (int i = 0; i < tempList.length; i++) {
+        for (int i = 0;
+             i < tempList.length;
+             i++) {
             if (path.endsWith(File.separator)) {
                 temp = new File(path + tempList[i]);
             } else {
@@ -495,8 +494,9 @@ public class FileUtil {
     }
 
     public static String readFile(File file) {
-        if (!file.exists())
+        if (!file.exists()) {
             return null;
+        }
         FileInputStream is = null;
         ByteArrayOutputStream arrayOutputStream = null;
         try {
@@ -504,8 +504,9 @@ public class FileUtil {
             byte[] bytes = new byte[1024];
 
             arrayOutputStream = new ByteArrayOutputStream();
-            while (is.read(bytes) != -1)
+            while (is.read(bytes) != -1) {
                 arrayOutputStream.write(bytes, 0, bytes.length);
+            }
             is.close();
             arrayOutputStream.close();
         } catch (FileNotFoundException e) {
