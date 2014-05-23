@@ -239,4 +239,8 @@
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">未签名捐赠二维码</string>
 
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">分享</string>
+    <string name="fancy_qr_code_save">保存</string>
+
 </resources>
