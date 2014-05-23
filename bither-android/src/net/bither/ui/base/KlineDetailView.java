@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class KlineDetailView extends LinearLayout {
     private TextView tvTenLine;
     private TextView tvThirtyLine;
     private TextView tvVolume;
+    private boolean isFirst = true;
 
     public KlineDetailView(Context context) {
         super(context);
@@ -55,6 +57,7 @@ public class KlineDetailView extends LinearLayout {
     }
 
     private void initView() {
+        isFirst = true;
         removeAllViews();
         addView(LayoutInflater.from(getContext()).inflate(
                         R.layout.kline_detail_view, null), LayoutParams.WRAP_CONTENT,
@@ -68,6 +71,8 @@ public class KlineDetailView extends LinearLayout {
         this.tvTenLine = (TextView) findViewById(R.id.tv_ten_line);
         this.tvThirtyLine = (TextView) findViewById(R.id.tv_thirty_line);
         this.tvVolume = (TextView) findViewById(R.id.tv_volume);
+        //TODO Used to calculate the widht, set the default value
+        this.tvVolume.setText("10000.00");
 
     }
 
@@ -89,31 +94,12 @@ public class KlineDetailView extends LinearLayout {
         AnimationUtil.fadeIn(KlineDetailView.this);
     }
 
+
     public void notifyViewMove(int x, int y, int parentWidth, int parentHight) {
         clearAnimation();
-        if (getVisibility() != View.VISIBLE) {
-            setVisibility(View.VISIBLE);
-        }
-        if (x > parentWidth / 2) {
-            moveViewDelayed(x, y, parentWidth, parentHight);
-        } else {
-            moveView(x, y, parentWidth, parentHight);
-        }
-    }
 
-    private void moveViewDelayed(final int x, final int y,
-                                 final int parentWidth, final int parentHight) {
-        if (getWidth() > 0) {
-            moveView(x, y, parentWidth, parentHight);
-        } else {
-            new Handler().postDelayed(new Runnable() {
+        moveView(x, y, parentWidth, parentHight);
 
-                @Override
-                public void run() {
-                    moveViewDelayed(x, y, parentWidth, parentHight);
-                }
-            }, 100);
-        }
     }
 
     private void moveView(int x, int y, int parentWidth, int parentHight) {
@@ -133,8 +119,20 @@ public class KlineDetailView extends LinearLayout {
                 bottomMargin = y;
             }
         }
-        AnimationUtil.moveMarginAnimation(KlineDetailView.this, leftMargin,
-                bottomMargin);
+        if (isFirst) {
+            isFirst = false;
+            display(leftMargin, bottomMargin);
+        } else {
+            AnimationUtil.moveMarginAnimation(KlineDetailView.this, leftMargin,
+                    bottomMargin);
+        }
     }
 
+    private void display(int leftMargin, int bottomMargin) {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+        params.leftMargin = leftMargin;
+        params.bottomMargin = bottomMargin;
+        setLayoutParams(params);
+        AnimationUtil.fadeOut(KlineDetailView.this);
+    }
 }

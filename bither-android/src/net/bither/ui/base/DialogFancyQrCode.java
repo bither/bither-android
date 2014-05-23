@@ -28,11 +28,16 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.pi.common.util.NativeUtil;
+
 import net.bither.R;
 import net.bither.util.FileUtil;
+import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+
+import java.io.File;
 
 /**
  * Created by songchenwen on 14-5-23.
@@ -108,7 +113,8 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
         @Override
         public void run() {
             Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
-            // TODO save image to gallery
+            long time = System.currentTimeMillis();
+            ImageFileUtil.saveImageToDcim(content, 0, time);
         }
     }
 

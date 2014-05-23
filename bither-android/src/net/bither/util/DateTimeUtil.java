@@ -44,7 +44,16 @@ public class DateTimeUtil {
 	private static final String DATE_TIME_FORMAT_OF_MINUTE = "HH:mm";
 	private static final String DATE_TIME_FORMAT_OF_DAY = "MM/dd";
 
-	public static final String getNameForFile(long time) {
+
+    public static final String getNameForDcim(long time) {
+        Date date = new Date(time);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                DATE_TIME_FORMAT_DCIM_FilENAME);
+        return dateFormat.format(date);
+    }
+
+
+    public static final String getNameForFile(long time) {
 		Date date = new Date(time);
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				DATE_TIME_FORMAT_DCIM_FilENAME);
