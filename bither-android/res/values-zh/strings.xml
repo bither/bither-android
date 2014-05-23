@@ -67,6 +67,7 @@
     <string name="add_address_delete">删除</string>
     <string name="add_address_watch_only_hint">比特币地址</string>
     <string name="add_address_already_watched">这个地址已经被监控了</string>
+    <string name="addresses_already_monitored">这个冷钱包已经被监控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">请输入密码</string>
     <string name="add_address_generate_address_password_lengh_note">6&#8211;20位数字</string>
