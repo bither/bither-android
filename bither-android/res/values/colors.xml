@@ -66,4 +66,8 @@
     <color name="ten_kline">#ffd9d500</color>
     <color name="thrity_kline">#ff8495a7</color>
 
+    <!-- fancy qr code-->
+    <color name="fancy_qr_code_fg">#ff835229</color>
+    <color name="fancy_qr_code_bg">#ffe7e1c7</color>
+
 </resources>
