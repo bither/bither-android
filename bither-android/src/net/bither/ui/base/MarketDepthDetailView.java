@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class MarketDepthDetailView extends LinearLayout {
 
     private ImageView ivSymbolBtc;
     private Bitmap btcBit;
+    private boolean isFirst = true;
 
     public MarketDepthDetailView(Context context) {
         super(context);
@@ -60,6 +62,7 @@ public class MarketDepthDetailView extends LinearLayout {
     }
 
     private void initView() {
+        isFirst = true;
         removeAllViews();
         addView(LayoutInflater.from(getContext()).inflate(
                         R.layout.market_depth_detail_view, null),
@@ -70,12 +73,13 @@ public class MarketDepthDetailView extends LinearLayout {
         this.tvVolume = (TextView) findViewById(R.id.tv_detail_volume);
         this.ivSymbolBtc = (ImageView) findViewById(R.id.iv_symbol_btc);
         this.btcBit = CurrencySymbolUtil.getBtcSlimSymbol(this.tvVolume);
-        tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        this.tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        //TODO Used to calculate the widht, set the default value
+        this.tvVolume.setText("10000.00");
 
     }
 
     public void setContent(String order, String price, String volume) {
-
         this.tvOrder.setText(order);
         this.tvPrice.setText(price);
         this.tvVolume.setText(" " + volume);
@@ -91,29 +95,9 @@ public class MarketDepthDetailView extends LinearLayout {
 
     public void notifyViewMove(int x, int y, int parentWidth) {
         clearAnimation();
-        if (getVisibility() != View.VISIBLE) {
-            setVisibility(View.VISIBLE);
-        }
-        if (x > parentWidth / 2) {
-            moveViewDelayed(x, y, parentWidth);
-        } else {
-            moveView(x, y, parentWidth);
-        }
+        moveView(x, y, parentWidth);
     }
 
-    private void moveViewDelayed(final int x, final int y, final int parentWidth) {
-        if (getWidth() > 0) {
-            moveView(x, y, parentWidth);
-        } else {
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    moveViewDelayed(x, y, parentWidth);
-                }
-            }, 100);
-        }
-    }
 
     private void moveView(int x, int y, int parentWidth) {
         int leftMargin = 0;
@@ -122,8 +106,21 @@ public class MarketDepthDetailView extends LinearLayout {
         } else {
             leftMargin = x;
         }
-        AnimationUtil.moveMarginAnimation(MarketDepthDetailView.this,
-                leftMargin, y);
+        if (isFirst) {
+            isFirst = false;
+            display(leftMargin, y);
+        } else {
+            AnimationUtil.moveMarginAnimation(MarketDepthDetailView.this, leftMargin,
+                    y);
+        }
+    }
+
+    private void display(int leftMargin, int bottomMargin) {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+        params.leftMargin = leftMargin;
+        params.bottomMargin = bottomMargin;
+        setLayoutParams(params);
+        AnimationUtil.fadeOut(MarketDepthDetailView.this);
     }
 
 }
