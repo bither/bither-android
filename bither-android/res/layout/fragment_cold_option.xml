@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.bither.ui.base.OverScrollableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/card_list_padding"
-            android:paddingRight="@dimen/card_list_padding" >
+            android:paddingRight="@dimen/card_list_padding">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -20,7 +20,7 @@
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="6dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <Button
                     android:id="@+id/btn_get_sign"
@@ -67,7 +67,7 @@
                     android:id="@+id/ll_qr_all_keys"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <include layout="@layout/layout_vertical_seperator" />
 
@@ -87,17 +87,35 @@
 
                 <include layout="@layout/layout_vertical_seperator" />
 
-                <Button
-                    android:id="@+id/btn_backup_time"
+                <FrameLayout
+                    android:id="@+id/ll_back_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/ui_touchable_bg"
-                    android:gravity="left"
-                    android:padding="10dp"
-                    android:text="@string/clone_from_button"
-                    android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/btn_backup_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ui_touchable_bg"
+                        android:gravity="left"
+                        android:padding="10dp"
+                        android:text="@string/clone_from_button"
+                        android:textColor="@color/text_field_text_color"
+                        android:textSize="18sp" />
+
+
+                    <ProgressBar
+                        android:id="@+id/pb_back_up"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="right|center_vertical"
+                        android:indeterminateDrawable="@drawable/check_progress_bar"
+                        android:indeterminateDuration="600"
+                        android:indeterminateOnly="true"
+                        android:visibility="gone" />
+                </FrameLayout>
             </LinearLayout>
 
             <include layout="@layout/layout_card_foreground_single" />
@@ -115,13 +133,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="3dp"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
