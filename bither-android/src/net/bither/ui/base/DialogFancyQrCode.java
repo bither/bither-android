@@ -48,7 +48,7 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
     public DialogFancyQrCode(Context context, String content) {
         super(context, R.style.tipsDialog);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().getAttributes().dimAmount = 0.85f;
+        getWindow().getAttributes().dimAmount = 0.75f;
         setCanceledOnTouchOutside(true);
         this.content = content;
         setContentView(R.layout.dialog_fancy_qr_code);

@@ -18,6 +18,7 @@
                 android:id="@+id/lv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollHeader="#ffd8d8e0"
                 android:background="@color/white"
                 android:divider="@color/card_separator_color"
                 android:dividerHeight="1px"
