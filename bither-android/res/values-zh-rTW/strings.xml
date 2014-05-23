@@ -142,6 +142,9 @@
     <string name="sell_order">賣單</string>
     <string name="setting_name_transaction_fee_low_warn">確認默認使用低手續費模式?\n這會導致較慢的交易確認</string>
     <string name="backup_again">一個小時內剛剛進行過備份，確認要再次備份嗎?</string>
+    <string name="set_avatar">設置頭像</string>
+    <string name="set_avatar_camera">來自相機</string>
+    <string name="set_avatar_gallery">來自圖庫</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
