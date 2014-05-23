@@ -106,14 +106,12 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
 		if (f != null && f instanceof AddAddress) {
 			AddAddress a = (AddAddress) f;
 			ArrayList<String> addresses = a.getAddresses();
-			if (addresses.size() > 0) {
-				Intent intent = new Intent();
-				intent.putExtra(
-						BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-						addresses);
-				setResult(Activity.RESULT_OK, intent);
-				finish();
-			}
+            Intent intent = new Intent();
+            intent.putExtra(
+                    BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                    addresses);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
 		}
 	}
 

@@ -73,6 +73,7 @@
     <string name="add_address_delete">Delete</string>
     <string name="add_address_watch_only_hint">Bitcoin Address</string>
     <string name="add_address_already_watched">This address is already monitored</string>
+    <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
     <string name="add_address_generate_address_password_label">Enter password</string>
     <string name="add_address_generate_address_password_lengh_note">6&#8211;20 digits</string>
