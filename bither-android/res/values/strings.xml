@@ -254,4 +254,8 @@
     <string name="network_monitor_block_list_title">Blocks</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
 
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">Share</string>
+    <string name="fancy_qr_code_save">Save</string>
+
 </resources>

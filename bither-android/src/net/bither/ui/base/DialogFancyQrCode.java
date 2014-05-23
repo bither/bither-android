@@ -16,35 +16,43 @@
 
 package net.bither.ui.base;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import net.bither.R;
+import net.bither.util.FileUtil;
+import net.bither.util.ImageManageUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
 /**
  * Created by songchenwen on 14-5-23.
  */
-public class DialogFancyQrCode extends CenterDialog {
-    private static final int Margin = UIUtil.dip2pix(20);
+public class DialogFancyQrCode extends Dialog implements View.OnClickListener, DialogInterface.OnDismissListener {
+    private static final float AvatarSizeRate = 0.2f;
     private QrCodeImageView ivQr;
     private ImageView ivAvatar;
     private FrameLayout flContent;
     private String content;
-
-    private View.OnClickListener dismissClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            dismiss();
-        }
-    };
+    private int clickedView = 0;
 
     public DialogFancyQrCode(Context context, String content) {
-        super(context);
+        super(context, R.style.tipsDialog);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().getAttributes().dimAmount = 0.85f;
+        setCanceledOnTouchOutside(true);
         this.content = content;
         setContentView(R.layout.dialog_fancy_qr_code);
+        setOnDismissListener(this);
         initView();
     }
 
@@ -52,9 +60,80 @@ public class DialogFancyQrCode extends CenterDialog {
         ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
         ivAvatar = (ImageView) findViewById(R.id.iv_avatar);
         flContent = (FrameLayout) findViewById(R.id.fl_content);
-        container.setOnClickListener(dismissClick);
-        int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight()) - Margin * 2 - container.getPaddingLeft() - container.getPaddingRight();
+        findViewById(R.id.ll_container).setOnClickListener(this);
+        findViewById(R.id.btn_share).setOnClickListener(this);
+        findViewById(R.id.btn_save).setOnClickListener(this);
+        ivQr.setOnClickListener(this);
+        int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
+        ivAvatar.getLayoutParams().width = ivAvatar.getLayoutParams().height = (int) (size * AvatarSizeRate);
         ivQr.setContent(content, getContext().getResources().getColor(R.color.fancy_qr_code_fg), getContext().getResources().getColor(R.color.fancy_qr_code_bg));
+    }
+
+    @Override
+    public void show() {
+        clickedView = 0;
+        super.show();
+    }
+
+    @Override
+    public void onClick(View v) {
+        clickedView = v.getId();
+        dismiss();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        switch (clickedView) {
+            case R.id.btn_share:
+                share();
+                break;
+            case R.id.btn_save:
+                save();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void save() {
+        new SaveThread().start();
+    }
+
+    private void share() {
+        new ShareThread().start();
+    }
+
+    private class SaveThread extends Thread {
+        @Override
+        public void run() {
+            Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
+            // TODO save image to gallery
+        }
+    }
+
+    private class ShareThread extends Thread {
+        @Override
+        public void run() {
+            Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
+            final Uri uri = FileUtil.saveShareImage(content);
+            ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (uri != null) {
+                        Intent intent = new Intent(
+                                android.content.Intent.ACTION_SEND);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        intent.setType("image/jpg");
+                        getContext().startActivity(intent);
+                    } else {
+                        if (getContext() instanceof Activity) {
+                            DropdownMessage.showDropdownMessage((Activity) getContext(), R.string.market_share_failed);
+                        }
+                    }
+                }
+            });
+        }
     }
 }
