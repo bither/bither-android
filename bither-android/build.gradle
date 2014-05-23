@@ -6,33 +6,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
-repositories {
-    mavenLocal()
-    maven { url 'http://distribution.bitcoinj.googlecode.com/git/releases/' }
-    mavenCentral()
-}
 apply plugin: 'android'
-dependencies {
-    compile 'commons-lang:commons-lang:2.6@jar'
-    compile 'com.github.tony19:apktool-lib:1.4.4-3@jar'
-    compile 'com.github.tony19:apktool-lib:1.4.4-3@jar'
-    compile 'com.github.tony19:logback-android-classic:1.0.10-2@jar'
-    compile 'ch.qos.logback:logback-core:1.0.9@jar'
-    compile 'com.android.support:support-v4:+'
-    compile 'org.slf4j:slf4j-api:1.7.5@jar'
-    compile 'com.nineoldandroids:library:2.4.+'
-    compile 'com.google.zxing:core:2.2@jar'
-    compile 'com.lambdaworks:scrypt:1.4.0@jar'
-    compile 'net.jcip:jcip-annotations:1.0@jar'
-    compile 'com.madgag:sc-light-jdk15on:1.47.0.2@jar'
-    compile 'com.google.protobuf:protobuf-java:2.5.0@jar'
-    compile 'com.google.guava:guava:13.0.1@jar'
-    compile 'com.google:bitcoinj:0.11.2@jar'
-    compile 'com.google.code.findbugs:jsr305:2.0.1@jar'
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile project(':wheel')
-    compile project(':android-charts')
-}
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.1'
@@ -40,12 +14,11 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src', 'test']
-            resources.srcDirs = ['src', 'test']
-            aidl.srcDirs = ['src', 'test']
-            renderscript.srcDirs = ['src', 'test']
+            java.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['native-libs']
+            jni.srcDirs = []
         }
 
         // Move the tests to tests/java, tests/res, etc...
@@ -60,4 +33,28 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+    lintOptions {
+        abortOnError false
+    }
+}
+repositories {
+    mavenLocal()
+    maven { url 'http://distribution.bitcoinj.googlecode.com/git/releases/' }
+    mavenCentral()
+}
+dependencies {
+    compile 'commons-lang:commons-lang:2.6@jar'
+    compile ('com.github.tony19:logback-android-classic:1.0.10-2@jar'){
+        // Work around for gradle 0.9 and 0.10
+        transitive = true
+    }
+    compile 'com.android.support:support-v4:+'
+    compile 'com.nineoldandroids:library:2.4.+'
+    compile 'com.google.zxing:core:2.2@jar'
+    compile ('com.google:bitcoinj:0.11.2@jar'){
+        transitive = true
+    }
+    compile 'com.lambdaworks:scrypt:1.4.0@jar'
+    compile project(':wheel')
+    compile project(':android-charts')
 }
