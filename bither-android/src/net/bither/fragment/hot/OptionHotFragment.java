@@ -27,6 +27,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogProgress;
+import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
@@ -48,11 +49,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class OptionHotFragment extends Fragment implements Selectable {
+public class OptionHotFragment extends Fragment implements Selectable,DialogSetAvatar.SetAvatarDelegate {
 	private SettingSelectorView ssvCurrency;
 	private SettingSelectorView ssvMarket;
 	private SettingSelectorView ssvWifi;
 	private SettingSelectorView ssvTransactionFee;
+    private Button btnAvatar;
 	private Button btnCheck;
 	private Button btnDonate;
 	private TextView tvWebsite;
@@ -86,6 +88,7 @@ public class OptionHotFragment extends Fragment implements Selectable {
 		tvWebsite = (TextView) view.findViewById(R.id.tv_website);
 		tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 		ivLogo = (ImageView) view.findViewById(R.id.iv_logo);
+        btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
 		btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
 		btnDonate = (Button) view.findViewById(R.id.btn_donate);
 		ssvCurrency.setSelector(currencySelector);
@@ -109,6 +112,7 @@ public class OptionHotFragment extends Fragment implements Selectable {
 		}
 		btnCheck.setOnClickListener(checkClick);
 		btnDonate.setOnClickListener(donateClick);
+        btnAvatar.setOnClickListener(avatarClick);
 		tvWebsite.setOnClickListener(websiteClick);
 		ivLogo.setOnClickListener(logoClickListener);
 	}
@@ -344,7 +348,25 @@ public class OptionHotFragment extends Fragment implements Selectable {
 		}
 	};
 
-	private OnClickListener websiteClick = new OnClickListener() {
+    private OnClickListener avatarClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogSetAvatar dialog = new DialogSetAvatar(getActivity(), OptionHotFragment.this);
+            dialog.show();
+        }
+    };
+
+    @Override
+    public void avatarFromCamera() {
+        // TODO avatar from camera
+    }
+
+    @Override
+    public void avatarFromGallery() {
+        // TODO avatar from gallery
+    }
+
+    private OnClickListener websiteClick = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {

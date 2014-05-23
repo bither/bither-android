@@ -148,6 +148,9 @@
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
     <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
+    <string name="set_avatar">Set Avatar</string>
+    <string name="set_avatar_camera">From Camera</string>
+    <string name="set_avatar_gallery">From Gallery</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
