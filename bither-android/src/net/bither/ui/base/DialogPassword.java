@@ -16,17 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-
-import net.bither.R;
-import net.bither.model.Check;
-import net.bither.model.Check.CheckListener;
-import net.bither.model.Check.ICheckAction;
-import net.bither.model.PasswordSeed;
-import net.bither.preference.AppSharedPreference;
-import net.bither.util.CheckUtil;
-import net.bither.util.StringUtil;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -42,264 +31,273 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import net.bither.R;
+import net.bither.model.Check;
+import net.bither.model.Check.CheckListener;
+import net.bither.model.Check.ICheckAction;
+import net.bither.model.PasswordSeed;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.CheckUtil;
+import net.bither.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+
 public class DialogPassword extends CenterDialog implements OnDismissListener,
-		OnShowListener {
-	public static interface DialogPasswordListener {
-		public void onPasswordEntered(String password);
-	}
+        OnShowListener {
+    private LinearLayout llInput;
+    private LinearLayout llChecking;
+    private TextView tvTitle;
+    private TextView tvError;
+    private EditText etPassword;
+    private EditText etPasswordConfirm;
+    private Button btnOk;
+    private Button btnCancel;
+    private PasswordSeed passwordSeed;
+    private Check passwordCheck = new Check("", new ICheckAction() {
+        @Override
+        public boolean check() {
+            if (passwordSeed != null) {
+                return passwordSeed.checkPassword(etPassword.getText()
+                        .toString());
+            } else {
+                return true;
+            }
+        }
+    });
+    private DialogPasswordListener listener;
+    private boolean passwordEntered = false;
+    private View.OnClickListener cancelClick = new View.OnClickListener() {
 
-	private LinearLayout llInput;
-	private LinearLayout llChecking;
-	private TextView tvTitle;
-	private TextView tvError;
-	private EditText etPassword;
-	private EditText etPasswordConfirm;
-	private Button btnOk;
-	private Button btnCancel;
+        @Override
+        public void onClick(View v) {
+            passwordEntered = false;
+            dismiss();
+        }
+    };
+    private boolean checkPre = true;
+    private boolean cancelable = true;
+    private InputMethodManager imm;
+    private ExecutorService executor;
+    private View.OnClickListener okClick = new View.OnClickListener() {
 
-	private PasswordSeed passwordSeed;
-	private DialogPasswordListener listener;
-	private boolean passwordEntered = false;
-	private boolean checkPre = true;
-	private boolean cancelable = true;
+        @Override
+        public void onClick(View v) {
+            if (passwordSeed == null
+                    && !StringUtil
+                    .compareString(etPassword.getText().toString(),
+                            etPasswordConfirm.getText().toString())
+                    && checkPre) {
+                tvError.setText(R.string.add_address_generate_address_password_not_same);
+                tvError.setVisibility(View.VISIBLE);
+                etPasswordConfirm.requestFocus();
+                return;
+            }
+            if (passwordSeed != null && checkPre) {
+                ArrayList<Check> checks = new ArrayList<Check>();
+                checks.add(passwordCheck);
+                executor = CheckUtil.runChecks(checks, 1);
+            } else {
+                passwordEntered = true;
+                dismiss();
+            }
+        }
+    };
+    private CheckListener passwordCheckListener = new CheckListener() {
 
-	private InputMethodManager imm;
-	private ExecutorService executor;
+        @Override
+        public void onCheckEnd(Check check, boolean success) {
+            if (executor != null) {
+                executor.shutdown();
+                executor = null;
+            }
+            if (success) {
+                passwordEntered = true;
+                dismiss();
+            } else {
+                llChecking.setVisibility(View.GONE);
+                llInput.setVisibility(View.VISIBLE);
+                etPassword.setText("");
+                checkValid();
+                tvError.setText(R.string.password_wrong);
+                tvError.setVisibility(View.VISIBLE);
+                shake();
+                imm.showSoftInput(etPassword, 0);
+            }
+        }
 
-	public DialogPassword(Context context, DialogPasswordListener listener) {
-		super(context);
-		setContentView(R.layout.dialog_password);
-		this.listener = listener;
-		setOnDismissListener(this);
-		setOnShowListener(this);
-		passwordSeed = getPasswordSeed();
-		initView();
-	}
+        @Override
+        public void onCheckBegin(Check check) {
+            llChecking.setVisibility(View.VISIBLE);
+            llInput.setVisibility(View.INVISIBLE);
+            imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+        }
+    };
+    private TextWatcher passwordWatcher = new TextWatcher() {
+        private String password;
+        private String passwordConfirm;
 
-	private void initView() {
-		llInput = (LinearLayout) findViewById(R.id.ll_input);
-		llChecking = (LinearLayout) findViewById(R.id.ll_checking);
-		tvTitle = (TextView) findViewById(R.id.tv_title);
-		tvError = (TextView) findViewById(R.id.tv_error);
-		etPassword = (EditText) findViewById(R.id.et_password);
-		etPasswordConfirm = (EditText) findViewById(R.id.et_password_confirm);
-		btnOk = (Button) findViewById(R.id.btn_ok);
-		btnCancel = (Button) findViewById(R.id.btn_cancel);
-		etPassword.addTextChangedListener(passwordWatcher);
-		etPasswordConfirm.addTextChangedListener(passwordWatcher);
-		configureCheckPre();
-		btnOk.setOnClickListener(okClick);
-		btnCancel.setOnClickListener(cancelClick);
-		btnOk.setEnabled(false);
-		passwordCheck.setCheckListener(passwordCheckListener);
-		imm = (InputMethodManager) getContext().getSystemService(
-				Context.INPUT_METHOD_SERVICE);
-	}
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
 
-	private View.OnClickListener cancelClick = new View.OnClickListener() {
+        }
 
-		@Override
-		public void onClick(View v) {
-			passwordEntered = false;
-			dismiss();
-		}
-	};
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                                      int after) {
+            password = etPassword.getText().toString();
+            passwordConfirm = etPasswordConfirm.getText().toString();
+        }
 
-	private View.OnClickListener okClick = new View.OnClickListener() {
+        @Override
+        public void afterTextChanged(Editable s) {
+            tvError.setVisibility(View.GONE);
+            String p = etPassword.getText().toString();
+            if (p.length() > 0) {
+                if (!StringUtil.validPassword(p)) {
+                    etPassword.setText(password);
+                }
+            }
+            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
+                String pc = etPasswordConfirm.getText().toString();
+                if (pc.length() > 0) {
+                    if (!StringUtil.validPassword(pc)) {
+                        etPasswordConfirm.setText(passwordConfirm);
+                    }
+                }
+            }
+            checkValid();
+        }
+    };
 
-		@Override
-		public void onClick(View v) {
-			if (passwordSeed == null
-					&& !StringUtil
-							.compareString(etPassword.getText().toString(),
-									etPasswordConfirm.getText().toString())
-					&& checkPre) {
-				tvError.setText(R.string.add_address_generate_address_password_not_same);
-				tvError.setVisibility(View.VISIBLE);
-				etPasswordConfirm.requestFocus();
-				return;
-			}
-			if (passwordSeed != null && checkPre) {
-				ArrayList<Check> checks = new ArrayList<Check>();
-				checks.add(passwordCheck);
-				executor = CheckUtil.runChecks(checks, 1);
-			} else {
-				passwordEntered = true;
-				dismiss();
-			}
-		}
-	};
+    public DialogPassword(Context context, DialogPasswordListener listener) {
+        super(context);
+        setContentView(R.layout.dialog_password);
+        this.listener = listener;
+        setOnDismissListener(this);
+        setOnShowListener(this);
+        passwordSeed = getPasswordSeed();
+        initView();
+    }
 
-	public void dismiss() {
-		imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-		super.dismiss();
-	};
+    ;
 
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		if (passwordEntered && listener != null) {
-			listener.onPasswordEntered(etPassword.getText().toString());
-		}
-	}
+    private void initView() {
+        llInput = (LinearLayout) findViewById(R.id.ll_input);
+        llChecking = (LinearLayout) findViewById(R.id.ll_checking);
+        tvTitle = (TextView) findViewById(R.id.tv_title);
+        tvError = (TextView) findViewById(R.id.tv_error);
+        etPassword = (EditText) findViewById(R.id.et_password);
+        etPasswordConfirm = (EditText) findViewById(R.id.et_password_confirm);
+        btnOk = (Button) findViewById(R.id.btn_ok);
+        btnCancel = (Button) findViewById(R.id.btn_cancel);
+        etPassword.addTextChangedListener(passwordWatcher);
+        etPasswordConfirm.addTextChangedListener(passwordWatcher);
+        configureCheckPre();
+        btnOk.setOnClickListener(okClick);
+        btnCancel.setOnClickListener(cancelClick);
+        btnOk.setEnabled(false);
+        passwordCheck.setCheckListener(passwordCheckListener);
+        imm = (InputMethodManager) getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+    }
 
-	private TextWatcher passwordWatcher = new TextWatcher() {
-		private String password;
-		private String passwordConfirm;
+    public void dismiss() {
+        imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+        super.dismiss();
+    }
 
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (passwordEntered && listener != null) {
+            listener.onPasswordEntered(etPassword.getText().toString());
+        }
+    }
 
-		}
+    private void checkValid() {
+        btnOk.setEnabled(false);
+        String password = etPassword.getText().toString();
+        if (password.length() >= 6 && password.length() <= 20) {
+            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
+                String passwordConfirm = etPasswordConfirm.getText().toString();
+                if (passwordConfirm.length() >= 6
+                        && passwordConfirm.length() <= 20) {
+                    btnOk.setEnabled(true);
+                } else {
+                    btnOk.setEnabled(false);
+                }
+            } else {
+                btnOk.setEnabled(true);
+            }
+        }
+    }
 
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-			password = etPassword.getText().toString();
-			passwordConfirm = etPasswordConfirm.getText().toString();
-		}
+    private PasswordSeed getPasswordSeed() {
+        return AppSharedPreference.getInstance().getPasswordSeed();
+    }
 
-		@Override
-		public void afterTextChanged(Editable s) {
-			tvError.setVisibility(View.GONE);
-			String p = etPassword.getText().toString();
-			if (p.length() > 0) {
-				if (!StringUtil.validPassword(p)) {
-					etPassword.setText(password);
-				}
-			}
-			if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-				String pc = etPasswordConfirm.getText().toString();
-				if (pc.length() > 0) {
-					if (!StringUtil.validPassword(pc)) {
-						etPasswordConfirm.setText(passwordConfirm);
-					}
-				}
-			}
-			checkValid();
-		}
-	};
+    @Override
+    public void onShow(DialogInterface dialog) {
+        imm.showSoftInput(etPassword, 0);
+    }
 
-	private void checkValid() {
-		btnOk.setEnabled(false);
-		String password = etPassword.getText().toString();
-		if (password.length() >= 6 && password.length() <= 20) {
-			if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-				String passwordConfirm = etPasswordConfirm.getText().toString();
-				if (passwordConfirm.length() >= 6
-						&& passwordConfirm.length() <= 20) {
-					btnOk.setEnabled(true);
-				} else {
-					btnOk.setEnabled(false);
-				}
-			} else {
-				btnOk.setEnabled(true);
-			}
-		}
-	}
+    private void shake() {
+        Animation shake = AnimationUtils.loadAnimation(getContext(),
+                R.anim.password_wrong_warning);
+        container.startAnimation(shake);
+    }
 
-	private PasswordSeed getPasswordSeed() {
-		return AppSharedPreference.getInstance().getPasswordSeed();
-	}
+    public void setCheckPre(boolean check) {
+        checkPre = check;
+        configureCheckPre();
+    }
 
-	@Override
-	public void onShow(DialogInterface dialog) {
-		imm.showSoftInput(etPassword, 0);
-	}
+    private void configureCheckPre() {
+        if (checkPre) {
+            if (passwordSeed != null) {
+                etPasswordConfirm.setVisibility(View.GONE);
+            } else {
+                etPasswordConfirm.setVisibility(View.VISIBLE);
+            }
+        } else {
+            etPasswordConfirm.setVisibility(View.GONE);
+        }
+    }
 
-	private void shake() {
-		Animation shake = AnimationUtils.loadAnimation(getContext(),
-				R.anim.password_wrong_warning);
-		container.startAnimation(shake);
-	}
+    public void show() {
+        if (checkPre) {
+            if (etPasswordConfirm.getVisibility() != View.VISIBLE) {
+                setTitle(R.string.add_address_generate_address_password_label);
+            } else {
+                setTitle(R.string.add_address_generate_address_password_set_label);
+            }
+        }
+        if (cancelable) {
+            btnCancel.setVisibility(View.VISIBLE);
+        } else {
+            btnCancel.setVisibility(View.GONE);
+        }
+        super.show();
+    }
 
-	private Check passwordCheck = new Check("", new ICheckAction() {
-		@Override
-		public boolean check() {
-			if (passwordSeed != null) {
-				return passwordSeed.checkPassword(etPassword.getText()
-						.toString());
-			} else {
-				return true;
-			}
-		}
-	});
+    public void setTitle(int resource) {
+        tvTitle.setText(resource);
+    }
 
-	private CheckListener passwordCheckListener = new CheckListener() {
+    ;
 
-		@Override
-		public void onCheckEnd(Check check, boolean success) {
-			if (executor != null) {
-				executor.shutdown();
-				executor = null;
-			}
-			if (success) {
-				passwordEntered = true;
-				dismiss();
-			} else {
-				llChecking.setVisibility(View.GONE);
-				llInput.setVisibility(View.VISIBLE);
-				etPassword.setText("");
-				checkValid();
-				tvError.setText(R.string.password_wrong);
-				tvError.setVisibility(View.VISIBLE);
-				shake();
-				imm.showSoftInput(etPassword, 0);
-			}
-		}
+    public void setTitle(String title) {
+        tvTitle.setText(title);
+    }
 
-		@Override
-		public void onCheckBegin(Check check) {
-			llChecking.setVisibility(View.VISIBLE);
-			llInput.setVisibility(View.INVISIBLE);
-			imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-		}
-	};
+    @Override
+    public void setCancelable(boolean flag) {
+        this.cancelable = flag;
+        super.setCancelable(flag);
+    }
 
-	public void setCheckPre(boolean check) {
-		checkPre = check;
-		configureCheckPre();
-	}
-
-	private void configureCheckPre() {
-		if (checkPre) {
-			if (passwordSeed != null) {
-				etPasswordConfirm.setVisibility(View.GONE);
-			} else {
-				etPasswordConfirm.setVisibility(View.VISIBLE);
-			}
-		} else {
-			etPasswordConfirm.setVisibility(View.GONE);
-		}
-	}
-
-	public void show() {
-		if (checkPre) {
-			if (etPasswordConfirm.getVisibility() != View.VISIBLE) {
-				setTitle(R.string.add_address_generate_address_password_label);
-			} else {
-				setTitle(R.string.add_address_generate_address_password_set_label);
-			}
-		}
-		if (cancelable) {
-			btnCancel.setVisibility(View.VISIBLE);
-		} else {
-			btnCancel.setVisibility(View.GONE);
-		}
-		super.show();
-	};
-
-	public void setTitle(int resource) {
-		tvTitle.setText(resource);
-	}
-
-	public void setTitle(String title) {
-		tvTitle.setText(title);
-	}
-
-	@Override
-	public void setCancelable(boolean flag) {
-		this.cancelable = flag;
-		super.setCancelable(flag);
-	}
+    public static interface DialogPasswordListener {
+        public void onPasswordEntered(String password);
+    }
 }

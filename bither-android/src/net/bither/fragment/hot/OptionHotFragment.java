@@ -43,6 +43,7 @@ import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
+import net.bither.ui.base.DialogEditPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
@@ -57,7 +58,8 @@ import net.bither.util.WalletUtils;
 
 import java.util.List;
 
-public class OptionHotFragment extends Fragment implements Selectable, DialogSetAvatar.SetAvatarDelegate {
+public class OptionHotFragment extends Fragment implements Selectable,
+        DialogSetAvatar.SetAvatarDelegate {
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvWifi;
@@ -65,6 +67,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
+    private Button btnEditPassword;
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
@@ -303,6 +306,13 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
             dialog.show();
         }
     };
+    private OnClickListener editPasswordClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogEditPassword dialog = new DialogEditPassword(getActivity());
+            dialog.show();
+        }
+    };
     private OnClickListener websiteClick = new OnClickListener() {
 
         @Override
@@ -348,6 +358,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
+        btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
@@ -370,6 +381,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         btnCheck.setOnClickListener(checkClick);
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
+        btnEditPassword.setOnClickListener(editPasswordClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         updateAvatar();
@@ -391,7 +403,8 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         if (avatar != null) {
             new UpdateAvatarThread(avatar).start();
         } else {
-            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.avatar_button_icon), null);
+            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                    getResources().getDrawable(R.drawable.avatar_button_icon), null);
         }
     }
 
@@ -409,10 +422,13 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         @Override
         public void run() {
             int borderPadding = UIUtil.dip2pix(2);
-            Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(), R.drawable.avatar_button_icon_border);
-            Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(), bmpBorder.getConfig());
+            Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.avatar_button_icon_border);
+            Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(),
+                    bmpBorder.getConfig());
             Canvas c = new Canvas(result);
-            c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding, result.getWidth() - borderPadding, result.getHeight() - borderPadding), null);
+            c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding,
+                    result.getWidth() - borderPadding, result.getHeight() - borderPadding), null);
             c.drawBitmap(bmpBorder, 0, 0, null);
             final BitmapDrawable d = new BitmapDrawable(getResources(), result);
             ThreadUtil.runOnMainThread(new Runnable() {

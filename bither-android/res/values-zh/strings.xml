@@ -145,6 +145,7 @@
     <string name="set_avatar">设置头像</string>
     <string name="set_avatar_camera">来自相机</string>
     <string name="set_avatar_gallery">来自图库</string>
+    <string name="edit_password_button">修改密码</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
@@ -247,4 +248,14 @@
     <string name="fancy_qr_code_save">保存</string>
     <string name="fancy_qr_code_save_success">二维码已保存</string>
     <string name="saving">正在保存…</string>
+
+    <!-- edit password -->
+    <string name="edit_password_title">修改密码</string>
+    <string name="edit_password_old_password">原密码</string>
+    <string name="edit_password_new_password">新密码</string>
+    <string name="edit_password_confirm_new_password">确认新密码</string>
+    <string name="edit_password_success">修改密码成功</string>
+    <string name="edit_password_fail">修改密码失败</string>
+    <string name="edit_password_new_old_same">新密码不能和旧密码相同</string>
+    <string name="edit_password_editing">正在修改密码…</string>
 </resources>

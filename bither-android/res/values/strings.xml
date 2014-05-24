@@ -151,6 +151,7 @@
     <string name="set_avatar">Set Avatar</string>
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
+    <string name="edit_password_button">Change Password</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
@@ -263,4 +264,13 @@
     <string name="fancy_qr_code_save_success">QR Code saved.</string>
     <string name="saving">Saving…</string>
 
+    <!-- edit password -->
+    <string name="edit_password_title">Change Password</string>
+    <string name="edit_password_old_password">Old Password</string>
+    <string name="edit_password_new_password">New Password</string>
+    <string name="edit_password_confirm_new_password">Confirm New Password</string>
+    <string name="edit_password_success">Change password success.</string>
+    <string name="edit_password_fail">Change password failed.</string>
+    <string name="edit_password_new_old_same">New password is same to the old.</string>
+    <string name="edit_password_editing">Changing password…</string>
 </resources>

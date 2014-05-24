@@ -21,25 +21,25 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.Window;
 
-
 import net.bither.BitherApplication;
 import net.bither.R;
-
-import net.bither.BitherApplication;
 
 import java.io.File;
 
 public class ImageManageUtil {
-    public static int IMAGE_SIZE=612;
+    public static int IMAGE_SIZE = 612;
+
+    public static int getScreenWidth() {
+        return BitherApplication.mContext.getResources().getDisplayMetrics().widthPixels;
+    }
 
     public static Bitmap getBitmapFromView(View v, int width, int height) {
         v.measure(width, height);
@@ -48,16 +48,6 @@ public class ImageManageUtil {
         v.draw(new Canvas(bmp));
         return bmp;
     }
-    public static int getScreenWidth() {
-        return BitherApplication.mContext.getResources().getDisplayMetrics().widthPixels;
-    }
-	public static Bitmap getBitmapFromView(View v, int width, int height) {
-		v.measure(width, height);
-		v.layout(0, 0, width, height);
-		Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		v.draw(new Canvas(bmp));
-		return bmp;
-	}
 
     public static Bitmap getBitmapFromView(View v) {
         Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
@@ -71,6 +61,7 @@ public class ImageManageUtil {
         window.getDecorView().getWindowVisibleDisplayFrame(frame);
         return frame.top;
     }
+
     public static Bitmap getMatrixBitmap(Bitmap bm, int w, int h,
                                          boolean needRecycleSource) {
         int width = bm.getWidth();
@@ -85,6 +76,14 @@ public class ImageManageUtil {
             matrix.postScale(scale, scale);
             Bitmap bitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
                     matrix, true);
+            if (needRecycleSource && bm != null && bm != bitmap) {
+                bm.recycle();
+            }
+            return bitmap;
+        } else {
+            return bm;
+        }
+    }
 
     public static Bitmap getAvatarForFancyQrCode() {
         Paint paint = new Paint();
@@ -110,14 +109,6 @@ public class ImageManageUtil {
         return result;
     }
 
-            if (needRecycleSource && bm != null && bm != bitmap) {
-                bm.recycle();
-            }
-            return bitmap;
-        } else {
-            return bm;
-        }
-    }
 
     public static Bitmap getBitmapNearestSize(String fileName, int size) {
         try {
@@ -145,6 +136,7 @@ public class ImageManageUtil {
             return null;
         }
     }
+
     private static Bitmap getBitmapNearestSize(byte[] bytes, int size) {
         try {
             BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -162,6 +154,7 @@ public class ImageManageUtil {
             return null;
         }
     }
+
     private static int getSampleSize(int fileSize, int targetSize) {
         int sampleSize = 1;
         if (fileSize > targetSize * 2) {
@@ -170,7 +163,9 @@ public class ImageManageUtil {
                 sampleLessThanSize++;
             } while (fileSize / sampleLessThanSize > targetSize);
 
-            for (int i = 1; i <= sampleLessThanSize; i++) {
+            for (int i = 1;
+                 i <= sampleLessThanSize;
+                 i++) {
                 if (Math.abs(fileSize / i - targetSize) <= Math.abs(fileSize
                         / sampleSize - targetSize)) {
                     sampleSize = i;
@@ -185,6 +180,4 @@ public class ImageManageUtil {
         }
         return sampleSize;
     }
-
-
 }
