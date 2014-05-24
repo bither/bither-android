@@ -20,14 +20,18 @@ package net.bither.api;
 
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpPostResponse;
-import net.bither.http.HttpSetting;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 
 import java.io.File;
 
 public class UploadAvatarApi extends HttpPostResponse<String> {
+
+    private final String FILE_KEY = "file";
+
     private File mFile;
 
     public UploadAvatarApi(File file) {
@@ -37,8 +41,10 @@ public class UploadAvatarApi extends HttpPostResponse<String> {
 
     @Override
     public HttpEntity getHttpEntity() throws Exception {
-        FileEntity entity = new FileEntity(this.mFile, "binary/octet-stream");
-        return entity;
+        MultipartEntity multipartEntity = new MultipartEntity(
+                HttpMultipartMode.BROWSER_COMPATIBLE);
+        multipartEntity.addPart(FILE_KEY, new FileBody(this.mFile));
+        return multipartEntity;
     }
 
     @Override
