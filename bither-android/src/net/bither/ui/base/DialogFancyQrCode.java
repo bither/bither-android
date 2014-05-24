@@ -18,7 +18,6 @@ package net.bither.ui.base;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,8 +27,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.pi.common.util.NativeUtil;
-
 import net.bither.R;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
@@ -37,21 +34,21 @@ import net.bither.util.ImageManageUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
-import java.io.File;
-
 /**
  * Created by songchenwen on 14-5-23.
  */
 public class DialogFancyQrCode extends Dialog implements View.OnClickListener, DialogInterface.OnDismissListener {
     private static final float AvatarSizeRate = 0.2f;
+    private Activity activity;
     private QrCodeImageView ivQr;
     private ImageView ivAvatar;
     private FrameLayout flContent;
     private String content;
     private int clickedView = 0;
 
-    public DialogFancyQrCode(Context context, String content) {
+    public DialogFancyQrCode(Activity context, String content) {
         super(context, R.style.tipsDialog);
+        this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.75f;
         setCanceledOnTouchOutside(true);
@@ -115,6 +112,7 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
             Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
             long time = System.currentTimeMillis();
             ImageFileUtil.saveImageToDcim(content, 0, time);
+            DropdownMessage.showDropdownMessage(activity, R.string.fancy_qr_code_save_success);
         }
     }
 
@@ -123,21 +121,20 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
         public void run() {
             Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
             final Uri uri = FileUtil.saveShareImage(content);
+            if (uri == null) {
+                DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
+                return;
+            }
             ThreadUtil.runOnMainThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (uri != null) {
-                        Intent intent = new Intent(
-                                android.content.Intent.ACTION_SEND);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        intent.setType("image/jpg");
-                        getContext().startActivity(intent);
-                    } else {
-                        if (getContext() instanceof Activity) {
-                            DropdownMessage.showDropdownMessage((Activity) getContext(), R.string.market_share_failed);
-                        }
-                    }
+                    Intent intent = new Intent(
+                            android.content.Intent.ACTION_SEND);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    intent.setType("image/jpg");
+                    getContext().startActivity(intent);
+
                 }
             });
         }

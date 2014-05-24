@@ -260,6 +260,7 @@
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">Share</string>
     <string name="fancy_qr_code_save">Save</string>
-    <string name="saving">Saving…</string>
+    <string name="fancy_qr_code_save_success">QR Code saved.</string>
+<string name="saving">Saving…</string>
 
 </resources>

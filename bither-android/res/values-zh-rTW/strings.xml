@@ -245,6 +245,8 @@
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">分享</string>
     <string name="fancy_qr_code_save">保存</string>
+
     <string name="saving">正在保存…</string>
+    <string name="fancy_qr_code_save_success">二維碼已保存</string>
 
 </resources>
