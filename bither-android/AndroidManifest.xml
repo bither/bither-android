@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />

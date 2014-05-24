@@ -118,9 +118,9 @@ public class ImageFileUtil {
         exif.saveAttributes();
     }
 
-    public static File getAvatarFile(long time) {
+    public static File getAvatarFile(String fileName) {
         File file = FileUtil.getUploadImageDir();
-        return new File(file, getAvatarFileName(time));
+        return new File(file, fileName);
     }
 
     public static String getAvatarFileName(long time) {

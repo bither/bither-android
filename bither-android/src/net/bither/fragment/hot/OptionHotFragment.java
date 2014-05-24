@@ -36,6 +36,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -53,13 +54,17 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.ImageFileUtil;
+import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
+import java.io.File;
 import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable, DialogSetAvatar.SetAvatarDelegate {
@@ -377,7 +382,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         btnAvatar.setOnClickListener(avatarClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
-        updateAvatar();
+        setAvatar(AppSharedPreference.getInstance().getUserAvatar());
     }
 
     @Override
@@ -391,15 +396,6 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
     }
 
-    private void updateAvatar() {
-        // TODO get avatar here
-        Bitmap avatar = null;
-        if (avatar != null) {
-            new UpdateAvatarThread(avatar).start();
-        } else {
-            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.avatar_button_icon), null);
-        }
-    }
 
     @Override
     public void onSelected() {
@@ -407,15 +403,38 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if ((requestCode == BitherSetting.REQUEST_CODE_IMAGE || requestCode == BitherSetting.REQUEST_CODE_CAMERA) && resultCode == Activity.RESULT_OK) {
-            LogUtil.d("image", "REQUEST_CODE_IMAGE");
-            Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
-            intent.setData(data.getData());
-            intent.setAction(data.getAction());
-            intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-            startActivity(intent);
+        if (requestCode == BitherSetting.REQUEST_CODE_IMAGE || requestCode == BitherSetting.REQUEST_CODE_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
+                intent.setData(data.getData());
+                intent.setAction(data.getAction());
+                startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
+            }
+        } else if (requestCode == BitherSetting.REQUEST_CODE_CROP_IMAGE) {
+            String photoName = "";
+            if (data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
+                photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
+            }
+            if (!StringUtil.isEmpty(photoName)) {
+
+                return;
+            }
+            setAvatar(photoName);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void setAvatar(String photoName) {
+        Bitmap avatar = null;
+        if (!StringUtil.isEmpty(photoName)) {
+            File file = ImageFileUtil.getAvatarFile(photoName);
+            ImageManageUtil.getBitmapNearestSize(file.getAbsolutePath(), 150);
+        }
+        if (avatar != null) {
+            new UpdateAvatarThread(avatar).start();
+        } else {
+            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.avatar_button_icon), null);
+        }
     }
 
     private class UpdateAvatarThread extends Thread {
