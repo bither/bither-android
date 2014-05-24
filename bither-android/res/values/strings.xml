@@ -148,6 +148,9 @@
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
     <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
+    <string name="set_avatar">Set Avatar</string>
+    <string name="set_avatar_camera">From Camera</string>
+    <string name="set_avatar_gallery">From Gallery</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
@@ -253,5 +256,11 @@
     <string name="network_monitor_peer_list_title">Peers</string>
     <string name="network_monitor_block_list_title">Blocks</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
+
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">Share</string>
+    <string name="fancy_qr_code_save">Save</string>
+    <string name="fancy_qr_code_save_success">QR Code saved.</string>
+    <string name="saving">Saving…</string>
 
 </resources>

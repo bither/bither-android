@@ -349,7 +349,7 @@ public class GridChart extends BaseChart {
 	 * 经线刻度字体大小
 	 * </p>
 	 */
-	public static final int DEFAULT_LONGITUDE_FONT_SIZE = 12;
+	public static final int DEFAULT_LONGITUDE_FONT_SIZE = 14;
 
 	/**
 	 * <p>
@@ -375,7 +375,7 @@ public class GridChart extends BaseChart {
 	 * 默认纬线刻度字体大小
 	 * </p>
 	 */
-	public static final int DEFAULT_LATITUDE_FONT_SIZE = 12;
+	public static final int DEFAULT_LATITUDE_FONT_SIZE =14;
 
 	public static final int DEFAULT_CROSS_LINES_COLOR = Color.CYAN;
 	public static final int DEFAULT_CROSS_LINES_FONT_COLOR = Color.CYAN;

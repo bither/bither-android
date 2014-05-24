@@ -142,6 +142,9 @@
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
     <string name="backup_again">一个小时内刚刚进行过备份，确认要再次备份吗?</string>
+    <string name="set_avatar">设置头像</string>
+    <string name="set_avatar_camera">来自相机</string>
+    <string name="set_avatar_gallery">来自图库</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
@@ -239,4 +242,9 @@
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">未签名捐赠二维码</string>
 
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">分享</string>
+    <string name="fancy_qr_code_save">保存</string>
+    <string name="fancy_qr_code_save_success">二维码已保存</string>
+    <string name="saving">正在保存…</string>
 </resources>

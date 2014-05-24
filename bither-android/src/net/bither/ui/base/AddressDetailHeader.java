@@ -57,6 +57,7 @@ public class AddressDetailHeader extends FrameLayout {
 	private Button btnSend;
 	private ImageButton ibtnBalanceDetail;
 	private BalanceBtcToMoneyButton btnBalance;
+    private DialogFancyQrCode dialogQr;
 	private int addressPosition;
 
 	public AddressDetailHeader(Activity activity) {
@@ -101,6 +102,7 @@ public class AddressDetailHeader extends FrameLayout {
 		if (address.getAddress() == null) {
 			return;
 		}
+        dialogQr = new DialogFancyQrCode(activity, address.getAddress());
 		tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
 		if (this.address != address) {
 			ivQr.setContent(address.getAddress());
@@ -190,27 +192,9 @@ public class AddressDetailHeader extends FrameLayout {
 
 		@Override
 		public void onClick(View v) {
-			if (address != null) {
-				int size = Math.min(UIUtil.getScreenHeight(),
-						UIUtil.getScreenWidth());
-				QrCodeImageView iv = new QrCodeImageView(getContext());
-				iv.setBackgroundColor(Color.WHITE);
-				final Dialog dialog = new Dialog(getContext(),
-						R.style.tipsDialog);
-				dialog.getWindow().addFlags(
-						WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-				dialog.getWindow().getAttributes().dimAmount = 0.85f;
-				dialog.setCanceledOnTouchOutside(true);
-				dialog.setContentView(iv, new LayoutParams(size, size));
-				dialog.show();
-				iv.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						dialog.dismiss();
-					}
-				});
-				iv.setContent(address.getAddress());
-			}
+			if(dialogQr != null){
+                dialogQr.show();
+            }
 		}
 	};
 

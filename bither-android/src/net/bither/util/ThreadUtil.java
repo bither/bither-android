@@ -34,6 +34,10 @@ public class ThreadUtil {
 	}
 
 	public static void runOnMainThread(Runnable runnable) {
-		getMainThreadHandler().post(runnable);
+        if(Looper.myLooper() == Looper.getMainLooper()){
+            runnable.run();
+        }else{
+		    getMainThreadHandler().post(runnable);
+        }
 	}
 }

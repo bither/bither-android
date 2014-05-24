@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.bither.ui.base.OverScrollableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/bg"
             android:paddingLeft="@dimen/card_list_padding"
-            android:paddingRight="@dimen/card_list_padding" >
+            android:paddingRight="@dimen/card_list_padding">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -21,7 +21,7 @@
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingBottom="6dp"
-                android:paddingTop="10dp" >
+                android:paddingTop="10dp">
 
                 <net.bither.ui.base.SettingSelectorView
                     android:id="@+id/ssv_currency"
@@ -42,6 +42,21 @@
                     android:id="@+id/ssv_wifi"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/btn_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ui_touchable_bg"
+                    android:drawableRight="@drawable/avatar_button_icon"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="@string/set_avatar"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="18sp" />
+
+                <include layout="@layout/layout_vertical_seperator" />
 
                 <Button
                     android:id="@+id/btn_check_private_key"
@@ -88,13 +103,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="3dp"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"

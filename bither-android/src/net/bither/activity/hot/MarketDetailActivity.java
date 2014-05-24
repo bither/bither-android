@@ -379,7 +379,6 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		@Override
 		public void notifyTouchPointMove(int x, int y) {
 			handler.removeCallbacks(disappearMarketDepthRunnable);
-
 			marketDepthDetailView.notifyViewMove(x, y, chartDepth.getWidth());
 			handler.postDelayed(disappearMarketDepthRunnable, DISAPPEAR_TIME);
 
