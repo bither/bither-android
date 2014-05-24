@@ -35,6 +35,7 @@ import net.bither.BitherApplication;
 import net.bither.R;
 
 import net.bither.BitherApplication;
+import net.bither.preference.AppSharedPreference;
 
 import java.io.File;
 
@@ -103,11 +104,18 @@ public class ImageManageUtil {
         Paint avatarPaint = new Paint();
         avatarPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         avatarPaint.setAntiAlias(true);
-        // TODO get avatar
-        Bitmap avatar = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
-        c.drawBitmap(avatar, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
+        String avatar = AppSharedPreference.getInstance().getUserAvatar();
+        Bitmap avatarBit = null;
+        if (!StringUtil.isEmpty(avatar)) {
+            File file = ImageFileUtil.getSmallAvatarFile(avatar);
+            avatarBit = ImageManageUtil.getBitmapNearestSize(file, ImageManageUtil.IMAGE_SMALL_SIZE);
+        }
+        if (avatarBit == null) {
+            avatarBit = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
+        }
+        c.drawBitmap(avatarBit, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
                 avatarPaint);
-        avatar = null;
+        avatarBit = null;
         Bitmap overlay = BitmapFactory.decodeResource(res,
                 R.drawable.avatar_for_fancy_qr_code_overlay);
         c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
