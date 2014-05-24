@@ -782,11 +782,8 @@ public abstract class CropImageGlActivityBase extends Activity {
         }
     }
 
-    ;
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            setResult(RESULT_CANCELED);
             finish();
             overridePendingTransition(0, R.anim.slide_out_bottom);
         }

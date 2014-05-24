@@ -53,6 +53,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
@@ -67,6 +68,8 @@ import java.io.File;
 import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable, DialogSetAvatar.SetAvatarDelegate {
+    private static Uri imageUri;
+
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvWifi;
@@ -77,6 +80,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
+
 
     private DialogProgress dp;
     private OnClickListener logoClickListener = new OnClickListener() {
@@ -386,7 +390,15 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
 
     @Override
     public void avatarFromCamera() {
-        // TODO avatar from camera
+        if (FileUtil.existSdCardMounted()) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File file = ImageFileUtil.getImageForGallery(System.currentTimeMillis());
+            imageUri = Uri.fromFile(file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, BitherSetting.REQUEST_CODE_CAMERA);
+        } else {
+            DropdownMessage.showDropdownMessage(getActivity(), R.string.no_sd_card);
+        }
     }
 
     @Override
@@ -398,27 +410,40 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == BitherSetting.REQUEST_CODE_IMAGE || requestCode == BitherSetting.REQUEST_CODE_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case BitherSetting.REQUEST_CODE_IMAGE:
+                if (data != null) {
+                    Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
+                    intent.setData(data.getData());
+                    intent.setAction(data.getAction());
+                    LogUtil.d("fragment", "REQUEST_CODE_IMAGE");
+                    startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
+                }
+                break;
+            case BitherSetting.REQUEST_CODE_CAMERA:
                 Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
-                intent.setData(data.getData());
-                intent.setAction(data.getAction());
-                LogUtil.d("fragment", "REQUEST_CODE_IMAGE");
+
+                intent.putExtra("android.intent.extra.STREAM", imageUri);
+                intent.setAction(Intent.ACTION_SEND);
+                LogUtil.d("fragment", "REQUEST_CODE_CAMERA");
                 startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
-            }
-        } else if (requestCode == BitherSetting.REQUEST_CODE_CROP_IMAGE) {
-            LogUtil.d("fragment", "REQUEST_CODE_CROP_IMAGE");
-            if (resultCode == Activity.RESULT_OK) {
-                String photoName = "";
-                if (data != null && data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
-                    photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
+                break;
+            case BitherSetting.REQUEST_CODE_CROP_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
+                    String photoName = "";
+                    if (data != null && data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
+                        photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
+                    }
+                    LogUtil.d("fragment", "photoName:" + photoName);
+                    if (!StringUtil.isEmpty(photoName)) {
+                        AppSharedPreference.getInstance().setUserAvatar(photoName);
+                        setAvatar(photoName);
+                    }
                 }
-                LogUtil.d("fragment", "photoName:" + photoName);
-                if (!StringUtil.isEmpty(photoName)) {
-                    AppSharedPreference.getInstance().setUserAvatar(photoName);
-                    setAvatar(photoName);
-                }
-            }
+                break;
         }
 
     }

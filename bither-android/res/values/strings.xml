@@ -219,6 +219,7 @@
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
     <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>
+    <string name="no_sd_card">SD card failure</string>
     <string name="last_time_of_back_up">The last backup: %s </string>
     <string name="just_now">Just now</string>
     <string name="private_key_count_limit">Reached private key count limit</string>

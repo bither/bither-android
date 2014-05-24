@@ -36,16 +36,8 @@ public class ImageFileUtil {
     private static final String DCIM_FILE_NAME = "IMG_%s";
     private static final String AVATAR_FILE_NAME = "a%d.jpg";
 
-
-    public static String getImageNameForGallery(String formatString,
-                                                long timeMillis) {
-        return String.format(formatString,
-                DateTimeUtil.getNameForDcim(timeMillis));
-    }
-
-    public static final String saveImageToDcim(Bitmap bit, int orientation,
-                                               long timeMillis) {
-        String pictureName = getImageNameForGallery(DCIM_FILE_NAME,
+    public static File getImageForGallery(long timeMillis) {
+        String pictureName = getImageNameForGallery(
                 timeMillis);
         File dcimFile = new File(Environment.getExternalStorageDirectory()
                 + File.separator + Environment.DIRECTORY_DCIM, "Camera");
@@ -53,7 +45,23 @@ public class ImageFileUtil {
             dcimFile.mkdirs();
         }
         File file = new File(dcimFile, formatFileName(pictureName));
+        return file;
+    }
+
+    public static String getImageNameForGallery(
+            long timeMillis) {
+        return String.format(DCIM_FILE_NAME,
+                DateTimeUtil.getNameForDcim(timeMillis));
+    }
+
+
+    public static final String saveImageToDcim(Bitmap bit, int orientation,
+                                               long timeMillis) {
+        String pictureName = getImageNameForGallery(
+                timeMillis);
+        File file = getImageForGallery(timeMillis);
         try {
+
             NativeUtil.compressBitmap(bit, 100, file.getAbsolutePath(), true);
             saveExifInterface(file, orientation);
             addPicutureToResolver(file, pictureName, orientation, timeMillis);
