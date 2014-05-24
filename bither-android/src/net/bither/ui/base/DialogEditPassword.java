@@ -69,6 +69,10 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         initView();
     }
 
+    private PasswordSeed getPasswordSeed() {
+        return AppSharedPreference.getInstance().getPasswordSeed();
+    }
+
     private void initView() {
         llInput = (LinearLayout) findViewById(R.id.ll_input);
         llEditing = (LinearLayout) findViewById(R.id.ll_editing);
@@ -89,30 +93,6 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
                 Context.INPUT_METHOD_SERVICE);
     }
 
-    public void dismiss() {
-        imm.hideSoftInputFromWindow(etNewPassword.getWindowToken(), 0);
-        super.dismiss();
-    }
-
-    private void checkValid() {
-        btnOk.setEnabled(false);
-        String passwordOld = etOldPassword.getText().toString();
-        if (passwordOld.length() >= 6 && passwordOld.length() <= 20) {
-            String password = etNewPassword.getText().toString();
-            if (password.length() >= 6 && password.length() <= 20) {
-                String passwordConfirm = etNewPasswordConfirm.getText().toString();
-                if (passwordConfirm.length() >= 6
-                        && passwordConfirm.length() <= 20) {
-                    btnOk.setEnabled(true);
-                }
-            }
-        }
-    }
-
-    private PasswordSeed getPasswordSeed() {
-        return AppSharedPreference.getInstance().getPasswordSeed();
-    }
-
     @Override
     public void show() {
         if (passwordSeed != null) {
@@ -120,15 +100,14 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         }
     }
 
+    public void dismiss() {
+        imm.hideSoftInputFromWindow(etNewPassword.getWindowToken(), 0);
+        super.dismiss();
+    }
+
     @Override
     public void onShow(DialogInterface dialog) {
         imm.showSoftInput(etOldPassword, 0);
-    }
-
-    private void shake() {
-        Animation shake = AnimationUtils.loadAnimation(getContext(),
-                R.anim.password_wrong_warning);
-        container.startAnimation(shake);
     }
 
     @Override
@@ -149,6 +128,7 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
                 tvError.setText(R.string.edit_password_new_old_same);
                 tvError.setVisibility(View.VISIBLE);
                 etNewPasswordConfirm.requestFocus();
+                return;
             }
             if (passwordSeed != null) {
                 ArrayList<Check> checks = new ArrayList<Check>();
@@ -160,6 +140,12 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         } else {
             dismiss();
         }
+    }
+
+    private void shake() {
+        Animation shake = AnimationUtils.loadAnimation(getContext(),
+                R.anim.password_wrong_warning);
+        container.startAnimation(shake);
     }
 
     @Override
@@ -204,6 +190,21 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
                 etNewPassword.getText().toString(), this).start();
     }
 
+    private void checkValid() {
+        btnOk.setEnabled(false);
+        String passwordOld = etOldPassword.getText().toString();
+        if (passwordOld.length() >= 6 && passwordOld.length() <= 20) {
+            String password = etNewPassword.getText().toString();
+            if (password.length() >= 6 && password.length() <= 20) {
+                String passwordConfirm = etNewPasswordConfirm.getText().toString();
+                if (passwordConfirm.length() >= 6
+                        && passwordConfirm.length() <= 20) {
+                    btnOk.setEnabled(true);
+                }
+            }
+        }
+    }
+
     @Override
     public void onSuccess() {
         dismiss();
@@ -222,17 +223,17 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         private String passwordNewConfirm;
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before,
-                                  int count) {
-
-        }
-
-        @Override
         public void beforeTextChanged(CharSequence s, int start, int count,
                                       int after) {
             passwordOld = etOldPassword.getText().toString();
             passwordNew = etNewPassword.getText().toString();
             passwordNewConfirm = etNewPasswordConfirm.getText().toString();
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
+
         }
 
         @Override
