@@ -141,6 +141,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                 if (fromFile != null) {
                     fromFileName = fromFile.getAbsolutePath();
                 }
+
             }
         }
         if (StringUtil.isEmpty(fromFileName)) {

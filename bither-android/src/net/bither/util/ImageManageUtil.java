@@ -51,13 +51,7 @@ public class ImageManageUtil {
     public static int getScreenWidth() {
         return BitherApplication.mContext.getResources().getDisplayMetrics().widthPixels;
     }
-	public static Bitmap getBitmapFromView(View v, int width, int height) {
-		v.measure(width, height);
-		v.layout(0, 0, width, height);
-		Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		v.draw(new Canvas(bmp));
-		return bmp;
-	}
+
 
     public static Bitmap getBitmapFromView(View v) {
         Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
@@ -85,6 +79,14 @@ public class ImageManageUtil {
             matrix.postScale(scale, scale);
             Bitmap bitmap = Bitmap.createBitmap(bm, 0, 0, width, height,
                     matrix, true);
+            if (needRecycleSource && bm != null && bm != bitmap) {
+                bm.recycle();
+            }
+            return bitmap;
+        } else {
+            return bm;
+        }
+    }
 
     public static Bitmap getAvatarForFancyQrCode() {
         Paint paint = new Paint();
@@ -110,14 +112,7 @@ public class ImageManageUtil {
         return result;
     }
 
-            if (needRecycleSource && bm != null && bm != bitmap) {
-                bm.recycle();
-            }
-            return bitmap;
-        } else {
-            return bm;
-        }
-    }
+
 
     public static Bitmap getBitmapNearestSize(String fileName, int size) {
         try {

@@ -16,6 +16,7 @@
 
 package net.bither.fragment.hot;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,10 +37,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.fragment.Selectable;
+import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DialogConfirmTask;
@@ -49,6 +53,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
@@ -382,7 +387,8 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
 
     @Override
     public void avatarFromGallery() {
-        // TODO avatar from gallery
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
     }
 
     private void updateAvatar() {
@@ -397,6 +403,19 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
 
     @Override
     public void onSelected() {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ((requestCode == BitherSetting.REQUEST_CODE_IMAGE || requestCode == BitherSetting.REQUEST_CODE_CAMERA) && resultCode == Activity.RESULT_OK) {
+            LogUtil.d("image", "REQUEST_CODE_IMAGE");
+            Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
+            intent.setData(data.getData());
+            intent.setAction(data.getAction());
+            intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+            startActivity(intent);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private class UpdateAvatarThread extends Thread {

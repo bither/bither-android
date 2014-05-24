@@ -223,7 +223,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    ;
+
 
     private class CloneFromPasswordListener implements DialogPasswordListener {
         private String content;
