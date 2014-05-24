@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_container"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              android:id="@+id/ll_container"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/fl_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal">
 
-        <net.bither.ui.base.QrCodeImageView
+        <ImageView
             android:id="@+id/iv_qrcode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
-        <ImageView
-            android:id="@+id/iv_avatar"
-            android:layout_width="40dp"
+
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_launcher"
-            android:layout_height="40dp" />
+            android:indeterminateDrawable="@drawable/check_progress_bar"
+            android:indeterminateDuration="600"
+            android:indeterminateOnly="true"/>
     </FrameLayout>
 
     <LinearLayout
@@ -34,7 +36,7 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/btn_share"
@@ -45,12 +47,12 @@
             android:textSize="16sp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:background="@drawable/dialog_btn_bg_selector" />
+            android:background="@drawable/dialog_btn_bg_selector"/>
 
         <ImageView
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/btn_save"
@@ -62,12 +64,12 @@
             android:textSize="16sp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:background="@drawable/dialog_btn_bg_selector" />
+            android:background="@drawable/dialog_btn_bg_selector"/>
 
         <ImageView
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>
