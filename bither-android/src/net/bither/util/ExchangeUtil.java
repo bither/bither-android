@@ -23,13 +23,15 @@ import java.util.Currency;
 import net.bither.BitherSetting.MarketType;
 import net.bither.preference.AppSharedPreference;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 public class ExchangeUtil {
 	private ExchangeUtil() {
 
 	}
 
 	public enum ExchangeType {
-		USD("$"), CNY(Currency.getInstance("CNY").getSymbol());
+		USD("$"), CNY(StringEscapeUtils.unescapeHtml("&yen;"));
 		private String symbol;
 
 		private ExchangeType(String symbol) {
