@@ -17,11 +17,15 @@
 package net.bither.util;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
@@ -40,6 +44,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -539,5 +544,64 @@ public class FileUtil {
         return file.exists() && file.delete();
 
     }
+    public static File convertUriToFile(Activity activity, Uri uri) {
+        File file = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            @SuppressWarnings("deprecation")
+            Cursor actualimagecursor = activity.managedQuery(uri, proj, null,
+                    null, null);
+            if (actualimagecursor != null) {
+                int actual_image_column_index = actualimagecursor
+                        .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                actualimagecursor.moveToFirst();
+                String img_path = actualimagecursor
+                        .getString(actual_image_column_index);
+                if (!StringUtil.isEmpty(img_path)) {
+                    file = new File(img_path);
+                }
+            } else {
+
+                file = new File(new URI(uri.toString()));
+                if (file.exists()) {
+                    return file;
+                }
+
+            }
+        } catch (Exception e) {
+        }
+        return file;
+
+    }
+    public static int getOrientationOfFile(String fileName) {
+        int orientation = 0;
+        try {
+            ExifInterface exif = new ExifInterface(fileName);
+            String orientationString = exif
+                    .getAttribute(ExifInterface.TAG_ORIENTATION);
+            if (StringUtil.isNubmer(orientationString)) {
+                int orc = Integer.valueOf(orientationString);
+                switch (orc) {
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        orientation = 90;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        orientation = 180;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        orientation = 270;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return orientation;
+
+    }
+
 
 }

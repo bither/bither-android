@@ -120,7 +120,11 @@ public class ImageFileUtil {
 
     public static File getAvatarFile(long time) {
         File file = FileUtil.getUploadImageDir();
-        return new File(file, StringUtil.format(AVATAR_FILE_NAME, time));
+        return new File(file, getAvatarFileName(time));
+    }
+
+    public static String getAvatarFileName(long time) {
+        return StringUtil.format(AVATAR_FILE_NAME, time);
     }
 
 }

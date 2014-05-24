@@ -24,6 +24,7 @@ import net.bither.activity.hot.HotActivity;
 import net.bither.exception.UEHandler;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.DialogCropPhotoTransit;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LinuxSecureRandom;
 import net.bither.util.LogUtil;
@@ -32,6 +33,7 @@ import net.bither.util.WalletUtils;
 
 import org.slf4j.LoggerFactory;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -71,6 +73,7 @@ public class BitherApplication extends Application {
 	public static Context mContext;
 	public static HotActivity warmActivity;
 	public static UEHandler ueHandler;
+    public static Activity initialActivity;
 
 	private boolean canStopMonitor = true;// TODO to be removed
 
@@ -248,4 +251,8 @@ public class BitherApplication extends Application {
 		TransactionsUtil.configureMinFee(AppSharedPreference.getInstance()
 				.getTransactionFeeMode().getMinFeeSatoshi());
 	}
+    public static DialogCropPhotoTransit getDialogCropPhotoTransit() {
+        return DialogCropPhotoTransit.getInstance();
+    }
+
 }
