@@ -73,7 +73,6 @@
         </activity>
         <activity
             android:name="net.bither.image.glcrop.CropImageGlActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="adjustNothing" >

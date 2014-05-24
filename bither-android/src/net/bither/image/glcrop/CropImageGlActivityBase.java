@@ -16,7 +16,6 @@
 package net.bither.image.glcrop;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
@@ -28,7 +27,6 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,13 +37,11 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 
@@ -55,7 +51,6 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.runnable.HandlerMessage;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.runnable.BaseRunnable;
 import net.bither.util.ImageManageUtil;
@@ -546,7 +541,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                             case HandlerMessage.MSG_SUCCESS:
                                 mSaving = false;
                                 pdSaving.dismiss();
-                            
+
                                 handleSaveSuccess(photoName);
                                 break;
                             case HandlerMessage.MSG_FAILURE:
@@ -639,8 +634,13 @@ public abstract class CropImageGlActivityBase extends Activity {
         public void run() {
             try {
                 obtainMessage(HandlerMessage.MSG_PREPARE);
-                File file = ImageFileUtil.getAvatarFile(photoName);
+                File file = ImageFileUtil.getUploadAvatarFile(photoName);
                 NativeUtil.compressBitmap(b, file.getAbsolutePath(), true);
+                file = ImageFileUtil.getAvatarFile(photoName);
+                NativeUtil.compressBitmap(b, file.getAbsolutePath(), true);
+                file = ImageFileUtil.getSmallAvatarFile(photoName);
+                Bitmap smallBit = ImageManageUtil.getMatrixBitmap(b, ImageManageUtil.IMAGE_SMALL_SIZE, ImageManageUtil.IMAGE_SMALL_SIZE, false);
+                NativeUtil.compressBitmap(smallBit, file.getAbsolutePath(), true);
                 obtainMessage(HandlerMessage.MSG_SUCCESS);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -677,7 +677,7 @@ public abstract class CropImageGlActivityBase extends Activity {
             if (orBitmap == null || orBitmap.isRecycled()) {
                 if (!StringUtil.isEmpty(fromFileName)) {
                     orBitmap = ImageManageUtil
-                            .getBitmapNearestSize(fromFileName, ImageManageUtil.IMAGE_SIZE);
+                            .getBitmapNearestSize(new File(fromFileName), ImageManageUtil.IMAGE_SIZE);
                     if (orBitmap == null) {
                         finish();
                         return null;

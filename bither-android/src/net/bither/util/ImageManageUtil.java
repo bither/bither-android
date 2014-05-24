@@ -39,7 +39,8 @@ import net.bither.BitherApplication;
 import java.io.File;
 
 public class ImageManageUtil {
-    public static int IMAGE_SIZE=612;
+    public static int IMAGE_SIZE = 612;
+    public static int IMAGE_SMALL_SIZE = 150;
 
     public static Bitmap getBitmapFromView(View v, int width, int height) {
         v.measure(width, height);
@@ -48,6 +49,7 @@ public class ImageManageUtil {
         v.draw(new Canvas(bmp));
         return bmp;
     }
+
     public static int getScreenWidth() {
         return BitherApplication.mContext.getResources().getDisplayMetrics().widthPixels;
     }
@@ -65,6 +67,7 @@ public class ImageManageUtil {
         window.getDecorView().getWindowVisibleDisplayFrame(frame);
         return frame.top;
     }
+
     public static Bitmap getMatrixBitmap(Bitmap bm, int w, int h,
                                          boolean needRecycleSource) {
         int width = bm.getWidth();
@@ -113,10 +116,8 @@ public class ImageManageUtil {
     }
 
 
-
-    public static Bitmap getBitmapNearestSize(String fileName, int size) {
+    public static Bitmap getBitmapNearestSize(File file, int size) {
         try {
-            File file = new File(fileName);
             if (file == null || !file.exists()) {
                 return null;
             } else if (file.length() == 0) {
@@ -125,7 +126,7 @@ public class ImageManageUtil {
             }
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(fileName, opts);
+            BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
             int sampleSize = getSampleSize(
                     Math.min(opts.outHeight, opts.outWidth), size);
             opts.inSampleSize = sampleSize;
@@ -133,13 +134,14 @@ public class ImageManageUtil {
             opts.inPurgeable = true;
             opts.inInputShareable = false;
             opts.inPreferredConfig = Config.ARGB_8888;
-            Bitmap bit = BitmapFactory.decodeFile(fileName, opts);
+            Bitmap bit = BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
             return bit;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
     private static Bitmap getBitmapNearestSize(byte[] bytes, int size) {
         try {
             BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -157,6 +159,7 @@ public class ImageManageUtil {
             return null;
         }
     }
+
     private static int getSampleSize(int fileSize, int targetSize) {
         int sampleSize = 1;
         if (fileSize > targetSize * 2) {

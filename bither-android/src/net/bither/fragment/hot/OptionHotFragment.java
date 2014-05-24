@@ -36,7 +36,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -396,69 +395,77 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
     }
 
-
-    @Override
-    public void onSelected() {
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == BitherSetting.REQUEST_CODE_IMAGE || requestCode == BitherSetting.REQUEST_CODE_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
                 intent.setData(data.getData());
                 intent.setAction(data.getAction());
+                LogUtil.d("fragment", "REQUEST_CODE_IMAGE");
                 startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
             }
         } else if (requestCode == BitherSetting.REQUEST_CODE_CROP_IMAGE) {
-            String photoName = "";
-            if (data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
-                photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
+            LogUtil.d("fragment", "REQUEST_CODE_CROP_IMAGE");
+            if (resultCode == Activity.RESULT_OK) {
+                String photoName = "";
+                if (data != null && data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
+                    photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
+                }
+                LogUtil.d("fragment", "photoName:" + photoName);
+                if (!StringUtil.isEmpty(photoName)) {
+                    AppSharedPreference.getInstance().setUserAvatar(photoName);
+                    setAvatar(photoName);
+                }
             }
-            if (!StringUtil.isEmpty(photoName)) {
-
-                return;
-            }
-            setAvatar(photoName);
         }
-        super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    @Override
+    public void onSelected() {
     }
 
     private void setAvatar(String photoName) {
         Bitmap avatar = null;
         if (!StringUtil.isEmpty(photoName)) {
-            File file = ImageFileUtil.getAvatarFile(photoName);
-            ImageManageUtil.getBitmapNearestSize(file.getAbsolutePath(), 150);
-        }
-        if (avatar != null) {
-            new UpdateAvatarThread(avatar).start();
+            new UpdateAvatarThread(photoName).start();
         } else {
             btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.avatar_button_icon), null);
         }
     }
 
     private class UpdateAvatarThread extends Thread {
-        private Bitmap avatar;
+        private String photoName;
 
-        private UpdateAvatarThread(Bitmap avatar) {
-            this.avatar = avatar;
+        private UpdateAvatarThread(String photoName) {
+            this.photoName = photoName;
         }
 
         @Override
         public void run() {
-            int borderPadding = UIUtil.dip2pix(2);
-            Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(), R.drawable.avatar_button_icon_border);
-            Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(), bmpBorder.getConfig());
-            Canvas c = new Canvas(result);
-            c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding, result.getWidth() - borderPadding, result.getHeight() - borderPadding), null);
-            c.drawBitmap(bmpBorder, 0, 0, null);
-            final BitmapDrawable d = new BitmapDrawable(getResources(), result);
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
-                }
-            });
+            Bitmap avatar = null;
+            if (!StringUtil.isEmpty(photoName)) {
+                File file = ImageFileUtil.getSmallAvatarFile(photoName);
+                avatar = ImageManageUtil.getBitmapNearestSize(file, 150);
+            }
+            if (avatar != null) {
+                int borderPadding = UIUtil.dip2pix(2);
+                Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(), R.drawable.avatar_button_icon_border);
+                Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(), bmpBorder.getConfig());
+                Canvas c = new Canvas(result);
+                c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding, result.getWidth() - borderPadding, result.getHeight() - borderPadding), null);
+                c.drawBitmap(bmpBorder, 0, 0, null);
+                final BitmapDrawable d = new BitmapDrawable(getResources(), result);
+                ThreadUtil.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, d, null);
+                    }
+
+                });
+            }
         }
     }
 

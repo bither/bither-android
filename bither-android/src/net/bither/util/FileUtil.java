@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
@@ -89,7 +88,9 @@ public class FileUtil {
     private static final String IMAGE_CACHE_DIR = "image";
     private static final String IMAGE_SHARE_FILE_NAME = "share.jpg";
 
-    private static final String IMAGE_UPLOAD_CACHE = "pic";
+    private static final String IMAGE_CACHE_UPLOAD = "pic/upload";
+    private static final String IMAGE_CACHE_612 = "pic/612";
+    private static final String IMAGE_CACHE_150 = "pic/150";
 
 
     /**
@@ -298,7 +299,15 @@ public class FileUtil {
     }
 
     public static File getUploadImageDir() {
-        return getDiskDir(IMAGE_UPLOAD_CACHE, false);
+        return getDiskDir(IMAGE_CACHE_UPLOAD, true);
+    }
+
+    public static File getAvatarDir() {
+        return getDiskDir(IMAGE_CACHE_612, true);
+    }
+
+    public static File getSmallAvatarDir() {
+        return getDiskDir(IMAGE_CACHE_150, true);
     }
 
     public static File getExchangeRateFile() {
@@ -545,10 +554,11 @@ public class FileUtil {
         return file.exists() && file.delete();
 
     }
+
     public static File convertUriToFile(Activity activity, Uri uri) {
         File file = null;
         try {
-            String[] proj = { MediaStore.Images.Media.DATA };
+            String[] proj = {MediaStore.Images.Media.DATA};
             @SuppressWarnings("deprecation")
             Cursor actualimagecursor = activity.managedQuery(uri, proj, null,
                     null, null);
@@ -574,6 +584,7 @@ public class FileUtil {
         return file;
 
     }
+
     public static int getOrientationOfFile(String fileName) {
         int orientation = 0;
         try {

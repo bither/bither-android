@@ -118,8 +118,18 @@ public class ImageFileUtil {
         exif.saveAttributes();
     }
 
-    public static File getAvatarFile(String fileName) {
+    public static File getUploadAvatarFile(String fileName) {
         File file = FileUtil.getUploadImageDir();
+        return new File(file, fileName);
+    }
+
+    public static File getAvatarFile(String fileName) {
+        File file = FileUtil.getAvatarDir();
+        return new File(file, fileName);
+    }
+
+    public static File getSmallAvatarFile(String fileName) {
+        File file = FileUtil.getSmallAvatarDir();
         return new File(file, fileName);
     }
 

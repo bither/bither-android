@@ -47,6 +47,7 @@ import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -271,6 +272,7 @@ public class HotActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE
                 && resultCode == RESULT_OK) {
             Fragment f = getFragmentAtIndex(1);
@@ -295,6 +297,7 @@ public class HotActivity extends FragmentActivity {
             DropdownMessage.showDropdownMessage(this, R.string.donate_thanks);
         }
         super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     private class PageChangeListener implements OnPageChangeListener {
