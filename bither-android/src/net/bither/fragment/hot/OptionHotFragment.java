@@ -386,6 +386,7 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     }
 
     private void updateAvatar() {
+        // TODO get avatar here
         Bitmap avatar = null;
         if (avatar != null) {
             new UpdateAvatarThread(avatar).start();

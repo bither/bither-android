@@ -24,52 +24,52 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import net.bither.R;
+import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.ImageManageUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
 /**
  * Created by songchenwen on 14-5-23.
  */
-public class DialogFancyQrCode extends Dialog implements View.OnClickListener, DialogInterface.OnDismissListener {
-    private static final float AvatarSizeRate = 0.2f;
+public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
+        DialogInterface.OnDismissListener, FancyQrCodeThread.FancyQrCodeListener {
     private Activity activity;
-    private QrCodeImageView ivQr;
-    private ImageView ivAvatar;
-    private FrameLayout flContent;
+    private ImageView ivQr;
+    private ProgressBar pb;
     private String content;
+    private Bitmap qrCode;
     private int clickedView = 0;
 
     public DialogFancyQrCode(Activity context, String content) {
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().getAttributes().dimAmount = 0.75f;
+        getWindow().getAttributes().dimAmount = 0.82f;
         setCanceledOnTouchOutside(true);
         this.content = content;
         setContentView(R.layout.dialog_fancy_qr_code);
         setOnDismissListener(this);
         initView();
+        new FancyQrCodeThread(content, ivQr.getLayoutParams().width,
+                getContext().getResources().getColor(R.color.fancy_qr_code_fg),
+                getContext().getResources().getColor(R.color.fancy_qr_code_bg), this).start();
     }
 
     private void initView() {
-        ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
-        ivAvatar = (ImageView) findViewById(R.id.iv_avatar);
-        flContent = (FrameLayout) findViewById(R.id.fl_content);
+        ivQr = (ImageView) findViewById(R.id.iv_qrcode);
+        pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ll_container).setOnClickListener(this);
         findViewById(R.id.btn_share).setOnClickListener(this);
         findViewById(R.id.btn_save).setOnClickListener(this);
         ivQr.setOnClickListener(this);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
-        ivAvatar.getLayoutParams().width = ivAvatar.getLayoutParams().height = (int) (size * AvatarSizeRate);
-        ivQr.setContent(content, getContext().getResources().getColor(R.color.fancy_qr_code_fg), getContext().getResources().getColor(R.color.fancy_qr_code_bg));
     }
 
     @Override
@@ -99,19 +99,29 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
     }
 
     private void save() {
-        new SaveThread().start();
+        if (qrCode != null) {
+            new SaveThread().start();
+        }
     }
 
     private void share() {
-        new ShareThread().start();
+        if (qrCode != null) {
+            new ShareThread().start();
+        }
+    }
+
+    @Override
+    public void generated(Bitmap bmp) {
+        pb.setVisibility(View.GONE);
+        qrCode = bmp;
+        ivQr.setImageBitmap(bmp);
     }
 
     private class SaveThread extends Thread {
         @Override
         public void run() {
-            Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
             long time = System.currentTimeMillis();
-            ImageFileUtil.saveImageToDcim(content, 0, time);
+            ImageFileUtil.saveImageToDcim(qrCode, 0, time);
             DropdownMessage.showDropdownMessage(activity, R.string.fancy_qr_code_save_success);
         }
     }
@@ -119,8 +129,7 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
     private class ShareThread extends Thread {
         @Override
         public void run() {
-            Bitmap content = ImageManageUtil.getBitmapFromView(flContent);
-            final Uri uri = FileUtil.saveShareImage(content);
+            final Uri uri = FileUtil.saveShareImage(qrCode);
             if (uri == null) {
                 DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
                 return;
@@ -134,7 +143,6 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener, D
                     intent.putExtra(Intent.EXTRA_STREAM, uri);
                     intent.setType("image/jpg");
                     getContext().startActivity(intent);
-
                 }
             });
         }

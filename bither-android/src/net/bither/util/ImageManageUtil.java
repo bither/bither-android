@@ -16,34 +16,66 @@
 
 package net.bither.util;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.Window;
 
+import net.bither.BitherApplication;
+import net.bither.R;
+
 public class ImageManageUtil {
 
-	public static Bitmap getBitmapFromView(View v, int width, int height) {
-		v.measure(width, height);
-		v.layout(0, 0, width, height);
-		Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-		v.draw(new Canvas(bmp));
-		return bmp;
-	}
+    public static Bitmap getBitmapFromView(View v, int width, int height) {
+        v.measure(width, height);
+        v.layout(0, 0, width, height);
+        Bitmap bmp = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        v.draw(new Canvas(bmp));
+        return bmp;
+    }
 
-	public static Bitmap getBitmapFromView(View v) {
-		Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
-				Config.ARGB_8888);
-		v.draw(new Canvas(bmp));
-		return bmp;
-	}
+    public static Bitmap getBitmapFromView(View v) {
+        Bitmap bmp = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
+                Config.ARGB_8888);
+        v.draw(new Canvas(bmp));
+        return bmp;
+    }
 
-	public static final int getStatusBarHeight(Window window) {
-		Rect frame = new Rect();
-		window.getDecorView().getWindowVisibleDisplayFrame(frame);
-		return frame.top;
-	}
+    public static final int getStatusBarHeight(Window window) {
+        Rect frame = new Rect();
+        window.getDecorView().getWindowVisibleDisplayFrame(frame);
+        return frame.top;
+    }
+
+    public static Bitmap getAvatarForFancyQrCode() {
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        Resources res = BitherApplication.mContext.getResources();
+        Bitmap shape = BitmapFactory.decodeResource(res, R.drawable.avatar_for_fancy_qr_code_shape);
+        Bitmap result = Bitmap.createBitmap(shape.getWidth(), shape.getHeight(), shape.getConfig());
+        Canvas c = new Canvas(result);
+        c.drawBitmap(shape, 0, 0, paint);
+        shape = null;
+        Paint avatarPaint = new Paint();
+        avatarPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        avatarPaint.setAntiAlias(true);
+        // TODO get avatar
+        Bitmap avatar = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
+        c.drawBitmap(avatar, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
+                avatarPaint);
+        avatar = null;
+        Bitmap overlay = BitmapFactory.decodeResource(res,
+                R.drawable.avatar_for_fancy_qr_code_overlay);
+        c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
+        overlay = null;
+        return result;
+    }
 
 }
