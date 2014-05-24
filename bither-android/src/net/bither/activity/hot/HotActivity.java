@@ -16,6 +16,7 @@
 
 package net.bither.activity.hot;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.ThreadNeedService;
+import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
@@ -41,6 +43,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.FileUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
@@ -403,6 +406,9 @@ public class HotActivity extends FragmentActivity {
             public void run() {
                 AddErrorMsgRunnable addErrorMsgRunnable = new AddErrorMsgRunnable();
                 addErrorMsgRunnable.run();
+                UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
+                uploadAvatarRunnable.run();
+
             }
         }).start();
     }

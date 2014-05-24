@@ -45,6 +45,7 @@ import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogProgress;
@@ -491,6 +492,8 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
 
                 });
             }
+            UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
+            uploadAvatarRunnable.run();
         }
     }
 
