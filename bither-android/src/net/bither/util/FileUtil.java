@@ -25,6 +25,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.pi.common.util.NativeUtil;
 
@@ -88,10 +89,12 @@ public class FileUtil {
     private static final String IMAGE_CACHE_DIR = "image";
     private static final String IMAGE_SHARE_FILE_NAME = "share.jpg";
 
-    private static final String IMAGE_CACHE_UPLOAD = "pic/upload";
-    private static final String IMAGE_CACHE_612 = "pic/612";
-    private static final String IMAGE_CACHE_150 = "pic/150";
+    private static final String IMAGE_CACHE_UPLOAD = IMAGE_CACHE_DIR + "/upload";
+    private static final String IMAGE_CACHE_612 = IMAGE_CACHE_DIR + "image/612";
+    private static final String IMAGE_CACHE_150 = IMAGE_CACHE_DIR + "image/150";
 
+    // share to weibo
+    private static int MAX_SHARE_SIZE = 618;
 
     /**
      * sdCard exist
@@ -157,10 +160,20 @@ public class FileUtil {
         return dir;
     }
 
+
     public static Uri saveShareImage(Bitmap bmp) {
         File dir = getDiskDir(IMAGE_CACHE_DIR, true);
         File jpg = new File(dir, IMAGE_SHARE_FILE_NAME);
-        NativeUtil.compressBitmap(bmp, 95, jpg.getAbsolutePath(), true);
+        float w = bmp.getWidth();
+        float h = bmp.getHeight();
+        float sampleSize = 1;
+        if (w > MAX_SHARE_SIZE) {
+            sampleSize = MAX_SHARE_SIZE / w;
+        }
+        w = (int) (w * sampleSize);
+        h = (int) (h * sampleSize);
+        bmp = ImageManageUtil.getMatrixBitmap(bmp, (int) w, (int) h, true);
+        NativeUtil.compressBitmap(bmp, 65, jpg.getAbsolutePath(), true);
         return Uri.fromFile(jpg);
     }
 
