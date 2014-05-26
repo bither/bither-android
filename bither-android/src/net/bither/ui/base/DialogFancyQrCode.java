@@ -31,6 +31,7 @@ import net.bither.R;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
+import net.bither.util.ImageManageUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -50,13 +51,16 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().getAttributes().dimAmount = 0.82f;
+        getWindow().getAttributes().dimAmount = 0.75f;
+        getWindow().getAttributes().width = UIUtil.getScreenWidth();
+        getWindow().getAttributes().height = UIUtil.getScreenHeight() - ImageManageUtil
+                .getStatusBarHeight(getWindow());
         setCanceledOnTouchOutside(true);
         this.content = content;
         setContentView(R.layout.dialog_fancy_qr_code);
         setOnDismissListener(this);
         initView();
-        new FancyQrCodeThread(content, ivQr.getLayoutParams().width,
+        new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width,
                 getContext().getResources().getColor(R.color.fancy_qr_code_fg),
                 getContext().getResources().getColor(R.color.fancy_qr_code_bg), this).start();
     }
@@ -65,8 +69,8 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         ivQr = (ImageView) findViewById(R.id.iv_qrcode);
         pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ll_container).setOnClickListener(this);
-        findViewById(R.id.btn_share).setOnClickListener(this);
-        findViewById(R.id.btn_save).setOnClickListener(this);
+        findViewById(R.id.ibtn_share).setOnClickListener(this);
+        findViewById(R.id.ibtn_save).setOnClickListener(this);
         ivQr.setOnClickListener(this);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
@@ -87,10 +91,10 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
     @Override
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
-            case R.id.btn_share:
+            case R.id.ibtn_share:
                 share();
                 break;
-            case R.id.btn_save:
+            case R.id.ibtn_save:
                 save();
                 break;
             default:
@@ -98,15 +102,15 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         }
     }
 
-    private void save() {
-        if (qrCode != null) {
-            new SaveThread().start();
-        }
-    }
-
     private void share() {
         if (qrCode != null) {
             new ShareThread().start();
+        }
+    }
+
+    private void save() {
+        if (qrCode != null) {
+            new SaveThread().start();
         }
     }
 
