@@ -56,7 +56,7 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().getAttributes().dimAmount = 0.75f;
+        getWindow().getAttributes().dimAmount = 0.8f;
         getWindow().getAttributes().width = UIUtil.getScreenWidth();
         getWindow().getAttributes().height = UIUtil.getScreenHeight() - ImageManageUtil
                 .getStatusBarHeight(getWindow());
