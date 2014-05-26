@@ -263,6 +263,7 @@
     <string name="fancy_qr_code_share">Share</string>
     <string name="fancy_qr_code_save">Save</string>
     <string name="fancy_qr_code_save_success">QR Code saved.</string>
+    <string name="fancy_qr_code_view_origin">View Original QR Code</string>
     <string name="saving">Saving…</string>
 
     <!-- edit password -->

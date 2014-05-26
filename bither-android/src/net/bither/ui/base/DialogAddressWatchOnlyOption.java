@@ -16,104 +16,136 @@
 
 package net.bither.ui.base;
 
-import net.bither.BitherApplication;
-import net.bither.R;
-import net.bither.fragment.Refreshable;
-import net.bither.model.BitherAddress;
-import net.bither.util.WalletUtils;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
+import net.bither.R;
+import net.bither.fragment.Refreshable;
+import net.bither.model.BitherAddress;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.ThreadUtil;
+import net.bither.util.WalletUtils;
+
 public class DialogAddressWatchOnlyOption extends CenterDialog {
-	private BitherAddress address;
-	private TextView tvViewOnBlockchainInfo;
-	private TextView tvDelete;
-	private TextView tvClose;
-	private Activity activity;
-	private Runnable afterDelete;
+    private DialogFancyQrCode dialogQr;
+    private BitherAddress address;
+    private TextView tvViewOnBlockchainInfo;
+    private TextView tvDelete;
+    private TextView tvClose;
+    private LinearLayout llOriginQRCode;
+    private Activity activity;
+    private View.OnClickListener viewOnBlockchainInfoClick = new View.OnClickListener() {
 
-	public DialogAddressWatchOnlyOption(Activity context,
-			BitherAddress address, Runnable afterDelete) {
-		super(context);
-		this.activity = context;
-		this.address = address;
-		this.afterDelete = afterDelete;
-		setContentView(R.layout.dialog_address_watch_only_option);
-		tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
-		tvDelete = (TextView) findViewById(R.id.tv_delete);
-		tvClose = (TextView) findViewById(R.id.tv_close);
-		tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
-		tvDelete.setOnClickListener(deleteClick);
-		tvClose.setOnClickListener(closeClick);
-	}
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://blockchain.info/address/"
+                            + address.getAddress())
+            )
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                getContext().startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(activity,
+                        R.string.find_browser_error);
+            }
+        }
+    };
+    private View.OnClickListener deleteClick = new View.OnClickListener() {
 
-	private View.OnClickListener viewOnBlockchainInfoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            dismiss();
+            if (WalletUtils.getBitherAddressList().size() == 1) {
+                DropdownMessage.showDropdownMessage(activity,
+                        R.string.address_detail_empty_address_list_notice);
+                return;
+            }
+            if (BitherApplication.getBitherApplication().isCanStopMonitor()) {
+                BitherApplication.getBitherApplication().setCanStopMonitor(
+                        false);
+                new DialogConfirmTask(getContext(), getContext().getString(
+                        R.string.address_delete_confirmation), new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                WalletUtils.removeBitherAddress(address);
+                                Fragment f = BitherApplication.warmActivity
+                                        .getFragmentAtIndex(1);
+                                if (f instanceof Refreshable) {
+                                    ((Refreshable) f).doRefresh();
+                                }
+                                if (afterDelete != null) {
+                                    activity.runOnUiThread(afterDelete);
+                                }
+                            }
+                        });
+                    }
+                }).show();
+            } else {
+                DropdownMessage.showDropdownMessage(activity,
+                        R.string.address_detail_cannot_stop_monitoring);
+            }
+        }
+    };
+    private Runnable afterDelete;
+    private View.OnClickListener originQrCodeClick = new View.OnClickListener() {
 
-		@Override
-		public void onClick(View v) {
-			dismiss();
-			Intent intent = new Intent(Intent.ACTION_VIEW,
-					Uri.parse("http://blockchain.info/address/"
-							+ address.getAddress()))
-					.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			try {
-				getContext().startActivity(intent);
-			} catch (Exception e) {
-				e.printStackTrace();
-				DropdownMessage.showDropdownMessage(activity,
-						R.string.find_browser_error);
-			}
-		}
-	};
-	private View.OnClickListener deleteClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dialogQr.show();
+                }
+            }, 300);
+        }
+    };
+    private View.OnClickListener closeClick = new View.OnClickListener() {
 
-		@Override
-		public void onClick(final View v) {
-			dismiss();
-			if (WalletUtils.getBitherAddressList().size() == 1) {
-				DropdownMessage.showDropdownMessage(activity,
-						R.string.address_detail_empty_address_list_notice);
-				return;
-			}
-			if (BitherApplication.getBitherApplication().isCanStopMonitor()) {
-				BitherApplication.getBitherApplication().setCanStopMonitor(
-						false);
-				new DialogConfirmTask(getContext(), getContext().getString(
-						R.string.address_delete_confirmation), new Runnable() {
-					@Override
-					public void run() {
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								WalletUtils.removeBitherAddress(address);
-								Fragment f = BitherApplication.warmActivity
-										.getFragmentAtIndex(1);
-								if (f instanceof Refreshable) {
-									((Refreshable) f).doRefresh();
-								}
-								if (afterDelete != null) {
-									activity.runOnUiThread(afterDelete);
-								}
-							}
-						});
-					}
-				}).show();
-			} else {
-				DropdownMessage.showDropdownMessage(activity,
-						R.string.address_detail_cannot_stop_monitoring);
-			}
-		}
-	};
-	private View.OnClickListener closeClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+        }
+    };
 
-		@Override
-		public void onClick(View v) {
-			dismiss();
-		}
-	};
+    public DialogAddressWatchOnlyOption(Activity context,
+                                        BitherAddress address, Runnable afterDelete) {
+        super(context);
+        this.activity = context;
+        this.address = address;
+        this.afterDelete = afterDelete;
+        setContentView(R.layout.dialog_address_watch_only_option);
+        tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
+        tvDelete = (TextView) findViewById(R.id.tv_delete);
+        tvClose = (TextView) findViewById(R.id.tv_close);
+        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
+        tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
+        tvDelete.setOnClickListener(deleteClick);
+        llOriginQRCode.setOnClickListener(originQrCodeClick);
+        tvClose.setOnClickListener(closeClick);
+        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false);
+    }
+
+    @Override
+    public void show() {
+        if (AppSharedPreference.getInstance().hasUserAvatar()) {
+            llOriginQRCode.setVisibility(View.VISIBLE);
+        } else {
+            llOriginQRCode.setVisibility(View.GONE);
+        }
+        super.show();
+    }
 
 }

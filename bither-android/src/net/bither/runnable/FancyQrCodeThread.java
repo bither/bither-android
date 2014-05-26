@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
@@ -38,34 +39,41 @@ public class FancyQrCodeThread extends Thread {
     private FancyQrCodeListener listener;
     private String content;
     private int size;
-    private int fgColor;
-    private int bgColor;
+    private int fgColor = Color.BLACK;
+    private int bgColor = Color.WHITE;
+    private boolean addAvatar;
 
     public FancyQrCodeThread(String content, int size, int fgColor, int bgColor,
                              FancyQrCodeListener listener) {
+        this(content, size, fgColor, bgColor, listener, true);
+    }
+
+    public FancyQrCodeThread(String content, int size, int fgColor, int bgColor,
+                             FancyQrCodeListener listener, boolean addAvatar) {
         this.content = content;
         this.listener = listener;
         this.size = size;
-        this.fgColor = fgColor;
-        this.bgColor = bgColor;
+        if (addAvatar) {
+            this.fgColor = fgColor;
+            this.bgColor = bgColor;
+        }
+        this.addAvatar = addAvatar;
     }
 
     @Override
     public void run() {
-        Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
-        if (avatar == null) {
-            fgColor = Color.BLACK;
-            bgColor = Color.WHITE;
-        }
         final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
-        if (avatar != null) {
-            Canvas c = new Canvas(qrCode);
-            int avatarSize = (int) (size * AvatarSizeRate);
-            int avaterOffset = (size - avatarSize) / 2;
-            Paint paint = new Paint();
-            paint.setAntiAlias(true);
-            c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
-                    avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
+        if (addAvatar && AppSharedPreference.getInstance().hasUserAvatar()) {
+            Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
+            if (avatar != null) {
+                Canvas c = new Canvas(qrCode);
+                int avatarSize = (int) (size * AvatarSizeRate);
+                int avaterOffset = (size - avatarSize) / 2;
+                Paint paint = new Paint();
+                paint.setAntiAlias(true);
+                c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
+                        avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
+            }
         }
 
         if (listener != null) {
