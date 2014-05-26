@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/ui_touchable_bg"
-                    android:drawableRight="@drawable/check_button_icon"
+                    android:drawableRight="@drawable/edit_password_button_icon"
                     android:gravity="left"
                     android:padding="10dp"
                     android:text="@string/edit_password_button"
