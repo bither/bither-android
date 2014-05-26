@@ -258,5 +258,5 @@
     <string name="edit_password_success">修改密码成功</string>
     <string name="edit_password_fail">修改密码失败</string>
     <string name="edit_password_new_old_same">新密码不能和旧密码相同</string>
-    <string name="edit_password_editing">正在修改密码…</string>
+    <string name="edit_password_editing">正在修改密码…\n请不要关闭手机屏幕</string>
 </resources>
