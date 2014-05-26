@@ -107,7 +107,7 @@ public class ImageManageUtil {
                     ImageManageUtil.IMAGE_SMALL_SIZE);
         }
         if (avatarBit == null) {
-            avatarBit = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
+            return null;
         }
         c.drawBitmap(avatarBit, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
                 avatarPaint);
