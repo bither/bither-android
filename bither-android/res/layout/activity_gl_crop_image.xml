@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/camera_bg" >
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/camera_bg">
 
     <LinearLayout
         android:id="@+id/ll_bottom"
@@ -10,42 +10,42 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/camera_bottom_bg"
         android:baselineAligned="false"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/ll_filter_bottom"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="65dp"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"/>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/ibtn_discard"
                 android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/camera_bottom_button_bg_selector"
-                android:src="@drawable/filter_discard_selector" />
+                android:src="@drawable/filter_discard_selector"/>
 
             <ImageButton
                 android:id="@+id/ibtn_save"
                 android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/camera_bottom_button_bg_selector"
-                android:src="@drawable/filter_save_selector" />
+                android:src="@drawable/filter_save_selector"/>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <FrameLayout
@@ -54,20 +54,9 @@
             android:layout_height="match_parent"
             android:background="@drawable/camera_bottom_button_bg_selector"
             android:paddingLeft="15dp"
-            android:paddingRight="15dp" >
+            android:paddingRight="15dp">
 
-            <ToggleButton
-                android:id="@+id/tbtn_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/camera_bottom_button_filter_toggle_selector"
-                android:checked="false"
-                android:clickable="false"
-                android:duplicateParentState="true"
-                android:focusable="false"
-                android:textOff=""
-                android:textOn="" />
+
         </FrameLayout>
     </LinearLayout>
 
@@ -76,19 +65,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/ll_bottom"
-        android:layout_below="@+id/rl_title_bar" >
+        android:layout_below="@+id/rl_title_bar">
 
         <FrameLayout
             android:id="@+id/fl_image_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/camera_bg" >
+            android:background="@drawable/camera_bg">
 
             <FrameLayout
                 android:id="@+id/fl_filter_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/camera_bg" >
+                android:background="@drawable/camera_bg">
 
                 <FrameLayout
                     android:id="@+id/fl_camera_iris_frame"
@@ -96,13 +85,8 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_margin="3dp"
-                    android:background="@drawable/camera_iris_frame" >
+                    android:background="@drawable/camera_iris_frame">
 
-                    <!--<net.bither.camera.support.FilterSurfaceView-->
-                        <!--android:id="@+id/filter_image"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_gravity="center" />-->
                 </FrameLayout>
             </FrameLayout>
 
@@ -110,30 +94,16 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/camera_bg" />
+                android:background="@drawable/camera_bg"/>
         </FrameLayout>
-
-        <!--<com.pi.common.camera.FilterSelectorView-->
-            <!--android:id="@+id/sv_filters"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="bottom"-->
-            <!--android:visibility="gone" />-->
     </FrameLayout>
-
-    <!--<com.pi.common.camera.TiltShiftModeView-->
-        <!--android:id="@+id/tiltShift"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="top|left"-->
-        <!--android:visibility="gone" />-->
 
     <LinearLayout
         android:id="@id/rl_title_bar"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_gravity="top" >
+        android:layout_gravity="top">
 
         <ImageButton
             android:id="@+id/discard"
@@ -141,27 +111,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
             android:background="@drawable/camera_top_button_bg_selector"
-            android:src="@drawable/action_bar_glyph_cancel_selector" />
+            android:src="@drawable/action_bar_glyph_cancel_selector"/>
 
         <FrameLayout
             android:id="@+id/fl_frame_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|center_vertical"
-            android:background="@drawable/camera_top_button_bg_selector" >
-
-            <ToggleButton
-                android:id="@+id/tbtn_frame"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/action_bar_glyph_frame_selector"
-                android:checked="false"
-                android:clickable="false"
-                android:duplicateParentState="true"
-                android:focusable="false"
-                android:textOff=""
-                android:textOn="" />
+            android:background="@drawable/camera_top_button_bg_selector">
         </FrameLayout>
 
         <ImageButton
@@ -171,12 +128,12 @@
             android:layout_gravity="left|center_vertical"
             android:background="@drawable/camera_top_button_bg_selector"
             android:src="@drawable/action_bar_glyph_tiltshift_selector"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/btn_crop"
@@ -185,7 +142,7 @@
             android:layout_gravity="right|center_vertical"
             android:background="@drawable/camera_top_button_bg_selector"
             android:src="@drawable/action_bar_glyph_crop_selector"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/image_cw_90r"
@@ -193,7 +150,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:background="@drawable/camera_top_button_bg_selector"
-            android:src="@drawable/action_bar_glyph_rotate_selector" />
+            android:src="@drawable/action_bar_glyph_rotate_selector"/>
     </LinearLayout>
 
 </RelativeLayout>
