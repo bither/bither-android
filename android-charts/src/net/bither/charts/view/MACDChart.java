@@ -23,6 +23,7 @@ package net.bither.charts.view;
 
 import net.bither.charts.entity.IMeasurable;
 import net.bither.charts.entity.MACDEntity;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -30,390 +31,292 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/03/17 17:19:45
- * 
- */
 public class MACDChart extends SlipStickChart {
 
-	public static final int MACD_DISPLAY_TYPE_STICK = 1 << 0;
-	public static final int MACD_DISPLAY_TYPE_LINE = 1 << 1;
-	public static final int MACD_DISPLAY_TYPE_LINE_STICK = 1 << 2;
+    public static final int MACD_DISPLAY_TYPE_STICK = 1 << 0;
+    public static final int MACD_DISPLAY_TYPE_LINE = 1 << 1;
+    public static final int MACD_DISPLAY_TYPE_LINE_STICK = 1 << 2;
 
-	public static final int DEFAULT_POSITIVE_STICK_COLOR = Color.RED;
-	public static final int DEFAULT_NEGATIVE_STICK_COLOR = Color.BLUE;
-	public static final int DEFAULT_MACD_LINE_COLOR = Color.RED;
-	public static final int DEFAULT_DIFF_LINE_COLOR = Color.WHITE;
-	public static final int DEFAULT_DEA_LINE_COLOR = Color.YELLOW;
-	public static final int DEFAULT_MACD_DISPLAY_TYPE = MACD_DISPLAY_TYPE_LINE_STICK;
+    public static final int DEFAULT_POSITIVE_STICK_COLOR = Color.RED;
+    public static final int DEFAULT_NEGATIVE_STICK_COLOR = Color.BLUE;
+    public static final int DEFAULT_MACD_LINE_COLOR = Color.RED;
+    public static final int DEFAULT_DIFF_LINE_COLOR = Color.WHITE;
+    public static final int DEFAULT_DEA_LINE_COLOR = Color.YELLOW;
+    public static final int DEFAULT_MACD_DISPLAY_TYPE = MACD_DISPLAY_TYPE_LINE_STICK;
 
-	private int positiveStickColor = DEFAULT_POSITIVE_STICK_COLOR;
-	private int negativeStickColor = DEFAULT_NEGATIVE_STICK_COLOR;
-	private int macdLineColor = DEFAULT_MACD_LINE_COLOR;
-	private int diffLineColor = DEFAULT_DIFF_LINE_COLOR;
-	private int deaLineColor = DEFAULT_DEA_LINE_COLOR;
-	private int macdDisplayType = DEFAULT_MACD_DISPLAY_TYPE;
+    private int positiveStickColor = DEFAULT_POSITIVE_STICK_COLOR;
+    private int negativeStickColor = DEFAULT_NEGATIVE_STICK_COLOR;
+    private int macdLineColor = DEFAULT_MACD_LINE_COLOR;
+    private int diffLineColor = DEFAULT_DIFF_LINE_COLOR;
+    private int deaLineColor = DEFAULT_DEA_LINE_COLOR;
+    private int macdDisplayType = DEFAULT_MACD_DISPLAY_TYPE;
 
-	/**
-	 * <p>
-	 * Constructor of MACDChart
-	 * </p>
-	 * <p>
-	 * MACDChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * MACDChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 */
-	public MACDChart(Context context) {
-		super(context);
-		// TODO Auto-generated constructor stub
-	}
+    public MACDChart(Context context) {
+        super(context);
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * <p>
-	 * Constructor of MACDChart
-	 * </p>
-	 * <p>
-	 * MACDChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * MACDChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 * @param attrs
-	 * @param defStyle
-	 */
-	public MACDChart(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public MACDChart(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	/**
-	 * <p>
-	 * Constructor of MACDChart
-	 * </p>
-	 * <p>
-	 * MACDChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * MACDChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 * @param attrs
-	 */
-	public MACDChart(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public MACDChart(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	@Override
-	protected void calcValueRange() {
-		if (stickData == null) {
-			return;
-		}
-		if (stickData.size() <= 0) {
-			return;
-		}
-		double maxValue = Double.MIN_VALUE;
-		double minValue = Double.MAX_VALUE;
+    @Override
+    protected void calcValueRange() {
+        if (stickData == null) {
+            return;
+        }
+        if (stickData.size() <= 0) {
+            return;
+        }
+        double maxValue = Double.MIN_VALUE;
+        double minValue = Double.MAX_VALUE;
 
-		IMeasurable first = stickData.get(displayFrom);
-		maxValue = Math.max(first.getHigh(), maxValue);
-		minValue = Math.min(first.getLow(), minValue);
-		// 判断显示为方柱或显示为线条
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			IMeasurable macd = stickData.get(i);
-			maxValue = Math.max(macd.getHigh(), maxValue);
-			minValue = Math.min(macd.getLow(), minValue);
-		}
-		this.maxValue = maxValue;
-		this.minValue = minValue;
-	}
+        IMeasurable first = stickData.get(displayFrom);
+        maxValue = Math.max(first.getHigh(), maxValue);
+        minValue = Math.min(first.getLow(), minValue);
+        // 判断显示为方柱或显示为线条
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            IMeasurable macd = stickData.get(i);
+            maxValue = Math.max(macd.getHigh(), maxValue);
+            minValue = Math.min(macd.getLow(), minValue);
+        }
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+    }
 
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        drawLinesData(canvas);
+    }
 
-		// 在K线图上增加均线
-		drawLinesData(canvas);
-	}
+    @Override
+    protected void drawSticks(Canvas canvas) {
 
-	@Override
-	protected void drawSticks(Canvas canvas) {
+        if (stickData == null) {
+            return;
+        }
+        if (stickData.size() <= 0) {
+            return;
+        }
 
-		if (stickData == null) {
-			return;
-		}
-		if (stickData.size() <= 0) {
-			return;
-		}
+        if (macdDisplayType == MACD_DISPLAY_TYPE_LINE) {
+            this.drawMacdLine(canvas);
+            return;
+        }
 
-		if (macdDisplayType == MACD_DISPLAY_TYPE_LINE) {
-			this.drawMacdLine(canvas);
-			return;
-		}
+        Paint mPaintStick = new Paint();
+        mPaintStick.setAntiAlias(true);
 
-		Paint mPaintStick = new Paint();
-		mPaintStick.setAntiAlias(true);
+        float stickWidth = getDataQuadrantPaddingWidth() / displayNumber
+                - stickSpacing;
+        float stickX = getDataQuadrantPaddingStartX();
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            MACDEntity stick = (MACDEntity) stickData.get(i);
 
-		float stickWidth = getDataQuadrantPaddingWidth() / displayNumber
-				- stickSpacing;
-		float stickX = getDataQuadrantPaddingStartX();
+            float highY;
+            float lowY;
+            if (stick.getMacd() == 0) {
+                continue;
+            }
+            if (stick.getMacd() > 0) {
+                mPaintStick.setColor(positiveStickColor);
+                highY = (float) ((1 - (stick.getMacd() - minValue)
+                        / (maxValue - minValue))
+                        * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+                lowY = (float) ((1 - (0 - minValue) / (maxValue - minValue))
+                        * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
 
-		// 判断显示为方柱或显示为线条
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			MACDEntity stick = (MACDEntity) stickData.get(i);
+            } else {
+                mPaintStick.setColor(negativeStickColor);
+                highY = (float) ((1 - (0 - minValue) / (maxValue - minValue))
+                        * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
 
-			float highY;
-			float lowY;
-			if (stick.getMacd() == 0) {
-				// 没有值的情况下不绘制
-				continue;
-			}
-			// 柱状线颜色设定
-			if (stick.getMacd() > 0) {
-				mPaintStick.setColor(positiveStickColor);
-				highY = (float) ((1 - (stick.getMacd() - minValue)
-						/ (maxValue - minValue))
-						* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
-				lowY = (float) ((1 - (0 - minValue) / (maxValue - minValue))
-						* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+                lowY = (float) ((1 - (stick.getMacd() - minValue)
+                        / (maxValue - minValue))
+                        * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
 
-			} else {
-				mPaintStick.setColor(negativeStickColor);
-				highY = (float) ((1 - (0 - minValue) / (maxValue - minValue))
-						* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+            }
 
-				lowY = (float) ((1 - (stick.getMacd() - minValue)
-						/ (maxValue - minValue))
-						* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+            if (macdDisplayType == MACD_DISPLAY_TYPE_STICK) {
+                if (stickWidth >= 2) {
+                    canvas.drawRect(stickX, highY, stickX + stickWidth, lowY,
+                            mPaintStick);
+                } else {
+                    canvas.drawLine(stickX, highY, stickX, lowY, mPaintStick);
+                }
+            } else if (macdDisplayType == MACD_DISPLAY_TYPE_LINE_STICK) {
+                canvas.drawLine(stickX + stickWidth / 2, highY, stickX
+                        + stickWidth / 2, lowY, mPaintStick);
+            }
+            stickX = stickX + stickSpacing + stickWidth;
+        }
+    }
 
-			}
+    protected void drawDiffLine(Canvas canvas) {
 
-			if (macdDisplayType == MACD_DISPLAY_TYPE_STICK) {
-				// 绘制数据，根据宽度判断绘制直线或方柱
-				if (stickWidth >= 2) {
-					canvas.drawRect(stickX, highY, stickX + stickWidth, lowY,
-							mPaintStick);
-				} else {
-					canvas.drawLine(stickX, highY, stickX, lowY, mPaintStick);
-				}
-			} else if (macdDisplayType == MACD_DISPLAY_TYPE_LINE_STICK) {
-				canvas.drawLine(stickX + stickWidth / 2, highY, stickX
-						+ stickWidth / 2, lowY, mPaintStick);
-			}
+        if (null == this.stickData) {
+            return;
+        }
+        Paint mPaintStick = new Paint();
+        mPaintStick.setAntiAlias(true);
+        mPaintStick.setColor(diffLineColor);
 
-			// X位移
-			stickX = stickX + stickSpacing + stickWidth;
-		}
-	}
+        // distance between two points
+        float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
+        // start point‘s X
+        float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
+        // start point
+        PointF ptFirst = null;
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            MACDEntity entity = (MACDEntity) stickData.get(i);
+            // calculate Y
+            float valueY = (float) ((1f - (entity.getDiff() - minValue)
+                    / (maxValue - minValue)) * getDataQuadrantPaddingHeight())
+                    + getDataQuadrantPaddingStartY();
 
-	protected void drawDiffLine(Canvas canvas) {
+            // if is not last point connect to previous point
+            if (i > displayFrom) {
+                canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
+                        mPaintStick);
+            }
+            // reset
+            ptFirst = new PointF(startX, valueY);
+            startX = startX + 1 + lineLength;
+        }
+    }
 
-		if (null == this.stickData) {
-			return;
-		}
-		Paint mPaintStick = new Paint();
-		mPaintStick.setAntiAlias(true);
-		mPaintStick.setColor(diffLineColor);
+    protected void drawDeaLine(Canvas canvas) {
 
-		// distance between two points
-		float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
-		// start point‘s X
-		float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
-		// start point
-		PointF ptFirst = null;
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			MACDEntity entity = (MACDEntity) stickData.get(i);
-			// calculate Y
-			float valueY = (float) ((1f - (entity.getDiff() - minValue)
-					/ (maxValue - minValue)) * getDataQuadrantPaddingHeight())
-					+ getDataQuadrantPaddingStartY();
+        Paint mPaintStick = new Paint();
+        mPaintStick.setAntiAlias(true);
+        mPaintStick.setColor(deaLineColor);
+        // distance between two points
+        float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
+        // set start point’s X
+        float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
+        // start point
+        PointF ptFirst = null;
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            MACDEntity entity = (MACDEntity) stickData.get(i);
+            // calculate Y
+            float valueY = (float) ((1f - (entity.getDea() - minValue)
+                    / (maxValue - minValue)) * getDataQuadrantPaddingHeight())
+                    + getDataQuadrantPaddingStartY();
 
-			// if is not last point connect to previous point
-			if (i > displayFrom) {
-				canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
-						mPaintStick);
-			}
-			// reset
-			ptFirst = new PointF(startX, valueY);
-			startX = startX + 1 + lineLength;
-		}
-	}
+            // if is not last point connect to previous point
+            if (i > displayFrom) {
+                canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
+                        mPaintStick);
+            }
+            // reset
+            ptFirst = new PointF(startX, valueY);
+            startX = startX + 1 + lineLength;
+        }
+    }
 
-	protected void drawDeaLine(Canvas canvas) {
+    protected void drawMacdLine(Canvas canvas) {
+        Paint mPaintStick = new Paint();
+        mPaintStick.setAntiAlias(true);
+        mPaintStick.setColor(macdLineColor);
 
-		Paint mPaintStick = new Paint();
-		mPaintStick.setAntiAlias(true);
-		mPaintStick.setColor(deaLineColor);
-		// distance between two points
-		float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
-		// set start point’s X
-		float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
-		// start point
-		PointF ptFirst = null;
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			MACDEntity entity = (MACDEntity) stickData.get(i);
-			// calculate Y
-			float valueY = (float) ((1f - (entity.getDea() - minValue)
-					/ (maxValue - minValue)) * getDataQuadrantPaddingHeight())
-					+ getDataQuadrantPaddingStartY();
+        // distance between two points
+        float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
+        // set start point’s X
+        float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
+        // start point
+        PointF ptFirst = null;
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            MACDEntity entity = (MACDEntity) stickData.get(i);
+            // calculate Y
+            float valueY = (float) ((1f - (entity.getMacd() - minValue)
+                    / (maxValue - minValue)) * getDataQuadrantPaddingHeight())
+                    + getDataQuadrantPaddingStartY();
 
-			// if is not last point connect to previous point
-			if (i > displayFrom) {
-				canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
-						mPaintStick);
-			}
-			// reset
-			ptFirst = new PointF(startX, valueY);
-			startX = startX + 1 + lineLength;
-		}
-	}
+            // if is not last point connect to previous point
+            if (i > displayFrom) {
+                canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
+                        mPaintStick);
+            }
+            // reset
+            ptFirst = new PointF(startX, valueY);
+            startX = startX + 1 + lineLength;
+        }
+    }
 
-	protected void drawMacdLine(Canvas canvas) {
-		Paint mPaintStick = new Paint();
-		mPaintStick.setAntiAlias(true);
-		mPaintStick.setColor(macdLineColor);
+    protected void drawLinesData(Canvas canvas) {
 
-		// distance between two points
-		float lineLength = getDataQuadrantPaddingWidth() / displayNumber - 1;
-		// set start point’s X
-		float startX = getDataQuadrantPaddingStartX() + lineLength / 2;
-		// start point
-		PointF ptFirst = null;
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			MACDEntity entity = (MACDEntity) stickData.get(i);
-			// calculate Y
-			float valueY = (float) ((1f - (entity.getMacd() - minValue)
-					/ (maxValue - minValue)) * getDataQuadrantPaddingHeight())
-					+ getDataQuadrantPaddingStartY();
+        if (stickData == null) {
+            return;
+        }
+        if (stickData.size() <= 0) {
+            return;
+        }
 
-			// if is not last point connect to previous point
-			if (i > displayFrom) {
-				canvas.drawLine(ptFirst.x, ptFirst.y, startX, valueY,
-						mPaintStick);
-			}
-			// reset
-			ptFirst = new PointF(startX, valueY);
-			startX = startX + 1 + lineLength;
-		}
-	}
+        drawDeaLine(canvas);
+        drawDiffLine(canvas);
+    }
 
-	protected void drawLinesData(Canvas canvas) {
+    public int getPositiveStickColor() {
+        return positiveStickColor;
+    }
 
-		if (stickData == null) {
-			return;
-		}
-		if (stickData.size() <= 0) {
-			return;
-		}
+    public void setPositiveStickColor(int positiveStickColor) {
+        this.positiveStickColor = positiveStickColor;
+    }
 
-		drawDeaLine(canvas);
-		drawDiffLine(canvas);
-	}
+    public int getNegativeStickColor() {
+        return negativeStickColor;
+    }
 
-	/**
-	 * @return the positiveStickColor
-	 */
-	public int getPositiveStickColor() {
-		return positiveStickColor;
-	}
+    public void setNegativeStickColor(int negativeStickColor) {
+        this.negativeStickColor = negativeStickColor;
+    }
 
-	/**
-	 * @param positiveStickColor
-	 *            the positiveStickColor to set
-	 */
-	public void setPositiveStickColor(int positiveStickColor) {
-		this.positiveStickColor = positiveStickColor;
-	}
+    public int getMacdLineColor() {
+        return macdLineColor;
+    }
 
-	/**
-	 * @return the negativeStickColor
-	 */
-	public int getNegativeStickColor() {
-		return negativeStickColor;
-	}
+    public void setMacdLineColor(int macdLineColor) {
+        this.macdLineColor = macdLineColor;
+    }
 
-	/**
-	 * @param negativeStickColor
-	 *            the negativeStickColor to set
-	 */
-	public void setNegativeStickColor(int negativeStickColor) {
-		this.negativeStickColor = negativeStickColor;
-	}
+    public int getDiffLineColor() {
+        return diffLineColor;
+    }
 
-	/**
-	 * @return the macdLineColor
-	 */
-	public int getMacdLineColor() {
-		return macdLineColor;
-	}
+    public void setDiffLineColor(int diffLineColor) {
+        this.diffLineColor = diffLineColor;
+    }
 
-	/**
-	 * @param macdLineColor
-	 *            the macdLineColor to set
-	 */
-	public void setMacdLineColor(int macdLineColor) {
-		this.macdLineColor = macdLineColor;
-	}
+    public int getDeaLineColor() {
+        return deaLineColor;
+    }
 
-	/**
-	 * @return the diffLineColor
-	 */
-	public int getDiffLineColor() {
-		return diffLineColor;
-	}
+    public void setDeaLineColor(int deaLineColor) {
+        this.deaLineColor = deaLineColor;
+    }
 
-	/**
-	 * @param diffLineColor
-	 *            the diffLineColor to set
-	 */
-	public void setDiffLineColor(int diffLineColor) {
-		this.diffLineColor = diffLineColor;
-	}
+    public int getMacdDisplayType() {
+        return macdDisplayType;
+    }
 
-	/**
-	 * @return the deaLineColor
-	 */
-	public int getDeaLineColor() {
-		return deaLineColor;
-	}
-
-	/**
-	 * @param deaLineColor
-	 *            the deaLineColor to set
-	 */
-	public void setDeaLineColor(int deaLineColor) {
-		this.deaLineColor = deaLineColor;
-	}
-
-	/**
-	 * @return the macdDisplayType
-	 */
-	public int getMacdDisplayType() {
-		return macdDisplayType;
-	}
-
-	/**
-	 * @param macdDisplayType
-	 *            the macdDisplayType to set
-	 */
-	public void setMacdDisplayType(int macdDisplayType) {
-		this.macdDisplayType = macdDisplayType;
-	}
+    public void setMacdDisplayType(int macdDisplayType) {
+        this.macdDisplayType = macdDisplayType;
+    }
 
 }
