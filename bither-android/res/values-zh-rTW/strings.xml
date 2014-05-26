@@ -70,7 +70,7 @@
     <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">請輸入密碼</string>
-    <string name="add_address_generate_address_password_lengh_note">6&#8211;30位數字</string>
+    <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;30</string>
     <string name="add_address_generate_address_password_set_label">請設置密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>

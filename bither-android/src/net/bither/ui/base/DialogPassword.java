@@ -39,12 +39,17 @@ import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CheckUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
 public class DialogPassword extends CenterDialog implements OnDismissListener,
         OnShowListener {
+    public static interface DialogPasswordListener {
+        public void onPasswordEntered(String password);
+    }
+
     private LinearLayout llInput;
     private LinearLayout llChecking;
     private TextView tvTitle;
@@ -106,6 +111,13 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
     private CheckListener passwordCheckListener = new CheckListener() {
 
         @Override
+        public void onCheckBegin(Check check) {
+            llChecking.setVisibility(View.VISIBLE);
+            llInput.setVisibility(View.INVISIBLE);
+            imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+        }
+
+        @Override
         public void onCheckEnd(Check check, boolean success) {
             if (executor != null) {
                 executor.shutdown();
@@ -125,29 +137,22 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
                 imm.showSoftInput(etPassword, 0);
             }
         }
-
-        @Override
-        public void onCheckBegin(Check check) {
-            llChecking.setVisibility(View.VISIBLE);
-            llInput.setVisibility(View.INVISIBLE);
-            imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-        }
     };
     private TextWatcher passwordWatcher = new TextWatcher() {
         private String password;
         private String passwordConfirm;
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before,
-                                  int count) {
-
-        }
-
-        @Override
         public void beforeTextChanged(CharSequence s, int start, int count,
                                       int after) {
             password = etPassword.getText().toString();
             passwordConfirm = etPasswordConfirm.getText().toString();
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before,
+                                  int count) {
+
         }
 
         @Override
@@ -171,6 +176,8 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         }
     };
 
+    ;
+
     public DialogPassword(Context context, DialogPasswordListener listener) {
         super(context);
         setContentView(R.layout.dialog_password);
@@ -181,7 +188,9 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         initView();
     }
 
-    ;
+    private PasswordSeed getPasswordSeed() {
+        return AppSharedPreference.getInstance().getPasswordSeed();
+    }
 
     private void initView() {
         llInput = (LinearLayout) findViewById(R.id.ll_input);
@@ -201,11 +210,20 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         passwordCheck.setCheckListener(passwordCheckListener);
         imm = (InputMethodManager) getContext().getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        UIUtil.configurePasswordEditText(etPassword);
+        UIUtil.configurePasswordEditText(etPasswordConfirm);
     }
 
-    public void dismiss() {
-        imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-        super.dismiss();
+    private void configureCheckPre() {
+        if (checkPre) {
+            if (passwordSeed != null) {
+                etPasswordConfirm.setVisibility(View.GONE);
+            } else {
+                etPasswordConfirm.setVisibility(View.VISIBLE);
+            }
+        } else {
+            etPasswordConfirm.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -233,10 +251,6 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         }
     }
 
-    private PasswordSeed getPasswordSeed() {
-        return AppSharedPreference.getInstance().getPasswordSeed();
-    }
-
     @Override
     public void onShow(DialogInterface dialog) {
         imm.showSoftInput(etPassword, 0);
@@ -251,18 +265,6 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
     public void setCheckPre(boolean check) {
         checkPre = check;
         configureCheckPre();
-    }
-
-    private void configureCheckPre() {
-        if (checkPre) {
-            if (passwordSeed != null) {
-                etPasswordConfirm.setVisibility(View.GONE);
-            } else {
-                etPasswordConfirm.setVisibility(View.VISIBLE);
-            }
-        } else {
-            etPasswordConfirm.setVisibility(View.GONE);
-        }
     }
 
     public void show() {
@@ -281,14 +283,15 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         super.show();
     }
 
-    public void setTitle(int resource) {
-        tvTitle.setText(resource);
+    public void dismiss() {
+        imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
+        super.dismiss();
     }
 
     ;
 
-    public void setTitle(String title) {
-        tvTitle.setText(title);
+    public void setTitle(int resource) {
+        tvTitle.setText(resource);
     }
 
     @Override
@@ -297,7 +300,7 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         super.setCancelable(flag);
     }
 
-    public static interface DialogPasswordListener {
-        public void onPasswordEntered(String password);
+    public void setTitle(String title) {
+        tvTitle.setText(title);
     }
 }
