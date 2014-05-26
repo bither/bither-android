@@ -68,7 +68,8 @@ import net.bither.util.WalletUtils;
 import java.io.File;
 import java.util.List;
 
-public class OptionHotFragment extends Fragment implements Selectable, DialogSetAvatar.SetAvatarDelegate {
+public class OptionHotFragment extends Fragment implements Selectable,
+        DialogSetAvatar.SetAvatarDelegate {
     private static Uri imageUri;
 
     private SettingSelectorView ssvCurrency;
@@ -96,6 +97,11 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     private SettingSelector currencySelector = new SettingSelector() {
 
         @Override
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
         public void onOptionIndexSelected(int index) {
             if (index == 0) {
                 AppSharedPreference.getInstance().setExchangeType(
@@ -119,10 +125,6 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
             return "CNY";
         }
 
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
 
         @Override
         public int getCurrentOptionIndex() {
@@ -335,6 +337,69 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
     };
 
     @Override
+    public void avatarFromCamera() {
+        if (FileUtil.existSdCardMounted()) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File file = ImageFileUtil.getImageForGallery(System.currentTimeMillis());
+            imageUri = Uri.fromFile(file);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, BitherSetting.REQUEST_CODE_CAMERA);
+        } else {
+            DropdownMessage.showDropdownMessage(getActivity(), R.string.no_sd_card);
+        }
+    }
+
+    @Override
+    public void avatarFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media
+                .EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case BitherSetting.REQUEST_CODE_IMAGE:
+                if (data != null) {
+                    Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
+                    intent.setData(data.getData());
+                    intent.setAction(data.getAction());
+                    LogUtil.d("fragment", "REQUEST_CODE_IMAGE");
+                    startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
+                }
+                break;
+            case BitherSetting.REQUEST_CODE_CAMERA:
+                Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
+
+                intent.putExtra("android.intent.extra.STREAM", imageUri);
+                intent.setAction(Intent.ACTION_SEND);
+                LogUtil.d("fragment", "REQUEST_CODE_CAMERA");
+                startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
+                break;
+            case BitherSetting.REQUEST_CODE_CROP_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
+                    String photoName = "";
+                    if (data != null && data.hasExtra(BitherSetting.INTENT_REF
+                            .PIC_PASS_VALUE_TAG)) {
+                        photoName = data.getStringExtra(BitherSetting.INTENT_REF
+                                .PIC_PASS_VALUE_TAG);
+                    }
+                    LogUtil.d("fragment", "photoName:" + photoName);
+                    if (!StringUtil.isEmpty(photoName)) {
+                        AppSharedPreference.getInstance().setUserAvatar(photoName);
+                        setAvatar(photoName);
+                    }
+                }
+                break;
+        }
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -389,77 +454,18 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
     }
 
-    @Override
-    public void avatarFromCamera() {
-        if (FileUtil.existSdCardMounted()) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File file = ImageFileUtil.getImageForGallery(System.currentTimeMillis());
-            imageUri = Uri.fromFile(file);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-            startActivityForResult(intent, BitherSetting.REQUEST_CODE_CAMERA);
-        } else {
-            DropdownMessage.showDropdownMessage(getActivity(), R.string.no_sd_card);
-        }
-    }
-
-    @Override
-    public void avatarFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        switch (requestCode) {
-            case BitherSetting.REQUEST_CODE_IMAGE:
-                if (data != null) {
-                    Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
-                    intent.setData(data.getData());
-                    intent.setAction(data.getAction());
-                    LogUtil.d("fragment", "REQUEST_CODE_IMAGE");
-                    startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
-                }
-                break;
-            case BitherSetting.REQUEST_CODE_CAMERA:
-                Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
-
-                intent.putExtra("android.intent.extra.STREAM", imageUri);
-                intent.setAction(Intent.ACTION_SEND);
-                LogUtil.d("fragment", "REQUEST_CODE_CAMERA");
-                startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
-                break;
-            case BitherSetting.REQUEST_CODE_CROP_IMAGE:
-                if (resultCode == Activity.RESULT_OK) {
-                    String photoName = "";
-                    if (data != null && data.hasExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG)) {
-                        photoName = data.getStringExtra(BitherSetting.INTENT_REF.PIC_PASS_VALUE_TAG);
-                    }
-                    LogUtil.d("fragment", "photoName:" + photoName);
-                    if (!StringUtil.isEmpty(photoName)) {
-                        AppSharedPreference.getInstance().setUserAvatar(photoName);
-                        setAvatar(photoName);
-                    }
-                }
-                break;
-        }
-
-    }
-
-    @Override
-    public void onSelected() {
-    }
-
     private void setAvatar(String photoName) {
         Bitmap avatar = null;
         if (!StringUtil.isEmpty(photoName)) {
             new UpdateAvatarThread(photoName).start();
         } else {
-            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(R.drawable.avatar_button_icon), null);
+            btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                    getResources().getDrawable(R.drawable.avatar_button_icon), null);
         }
+    }
+
+    @Override
+    public void onSelected() {
     }
 
     private class UpdateAvatarThread extends Thread {
@@ -478,10 +484,16 @@ public class OptionHotFragment extends Fragment implements Selectable, DialogSet
             }
             if (avatar != null) {
                 int borderPadding = UIUtil.dip2pix(2);
-                Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(), R.drawable.avatar_button_icon_border);
-                Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(), bmpBorder.getConfig());
+                Bitmap bmpBorder = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.avatar_button_icon_border);
+                Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(),
+                        bmpBorder.getConfig());
                 Canvas c = new Canvas(result);
-                c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding, result.getWidth() - borderPadding, result.getHeight() - borderPadding), null);
+                c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding,
+                                result.getWidth() - borderPadding,
+                                result.getHeight() - borderPadding),
+                        null
+                );
                 c.drawBitmap(bmpBorder, 0, 0, null);
                 final BitmapDrawable d = new BitmapDrawable(getResources(), result);
                 ThreadUtil.runOnMainThread(new Runnable() {

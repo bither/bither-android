@@ -16,8 +16,9 @@
 
 package net.bither.preference;
 
-import java.util.Date;
-import java.util.Locale;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting.AppMode;
@@ -28,30 +29,19 @@ import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import java.util.Date;
+import java.util.Locale;
 
 public class AppSharedPreference {
-    private SharedPreferences mPreferences;
-    private static AppSharedPreference mInstance = new AppSharedPreference();
-
     private static final String APP_BITHER = "app_bither";
-
     private static final String PREFS_KEY_LAST_VERSION = "last_version";
-
     private static final String DEFAULT_MARKET = "default_market";
     private static final String DEFAULT_EXCHANGE_RATE = "default_exchange_rate";
-
     private static final String APP_MODE = "app_mode";
-
     private static final String LAST_CHECK_PRIVATE_KEY_TIME = "last_check_private_key_time";
     private static final String LAST_BACK_UP_PRIVATE_KEY_TIME = "last_back_up_private_key_time";
-
     private static final String HAS_PRIVATE_KEY = "has_private_key";
-
     private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
-
     // from service
     private static final String SYNC_BLOCK_ONLY_WIFI = "sync_block_only_wifi";
     private static final String PREFS_KEY_CONNECTIVITY_NOTIFICATION = "connectivity_notification";
@@ -60,14 +50,20 @@ public class AppSharedPreference {
     private static final String DOWNLOAD_SPV_FINISH = "download_spv_finish";
     private static final String PASSWORD_SEED = "password_seed";
     private static final String USER_AVATAR = "user_avatar";
+    private static AppSharedPreference mInstance = new AppSharedPreference();
+    private SharedPreferences mPreferences;
+
+    private AppSharedPreference() {
+        this.mPreferences = BitherApplication.mContext.getSharedPreferences(
+                APP_BITHER, Context.MODE_MULTI_PROCESS);
+    }
 
     public static AppSharedPreference getInstance() {
         return mInstance;
     }
 
-    private AppSharedPreference() {
-        this.mPreferences = BitherApplication.mContext.getSharedPreferences(
-                APP_BITHER, Context.MODE_MULTI_PROCESS);
+    public int getVerionCode() {
+        return this.mPreferences.getInt(PREFS_KEY_LAST_VERSION, 0);
     }
 
     public void setVerionCode(int versionCode) {
@@ -75,13 +71,14 @@ public class AppSharedPreference {
                 .commit();
     }
 
-    public int getVerionCode() {
-        return this.mPreferences.getInt(PREFS_KEY_LAST_VERSION, 0);
-    }
+    public MarketType getDefaultMarket() {
+        MarketType marketType = getMarketType();
+        if (marketType == null) {
+            setDefault();
+        }
+        marketType = getMarketType();
+        return marketType;
 
-    public void setMarketType(MarketType marketType) {
-        this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal())
-                .commit();
     }
 
     private MarketType getMarketType() {
@@ -93,18 +90,9 @@ public class AppSharedPreference {
 
     }
 
-    public void setExchangeType(ExchangeType exchangeType) {
-        this.mPreferences.edit()
-                .putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
-    }
-
-    private ExchangeType getExchangeType() {
-        int type = this.mPreferences.getInt(DEFAULT_EXCHANGE_RATE, -1);
-        if (type == -1) {
-            return null;
-        }
-        return ExchangeType.values()[type];
-
+    public void setMarketType(MarketType marketType) {
+        this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal())
+                .commit();
     }
 
     private void setDefault() {
@@ -120,16 +108,6 @@ public class AppSharedPreference {
 
     }
 
-    public MarketType getDefaultMarket() {
-        MarketType marketType = getMarketType();
-        if (marketType == null) {
-            setDefault();
-        }
-        marketType = getMarketType();
-        return marketType;
-
-    }
-
     public ExchangeType getDefaultExchangeRate() {
         ExchangeType exchangeType = getExchangeType();
         if (exchangeType == null) {
@@ -138,6 +116,20 @@ public class AppSharedPreference {
         exchangeType = getExchangeType();
         return exchangeType;
 
+    }
+
+    private ExchangeType getExchangeType() {
+        int type = this.mPreferences.getInt(DEFAULT_EXCHANGE_RATE, -1);
+        if (type == -1) {
+            return null;
+        }
+        return ExchangeType.values()[type];
+
+    }
+
+    public void setExchangeType(ExchangeType exchangeType) {
+        this.mPreferences.edit()
+                .putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
     }
 
     public AppMode getAppMode() {
@@ -244,19 +236,12 @@ public class AppSharedPreference {
                 .commit();
     }
 
-    public PasswordSeed getPasswordSeed() {
-        String str = this.mPreferences.getString(PASSWORD_SEED, "");
-        if (StringUtil.isEmpty(str)) {
-            return null;
+    public TransactionFeeMode getTransactionFeeMode() {
+        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
+        if (ordinal < TransactionFeeMode.values().length && ordinal >= 0) {
+            return TransactionFeeMode.values()[ordinal];
         }
-        return new PasswordSeed(str);
-    }
-
-    public void setPasswordSeed(PasswordSeed passwordSeed) {
-        if (getPasswordSeed() == null) {
-            this.mPreferences.edit()
-                    .putString(PASSWORD_SEED, passwordSeed.toString()).commit();
-        }
+        return TransactionFeeMode.Normal;
     }
 
     public void setTransactionFeeMode(TransactionFeeMode mode) {
@@ -268,19 +253,29 @@ public class AppSharedPreference {
         TransactionsUtil.configureMinFee(mode.getMinFeeSatoshi());
     }
 
-    public TransactionFeeMode getTransactionFeeMode() {
-        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
-        if (ordinal < TransactionFeeMode.values().length && ordinal >= 0) {
-            return TransactionFeeMode.values()[ordinal];
-        }
-        return TransactionFeeMode.Normal;
+    public String getUserAvatar() {
+        return this.mPreferences.getString(USER_AVATAR, "");
     }
 
     public void setUserAvatar(String avatar) {
         this.mPreferences.edit().putString(USER_AVATAR, avatar).commit();
     }
 
-    public String getUserAvatar() {
-        return this.mPreferences.getString(USER_AVATAR, "");
+    public PasswordSeed getPasswordSeed() {
+        String str = this.mPreferences.getString(PASSWORD_SEED, "");
+        if (StringUtil.isEmpty(str)) {
+            return null;
+        }
+        return new PasswordSeed(str);
     }
+
+
+    public void setPasswordSeed(PasswordSeed passwordSeed) {
+        if (getPasswordSeed() == null) {
+            this.mPreferences.edit()
+                    .putString(PASSWORD_SEED, passwordSeed.toString()).commit();
+        }
+    }
+
+
 }

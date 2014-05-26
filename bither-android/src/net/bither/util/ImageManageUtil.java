@@ -21,20 +21,16 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.Window;
 
-
 import net.bither.BitherApplication;
 import net.bither.R;
-
-import net.bither.BitherApplication;
 import net.bither.preference.AppSharedPreference;
 
 import java.io.File;
@@ -108,7 +104,8 @@ public class ImageManageUtil {
         Bitmap avatarBit = null;
         if (!StringUtil.isEmpty(avatar)) {
             File file = ImageFileUtil.getSmallAvatarFile(avatar);
-            avatarBit = ImageManageUtil.getBitmapNearestSize(file, ImageManageUtil.IMAGE_SMALL_SIZE);
+            avatarBit = ImageManageUtil.getBitmapNearestSize(file,
+                    ImageManageUtil.IMAGE_SMALL_SIZE);
         }
         if (avatarBit == null) {
             avatarBit = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
@@ -150,6 +147,32 @@ public class ImageManageUtil {
         }
     }
 
+    private static int getSampleSize(int fileSize, int targetSize) {
+        int sampleSize = 1;
+        if (fileSize > targetSize * 2) {
+            int sampleLessThanSize = 0;
+            do {
+                sampleLessThanSize++;
+            } while (fileSize / sampleLessThanSize > targetSize);
+
+            for (int i = 1;
+                 i <= sampleLessThanSize;
+                 i++) {
+                if (Math.abs(fileSize / i - targetSize) <= Math.abs(fileSize
+                        / sampleSize - targetSize)) {
+                    sampleSize = i;
+                }
+            }
+        } else {
+            if (fileSize <= targetSize) {
+                sampleSize = 1;
+            } else {
+                sampleSize = 2;
+            }
+        }
+        return sampleSize;
+    }
+
     private static Bitmap getBitmapNearestSize(byte[] bytes, int size) {
         try {
             BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -166,30 +189,6 @@ public class ImageManageUtil {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static int getSampleSize(int fileSize, int targetSize) {
-        int sampleSize = 1;
-        if (fileSize > targetSize * 2) {
-            int sampleLessThanSize = 0;
-            do {
-                sampleLessThanSize++;
-            } while (fileSize / sampleLessThanSize > targetSize);
-
-            for (int i = 1; i <= sampleLessThanSize; i++) {
-                if (Math.abs(fileSize / i - targetSize) <= Math.abs(fileSize
-                        / sampleSize - targetSize)) {
-                    sampleSize = i;
-                }
-            }
-        } else {
-            if (fileSize <= targetSize) {
-                sampleSize = 1;
-            } else {
-                sampleSize = 2;
-            }
-        }
-        return sampleSize;
     }
 
 
