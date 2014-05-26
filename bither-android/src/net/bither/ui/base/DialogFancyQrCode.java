@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
@@ -48,10 +49,14 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
     private int clickedView = 0;
 
     public DialogFancyQrCode(Activity context, String content) {
+        this(context, content, AppSharedPreference.getInstance().hasUserAvatar());
+    }
+
+    public DialogFancyQrCode(Activity context, String content, boolean addAvatar) {
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        getWindow().getAttributes().dimAmount = 0.75f;
+        getWindow().getAttributes().dimAmount = 0.8f;
         getWindow().getAttributes().width = UIUtil.getScreenWidth();
         getWindow().getAttributes().height = UIUtil.getScreenHeight() - ImageManageUtil
                 .getStatusBarHeight(getWindow());
@@ -62,7 +67,8 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         initView();
         new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width,
                 getContext().getResources().getColor(R.color.fancy_qr_code_fg),
-                getContext().getResources().getColor(R.color.fancy_qr_code_bg), this).start();
+                getContext().getResources().getColor(R.color.fancy_qr_code_bg), this,
+                addAvatar).start();
     }
 
     private void initView() {

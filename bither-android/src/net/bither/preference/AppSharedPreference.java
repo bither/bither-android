@@ -268,6 +268,10 @@ public class AppSharedPreference {
         TransactionsUtil.configureMinFee(mode.getMinFeeSatoshi());
     }
 
+    public boolean hasUserAvatar() {
+        return !StringUtil.isEmpty(getUserAvatar());
+    }
+
     public String getUserAvatar() {
         return this.mPreferences.getString(USER_AVATAR, "");
     }
