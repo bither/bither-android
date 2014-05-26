@@ -218,11 +218,11 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
     private void checkValid() {
         btnOk.setEnabled(false);
         String password = etPassword.getText().toString();
-        if (password.length() >= 6 && password.length() <= 20) {
+        if (password.length() >= 6 && password.length() <= 30) {
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
                 String passwordConfirm = etPasswordConfirm.getText().toString();
                 if (passwordConfirm.length() >= 6
-                        && passwordConfirm.length() <= 20) {
+                        && passwordConfirm.length() <= 30) {
                     btnOk.setEnabled(true);
                 } else {
                     btnOk.setEnabled(false);
