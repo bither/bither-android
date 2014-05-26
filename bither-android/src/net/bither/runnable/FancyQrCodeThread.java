@@ -18,6 +18,7 @@ package net.bither.runnable;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
@@ -51,8 +52,12 @@ public class FancyQrCodeThread extends Thread {
 
     @Override
     public void run() {
-        final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
         Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
+        if (avatar == null) {
+            fgColor = Color.BLACK;
+            bgColor = Color.TRANSPARENT;
+        }
+        final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
         if (avatar != null) {
             Canvas c = new Canvas(qrCode);
             int avatarSize = (int) (size * AvatarSizeRate);
@@ -62,6 +67,7 @@ public class FancyQrCodeThread extends Thread {
             c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
                     avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
         }
+
         if (listener != null) {
             ThreadUtil.runOnMainThread(new Runnable() {
                 @Override
