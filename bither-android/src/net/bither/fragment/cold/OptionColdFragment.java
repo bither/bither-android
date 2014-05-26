@@ -92,7 +92,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private Button btnEditPassword;
     private FrameLayout flBackTime;
     private ProgressBar pbBackTime;
-    private TextView tvWebsite;
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
@@ -114,13 +113,18 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            String content = PrivateKeyUtil
-                    .getPrivateKeyStringFromAllPrivateAddresses();
-            Intent intent = new Intent(getActivity(), QrCodeActivity.class);
-            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-                    getString(R.string.clone_to_title));
-            intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
-            startActivity(intent);
+            new DialogPassword(getActivity(), new DialogPasswordListener() {
+                @Override
+                public void onPasswordEntered(String password) {
+                    String content = PrivateKeyUtil
+                            .getPrivateKeyStringFromAllPrivateAddresses();
+                    Intent intent = new Intent(getActivity(), QrCodeActivity.class);
+                    intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                            getString(R.string.clone_to_title));
+                    intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
+                    startActivity(intent);
+                }
+            }).show();
         }
     };
     private OnClickListener cloneFromClick = new OnClickListener() {
@@ -240,7 +244,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
         btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
         llQrForAll = (LinearLayout) view.findViewById(R.id.ll_qr_all_keys);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
-        tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         flBackTime = (FrameLayout) view.findViewById(R.id.ll_back_up);
         pbBackTime = (ProgressBar) view.findViewById(R.id.pb_back_up);
         String version = null;
