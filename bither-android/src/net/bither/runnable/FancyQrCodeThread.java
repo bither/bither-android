@@ -55,7 +55,7 @@ public class FancyQrCodeThread extends Thread {
         Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
         if (avatar == null) {
             fgColor = Color.BLACK;
-            bgColor = Color.TRANSPARENT;
+            bgColor = Color.WHITE;
         }
         final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
         if (avatar != null) {
