@@ -81,9 +81,9 @@ public abstract class CropImageGlActivityBase extends Activity {
     private FrameLayout flImageContainer;
     private FrameLayout flCamContainer;
     private FrameLayout flFilterToggle;
-    private ToggleButton tbtnFilters;
+
     private FrameLayout flFrameToggle;
-    private ToggleButton tbtnFrame;
+
     private ImageButton ibtnTiltShift;
     //  private TiltShiftModeView tiltShiftModeView;
 
@@ -169,16 +169,9 @@ public abstract class CropImageGlActivityBase extends Activity {
         flCamContainer = (FrameLayout) findViewById(R.id.fl_cam_container);
         flFilterToggle = (FrameLayout) findViewById(R.id.fl_filter_toggle);
         flFrameToggle = (FrameLayout) findViewById(R.id.fl_frame_toggle);
-        tbtnFrame = (ToggleButton) findViewById(R.id.tbtn_frame);
         ibtnTiltShift = (ImageButton) findViewById(R.id.ibtn_tilt_shift);
         //    tiltShiftModeView = (TiltShiftModeView) findViewById(R.id.tiltShift);
-        flFilterToggle.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                tbtnFilters.setChecked(!tbtnFilters.isChecked());
-            }
-        });
-        tbtnFilters = (ToggleButton) findViewById(R.id.tbtn_filter);
-        tbtnFilters.setOnCheckedChangeListener(filtersCheck);
+
         //fv = (FilterSelectorView) findViewById(R.id.sv_filters);
         findViewById(R.id.discard).setOnClickListener(
                 new OnClickListener() {
@@ -221,57 +214,15 @@ public abstract class CropImageGlActivityBase extends Activity {
         });
         btnCrop.setOnClickListener(cropOnClick);
 
-        flFrameToggle.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                tbtnFrame.setChecked(!tbtnFrame.isChecked());
-            }
-        });
-//        tbtnFrame.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView,
-//                                         boolean isChecked) {
-//                cv.setDrawBorder(isChecked);
-//            }
-//        });
+
         ibtnTiltShift.setOnClickListener(tiltShiftClick);
-        // tiltShiftModeView.setModeSelectedListener(tiltShiftModeSelected);
-//        mFilters = GlFilterUtil.getFilters();
-//        cv.setFilters(mFilters);
-//        initFilterSelector();
         orientation = FileUtil.getOrientationOfFile(fromFileName);
         rotateImage(orientation);
         startRedrawImageView();
-        tbtnFilters.postDelayed(new Runnable() {
-            public void run() {
-                tbtnFilters.setChecked(true);
-            }
-        }, 100);
 
         pdSaving = getProgressDialog(getString(R.string.saving));
         pdSaving.setCancelable(true);
     }
-
-//    private ModeSelectedListener tiltShiftModeSelected = new ModeSelectedListener() {
-//        public void onModeSelected(int mode) {
-//            if (mode != BlurManager.getBlurType()) {
-//                BlurManager.setBlurType(mode);
-//                if (mode == BlurManager.BLUR_TYPE_NONE) {
-//                    ibtnTiltShift
-//                            .setImageResource(R.drawable.action_bar_glyph_tiltshift_selector);
-//                    cv.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-//                    cv.requestRender();
-//                } else {
-//                    if (mode == BlurManager.BLUR_TYPE_CIRCLE) {
-//                        ibtnTiltShift
-//                                .setImageResource(R.drawable.action_bar_glyph_tiltshift_circle_selector);
-//                    } else if (mode == BlurManager.BLUR_TYPE_LINEAR) {
-//                        ibtnTiltShift
-//                                .setImageResource(R.drawable.action_bar_glyph_tiltshift_bar_selector);
-//                    }
-//                    BlurManager.showOnce();
-//                }
-//            }
-//        }
-//    };
 
     private OnClickListener tiltShiftClick = new OnClickListener() {
         public void onClick(View v) {

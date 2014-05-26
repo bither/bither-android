@@ -38,7 +38,7 @@ public class CropImageGlActivity extends CropImageGlActivityBase {
     private static final int FinishAnimDuration = 300;
 
     private boolean touchable;
-    private ToggleButton tbtnFilter;
+
     private View fsv;
     private View llBottom;
     private View llTop;
@@ -47,7 +47,7 @@ public class CropImageGlActivity extends CropImageGlActivityBase {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         touchable = true;
-        tbtnFilter = (ToggleButton) findViewById(R.id.tbtn_filter);
+
         //fsv = findViewById(R.id.sv_filters);
         llBottom = findViewById(R.id.ll_bottom);
         llTop = findViewById(R.id.rl_title_bar);
