@@ -314,8 +314,10 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 		dp.show();
 		DrawShareImageThread thread = new DrawShareImageThread();
 		dp.setThread(thread);
-		chartDepth.clearTounch();
-		chartKline.clearTounch();
+		chartDepth.onlyClearTouch();
+		chartKline.onlyClearTouch();
+        marketDepthDetailView.setVisibility(View.INVISIBLE);
+        mKLineDetailView.setVisibility(View.INVISIBLE);
 		thread.start();
 	}
 

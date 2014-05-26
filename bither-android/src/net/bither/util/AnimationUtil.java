@@ -28,7 +28,7 @@ import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 public class AnimationUtil {
-    private static final int FADE_IN_DURATION = 300;
+    private static final int FADE_DURATION = 500;
     private static final int MOVE_MARGIN_DURATION = 500;
 
     private AnimationUtil() {
@@ -38,7 +38,7 @@ public class AnimationUtil {
     public static void fadeOut(final View view) {
         view.setVisibility(View.VISIBLE);
         Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
-        alphaAnimation.setDuration(FADE_IN_DURATION);
+        alphaAnimation.setDuration(FADE_DURATION);
         alphaAnimation.setAnimationListener(new AnimationListener() {
 
             @Override
@@ -62,7 +62,7 @@ public class AnimationUtil {
 
     public static void fadeIn(final View view) {
         Animation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
-        alphaAnimation.setDuration(FADE_IN_DURATION);
+        alphaAnimation.setDuration(FADE_DURATION);
         alphaAnimation.setAnimationListener(new AnimationListener() {
 
             @Override
