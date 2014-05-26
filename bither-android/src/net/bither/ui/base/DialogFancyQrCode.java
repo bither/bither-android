@@ -32,7 +32,6 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.ImageManageUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -57,14 +56,13 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
-        getWindow().getAttributes().width = UIUtil.getScreenWidth();
-        getWindow().getAttributes().height = UIUtil.getScreenHeight() - ImageManageUtil
-                .getStatusBarHeight(getWindow());
         setCanceledOnTouchOutside(true);
         this.content = content;
         setContentView(R.layout.dialog_fancy_qr_code);
         setOnDismissListener(this);
         initView();
+        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT);
         new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width,
                 getContext().getResources().getColor(R.color.fancy_qr_code_fg),
                 getContext().getResources().getColor(R.color.fancy_qr_code_bg), this,
