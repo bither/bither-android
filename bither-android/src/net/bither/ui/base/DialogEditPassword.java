@@ -37,6 +37,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.EditPasswordThread;
 import net.bither.util.CheckUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -91,6 +92,9 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         passwordCheck.setCheckListener(this);
         imm = (InputMethodManager) getContext().getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        UIUtil.configurePasswordEditText(etOldPassword);
+        UIUtil.configurePasswordEditText(etNewPassword);
+        UIUtil.configurePasswordEditText(etNewPasswordConfirm);
     }
 
     @Override
