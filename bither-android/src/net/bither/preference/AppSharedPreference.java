@@ -49,6 +49,8 @@ public class AppSharedPreference {
     private static final String PREFS_DEFAULT_BTC_PRECISION = "4";
     private static final String DOWNLOAD_SPV_FINISH = "download_spv_finish";
     private static final String PASSWORD_SEED = "password_seed";
+    private static final String USER_AVATAR = "user_avatar";
+
     private static AppSharedPreference mInstance = new AppSharedPreference();
     private SharedPreferences mPreferences;
 
@@ -70,6 +72,16 @@ public class AppSharedPreference {
                 .commit();
     }
 
+    public MarketType getDefaultMarket() {
+        MarketType marketType = getMarketType();
+        if (marketType == null) {
+            setDefault();
+        }
+        marketType = getMarketType();
+        return marketType;
+
+    }
+
     private MarketType getMarketType() {
         int type = this.mPreferences.getInt(DEFAULT_MARKET, -1);
         if (type == -1) {
@@ -82,20 +94,6 @@ public class AppSharedPreference {
     public void setMarketType(MarketType marketType) {
         this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal())
                 .commit();
-    }
-
-    private ExchangeType getExchangeType() {
-        int type = this.mPreferences.getInt(DEFAULT_EXCHANGE_RATE, -1);
-        if (type == -1) {
-            return null;
-        }
-        return ExchangeType.values()[type];
-
-    }
-
-    public void setExchangeType(ExchangeType exchangeType) {
-        this.mPreferences.edit()
-                .putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
     }
 
     private void setDefault() {
@@ -111,16 +109,6 @@ public class AppSharedPreference {
 
     }
 
-    public MarketType getDefaultMarket() {
-        MarketType marketType = getMarketType();
-        if (marketType == null) {
-            setDefault();
-        }
-        marketType = getMarketType();
-        return marketType;
-
-    }
-
     public ExchangeType getDefaultExchangeRate() {
         ExchangeType exchangeType = getExchangeType();
         if (exchangeType == null) {
@@ -129,6 +117,20 @@ public class AppSharedPreference {
         exchangeType = getExchangeType();
         return exchangeType;
 
+    }
+
+    private ExchangeType getExchangeType() {
+        int type = this.mPreferences.getInt(DEFAULT_EXCHANGE_RATE, -1);
+        if (type == -1) {
+            return null;
+        }
+        return ExchangeType.values()[type];
+
+    }
+
+    public void setExchangeType(ExchangeType exchangeType) {
+        this.mPreferences.edit()
+                .putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
     }
 
     public AppMode getAppMode() {
@@ -265,4 +267,13 @@ public class AppSharedPreference {
                 .commit();
         TransactionsUtil.configureMinFee(mode.getMinFeeSatoshi());
     }
+
+    public String getUserAvatar() {
+        return this.mPreferences.getString(USER_AVATAR, "");
+    }
+
+    public void setUserAvatar(String avatar) {
+        this.mPreferences.edit().putString(USER_AVATAR, avatar).commit();
+    }
+
 }

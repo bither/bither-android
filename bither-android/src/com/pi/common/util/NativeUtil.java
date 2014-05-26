@@ -30,6 +30,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 public class NativeUtil {
+    private static int DEFAULT_QUALITY=95;
+    public static void compressBitmap(Bitmap bit, String fileName,
+                                      boolean optimize){
+        compressBitmap(bit,DEFAULT_QUALITY,fileName,optimize);
+
+    }
     public static void compressBitmap(Bitmap bit, int quality, String fileName,
                                       boolean optimize) {
         LogUtil.d("native", "compress of native");

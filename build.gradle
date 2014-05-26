@@ -41,6 +41,10 @@ subprojects {
             debug.setRoot('build-types/debug')
             release.setRoot('build-types/release')
         }
+        packagingOptions {
+            exclude 'META-INF/NOTICE.txt'
+            exclude 'META-INF/LICENSE.txt'
+        }
         lintOptions {
             abortOnError false
         }

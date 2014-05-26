@@ -66,7 +66,6 @@ import java.util.List;
 public class OptionColdFragment extends Fragment implements Selectable {
     private int ONE_HOUR = 1 * 60 * 60 * 1000;
     private OnClickListener backupTimeListener = new OnClickListener() {
-
         @Override
         public void onClick(View v) {
             long backupTime = AppSharedPreference.getInstance()
@@ -84,7 +83,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 );
                 dialogConfirmTask.show();
             }
-
         }
     };
     private Button btnGetSign;
@@ -173,6 +171,47 @@ public class OptionColdFragment extends Fragment implements Selectable {
     };
 
     @Override
+    public void onSelected() {
+        configureCloneButton();
+        configureQrForAll();
+    }
+
+    private void configureCloneButton() {
+        if (WalletUtils.getPrivateAddressList() != null
+                && WalletUtils.getPrivateAddressList().size() > 0) {
+            btnCloneFrom.setVisibility(View.GONE);
+            btnCloneTo.setVisibility(View.VISIBLE);
+        } else {
+            btnCloneFrom.setVisibility(View.VISIBLE);
+            btnCloneTo.setVisibility(View.GONE);
+        }
+    }
+
+    private void configureQrForAll() {
+        if (WalletUtils.getPrivateAddressList() != null
+                && WalletUtils.getPrivateAddressList().size() > 0) {
+            llQrForAll.setVisibility(View.VISIBLE);
+        } else {
+            llQrForAll.setVisibility(View.GONE);
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
+            String content = data
+                    .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            DialogPassword dialogPassword = new DialogPassword(getActivity(),
+                    new CloneFromPasswordListener(content));
+            dialogPassword.setCheckPre(false);
+            dialogPassword.setTitle(R.string.clone_from_password);
+            dialogPassword.show();
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -184,12 +223,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 false);
         initView(view);
         return view;
-    }
-
-    @Override
-    public void onSelected() {
-        configureCloneButton();
-        configureQrForAll();
     }
 
     @Override
@@ -257,41 +290,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
             btnBackupTime.setText(R.string.no_sd_card_of_back_up);
         }
 
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE
-                && resultCode == Activity.RESULT_OK) {
-            String content = data
-                    .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            DialogPassword dialogPassword = new DialogPassword(getActivity(),
-                    new CloneFromPasswordListener(content));
-            dialogPassword.setCheckPre(false);
-            dialogPassword.setTitle(R.string.clone_from_password);
-            dialogPassword.show();
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void configureCloneButton() {
-        if (WalletUtils.getPrivateAddressList() != null
-                && WalletUtils.getPrivateAddressList().size() > 0) {
-            btnCloneFrom.setVisibility(View.GONE);
-            btnCloneTo.setVisibility(View.VISIBLE);
-        } else {
-            btnCloneFrom.setVisibility(View.VISIBLE);
-            btnCloneTo.setVisibility(View.GONE);
-        }
-    }
-
-    private void configureQrForAll() {
-        if (WalletUtils.getPrivateAddressList() != null
-                && WalletUtils.getPrivateAddressList().size() > 0) {
-            llQrForAll.setVisibility(View.VISIBLE);
-        } else {
-            llQrForAll.setVisibility(View.GONE);
-        }
     }
 
     private void backupPrivateKey() {

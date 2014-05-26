@@ -212,7 +212,8 @@
     <string name="clone_from_password">输入克隆源的密码</string>
     <string name="qr_code_for_all_addresses">冷钱包监控二维码</string>
     <string name="qr_code_for_all_addresses_title">使用热钱包扫描来监控冷钱包</string>
-    <string name="no_sd_card_of_back_up">没有SD卡，无法自动备份</string>
+    <string name="no_sd_card_of_back_up">SD卡错误，无法自动备份</string>
+    <string name="no_sd_card">SD卡错误</string>
     <string name="last_time_of_back_up">上一次备份时间: %s </string>
     <string name="just_now">刚刚</string>
     <string name="private_key_count_limit">已达私钥数量上限</string>

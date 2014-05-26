@@ -251,8 +251,6 @@ public class BitherApplication extends Application {
 		TransactionsUtil.configureMinFee(AppSharedPreference.getInstance()
 				.getTransactionFeeMode().getMinFeeSatoshi());
 	}
-    public static DialogCropPhotoTransit getDialogCropPhotoTransit() {
-        return DialogCropPhotoTransit.getInstance();
-    }
+
 
 }

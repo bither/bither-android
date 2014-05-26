@@ -98,11 +98,11 @@
                     android:layout_margin="3dp"
                     android:background="@drawable/camera_iris_frame" >
 
-                    <net.bither.camera.support.FilterSurfaceView
-                        android:id="@+id/filter_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center" />
+                    <!--<net.bither.camera.support.FilterSurfaceView-->
+                        <!--android:id="@+id/filter_image"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_gravity="center" />-->
                 </FrameLayout>
             </FrameLayout>
 
@@ -130,8 +130,8 @@
 
     <LinearLayout
         android:id="@id/rl_title_bar"
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_gravity="top" >
 

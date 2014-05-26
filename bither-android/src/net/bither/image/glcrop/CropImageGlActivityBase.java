@@ -16,7 +16,6 @@
 package net.bither.image.glcrop;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
@@ -28,7 +27,6 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,20 +37,20 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 
+import com.pi.common.util.NativeUtil;
+
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.runnable.HandlerMessage;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.runnable.BaseRunnable;
 import net.bither.util.ImageManageUtil;
@@ -130,10 +128,6 @@ public abstract class CropImageGlActivityBase extends Activity {
                 if (BitherApplication.initialActivity != null) {
                     BitherApplication.initialActivity.finish();
                 }
-//                FetcherHolder.getLargeImageFetcher().getImageCache()
-//                        .clearMemoryCache();
-//                FetcherHolder.getSmallImageFetcher().getImageCache()
-//                        .clearMemoryCache();
                 Uri formUri = (Uri) intent.getExtras().get(
                         "android.intent.extra.STREAM");
                 File fromFile = FileUtil.convertUriToFile(
@@ -141,6 +135,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                 if (fromFile != null) {
                     fromFileName = fromFile.getAbsolutePath();
                 }
+
             }
         }
         if (StringUtil.isEmpty(fromFileName)) {
@@ -164,7 +159,6 @@ public abstract class CropImageGlActivityBase extends Activity {
         }
 
         mImageView = (CropImageView) findViewById(R.id.image);
-        //  cv = (FilterSurfaceView) findViewById(R.id.filter_image);
         flCameraIrisFrame = (FrameLayout) findViewById(R.id.fl_camera_iris_frame);
         LayoutParams lp = (LayoutParams) flCameraIrisFrame
                 .getLayoutParams();
@@ -254,8 +248,6 @@ public abstract class CropImageGlActivityBase extends Activity {
 
         pdSaving = getProgressDialog(getString(R.string.saving));
         pdSaving.setCancelable(true);
-//        FetcherHolder.getLargeImageFetcher();
-//        FetcherHolder.getSmallImageFetcher();
     }
 
 //    private ModeSelectedListener tiltShiftModeSelected = new ModeSelectedListener() {
@@ -511,23 +503,9 @@ public abstract class CropImageGlActivityBase extends Activity {
             mSaving = true;
 
             timeMillis = System.currentTimeMillis();
-            Bitmap croppedImage;
+            final Bitmap croppedImage;
             final Rect imagePlace = new Rect();
-            final String photoName;
-//            switch (getPiImageType()) {
-//                case GETCAI:
-//                    photoName = FileUtil.getGetcaiPhotoName(AppSharedPreference
-//                            .getInstance().getMyUser().getUserId(), timeMillis);
-//                    break;
-//                case AVATAR:
-//                    ImageFileUtil.getAvatarFile()
-//                    photoName = FileUtil.getSelfAvatarPhotoName(timeMillis);
-//                    break;
-//                default:
-//                    photoName = FileUtil.getPiameraPhotoName(AppSharedPreference
-//                            .getInstance().getMyUser().getUserId(), timeMillis);
-//                    break;
-//            }
+            final String photoName = ImageFileUtil.getAvatarFileName(timeMillis);
             if (side == CropSide) {
                 croppedImage = getCropedBitmap();
                 Rect crop = mCrop.getCropRect();
@@ -550,47 +528,28 @@ public abstract class CropImageGlActivityBase extends Activity {
                         + (int) (crop.width() * values[0]);
                 imagePlace.bottom = imagePlace.top
                         + (int) (crop.height() * values[0]);
-                SaveRunnable save = new SaveRunnable(croppedImage, timeMillis
+                SaveRunnable save = new SaveRunnable(croppedImage, photoName
                 );
                 save.setHandler(new Handler() {
                     @Override
                     public void dispatchMessage(Message msg) {
 
-//                        switch (msg.what) {
-//                            case GLUtil.CaptureBegin:
-//                                pdSaving.show();
-//                                break;
-//                            case GLUtil.CaptureSuccess:
-//                                mSaving = false;
-//                                pdSaving.dismiss();
-//                                BitherApplication.getDialogCropPhotoTransit()
-//                                        .setFromRect(imagePlace);
-//                                BitherApplication.getDialogCropPhotoTransit()
-//                                        .setToShowAnimation(toShowSaveAnimation());
-//                                BitherApplication
-//                                        .getDialogCropPhotoTransit()
-//                                        .setBitmap(
-//                                                FetcherHolder
-//                                                        .getLargeImageFetcher()
-//                                                        .getImageCache()
-//                                                        .getBitmapFromMemCache(
-//                                                                getPiImageType()
-//                                                                        .getLargeImageUrl(
-//                                                                                photoName)
-//                                                        )
-//                                        );
-//                                if (!isPaused) {
-//                                    BitherApplication.getDialogCropPhotoTransit()
-//                                            .show();
-//                                }
-//                                handleSaveSuccess(timeMillis, 0);
-//                                break;
-//                            case GLUtil.CaptureFailed:
-//                                mSaving = false;
-//
-//                                pdSaving.dismiss();
-//                                break;
-//                        }
+                        switch (msg.what) {
+                            case HandlerMessage.MSG_PREPARE:
+                                pdSaving.show();
+                                break;
+                            case HandlerMessage.MSG_SUCCESS:
+                                mSaving = false;
+                                pdSaving.dismiss();
+
+                                handleSaveSuccess(photoName);
+                                break;
+                            case HandlerMessage.MSG_FAILURE:
+                                mSaving = false;
+
+                                pdSaving.dismiss();
+                                break;
+                        }
                     }
                 });
                 new Thread(save).start();
@@ -664,25 +623,28 @@ public abstract class CropImageGlActivityBase extends Activity {
     private static class SaveRunnable extends BaseRunnable {
 
         private Bitmap b;
-        private long timeMillis;
-//        private PiImageType imageType;
+        private String photoName;
 
-        public SaveRunnable(Bitmap bmp, long timeStamp) {
+        public SaveRunnable(Bitmap bmp, String photoName) {
             this.b = bmp;
-            this.timeMillis = timeStamp;
-//            this.imageType = imageType;
+            this.photoName = photoName;
         }
 
         @Override
         public void run() {
             try {
-                //TODO save bitmap
-//                obtainMessage(GLUtil.CaptureBegin);
-//                GLUtil.saveImage(b, timeMillis, 0, false, imageType);
-//                obtainMessage(GLUtil.CaptureSuccess);
+                obtainMessage(HandlerMessage.MSG_PREPARE);
+                File file = ImageFileUtil.getUploadAvatarFile(photoName);
+                NativeUtil.compressBitmap(b, file.getAbsolutePath(), true);
+                file = ImageFileUtil.getAvatarFile(photoName);
+                NativeUtil.compressBitmap(b, file.getAbsolutePath(), true);
+                file = ImageFileUtil.getSmallAvatarFile(photoName);
+                Bitmap smallBit = ImageManageUtil.getMatrixBitmap(b, ImageManageUtil.IMAGE_SMALL_SIZE, ImageManageUtil.IMAGE_SMALL_SIZE, false);
+                NativeUtil.compressBitmap(smallBit, file.getAbsolutePath(), true);
+                obtainMessage(HandlerMessage.MSG_SUCCESS);
             } catch (Exception e) {
                 e.printStackTrace();
-                //  obtainMessage(GLUtil.CaptureFailed);
+                obtainMessage(HandlerMessage.MSG_FAILURE);
             }
         }
     }
@@ -715,7 +677,7 @@ public abstract class CropImageGlActivityBase extends Activity {
             if (orBitmap == null || orBitmap.isRecycled()) {
                 if (!StringUtil.isEmpty(fromFileName)) {
                     orBitmap = ImageManageUtil
-                            .getBitmapNearestSize(fromFileName, ImageManageUtil.IMAGE_SIZE);
+                            .getBitmapNearestSize(new File(fromFileName), ImageManageUtil.IMAGE_SIZE);
                     if (orBitmap == null) {
                         finish();
                         return null;
@@ -820,11 +782,8 @@ public abstract class CropImageGlActivityBase extends Activity {
         }
     }
 
-    ;
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            setResult(RESULT_CANCELED);
             finish();
             overridePendingTransition(0, R.anim.slide_out_bottom);
         }
@@ -883,7 +842,7 @@ public abstract class CropImageGlActivityBase extends Activity {
         return true;
     }
 
-    protected abstract void handleSaveSuccess(long timeStamp, int filterId);
+    protected abstract void handleSaveSuccess(String photoName);
 
     protected abstract Dialog getProgressDialog(String msg);
 }

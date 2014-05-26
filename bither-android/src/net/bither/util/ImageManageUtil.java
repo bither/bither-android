@@ -31,10 +31,12 @@ import android.view.Window;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 
 import java.io.File;
 
 public class ImageManageUtil {
+    public static int IMAGE_SMALL_SIZE = 150;
     public static int IMAGE_SIZE = 612;
 
     public static int getScreenWidth() {
@@ -97,11 +99,19 @@ public class ImageManageUtil {
         Paint avatarPaint = new Paint();
         avatarPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         avatarPaint.setAntiAlias(true);
-        // TODO get avatar
-        Bitmap avatar = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
-        c.drawBitmap(avatar, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
+        String avatar = AppSharedPreference.getInstance().getUserAvatar();
+        Bitmap avatarBit = null;
+        if (!StringUtil.isEmpty(avatar)) {
+            File file = ImageFileUtil.getSmallAvatarFile(avatar);
+            avatarBit = ImageManageUtil.getBitmapNearestSize(file,
+                    ImageManageUtil.IMAGE_SMALL_SIZE);
+        }
+        if (avatarBit == null) {
+            avatarBit = BitmapFactory.decodeResource(res, R.drawable.avatar_test);
+        }
+        c.drawBitmap(avatarBit, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
                 avatarPaint);
-        avatar = null;
+        avatarBit = null;
         Bitmap overlay = BitmapFactory.decodeResource(res,
                 R.drawable.avatar_for_fancy_qr_code_overlay);
         c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
@@ -110,9 +120,8 @@ public class ImageManageUtil {
     }
 
 
-    public static Bitmap getBitmapNearestSize(String fileName, int size) {
+    public static Bitmap getBitmapNearestSize(File file, int size) {
         try {
-            File file = new File(fileName);
             if (file == null || !file.exists()) {
                 return null;
             } else if (file.length() == 0) {
@@ -121,7 +130,7 @@ public class ImageManageUtil {
             }
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(fileName, opts);
+            BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
             int sampleSize = getSampleSize(
                     Math.min(opts.outHeight, opts.outWidth), size);
             opts.inSampleSize = sampleSize;
@@ -129,26 +138,8 @@ public class ImageManageUtil {
             opts.inPurgeable = true;
             opts.inInputShareable = false;
             opts.inPreferredConfig = Config.ARGB_8888;
-            Bitmap bit = BitmapFactory.decodeFile(fileName, opts);
+            Bitmap bit = BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
             return bit;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private static Bitmap getBitmapNearestSize(byte[] bytes, int size) {
-        try {
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-            int bmpSize = Math.min(opts.outHeight, opts.outWidth);
-            opts.inSampleSize = getSampleSize(bmpSize, size);
-            opts.inJustDecodeBounds = false;
-            opts.inPurgeable = true;
-            opts.inInputShareable = false;
-            opts.inPreferredConfig = Config.ARGB_8888;
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

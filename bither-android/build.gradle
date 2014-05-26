@@ -16,6 +16,8 @@ dependencies {
         transitive = true
     }
     compile 'com.lambdaworks:scrypt:1.4.0@jar'
+    compile 'org.apache.httpcomponents:httpmime:4.1@jar'
+    compile 'org.apache.james:apache-mime4j-core:0.7.1@jar'
     compile project(':wheel')
     compile project(':android-charts')
 }
