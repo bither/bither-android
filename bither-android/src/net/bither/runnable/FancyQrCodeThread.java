@@ -29,6 +29,10 @@ import net.bither.util.ThreadUtil;
  * Created by songchenwen on 14-5-24.
  */
 public class FancyQrCodeThread extends Thread {
+    public static interface FancyQrCodeListener {
+        public void generated(Bitmap bmp);
+    }
+
     public static final float AvatarSizeRate = 0.16f;
     private FancyQrCodeListener listener;
     private String content;
@@ -49,13 +53,15 @@ public class FancyQrCodeThread extends Thread {
     public void run() {
         final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
         Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
-        Canvas c = new Canvas(qrCode);
-        int avatarSize = (int) (size * AvatarSizeRate);
-        int avaterOffset = (size - avatarSize) / 2;
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
-                avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
+        if (avatar != null) {
+            Canvas c = new Canvas(qrCode);
+            int avatarSize = (int) (size * AvatarSizeRate);
+            int avaterOffset = (size - avatarSize) / 2;
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+            c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
+                    avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
+        }
         if (listener != null) {
             ThreadUtil.runOnMainThread(new Runnable() {
                 @Override
@@ -64,9 +70,5 @@ public class FancyQrCodeThread extends Thread {
                 }
             });
         }
-    }
-
-    public static interface FancyQrCodeListener {
-        public void generated(Bitmap bmp);
     }
 }
