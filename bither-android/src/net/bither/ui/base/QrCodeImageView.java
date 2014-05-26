@@ -39,6 +39,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class QrCodeImageView extends FrameLayout implements OnClickListener {
+    public static interface QrCodeFullScreenListener {
+        public void onShowFullScreenQr(String content, Bitmap placeHolder,
+                                       View fromView);
+    }
+
     private static ThreadPoolExecutor threadPool;
     private int fgColor;
     private int bgColor;
@@ -56,16 +61,6 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         initView();
     }
 
-    public QrCodeImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView();
-    }
-
-    public QrCodeImageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        initView();
-    }
-
     private void initView() {
         fgColor = Color.BLACK;
         bgColor = Color.TRANSPARENT;
@@ -76,6 +71,28 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         iv = (ImageView) findViewById(R.id.iv_qr);
         pb = (ProgressBar) findViewById(R.id.pb_qr);
         setOnClickListener(this);
+    }
+
+    public QrCodeImageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
+
+    public QrCodeImageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
+
+    public void setFullScreenListener(QrCodeFullScreenListener listener) {
+        this.listener = listener;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        setContent(content, Color.BLACK, Color.TRANSPARENT);
     }
 
     public void setContent(String content, int fgColor, int bgColor) {
@@ -98,18 +115,6 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         }
     }
 
-    public void setFullScreenListener(QrCodeFullScreenListener listener) {
-        this.listener = listener;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        setContent(content, Color.BLACK, Color.TRANSPARENT);
-    }
-
     @Override
     public void onClick(View v) {
         if (bmp == null || listener == null) {
@@ -125,33 +130,6 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         }
         return threadPool;
     }
-
-    public static interface QrCodeFullScreenListener {
-        public void onShowFullScreenQr(String content, Bitmap placeHolder,
-                                       View fromView);
-    }
-
-    private Runnable showRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            final int size = Math.min(getWidth(), getHeight());
-            if (size == 0) {
-                mainHandler.removeCallbacks(showRunnable);
-                mainHandler.postDelayed(showRunnable, 50);
-                return;
-            }
-            iv.getLayoutParams().width = size;
-            iv.getLayoutParams().height = size;
-            pb.setVisibility(View.VISIBLE);
-            if (future != null) {
-                future.cancel(true);
-                future = null;
-            }
-            bmpRunnable = new BmpRunnable(size);
-            future = getThreadPool().submit(bmpRunnable);
-        }
-    };
 
     private class BmpRunnable implements Runnable {
         private int size;
@@ -179,6 +157,29 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
             future = null;
         }
     }
+
+    private Runnable showRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            final int size = Math.min(getWidth() - getPaddingLeft() - getPaddingRight(),
+                    getHeight() - getPaddingTop() - getPaddingBottom());
+            if (size == 0) {
+                mainHandler.removeCallbacks(showRunnable);
+                mainHandler.postDelayed(showRunnable, 50);
+                return;
+            }
+            iv.getLayoutParams().width = size;
+            iv.getLayoutParams().height = size;
+            pb.setVisibility(View.VISIBLE);
+            if (future != null) {
+                future.cancel(true);
+                future = null;
+            }
+            bmpRunnable = new BmpRunnable(size);
+            future = getThreadPool().submit(bmpRunnable);
+        }
+    };
 
 
 }
