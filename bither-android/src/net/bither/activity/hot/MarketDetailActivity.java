@@ -344,12 +344,12 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 						dp.dismiss();
 					}
 					if (uri != null) {
-						Intent intent = new Intent(
-								android.content.Intent.ACTION_SEND);
-						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						intent.putExtra(Intent.EXTRA_STREAM, uri);
-						intent.setType("image/jpg");
-						startActivity(intent);
+                        Intent intent = new Intent(
+                                android.content.Intent.ACTION_SEND);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        intent.setType("image/jpg");
+                        startActivity(intent);
 					} else {
 						DropdownMessage.showDropdownMessage(
 								MarketDetailActivity.this,
