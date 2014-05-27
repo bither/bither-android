@@ -23,6 +23,7 @@ import java.util.List;
 
 import net.bither.BitherSetting.AppMode;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
@@ -76,17 +77,11 @@ public class BackupPrivateKeyRunnable extends BaseRunnable {
             return;
         }
         for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addressWithPrivateKeys) {
-            String address = bitherAddressWithPrivateKey.getAddress();
             if (bitherAddressWithPrivateKey.getKeys() != null
                     && bitherAddressWithPrivateKey.getKeys().size() > 0) {
-                ECKey ecKey = bitherAddressWithPrivateKey.getKeys().get(0);
-                EncryptedPrivateKey encryptedPrivateKey = ecKey
-                        .getEncryptedPrivateKey();
+                PasswordSeed passwordSeed = new PasswordSeed(bitherAddressWithPrivateKey);
                 backupString = backupString
-                        + address
-                        + StringUtil.QR_CODE_SPLIT
-                        + PrivateKeyUtil.getPrivateKeyString(
-                        encryptedPrivateKey, ecKey.getKeyCrypter())
+                        + passwordSeed.toString()
                         + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
 
             }

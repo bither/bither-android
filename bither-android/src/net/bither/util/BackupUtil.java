@@ -18,7 +18,6 @@ package net.bither.util;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 import net.bither.BitherSetting.AppMode;
 import net.bither.preference.AppSharedPreference;

@@ -434,11 +434,11 @@ public class FileUtil {
             public int compare(File f1, File f2) {
                 long diff = f1.lastModified() - f2.lastModified();
                 if (diff > 0) {
-                    return 1;
+                    return -1;//-1 f1 before f2
                 } else if (diff == 0) {
                     return 0;
                 } else {
-                    return -1;
+                    return 1;
                 }
             }
 

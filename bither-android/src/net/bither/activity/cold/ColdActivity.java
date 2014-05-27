@@ -326,6 +326,7 @@ public class ColdActivity extends FragmentActivity {
     private void importWalletFromBackup(final String password) {
         List<File> fileList = FileUtil.getBackupFileListOfCold();
         final File file = fileList.get(0);
+        LogUtil.d("backup",file.getName());
         if (pd == null) {
             pd = new ProgressDialog(ColdActivity.this, getString(R.string.please_wait), null);
         }
