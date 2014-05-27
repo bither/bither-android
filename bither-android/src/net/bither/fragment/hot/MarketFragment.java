@@ -24,7 +24,7 @@ import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.model.Market;
-import net.bither.ui.base.MarkerListHeader;
+import net.bither.ui.base.MarketListHeader;
 import net.bither.ui.base.MarketFragmentListItemView;
 import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SmoothScrollListRunnable;
@@ -48,7 +48,7 @@ public class MarketFragment extends Fragment implements Refreshable,
 
 	private List<Market> markets;
 	private boolean isLoading = false;
-	private MarkerListHeader header;
+	private MarketListHeader header;
 	private ListView lv;
 	private MarketFragmentListAdapter mAdaper;
 
@@ -69,7 +69,7 @@ public class MarketFragment extends Fragment implements Refreshable,
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_market, container, false);
-		header = (MarkerListHeader) view.findViewById(R.id.v_header);
+		header = (MarketListHeader) view.findViewById(R.id.v_header);
 		lv = (ListView) view.findViewById(R.id.lv);
 		lv.setAdapter(mAdaper);
 		lv.setOnItemClickListener(this);
