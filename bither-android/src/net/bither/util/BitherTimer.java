@@ -26,58 +26,47 @@ import net.bither.model.Ticker;
 
 public class BitherTimer {
 
-	private boolean mIsPause = false;
-	private Timer mTimer;
-	private TimerTask mTimerTask;
+    private Timer mTimer;
+    private TimerTask mTimerTask;
 
-	public void startTimer() {
-		if (mTimer == null || mTimerTask == null) {
-			mTimer = new Timer();
-			mTimerTask = new TimerTask() {
+    public void startTimer() {
+        if (mTimer == null || mTimerTask == null) {
+            mTimer = new Timer();
+            mTimerTask = new TimerTask() {
+                @Override
+                public void run() {
 
-				@Override
-				public void run() {
-					if (!mIsPause) {
-						getExchangeTicker();
-					}
+                    getExchangeTicker();
+                }
+            };
+            if (mTimer != null && mTimerTask != null) {
+                mTimer.schedule(mTimerTask, 0, 1 * 60 * 1000);
+            }
+        }
 
-				}
-			};
-			if (mTimer != null && mTimerTask != null) {
-				mTimer.schedule(mTimerTask, 0, 1 * 60 * 1000);
-			}
-		}
+    }
+    private void getExchangeTicker() {
+        try {
+            FileUtil.upgradeTickerFile();
+            File file = FileUtil.getTickerFile();
+            @SuppressWarnings("unchecked")
+            List<Ticker> cacheList = (List<Ticker>) FileUtil.deserialize(file);
+            if (cacheList != null) {
+                BroadcastUtil.sendBroadcastMarketState(cacheList);
+            }
+            GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
+            getExchangeTickerApi.handleHttpGet();
+            double exchangeRate = getExchangeTickerApi.getCurrencyRate();
+            ExchangeUtil.setExcchangeRate(exchangeRate);
+            List<Ticker> tickers = getExchangeTickerApi.getResult();
+            if (tickers != null && tickers.size() > 0) {
+                FileUtil.serializeObject(file, tickers);
+                BroadcastUtil.sendBroadcastMarketState(tickers);
+            }
 
-	}
-
-	public void setPause(boolean isPause) {
-		mIsPause = isPause;
-
-	}
-
-	private void getExchangeTicker() {
-
-		try {
-			FileUtil.upgradeTickerFile();
-			File file = FileUtil.getTickerFile();
-			@SuppressWarnings("unchecked")
-			List<Ticker> cacheList = (List<Ticker>) FileUtil.deserialize(file);
-			if (cacheList != null) {
-				BroadcastUtil.sendBroadcastMarketState(cacheList);
-			}
-			GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
-			getExchangeTickerApi.handleHttpGet();
-			double exchangeRate = getExchangeTickerApi.getCurrencyRate();
-			ExchangeUtil.setExcchangeRate(exchangeRate);
-			List<Ticker> tickers = getExchangeTickerApi.getResult();
-			if (tickers != null && tickers.size() > 0) {
-				FileUtil.serializeObject(file, tickers);
-				BroadcastUtil.sendBroadcastMarketState(tickers);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }
