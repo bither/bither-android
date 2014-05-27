@@ -16,8 +16,6 @@
 
 package net.bither.image.glcrop;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -25,6 +23,8 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.ArrayList;
 
 class CropImageView extends ImageViewTouchBase {
 	ArrayList<HighlightView> mHighlightViews = new ArrayList<HighlightView>();

@@ -21,10 +21,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.TranslateAnimation;
-import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -36,10 +32,7 @@ import net.bither.ui.base.ProgressDialog;
  */
 public class CropImageGlActivity extends CropImageGlActivityBase {
     private static final int FinishAnimDuration = 300;
-
     private boolean touchable;
-
-    private View fsv;
     private View llBottom;
     private View llTop;
 
@@ -47,8 +40,6 @@ public class CropImageGlActivity extends CropImageGlActivityBase {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         touchable = true;
-
-        //fsv = findViewById(R.id.sv_filters);
         llBottom = findViewById(R.id.ll_bottom);
         llTop = findViewById(R.id.rl_title_bar);
     }
@@ -66,57 +57,6 @@ public class CropImageGlActivity extends CropImageGlActivityBase {
                 R.anim.slide_out_bottom);
 
     }
-
-
-    private void afterHideFilters(final long timeStamp, final int filterId) {
-        TranslateAnimation topHide = new TranslateAnimation(0, 0, 0,
-                -llTop.getHeight());
-        TranslateAnimation bottomHide = new TranslateAnimation(0, 0, 0,
-                llBottom.getHeight());
-        topHide.setFillAfter(true);
-        bottomHide.setFillAfter(true);
-        bottomHide.setAnimationListener(new AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-//				Intent intent = new Intent(CropImageGlActivity.this,
-//						PostShareActivity.class);
-//				intent.putExtra(PiCommonSetting.INTENT_REF.PIC_PASS_VALUE_TAG,
-//						timeStamp);
-//				intent.putExtra(
-//						PiCommonSetting.INTENT_REF.FILTER_ID_PASS_VALUE_TAG,
-//						filterId);
-//				startActivity(intent);
-//				finish();
-//				overridePendingTransition(0, 0);
-            }
-        });
-        topHide.setDuration(FinishAnimDuration);
-        bottomHide.setDuration(FinishAnimDuration);
-        llTop.startAnimation(topHide);
-        llBottom.startAnimation(bottomHide);
-    }
-
-    @Override
-    protected Boolean toShowSaveAnimation() {
-//		if (getPiImageType().ordinal() == PiImageType.AVATAR.ordinal()
-//				|| StringUtil.compareString(getIntent().getAction(),
-//						PiCommonSetting.INTENT_REF.ACTION_COMMENT_ADD_PHOTO)) {
-//			return super.toShowSaveAnimation();
-//		} else {
-//			return false;
-//		}
-        return true;
-    }
-
 
     @Override
     protected Dialog getProgressDialog(String msg) {

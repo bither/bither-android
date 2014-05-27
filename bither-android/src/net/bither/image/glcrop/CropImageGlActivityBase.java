@@ -15,9 +15,6 @@
  */
 package net.bither.image.glcrop;
 
-import java.io.File;
-import java.util.concurrent.CountDownLatch;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -42,52 +39,39 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
-import android.widget.ToggleButton;
-
 
 import com.pi.common.util.NativeUtil;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.runnable.HandlerMessage;
-import net.bither.util.ImageFileUtil;
-import net.bither.util.StringUtil;
-import net.bither.runnable.BaseRunnable;
-import net.bither.util.ImageManageUtil;
 import net.bither.animation.FlipAndZoomAnimation;
+import net.bither.runnable.BaseRunnable;
+import net.bither.runnable.HandlerMessage;
 import net.bither.util.FileUtil;
+import net.bither.util.ImageFileUtil;
+import net.bither.util.ImageManageUtil;
+import net.bither.util.StringUtil;
+
+import java.io.File;
+import java.util.concurrent.CountDownLatch;
 
 
 /**
  * The activity can crop specific region of interest from an image.
  */
 public abstract class CropImageGlActivityBase extends Activity {
-
-    public static final int CROP_MSG = 10;
-    public static final int CROP_MSG_INTERNAL = 100;
-
     private boolean mCircleCrop = false;
     private final Handler mHandler = new Handler();
-
     public boolean mWaitingToPick; // Whether we are wait the user to pick a
     // face.
     public boolean mSaving; // Whether the "save" button is already clicked.
-
-    //  private FilterSelectorView fv;
     private CropImageView mImageView;
-    // private FilterSurfaceView cv;
     private FrameLayout flCameraIrisFrame;
     private FrameLayout flFilterImage;
     private FrameLayout flImageContainer;
     private FrameLayout flCamContainer;
-    private FrameLayout flFilterToggle;
-
     private FrameLayout flFrameToggle;
-
     private ImageButton ibtnTiltShift;
-    //  private TiltShiftModeView tiltShiftModeView;
-
-    //private List<IFilter> mFilters;
     private Bitmap mBitmap;
     private Bitmap orBitmap;
     private Bitmap filterBitmap;
@@ -97,18 +81,11 @@ public abstract class CropImageGlActivityBase extends Activity {
     private ImageButton IV90R;
 
     private static final float zTransition = 400;
-    // private MediaItem mItem;
-    // private final BitmapManager.ThreadSet mDecodingThreads = new
-    // BitmapManager.ThreadSet();
     public HighlightView mCrop;
-
-    //private IFilter selectedFilter;
-
     private static final int CropSide = 0;
     private static final int FilterSide = 1;
     private int side = CropSide;
     private String fromFileName;
-    // private String saveFileName;
     private long timeMillis;
 
     private Dialog pdSaving;
@@ -167,12 +144,8 @@ public abstract class CropImageGlActivityBase extends Activity {
         flFilterImage = (FrameLayout) findViewById(R.id.fl_filter_image);
         flImageContainer = (FrameLayout) findViewById(R.id.fl_image_container);
         flCamContainer = (FrameLayout) findViewById(R.id.fl_cam_container);
-        flFilterToggle = (FrameLayout) findViewById(R.id.fl_filter_toggle);
         flFrameToggle = (FrameLayout) findViewById(R.id.fl_frame_toggle);
         ibtnTiltShift = (ImageButton) findViewById(R.id.ibtn_tilt_shift);
-        //    tiltShiftModeView = (TiltShiftModeView) findViewById(R.id.tiltShift);
-
-        //fv = (FilterSelectorView) findViewById(R.id.sv_filters);
         findViewById(R.id.discard).setOnClickListener(
                 new OnClickListener() {
                     public void onClick(View v) {
@@ -226,67 +199,7 @@ public abstract class CropImageGlActivityBase extends Activity {
 
     private OnClickListener tiltShiftClick = new OnClickListener() {
         public void onClick(View v) {
-//            if (tiltShiftModeView.getVisibility() != View.VISIBLE) {
-//                ((RelativeLayout.LayoutParams) tiltShiftModeView
-//                        .getLayoutParams()).leftMargin = v.getLeft();
-//                tiltShiftModeView.setVisibility(View.VISIBLE);
-//            } else {
-//                tiltShiftModeView.setVisibility(View.GONE);
-//            }
-        }
-    };
 
-    private OnCheckedChangeListener filtersCheck = new OnCheckedChangeListener() {
-
-        public void onCheckedChanged(CompoundButton buttonView,
-                                     boolean isChecked) {
-//            flFilterToggle.setEnabled(false);
-//            if (isChecked) {
-//                fv.setVisibility(View.VISIBLE);
-//                fv.clearAnimation();
-//                Animation show = AnimationUtils.loadAnimation(
-//                        CropImageGlActivityBase.this,
-//                        R.anim.camera_filters_show);
-//                show.setAnimationListener(new AnimationListener() {
-//                    public void onAnimationStart(Animation animation) {
-//
-//                    }
-//
-//                    public void onAnimationRepeat(Animation animation) {
-//
-//                    }
-//
-//                    public void onAnimationEnd(Animation animation) {
-//                        int restArea = flCamContainer.getHeight()
-//                                - cv.getHeight();
-//                        ((LayoutParams) flImageContainer
-//                                .getLayoutParams()).bottomMargin = Math.min(
-//                                restArea, fv.getHeight());
-//                        flImageContainer.requestLayout();
-//                        flFilterToggle.setEnabled(true);
-//                    }
-//                });
-//                fv.startAnimation(show);
-//            } else {
-//                Animation hide = AnimationUtils.loadAnimation(
-//                        CropImageGlActivityBase.this,
-//                        R.anim.camera_filters_hide);
-//                hide.setAnimationListener(new AnimationListener() {
-//                    public void onAnimationStart(Animation animation) {
-//                    }
-//
-//                    public void onAnimationRepeat(Animation animation) {
-//                    }
-//
-//                    public void onAnimationEnd(Animation animation) {
-//                        fv.setVisibility(View.GONE);
-//                        flFilterToggle.setEnabled(true);
-//                    }
-//                });
-//                fv.clearAnimation();
-//                fv.startAnimation(hide);
-//                ((LayoutParams) flImageContainer.getLayoutParams()).bottomMargin = 0;
-//            }
         }
     };
 
@@ -319,25 +232,6 @@ public abstract class CropImageGlActivityBase extends Activity {
         return croppedImage;
     }
 
-    private void initFilterSelector() {
-//        fv.setFilters(mFilters);
-//        fv.setOnFilterSelectedListener(new OnFilterSelectedListener() {
-//            public void OnFilterSelected(IFilter filter) {
-//                selectedFilter = filter;
-//                if (selectedFilter != null) {
-//                    if (side != FilterSide) {
-//                        if (!(selectedFilter instanceof NormalFilter)) {
-//                            turnToFilter();
-//                        }
-//                    } else {
-//                        cv.setFilter(selectedFilter);
-//                    }
-//                }
-//            }
-//        });
-//        fv.setSelectedFilter(mFilters.get(0));
-    }
-
     private OnClickListener cropOnClick = new OnClickListener() {
 
         public void onClick(View v) {
@@ -348,7 +242,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                 mImageView.setImageBitmapResetBase(orBitmap, false);
 
             } catch (Exception e) {
-                //   LogUtil.recordException(this.toString(), e);
+                e.printStackTrace();
             }
         }
     };
@@ -399,21 +293,12 @@ public abstract class CropImageGlActivityBase extends Activity {
     @Override
     protected void onResume() {
         isPaused = false;
-//        if (cv != null) {
-//            if (side == FilterSide) {
-//                cv.onResume();
-//            }
-//        }
         super.onResume();
     }
 
     @Override
     protected void onPause() {
         isPaused = true;
-//        if (cv != null) {
-//            cv.onPause();
-//        }
-
         super.onPause();
     }
 
@@ -438,14 +323,14 @@ public abstract class CropImageGlActivityBase extends Activity {
                 && (side == CropSide)) {
             filterBitmap = null;
         }
-        //   GLUtil.releaseDirectIntBuffer();
     }
 
     private void onSaveClicked() {
 
         try {
-            if (mSaving)
+            if (mSaving) {
                 return;
+            }
 
             if (side == CropSide && mCrop == null) {
                 return;
@@ -457,116 +342,56 @@ public abstract class CropImageGlActivityBase extends Activity {
             final Bitmap croppedImage;
             final Rect imagePlace = new Rect();
             final String photoName = ImageFileUtil.getAvatarFileName(timeMillis);
-            if (side == CropSide) {
-                croppedImage = getCropedBitmap();
-                Rect crop = mCrop.getCropRect();
-                int[] location = new int[2];
-                flImageContainer.getLocationOnScreen(location);
-                Matrix imageMatrix = mImageView.getImageMatrix();
-                Rect bitmapRect = mImageView.getDrawable().copyBounds();
-                float[] values = new float[9];
-                imageMatrix.getValues(values);
-                float visualWidth = bitmapRect.width() * values[0];
-                float visualHeight = bitmapRect.height() * values[0];
-                Rect drawRect = new Rect((int) values[2], (int) values[5],
-                        (int) (values[2] + visualWidth),
-                        (int) (values[5] + visualHeight));
-                imagePlace.left = (int) (location[0] + drawRect.left + crop.left
-                        * values[0]);
-                imagePlace.top = (int) (location[1] + drawRect.top + crop.top
-                        * values[0]);
-                imagePlace.right = imagePlace.left
-                        + (int) (crop.width() * values[0]);
-                imagePlace.bottom = imagePlace.top
-                        + (int) (crop.height() * values[0]);
-                SaveRunnable save = new SaveRunnable(croppedImage, photoName
-                );
-                save.setHandler(new Handler() {
-                    @Override
-                    public void dispatchMessage(Message msg) {
 
-                        switch (msg.what) {
-                            case HandlerMessage.MSG_PREPARE:
-                                pdSaving.show();
-                                break;
-                            case HandlerMessage.MSG_SUCCESS:
-                                mSaving = false;
-                                pdSaving.dismiss();
+            croppedImage = getCropedBitmap();
+            Rect crop = mCrop.getCropRect();
+            int[] location = new int[2];
+            flImageContainer.getLocationOnScreen(location);
+            Matrix imageMatrix = mImageView.getImageMatrix();
+            Rect bitmapRect = mImageView.getDrawable().copyBounds();
+            float[] values = new float[9];
+            imageMatrix.getValues(values);
+            float visualWidth = bitmapRect.width() * values[0];
+            float visualHeight = bitmapRect.height() * values[0];
+            Rect drawRect = new Rect((int) values[2], (int) values[5],
+                    (int) (values[2] + visualWidth),
+                    (int) (values[5] + visualHeight));
+            imagePlace.left = (int) (location[0] + drawRect.left + crop.left
+                    * values[0]);
+            imagePlace.top = (int) (location[1] + drawRect.top + crop.top
+                    * values[0]);
+            imagePlace.right = imagePlace.left
+                    + (int) (crop.width() * values[0]);
+            imagePlace.bottom = imagePlace.top
+                    + (int) (crop.height() * values[0]);
+            SaveRunnable save = new SaveRunnable(croppedImage, photoName
+            );
+            save.setHandler(new Handler() {
+                @Override
+                public void dispatchMessage(Message msg) {
 
-                                handleSaveSuccess(photoName);
-                                break;
-                            case HandlerMessage.MSG_FAILURE:
-                                mSaving = false;
+                    switch (msg.what) {
+                        case HandlerMessage.MSG_PREPARE:
+                            pdSaving.show();
+                            break;
+                        case HandlerMessage.MSG_SUCCESS:
+                            mSaving = false;
+                            pdSaving.dismiss();
 
-                                pdSaving.dismiss();
-                                break;
-                        }
+                            handleSaveSuccess(photoName);
+                            break;
+                        case HandlerMessage.MSG_FAILURE:
+                            mSaving = false;
+
+                            pdSaving.dismiss();
+                            break;
                     }
-                });
-                new Thread(save).start();
-            } else {
-                //final int filterId = cv.getFilter().getFilterId();
-                int[] location = new int[2];
-                //   cv.getLocationOnScreen(location);
-                imagePlace.top = location[1];
-                int imageSize = ImageManageUtil.IMAGE_SIZE;
-                imagePlace.bottom = imagePlace.top + imageSize;
-                imagePlace.left = location[0];
-                imagePlace.right = location[0] + imageSize;
-                Handler h = new Handler() {
-                    @Override
-                    public void dispatchMessage(Message msg) {
-                        switch (msg.what) {
-//                            case GLUtil.CaptureBegin:
-//                                pdSaving.show();
-//                                break;
-//                            case GLUtil.CaptureSuccess:
-//                                mSaving = false;
-//                                pdSaving.dismiss();
-//                                PiApplication.getDialogCropPhotoTransit()
-//                                        .setFromRect(imagePlace);
-//                                PiApplication.getDialogCropPhotoTransit()
-//                                        .setToShowAnimation(toShowSaveAnimation());
-//                                PiApplication
-//                                        .getDialogCropPhotoTransit()
-//                                        .setBitmap(
-//                                                FetcherHolder
-//                                                        .getLargeImageFetcher()
-//                                                        .getImageCache()
-//                                                        .getBitmapFromMemCache(
-//                                                                getPiImageType()
-//                                                                        .getLargeImageUrl(
-//                                                                                photoName)
-//                                                        )
-//                                        );
-//                                if (!isPaused) {
-//                                    BitherApplication.getDialogCropPhotoTransit()
-//                                            .show();
-//                                }
-//                                handleSaveSuccess(timeMillis, filterId);
-//                                break;
-//                            case GLUtil.CaptureFailed:
-//                                mSaving = false;
-//
-//                                pdSaving.dismiss();
-//                                orBitmap = getOrBitmap();
-//                                turnToCrop();
-//                                startRedrawImageView();
-//                                break;
-//                            default:
-//                                break;
-                        }
-                        super.dispatchMessage(msg);
-                    }
-                };
-                orBitmap = null;
-                mBitmap = null;
-                mImageView.setImageBitmapResetBase(null, false);
-                filterBitmap = null;
-                //    cv.save(h, timeMillis, getPiImageType());
-            }
+                }
+            });
+            new Thread(save).start();
+
         } catch (Exception e) {
-            //  LogUtil.recordException(this.toString(), e);
+            e.printStackTrace();
         }
 
     }
@@ -590,7 +415,8 @@ public abstract class CropImageGlActivityBase extends Activity {
                 file = ImageFileUtil.getAvatarFile(photoName);
                 NativeUtil.compressBitmap(b, file.getAbsolutePath(), true);
                 file = ImageFileUtil.getSmallAvatarFile(photoName);
-                Bitmap smallBit = ImageManageUtil.getMatrixBitmap(b, ImageManageUtil.IMAGE_SMALL_SIZE, ImageManageUtil.IMAGE_SMALL_SIZE, false);
+                Bitmap smallBit = ImageManageUtil.getMatrixBitmap(b,
+                        ImageManageUtil.IMAGE_SMALL_SIZE, ImageManageUtil.IMAGE_SMALL_SIZE, false);
                 NativeUtil.compressBitmap(smallBit, file.getAbsolutePath(), true);
                 obtainMessage(HandlerMessage.MSG_SUCCESS);
             } catch (Exception e) {
@@ -600,21 +426,6 @@ public abstract class CropImageGlActivityBase extends Activity {
         }
     }
 
-    private void turnToFilter() {
-        if (side == CropSide && mCrop == null) {
-            return;
-        }
-        IV90R.setClickable(false);
-        mBitmap = null;
-        mImageView.setImageBitmapResetBase(null, true);
-        mBitmap = getCropedBitmap();
-        orBitmap = null;
-//        cv.setSource(mBitmap);
-//        cv.setFilter(selectedFilter);
-//        cv.onResume();
-        applyRotation(flImageContainer, 0, 90, 0, zTransition,
-                toFilterPreRotate);
-    }
 
     private void turnToCrop() {
 
@@ -628,7 +439,8 @@ public abstract class CropImageGlActivityBase extends Activity {
             if (orBitmap == null || orBitmap.isRecycled()) {
                 if (!StringUtil.isEmpty(fromFileName)) {
                     orBitmap = ImageManageUtil
-                            .getBitmapNearestSize(new File(fromFileName), ImageManageUtil.IMAGE_SIZE);
+                            .getBitmapNearestSize(new File(fromFileName),
+                                    ImageManageUtil.IMAGE_SIZE);
                     if (orBitmap == null) {
                         finish();
                         return null;
@@ -665,22 +477,6 @@ public abstract class CropImageGlActivityBase extends Activity {
         view.startAnimation(rotation);
     }
 
-    private AnimationListener toFilterPreRotate = new AnimationListener() {
-
-        public void onAnimationStart(Animation animation) {
-            mImageView.setTouchable(false);
-        }
-
-        public void onAnimationRepeat(Animation animation) {
-        }
-
-        public void onAnimationEnd(Animation animation) {
-            flFilterImage.bringToFront();
-            //  cv.requestRender();
-            applyRotation(flImageContainer, -90, 0, zTransition, 0,
-                    new PostRotate(FilterSide));
-        }
-    };
 
     private AnimationListener toCropPreRotate = new AnimationListener() {
 
@@ -694,7 +490,6 @@ public abstract class CropImageGlActivityBase extends Activity {
         public void onAnimationEnd(Animation animation) {
 
             mImageView.bringToFront();
-            //  cv.onPause();
             applyRotation(flImageContainer, 90, 0, zTransition, 0,
                     new PostRotate(CropSide));
         }
@@ -721,7 +516,6 @@ public abstract class CropImageGlActivityBase extends Activity {
                 IV90R.setClickable(true);
                 IV90R.setVisibility(View.VISIBLE);
                 btnCrop.setVisibility(View.GONE);
-                //fv.setSelectedFilter(mFilters.get(0));
             } else if (side == FilterSide) {
                 btnCrop.setClickable(true);
                 mImageView.setTouchable(false);
@@ -788,10 +582,6 @@ public abstract class CropImageGlActivityBase extends Activity {
             });
         }
     };
-
-    protected Boolean toShowSaveAnimation() {
-        return true;
-    }
 
     protected abstract void handleSaveSuccess(String photoName);
 
