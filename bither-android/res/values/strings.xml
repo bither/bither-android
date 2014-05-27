@@ -226,6 +226,7 @@
     <string name="private_key_count_limit">Reached private key count limit</string>
     <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
     <string name="generate_address_count_label">How many private keys to generate?</string>
+    <string name="restore_from_backup_of_cold">restore_from_backup_of_cold</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">Init Transaction</string>
