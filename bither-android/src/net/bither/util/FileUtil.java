@@ -25,7 +25,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.pi.common.util.NativeUtil;
 
@@ -47,8 +46,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 public class FileUtil {
 
@@ -127,6 +128,21 @@ public class FileUtil {
                         + ".bak"
         );
         return file;
+    }
+
+    public static List<File> getBackupFileListOfCold() {
+        File dir = getBackupSdCardDir();
+        List<File> fileList = new ArrayList<File>();
+        File[] files = dir.listFiles();
+        if (files != null && files.length > 0) {
+            files = orderByDateDesc(files);
+            for (File file : files) {
+                if (StringUtil.checkBackupFileOfCold(file.getName())) {
+                    fileList.add(file);
+                }
+            }
+        }
+        return fileList;
     }
 
     private static File getBackupRomDir() {

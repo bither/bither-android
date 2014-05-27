@@ -16,30 +16,6 @@
 
 package net.bither.activity.cold;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.adapter.cold.ColdFragmentPagerAdapter;
-import net.bither.fragment.Refreshable;
-import net.bither.fragment.Selectable;
-import net.bither.fragment.Unselectable;
-import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.ui.base.DialogColdAddressCount;
-import net.bither.ui.base.DialogConfirmTask;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.TabButton;
-import net.bither.util.FileUtil;
-import net.bither.util.LogUtil;
-import net.bither.util.StringUtil;
-import net.bither.util.ThreadUtil;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,6 +26,36 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 
+import com.google.bitcoin.core.ECKey;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.adapter.cold.ColdFragmentPagerAdapter;
+import net.bither.fragment.Refreshable;
+import net.bither.fragment.Selectable;
+import net.bither.fragment.Unselectable;
+import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.model.PasswordSeed;
+import net.bither.ui.base.DialogColdAddressCount;
+import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogPassword;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.ProgressDialog;
+import net.bither.ui.base.TabButton;
+import net.bither.util.BackupUtil;
+import net.bither.util.FileUtil;
+import net.bither.util.LogUtil;
+import net.bither.util.StringUtil;
+import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class ColdActivity extends FragmentActivity {
 
     private TabButton tbtnMessage;
@@ -58,6 +64,7 @@ public class ColdActivity extends FragmentActivity {
     private FrameLayout flAddPrivateKey;
     private ColdFragmentPagerAdapter mAdapter;
     private ViewPager mPager;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -76,7 +83,8 @@ public class ColdActivity extends FragmentActivity {
                         if (f instanceof Selectable) {
                             ((Selectable) f).onSelected();
                         }
-                        if (BitherApplication.isFirstIn) {
+                        if (WalletUtils.getPrivateAddressList() != null && WalletUtils
+                                .getPrivateAddressList().size() == 0) {
                             checkBackup();
                         }
                     }
@@ -266,34 +274,129 @@ public class ColdActivity extends FragmentActivity {
     }
 
     private void checkBackup() {
-        File dir = FileUtil.getBackupSdCardDir();
-        File[] files = dir.listFiles();
-        if (files != null && files.length > 0) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    ThreadUtil.runOnMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
-                                    new DialogPassword.DialogPasswordListener() {
-
-
-                                        @Override
-                                        public void onPasswordEntered(String password) {
-
-                                        }
-                                    }
-                            );
-                            dialogPassword.show();
-                        }
-                    });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<File> files = FileUtil.getBackupFileListOfCold();
+                if (files != null && files.size() > 0) {
+                    showDialogOfColdBackup();
                 }
-            };
-            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
-                    getString(R.string.restore_from_backup_of_cold), runnable);
-            dialogConfirmTask.show();
-        }
+            }
+        }).start();
+
     }
 
+    private void showDialogOfColdBackup() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
+                        getString(R.string.recover_from_backup_of_cold), passwordRunnable);
+                dialogConfirmTask.show();
+            }
+        });
+
+    }
+
+    Runnable passwordRunnable = new Runnable() {
+        @Override
+        public void run() {
+            ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    showDialogPassword();
+                }
+            });
+        }
+    };
+
+    private void showDialogPassword() {
+        DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
+                new DialogPassword.DialogPasswordListener() {
+                    @Override
+                    public void onPasswordEntered(String password) {
+                        importWalletFromBackup(password);
+                    }
+                }
+        );
+        dialogPassword.setCheckPre(false);
+        dialogPassword.show();
+    }
+
+    private void importWalletFromBackup(final String password) {
+        List<File> fileList = FileUtil.getBackupFileListOfCold();
+        final File file = fileList.get(0);
+        if (pd == null) {
+            pd = new ProgressDialog(ColdActivity.this, getString(R.string.please_wait), null);
+        }
+        pd.show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String[] strings = BackupUtil.getBackupKeyStrList
+                        (file);
+                if (strings != null && strings.length > 0) {
+                    PasswordSeed passwordSeed = new PasswordSeed
+                            (strings[0]);
+                    boolean check = passwordSeed.checkPassword
+                            (password);
+                    if (!check) {
+                        checkPasswordWrong();
+                    } else {
+                        for (String keyString : strings) {
+                            String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
+                            if (strs.length != 4) {
+                                continue;
+                            }
+                            passwordSeed = new PasswordSeed(keyString);
+                            passwordSeed.checkPassword(password);
+                            ECKey key = passwordSeed.getECKey();
+                            if (key != null) {
+                                BitherAddressWithPrivateKey wallet = new
+                                        BitherAddressWithPrivateKey(
+                                        false);
+                                wallet.setKeyCrypter(key.getKeyCrypter());
+                                wallet.addKey(key);
+                                WalletUtils.addAddressWithPrivateKey(null, wallet);
+                            }
+                        }
+                        recoverBackupSuccess();
+                    }
+
+                }
+            }
+        }).start();
+
+    }
+
+    private void checkPasswordWrong() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pd != null) {
+                    pd.dismiss();
+                }
+                DropdownMessage.showDropdownMessage
+                        (ColdActivity.this,
+                                R.string.password_wrong);
+                showDialogPassword();
+            }
+        });
+    }
+
+    private void recoverBackupSuccess() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pd != null) {
+                    pd.dismiss();
+                }
+                Fragment fragment = getFragmentAtIndex(1);
+                if (fragment instanceof Refreshable) {
+                    Refreshable refreshable = (Refreshable) fragment;
+                    refreshable.doRefresh();
+                }
+            }
+        });
+    }
 }

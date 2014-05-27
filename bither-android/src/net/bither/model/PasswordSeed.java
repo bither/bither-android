@@ -24,35 +24,45 @@ import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.params.MainNetParams;
 
 public class PasswordSeed {
-	private String address;
-	private String keyStr;
+    private String address;
+    private String keyStr;
+    private ECKey ecKey;
 
-	public PasswordSeed(String str) {
-		int indexOfSplit = str.indexOf(StringUtil.QR_CODE_SPLIT);
-		address = str.substring(0, indexOfSplit);
-		keyStr = str.substring(indexOfSplit + 1);
-	}
+    public PasswordSeed(String str) {
+        int indexOfSplit = str.indexOf(StringUtil.QR_CODE_SPLIT);
+        this.address = str.substring(0, indexOfSplit);
+        this.keyStr = str.substring(indexOfSplit + 1);
+    }
 
-	public PasswordSeed(BitherAddressWithPrivateKey address) {
-		this.address = address.getAddress();
-		this.keyStr = PrivateKeyUtil.getPrivateKeyString(
-				address.getKeys().get(0).getEncryptedPrivateKey(),
-				address.getKeyCrypter());
-	}
+    public PasswordSeed(BitherAddressWithPrivateKey address) {
+        this.address = address.getAddress();
+        this.keyStr = PrivateKeyUtil.getPrivateKeyString(
+                address.getKeys().get(0).getEncryptedPrivateKey(),
+                address.getKeyCrypter());
+    }
 
-	public boolean checkPassword(String password) {
-		ECKey key = PrivateKeyUtil.getECKeyFromSingleString(keyStr, password);
-		if (key == null) {
-			return false;
-		}
-		return StringUtil.compareString(address,
-				new Address(MainNetParams.get(), key.getPubKeyHash())
-						.toString());
-	}
+    public boolean checkPassword(String password) {
+        this.ecKey = PrivateKeyUtil.getECKeyFromSingleString(keyStr, password);
+        if (this.ecKey == null) {
+            return false;
+        }
+        return StringUtil.compareString(address,
+                new Address(MainNetParams.get(), this.ecKey.getPubKeyHash())
+                        .toString()
+        );
+    }
 
-	@Override
-	public String toString() {
-		return address + StringUtil.QR_CODE_SPLIT + keyStr;
-	}
+    public ECKey getECKey() {
+        return this.ecKey;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    @Override
+    public String toString() {
+        return this.address + StringUtil.QR_CODE_SPLIT + this.keyStr;
+    }
 
 }
