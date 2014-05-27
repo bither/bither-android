@@ -59,6 +59,8 @@
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分钟内只能停止监控一个地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
+    <string name="address_detail_private_key_qr_code">私钥二维码</string>
+    <string name="address_detail_private_key_qr_code_backup">备份私钥</string>
 
     <!-- add address -->
     <string name="add_address_tab_watch_only">监控</string>
@@ -146,6 +148,15 @@
     <string name="set_avatar_camera">来自相机</string>
     <string name="set_avatar_gallery">来自图库</string>
     <string name="edit_password_button">修改密码</string>
+    <string name="import_private_key_qr_code">导入私钥二维码</string>
+    <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
+    <string name="import_private_key_qr_code_password">输入原密码</string>
+    <string name="import_private_key_qr_code_success">导入成功</string>
+    <string name="import_private_key_qr_code_failed">导入失败</string>
+    <string name="import_private_key_qr_code_failed_monitored">不能导入冷钱包私钥</string>
+    <string name="import_private_key_qr_code_failed_duplicate">私钥已存在</string>
+    <string name="import_private_key_qr_code_importing">正在导入…</string>
+    <string name="import_private_key_qr_code_failed_different_password">导入私钥的密码与已有密码不同, 无法导入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
