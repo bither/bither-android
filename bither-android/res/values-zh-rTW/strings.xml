@@ -148,6 +148,15 @@
     <string name="set_avatar_camera">來自相機</string>
     <string name="set_avatar_gallery">來自圖庫</string>
     <string name="edit_password_button">修改密碼</string>
+    <string name="import_private_key_qr_code">導入私鑰二維碼</string>
+    <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
+    <string name="import_private_key_qr_code_password">輸入原密碼</string>
+    <string name="import_private_key_qr_code_success">導入成功</string>
+    <string name="import_private_key_qr_code_failed">導入失敗</string>
+    <string name="import_private_key_qr_code_failed_monitored">不能導入冷錢包私鑰</string>
+    <string name="import_private_key_qr_code_failed_duplicate">私鑰已存在</string>
+    <string name="import_private_key_qr_code_importing">正在導入…</string>
+    <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>

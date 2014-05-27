@@ -33,7 +33,9 @@ import com.google.bitcoin.core.ECKey;
 import net.bither.R;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -56,8 +58,8 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
         setCanceledOnTouchOutside(true);
-        this.content = PrivateKeyUtil.getPrivateKeyString
-                (key.getEncryptedPrivateKey(), key.getKeyCrypter());
+        this.content = StringUtil.encodeQrCodeString(PrivateKeyUtil.getPrivateKeyString(key
+                .getEncryptedPrivateKey(), key.getKeyCrypter()));
         setContentView(R.layout.dialog_private_key_qr_code);
         setOnDismissListener(this);
         initView();
@@ -92,7 +94,7 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
     @Override
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
-            case R.id.ibtn_share:
+            case R.id.ll_back_up:
                 share();
                 break;
             default:

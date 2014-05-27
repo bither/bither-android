@@ -154,6 +154,15 @@
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
+    <string name="import_private_key_qr_code">Import Private Key QR Code</string>
+    <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_private_key_qr_code_password">Enter original password</string>
+    <string name="import_private_key_qr_code_success">Import success.</string>
+    <string name="import_private_key_qr_code_failed">Import failed.</string>
+    <string name="import_private_key_qr_code_failed_monitored">Can\'t import Bither Cold private key.</string>
+    <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
+    <string name="import_private_key_qr_code_importing">Importing…</string>
+    <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
@@ -218,7 +227,7 @@
     <string name="clone_from_waiting">Cloning…</string>
     <string name="clone_from_success">Clone success</string>
     <string name="clone_from_failed">Clone failed</string>
-    <string name="clone_from_password">Type in source password</string>
+    <string name="clone_from_password">Enter source password</string>
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
     <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>

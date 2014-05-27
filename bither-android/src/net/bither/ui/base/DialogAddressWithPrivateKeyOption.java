@@ -28,7 +28,7 @@ import net.bither.model.BitherAddress;
 import net.bither.preference.AppSharedPreference;
 
 public class DialogAddressWithPrivateKeyOption extends CenterDialog implements View
-        .OnClickListener, DialogInterface.OnDismissListener {
+        .OnClickListener, DialogInterface.OnDismissListener, DialogPassword.DialogPasswordListener {
     private DialogFancyQrCode dialogQr;
     private DialogPrivateKeyQrCode dialogPrivateKey;
     private BitherAddress address;
@@ -84,7 +84,7 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
                 }
                 break;
             case R.id.tv_private_key_qr_code:
-                dialogPrivateKey.show();
+                new DialogPassword(activity, this).show();
                 break;
             default:
                 return;
@@ -98,4 +98,8 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     }
 
 
+    @Override
+    public void onPasswordEntered(String password) {
+        dialogPrivateKey.show();
+    }
 }

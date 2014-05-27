@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/fancy_qr_code_share_selector"
-                android:paddingRight="20dp"/>
+                android:paddingRight="10dp"/>
 
             <TextView
                 android:textSize="16sp"

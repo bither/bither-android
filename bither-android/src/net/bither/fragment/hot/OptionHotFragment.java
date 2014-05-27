@@ -37,18 +37,26 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.bitcoin.core.ECKey;
+
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.ScanActivity;
+import net.bither.ScanQRCodeTransportActivity;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
+import net.bither.activity.hot.HotActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
+import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
+import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogEditPassword;
+import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
@@ -60,6 +68,7 @@ import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
+import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
@@ -80,6 +89,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private Button btnCheck;
     private Button btnDonate;
     private Button btnEditPassword;
+    private Button btnImportPrivateKey;
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
@@ -343,6 +353,17 @@ public class OptionHotFragment extends Fragment implements Selectable,
             }
         }
     };
+    private OnClickListener importPrivateKeyClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(),
+                    ScanQRCodeTransportActivity.class);
+            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                    getString(R.string.import_private_key_qr_code_scan_title));
+            startActivityForResult(intent,
+                    BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
+        }
+    };
 
     @Override
     public void avatarFromCamera() {
@@ -403,6 +424,15 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     }
                 }
                 break;
+            case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
+                String content = data
+                        .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                DialogPassword dialogPassword = new DialogPassword(getActivity(),
+                        new ImportPrivateKeyPasswordListener(content));
+                dialogPassword.setCheckPre(false);
+                dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                dialogPassword.show();
+                break;
         }
 
     }
@@ -436,6 +466,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
         btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
+        btnImportPrivateKey = (Button) view.findViewById(R.id.btn_import_private_key);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
@@ -459,6 +490,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        btnImportPrivateKey.setOnClickListener(importPrivateKeyClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
@@ -519,4 +551,122 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     }
 
+    private class ImportPrivateKeyPasswordListener implements DialogPassword
+            .DialogPasswordListener {
+        private String content;
+
+        public ImportPrivateKeyPasswordListener(String content) {
+            this.content = content;
+        }
+
+        @Override
+        public void onPasswordEntered(String password) {
+            if (dp != null && !dp.isShowing()) {
+                dp.setMessage(R.string.import_private_key_qr_code_importing);
+                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread
+                        (content, password);
+                dp.setThread(importPrivateKeyThread);
+                dp.show();
+                importPrivateKeyThread.start();
+            }
+        }
+    }
+
+    private class ImportPrivateKeyThread extends Thread {
+        private String content;
+        private String password;
+
+        public ImportPrivateKeyThread(String content, String password) {
+            this.content = content;
+            this.password = password;
+        }
+
+        public void run() {
+            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content,
+                    password);
+            if (key == null) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(),
+                                R.string.import_private_key_qr_code_failed);
+                    }
+                });
+                return;
+            }
+            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(
+                    false);
+            wallet.setKeyCrypter(key.getKeyCrypter());
+            wallet.addKey(key);
+            if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(),
+                                R.string.import_private_key_qr_code_failed_monitored);
+                    }
+                });
+                return;
+            } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(),
+                                R.string.import_private_key_qr_code_failed_duplicate);
+                    }
+                });
+                return;
+            } else {
+                WalletUtils.addAddressWithPrivateKey(null, wallet);
+            }
+
+            if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(),
+                                R.string.import_private_key_qr_code_failed_different_password);
+                    }
+                });
+                return;
+            }
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dp != null && dp.isShowing()) {
+                        dp.setThread(null);
+                        dp.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(getActivity(),
+                            R.string.import_private_key_qr_code_success);
+                    if (getActivity() instanceof HotActivity) {
+                        HotActivity activity = (HotActivity) getActivity();
+                        Fragment f = activity.getFragmentAtIndex(1);
+                        if (f != null && f instanceof Refreshable) {
+                            Refreshable r = (Refreshable) f;
+                            r.doRefresh();
+                        }
+                        activity.scrollToFragmentAt(1);
+                    }
+                }
+            });
+        }
+    }
 }

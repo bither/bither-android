@@ -106,6 +106,7 @@ public class BitherSetting {
         public static final int SCAN_REQUEST_CODE = 536;
         public static final int SIGN_TX_REQUEST_CODE = 253;
         public static final int CLONE_FROM_REQUEST_CODE = 1117;
+        public static final int IMPORT_PRIVATE_KEY_REQUEST_CODE = 1356;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";

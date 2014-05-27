@@ -22,6 +22,7 @@
     <LinearLayout
         android:id="@+id/ll_origin_qr_code"
         android:orientation="vertical"
+        android:background="@drawable/ui_touchable_foreground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -29,7 +30,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:duplicateParentState="true"
-            android:background="@drawable/ui_touchable_foreground"
             android:padding="10dp"
             android:text="@string/fancy_qr_code_view_origin"
             android:textColor="@color/dialog_text_color_selector"
@@ -43,7 +43,7 @@
 
     <TextView
         android:id="@+id/tv_private_key_qr_code"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
         android:padding="10dp"
