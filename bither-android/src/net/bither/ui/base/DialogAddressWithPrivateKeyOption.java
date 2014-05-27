@@ -17,77 +17,39 @@
 package net.bither.ui.base;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.model.BitherAddress;
 import net.bither.preference.AppSharedPreference;
-import net.bither.util.ThreadUtil;
 
-public class DialogAddressWithPrivateKeyOption extends CenterDialog {
+public class DialogAddressWithPrivateKeyOption extends CenterDialog implements View
+        .OnClickListener, DialogInterface.OnDismissListener {
     private DialogFancyQrCode dialogQr;
+    private DialogPrivateKeyQrCode dialogPrivateKey;
     private BitherAddress address;
-    private TextView tvViewOnBlockchainInfo;
     private LinearLayout llOriginQRCode;
-    private TextView tvClose;
     private Activity activity;
-    private View.OnClickListener viewOnBlockchainInfoClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            dismiss();
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://blockchain.info/address/"
-                            + address.getAddress())
-            )
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            try {
-                getContext().startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.find_browser_error);
-            }
-        }
-    };
-    private View.OnClickListener originQrCodeClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            dismiss();
-            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dialogQr.show();
-                }
-            }, 300);
-        }
-    };
-    private View.OnClickListener closeClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            dismiss();
-        }
-    };
+    private int clickedView;
 
     public DialogAddressWithPrivateKeyOption(Activity context,
                                              BitherAddress address) {
         super(context);
         this.activity = context;
         this.address = address;
+        setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_private_key_option);
-        tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
         llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
-        tvClose = (TextView) findViewById(R.id.tv_close);
-        tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
-        llOriginQRCode.setOnClickListener(originQrCodeClick);
-        tvClose.setOnClickListener(closeClick);
+        findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
+        findViewById(R.id.tv_private_key_qr_code).setOnClickListener(this);
+        llOriginQRCode.setOnClickListener(this);
+        findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false);
+        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getKeys().get(0));
     }
 
     @Override
@@ -97,7 +59,43 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog {
         } else {
             llOriginQRCode.setVisibility(View.GONE);
         }
+        clickedView = 0;
         super.show();
     }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        switch (clickedView) {
+            case R.id.ll_origin_qr_code:
+                dialogQr.show();
+                break;
+            case R.id.tv_view_on_blockchaininfo:
+                Intent intent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://blockchain.info/address/"
+                                + address.getAddress())
+                )
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                try {
+                    getContext().startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DropdownMessage.showDropdownMessage(activity,
+                            R.string.find_browser_error);
+                }
+                break;
+            case R.id.tv_private_key_qr_code:
+                dialogPrivateKey.show();
+                break;
+            default:
+                return;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        clickedView = v.getId();
+        dismiss();
+    }
+
 
 }

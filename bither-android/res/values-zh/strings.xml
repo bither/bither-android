@@ -59,6 +59,8 @@
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分钟内只能停止监控一个地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
+    <string name="address_detail_private_key_qr_code">私钥二维码</string>
+    <string name="address_detail_private_key_qr_code_backup">备份私钥</string>
 
     <!-- add address -->
     <string name="add_address_tab_watch_only">监控</string>

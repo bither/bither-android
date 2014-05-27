@@ -64,6 +64,8 @@
     <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
     <string name="address_detail_cannot_stop_monitoring">You can only stop monitoring one address in a minute.</string>
     <string name="address_detail_empty_address_list_notice">You can\'t empty address list.</string>
+    <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
+    <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
     <string name="add_address_tab_watch_only">Watch Only</string>
