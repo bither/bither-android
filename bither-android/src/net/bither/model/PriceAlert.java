@@ -15,7 +15,7 @@ public class PriceAlert implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final byte[] paLock = new byte[0];
-
+    private static List<PriceAlert> priceAlertList = getPriceAlertFromFile();
     private BitherSetting.MarketType marketType;
     private ExchangeUtil.ExchangeType exchangeType;
     private double limit;
@@ -78,9 +78,17 @@ public class PriceAlert implements Serializable {
         return false;
     }
 
+    public static PriceAlert getPriceAlert(BitherSetting.MarketType marketType) {
+        for (PriceAlert priceAlert : priceAlertList) {
+            if (priceAlert.getMarketType() == marketType) {
+                return priceAlert;
+            }
+        }
+        return null;
+    }
+
     public static void removePriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
-            List<PriceAlert> priceAlertList = getPriceAlertFromFile();
             if (priceAlertList.contains(priceAlert)) {
                 priceAlertList.remove(priceAlert);
             }
@@ -92,7 +100,6 @@ public class PriceAlert implements Serializable {
     public static void addPriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
             File file = FileUtil.getPriceAlertFile();
-            List<PriceAlert> priceAlertList = getPriceAlertFromFile();
             if (priceAlertList.contains(priceAlert)) {
                 priceAlertList.remove(priceAlert);
             }
@@ -103,7 +110,7 @@ public class PriceAlert implements Serializable {
 
     public static List<PriceAlert> getPriceAlertList() {
         synchronized (paLock) {
-            return getPriceAlertFromFile();
+            return priceAlertList;
         }
     }
 

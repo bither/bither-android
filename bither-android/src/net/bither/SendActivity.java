@@ -426,12 +426,7 @@ public class SendActivity extends SwipeRightActivity {
 	private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			MarketType m = (MarketType) intent.getExtras().getSerializable(
-					BroadcastUtil.ACTION_MARKET);
-			if (m.ordinal() == AppSharedPreference.getInstance()
-					.getDefaultMarket().ordinal()) {
-				amountCalculatorLink.setExchangeRate(getExchangeRate());
-			}
+			amountCalculatorLink.setExchangeRate(getExchangeRate());
 		}
 	};
 
