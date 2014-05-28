@@ -19,11 +19,15 @@ package net.bither.ui.base;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,17 +44,17 @@ import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.ExchangeUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 
 public class MarketListHeader extends FrameLayout implements
-        MarketTickerChangedObserver {
+        MarketTickerChangedObserver, ViewTreeObserver.OnGlobalLayoutListener {
     private static final int LightScanInterval = 1200;
     public static int BgAnimDuration = 600;
-    private View ivLight;
     private Animation refreshAnim = AnimationUtils.loadAnimation(getContext(),
             R.anim.check_light_scan);
-
+    private View ivLight;
     private TextView tvName;
     private TextView tvSymbol;
     private TextView tvPrice;
@@ -60,33 +64,23 @@ public class MarketListHeader extends FrameLayout implements
     private TextView tvSell;
     private TextView tvBuy;
     private ImageView ivVolumeSymbol;
-
     private TrendingGraphicView vTrending;
     private LinearLayout llTrending;
+    private View vContainer;
+    private View flContainer;
+    private View parent;
+
+    private LinearLayout llAlert;
+    private EditText etAlertHigh;
+    private EditText etAlertLow;
+    private BgHolder bg;
+    private GestureDetector gestureDetector;
+    private ContainerBottomPaddingHolder bottomHolder;
+
+    private InputMethodManager imm;
+
 
     private Market mMarket;
-    private OnClickListener marketDetailClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (mMarket != null) {
-                Intent intent = new Intent(getContext(),
-                        MarketDetailActivity.class);
-                intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT,
-                        mMarket.getMarketType());
-                getContext().startActivity(intent);
-            }
-        }
-    };
-    private BgHolder bg;
-    private OnTouchListener trendingTouch = new OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            vTrending.causeDraw();
-            return false;
-        }
-    };
 
     public MarketListHeader(Context context) {
         super(context);
@@ -95,10 +89,12 @@ public class MarketListHeader extends FrameLayout implements
 
     private void initView() {
         removeAllViews();
-        addView(LayoutInflater.from(getContext()).inflate(
-                        R.layout.layout_market_list_header, null),
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
-        );
+        imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        parent = LayoutInflater.from(getContext()).inflate(
+                R.layout.layout_market_list_header, null);
+        addView(parent, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        flContainer = findViewById(R.id.fl_container);
+        vContainer = findViewById(R.id.ll_container);
         ivLight = findViewById(R.id.iv_light);
         tvName = (TextView) findViewById(R.id.tv_market_name);
         tvSymbol = (TextView) findViewById(R.id.tv_currency_symbol);
@@ -111,18 +107,25 @@ public class MarketListHeader extends FrameLayout implements
         ivVolumeSymbol = (ImageView) findViewById(R.id.iv_volume_symbol);
         vTrending = (TrendingGraphicView) findViewById(R.id.v_trending);
         llTrending = (LinearLayout) findViewById(R.id.ll_trending);
+        llAlert = (LinearLayout) findViewById(R.id.ll_alert);
+        etAlertHigh = (EditText) findViewById(R.id.et_alert_high);
+        etAlertLow = (EditText) findViewById(R.id.et_alert_low);
+        gestureDetector = new GestureDetector(getContext(), new SwipeDetector());
+        bottomHolder = new ContainerBottomPaddingHolder();
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
         refreshAnim.setDuration(LightScanInterval);
         refreshAnim.setFillBefore(false);
         refreshAnim.setRepeatCount(0);
         refreshAnim.setFillAfter(false);
         ivVolumeSymbol
                 .setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvVolume));
-        llTrending.setOnClickListener(marketDetailClick);
-        llTrending.setOnTouchListener(trendingTouch);
+        llTrending.setOnClickListener(new MarketDetailClick());
+        llTrending.setOnTouchListener(new TrendingTouch());
         setMarket(MarketUtil.getDefaultMarket());
     }
 
     private void showMarket() {
+        bringToFront();
         if (mMarket == null) {
             return;
         }
@@ -188,6 +191,13 @@ public class MarketListHeader extends FrameLayout implements
         if (mMarket == null) {
             bg = new BgHolder(market.getMarketColor());
         }
+        if (mMarket != null) {
+            if (bottomHolder.getBottom() > 0) {
+                bottomHolder.reset();
+            } else {
+                bottomHolder.shake();
+            }
+        }
         mMarket = market;
         showMarket();
     }
@@ -211,6 +221,151 @@ public class MarketListHeader extends FrameLayout implements
         showMarket();
     }
 
+    @Override
+    public void onGlobalLayout() {
+        if (parent.getLayoutParams().height <= 0) {
+            parent.getLayoutParams().height = parent.getHeight();
+            vContainer.getLayoutParams().height = vContainer.getHeight();
+            flContainer.getLayoutParams().height = flContainer.getHeight();
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (gestureDetector.onTouchEvent(ev)) {
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
+        private int SwipeThreshold = 20;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                LogUtil.i("Market", "fling");
+                float diffY = e2.getY() - e1.getY();
+                float diffX = e2.getX() - e1.getX();
+                if (Math.abs(diffX) < Math.abs(diffY)) {
+                    if (Math.abs(diffY) > SwipeThreshold) {
+                        if (diffY > 0) {
+                            if (bottomHolder.isShowing()) {
+                                bottomHolder.reset();
+                                return true;
+                            }
+                        } else {
+                            if (!bottomHolder.isShowing()) {
+                                bottomHolder.showBottom();
+                                return true;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            if (bottomHolder.isShowing()) {
+                if (touchInView(e, etAlertHigh) || touchInView(e, etAlertLow)) {
+                    return super.onDown(e);
+                }
+            } else {
+                if (touchInView(e, llTrending)) {
+                    return super.onDown(e);
+                }
+            }
+            return true;
+        }
+
+        private boolean touchInView(MotionEvent e, View v) {
+            float x, y;
+            x = e.getX();
+            y = e.getY();
+            int[] locationInWindow = new int[2];
+            getLocationInWindow(locationInWindow);
+            x = x + locationInWindow[0];
+            y = y + locationInWindow[1];
+            v.getLocationInWindow(locationInWindow);
+            if (x > locationInWindow[0]
+                    && x < locationInWindow[0] + v.getWidth()) {
+                if (y > locationInWindow[1]
+                        && y < locationInWindow[1] + v.getHeight()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    private class ContainerBottomPaddingHolder {
+        public static final int AnimDuration = 180;
+
+        public void reset() {
+            ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
+            etAlertLow.clearFocus();
+            etAlertHigh.clearFocus();
+            imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
+        public void shake() {
+            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight() / 2,
+                    0).setDuration(AnimDuration * 2).start();
+        }
+
+        public int getBottom() {
+            return flContainer.getPaddingBottom();
+        }
+
+        public void setBottom(int bottom) {
+            bottom = Math.max(0, Math.min(bottom, llAlert.getHeight()));
+            flContainer.setPadding(0, 0, 0, bottom);
+            vContainer.requestLayout();
+        }
+
+        public boolean isShowing() {
+            return getBottom() >= llAlert.getHeight();
+        }
+
+        public void showBottom() {
+            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
+                    (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
+                    .start();
+        }
+
+        public int getThreshold() {
+            return (int) (llAlert.getHeight() * 0.8f);
+        }
+    }
+
+    private class MarketDetailClick implements OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            if (mMarket != null) {
+                Intent intent = new Intent(getContext(),
+                        MarketDetailActivity.class);
+                intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT,
+                        mMarket.getMarketType());
+                getContext().startActivity(intent);
+            }
+        }
+    }
+
+    private class TrendingTouch implements OnTouchListener {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            vTrending.causeDraw();
+            return false;
+        }
+    }
+
     private class BgHolder {
         private float animProgress = 0;
         private ArgbEvaluator evaluator = new ArgbEvaluator();
@@ -218,16 +373,18 @@ public class MarketListHeader extends FrameLayout implements
         private int endColor;
         private int currentColor;
         private ObjectAnimator animator;
+        private View bg;
 
         public BgHolder(int startColor) {
             this.startColor = startColor;
             this.endColor = startColor;
+            bg = findViewById(R.id.fl_bg);
             setBg((Integer) evaluator.evaluate(0, startColor, startColor));
         }
 
         private void setBg(int color) {
             currentColor = color;
-            MarketListHeader.this.setBackgroundColor(color);
+            bg.setBackgroundColor(color);
         }
 
         public float getAnimProgress() {

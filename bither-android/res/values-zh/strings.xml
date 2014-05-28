@@ -128,6 +128,8 @@
     <string name="kline_low">最低: </string>
     <string name="kline_open">开盘: </string>
     <string name="kline_close">收盘: </string>
+    <string name="market_price_alert_high_hint">高于</string>
+    <string name="market_price_alert_low_hint">低于</string>
 
     <!-- setting -->
     <string name="setting_name_currency">默认货币</string>

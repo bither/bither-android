@@ -53,10 +53,8 @@ public class FancyQrCodeThread extends Thread {
         this.content = content;
         this.listener = listener;
         this.size = size;
-        if (addAvatar) {
-            this.fgColor = fgColor;
-            this.bgColor = bgColor;
-        }
+        this.fgColor = fgColor;
+        this.bgColor = bgColor;
         this.addAvatar = addAvatar;
     }
 

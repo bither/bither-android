@@ -134,6 +134,8 @@
     <string name="kline_open">Open: </string>
     <string name="kline_close">Close: </string>
     <string name="kline_amount">Volume: </string>
+    <string name="market_price_alert_high_hint">Higher Than</string>
+    <string name="market_price_alert_low_hint">Lower Than</string>
 
     <!-- setting -->
     <string name="setting_name_currency">Default Currency</string>
