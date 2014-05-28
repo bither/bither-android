@@ -74,7 +74,7 @@ public class AddressDetailHeader extends FrameLayout {
             if (address != null) {
                 WalletUtils.removeBitherAddress(address);
             }
-            Fragment f = BitherApplication.warmActivity.getFragmentAtIndex(1);
+            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
             if (f instanceof Refreshable) {
                 ((Refreshable) f).doRefresh();
             }

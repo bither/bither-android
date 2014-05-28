@@ -72,7 +72,7 @@ public class BitherApplication extends Application {
     public static int ChainHeight;
 
     public static Context mContext;
-    public static HotActivity warmActivity;
+    public static HotActivity hotActivity;
     public static UEHandler ueHandler;
     public static Activity initialActivity;
     public static boolean isFirstIn = false;

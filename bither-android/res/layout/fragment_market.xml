@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/card_list_padding"
-    android:paddingRight="@dimen/card_list_padding" >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical"
+             android:paddingLeft="@dimen/card_list_padding"
+             android:paddingRight="@dimen/card_list_padding">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical" >
+        android:background="@color/white">
 
         <net.bither.ui.base.MarketListHeader
             android:id="@+id/v_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp" />
+            android:layout_alignParentTop="true"
+            android:paddingTop="10dp"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="-8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/v_header"
             android:layout_marginBottom="6dp"
-            android:layout_weight="1" >
+            android:layout_weight="1">
 
             <net.bither.ui.base.OverScrollableListView
                 android:id="@+id/lv"
@@ -33,16 +36,11 @@
                 android:dividerHeight="1px"
                 android:drawSelectorOnTop="false"
                 android:fadingEdgeLength="0dp"
-                android:scrollbars="none" />
+                android:scrollbars="none"/>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:background="@drawable/global_shadow_down" />
         </FrameLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <include layout="@layout/layout_card_foreground_single" />
+    <include layout="@layout/layout_card_foreground_single"/>
 
 </FrameLayout>

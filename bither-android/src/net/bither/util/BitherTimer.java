@@ -27,12 +27,12 @@ import java.util.TimerTask;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-import net.bither.ChooseModeActivity;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 
 public class BitherTimer {
 
@@ -71,6 +71,7 @@ public class BitherTimer {
             ExchangeUtil.setExcchangeRate(exchangeRate);
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
+                comporePriceAlert(tickers);
                 FileUtil.serializeObject(file, tickers);
                 BroadcastUtil.sendBroadcastMarketState(tickers);
             }
@@ -85,11 +86,15 @@ public class BitherTimer {
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (ticker.getDefaultExchangeHigh() >= priceAlert.getCaps()) {
-                        notif();
+                    if (priceAlert.getHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
+                            .getHigher()) {
+                        notif(ticker.getMarketType(), true, priceAlert.getHigher());
+                        PriceAlert.removePriceAlert(priceAlert);
                     }
-                    if (ticker.getDefaultExchangeLow() <= priceAlert.getLimit()) {
-                        notif();
+                    if (priceAlert.getLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
+                            .getLower()) {
+                        notif(ticker.getMarketType(), false, priceAlert.getLower());
+                        PriceAlert.removePriceAlert(priceAlert);
                     }
                 }
 
@@ -100,18 +105,30 @@ public class BitherTimer {
 
     }
 
-    private void notif() {
+    private void notif(final BitherSetting.MarketType marketType, boolean isHigher,
+                       double alertPrice) {
         Context context = BitherApplication.mContext;
         NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent2 = new Intent(BitherApplication.mContext, MarketDetailActivity.class);
 
-        String title = context.getString(R.string.please_wait);
-        String contentText = context
-                .getString(R.string.please_wait);
+        Intent intent = new Intent(BitherApplication.mContext, MarketDetailActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT, marketType);
+        intent.putExtra(BitherSetting.INTENT_REF.INTENT_FROM_NOTIF, true);
+        String title = context.getString(R.string.market_price_alert_title);
+        String contentText;
+        if (isHigher) {
+            contentText = context.getString(R.string.price_alert_higher_than);
+        } else {
+            contentText = context.getString(R.string.price_alert_lower_than);
+        }
+        contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
+        contentText = contentText + " " + AppSharedPreference.getInstance()
+                .getDefaultExchangeType().getSymbol() + StringUtil.formatDoubleToMoneyString
+                (alertPrice);
         SystemUtil.nmNotifyDefault(nm, context,
-                BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent2,
+                BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent,
                 title, contentText, R.drawable.ic_launcher);
+
     }
 
 }

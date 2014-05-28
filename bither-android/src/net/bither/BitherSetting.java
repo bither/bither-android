@@ -122,6 +122,7 @@ public class BitherSetting {
         public static final String TITLE_STRING = "title_string";
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
+        public static final String INTENT_FROM_NOTIF = "from_notif";
     }
 
     public static enum AppMode {
@@ -154,4 +155,38 @@ public class BitherSetting {
         }
     }
 
+    public static String getMarketName(MarketType marketType) {
+        String name = "";
+        switch (marketType) {
+            case HUOBI:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_huobi);
+                break;
+            case BITSTAMP:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitstamp);
+                break;
+            case BTCE:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_btce);
+                break;
+            case OKCOIN:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_okcoin);
+                break;
+            case CHBTC:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_chbtc);
+                break;
+            case BTCCHINA:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_btcchina);
+                break;
+            default:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitstamp);
+                break;
+        }
+        return name;
+    }
 }

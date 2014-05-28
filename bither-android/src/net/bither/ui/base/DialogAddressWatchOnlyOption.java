@@ -80,7 +80,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
                             @Override
                             public void run() {
                                 WalletUtils.removeBitherAddress(address);
-                                Fragment f = BitherApplication.warmActivity
+                                Fragment f = BitherApplication.hotActivity
                                         .getFragmentAtIndex(1);
                                 if (f instanceof Refreshable) {
                                     ((Refreshable) f).doRefresh();

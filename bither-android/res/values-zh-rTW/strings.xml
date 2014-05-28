@@ -126,6 +126,11 @@
     <string name="kline_open">開盤: </string>
     <string name="kline_close">收盤: </string>
     <string name="kline_amount">交易量: </string>
+    <string name="market_price_alert_high_hint">高於</string>
+    <string name="market_price_alert_low_hint">低於</string>
+    <string name="market_price_alert_title">價格預警</string>
+    <string name="price_alert_higher_than">%s價格高於 </string>
+    <string name="price_alert_lower_than">%s價格低於 </string>
 
     <!-- setting -->
     <string name="setting_name_currency">默認貨幣</string>
