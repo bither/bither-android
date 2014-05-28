@@ -154,4 +154,38 @@ public class BitherSetting {
         }
     }
 
+    public static String getMarketName(MarketType marketType) {
+        String name = "";
+        switch (marketType) {
+            case HUOBI:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_huobi);
+                break;
+            case BITSTAMP:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitstamp);
+                break;
+            case BTCE:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_btce);
+                break;
+            case OKCOIN:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_okcoin);
+                break;
+            case CHBTC:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_chbtc);
+                break;
+            case BTCCHINA:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_btcchina);
+                break;
+            default:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitstamp);
+                break;
+        }
+        return name;
+    }
 }

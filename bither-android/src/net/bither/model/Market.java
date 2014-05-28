@@ -17,6 +17,7 @@
 package net.bither.model;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.R;
 
@@ -56,38 +57,7 @@ public class Market {
     }
 
     public String getName() {
-        String name = "";
-        switch (getMarketType()) {
-            case HUOBI:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_huobi);
-                break;
-            case BITSTAMP:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_bitstamp);
-                break;
-            case BTCE:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_btce);
-                break;
-            case OKCOIN:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_okcoin);
-                break;
-            case CHBTC:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_chbtc);
-                break;
-            case BTCCHINA:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_btcchina);
-                break;
-            default:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_bitstamp);
-                break;
-        }
-        return name;
+        return BitherSetting.getMarketName(getMarketType());
     }
 
     public MarketType getMarketType() {

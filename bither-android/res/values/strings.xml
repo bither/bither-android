@@ -137,6 +137,8 @@
     <string name="market_price_alert_high_hint">Higher Than</string>
     <string name="market_price_alert_low_hint">Lower Than</string>
     <string name="market_price_alert_title">Price Alert</string>
+    <string name="price_alert_higher_than">Price on %s is higher than </string>
+    <string name="price_alert_lower_than">Price on %s is lower than </string>
 
     <!-- setting -->
     <string name="setting_name_currency">Default Currency</string>

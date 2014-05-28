@@ -71,6 +71,7 @@ public class BitherTimer {
             ExchangeUtil.setExcchangeRate(exchangeRate);
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
+                comporePriceAlert(tickers);
                 FileUtil.serializeObject(file, tickers);
                 BroadcastUtil.sendBroadcastMarketState(tickers);
             }
@@ -85,11 +86,13 @@ public class BitherTimer {
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (ticker.getDefaultExchangeHigh() >= priceAlert.getCaps()) {
-                        notif();
+                    if (priceAlert.getCaps() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
+                            .getCaps()) {
+                        notif(ticker.getMarketType(), true, priceAlert.getCaps());
                     }
-                    if (ticker.getDefaultExchangeLow() <= priceAlert.getLimit()) {
-                        notif();
+                    if (priceAlert.getLimit() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
+                            .getLimit()) {
+                        notif(ticker.getMarketType(), false, priceAlert.getLimit());
                     }
                 }
 
@@ -100,15 +103,21 @@ public class BitherTimer {
 
     }
 
-    private void notif() {
+    private void notif(BitherSetting.MarketType marketType, boolean isHigher, double alertPrice) {
         Context context = BitherApplication.mContext;
         NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent2 = new Intent(BitherApplication.mContext, MarketDetailActivity.class);
 
-        String title = context.getString(R.string.please_wait);
-        String contentText = context
-                .getString(R.string.please_wait);
+        Intent intent2 = new Intent(BitherApplication.mContext, MarketDetailActivity.class);
+        String title = context.getString(R.string.market_price_alert_title);
+        String contentText;
+        if (isHigher) {
+            contentText = context.getString(R.string.price_alert_higher_than);
+        } else {
+            contentText = context.getString(R.string.price_alert_lower_than);
+        }
+        contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
+        contentText = contentText + StringUtil.formatDoubleToMoneyString(alertPrice);
         SystemUtil.nmNotifyDefault(nm, context,
                 BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent2,
                 title, contentText, R.drawable.ic_launcher);
