@@ -27,6 +27,9 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.google.zxing.qrcode.decoder.Version;
 
+import net.bither.BitherApplication;
+import net.bither.R;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,37 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.Nonnull;
 
 public class Qr {
+    public static enum QrCodeTheme {
+        YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
+        GREEN("#ff9dc427", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
+        BLUELIGHT("#ff5590ca", "#ffeff4f7", R.string.fancy_qr_code_theme_name_bluelight),
+        RED("#ffd55234", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
+        BLUEDARK("#ff16abe3", "#fff9fdfe", R.string.fancy_qr_code_theme_name_bluedark),
+        PURPLE("#ffb73aa7", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
+
+        private int fgColor;
+        private int bgColor;
+        private int title;
+
+        QrCodeTheme(String fg, String bg, int title) {
+            fgColor = Color.parseColor(fg);
+            bgColor = Color.parseColor(bg);
+            this.title = title;
+        }
+
+        public int getFgColor() {
+            return fgColor;
+        }
+
+        public int getBgColor() {
+            return bgColor;
+        }
+
+        public String getTitle() {
+            return BitherApplication.mContext.getString(title);
+        }
+    }
+
     private final static QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 
     private static final Logger log = LoggerFactory.getLogger(Qr.class);
@@ -49,7 +83,8 @@ public class Qr {
         return bitmap(content, size, Color.BLACK, Color.TRANSPARENT);
     }
 
-    public static Bitmap bitmap(@Nonnull final String content, final int size, int fgColor, int bgColor) {
+    public static Bitmap bitmap(@Nonnull final String content, final int size, int fgColor,
+                                int bgColor) {
         try {
             final Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.MARGIN, 0);
@@ -61,9 +96,13 @@ public class Qr {
             final int height = result.getHeight();
             final int[] pixels = new int[width * height];
 
-            for (int y = 0; y < height; y++) {
+            for (int y = 0;
+                 y < height;
+                 y++) {
                 final int offset = y * width;
-                for (int x = 0; x < width; x++) {
+                for (int x = 0;
+                     x < width;
+                     x++) {
                     pixels[offset + x] = result.get(x, y) ? fgColor
                             : bgColor;
                 }
@@ -106,14 +145,16 @@ public class Qr {
         final byte[] bytes = Base43.decode(content.substring(1));
 
         InputStream is = new ByteArrayInputStream(bytes);
-        if (useCompression)
+        if (useCompression) {
             is = new GZIPInputStream(is);
+        }
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         final byte[] buf = new byte[4096];
         int read;
-        while (-1 != (read = is.read(buf)))
+        while (-1 != (read = is.read(buf))) {
             baos.write(buf, 0, read);
+        }
         baos.close();
         is.close();
 
@@ -121,7 +162,9 @@ public class Qr {
     }
 
     public static void printQrContentSize() {
-        for (int versionNum = 1; versionNum <= 40; versionNum++) {
+        for (int versionNum = 1;
+             versionNum <= 40;
+             versionNum++) {
             Version version = Version.getVersionForNumber(versionNum);
             // numBytes = 196
             int numBytes = version.getTotalCodewords();

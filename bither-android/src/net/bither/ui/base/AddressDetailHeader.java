@@ -37,6 +37,7 @@ import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddress;
 import net.bither.preference.AppSharedPreference;
+import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
@@ -178,8 +179,8 @@ public class AddressDetailHeader extends FrameLayout {
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         if (this.address != address) {
             if (AppSharedPreference.getInstance().hasUserAvatar()) {
-                ivQr.setContent(address.getAddress(), getResources().getColor(R.color
-                        .fancy_qr_code_fg), getResources().getColor(R.color.fancy_qr_code_bg));
+                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+                ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
             } else {
                 ivQr.setContent(address.getAddress());
             }

@@ -262,6 +262,13 @@
     <string name="fancy_qr_code_save_success">二维码已保存</string>
     <string name="fancy_qr_code_view_origin">查看原始二维码</string>
     <string name="saving">正在保存…</string>
+    <string name="fancy_qr_code_theme">二维码风格</string>
+    <string name="fancy_qr_code_theme_name_yellow">黄</string>
+    <string name="fancy_qr_code_theme_name_green">绿</string>
+    <string name="fancy_qr_code_theme_name_bluelight">浅蓝</string>
+    <string name="fancy_qr_code_theme_name_red">红</string>
+    <string name="fancy_qr_code_theme_name_bluedark">深蓝</string>
+    <string name="fancy_qr_code_theme_name_purple">紫</string>
 
     <!-- edit password -->
     <string name="edit_password_title">修改密码</string>

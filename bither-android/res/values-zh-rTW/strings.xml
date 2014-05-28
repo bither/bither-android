@@ -262,6 +262,13 @@
     <string name="saving">正在保存…</string>
     <string name="fancy_qr_code_save_success">二維碼已保存</string>
     <string name="fancy_qr_code_view_origin">查看原始二維碼</string>
+    <string name="fancy_qr_code_theme">二維碼風格</string>
+    <string name="fancy_qr_code_theme_name_yellow">黃</string>
+    <string name="fancy_qr_code_theme_name_green">綠</string>
+    <string name="fancy_qr_code_theme_name_bluelight">淺藍</string>
+    <string name="fancy_qr_code_theme_name_red">紅</string>
+    <string name="fancy_qr_code_theme_name_bluedark">深藍</string>
+    <string name="fancy_qr_code_theme_name_purple">紫</string>
 
     <!-- edit password -->
     <string name="edit_password_title">修改密碼</string>

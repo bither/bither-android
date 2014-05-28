@@ -25,6 +25,7 @@ import net.bither.BitherSetting.AppMode;
 import net.bither.BitherSetting.MarketType;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
@@ -50,6 +51,7 @@ public class AppSharedPreference {
     private static final String DOWNLOAD_SPV_FINISH = "download_spv_finish";
     private static final String PASSWORD_SEED = "password_seed";
     private static final String USER_AVATAR = "user_avatar";
+    private static final String FANCY_QR_CODE_THEME = "fancy_qr_code_theme";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
     private SharedPreferences mPreferences;
@@ -278,6 +280,18 @@ public class AppSharedPreference {
 
     public void setUserAvatar(String avatar) {
         this.mPreferences.edit().putString(USER_AVATAR, avatar).commit();
+    }
+
+    public Qr.QrCodeTheme getFancyQrCodeTheme() {
+        int index = this.mPreferences.getInt(FANCY_QR_CODE_THEME, 0);
+        if (index >= 0 && index < Qr.QrCodeTheme.values().length) {
+            return Qr.QrCodeTheme.values()[index];
+        }
+        return Qr.QrCodeTheme.YELLOW;
+    }
+
+    public void setFancyQrCodeTheme(Qr.QrCodeTheme theme) {
+        mPreferences.edit().putInt(FANCY_QR_CODE_THEME, theme.ordinal()).commit();
     }
 
 }
