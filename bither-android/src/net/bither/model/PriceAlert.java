@@ -18,13 +18,13 @@ public class PriceAlert implements Serializable {
     private static List<PriceAlert> priceAlertList = getPriceAlertFromFile();
     private BitherSetting.MarketType marketType;
     private ExchangeUtil.ExchangeType exchangeType;
-    private double limit;
-    private double caps;
+    private double lower;
+    private double higher;
 
-    public PriceAlert(BitherSetting.MarketType marketType, double limit, double caps) {
+    public PriceAlert(BitherSetting.MarketType marketType, double limit, double higher) {
         this.marketType = marketType;
-        this.limit = limit;
-        this.caps = caps;
+        this.lower = limit;
+        this.higher = higher;
         this.exchangeType = AppSharedPreference.getInstance().getDefaultExchangeType();
     }
 
@@ -45,28 +45,28 @@ public class PriceAlert implements Serializable {
         this.exchangeType = exchangeType;
     }
 
-    public double getLimit() {
-        return this.limit;
+    public double getLower() {
+        return this.lower;
     }
 
-    public double getExchangeLimit() {
-        return this.limit * ExchangeUtil.getRate(getExchangeType());
+    public double getExchangeLower() {
+        return this.lower * ExchangeUtil.getRate(getExchangeType());
     }
 
-    public void setLimit(double limit) {
-        this.limit = limit;
+    public void setLower(double lower) {
+        this.lower = lower;
     }
 
-    public double getExchangeCaps() {
-        return this.caps * ExchangeUtil.getRate(getExchangeType());
+    public double getExchangeHigher() {
+        return this.higher * ExchangeUtil.getRate(getExchangeType());
     }
 
-    public double getCaps() {
-        return this.caps;
+    public double getHigher() {
+        return this.higher;
     }
 
-    public void setCaps(double caps) {
-        this.caps = caps;
+    public void setHigher(double higher) {
+        this.higher = higher;
     }
 
     @Override

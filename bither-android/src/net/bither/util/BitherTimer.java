@@ -27,7 +27,6 @@ import java.util.TimerTask;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-import net.bither.ChooseModeActivity;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
@@ -86,13 +85,13 @@ public class BitherTimer {
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (priceAlert.getCaps() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
-                            .getCaps()) {
-                        notif(ticker.getMarketType(), true, priceAlert.getCaps());
+                    if (priceAlert.getHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
+                            .getHigher()) {
+                        notif(ticker.getMarketType(), true, priceAlert.getHigher());
                     }
-                    if (priceAlert.getLimit() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
-                            .getLimit()) {
-                        notif(ticker.getMarketType(), false, priceAlert.getLimit());
+                    if (priceAlert.getLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
+                            .getLower()) {
+                        notif(ticker.getMarketType(), false, priceAlert.getLower());
                     }
                 }
 

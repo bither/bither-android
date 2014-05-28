@@ -186,13 +186,13 @@ public class MarketListHeader extends FrameLayout implements
         etAlertHigh.setText("");
         etAlertLow.setText("");
         if (priceAlert != null) {
-            if (priceAlert.getExchangeCaps() > 0) {
+            if (priceAlert.getExchangeHigher() > 0) {
                 etAlertHigh.setText(StringUtil.formatDoubleToMoneyString(priceAlert
-                        .getExchangeCaps()));
+                        .getExchangeHigher()));
             }
-            if (priceAlert.getExchangeLimit() > 0) {
+            if (priceAlert.getExchangeLower() > 0) {
                 etAlertLow.setText(StringUtil.formatDoubleToMoneyString(priceAlert
-                        .getExchangeLimit()));
+                        .getExchangeLower()));
             }
         }
     }
