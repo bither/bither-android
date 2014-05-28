@@ -16,60 +16,102 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
+import android.app.Activity;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
-public class SubtransactionListItem extends FrameLayout {
-	private TextView tvAddress;
-	private TextView tvBtc;
+import java.math.BigInteger;
 
-	public SubtransactionListItem(Context context) {
-		super(context);
-		removeAllViews();
-		addView(LayoutInflater.from(context).inflate(
-				R.layout.list_item_transaction_address, null),
-				LayoutParams.MATCH_PARENT, UIUtil.dip2pix(40));
-		tvAddress = (TextView) findViewById(R.id.tv_subtransaction_address);
-		tvBtc = (TextView) findViewById(R.id.tv_subtransaction_btc);
-	}
+/**
+ * Created by songchenwen on 14-5-28.
+ */
+public class SubtransactionListItem extends FrameLayout implements View.OnClickListener {
+    public static final int Height = UIUtil.dip2pix(70);
+    public static final int MessageHeight = UIUtil.dip2pix(40);
 
-	private SubtransactionListItem(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    private View parent;
+    private TextView tvAddress;
+    private TextView tvBtc;
+    private TextView tvMessage;
+    private FrameLayout flAddress;
+    private String address;
+    private Activity activity;
 
-	private SubtransactionListItem(Context context, AttributeSet attrs,
-			int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public SubtransactionListItem(Activity context) {
+        super(context);
+        activity = context;
+        removeAllViews();
+        parent = LayoutInflater.from(context).inflate(R.layout.list_item_transaction_address, null);
+        addView(parent, LayoutParams.MATCH_PARENT, Height);
+        tvAddress = (TextView) findViewById(R.id.tv_subtransaction_address);
+        tvBtc = (TextView) findViewById(R.id.tv_subtransaction_btc);
+        tvMessage = (TextView) findViewById(R.id.tv_message);
+        flAddress = (FrameLayout) findViewById(R.id.fl_address);
+        flAddress.setOnClickListener(this);
+    }
 
-	public void setTextColor(int color) {
-		tvAddress.setTextColor(color);
-		tvBtc.setTextColor(color);
-	}
+    private SubtransactionListItem(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	public void setContent(String address, BigInteger value) {
-		if (!StringUtil.compareString(address,
-				getContext().getString(R.string.address_cannot_be_parsed))
-				&& !StringUtil.compareString(address,
-						getContext().getString(R.string.input_coinbase))) {
-			tvAddress.setText(WalletUtils.formatHash(address, 4, 20));
-		} else {
-			tvAddress.setText(address);
-		}
-		if (value != null) {
-			tvBtc.setText(GenericUtils.formatValue(value));
-		} else {
-			tvBtc.setText("");
-		}
-	}
+    private SubtransactionListItem(Context context, AttributeSet attrs,
+                                   int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    public void setTextColor(int color) {
+        tvAddress.setTextColor(color);
+        tvMessage.setTextColor(color);
+        tvBtc.setTextColor(color);
+    }
+
+    public void setContent(String address, BigInteger value) {
+        if (!isMessage(address)) {
+            this.address = address;
+            parent.getLayoutParams().height = Height;
+            tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
+            tvMessage.setVisibility(View.GONE);
+            flAddress.setVisibility(View.VISIBLE);
+        } else {
+            parent.getLayoutParams().height = MessageHeight;
+            tvMessage.setText(address);
+            flAddress.setVisibility(View.GONE);
+            tvMessage.setVisibility(View.VISIBLE);
+        }
+        if (value != null) {
+            tvBtc.setText(GenericUtils.formatValue(value));
+        } else {
+            tvBtc.setText("");
+        }
+    }
+
+    public static boolean isMessage(String address) {
+        return StringUtil.compareString(address, BitherApplication.mContext.getString(R.string
+                .address_cannot_be_parsed)) || StringUtil.compareString(address,
+                BitherApplication.mContext.getString(R.string.input_coinbase)) || StringUtil
+                .compareString(address, BitherApplication.mContext.getString(R.string
+                        .address_mine));
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.fl_address) {
+            if (address != null && !isMessage(address)) {
+                StringUtil.copyString(address);
+                DropdownMessage.showDropdownMessage(activity,
+                        R.string.copy_address_success);
+            }
+        }
+    }
 }

@@ -43,6 +43,7 @@
     <string name="address_first_seen_time">最早出現時間</string>
     <string name="input_coinbase">挖礦</string>
     <string name="address_cannot_be_parsed">地址不詳</string>
+    <string name="address_mine">我的地址</string>
     <string name="copy_address">複製</string>
     <string name="qr_code">二​​維碼</string>
     <string name="copy_address_success">地址已復制</string>
