@@ -49,8 +49,16 @@ public class PriceAlert implements Serializable {
         return this.limit;
     }
 
+    public double getExchangeLimit() {
+        return this.limit * ExchangeUtil.getRate(getExchangeType());
+    }
+
     public void setLimit(double limit) {
         this.limit = limit;
+    }
+
+    public double getExchangeCaps() {
+        return this.caps * ExchangeUtil.getRate(getExchangeType());
     }
 
     public double getCaps() {
