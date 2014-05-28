@@ -122,6 +122,7 @@ public class BitherSetting {
         public static final String TITLE_STRING = "title_string";
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
+        public static final String INTENT_FROM_NOTIF = "from_notif";
     }
 
     public static enum AppMode {

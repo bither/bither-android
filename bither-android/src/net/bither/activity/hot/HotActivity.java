@@ -16,7 +16,6 @@
 
 package net.bither.activity.hot;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.hot.HotAddressFragment;
-import net.bither.image.glcrop.CropImageGlActivity;
+import net.bither.fragment.hot.MarketFragment;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
@@ -43,23 +42,18 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.FileUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -82,7 +76,7 @@ public class HotActivity extends FragmentActivity {
         BroadcastUtil.removeProgressState();
         initAppState();
         super.onCreate(savedInstanceState);
-        BitherApplication.warmActivity = this;
+        BitherApplication.hotActivity = this;
         setContentView(R.layout.activity_hot);
         initView();
         mPager.postDelayed(new Runnable() {
@@ -123,7 +117,7 @@ public class HotActivity extends FragmentActivity {
         unregisterReceiver(broadcastReceiver);
         unregisterReceiver(totalBitcoinBroadcastReceiver);
         super.onDestroy();
-        BitherApplication.warmActivity = null;
+        BitherApplication.hotActivity = null;
         ServiceUtil.doMarkTimerTask(false);
     }
 
@@ -192,7 +186,8 @@ public class HotActivity extends FragmentActivity {
     }
 
     private void deleteNotification() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context
+                .NOTIFICATION_SERVICE);
         notificationManager
                 .cancel(BitherSetting.NOTIFICATION_ID_COINS_RECEIVED);
     }
@@ -311,7 +306,9 @@ public class HotActivity extends FragmentActivity {
             this.indicators = new ArrayList<TabButton>();
             this.pager = viewPager;
             int size = buttons.length;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0;
+                 i < size;
+                 i++) {
                 TabButton button = buttons[i];
                 indicators.add(button);
                 if (pager.getCurrentItem() == i) {
@@ -356,7 +353,9 @@ public class HotActivity extends FragmentActivity {
         public void onPageSelected(int position) {
             showNewCount();
             if (position >= 0 && position < indicators.size()) {
-                for (int i = 0; i < indicators.size(); i++) {
+                for (int i = 0;
+                     i < indicators.size();
+                     i++) {
                     indicators.get(i).setChecked(i == position);
                     if (i != position) {
                         Fragment f = getFragmentAtIndex(i);
@@ -432,7 +431,8 @@ public class HotActivity extends FragmentActivity {
         }
     }
 
-    private final TotalBitcoinBroadcastReceiver totalBitcoinBroadcastReceiver = new TotalBitcoinBroadcastReceiver();
+    private final TotalBitcoinBroadcastReceiver totalBitcoinBroadcastReceiver = new
+            TotalBitcoinBroadcastReceiver();
 
     private final class TotalBitcoinBroadcastReceiver extends BroadcastReceiver {
 
@@ -448,6 +448,17 @@ public class HotActivity extends FragmentActivity {
                     tbtnMain.setBigInteger(btc);
                 }
             }
+        }
+    }
+
+    public void notifPriceAlert(BitherSetting.MarketType marketType) {
+        if (mPager.getCurrentItem() != 0) {
+            mPager.setCurrentItem(0);
+        }
+        Fragment fragment = getActiveFragment();
+        if (fragment instanceof MarketFragment) {
+            MarketFragment marketFragment = (MarketFragment) fragment;
+            marketFragment.notifPriceAlert(marketType);
         }
     }
 

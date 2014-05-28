@@ -82,7 +82,7 @@ public class FileUtil {
     private static final String EXCAHNGE_TICKER_NAME = "exchange.ticker";
     private static final String EXCHANGE_KLINE_NAME = "exchange.kline";
     private static final String EXCHANGE_DEPTH_NAME = "exchange.depth";
-    private static final String PRICE_ALERT = "price_alert";
+    private static final String PRICE_ALERT = "price.alert";
     private static final String ADDRESS_LIST = "address_list";
 
     private static final String EXCHANGERATE = "exchangerate";

@@ -346,10 +346,10 @@ public class MarketListHeader extends FrameLayout implements
                 low = Double.parseDouble(etAlertLow.getText().toString());
             }
             mMarket.setPriceAlert(low, high);
-            if (BitherApplication.warmActivity != null && BitherApplication.warmActivity
-                    .getFragmentAtIndex(0) != null && BitherApplication.warmActivity
+            if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
+                    .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
                     .getFragmentAtIndex(0) instanceof Refreshable) {
-                Refreshable r = (Refreshable) BitherApplication.warmActivity.getFragmentAtIndex(0);
+                Refreshable r = (Refreshable) BitherApplication.hotActivity.getFragmentAtIndex(0);
                 r.doRefresh();
             }
             ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
