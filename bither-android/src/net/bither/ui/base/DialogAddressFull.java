@@ -16,11 +16,7 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
-
-import net.bither.R;
-import net.bither.util.UIUtil;
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.v4.util.ArrayMap;
 import android.view.View;
@@ -30,78 +26,103 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import net.bither.R;
+import net.bither.util.UIUtil;
+
+import java.math.BigInteger;
+
+/**
+ * Created by songchenwen on 14-5-28.
+ */
 public class DialogAddressFull extends DialogWithArrow {
-	private static final int MaxHeight = UIUtil.getScreenHeight()
-			- UIUtil.dip2pix(100);
-	private ArrayMap<String, BigInteger> addresses;
-	private ListView lv;
+    private static final int MaxHeight = UIUtil.getScreenHeight()
+            - UIUtil.dip2pix(100);
+    private Activity activity;
+    private ArrayMap<String, BigInteger> addresses;
+    private ListView lv;
+    private BaseAdapter adapter = new BaseAdapter() {
 
-	public DialogAddressFull(Context context,
-			ArrayMap<String, BigInteger> addresses) {
-		super(context);
-		this.addresses = addresses;
-		setContentView(R.layout.dialog_address_full);
-		lv = (ListView) findViewById(R.id.lv);
-		int width = UIUtil.dip2pix(200);
-		for (int i = 0; i < addresses.size(); i++) {
-			if (addresses.valueAt(i) != null) {
-				width = Math.min(UIUtil.getScreenWidth() - UIUtil.dip2pix(45),
-						UIUtil.dip2pix(280));
-				break;
-			}
-		}
-		lv.getLayoutParams().height = Math.min(
-				addresses.size() * UIUtil.dip2pix(40), MaxHeight);
-		lv.getLayoutParams().width = width;
-		lv.setAdapter(adapter);
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				dismiss();
-			}
-		});
-	}
+        @Override
+        public int getCount() {
+            return addresses.size();
+        }
 
-	private BaseAdapter adapter = new BaseAdapter() {
+        @Override
+        public Object getItem(int position) {
+            return addresses.keyAt(position);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			SubtransactionListItem view;
-			if (convertView == null
-					|| !(convertView instanceof SubtransactionListItem)) {
-				convertView = new SubtransactionListItem(getContext());
-			}
-			view = (SubtransactionListItem) convertView;
-			view.setTextColor(Color.WHITE);
-			view.setContent(addresses.keyAt(position),
-					addresses.valueAt(position));
-			return convertView;
-		}
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            SubtransactionListItem view;
+            if (convertView == null
+                    || !(convertView instanceof SubtransactionListItem)) {
+                convertView = new SubtransactionListItem(activity);
+            }
+            view = (SubtransactionListItem) convertView;
+            view.setTextColor(Color.WHITE);
+            view.setContent(addresses.keyAt(position),
+                    addresses.valueAt(position));
+            return convertView;
+        }
+    };
 
-		@Override
-		public Object getItem(int position) {
-			return addresses.keyAt(position);
-		}
+    public DialogAddressFull(Activity context,
+                             ArrayMap<String, BigInteger> addresses) {
+        super(context);
+        activity = context;
+        this.addresses = addresses;
+        setContentView(R.layout.dialog_address_full);
+        lv = (ListView) findViewById(R.id.lv);
+        int width = UIUtil.dip2pix(140);
+        for (int i = 0;
+             i < addresses.size();
+             i++) {
+            if (addresses.valueAt(i) != null) {
+                width = Math.min(UIUtil.getScreenWidth() - UIUtil.dip2pix(100),
+                        UIUtil.dip2pix(220));
+                break;
+            }
+        }
+        lv.getLayoutParams().height = Math.min(caculateHeight(), MaxHeight);
+        lv.getLayoutParams().width = width;
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                dismiss();
+            }
+        });
+    }
 
-		@Override
-		public int getCount() {
-			return addresses.size();
-		}
-	};
+    private int caculateHeight() {
+        if (addresses == null) {
+            return super.getSuggestHeight();
+        }
+        int height = 0;
+        for (String address : addresses.keySet()) {
+            if (SubtransactionListItem.isMessage(address)) {
+                height += SubtransactionListItem.MessageHeight;
+            } else {
+                height += SubtransactionListItem.Height;
+            }
+        }
+        return height;
+    }
 
-	@Override
-	public int getSuggestHeight() {
-		if (addresses == null) {
-			return super.getSuggestHeight();
-		}
-		return Math.min(addresses.size() * UIUtil.dip2pix(40), MaxHeight)
-				+ UIUtil.dip2pix(20);
-	}
+    @Override
+    public int getSuggestHeight() {
+        if (addresses == null) {
+            return super.getSuggestHeight();
+        }
+        return Math.min(caculateHeight(), MaxHeight)
+                + UIUtil.dip2pix(20);
+    }
 
 }
