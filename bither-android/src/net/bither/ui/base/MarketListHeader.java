@@ -39,10 +39,13 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
+import net.bither.fragment.Refreshable;
 import net.bither.model.Market;
+import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CurrencySymbolUtil;
@@ -178,6 +181,19 @@ public class MarketListHeader extends FrameLayout implements
             tvBuy.setText(symbol
                     + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
+        }
+        PriceAlert priceAlert = mMarket.getPriceAlert();
+        etAlertHigh.setText("");
+        etAlertLow.setText("");
+        if (priceAlert != null) {
+            if (priceAlert.getExchangeCaps() > 0) {
+                etAlertHigh.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                        .getExchangeCaps()));
+            }
+            if (priceAlert.getExchangeLimit() > 0) {
+                etAlertLow.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                        .getExchangeLimit()));
+            }
         }
     }
 
@@ -321,6 +337,21 @@ public class MarketListHeader extends FrameLayout implements
             etAlertHigh.clearFocus();
             imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
+            double high = -1;
+            double low = -1;
+            if (etAlertHigh.getText().length() > 0) {
+                high = Double.parseDouble(etAlertHigh.getText().toString());
+            }
+            if (etAlertLow.getText().length() > 0) {
+                low = Double.parseDouble(etAlertLow.getText().toString());
+            }
+            mMarket.setPriceAlert(low, high);
+            if (BitherApplication.warmActivity != null && BitherApplication.warmActivity
+                    .getFragmentAtIndex(0) != null && BitherApplication.warmActivity
+                    .getFragmentAtIndex(0) instanceof Refreshable) {
+                Refreshable r = (Refreshable) BitherApplication.warmActivity.getFragmentAtIndex(0);
+                r.doRefresh();
+            }
             ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
         }
 

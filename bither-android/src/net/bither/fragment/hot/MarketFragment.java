@@ -38,7 +38,6 @@ import net.bither.model.Market;
 import net.bither.ui.base.MarketFragmentListItemView;
 import net.bither.ui.base.MarketListHeader;
 import net.bither.ui.base.MarketTickerChangedObserver;
-import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.MarketUtil;
 
@@ -48,7 +47,6 @@ public class MarketFragment extends Fragment implements Refreshable,
         Selectable, Unselectable, OnItemClickListener {
 
     private List<Market> markets;
-    private boolean isLoading = false;
     private MarketListHeader header;
     private ListView lv;
     private MarketFragmentListAdapter mAdaper;
@@ -139,44 +137,33 @@ public class MarketFragment extends Fragment implements Refreshable,
         if (lv == null) {
             return;
         }
-        if (lv.getFirstVisiblePosition() != 0) {
-            lv.post(new SmoothScrollListRunnable(lv, 0, new Runnable() {
-                @Override
-                public void run() {
-                    refresh();
-                }
-            }));
-        } else {
-            refresh();
-        }
+        refresh();
     }
 
     public void refresh() {
-        if (isLoading) {
-            return;
+        if (mAdaper != null) {
+            mAdaper.notifyDataSetChanged();
         }
     }
 
     @Override
     public void onSelected() {
-        if (!isLoading) {
-            if (lv != null) {
-                header.onResume();
-                int listItemCount = lv.getChildCount();
-                for (int i = 0;
-                     i < listItemCount;
-                     i++) {
-                    View v = lv.getChildAt(i);
-                    if (v instanceof MarketFragmentListItemView) {
-                        MarketFragmentListItemView av = (MarketFragmentListItemView) v;
-                        av.onResume();
-                    }
+        if (lv != null) {
+            header.onResume();
+            int listItemCount = lv.getChildCount();
+            for (int i = 0;
+                 i < listItemCount;
+                 i++) {
+                View v = lv.getChildAt(i);
+                if (v instanceof MarketFragmentListItemView) {
+                    MarketFragmentListItemView av = (MarketFragmentListItemView) v;
+                    av.onResume();
                 }
-            } else {
-                if (selectedThread == null || !selectedThread.isAlive()) {
-                    selectedThread = new SelectedThread();
-                    selectedThread.start();
-                }
+            }
+        } else {
+            if (selectedThread == null || !selectedThread.isAlive()) {
+                selectedThread = new SelectedThread();
+                selectedThread.start();
             }
         }
     }
