@@ -20,14 +20,11 @@ import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.AnimationUtil;
 import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.LogUtil;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -85,7 +82,7 @@ public class MarketDepthDetailView extends LinearLayout {
         this.tvVolume.setText(" " + volume);
         this.ivSymbolBtc.setImageBitmap(btcBit);
         this.tvSymbol.setText(AppSharedPreference.getInstance()
-                .getDefaultExchangeRate().getSymbol());
+                .getDefaultExchangeType().getSymbol());
     }
 
     public void hide() {

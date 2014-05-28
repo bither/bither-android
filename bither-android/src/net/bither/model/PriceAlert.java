@@ -1,6 +1,8 @@
 package net.bither.model;
 
 import net.bither.BitherSetting;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 
 import java.io.File;
@@ -13,11 +15,18 @@ public class PriceAlert implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final byte[] paLock = new byte[0];
-    private static List<PriceAlert> priceAlertList = null;
 
     private BitherSetting.MarketType marketType;
+    private ExchangeUtil.ExchangeType exchangeType;
     private double limit;
     private double caps;
+
+    public PriceAlert(BitherSetting.MarketType marketType, double limit, double caps) {
+        this.marketType = marketType;
+        this.limit = limit;
+        this.caps = caps;
+        this.exchangeType = AppSharedPreference.getInstance().getDefaultExchangeType();
+    }
 
     public BitherSetting.MarketType getMarketType() {
         return this.marketType;
@@ -26,6 +35,14 @@ public class PriceAlert implements Serializable {
     public void setMarketType(BitherSetting.MarketType marketType) {
         this.marketType = marketType;
 
+    }
+
+    public ExchangeUtil.ExchangeType getExchangeType() {
+        return this.exchangeType;
+    }
+
+    public void setExchangeType(ExchangeUtil.ExchangeType exchangeType) {
+        this.exchangeType = exchangeType;
     }
 
     public double getLimit() {
@@ -55,7 +72,8 @@ public class PriceAlert implements Serializable {
 
     public static void removePriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
-            if (priceAlertList != null && priceAlertList.contains(priceAlert)) {
+            List<PriceAlert> priceAlertList = getPriceAlertFromFile();
+            if (priceAlertList.contains(priceAlert)) {
                 priceAlertList.remove(priceAlert);
             }
             File file = FileUtil.getPriceAlertFile();
@@ -66,13 +84,7 @@ public class PriceAlert implements Serializable {
     public static void addPriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
             File file = FileUtil.getPriceAlertFile();
-            if (priceAlertList == null && file.exists()) {
-                priceAlertList = (List<PriceAlert>) FileUtil.deserialize(file);
-            }
-
-            if (priceAlertList == null) {
-                priceAlertList = new ArrayList<PriceAlert>();
-            }
+            List<PriceAlert> priceAlertList = getPriceAlertFromFile();
             if (priceAlertList.contains(priceAlert)) {
                 priceAlertList.remove(priceAlert);
             }
@@ -83,7 +95,16 @@ public class PriceAlert implements Serializable {
 
     public static List<PriceAlert> getPriceAlertList() {
         synchronized (paLock) {
-            return priceAlertList;
+            return getPriceAlertFromFile();
         }
+    }
+
+    private static List<PriceAlert> getPriceAlertFromFile() {
+        File file = FileUtil.getPriceAlertFile();
+        List<PriceAlert> priceAlertList = (List<PriceAlert>) FileUtil.deserialize(file);
+        if (priceAlertList == null) {
+            priceAlertList = new ArrayList<PriceAlert>();
+        }
+        return priceAlertList;
     }
 }

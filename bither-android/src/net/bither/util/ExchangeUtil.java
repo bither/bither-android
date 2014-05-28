@@ -18,7 +18,6 @@ package net.bither.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Currency;
 
 import net.bither.BitherSetting.MarketType;
 import net.bither.preference.AppSharedPreference;
@@ -67,7 +66,7 @@ public class ExchangeUtil {
 
 	public static double getRate(MarketType marketType) {
 		ExchangeType exchangeType = AppSharedPreference.getInstance()
-				.getDefaultExchangeRate();
+				.getDefaultExchangeType();
 		double rate = 1;
 		double preRate = getExchangeRate();
 		switch (marketType) {

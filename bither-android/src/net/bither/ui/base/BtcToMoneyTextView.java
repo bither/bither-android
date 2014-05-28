@@ -77,7 +77,7 @@ public class BtcToMoneyTextView extends TextView implements
 			} else {
 				double money = btc.doubleValue() / 100000000.0 * price;
 				setText(AppSharedPreference.getInstance()
-						.getDefaultExchangeRate().getSymbol()
+						.getDefaultExchangeType().getSymbol()
 						+ StringUtil.formatDoubleToMoneyString(money));
 			}
 		} else {
@@ -93,7 +93,7 @@ public class BtcToMoneyTextView extends TextView implements
 			} else {
 				double money = btc.doubleValue() / 100000000.0 * price;
 				setText(AppSharedPreference.getInstance()
-						.getDefaultExchangeRate().getSymbol()
+						.getDefaultExchangeType().getSymbol()
 						+ StringUtil.formatDoubleToMoneyString(money));
 			}
 		} else {

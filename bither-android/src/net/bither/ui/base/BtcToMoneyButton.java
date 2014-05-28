@@ -93,7 +93,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
 				if (price != 0) {
 					double money = btc.doubleValue() / 100000000.0 * price;
 					setText(AppSharedPreference.getInstance()
-							.getDefaultExchangeRate().getSymbol()
+							.getDefaultExchangeType().getSymbol()
 							+ StringUtil.formatDoubleToMoneyString(money));
 					showMoney = true;
 				}
@@ -111,7 +111,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
 				if (price != 0) {
 					double money = btc.doubleValue() / 100000000.0 * price;
 					setText(AppSharedPreference.getInstance()
-							.getDefaultExchangeRate().getSymbol()
+							.getDefaultExchangeType().getSymbol()
 							+ StringUtil.formatDoubleToMoneyString(money));
 				}
 			}

@@ -139,7 +139,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getDefaultExchangeRate()
+            return AppSharedPreference.getInstance().getDefaultExchangeType()
                     .ordinal();
         }
 
