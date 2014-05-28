@@ -16,20 +16,6 @@
 
 package net.bither.fragment.hot;
 
-import java.util.List;
-
-import net.bither.R;
-import net.bither.adapter.hot.MarketFragmentListAdapter;
-import net.bither.fragment.Refreshable;
-import net.bither.fragment.Selectable;
-import net.bither.fragment.Unselectable;
-import net.bither.model.Market;
-import net.bither.ui.base.MarketListHeader;
-import net.bither.ui.base.MarketFragmentListItemView;
-import net.bither.ui.base.MarketTickerChangedObserver;
-import net.bither.ui.base.SmoothScrollListRunnable;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.MarketUtil;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -43,161 +29,174 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import net.bither.R;
+import net.bither.adapter.hot.MarketFragmentListAdapter;
+import net.bither.fragment.Refreshable;
+import net.bither.fragment.Selectable;
+import net.bither.fragment.Unselectable;
+import net.bither.model.Market;
+import net.bither.ui.base.MarketFragmentListItemView;
+import net.bither.ui.base.MarketListHeader;
+import net.bither.ui.base.MarketTickerChangedObserver;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.MarketUtil;
+
+import java.util.List;
+
 public class MarketFragment extends Fragment implements Refreshable,
-		Selectable, Unselectable, OnItemClickListener {
+        Selectable, Unselectable, OnItemClickListener {
 
-	private List<Market> markets;
-	private boolean isLoading = false;
-	private MarketListHeader header;
-	private ListView lv;
-	private MarketFragmentListAdapter mAdaper;
+    private List<Market> markets;
+    private MarketListHeader header;
+    private ListView lv;
+    private MarketFragmentListAdapter mAdaper;
 
-	private SelectedThread selectedThread;
+    private SelectedThread selectedThread;
 
-	private IntentFilter broadcastIntentFilter = new IntentFilter(
-			BroadcastUtil.ACTION_MARKET);
+    private IntentFilter broadcastIntentFilter = new IntentFilter(
+            BroadcastUtil.ACTION_MARKET);
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		markets = MarketUtil.getMarkets();
-		mAdaper = new MarketFragmentListAdapter(getActivity(), markets);
-	}
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater
-				.inflate(R.layout.fragment_market, container, false);
-		header = (MarketListHeader) view.findViewById(R.id.v_header);
-		lv = (ListView) view.findViewById(R.id.lv);
-		lv.setAdapter(mAdaper);
-		lv.setOnItemClickListener(this);
-		return view;
-	}
+            header.onMarketTickerChanged();
+            int itemCount = lv.getChildCount();
+            for (int i = 0;
+                 i < itemCount;
+                 i++) {
+                View v = lv.getChildAt(i);
+                if (v instanceof MarketTickerChangedObserver) {
+                    MarketTickerChangedObserver o = (MarketTickerChangedObserver) v;
+                    o.onMarketTickerChanged();
+                }
+            }
+        }
+    };
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		header.setMarket(markets.get(arg2));
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        markets = MarketUtil.getMarkets();
+        mAdaper = new MarketFragmentListAdapter(getActivity(), markets);
+    }
 
-	public void onResume() {
-		super.onResume();
-		header.onResume();
-		int listItemCount = lv.getChildCount();
-		for (int i = 0; i < listItemCount; i++) {
-			View v = lv.getChildAt(i);
-			if (v instanceof MarketFragmentListItemView) {
-				MarketFragmentListItemView av = (MarketFragmentListItemView) v;
-				av.onResume();
-			}
-		}
-		getActivity()
-				.registerReceiver(broadcastReceiver, broadcastIntentFilter);
-	};
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater
+                .inflate(R.layout.fragment_market, container, false);
+        header = (MarketListHeader) view.findViewById(R.id.v_header);
+        lv = (ListView) view.findViewById(R.id.lv);
+        lv.setAdapter(mAdaper);
+        lv.setOnItemClickListener(this);
+        return view;
+    }
 
-	@Override
-	public void onPause() {
-		header.onPause();
-		int listItemCount = lv.getChildCount();
-		for (int i = 0; i < listItemCount; i++) {
-			View v = lv.getChildAt(i);
-			if (v instanceof MarketFragmentListItemView) {
-				MarketFragmentListItemView av = (MarketFragmentListItemView) v;
-				av.onPause();
-			}
-		}
-		getActivity().unregisterReceiver(broadcastReceiver);
-		super.onPause();
-	}
+    public void onResume() {
+        super.onResume();
+        header.onResume();
+        int listItemCount = lv.getChildCount();
+        for (int i = 0;
+             i < listItemCount;
+             i++) {
+            View v = lv.getChildAt(i);
+            if (v instanceof MarketFragmentListItemView) {
+                MarketFragmentListItemView av = (MarketFragmentListItemView) v;
+                av.onResume();
+            }
+        }
+        getActivity()
+                .registerReceiver(broadcastReceiver, broadcastIntentFilter);
+    }
 
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    @Override
+    public void onPause() {
+        header.onPause();
+        int listItemCount = lv.getChildCount();
+        for (int i = 0;
+             i < listItemCount;
+             i++) {
+            View v = lv.getChildAt(i);
+            if (v instanceof MarketFragmentListItemView) {
+                MarketFragmentListItemView av = (MarketFragmentListItemView) v;
+                av.onPause();
+            }
+        }
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        header.setMarket(markets.get(arg2));
+    }
 
-			header.onMarketTickerChanged();
-			int itemCount = lv.getChildCount();
-			for (int i = 0; i < itemCount; i++) {
-				View v = lv.getChildAt(i);
-				if (v instanceof MarketTickerChangedObserver) {
-					MarketTickerChangedObserver o = (MarketTickerChangedObserver) v;
-					o.onMarketTickerChanged();
-				}
-			}
-		}
-	};
+    @Override
+    public void doRefresh() {
+        if (lv == null) {
+            return;
+        }
+        refresh();
+    }
 
-	public void refresh() {
-		if (isLoading) {
-			return;
-		}
-	}
+    public void refresh() {
+        if (mAdaper != null) {
+            mAdaper.notifyDataSetChanged();
+        }
+    }
 
-	@Override
-	public void doRefresh() {
-		if (lv == null) {
-			return;
-		}
-		if (lv.getFirstVisiblePosition() != 0) {
-			lv.post(new SmoothScrollListRunnable(lv, 0, new Runnable() {
-				@Override
-				public void run() {
-					refresh();
-				}
-			}));
-		} else {
-			refresh();
-		}
-	}
+    @Override
+    public void onSelected() {
+        if (lv != null) {
+            header.onResume();
+            int listItemCount = lv.getChildCount();
+            for (int i = 0;
+                 i < listItemCount;
+                 i++) {
+                View v = lv.getChildAt(i);
+                if (v instanceof MarketFragmentListItemView) {
+                    MarketFragmentListItemView av = (MarketFragmentListItemView) v;
+                    av.onResume();
+                }
+            }
+        } else {
+            if (selectedThread == null || !selectedThread.isAlive()) {
+                selectedThread = new SelectedThread();
+                selectedThread.start();
+            }
+        }
+    }
 
-	private class SelectedThread extends Thread {
-		@Override
-		public void run() {
-			for (int i = 0; i < 20; i++) {
-				if (lv != null) {
-					header.onResume();
-					int listItemCount = lv.getChildCount();
-					for (int j = 0; j < listItemCount; j++) {
-						View v = lv.getChildAt(i);
-						if (v instanceof MarketFragmentListItemView) {
-							MarketFragmentListItemView av = (MarketFragmentListItemView) v;
-							av.onResume();
-						}
-					}
-				}
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-	};
+    @Override
+    public void onUnselected() {
+        header.reset();
+    }
 
-	@Override
-	public void onSelected() {
-		if (!isLoading) {
-			if (lv != null) {
-				header.onResume();
-				int listItemCount = lv.getChildCount();
-				for (int i = 0; i < listItemCount; i++) {
-					View v = lv.getChildAt(i);
-					if (v instanceof MarketFragmentListItemView) {
-						MarketFragmentListItemView av = (MarketFragmentListItemView) v;
-						av.onResume();
-					}
-				}
-			} else {
-				if (selectedThread == null || !selectedThread.isAlive()) {
-					selectedThread = new SelectedThread();
-					selectedThread.start();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void onUnselected() {
-
-	}
+    private class SelectedThread extends Thread {
+        @Override
+        public void run() {
+            for (int i = 0;
+                 i < 20;
+                 i++) {
+                if (lv != null) {
+                    header.onResume();
+                    int listItemCount = lv.getChildCount();
+                    for (int j = 0;
+                         j < listItemCount;
+                         j++) {
+                        View v = lv.getChildAt(i);
+                        if (v instanceof MarketFragmentListItemView) {
+                            MarketFragmentListItemView av = (MarketFragmentListItemView) v;
+                            av.onResume();
+                        }
+                    }
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
 }

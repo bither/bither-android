@@ -16,87 +16,96 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.model.Market;
-import net.bither.model.Ticker;
-import net.bither.preference.AppSharedPreference;
-import net.bither.util.ExchangeUtil;
-import net.bither.util.StringUtil;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.bither.R;
+import net.bither.model.Market;
+import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.ExchangeUtil;
+import net.bither.util.StringUtil;
+
 public class MarketFragmentListItemView extends FrameLayout implements
-		MarketTickerChangedObserver {
-	private Market market;
-	private TextView tvMarketName;
-	private TextView tvPrice;
+        MarketTickerChangedObserver {
+    private Market market;
+    private TextView tvMarketName;
+    private TextView tvPrice;
+    private ImageView ivPriceAlert;
 
-	public MarketFragmentListItemView(FragmentActivity activity) {
-		super(activity);
-		View v = LayoutInflater.from(activity).inflate(
-				R.layout.list_item_market_fragment, null);
-		addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		initView();
-	}
+    public MarketFragmentListItemView(FragmentActivity activity) {
+        super(activity);
+        View v = LayoutInflater.from(activity).inflate(
+                R.layout.list_item_market_fragment, null);
+        addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        initView();
+    }
 
-	private MarketFragmentListItemView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    private void initView() {
+        tvMarketName = (TextView) findViewById(R.id.tv_market_name);
+        tvPrice = (TextView) findViewById(R.id.tv_price);
+        ivPriceAlert = (ImageView) findViewById(R.id.iv_price_alert);
+    }
 
-	private MarketFragmentListItemView(Context context, AttributeSet attrs,
-			int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    private MarketFragmentListItemView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	private void initView() {
-		tvMarketName = (TextView) findViewById(R.id.tv_market_name);
-		tvPrice = (TextView) findViewById(R.id.tv_price);
-	}
+    private MarketFragmentListItemView(Context context, AttributeSet attrs,
+                                       int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	public void setMarket(Market market, int loaderPosition) {
-		this.market = market;
-		if (market != null) {
-			showTickerInfo();
-		}
-	}
+    public void setMarket(Market market, int loaderPosition) {
+        this.market = market;
+        if (market != null) {
+            showTickerInfo();
+        }
+    }
 
-	private void showTickerInfo() {
-		if (market != null) {
-			tvMarketName.setText(market.getName());
-			tvMarketName.setTextColor(market.getMarketColor());
-		}
-		if (market.getTicker() == null) {
-			return;
-		}
-		Ticker ticker = market.getTicker();
-		if (ExchangeUtil.getExchangeRate() > 0) {
-			tvPrice.setText(AppSharedPreference.getInstance()
-					.getDefaultExchangeType().getSymbol()
-					+ StringUtil.formatDoubleToMoneyString(ticker
-							.getDefaultExchangePrice()));
-		} else {
-			tvPrice.setText(ExchangeUtil
-					.getExchangeType(market.getMarketType()).getSymbol()
-					+ StringUtil.formatDoubleToMoneyString(ticker.getPrice()));
-		}
-	}
+    private void showTickerInfo() {
+        if (market != null) {
+            tvMarketName.setText(market.getName());
+            tvMarketName.setTextColor(market.getMarketColor());
+        }
+        if (market.getTicker() == null) {
+            return;
+        }
+        Ticker ticker = market.getTicker();
+        if (ExchangeUtil.getExchangeRate() > 0) {
+            tvPrice.setText(AppSharedPreference.getInstance()
+                    .getDefaultExchangeType().getSymbol()
+                    + StringUtil.formatDoubleToMoneyString(ticker
+                    .getDefaultExchangePrice()));
+        } else {
+            tvPrice.setText(ExchangeUtil
+                    .getExchangeType(market.getMarketType()).getSymbol()
+                    + StringUtil.formatDoubleToMoneyString(ticker.getPrice()));
+        }
+        if (market.getPriceAlert() == null) {
+            ivPriceAlert.setVisibility(View.GONE);
+        } else {
+            ivPriceAlert.setVisibility(View.VISIBLE);
+        }
+    }
 
-	public void onResume() {
-		showTickerInfo();
-	}
+    public void onResume() {
+        showTickerInfo();
+    }
 
-	public void onPause() {
-	}
+    public void onPause() {
+    }
 
-	@Override
-	public void onMarketTickerChanged() {
+    @Override
+    public void onMarketTickerChanged() {
 
-		showTickerInfo();
+        showTickerInfo();
 
-	}
+    }
 }

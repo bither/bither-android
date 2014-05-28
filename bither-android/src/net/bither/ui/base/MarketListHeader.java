@@ -18,8 +18,11 @@ package net.bither.ui.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,22 +39,26 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
+import net.bither.fragment.Refreshable;
 import net.bither.model.Market;
+import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.ExchangeUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.WalletUtils;
 
 public class MarketListHeader extends FrameLayout implements
         MarketTickerChangedObserver, ViewTreeObserver.OnGlobalLayoutListener {
     private static final int LightScanInterval = 1200;
     public static int BgAnimDuration = 600;
+    private final TextViewListener textViewListener = new TextViewListener();
     private Animation refreshAnim = AnimationUtils.loadAnimation(getContext(),
             R.anim.check_light_scan);
     private View ivLight;
@@ -69,18 +76,15 @@ public class MarketListHeader extends FrameLayout implements
     private View vContainer;
     private View flContainer;
     private View parent;
-
     private LinearLayout llAlert;
     private EditText etAlertHigh;
     private EditText etAlertLow;
     private BgHolder bg;
     private GestureDetector gestureDetector;
     private ContainerBottomPaddingHolder bottomHolder;
-
     private InputMethodManager imm;
-
-
     private Market mMarket;
+    private TextViewListener alertTextViewListener;
 
     public MarketListHeader(Context context) {
         super(context);
@@ -113,6 +117,13 @@ public class MarketListHeader extends FrameLayout implements
         gestureDetector = new GestureDetector(getContext(), new SwipeDetector());
         bottomHolder = new ContainerBottomPaddingHolder();
         getViewTreeObserver().addOnGlobalLayoutListener(this);
+        alertTextViewListener = new TextViewListener();
+        etAlertHigh.setOnEditorActionListener(alertTextViewListener);
+        etAlertHigh.addTextChangedListener(alertTextViewListener);
+        etAlertHigh.setOnFocusChangeListener(alertTextViewListener);
+        etAlertLow.setOnEditorActionListener(alertTextViewListener);
+        etAlertLow.addTextChangedListener(alertTextViewListener);
+        etAlertLow.setOnFocusChangeListener(alertTextViewListener);
         refreshAnim.setDuration(LightScanInterval);
         refreshAnim.setFillBefore(false);
         refreshAnim.setRepeatCount(0);
@@ -171,6 +182,19 @@ public class MarketListHeader extends FrameLayout implements
                     + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         }
+        PriceAlert priceAlert = mMarket.getPriceAlert();
+        etAlertHigh.setText("");
+        etAlertLow.setText("");
+        if (priceAlert != null) {
+            if (priceAlert.getExchangeCaps() > 0) {
+                etAlertHigh.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                        .getExchangeCaps()));
+            }
+            if (priceAlert.getExchangeLimit() > 0) {
+                etAlertLow.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                        .getExchangeLimit()));
+            }
+        }
     }
 
     public MarketListHeader(Context context, AttributeSet attrs) {
@@ -214,11 +238,15 @@ public class MarketListHeader extends FrameLayout implements
     }
 
     public void onPause() {
-
+        bottomHolder.reset();
     }
 
     public void onResume() {
         showMarket();
+    }
+
+    public void reset() {
+        bottomHolder.reset();
     }
 
     @Override
@@ -244,7 +272,6 @@ public class MarketListHeader extends FrameLayout implements
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             try {
-                LogUtil.i("Market", "fling");
                 float diffY = e2.getY() - e1.getY();
                 float diffX = e2.getX() - e1.getX();
                 if (Math.abs(diffX) < Math.abs(diffY)) {
@@ -306,11 +333,26 @@ public class MarketListHeader extends FrameLayout implements
         public static final int AnimDuration = 180;
 
         public void reset() {
-            ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
             etAlertLow.clearFocus();
             etAlertHigh.clearFocus();
             imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
+            double high = -1;
+            double low = -1;
+            if (etAlertHigh.getText().length() > 0) {
+                high = Double.parseDouble(etAlertHigh.getText().toString());
+            }
+            if (etAlertLow.getText().length() > 0) {
+                low = Double.parseDouble(etAlertLow.getText().toString());
+            }
+            mMarket.setPriceAlert(low, high);
+            if (BitherApplication.warmActivity != null && BitherApplication.warmActivity
+                    .getFragmentAtIndex(0) != null && BitherApplication.warmActivity
+                    .getFragmentAtIndex(0) instanceof Refreshable) {
+                Refreshable r = (Refreshable) BitherApplication.warmActivity.getFragmentAtIndex(0);
+                r.doRefresh();
+            }
+            ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
         }
 
         public void shake() {
@@ -363,6 +405,54 @@ public class MarketListHeader extends FrameLayout implements
         public boolean onTouch(View v, MotionEvent event) {
             vTrending.causeDraw();
             return false;
+        }
+    }
+
+    private final class TextViewListener implements TextWatcher,
+            OnFocusChangeListener, TextView.OnEditorActionListener {
+        @Override
+        public void beforeTextChanged(final CharSequence s, final int start,
+                                      final int count, final int after) {
+        }
+
+        @Override
+        public void onTextChanged(final CharSequence s, final int start,
+                                  final int before, final int count) {
+        }
+
+        @Override
+        public void afterTextChanged(final Editable s) {
+            // workaround for German keyboards
+            final String original = s.toString();
+            final String replaced = original.replace(',', '.');
+            if (!replaced.equals(original)) {
+                s.clear();
+                s.append(replaced);
+            }
+            if (s.length() > 0) {
+                WalletUtils.formatSignificant(s,
+                        true ? WalletUtils.SMALLER_SPAN : null);
+            }
+        }
+
+        @Override
+        public void onFocusChange(final View v, final boolean hasFocus) {
+            if (!hasFocus) {
+                if (v instanceof EditText) {
+                    EditText et = (EditText) v;
+                    if (et.getText().length() > 0) {
+                        et.setText(StringUtil.formatDoubleToMoneyString(Double.parseDouble(et
+                                .getText().toString())));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean onEditorAction(final TextView v, final int actionId,
+                                      final KeyEvent event) {
+            bottomHolder.reset();
+            return true;
         }
     }
 
