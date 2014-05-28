@@ -132,7 +132,7 @@ public class MarketListHeader extends FrameLayout implements
         if (mMarket.getTicker() != null) {
             if (ExchangeUtil.getExchangeRate() > 0) {
                 symbol = AppSharedPreference.getInstance()
-                        .getDefaultExchangeRate().getSymbol();
+                        .getDefaultExchangeType().getSymbol();
             } else {
                 symbol = ExchangeUtil.getExchangeType(mMarket.getMarketType())
                         .getSymbol();

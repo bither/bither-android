@@ -137,7 +137,7 @@ public final class CurrencyCalculatorLink {
 		if (exchangeRate > 0) {
 			localAmountView.setEnabled(enabled);
 			localAmountView.setCurrencySymbol(AppSharedPreference.getInstance()
-					.getDefaultExchangeRate().getSymbol());
+					.getDefaultExchangeType().getSymbol());
 
 			if (exchangeDirection) {
 				final BigInteger btcAmount = btcAmountView.getAmount();

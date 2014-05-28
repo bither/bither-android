@@ -154,7 +154,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
 			String symbol;
 			if (ExchangeUtil.getExchangeRate() > 0) {
 				symbol = AppSharedPreference.getInstance()
-						.getDefaultExchangeRate().getSymbol();
+						.getDefaultExchangeType().getSymbol();
 			} else {
 				symbol = ExchangeUtil.getExchangeType(marketType).getSymbol();
 			}

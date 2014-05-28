@@ -109,7 +109,7 @@ public class AppSharedPreference {
 
     }
 
-    public ExchangeType getDefaultExchangeRate() {
+    public ExchangeType getDefaultExchangeType() {
         ExchangeType exchangeType = getExchangeType();
         if (exchangeType == null) {
             setDefault();
