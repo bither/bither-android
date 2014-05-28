@@ -19,6 +19,7 @@ package net.bither.fragment.cold;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -56,6 +57,7 @@ import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
@@ -246,6 +248,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         flBackTime = (FrameLayout) view.findViewById(R.id.ll_back_up);
         pbBackTime = (ProgressBar) view.findViewById(R.id.pb_back_up);
+        setPbBackTimeSize();
         String version = null;
         try {
             version = getActivity().getPackageManager().getPackageInfo(
@@ -295,6 +298,16 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     }
 
+    private void setPbBackTimeSize() {
+        Drawable drawable = btnGetSign.getCompoundDrawables()[2];
+        int w = drawable.getIntrinsicWidth();
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) pbBackTime
+                .getLayoutParams();
+        layoutParams.width = w;
+        layoutParams.height = w;
+        pbBackTime.setLayoutParams(layoutParams);
+    }
+
     private void backupPrivateKey() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -309,7 +322,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        pbBackTime.setVisibility(View.GONE);
+                        pbBackTime.setVisibility(View.INVISIBLE);
                         showBackupTime();
                     }
                 }, 1000);
