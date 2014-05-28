@@ -274,7 +274,7 @@ public class BlockchainService extends android.app.Service {
         }
         Intent intent = new Intent(this, HotActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.NOTIFICATION_ADDRESS, address);
-        SystemUtil.nmNotifyOfWarm(nm, BlockchainService.this,
+        SystemUtil.nmNotifyOfWallet(nm, BlockchainService.this,
                 BitherSetting.NOTIFICATION_ID_COINS_RECEIVED, intent, title,
                 contentText, R.drawable.ic_launcher, R.raw.coins_received);
 

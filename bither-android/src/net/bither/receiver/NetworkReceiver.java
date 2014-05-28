@@ -47,9 +47,9 @@ public class NetworkReceiver extends BroadcastReceiver {
 				String title = context.getString(R.string.cold_warning);
 				String contentText = context
 						.getString(R.string.safe_your_wallet);
-				SystemUtil.nmNotifyOfCold(nm, context,
-						BitherSetting.NOTIFICATION_ID_COINS_RECEIVED, intent2,
-						title, contentText, R.drawable.ic_launcher);
+				SystemUtil.nmNotifyDefault(nm, context,
+                        BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent2,
+                        title, contentText, R.drawable.ic_launcher);
 			}
 		}
 

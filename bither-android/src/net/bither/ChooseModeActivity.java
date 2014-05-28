@@ -378,7 +378,7 @@ public class ChooseModeActivity extends Activity {
         NotificationManager notificationManager = (NotificationManager) BitherApplication.mContext
                 .getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager
-                .cancel(BitherSetting.NOTIFICATION_ID_COINS_RECEIVED);
+                .cancel(BitherSetting.NOTIFICATION_ID_NETWORK_ALERT);
     }
 
     private class ModeGrowAnimatorListener implements AnimationListener {

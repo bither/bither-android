@@ -53,6 +53,16 @@ public class PriceAlert implements Serializable {
         return false;
     }
 
+    public static void removePriceAlert(PriceAlert priceAlert) {
+        synchronized (paLock) {
+            if (priceAlertList != null && priceAlertList.contains(priceAlert)) {
+                priceAlertList.remove(priceAlert);
+            }
+            File file = FileUtil.getPriceAlertFile();
+            FileUtil.serializeObject(file, priceAlertList);
+        }
+    }
+
     public static void addPriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
             File file = FileUtil.getPriceAlertFile();

@@ -41,6 +41,7 @@ public class BitherSetting {
 
     public static final int NOTIFICATION_ID_COINS_RECEIVED = 201451;
     public static final int NOTIFICATION_ID_NETWORK_ALERT = 201452;
+    public static final int NOTIFICATION_ID_PRICE_ALERT = 201453;
 
     public static final int CHAIN_TX_PER_NUM = 50;
     public static final String CHAIN_OFFSET = "&offset=%d";
@@ -110,8 +111,10 @@ public class BitherSetting {
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
-        public static final String ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG = "address_has_private_key_pass_value_tag";
-        public static final String ADDRESS_POSITION_PASS_VALUE_TAG = "address_position_pass_value_tag";
+        public static final String ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG =
+                "address_has_private_key_pass_value_tag";
+        public static final String ADDRESS_POSITION_PASS_VALUE_TAG =
+                "address_position_pass_value_tag";
         public static final String SCAN_ADDRESS_POSITION_TAG = "scan_address_position";
         public static final int SEND_REQUEST_CODE = 437;
         public static final String PRIVATE_KEY_PASSWORD = "private_key_password";
