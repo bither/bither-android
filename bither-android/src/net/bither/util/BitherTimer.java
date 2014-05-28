@@ -32,6 +32,7 @@ import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 
 public class BitherTimer {
 
@@ -88,10 +89,12 @@ public class BitherTimer {
                     if (priceAlert.getHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
                             .getHigher()) {
                         notif(ticker.getMarketType(), true, priceAlert.getHigher());
+                        PriceAlert.removePriceAlert(priceAlert);
                     }
                     if (priceAlert.getLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
                             .getLower()) {
                         notif(ticker.getMarketType(), false, priceAlert.getLower());
+                        PriceAlert.removePriceAlert(priceAlert);
                     }
                 }
 
@@ -116,7 +119,9 @@ public class BitherTimer {
             contentText = context.getString(R.string.price_alert_lower_than);
         }
         contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
-        contentText = contentText + StringUtil.formatDoubleToMoneyString(alertPrice);
+        contentText = contentText + " " + AppSharedPreference.getInstance()
+                .getDefaultExchangeType().getSymbol() + StringUtil.formatDoubleToMoneyString
+                (alertPrice);
         SystemUtil.nmNotifyDefault(nm, context,
                 BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent2,
                 title, contentText, R.drawable.ic_launcher);
