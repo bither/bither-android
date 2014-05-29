@@ -48,8 +48,8 @@ public class Qr {
         YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
         GREEN("#ff9dc427", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
         BLUELIGHT("#ff16abe3", "#fff9fdfe", R.string.fancy_qr_code_theme_name_bluelight),
+        BLUEDARK("#ff006f9b", "#ffeff4f7", R.string.fancy_qr_code_theme_name_bluedark),
         RED("#ffd55234", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
-        BLUEDARK("#ff5590ca", "#ffeff4f7", R.string.fancy_qr_code_theme_name_bluedark),
         PURPLE("#ffb73aa7", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
 
         private int fgColor;
