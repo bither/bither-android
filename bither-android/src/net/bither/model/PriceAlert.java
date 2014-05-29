@@ -4,6 +4,7 @@ import net.bither.BitherSetting;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
+import net.bither.util.LogUtil;
 
 import java.io.File;
 import java.io.Serializable;
@@ -32,41 +33,24 @@ public class PriceAlert implements Serializable {
         return this.marketType;
     }
 
-    public void setMarketType(BitherSetting.MarketType marketType) {
-        this.marketType = marketType;
-
-    }
-
     public ExchangeUtil.ExchangeType getExchangeType() {
         return this.exchangeType;
-    }
-
-    public void setExchangeType(ExchangeUtil.ExchangeType exchangeType) {
-        this.exchangeType = exchangeType;
-    }
-
-    public double getLower() {
-        return this.lower;
     }
 
     public double getExchangeLower() {
         return this.lower * ExchangeUtil.getRate(getExchangeType());
     }
 
-    public void setLower(double lower) {
-        this.lower = lower;
-    }
-
     public double getExchangeHigher() {
         return this.higher * ExchangeUtil.getRate(getExchangeType());
     }
 
-    public double getHigher() {
-        return this.higher;
+    public double getLower() {
+        return this.lower;
     }
 
-    public void setHigher(double higher) {
-        this.higher = higher;
+    public double getHigher() {
+        return this.higher;
     }
 
     @Override
@@ -76,6 +60,12 @@ public class PriceAlert implements Serializable {
             return getMarketType() == priceAlert.getMarketType();
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "h:" + this.higher + ",he:" + getExchangeHigher() + ",l:" + this.lower + "," +
+                "le:" + getExchangeLower() + "," + getExchangeType().getSymbol();
     }
 
     public static PriceAlert getPriceAlert(BitherSetting.MarketType marketType) {
@@ -89,23 +79,51 @@ public class PriceAlert implements Serializable {
 
     public static void removePriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
+            boolean removed = false;
             if (priceAlertList.contains(priceAlert)) {
                 priceAlertList.remove(priceAlert);
+                removed = true;
             }
-            File file = FileUtil.getPriceAlertFile();
-            FileUtil.serializeObject(file, priceAlertList);
+            if (removed) {
+                saveFile();
+            }
         }
     }
 
     public static void addPriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
-            File file = FileUtil.getPriceAlertFile();
+            boolean isAdd = false;
             if (priceAlertList.contains(priceAlert)) {
-                priceAlertList.remove(priceAlert);
+                for (PriceAlert cache : priceAlertList) {
+                    if (cache.equals(priceAlert)) {
+                        if (cache.getLower() != priceAlert.getLower() || cache.getHigher() !=
+                                priceAlert.getHigher()) {
+                            priceAlertList.remove(cache);
+                            isAdd = true;
+                        }
+                    }
+                }
+            } else {
+                isAdd = true;
             }
-            priceAlertList.add(priceAlert);
-            FileUtil.serializeObject(file, priceAlertList);
+            if (isAdd) {
+                LogUtil.d("price", priceAlert.toString());
+                priceAlertList.add(priceAlert);
+                saveFile();
+            }
         }
+    }
+
+    private static void saveFile() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (priceAlertList) {
+                    File file = FileUtil.getPriceAlertFile();
+                    FileUtil.serializeObject(file, priceAlertList);
+                }
+            }
+        });
     }
 
     public static List<PriceAlert> getPriceAlertList() {
