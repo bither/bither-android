@@ -851,6 +851,7 @@ public class BlockchainService extends android.app.Service {
             BroadcastUtil.removeAddressBitcoinState();
             BroadcastUtil.removeMarketState();
             pauseMarkTimerTask();
+            stopMarkTimeTask();
 
             try {
                 if (blockStore != null) {
@@ -1047,6 +1048,12 @@ public class BlockchainService extends android.app.Service {
                 mBitherTimer = new BitherTimer(BlockchainService.this);
                 mBitherTimer.startTimer();
             }
+        }
+    }
+
+    public void stopMarkTimeTask() {
+        if (mBitherTimer != null) {
+            mBitherTimer.stopTimer();
         }
     }
 
