@@ -44,7 +44,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
-import net.bither.fragment.Refreshable;
+import net.bither.fragment.hot.MarketFragment;
 import net.bither.model.Market;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
@@ -370,9 +370,12 @@ public class MarketListHeader extends FrameLayout implements
         }
 
         public void showBottom() {
-            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
-                    (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
-                    .start();
+            if (!isShowing()) {
+                showAlert();
+                ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
+                        (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
+                        .start();
+            }
         }
 
         public int getThreshold() {
@@ -416,13 +419,29 @@ public class MarketListHeader extends FrameLayout implements
                 low = Double.parseDouble(etAlertLow.getText().toString());
             }
             mMarket.setPriceAlert(low, high);
-            bottomHolder.reset();
             if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
                     .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
-                    .getFragmentAtIndex(0) instanceof Refreshable) {
-                Refreshable r = (Refreshable) BitherApplication.hotActivity
+                    .getFragmentAtIndex(0) instanceof MarketFragment) {
+                final MarketFragment f = (MarketFragment) BitherApplication.hotActivity
                         .getFragmentAtIndex(0);
-                r.doRefresh();
+                if (low > 0 || high > 0) {
+                    imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    etAlertLow.clearFocus();
+                    etAlertHigh.clearFocus();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bottomHolder.reset();
+                            int[] location = new int[2];
+                            findViewById(R.id.iv_icon).getLocationInWindow(location);
+                            f.showPriceAlertAnimTo(location[0], location[1], mMarket);
+                        }
+                    }, 300);
+                } else {
+                    bottomHolder.reset();
+                    f.doRefresh();
+                }
             }
         }
     }

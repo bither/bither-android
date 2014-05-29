@@ -89,7 +89,7 @@ public class MarketFragmentListItemView extends FrameLayout implements
                     + StringUtil.formatDoubleToMoneyString(ticker.getPrice()));
         }
         if (market.getPriceAlert() == null) {
-            ivPriceAlert.setVisibility(View.GONE);
+            ivPriceAlert.setVisibility(View.INVISIBLE);
         } else {
             ivPriceAlert.setVisibility(View.VISIBLE);
         }
