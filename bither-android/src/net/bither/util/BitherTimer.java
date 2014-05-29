@@ -98,13 +98,13 @@ public class BitherTimer {
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangeHigh() >=
+                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangePrice()>=
                             priceAlert
                                     .getExchangeHigher()) {
                         notif(ticker.getMarketType(), true, priceAlert.getExchangeHigher());
                         PriceAlert.removePriceAlert(priceAlert);
                     }
-                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangeLow() <=
+                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangePrice() <=
                             priceAlert
                                     .getExchangeLower()) {
                         notif(ticker.getMarketType(), false, priceAlert.getExchangeLower());
