@@ -135,7 +135,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         tvDelete.setOnClickListener(deleteClick);
         llOriginQRCode.setOnClickListener(originQrCodeClick);
         tvClose.setOnClickListener(closeClick);
-        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false);
+        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
     }
 
     @Override
