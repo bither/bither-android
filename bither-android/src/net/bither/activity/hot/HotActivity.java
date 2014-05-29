@@ -106,9 +106,11 @@ public class HotActivity extends FragmentActivity {
                         new IntentFilter(
                                 BroadcastUtil.ACTION_TOTAL_BITCOIN_STATE)
                 );
-                ServiceUtil.doMarkTimerTask(true);
+
             }
         }, 500);
+        BitherApplication.getBitherApplication()
+                .startBlockchainService(false);
         addNewPrivateKey();
     }
 
@@ -118,19 +120,6 @@ public class HotActivity extends FragmentActivity {
         unregisterReceiver(totalBitcoinBroadcastReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
-        ServiceUtil.doMarkTimerTask(false);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ServiceUtil.doMarkTimerTask(false);
-    }
-
-    @Override
-    protected void onResume() {
-        ServiceUtil.doMarkTimerTask(true);
-        super.onResume();
     }
 
     private void addNewPrivateKey() {
