@@ -333,31 +333,33 @@ public class MarketListHeader extends FrameLayout implements
         public static final int AnimDuration = 180;
 
         public void reset() {
-            etAlertLow.clearFocus();
-            etAlertHigh.clearFocus();
-            imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-            double high = -1;
-            double low = -1;
-            if (etAlertHigh.getText().length() > 0) {
-                high = Double.parseDouble(etAlertHigh.getText().toString());
+            if (isShowing()) {
+                etAlertLow.clearFocus();
+                etAlertHigh.clearFocus();
+                imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+                double high = -1;
+                double low = -1;
+                if (etAlertHigh.getText().length() > 0) {
+                    high = Double.parseDouble(etAlertHigh.getText().toString());
+                }
+                if (etAlertLow.getText().length() > 0) {
+                    low = Double.parseDouble(etAlertLow.getText().toString());
+                }
+                mMarket.setPriceAlert(low, high);
+                if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
+                        .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
+                        .getFragmentAtIndex(0) instanceof Refreshable) {
+                    Refreshable r = (Refreshable) BitherApplication.hotActivity
+                            .getFragmentAtIndex(0);
+                    r.doRefresh();
+                }
+                ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
             }
-            if (etAlertLow.getText().length() > 0) {
-                low = Double.parseDouble(etAlertLow.getText().toString());
-            }
-            mMarket.setPriceAlert(low, high);
-            if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
-                    .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
-                    .getFragmentAtIndex(0) instanceof Refreshable) {
-                Refreshable r = (Refreshable) BitherApplication.hotActivity.getFragmentAtIndex(0);
-                r.doRefresh();
-            }
-            ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
         }
 
-        public void shake() {
-            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight() / 2,
-                    0).setDuration(AnimDuration * 2).start();
+        public boolean isShowing() {
+            return getBottom() >= llAlert.getHeight();
         }
 
         public int getBottom() {
@@ -370,8 +372,9 @@ public class MarketListHeader extends FrameLayout implements
             vContainer.requestLayout();
         }
 
-        public boolean isShowing() {
-            return getBottom() >= llAlert.getHeight();
+        public void shake() {
+            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight() / 2,
+                    0).setDuration(AnimDuration * 2).start();
         }
 
         public void showBottom() {

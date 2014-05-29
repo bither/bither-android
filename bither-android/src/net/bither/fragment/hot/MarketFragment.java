@@ -174,6 +174,11 @@ public class MarketFragment extends Fragment implements Refreshable,
         header.reset();
     }
 
+    public void notifPriceAlert(BitherSetting.MarketType marketType) {
+        Market market = MarketUtil.getMarket(marketType);
+        header.setMarket(market);
+    }
+
     private class SelectedThread extends Thread {
         @Override
         public void run() {
@@ -199,10 +204,5 @@ public class MarketFragment extends Fragment implements Refreshable,
                 }
             }
         }
-    }
-
-    public void notifPriceAlert(BitherSetting.MarketType marketType) {
-        Market market = MarketUtil.getMarket(marketType);
-        header.setMarket(market);
     }
 }
