@@ -121,10 +121,9 @@ public class PriceAlert implements Serializable {
                 synchronized (priceAlertList) {
                     File file = FileUtil.getPriceAlertFile();
                     FileUtil.serializeObject(file, priceAlertList);
-                    LogUtil.d("price", "saveFile success");
                 }
             }
-        }).start();
+        });
     }
 
     public static List<PriceAlert> getPriceAlertList() {

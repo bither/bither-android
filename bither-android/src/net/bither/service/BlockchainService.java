@@ -131,6 +131,10 @@ public class BlockchainService extends android.app.Service {
             .getPackage().getName() + ".broadcast_transaction";
     public static final String ACTION_BROADCAST_TRANSACTION_HASH = "hash";
 
+    public static final String ACTION__TIMER_TASK_STAT = R.class.getPackage()
+            .getName() + ".timer_task_stat";
+    public static final String ACTION_TIMER_TASK_ISRUNNING = "timer_task_stat";
+
     private BitherApplication application;
     private AppSharedPreference prefs;
     private WakeLock wakeLock;
@@ -661,7 +665,6 @@ public class BlockchainService extends android.app.Service {
             }
             registerReceiver(tickReceiver, new IntentFilter(
                     Intent.ACTION_TIME_TICK));
-            startMarkTimerTask();
         }
     }
 
@@ -799,6 +802,14 @@ public class BlockchainService extends android.app.Service {
                 log.info("peergroup not available, not broadcasting transaction "
                         + tx.getHashAsString());
             }
+        } else if (ACTION__TIMER_TASK_STAT.equals(action)) {
+            boolean isRunning = intent.getBooleanExtra(
+                    ACTION_TIMER_TASK_ISRUNNING, false);
+            if (isRunning) {
+                startMarkTimerTask();
+            } else {
+                pauseMarkTimerTask();
+            }
         } else if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
             SyncWalletUtil.dowloadSpvStoredBlock(BlockchainService.this);
         }
@@ -839,6 +850,8 @@ public class BlockchainService extends android.app.Service {
             BroadcastUtil.removeProgressState();
             BroadcastUtil.removeAddressBitcoinState();
             BroadcastUtil.removeMarketState();
+            pauseMarkTimerTask();
+
             try {
                 if (blockStore != null) {
                     blockStore.close();
@@ -914,6 +927,10 @@ public class BlockchainService extends android.app.Service {
         return blockStore.getChainHead();
     }
 
+    private void pauseMarkTimerTask() {
+        BroadcastUtil.removeMarketState();
+
+    }
 
     public void beginInitBlockAndWalletInUiThread() {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -949,8 +966,7 @@ public class BlockchainService extends android.app.Service {
 
     private final BroadcastReceiver tickReceiver = new BroadcastReceiver() {
         private int lastChainHeight = 0;
-        private final List<ActivityHistoryEntry> activityHistory = new
-                LinkedList<ActivityHistoryEntry>();
+        private final List<ActivityHistoryEntry> activityHistory = new LinkedList<ActivityHistoryEntry>();
 
         @Override
         public void onReceive(final Context context, final Intent intent) {

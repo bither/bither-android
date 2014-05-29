@@ -107,7 +107,6 @@ public class BitherTimer {
 
     private void notif(final BitherSetting.MarketType marketType, boolean isHigher,
                        double alertPrice) {
-        LogUtil.d("price","notif");
         Context context = BitherApplication.mContext;
         NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
