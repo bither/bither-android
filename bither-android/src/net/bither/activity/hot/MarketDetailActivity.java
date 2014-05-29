@@ -117,10 +117,16 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         } else {
             setContentView(R.layout.activity_market_detail);
             initView();
-            if (isFromNotif) {
-                if (BitherApplication.hotActivity != null) {
-                    BitherApplication.hotActivity.notifPriceAlert(marketType);
-                }
+            if (isFromNotif && BitherApplication.hotActivity != null) {
+                chartKline.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (BitherApplication.hotActivity != null) {
+                            BitherApplication.hotActivity.notifPriceAlert(marketType);
+                        }
+                    }
+                }, 500);
+
             }
         }
     }
