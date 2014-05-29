@@ -123,7 +123,7 @@ public class PriceAlert implements Serializable {
                     FileUtil.serializeObject(file, priceAlertList);
                 }
             }
-        });
+        }).start();
     }
 
     public static List<PriceAlert> getPriceAlertList() {

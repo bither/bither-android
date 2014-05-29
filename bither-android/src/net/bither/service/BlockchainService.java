@@ -966,7 +966,8 @@ public class BlockchainService extends android.app.Service {
 
     private final BroadcastReceiver tickReceiver = new BroadcastReceiver() {
         private int lastChainHeight = 0;
-        private final List<ActivityHistoryEntry> activityHistory = new LinkedList<ActivityHistoryEntry>();
+        private final List<ActivityHistoryEntry> activityHistory = new
+                LinkedList<ActivityHistoryEntry>();
 
         @Override
         public void onReceive(final Context context, final Intent intent) {
@@ -1043,7 +1044,7 @@ public class BlockchainService extends android.app.Service {
     public void startMarkTimerTask() {
         if (prefs.getAppMode() == AppMode.HOT) {
             if (mBitherTimer == null) {
-                mBitherTimer = new BitherTimer();
+                mBitherTimer = new BitherTimer(BlockchainService.this);
                 mBitherTimer.startTimer();
             }
         }

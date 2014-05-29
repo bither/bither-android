@@ -23,7 +23,9 @@ import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
+import net.bither.util.ServiceUtil;
 import net.bither.util.SystemUtil;
+
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,27 +33,31 @@ import android.content.Intent;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (intent == null) {
-			return;
-		}
-		String action = intent.getAction();
-		LogUtil.d("receiver", action);
-		if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
-			if (NetworkUtil.isConnected() || NetworkUtil.BluetoothIsConnected()) {
-				NotificationManager nm = (NotificationManager) context
-						.getSystemService(Context.NOTIFICATION_SERVICE);
-				Intent intent2 = new Intent(context, ChooseModeActivity.class);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        String action = intent.getAction();
+        LogUtil.d("receiver", action);
+        if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
+            if (NetworkUtil.isConnected() || NetworkUtil.BluetoothIsConnected()) {
+                NotificationManager nm = (NotificationManager) context
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                Intent intent2 = new Intent(context, ChooseModeActivity.class);
 
-				String title = context.getString(R.string.cold_warning);
-				String contentText = context
-						.getString(R.string.safe_your_wallet);
-				SystemUtil.nmNotifyDefault(nm, context,
+                String title = context.getString(R.string.cold_warning);
+                String contentText = context
+                        .getString(R.string.safe_your_wallet);
+                SystemUtil.nmNotifyDefault(nm, context,
                         BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent2,
                         title, contentText, R.drawable.ic_launcher);
-			}
-		}
+            }
+        } else {
+            if (NetworkUtil.isConnected()) {
+                ServiceUtil.doMarkTimerTask(true);
+            }
+        }
 
-	}
+    }
 }

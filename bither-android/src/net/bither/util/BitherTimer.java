@@ -38,6 +38,11 @@ public class BitherTimer {
 
     private Timer mTimer;
     private TimerTask mTimerTask;
+    private Context context;
+
+    public BitherTimer(Context context) {
+        this.context = context;
+    }
 
     public void startTimer() {
         if (mTimer == null || mTimerTask == null) {
@@ -82,17 +87,20 @@ public class BitherTimer {
     }
 
     private void comporePriceAlert(List<Ticker> tickerList) {
+        LogUtil.d("price", "comporePriceAlert:" + tickerList.size());
         List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
         for (PriceAlert priceAlert : priceAlertList) {
-            for (Ticker ticker : tickerList)  {
+            for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
-                            .getExchangeHigher()) {
+                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangeHigh() >=
+                            priceAlert
+                                    .getExchangeHigher()) {
                         notif(ticker.getMarketType(), true, priceAlert.getExchangeHigher());
                         PriceAlert.removePriceAlert(priceAlert);
                     }
-                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
-                            .getExchangeLower()) {
+                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangeLow() <=
+                            priceAlert
+                                    .getExchangeLower()) {
                         notif(ticker.getMarketType(), false, priceAlert.getExchangeLower());
                         PriceAlert.removePriceAlert(priceAlert);
                     }
@@ -107,11 +115,10 @@ public class BitherTimer {
 
     private void notif(final BitherSetting.MarketType marketType, boolean isHigher,
                        double alertPrice) {
-        Context context = BitherApplication.mContext;
+        LogUtil.d("price", "notif");
         NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Intent intent = new Intent(BitherApplication.mContext, MarketDetailActivity.class);
+        Intent intent = new Intent(context, MarketDetailActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT, marketType);
         intent.putExtra(BitherSetting.INTENT_REF.INTENT_FROM_NOTIF, true);
         String title = context.getString(R.string.market_price_alert_title);
