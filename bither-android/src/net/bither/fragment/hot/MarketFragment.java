@@ -25,8 +25,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import net.bither.BitherSetting;
@@ -46,9 +50,10 @@ import java.util.List;
 
 public class MarketFragment extends Fragment implements Refreshable,
         Selectable, Unselectable, OnItemClickListener {
-
+    private View v;
     private List<Market> markets;
     private MarketListHeader header;
+    private ImageView ivMarketPriceAnimIcon;
     private ListView lv;
     private MarketFragmentListAdapter mAdaper;
 
@@ -85,13 +90,14 @@ public class MarketFragment extends Fragment implements Refreshable,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater
+        v = inflater
                 .inflate(R.layout.fragment_market, container, false);
-        header = (MarketListHeader) view.findViewById(R.id.v_header);
-        lv = (ListView) view.findViewById(R.id.lv);
+        header = (MarketListHeader) v.findViewById(R.id.v_header);
+        lv = (ListView) v.findViewById(R.id.lv);
+        ivMarketPriceAnimIcon = (ImageView) v.findViewById(R.id.iv_market_price_anim_icon);
         lv.setAdapter(mAdaper);
         lv.setOnItemClickListener(this);
-        return view;
+        return v;
     }
 
     public void onResume() {
@@ -134,20 +140,6 @@ public class MarketFragment extends Fragment implements Refreshable,
     }
 
     @Override
-    public void doRefresh() {
-        if (lv == null) {
-            return;
-        }
-        refresh();
-    }
-
-    public void refresh() {
-        if (mAdaper != null) {
-            mAdaper.notifyDataSetChanged();
-        }
-    }
-
-    @Override
     public void onSelected() {
         if (lv != null) {
             header.onResume();
@@ -166,6 +158,63 @@ public class MarketFragment extends Fragment implements Refreshable,
                 selectedThread = new SelectedThread();
                 selectedThread.start();
             }
+        }
+    }
+
+    public void showPriceAlertAnimTo(int fromX, int fromY, Market toMarket) {
+        int[] containerOffset = new int[2];
+        v.getLocationInWindow(containerOffset);
+        containerOffset[0] += v.getPaddingLeft();
+        containerOffset[1] += v.getPaddingTop();
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) ivMarketPriceAnimIcon
+                .getLayoutParams();
+        lp.topMargin = fromY - containerOffset[1];
+        lp.leftMargin = fromX - containerOffset[0];
+        int marketIndex = markets.indexOf(toMarket);
+        if (marketIndex < lv.getFirstVisiblePosition() && marketIndex > lv.getLastVisiblePosition
+                ()) {
+            lv.setSelection(marketIndex);
+        }
+        View marketView = lv.getChildAt(marketIndex - lv.getFirstVisiblePosition());
+        View toIconView = marketView.findViewById(R.id.iv_price_alert);
+        int[] toLocation = new int[2];
+        toIconView.getLocationInWindow(toLocation);
+        TranslateAnimation anim = new TranslateAnimation(0, toLocation[0] - fromX, 0,
+                toLocation[1] - fromY);
+        anim.setDuration(300);
+        anim.setInterpolator(new AccelerateDecelerateInterpolator());
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                doRefresh();
+                ivMarketPriceAnimIcon.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        ivMarketPriceAnimIcon.setVisibility(View.VISIBLE);
+        ivMarketPriceAnimIcon.startAnimation(anim);
+    }
+
+    @Override
+    public void doRefresh() {
+        if (lv == null) {
+            return;
+        }
+        refresh();
+    }
+
+    public void refresh() {
+        if (mAdaper != null) {
+            mAdaper.notifyDataSetChanged();
         }
     }
 

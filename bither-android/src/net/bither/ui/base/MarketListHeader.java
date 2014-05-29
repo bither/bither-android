@@ -30,6 +30,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -43,7 +44,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
-import net.bither.fragment.Refreshable;
+import net.bither.fragment.hot.MarketFragment;
 import net.bither.model.Market;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
@@ -58,7 +59,6 @@ public class MarketListHeader extends FrameLayout implements
         MarketTickerChangedObserver, ViewTreeObserver.OnGlobalLayoutListener {
     private static final int LightScanInterval = 1200;
     public static int BgAnimDuration = 600;
-    private final TextViewListener textViewListener = new TextViewListener();
     private Animation refreshAnim = AnimationUtils.loadAnimation(getContext(),
             R.anim.check_light_scan);
     private View ivLight;
@@ -80,6 +80,7 @@ public class MarketListHeader extends FrameLayout implements
     private EditText etAlertHigh;
     private EditText etAlertLow;
     private BgHolder bg;
+    private Button btnPriceAlertOk;
     private GestureDetector gestureDetector;
     private ContainerBottomPaddingHolder bottomHolder;
     private InputMethodManager imm;
@@ -114,6 +115,7 @@ public class MarketListHeader extends FrameLayout implements
         llAlert = (LinearLayout) findViewById(R.id.ll_alert);
         etAlertHigh = (EditText) findViewById(R.id.et_alert_high);
         etAlertLow = (EditText) findViewById(R.id.et_alert_low);
+        btnPriceAlertOk = (Button) findViewById(R.id.btn_ok);
         gestureDetector = new GestureDetector(getContext(), new SwipeDetector());
         bottomHolder = new ContainerBottomPaddingHolder();
         getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -124,6 +126,7 @@ public class MarketListHeader extends FrameLayout implements
         etAlertLow.setOnEditorActionListener(alertTextViewListener);
         etAlertLow.addTextChangedListener(alertTextViewListener);
         etAlertLow.setOnFocusChangeListener(alertTextViewListener);
+        btnPriceAlertOk.setOnClickListener(new PriceAlertOkClick());
         refreshAnim.setDuration(LightScanInterval);
         refreshAnim.setFillBefore(false);
         refreshAnim.setRepeatCount(0);
@@ -182,6 +185,9 @@ public class MarketListHeader extends FrameLayout implements
                     + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         }
+    }
+
+    private void showAlert() {
         PriceAlert priceAlert = mMarket.getPriceAlert();
         etAlertHigh.setText("");
         etAlertLow.setText("");
@@ -224,6 +230,7 @@ public class MarketListHeader extends FrameLayout implements
         }
         mMarket = market;
         showMarket();
+        showAlert();
     }
 
     @Override
@@ -298,7 +305,8 @@ public class MarketListHeader extends FrameLayout implements
         @Override
         public boolean onDown(MotionEvent e) {
             if (bottomHolder.isShowing()) {
-                if (touchInView(e, etAlertHigh) || touchInView(e, etAlertLow)) {
+                if (touchInView(e, etAlertHigh) || touchInView(e, etAlertLow) || touchInView(e,
+                        btnPriceAlertOk)) {
                     return super.onDown(e);
                 }
             } else {
@@ -334,27 +342,11 @@ public class MarketListHeader extends FrameLayout implements
 
         public void reset() {
             if (isShowing()) {
-                etAlertLow.clearFocus();
-                etAlertHigh.clearFocus();
                 imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                double high = -1;
-                double low = -1;
-                if (etAlertHigh.getText().length() > 0) {
-                    high = Double.parseDouble(etAlertHigh.getText().toString());
-                }
-                if (etAlertLow.getText().length() > 0) {
-                    low = Double.parseDouble(etAlertLow.getText().toString());
-                }
-                mMarket.setPriceAlert(low, high);
-                if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
-                        .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
-                        .getFragmentAtIndex(0) instanceof Refreshable) {
-                    Refreshable r = (Refreshable) BitherApplication.hotActivity
-                            .getFragmentAtIndex(0);
-                    r.doRefresh();
-                }
                 ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
+                etAlertLow.clearFocus();
+                etAlertHigh.clearFocus();
             }
         }
 
@@ -378,9 +370,12 @@ public class MarketListHeader extends FrameLayout implements
         }
 
         public void showBottom() {
-            ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
-                    (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
-                    .start();
+            if (!isShowing()) {
+                showAlert();
+                ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
+                        (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
+                        .start();
+            }
         }
 
         public int getThreshold() {
@@ -408,6 +403,46 @@ public class MarketListHeader extends FrameLayout implements
         public boolean onTouch(View v, MotionEvent event) {
             vTrending.causeDraw();
             return false;
+        }
+    }
+
+    private final class PriceAlertOkClick implements OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            double high = -1;
+            double low = -1;
+            if (etAlertHigh.getText().length() > 0) {
+                high = Double.parseDouble(etAlertHigh.getText().toString());
+            }
+            if (etAlertLow.getText().length() > 0) {
+                low = Double.parseDouble(etAlertLow.getText().toString());
+            }
+            mMarket.setPriceAlert(low, high);
+            if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
+                    .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
+                    .getFragmentAtIndex(0) instanceof MarketFragment) {
+                final MarketFragment f = (MarketFragment) BitherApplication.hotActivity
+                        .getFragmentAtIndex(0);
+                if (low > 0 || high > 0) {
+                    imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                    etAlertLow.clearFocus();
+                    etAlertHigh.clearFocus();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            bottomHolder.reset();
+                            int[] location = new int[2];
+                            findViewById(R.id.iv_icon).getLocationInWindow(location);
+                            f.showPriceAlertAnimTo(location[0], location[1], mMarket);
+                        }
+                    }, 300);
+                } else {
+                    bottomHolder.reset();
+                    f.doRefresh();
+                }
+            }
         }
     }
 
