@@ -21,6 +21,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
 import android.view.WindowManager;
@@ -53,6 +54,11 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
     }
 
     public DialogFancyQrCode(Activity context, String content, boolean addAvatar) {
+        this(context, content, addAvatar, false);
+    }
+
+    public DialogFancyQrCode(Activity context, String content, boolean addAvatar,
+                             boolean blackAndWhite) {
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -64,9 +70,14 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
         initView();
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT);
-        Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-        new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width, theme.getFgColor(),
-                theme.getBgColor(), this, addAvatar).start();
+        if (blackAndWhite) {
+            new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width, Color.BLACK,
+                    Color.WHITE, this, false).start();
+        } else {
+            Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+            new FancyQrCodeThread(this.content, ivQr.getLayoutParams().width, theme.getFgColor(),
+                    theme.getBgColor(), this, addAvatar).start();
+        }
     }
 
     private void initView() {
