@@ -6,13 +6,13 @@ buildscript {
         classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
-project(':bither-android'){
+project(':bither-android') {
     apply plugin: 'android'
 }
-project(':wheel'){
+project(':wheel') {
     apply plugin: 'android-library'
 }
-project(':android-charts'){
+project(':android-charts') {
     apply plugin: 'android-library'
 }
 subprojects {
@@ -44,6 +44,13 @@ subprojects {
         packagingOptions {
             exclude 'META-INF/NOTICE.txt'
             exclude 'META-INF/LICENSE.txt'
+            exclude 'META-INF/NOTICE'
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/DEPENDENCIES'
+            exclude 'org/apache/http/entity/mime/version.properties'
+            exclude 'com/google/bitcoin/crypto/mnemonic/wordlist/english.txt'
+            exclude 'com/google/bitcoin/protocols/payments/cacerts'
+            exclude 'lib/x86_64/darwin/libscrypt.dylib'
         }
         lintOptions {
             abortOnError false
