@@ -96,6 +96,11 @@ public class Market {
         if (low <= 0 && high <= 0) {
             PriceAlert.removePriceAlert(getPriceAlert());
         } else {
+            PriceAlert alert = getPriceAlert();
+            if (alert != null && alert.getExchangeHigher() == high && alert.getExchangeLower() ==
+                    low) {
+                return;
+            }
             PriceAlert.addPriceAlert(new PriceAlert(getMarketType(), low, high));
         }
     }
