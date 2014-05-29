@@ -27,30 +27,20 @@
             android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_alert_high"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="20dp"
-                android:drawablePadding="5dp"
-                android:textSize="16sp"
-                android:singleLine="true"
-                android:inputType="numberDecimal"
-                android:imeOptions="actionDone"
-                android:textColorHint="@color/text_field_light_text_color"
-                android:textColor="@color/text_field_text_color"
-                android:hint="@string/market_price_alert_high_hint"
-                android:drawableLeft="@drawable/market_price_alert_icon_light"
-                android:background="@drawable/text_field_holo_light_background"
-                android:layout_height="wrap_content"/>
+                android:src="@drawable/market_price_alert_icon_light"/>
 
             <EditText
                 android:id="@+id/et_alert_low"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:drawablePadding="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:textSize="16sp"
                 android:singleLine="true"
                 android:inputType="numberDecimal"
@@ -58,9 +48,38 @@
                 android:textColorHint="@color/text_field_light_text_color"
                 android:textColor="@color/text_field_text_color"
                 android:hint="@string/market_price_alert_low_hint"
-                android:drawableLeft="@drawable/market_price_alert_icon_light"
                 android:background="@drawable/text_field_holo_light_background"
                 android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/et_alert_high"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:inputType="numberDecimal"
+                android:imeOptions="actionDone"
+                android:textColorHint="@color/text_field_light_text_color"
+                android:textColor="@color/text_field_text_color"
+                android:hint="@string/market_price_alert_high_hint"
+                android:background="@drawable/text_field_holo_light_background"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btn_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/OK"
+                android:background="@drawable/btn_small_blue_selector"/>
 
         </LinearLayout>
 
