@@ -334,8 +334,6 @@ public class MarketListHeader extends FrameLayout implements
 
         public void reset() {
             if (isShowing()) {
-                etAlertLow.clearFocus();
-                etAlertHigh.clearFocus();
                 imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
                 double high = -1;
@@ -355,6 +353,8 @@ public class MarketListHeader extends FrameLayout implements
                     r.doRefresh();
                 }
                 ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
+                etAlertLow.clearFocus();
+                etAlertHigh.clearFocus();
             }
         }
 
