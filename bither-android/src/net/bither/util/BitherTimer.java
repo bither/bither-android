@@ -84,16 +84,16 @@ public class BitherTimer {
     private void comporePriceAlert(List<Ticker> tickerList) {
         List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
         for (PriceAlert priceAlert : priceAlertList) {
-            for (Ticker ticker : tickerList) {
+            for (Ticker ticker : tickerList)  {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (priceAlert.getHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
-                            .getHigher()) {
-                        notif(ticker.getMarketType(), true, priceAlert.getHigher());
+                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangeHigh() >= priceAlert
+                            .getExchangeHigher()) {
+                        notif(ticker.getMarketType(), true, priceAlert.getExchangeHigher());
                         PriceAlert.removePriceAlert(priceAlert);
                     }
-                    if (priceAlert.getLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
-                            .getLower()) {
-                        notif(ticker.getMarketType(), false, priceAlert.getLower());
+                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangeLow() <= priceAlert
+                            .getExchangeLower()) {
+                        notif(ticker.getMarketType(), false, priceAlert.getExchangeLower());
                         PriceAlert.removePriceAlert(priceAlert);
                     }
                 }
