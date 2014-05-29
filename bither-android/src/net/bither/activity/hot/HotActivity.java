@@ -250,19 +250,24 @@ public class HotActivity extends FragmentActivity {
 
             @Override
             public void onClick(View v) {
-                boolean isPrivateKeyLimit = WalletUtils.isPrivateLimit();
-                boolean isWatchOnlyLimit = WalletUtils.isWatchOnlyLimit();
-                if (isPrivateKeyLimit && isWatchOnlyLimit) {
-                    DropdownMessage.showDropdownMessage(HotActivity.this,
-                            R.string.private_key_count_limit);
-                    DropdownMessage.showDropdownMessage(HotActivity.this,
-                            R.string.watch_only_address_count_limit);
-                    return;
+                if (WalletUtils.getPrivateAddressList() != null && WalletUtils
+                        .getPrivateAddressList().size() > 0) {
+                    boolean isPrivateKeyLimit = WalletUtils.isPrivateLimit();
+                    boolean isWatchOnlyLimit = WalletUtils.isWatchOnlyLimit();
+                    if (isPrivateKeyLimit && isWatchOnlyLimit) {
+                        DropdownMessage.showDropdownMessage(HotActivity.this,
+                                R.string.private_key_count_limit);
+                        DropdownMessage.showDropdownMessage(HotActivity.this,
+                                R.string.watch_only_address_count_limit);
+                        return;
+                    }
+                    Intent intent = new Intent(HotActivity.this,
+                            AddHotAddressActivity.class);
+                    startActivityForResult(intent,
+                            BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                } else {
+                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.wallet_loading);
                 }
-                Intent intent = new Intent(HotActivity.this,
-                        AddHotAddressActivity.class);
-                startActivityForResult(intent,
-                        BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
             }
         });
 
