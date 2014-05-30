@@ -65,6 +65,8 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         super(context);
         activity = context;
         setContentView(R.layout.dialog_edit_password);
+        setCanceledOnTouchOutside(false);
+        setCancelable(false);
         setOnShowListener(this);
         passwordSeed = getPasswordSeed();
         initView();

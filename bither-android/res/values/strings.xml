@@ -47,7 +47,8 @@
     <string name="address_total_transaction_count">tx:</string>
     <string name="address_first_seen_time">Birth Time</string>
     <string name="input_coinbase">Minning</string>
-    <string name="address_cannot_be_parsed">Unknown Address </string>\
+    <string name="address_cannot_be_parsed">Unknown Address</string>
+    <string name="address_mine">Me</string>
     <string name="copy_address">Copy</string>
     <string name="qr_code">QR Code</string>
     <string name="copy_address_success">Address copied</string>
@@ -286,9 +287,8 @@
     <string name="fancy_qr_code_theme">QR Code Style</string>
     <string name="fancy_qr_code_theme_name_yellow">Yellow</string>
     <string name="fancy_qr_code_theme_name_green">Green</string>
-    <string name="fancy_qr_code_theme_name_bluelight">Light Blue</string>
     <string name="fancy_qr_code_theme_name_red">Red</string>
-    <string name="fancy_qr_code_theme_name_bluedark">Dark Blue</string>
+    <string name="fancy_qr_code_theme_name_blue">Blue</string>
     <string name="fancy_qr_code_theme_name_purple">Purple</string>
 
     <!-- edit password -->

@@ -52,7 +52,9 @@ import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogEditPassword;
@@ -598,25 +600,27 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public void onPasswordEntered(String password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
-                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread
-                        (content, password);
-                dp.setThread(importPrivateKeyThread);
-                dp.show();
+                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(dp,
+                        content, password);
                 importPrivateKeyThread.start();
             }
         }
     }
 
-    private class ImportPrivateKeyThread extends Thread {
+    private class ImportPrivateKeyThread extends ThreadNeedService {
         private String content;
         private String password;
+        private DialogProgress dp;
 
-        public ImportPrivateKeyThread(String content, String password) {
+        public ImportPrivateKeyThread(DialogProgress dp, String content, String password) {
+            super(dp, getActivity());
+            this.dp = dp;
             this.content = content;
             this.password = password;
         }
 
-        public void run() {
+        @Override
+        public void runWithService(BlockchainService service) {
             ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content,
                     password);
             if (key == null) {
@@ -664,7 +668,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 });
                 return;
             } else {
-                WalletUtils.addAddressWithPrivateKey(null, wallet);
+                WalletUtils.addAddressWithPrivateKey(service, wallet);
             }
 
             if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {

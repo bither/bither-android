@@ -178,12 +178,8 @@ public class AddressDetailHeader extends FrameLayout {
         dialogQr = new DialogFancyQrCode(activity, address.getAddress());
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         if (this.address != address) {
-            if (AppSharedPreference.getInstance().hasUserAvatar()) {
-                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-                ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
-            } else {
-                ivQr.setContent(address.getAddress());
-            }
+            Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+            ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
         }
         if (!address.isError()) {
             if (address.getAddressInfo() != null) {

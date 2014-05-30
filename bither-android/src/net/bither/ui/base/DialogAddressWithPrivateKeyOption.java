@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 
 import net.bither.R;
 import net.bither.model.BitherAddress;
-import net.bither.preference.AppSharedPreference;
 
 public class DialogAddressWithPrivateKeyOption extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener, DialogPassword.DialogPasswordListener {
@@ -54,11 +53,6 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
 
     @Override
     public void show() {
-        if (AppSharedPreference.getInstance().hasUserAvatar()) {
-            llOriginQRCode.setVisibility(View.VISIBLE);
-        } else {
-            llOriginQRCode.setVisibility(View.GONE);
-        }
         clickedView = 0;
         super.show();
     }

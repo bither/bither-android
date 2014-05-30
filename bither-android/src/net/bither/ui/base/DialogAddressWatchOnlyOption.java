@@ -140,11 +140,6 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
 
     @Override
     public void show() {
-        if (AppSharedPreference.getInstance().hasUserAvatar()) {
-            llOriginQRCode.setVisibility(View.VISIBLE);
-        } else {
-            llOriginQRCode.setVisibility(View.GONE);
-        }
         super.show();
     }
 
