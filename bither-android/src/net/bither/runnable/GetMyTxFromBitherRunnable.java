@@ -39,85 +39,85 @@ import com.google.bitcoin.core.Transaction;
 
 public class GetMyTxFromBitherRunnable extends BaseRunnable {
 
-	private static final String BLOCK_COUNT = "block_count";
+    private static final String BLOCK_COUNT = "block_count";
 
-	private List<BitherAddress> mAddressList;
+    private List<BitherAddress> mAddressList;
 
-	private BlockchainService mBlockchainService;
-	private int mStoreBlockHeight;
+    private BlockchainService mBlockchainService;
+    private int mStoreBlockHeight;
 
-	public GetMyTxFromBitherRunnable(BlockchainService blockchainService,
-			List<BitherAddress> list) {
-		this.mBlockchainService = blockchainService;
-		this.mAddressList = list;
+    public GetMyTxFromBitherRunnable(BlockchainService blockchainService,
+                                     List<BitherAddress> list) {
+        this.mBlockchainService = blockchainService;
+        this.mAddressList = list;
 
-	}
+    }
 
-	@Override
-	public void run() {
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		try {
-			for (BitherAddress address : mAddressList) {
-				List<Transaction> transactions = new ArrayList<Transaction>();
-				StoredBlock storedBlock = this.mBlockchainService
-						.getBlockStore();
-				this.mStoreBlockHeight = storedBlock.getHeight();
-				int apiBlockCount = 0;
+    @Override
+    public void run() {
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        try {
+            for (BitherAddress address : mAddressList) {
+                List<Transaction> transactions = new ArrayList<Transaction>();
+                StoredBlock storedBlock = this.mBlockchainService
+                        .getBlockStore();
+                this.mStoreBlockHeight = storedBlock.getHeight();
+                int apiBlockCount = 0;
 
-				try {
-					BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
-							address.getAddress());
-					bitherMytransactionsApi.handleHttpGet();
-					String txResult = bitherMytransactionsApi.getResult();
-					JSONObject jsonObject = new JSONObject(txResult);
-					if (!jsonObject.isNull(BLOCK_COUNT)) {
-						apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
-					}
-					List<Transaction> temp = new ArrayList<Transaction>();
-					LogUtil.d("wallet", "apiBlockCount:" + apiBlockCount);
-					temp = TransactionsUtil.getTransactionsFromBither(
-							jsonObject, this.mStoreBlockHeight);
-					transactions.addAll(temp);
+//                try {
+                BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
+                        address.getAddress());
+                bitherMytransactionsApi.handleHttpGet();
+                String txResult = bitherMytransactionsApi.getResult();
+                JSONObject jsonObject = new JSONObject(txResult);
+                if (!jsonObject.isNull(BLOCK_COUNT)) {
+                    apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
+                }
+                List<Transaction> temp = new ArrayList<Transaction>();
+                LogUtil.d("wallet", "apiBlockCount:" + apiBlockCount);
+                temp = TransactionsUtil.getTransactionsFromBither(
+                        jsonObject, this.mStoreBlockHeight);
+                transactions.addAll(temp);
 
-				} catch (Exception e) {
-					if (!address.hasPrivateKey()) {
-						throw e;
-					} else {
-						e.printStackTrace();
-					}
-				}
+//                } catch (Exception e) {
+//                    if (!address.hasPrivateKey()) {
+//                        throw e;
+//                    } else {
+//                        e.printStackTrace();
+//                    }
+//                }
 
-				LogUtil.d("progress", "transactions;" + transactions.size());
-				int lastSeenHeight = Math.min(apiBlockCount, mStoreBlockHeight);
-				if (lastSeenHeight <= 0) {
-					lastSeenHeight = apiBlockCount;
-				}
-				if (lastSeenHeight <= 0) {
-					lastSeenHeight = mStoreBlockHeight;
-				}
+                LogUtil.d("progress", "transactions;" + transactions.size());
+                int lastSeenHeight = Math.min(apiBlockCount, mStoreBlockHeight);
+                if (lastSeenHeight <= 0) {
+                    lastSeenHeight = apiBlockCount;
+                }
+                if (lastSeenHeight <= 0) {
+                    lastSeenHeight = mStoreBlockHeight;
+                }
 
-				WalletUtils.addTxToWallet(address, transactions,
-						lastSeenHeight, storedBlock.getHeader().getHash());
-				if (!address.isConsistent()) {
-					Log.e("wallet error", address.getAddress()
-							+ ": isConsistent error");
-				} else {
-					Log.d("wallet", address.getAddress() + " :sucess");
-				}
+                WalletUtils.addTxToWallet(address, transactions,
+                        lastSeenHeight, storedBlock.getHeader().getHash());
+                if (!address.isConsistent()) {
+                    Log.e("wallet error", address.getAddress()
+                            + ": isConsistent error");
+                } else {
+                    Log.d("wallet", address.getAddress() + " :sucess");
+                }
 
-				WalletUtils.saveBitherAddress(address);
-				BroadcastUtil.sendBroadcastAddressState(address);
-				BroadcastUtil
-						.sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
-				BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-						.getTotalBitcoin());
-				Collections.sort(transactions, new ComparatorTx());
-			}
-			obtainMessage(HandlerMessage.MSG_SUCCESS);
-		} catch (Exception e) {
-			obtainMessage(HandlerMessage.MSG_FAILURE);
-			e.printStackTrace();
-		}
+                WalletUtils.saveBitherAddress(address);
+                BroadcastUtil.sendBroadcastAddressState(address);
+                BroadcastUtil
+                        .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
+                BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
+                        .getTotalBitcoin());
+                Collections.sort(transactions, new ComparatorTx());
+            }
+            obtainMessage(HandlerMessage.MSG_SUCCESS);
+        } catch (Exception e) {
+            obtainMessage(HandlerMessage.MSG_FAILURE);
+            e.printStackTrace();
+        }
 
-	}
+    }
 }

@@ -33,9 +33,6 @@ import org.json.JSONObject;
 
 public class Depth implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static final String BIDS = "bids";
@@ -45,6 +42,7 @@ public class Depth implements Serializable {
 	private List<DateValueEntity> dateValueEntities;
 
 	private double maxVolume;
+	private int splitIndex;
 
 	public List<DateValueEntity> getDateValueEntities() {
 		return dateValueEntities;
@@ -73,6 +71,7 @@ public class Depth implements Serializable {
 		List<DateValueEntity> bidDateValueEntities = new ArrayList<DateValueEntity>();
 		List<DateValueEntity> askDateValueEntities = new ArrayList<DateValueEntity>();
 		double bidSumVolume = 0;
+		int splitIndex = 0;
 		if (!json.isNull(BIDS)) {
 			JSONArray bidArray = json.getJSONArray(BIDS);
 
@@ -91,6 +90,7 @@ public class Depth implements Serializable {
 				bidDateValueEntities.add(dateValueEntity);
 
 			}
+			splitIndex = bidArray.length();
 
 		}
 		double askSumVolume = 0;
@@ -124,6 +124,7 @@ public class Depth implements Serializable {
 		Collections.sort(dateValueEntities, new ComparatorDateValue());
 		depth.setMaxVolume(Math.max(askSumVolume, bidSumVolume));
 		depth.setDateValueEntities(dateValueEntities);
+		depth.setSplitIndex(splitIndex);
 		return depth;
 
 	}
@@ -134,6 +135,14 @@ public class Depth implements Serializable {
 
 	public void setMarketType(MarketType marketType) {
 		this.marketType = marketType;
+	}
+
+	public int getSplitIndex() {
+		return splitIndex;
+	}
+
+	public void setSplitIndex(int splitIndex) {
+		this.splitIndex = splitIndex;
 	}
 
 	private static class ComparatorDateValue implements
@@ -159,4 +168,5 @@ public class Depth implements Serializable {
 		}
 		return super.equals(o);
 	}
+
 }

@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import net.bither.BitherApplication;
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
@@ -32,11 +29,16 @@ import net.bither.charts.entity.DateValueEntity;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.charts.entity.LineEntity;
 import net.bither.charts.entity.ListChartData;
+import net.bither.charts.entity.MarketDepthEntity;
 import net.bither.charts.entity.OHLCEntity;
 import net.bither.charts.view.GridChart;
 import net.bither.charts.view.MACandleStickChart;
 import net.bither.charts.view.MarketDepthChart;
 import net.bither.model.Depth;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.graphics.Color;
 
 public class ChartsUtil {
@@ -78,14 +80,16 @@ public class ChartsUtil {
 	}
 
 	public static synchronized void initMarketDepth(
-			MarketDepthChart marketDepthChart, Depth depth) {
+			MarketDepthChart marketDepthChart, Depth depth, boolean isRefresh) {
 
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
 		LineEntity<DateValueEntity> MALineData = new LineEntity<DateValueEntity>();
-		MALineData.setTitle("LOW");
-		MALineData.setLineColor(Color.RED);
 		MALineData.setLineData(depth.getDateValueEntities());
 		lines.add(MALineData);
+		MarketDepthEntity marketDepthEntity = new MarketDepthEntity(lines,
+				depth.getSplitIndex());
+		marketDepthChart.setMareketDepthEntity(marketDepthEntity);
+
 		int lineColor = Color.argb(30, 255, 255, 255);
 
 		marketDepthChart.setLongitudeFontSize(14);
@@ -115,21 +119,15 @@ public class ChartsUtil {
 		marketDepthChart.setAxisXTitleQuadrantHeight(20);
 		marketDepthChart.setAxisXPosition(GridChart.AXIS_X_POSITION_BOTTOM);
 		marketDepthChart.setAxisYPosition(GridChart.AXIS_Y_POSITION_RIGHT);
-
-		marketDepthChart.setLinesData(lines);
-		marketDepthChart.invalidate();
+		if (isRefresh) {
+			marketDepthChart.invalidate();
+		}
 	}
 
 	public synchronized static void initMACandleStickChart(
 			MACandleStickChart macandlestickchart, List<IStickEntity> ohlc,
 			boolean isRefresh) {
 		List<LineEntity<DateValueEntity>> lines = new ArrayList<LineEntity<DateValueEntity>>();
-
-		// LineEntity<DateValueEntity> MA5 = new LineEntity<DateValueEntity>();
-		// MA5.setTitle("MA5");
-		// MA5.setLineColor(Color.WHITE);
-		// MA5.setLineData(initMA(ohlc, 5));
-		// lines.add(MA5);
 
 		LineEntity<DateValueEntity> MA10 = new LineEntity<DateValueEntity>();
 		MA10.setTitle("MA10");

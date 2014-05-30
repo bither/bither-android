@@ -47,7 +47,8 @@
     <string name="address_total_transaction_count">tx:</string>
     <string name="address_first_seen_time">Birth Time</string>
     <string name="input_coinbase">Minning</string>
-    <string name="address_cannot_be_parsed">Unknown Address </string>
+    <string name="address_cannot_be_parsed">Unknown Address</string>
+    <string name="address_mine">Me</string>
     <string name="copy_address">Copy</string>
     <string name="qr_code">QR Code</string>
     <string name="copy_address_success">Address copied</string>
@@ -64,6 +65,8 @@
     <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
     <string name="address_detail_cannot_stop_monitoring">You can only stop monitoring one address in a minute.</string>
     <string name="address_detail_empty_address_list_notice">You can\'t empty address list.</string>
+    <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
+    <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
     <string name="add_address_tab_watch_only">Watch Only</string>
@@ -73,15 +76,17 @@
     <string name="add_address_delete">Delete</string>
     <string name="add_address_watch_only_hint">Bitcoin Address</string>
     <string name="add_address_already_watched">This address is already monitored</string>
+    <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
     <string name="add_address_generate_address_password_label">Enter password</string>
-    <string name="add_address_generate_address_password_lengh_note">6&#8211;20 digits</string>
+    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;30</string>
     <string name="add_address_generate_address_password_set_label">Set password</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
     <string name="add_address_generate_address_password_not_same">Passwords not same</string>
     <string name="password_checking">Checking password</string>
     <string name="password_wrong">Wrong Password</string>
+    <string name="wallet_loading">Loading wallets, Please try again later.</string>
 
     <!-- send -->
     <string name="send_progress_dialog_message">Sending</string>
@@ -131,6 +136,11 @@
     <string name="kline_open">Open: </string>
     <string name="kline_close">Close: </string>
     <string name="kline_amount">Volume: </string>
+    <string name="market_price_alert_high_hint">Higher Than</string>
+    <string name="market_price_alert_low_hint">Lower Than</string>
+    <string name="market_price_alert_title">Price Alert</string>
+    <string name="price_alert_higher_than">Price on %s is higher than </string>
+    <string name="price_alert_lower_than">Price on %s is lower than </string>
 
     <!-- setting -->
     <string name="setting_name_currency">Default Currency</string>
@@ -147,6 +157,19 @@
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
     <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
+    <string name="set_avatar">Set Avatar</string>
+    <string name="set_avatar_camera">From Camera</string>
+    <string name="set_avatar_gallery">From Gallery</string>
+    <string name="edit_password_button">Change Password</string>
+    <string name="import_private_key_qr_code">Import Private Key QR Code</string>
+    <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_private_key_qr_code_password">Enter original password</string>
+    <string name="import_private_key_qr_code_success">Import success.</string>
+    <string name="import_private_key_qr_code_failed">Import failed.</string>
+    <string name="import_private_key_qr_code_failed_monitored">Can\'t import Bither Cold private key.</string>
+    <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
+    <string name="import_private_key_qr_code_importing">Importing…</string>
+    <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
@@ -211,15 +234,17 @@
     <string name="clone_from_waiting">Cloning…</string>
     <string name="clone_from_success">Clone success</string>
     <string name="clone_from_failed">Clone failed</string>
-    <string name="clone_from_password">Type in source password</string>
+    <string name="clone_from_password">Enter source password</string>
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
     <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>
+    <string name="no_sd_card">SD card failure</string>
     <string name="last_time_of_back_up">The last backup: %s </string>
     <string name="just_now">Just now</string>
     <string name="private_key_count_limit">Reached private key count limit</string>
     <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
     <string name="generate_address_count_label">How many private keys to generate?</string>
+    <string name="recover_from_backup_of_cold">Find previous back up of Bither Cold on SD card. Recover from it?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">Init Transaction</string>
@@ -242,7 +267,7 @@
 
     <!-- donate -->
     <string name="select_address_to_donate">Select an address to donate</string>
-    <string name="donate_no_address">No address to donate</string>
+    <string name="donate_no_address">No bitcoins available for donation.</string>
     <string name="donate_receiving_address_label">Donate to developers</string>
     <string name="donate_sending_verb">Donate</string>
     <string name="donate_unsigned_transaction_verb">Donation QR Code</string>
@@ -253,4 +278,26 @@
     <string name="network_monitor_block_list_title">Blocks</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
 
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">Share</string>
+    <string name="fancy_qr_code_save">Save</string>
+    <string name="fancy_qr_code_save_success">QR Code saved.</string>
+    <string name="fancy_qr_code_view_origin">View Original QR Code</string>
+    <string name="saving">Saving…</string>
+    <string name="fancy_qr_code_theme">QR Code Style</string>
+    <string name="fancy_qr_code_theme_name_yellow">Yellow</string>
+    <string name="fancy_qr_code_theme_name_green">Green</string>
+    <string name="fancy_qr_code_theme_name_red">Red</string>
+    <string name="fancy_qr_code_theme_name_blue">Blue</string>
+    <string name="fancy_qr_code_theme_name_purple">Purple</string>
+
+    <!-- edit password -->
+    <string name="edit_password_title">Change Password</string>
+    <string name="edit_password_old_password">Old Password</string>
+    <string name="edit_password_new_password">New Password</string>
+    <string name="edit_password_confirm_new_password">Confirm New Password</string>
+    <string name="edit_password_success">Change password success.</string>
+    <string name="edit_password_fail">Change password failed.</string>
+    <string name="edit_password_new_old_same">New password is same to the old.</string>
+    <string name="edit_password_editing">Changing password…\nDo Not turn off the screen.</string>
 </resources>

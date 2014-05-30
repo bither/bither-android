@@ -23,12 +23,15 @@ import java.util.List;
 
 import net.bither.BitherSetting.AppMode;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 import net.bither.util.BackupUtil.BackupListener;
+
 import android.os.Handler;
 import android.os.Looper;
 
@@ -37,69 +40,63 @@ import com.google.bitcoin.crypto.EncryptedPrivateKey;
 
 public class BackupPrivateKeyRunnable extends BaseRunnable {
 
-	private BackupListener mBackupListener;
+    private BackupListener mBackupListener;
 
-	public BackupPrivateKeyRunnable(BackupListener backupListener) {
-		this.mBackupListener = backupListener;
+    public BackupPrivateKeyRunnable(BackupListener backupListener) {
+        this.mBackupListener = backupListener;
 
-	}
+    }
 
-	@Override
-	public void run() {
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		backupPrivateKey();
-		if (this.mBackupListener != null) {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+    @Override
+    public void run() {
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        backupPrivateKey();
+        if (this.mBackupListener != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
 
-				@Override
-				public void run() {
-					mBackupListener.backupSuccess();
+                @Override
+                public void run() {
+                    mBackupListener.backupSuccess();
 
-				}
-			});
-		}
-		obtainMessage(HandlerMessage.MSG_SUCCESS);
+                }
+            });
+        }
+        obtainMessage(HandlerMessage.MSG_SUCCESS);
 
-	}
+    }
 
-	private void backupPrivateKey() {
-		File file = FileUtil.getBackupFileOfCold();
-		if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
-			file = FileUtil.getBackupKeyOfHot();
-		}
-		String backupString = "";
-		List<BitherAddressWithPrivateKey> addressWithPrivateKeys = WalletUtils
-				.getPrivateAddressList();
-		if (addressWithPrivateKeys == null) {
-			return;
-		}
-		for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addressWithPrivateKeys) {
-			String address = bitherAddressWithPrivateKey.getAddress();
-			if (bitherAddressWithPrivateKey.getKeys() != null
-					&& bitherAddressWithPrivateKey.getKeys().size() > 0) {
-				ECKey ecKey = bitherAddressWithPrivateKey.getKeys().get(0);
-				EncryptedPrivateKey encryptedPrivateKey = ecKey
-						.getEncryptedPrivateKey();
-				backupString = backupString
-						+ address
-						+ StringUtil.QR_CODE_SPLIT
-						+ PrivateKeyUtil.getPrivateKeyString(
-								encryptedPrivateKey, ecKey.getKeyCrypter())
-						+ "\n";
+    private void backupPrivateKey() {
+        File file = FileUtil.getBackupFileOfCold();
+        if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
+            file = FileUtil.getBackupKeyOfHot();
+        }
+        String backupString = "";
+        List<BitherAddressWithPrivateKey> addressWithPrivateKeys = WalletUtils
+                .getPrivateAddressList();
+        if (addressWithPrivateKeys == null) {
+            return;
+        }
+        for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addressWithPrivateKeys) {
+            if (bitherAddressWithPrivateKey.getKeys() != null
+                    && bitherAddressWithPrivateKey.getKeys().size() > 0) {
+                PasswordSeed passwordSeed = new PasswordSeed(bitherAddressWithPrivateKey);
+                backupString = backupString
+                        + passwordSeed.toString()
+                        + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
 
-			}
-		}
-		if (!StringUtil.isEmpty(backupString)) {
+            }
+        }
+        if (!StringUtil.isEmpty(backupString)) {
 
-			try {
-				FileUtil.writeFile(backupString.getBytes(), file);
-				AppSharedPreference.getInstance().setLastBackupKeyTime(
-						new Date(System.currentTimeMillis()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+            try {
+                FileUtil.writeFile(backupString.getBytes(), file);
+                AppSharedPreference.getInstance().setLastBackupKeyTime(
+                        new Date(System.currentTimeMillis()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-	}
+    }
 
 }

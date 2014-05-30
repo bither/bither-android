@@ -16,68 +16,132 @@
 
 package net.bither.util;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+
 import java.io.File;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import net.bither.BitherApplication;
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
+import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 
 public class BitherTimer {
+    private Thread thread = null;
+    private Context context;
+    private boolean isStop = false;
 
-	private boolean mIsPause = false;
-	private Timer mTimer;
-	private TimerTask mTimerTask;
+    public BitherTimer(Context context) {
+        this.context = context;
+    }
 
-	public void startTimer() {
-		if (mTimer == null || mTimerTask == null) {
-			mTimer = new Timer();
-			mTimerTask = new TimerTask() {
+    public void startTimer() {
+        if (thread == null) {
+            thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!isStop) {
+                        getExchangeTicker();
+                        try {
+                            Thread.sleep(1 * 60 * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            thread.start();
+        }
 
-				@Override
-				public void run() {
-					if (!mIsPause) {
-						getExchangeTicker();
-					}
+    }
 
-				}
-			};
-			if (mTimer != null && mTimerTask != null) {
-				mTimer.schedule(mTimerTask, 0, 1 * 60 * 1000);
-			}
-		}
+    public void stopTimer() {
+        isStop = true;
+    }
 
-	}
+    private void getExchangeTicker() {
+        try {
+            FileUtil.upgradeTickerFile();
+            File file = FileUtil.getTickerFile();
+            @SuppressWarnings("unchecked")
+            List<Ticker> cacheList = (List<Ticker>) FileUtil.deserialize(file);
+            if (cacheList != null) {
+                BroadcastUtil.sendBroadcastMarketState(cacheList);
+            }
+            GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
+            getExchangeTickerApi.handleHttpGet();
+            double exchangeRate = getExchangeTickerApi.getCurrencyRate();
+            ExchangeUtil.setExcchangeRate(exchangeRate);
+            List<Ticker> tickers = getExchangeTickerApi.getResult();
+            if (tickers != null && tickers.size() > 0) {
+                comporePriceAlert(tickers);
+                FileUtil.serializeObject(file, tickers);
+                BroadcastUtil.sendBroadcastMarketState(tickers);
+            }
 
-	public void setPause(boolean isPause) {
-		mIsPause = isPause;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	}
+    private void comporePriceAlert(List<Ticker> tickerList) {
+        LogUtil.d("price", "comporePriceAlert:" + tickerList.size());
+        List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
+        for (PriceAlert priceAlert : priceAlertList) {
+            for (Ticker ticker : tickerList) {
+                if (priceAlert.getMarketType() == ticker.getMarketType()) {
+                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangePrice()>=
+                            priceAlert
+                                    .getExchangeHigher()) {
+                        notif(ticker.getMarketType(), true, priceAlert.getExchangeHigher());
+                        PriceAlert.removePriceAlert(priceAlert);
+                    }
+                    if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangePrice() <=
+                            priceAlert
+                                    .getExchangeLower()) {
+                        notif(ticker.getMarketType(), false, priceAlert.getExchangeLower());
+                        PriceAlert.removePriceAlert(priceAlert);
+                    }
+                }
 
-	private void getExchangeTicker() {
 
-		try {
-			FileUtil.upgradeTickerFile();
-			File file = FileUtil.getTickerFile();
-			@SuppressWarnings("unchecked")
-			List<Ticker> cacheList = (List<Ticker>) FileUtil.deserialize(file);
-			if (cacheList != null) {
-				BroadcastUtil.sendBroadcastMarketState(cacheList);
-			}
-			GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
-			getExchangeTickerApi.handleHttpGet();
-			double exchangeRate = getExchangeTickerApi.getCurrencyRate();
-			ExchangeUtil.setExcchangeRate(exchangeRate);
-			List<Ticker> tickers = getExchangeTickerApi.getResult();
-			if (tickers != null && tickers.size() > 0) {
-				FileUtil.serializeObject(file, tickers);
-				BroadcastUtil.sendBroadcastMarketState(tickers);
-			}
+            }
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
+    }
+
+    private void notif(final BitherSetting.MarketType marketType, boolean isHigher,
+                       double alertPrice) {
+        LogUtil.d("price", "notif");
+        NotificationManager nm = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(context, MarketDetailActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT, marketType);
+        intent.putExtra(BitherSetting.INTENT_REF.INTENT_FROM_NOTIF, true);
+        String title = context.getString(R.string.market_price_alert_title);
+        String contentText;
+        if (isHigher) {
+            contentText = context.getString(R.string.price_alert_higher_than);
+        } else {
+            contentText = context.getString(R.string.price_alert_lower_than);
+        }
+        contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
+        contentText = contentText + " " + AppSharedPreference.getInstance()
+                .getDefaultExchangeType().getSymbol() + StringUtil.formatDoubleToMoneyString
+                (alertPrice);
+        SystemUtil.nmNotifyDefault(nm, context,
+                BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent,
+                title, contentText, R.drawable.ic_launcher);
+
+    }
 
 }

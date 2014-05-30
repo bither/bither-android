@@ -22,386 +22,154 @@
 package net.bither.charts.view;
 
 import net.bither.charts.entity.OHLCEntity;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/01/21 11:37:51
- * 
- */
 public class SlipCandleStickChart extends SlipStickChart {
 
-	/**
-	 * <p>
-	 * Default price up stick's border color
-	 * </p>
-	 * <p>
-	 * 値上がりローソクのボーダー色のデフォルト値
-	 * </p>
-	 * <p>
-	 * 默认阳线的边框颜色
-	 * </p>
-	 */
-	public static final int DEFAULT_POSITIVE_STICK_BORDER_COLOR = Color.RED;
+    public static final int DEFAULT_POSITIVE_STICK_BORDER_COLOR = Color.RED;
+    public static final int DEFAULT_POSITIVE_STICK_FILL_COLOR = Color.RED;
+    public static final int DEFAULT_NEGATIVE_STICK_BORDER_COLOR = Color.GREEN;
+    public static final int DEFAULT_NEGATIVE_STICK_FILL_COLOR = Color.GREEN;
+    public static final int DEFAULT_CROSS_STAR_COLOR = Color.LTGRAY;
+    private int positiveStickBorderColor = DEFAULT_POSITIVE_STICK_BORDER_COLOR;
 
-	/**
-	 * <p>
-	 * Default price up stick's fill color
-	 * </p>
-	 * <p>
-	 * 値上がりローソクの色のデフォルト値
-	 * </p>
-	 * <p>
-	 * 默认阳线的填充颜色
-	 * </p>
-	 */
-	public static final int DEFAULT_POSITIVE_STICK_FILL_COLOR = Color.RED;
+    private int positiveStickFillColor = DEFAULT_POSITIVE_STICK_FILL_COLOR;
 
-	/**
-	 * <p>
-	 * Default price down stick's border color
-	 * </p>
-	 * <p>
-	 * 値下りローソクのボーダー色のデフォルト値
-	 * </p>
-	 * <p>
-	 * 默认阴线的边框颜色
-	 * </p>
-	 */
-	public static final int DEFAULT_NEGATIVE_STICK_BORDER_COLOR = Color.GREEN;
+    private int negativeStickBorderColor = DEFAULT_NEGATIVE_STICK_BORDER_COLOR;
+    private int negativeStickFillColor = DEFAULT_NEGATIVE_STICK_FILL_COLOR;
 
-	/**
-	 * <p>
-	 * Default price down stick's fill color
-	 * </p>
-	 * <p>
-	 * 値下りローソクの色のデフォルト値
-	 * </p>
-	 * <p>
-	 * 默认阴线的填充颜色
-	 * </p>
-	 */
-	public static final int DEFAULT_NEGATIVE_STICK_FILL_COLOR = Color.GREEN;
+    private int crossStarColor = DEFAULT_CROSS_STAR_COLOR;
 
-	/**
-	 * <p>
-	 * Default price no change stick's color (cross-star,T-like etc.)
-	 * </p>
-	 * <p>
-	 * クローススターの色のデフォルト値
-	 * </p>
-	 * <p>
-	 * 默认十字线显示颜色
-	 * </p>
-	 */
-	public static final int DEFAULT_CROSS_STAR_COLOR = Color.LTGRAY;
+    public SlipCandleStickChart(Context context, AttributeSet attrs,
+                                int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	/**
-	 * <p>
-	 * Price up stick's border color
-	 * </p>
-	 * <p>
-	 * 値上がりローソクのボーダー色
-	 * </p>
-	 * <p>
-	 * 阳线的边框颜色
-	 * </p>
-	 */
-	private int positiveStickBorderColor = DEFAULT_POSITIVE_STICK_BORDER_COLOR;
+    public SlipCandleStickChart(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	/**
-	 * <p>
-	 * Price up stick's fill color
-	 * </p>
-	 * <p>
-	 * 値上がりローソクの色
-	 * </p>
-	 * <p>
-	 * 阳线的填充颜色
-	 * </p>
-	 */
-	private int positiveStickFillColor = DEFAULT_POSITIVE_STICK_FILL_COLOR;
+    public SlipCandleStickChart(Context context) {
+        super(context);
+    }
 
-	/**
-	 * <p>
-	 * Price down stick's border color
-	 * </p>
-	 * <p>
-	 * 値下りローソクのボーダー色
-	 * </p>
-	 * <p>
-	 * 阴线的边框颜色
-	 * </p>
-	 */
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+    }
 
-	private int negativeStickBorderColor = DEFAULT_NEGATIVE_STICK_BORDER_COLOR;
+    @Override
+    protected void drawSticks(Canvas canvas) {
+        if (null == stickData) {
+            return;
+        }
+        if (stickData.size() <= 0) {
+            return;
+        }
 
-	/**
-	 * <p>
-	 * Price down stick's fill color
-	 * </p>
-	 * <p>
-	 * 値下りローソクの色
-	 * </p>
-	 * <p>
-	 * 阴线的填充颜色
-	 * </p>
-	 */
-	private int negativeStickFillColor = DEFAULT_NEGATIVE_STICK_FILL_COLOR;
+        float stickWidth = getDataQuadrantPaddingWidth() / displayNumber
+                - stickSpacing;
+        float stickX = getDataQuadrantPaddingStartX();
 
-	/**
-	 * <p>
-	 * Price no change stick's color (cross-star,T-like etc.)
-	 * </p>
-	 * <p>
-	 * クローススターの色（価格変動無し）
-	 * </p>
-	 * <p>
-	 * 十字线显示颜色（十字星,一字平线,T形线的情况）
-	 * </p>
-	 */
-	private int crossStarColor = DEFAULT_CROSS_STAR_COLOR;
+        Paint mPaintPositive = new Paint();
+        mPaintPositive.setColor(positiveStickFillColor);
 
-	/**
-	 * <p>
-	 * Constructor of SlipCandleStickChart
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 * @param attrs
-	 * @param defStyle
-	 */
-	public SlipCandleStickChart(Context context, AttributeSet attrs,
-			int defStyle) {
-		super(context, attrs, defStyle);
-		// TODO Auto-generated constructor stub
-	}
+        Paint mPaintNegative = new Paint();
+        mPaintNegative.setColor(negativeStickFillColor);
 
-	/**
-	 * <p>
-	 * Constructor of SlipCandleStickChart
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 * @param attrs
-	 */
-	public SlipCandleStickChart(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		// TODO Auto-generated constructor stub
-	}
+        Paint mPaintCross = new Paint();
+        mPaintCross.setColor(crossStarColor);
 
-	/**
-	 * <p>
-	 * Constructor of SlipCandleStickChart
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChart类对象的构造函数
-	 * </p>
-	 * <p>
-	 * SlipCandleStickChartのコンストラクター
-	 * </p>
-	 * 
-	 * @param context
-	 */
-	public SlipCandleStickChart(Context context) {
-		super(context);
-		// TODO Auto-generated constructor stub
-	}
+        for (int i = displayFrom;
+             i < displayFrom + displayNumber;
+             i++) {
+            OHLCEntity ohlc = (OHLCEntity) stickData.get(i);
+            float openY = (float) ((1f - (ohlc.getOpen() - minValue)
+                    / (maxValue - minValue))
+                    * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+            float highY = (float) ((1f - (ohlc.getHigh() - minValue)
+                    / (maxValue - minValue))
+                    * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+            float lowY = (float) ((1f - (ohlc.getLow() - minValue)
+                    / (maxValue - minValue))
+                    * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+            float closeY = (float) ((1f - (ohlc.getClose() - minValue)
+                    / (maxValue - minValue))
+                    * (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * <p>Called when is going to draw this chart<p> <p>チャートを書く前、メソッドを呼ぶ<p>
-	 * <p>绘制图表时调用<p>
-	 * 
-	 * @param canvas
-	 * 
-	 * @see android.view.View#onDraw(android.graphics.Canvas)
-	 */
-	@Override
-	protected void onDraw(Canvas canvas) {
-		super.onDraw(canvas);
-	}
+            if (ohlc.getOpen() < ohlc.getClose()) {
+                // stick or line
+                if (stickWidth >= 2f) {
+                    canvas.drawRect(stickX, closeY, stickX + stickWidth, openY,
+                            mPaintPositive);
+                }
+                canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
+                        + stickWidth / 2f, lowY, mPaintPositive);
+            } else if (ohlc.getOpen() > ohlc.getClose()) {
+                // stick or line
+                if (stickWidth >= 2f) {
+                    canvas.drawRect(stickX, openY, stickX + stickWidth, closeY,
+                            mPaintNegative);
+                }
+                canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
+                        + stickWidth / 2f, lowY, mPaintNegative);
+            } else {
+                // line or point
+                if (stickWidth >= 2f) {
+                    canvas.drawLine(stickX, closeY, stickX + stickWidth, openY,
+                            mPaintCross);
+                }
+                canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
+                        + stickWidth / 2f, lowY, mPaintCross);
+            }
 
-	/**
-	 * <p>
-	 * draw sticks
-	 * </p>
-	 * <p>
-	 * スティックを書く
-	 * </p>
-	 * <p>
-	 * 绘制柱条
-	 * </p>
-	 * 
-	 * @param canvas
-	 */
-	@Override
-	protected void drawSticks(Canvas canvas) {
-		if (null == stickData) {
-			return;
-		}
-		if (stickData.size() <= 0) {
-			return;
-		}
+            // next x
+            stickX = stickX + stickSpacing + stickWidth;
+        }
+    }
 
-		float stickWidth = getDataQuadrantPaddingWidth() / displayNumber
-				- stickSpacing;
-		float stickX = getDataQuadrantPaddingStartX();
+    public int getPositiveStickBorderColor() {
+        return positiveStickBorderColor;
+    }
 
-		Paint mPaintPositive = new Paint();
-		mPaintPositive.setColor(positiveStickFillColor);
+    public void setPositiveStickBorderColor(int positiveStickBorderColor) {
+        this.positiveStickBorderColor = positiveStickBorderColor;
+    }
 
-		Paint mPaintNegative = new Paint();
-		mPaintNegative.setColor(negativeStickFillColor);
+    public int getPositiveStickFillColor() {
+        return positiveStickFillColor;
+    }
 
-		Paint mPaintCross = new Paint();
-		mPaintCross.setColor(crossStarColor);
+    public void setPositiveStickFillColor(int positiveStickFillColor) {
+        this.positiveStickFillColor = positiveStickFillColor;
+    }
 
-		for (int i = displayFrom; i < displayFrom + displayNumber; i++) {
-			OHLCEntity ohlc = (OHLCEntity) stickData.get(i);
-			float openY = (float) ((1f - (ohlc.getOpen() - minValue)
-					/ (maxValue - minValue))
-					* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
-			float highY = (float) ((1f - (ohlc.getHigh() - minValue)
-					/ (maxValue - minValue))
-					* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
-			float lowY = (float) ((1f - (ohlc.getLow() - minValue)
-					/ (maxValue - minValue))
-					* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
-			float closeY = (float) ((1f - (ohlc.getClose() - minValue)
-					/ (maxValue - minValue))
-					* (getDataQuadrantPaddingHeight()) + getDataQuadrantPaddingStartY());
+    public int getNegativeStickBorderColor() {
+        return negativeStickBorderColor;
+    }
 
-			if (ohlc.getOpen() < ohlc.getClose()) {
-				// stick or line
-				if (stickWidth >= 2f) {
-					canvas.drawRect(stickX, closeY, stickX + stickWidth, openY,
-							mPaintPositive);
-				}
-				canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
-						+ stickWidth / 2f, lowY, mPaintPositive);
-			} else if (ohlc.getOpen() > ohlc.getClose()) {
-				// stick or line
-				if (stickWidth >= 2f) {
-					canvas.drawRect(stickX, openY, stickX + stickWidth, closeY,
-							mPaintNegative);
-				}
-				canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
-						+ stickWidth / 2f, lowY, mPaintNegative);
-			} else {
-				// line or point
-				if (stickWidth >= 2f) {
-					canvas.drawLine(stickX, closeY, stickX + stickWidth, openY,
-							mPaintCross);
-				}
-				canvas.drawLine(stickX + stickWidth / 2f, highY, stickX
-						+ stickWidth / 2f, lowY, mPaintCross);
-			}
+    public void setNegativeStickBorderColor(int negativeStickBorderColor) {
+        this.negativeStickBorderColor = negativeStickBorderColor;
+    }
 
-			// next x
-			stickX = stickX + stickSpacing + stickWidth;
-		}
-	}
+    public int getNegativeStickFillColor() {
+        return negativeStickFillColor;
+    }
 
-	/**
-	 * @return the positiveStickBorderColor
-	 */
-	public int getPositiveStickBorderColor() {
-		return positiveStickBorderColor;
-	}
+    public void setNegativeStickFillColor(int negativeStickFillColor) {
+        this.negativeStickFillColor = negativeStickFillColor;
+    }
 
-	/**
-	 * @param positiveStickBorderColor
-	 *            the positiveStickBorderColor to set
-	 */
-	public void setPositiveStickBorderColor(int positiveStickBorderColor) {
-		this.positiveStickBorderColor = positiveStickBorderColor;
-	}
+    public int getCrossStarColor() {
+        return crossStarColor;
+    }
 
-	/**
-	 * @return the positiveStickFillColor
-	 */
-	public int getPositiveStickFillColor() {
-		return positiveStickFillColor;
-	}
-
-	/**
-	 * @param positiveStickFillColor
-	 *            the positiveStickFillColor to set
-	 */
-	public void setPositiveStickFillColor(int positiveStickFillColor) {
-		this.positiveStickFillColor = positiveStickFillColor;
-	}
-
-	/**
-	 * @return the negativeStickBorderColor
-	 */
-	public int getNegativeStickBorderColor() {
-		return negativeStickBorderColor;
-	}
-
-	/**
-	 * @param negativeStickBorderColor
-	 *            the negativeStickBorderColor to set
-	 */
-	public void setNegativeStickBorderColor(int negativeStickBorderColor) {
-		this.negativeStickBorderColor = negativeStickBorderColor;
-	}
-
-	/**
-	 * @return the negativeStickFillColor
-	 */
-	public int getNegativeStickFillColor() {
-		return negativeStickFillColor;
-	}
-
-	/**
-	 * @param negativeStickFillColor
-	 *            the negativeStickFillColor to set
-	 */
-	public void setNegativeStickFillColor(int negativeStickFillColor) {
-		this.negativeStickFillColor = negativeStickFillColor;
-	}
-
-	/**
-	 * @return the crossStarColor
-	 */
-	public int getCrossStarColor() {
-		return crossStarColor;
-	}
-
-	/**
-	 * @param crossStarColor
-	 *            the crossStarColor to set
-	 */
-	public void setCrossStarColor(int crossStarColor) {
-		this.crossStarColor = crossStarColor;
-	}
+    public void setCrossStarColor(int crossStarColor) {
+        this.crossStarColor = crossStarColor;
+    }
 }

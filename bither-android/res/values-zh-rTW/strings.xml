@@ -43,6 +43,7 @@
     <string name="address_first_seen_time">最早出現時間</string>
     <string name="input_coinbase">挖礦</string>
     <string name="address_cannot_be_parsed">地址不詳</string>
+    <string name="address_mine">我的地址</string>
     <string name="copy_address">複製</string>
     <string name="qr_code">二​​維碼</string>
     <string name="copy_address_success">地址已復制</string>
@@ -59,6 +60,8 @@
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止監控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分鐘內只能停止監控一個地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
+    <string name="address_detail_private_key_qr_code">私鑰二維碼</string>
+    <string name="address_detail_private_key_qr_code_backup">備份私鑰</string>
 
     <!-- add address -->
     <string name="add_address_tab_watch_only">監控</string>
@@ -67,15 +70,18 @@
     <string name="add_address_delete">刪除</string>
     <string name="add_address_watch_only_hint">比特幣地址</string>
     <string name="add_address_already_watched">這個地址已經被監控了</string>
+    <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">請輸入密碼</string>
-    <string name="add_address_generate_address_password_lengh_note">6&#8211;20位數字</string>
+    <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;30</string>
     <string name="add_address_generate_address_password_set_label">請設置密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
     <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
     <string name="password_checking">正在檢查密碼</string>
     <string name="password_wrong">密碼錯誤</string>
+    <string name="wallet_loading">錢包初始化中, 請稍後再試.</string>
+
 
     <!-- send -->
     <string name="send_progress_dialog_message">發送中</string>
@@ -123,6 +129,11 @@
     <string name="kline_open">開盤: </string>
     <string name="kline_close">收盤: </string>
     <string name="kline_amount">交易量: </string>
+    <string name="market_price_alert_high_hint">高於</string>
+    <string name="market_price_alert_low_hint">低於</string>
+    <string name="market_price_alert_title">價格預警</string>
+    <string name="price_alert_higher_than">%s價格高於 </string>
+    <string name="price_alert_lower_than">%s價格低於 </string>
 
     <!-- setting -->
     <string name="setting_name_currency">默認貨幣</string>
@@ -141,6 +152,19 @@
     <string name="sell_order">賣單</string>
     <string name="setting_name_transaction_fee_low_warn">確認默認使用低手續費模式?\n這會導致較慢的交易確認</string>
     <string name="backup_again">一個小時內剛剛進行過備份，確認要再次備份嗎?</string>
+    <string name="set_avatar">設置頭像</string>
+    <string name="set_avatar_camera">來自相機</string>
+    <string name="set_avatar_gallery">來自圖庫</string>
+    <string name="edit_password_button">修改密碼</string>
+    <string name="import_private_key_qr_code">導入私鑰二維碼</string>
+    <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
+    <string name="import_private_key_qr_code_password">輸入原密碼</string>
+    <string name="import_private_key_qr_code_success">導入成功</string>
+    <string name="import_private_key_qr_code_failed">導入失敗</string>
+    <string name="import_private_key_qr_code_failed_monitored">不能導入冷錢包私鑰</string>
+    <string name="import_private_key_qr_code_failed_duplicate">私鑰已存在</string>
+    <string name="import_private_key_qr_code_importing">正在導入…</string>
+    <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
@@ -158,8 +182,8 @@
     <string name="choose_mode_warm_desctription">熱錢包 : 聯機, 易用!</string>
     <string name="choose_mode_warm_waiting">正在創建錢包…</string>
     <string name="choose_mode_warm_retry">重試</string>
-    <string name="choose_mode_cold_confirm">模式設置後不能切換.\n冷錢包應該運行在離線的備用手機上.\n確定以冷錢包模式運行?</string>
-    <string name="choose_mode_warm_confirm">模式設置後不能切換.\n熱錢包可以方便的在線發送交易.\n確定以熱錢包模式運行?</string>
+    <string name="choose_mode_cold_confirm">模式設置後不能切換.\n冷錢包應該運行在離線的備用手機上.\n確認以冷錢包模式運行?</string>
+    <string name="choose_mode_warm_confirm">模式設置後不能切換.\n熱錢包可以方便的在線發送交易.\n確認以熱錢包模式運行?</string>
 
     <!-- warning -->
     <string name="cold_warning">警告</string>
@@ -208,11 +232,13 @@
     <string name="qr_code_for_all_addresses">冷錢包監控二維碼</string>
     <string name="qr_code_for_all_addresses_title">使用熱錢包掃描來監控冷錢包</string>
     <string name="no_sd_card_of_back_up">沒有SD卡，無法自動備份</string>
+    <string name="no_sd_card">SD卡錯誤</string>
     <string name="last_time_of_back_up">上一次備份時間: %s </string>
     <string name="just_now">剛剛</string>
     <string name="private_key_count_limit">已達私鑰數量上限</string>
     <string name="watch_only_address_count_limit">已達到監控地址上限</string>
     <string name="generate_address_count_label">生成多少個私鑰?</string>
+    <string name="recover_from_backup_of_cold">檢測到sd卡上有過去的冷錢包備份，是否從備份中恢復？</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">初始化交易</string>
@@ -233,9 +259,31 @@
 
     <!-- donate -->
     <string name="select_address_to_donate">請選擇用來捐贈的地址</string>
-    <string name="donate_no_address">沒有可以用來捐贈的地址</string>
+    <string name="donate_no_address">您沒有可以用來捐贈的比特幣</string>
     <string name="donate_receiving_address_label">捐贈給開發者</string>
     <string name="donate_sending_verb">捐贈</string>
     <string name="donate_unsigned_transaction_verb">未簽名捐贈二維碼</string>
 
+    <!-- fancy qr code -->
+    <string name="fancy_qr_code_share">分享</string>
+    <string name="fancy_qr_code_save">保存</string>
+    <string name="saving">正在保存…</string>
+    <string name="fancy_qr_code_save_success">二維碼已保存</string>
+    <string name="fancy_qr_code_view_origin">查看原始二維碼</string>
+    <string name="fancy_qr_code_theme">二維碼風格</string>
+    <string name="fancy_qr_code_theme_name_yellow">黃</string>
+    <string name="fancy_qr_code_theme_name_green">綠</string>
+    <string name="fancy_qr_code_theme_name_red">紅</string>
+    <string name="fancy_qr_code_theme_name_blue">藍</string>
+    <string name="fancy_qr_code_theme_name_purple">紫</string>
+
+    <!-- edit password -->
+    <string name="edit_password_title">修改密碼</string>
+    <string name="edit_password_old_password">原密碼</string>
+    <string name="edit_password_new_password">新密碼</string>
+    <string name="edit_password_confirm_new_password">確認新密碼</string>
+    <string name="edit_password_success">修改密碼成功</string>
+    <string name="edit_password_fail">修改密碼失敗</string>
+    <string name="edit_password_new_old_same">新密碼不能和舊密碼相同</string>
+    <string name="edit_password_editing">正在修改密碼…\n請不要關閉手機屏幕</string>
 </resources>

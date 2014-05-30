@@ -23,98 +23,52 @@ package net.bither.charts.entity;
 
 import java.io.Serializable;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/01/21 15:29:26
- * 
- */
 public class DateValueEntity implements IHasDate, IHasXTitle, Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String title;
-	private long date;
-	private float value;
+    private String title;
+    private long date;
+    private float value;
 
-	/**
-	 * <p>
-	 * Constructor of DateValueEntity
-	 * </p>
-	 * <p>
-	 * DateValueEntity类对象的构造函数
-	 * </p>
-	 * <p>
-	 * DateValueEntityのコンストラクター
-	 * </p>
-	 * 
-	 * @param date
-	 * @param value
-	 */
-	public DateValueEntity(float value, long date) {
-		super();
-		this.value = value;
-		this.date = date;
-		this.title = "";
-	}
+    public DateValueEntity(float value, long date) {
+        super();
+        this.value = value;
+        this.date = date;
+        this.title = "";
+    }
 
-	public DateValueEntity(float value, String title, long date) {
-		super();
-		this.value = value;
-		this.title = title;
-		this.date = date;
-	}
+    public DateValueEntity(float value, String title, long date) {
+        super();
+        this.value = value;
+        this.title = title;
+        this.date = date;
+    }
 
-	/**
-	 * @return the date
-	 */
-	public long getDate() {
-		return date;
-	}
+    public long getDate() {
+        return date;
+    }
 
-	/**
-	 * @param date
-	 *            the date to set
-	 */
-	public void setDate(long date) {
-		this.date = date;
-	}
+    public void setDate(long date) {
+        this.date = date;
+    }
 
-	/**
-	 * @return the value
-	 */
-	public float getValue() {
-		return value;
-	}
+    public float getValue() {
+        return value;
+    }
 
-	/**
-	 * @param value
-	 *            the value to set
-	 */
-	public void setValue(float value) {
-		this.value = value;
-	}
+    public void setValue(float value) {
+        this.value = value;
+    }
 
-	@Override
-	public String getTitle() {
-		return this.title;
-	}
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
 
-	@Override
-	public void setTitle(String title) {
-		this.title = title;
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
 
-	}
+    }
 }

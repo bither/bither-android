@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
+
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
@@ -66,6 +67,12 @@
         <activity
             android:name="net.bither.activity.hot.HotActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="adjustNothing" >
+        </activity>
+        <activity
+            android:name="net.bither.image.glcrop.CropImageGlActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="adjustNothing" >

@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/camera_bg">
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/camera_bottom_bg"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_filter_bottom"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="65dp"
+                android:layout_height="1dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/ibtn_discard"
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/camera_bottom_button_bg_selector"
+                android:src="@drawable/filter_discard_selector"/>
+
+            <ImageButton
+                android:id="@+id/ibtn_save"
+                android:layout_width="65dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/camera_bottom_button_bg_selector"
+                android:src="@drawable/filter_save_selector"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_filter_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/camera_bottom_button_bg_selector"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+
+        </FrameLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_cam_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@id/ll_bottom"
+        android:layout_below="@+id/rl_title_bar">
+
+        <FrameLayout
+            android:id="@+id/fl_image_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/camera_bg">
+
+            <FrameLayout
+                android:id="@+id/fl_filter_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/camera_bg">
+
+                <FrameLayout
+                    android:id="@+id/fl_camera_iris_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/camera_iris_frame">
+
+                </FrameLayout>
+            </FrameLayout>
+
+            <net.bither.image.glcrop.CropImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/camera_bg"/>
+        </FrameLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@id/rl_title_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="top">
+
+        <ImageButton
+            android:id="@+id/discard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/camera_top_button_bg_selector"
+            android:src="@drawable/action_bar_glyph_cancel_selector"/>
+
+        <FrameLayout
+            android:id="@+id/fl_frame_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/camera_top_button_bg_selector">
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/ibtn_tilt_shift"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:background="@drawable/camera_top_button_bg_selector"
+            android:src="@drawable/action_bar_glyph_tiltshift_selector"
+            android:visibility="gone"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/btn_crop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/camera_top_button_bg_selector"
+            android:src="@drawable/action_bar_glyph_crop_selector"
+            android:visibility="gone"/>
+
+        <ImageButton
+            android:id="@+id/image_cw_90r"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:background="@drawable/camera_top_button_bg_selector"
+            android:src="@drawable/action_bar_glyph_rotate_selector"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
-        android:drawableRight="@drawable/option_icon_share"
+        android:drawableRight="@drawable/fancy_qr_code_share_selector"
         android:gravity="center_vertical"
         android:padding="10dp"
         android:text="@string/market_share_button"

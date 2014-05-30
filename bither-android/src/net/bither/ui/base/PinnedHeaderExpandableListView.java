@@ -51,25 +51,12 @@ public class PinnedHeaderExpandableListView extends ExpandableListView
 		setOverScrollMode(OVER_SCROLL_ALWAYS);
 	}
 
-	/**
-	 * ��ListView��Adapter����ʵ�ָýӿ�
-	 * 
-	 * @author LiuXiaoyuan@hh.com.cn
-	 * @date 2011-9-13
-	 */
 	public interface PinnedExpandableListViewAdapter {
-
-		/**
-		 * �̶�����״̬�����ɼ�
-		 */
+		
 		public static final int PINNED_HEADER_GONE = 0;
-		/**
-		 * �̶�����״̬���ɼ�
-		 */
+		
 		public static final int PINNED_HEADER_VISIBLE = 1;
-		/**
-		 * �̶�����״̬������������
-		 */
+		
 		public static final int PINNED_HEADER_PUSHED_UP = 2;
 
 		public int getPinnedHeaderState(int groupPosition, int childPosition);
@@ -137,7 +124,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView
 		final int childPos = ExpandableListView
 				.getPackedPositionChild(flatPostion);
 		int state = mAdapter.getPinnedHeaderState(groupPos, childPos);
-		// ֻ����״̬�ı�ʱ��layout������൱��Ҫ����Ȼ���ܵ�����ͼ���ϵ�ˢ��
+		
 		if (mHeaderView != null && mAdapter != null && state != mOldState) {
 			mOldState = state;
 			mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
@@ -207,7 +194,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		super.dispatchDraw(canvas);
-		// ����HeaderView��û����ӵ�ExpandableListView���ӿؼ��У�����Ҫdraw��
+		
 		if (mHeaderVisible) {
 			drawChild(canvas, mHeaderView, getDrawingTime());
 		}
@@ -237,7 +224,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView
 
 				float offsetX = Math.abs(x - mDownX);
 				float offsetY = Math.abs(y - mDownY);
-				// ����ڹ̶������ڵ���ˣ���ô�����¼�
+				
 				if (x <= mHeaderViewWidth && y <= mHeaderViewHeight
 						&& offsetX <= FINGER_WIDTH && offsetY <= FINGER_WIDTH) {
 					mHeaderView.dispatchTouchEvent(ev);

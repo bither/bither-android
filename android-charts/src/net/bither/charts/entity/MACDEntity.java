@@ -21,164 +21,75 @@
 
 package net.bither.charts.entity;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/03/17 17:16:56
- * 
- */
 public class MACDEntity implements IStickEntity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private double dea;
-	private double diff;
-	private double macd;
-	private long date;
+    private double dea;
+    private double diff;
+    private double macd;
+    private long date;
+    private String title;
 
-	/**
-	 * <p>
-	 * Constructor of MACDEntity
-	 * </p>
-	 * <p>
-	 * MACDEntity类对象的构造函数
-	 * </p>
-	 * <p>
-	 * MACDEntityのコンストラクター
-	 * </p>
-	 * 
-	 */
-	public MACDEntity() {
-		super();
-	}
+    public MACDEntity() {
+        super();
+    }
 
-	/**
-	 * <p>
-	 * Constructor of MACDEntity
-	 * </p>
-	 * <p>
-	 * MACDEntity类对象的构造函数
-	 * </p>
-	 * <p>
-	 * MACDEntityのコンストラクター
-	 * </p>
-	 * 
-	 * @param dea
-	 * @param diff
-	 * @param macd
-	 * @param date
-	 */
-	public MACDEntity(double dea, double diff, double macd, int date) {
-		super();
-		this.dea = dea;
-		this.diff = diff;
-		this.macd = macd;
-		this.date = date;
-	}
+    public MACDEntity(double dea, double diff, double macd, int date) {
+        super();
+        this.dea = dea;
+        this.diff = diff;
+        this.macd = macd;
+        this.date = date;
+    }
 
-	/**
-	 * @return the dea
-	 */
-	public double getDea() {
-		return dea;
-	}
+    public double getDea() {
+        return dea;
+    }
 
-	/**
-	 * @param dea
-	 *            the dea to set
-	 */
-	public void setDea(double dea) {
-		this.dea = dea;
-	}
+    public void setDea(double dea) {
+        this.dea = dea;
+    }
 
-	/**
-	 * @return the diff
-	 */
-	public double getDiff() {
-		return diff;
-	}
+    public double getDiff() {
+        return diff;
+    }
 
-	/**
-	 * @param diff
-	 *            the diff to set
-	 */
-	public void setDiff(double diff) {
-		this.diff = diff;
-	}
+    public void setDiff(double diff) {
+        this.diff = diff;
+    }
 
-	/**
-	 * @return the macd
-	 */
-	public double getMacd() {
-		return macd;
-	}
+    public double getMacd() {
+        return macd;
+    }
 
-	/**
-	 * @param macd
-	 *            the macd to set
-	 */
-	public void setMacd(double macd) {
-		this.macd = macd;
-	}
+    public void setMacd(double macd) {
+        this.macd = macd;
+    }
 
-	/**
-	 * @return the date
-	 */
-	public long getDate() {
-		return date;
-	}
+    public long getDate() {
+        return date;
+    }
 
-	/**
-	 * @param date
-	 *            the date to set
-	 */
-	public void setDate(long date) {
-		this.date = date;
-	}
+    public void setDate(long date) {
+        this.date = date;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @return
-	 * 
-	 * @see cn.limc.androidcharts.entity.IMeasurable#getHigh()
-	 */
-	public double getHigh() {
-		return Math.max(Math.max(getDea(), getDiff()), getMacd());
-	}
+    public double getHigh() {
+        return Math.max(Math.max(getDea(), getDiff()), getMacd());
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @return
-	 * 
-	 * @see cn.limc.androidcharts.entity.IMeasurable#getLow()
-	 */
-	public double getLow() {
-		return Math.min(Math.min(getDea(), getDiff()), getMacd());
-	}
+    public double getLow() {
+        return Math.min(Math.min(getDea(), getDiff()), getMacd());
+    }
 
-	@Override
-	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
 
-	@Override
-	public void setTitle(String title) {
-		// TODO Auto-generated method stub
-
-	}
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

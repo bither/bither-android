@@ -26,159 +26,59 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-/**
- * <p>
- * Base view of all charts
- * </p>
- * <p>
- * 全部チャートのベースオブジェクト。
- * </p>
- * <p>
- * 所有图表对象的基类
- * </p>
- * 
- * @author limc
- * @version v1.0 2011/05/29 15:17:50
- * 
- */
 public abstract class BaseChart extends View implements IChart {
 
-	public static final String LOG_TAG = "BaseChart";
+    public static final String LOG_TAG = "BaseChart";
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param context
-	 * 
-	 * @see android.view.View#BaseChart(Context)
-	 */
-	public BaseChart(Context context) {
-		super(context);
-	}
+    public BaseChart(Context context) {
+        super(context);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param context
-	 * 
-	 * @param attrs
-	 * 
-	 * @see android.view.View#BaseChart(Context, AttributeSet)
-	 */
-	public BaseChart(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
+    public BaseChart(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param context
-	 * 
-	 * @param attrs
-	 * 
-	 * @param defStyle
-	 * 
-	 * @see android.view.View#BaseChart(Context, AttributeSet, int)
-	 */
-	public BaseChart(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public BaseChart(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param widthMeasureSpec
-	 * 
-	 * @param heightMeasureSpec
-	 * 
-	 * @see android.view.View#onMeasure(int, int)
-	 */
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		setMeasuredDimension(measureWidth(widthMeasureSpec),
-				measureHeight(heightMeasureSpec));
-	}
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(measureWidth(widthMeasureSpec),
+                measureHeight(heightMeasureSpec));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @param gainFocus
-	 * 
-	 * @param direction
-	 * 
-	 * @param previouslyFocusedRect
-	 * 
-	 * @see android.view.View#onFocusChanged(boolean, int,
-	 * android.graphics.Rect)
-	 */
-	@Override
-	protected void onFocusChanged(boolean gainFocus, int direction,
-			Rect previouslyFocusedRect) {
-		super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-	}
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction,
+                                  Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+    }
 
-	private int measureWidth(int measureSpec) {
-		int result = 0;
-		int specMode = MeasureSpec.getMode(measureSpec);
-		int specSize = MeasureSpec.getSize(measureSpec);
+    private int measureWidth(int measureSpec) {
+        int result = 0;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
 
-		if (specMode == MeasureSpec.EXACTLY) {
-			result = specSize;
-		} else if (specMode == MeasureSpec.AT_MOST) {
-			result = Math.min(result, specSize);
-		}
-		return result;
-	}
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        } else if (specMode == MeasureSpec.AT_MOST) {
+            result = Math.min(result, specSize);
+        }
+        return result;
+    }
 
-	private int measureHeight(int measureSpec) {
-		int result = 0;
-		int specMode = MeasureSpec.getMode(measureSpec);
-		int specSize = MeasureSpec.getSize(measureSpec);
+    private int measureHeight(int measureSpec) {
+        int result = 0;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
 
-		if (specMode == MeasureSpec.EXACTLY) {
-			result = specSize;
-		} else if (specMode == MeasureSpec.AT_MOST) {
-			result = Math.min(result, specSize);
-		}
-		return result;
-	}
-
-	// protected int[] getStyleableName(Context context) {
-	// try {
-	// StringBuilder sbStyleable = new StringBuilder();
-	// sbStyleable.append(context.getApplicationContext().getPackageName());
-	// sbStyleable.append(".R$styleable");
-	// String styleable = sbStyleable.toString();
-	// int[] id =
-	// (int[])Class.forName(styleable).getField(STYLEABLE_NAME).get(null);
-	// return id;
-	// }catch (Exception e) {
-	// return null;
-	// }
-	// }
-	//
-	// protected int getStyleableAttrId(Context context , String attr) {
-	// try {
-	// StringBuilder sbStyleable = new StringBuilder();
-	// sbStyleable.append(context.getApplicationContext().getPackageName());
-	// sbStyleable.append(".R$styleable");
-	// String styleable = sbStyleable.toString();
-	//
-	// Class<?> clazz = Class.forName(styleable);
-	// int[] id = (int[])clazz.getField(STYLEABLE_NAME).get(null);
-	//
-	// StringBuilder sbAttribute = new StringBuilder();
-	// sbAttribute.append(STYLEABLE_NAME);
-	// sbAttribute.append("_");
-	// sbAttribute.append(attr);
-	// String attribute = sbAttribute.toString();
-	//
-	// int index = clazz.getField(attribute).getInt(null);
-	// return id[index];
-	// }catch (Exception e) {
-	// return 0;
-	// }
-	// }
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        } else if (specMode == MeasureSpec.AT_MOST) {
+            result = Math.min(result, specSize);
+        }
+        return result;
+    }
 }

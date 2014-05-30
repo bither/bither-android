@@ -16,19 +16,6 @@
 
 package net.bither.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
@@ -40,98 +27,157 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.google.zxing.qrcode.decoder.Version;
 
+import net.bither.BitherApplication;
+import net.bither.R;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import javax.annotation.Nonnull;
+
 public class Qr {
-	private final static QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
+    public static enum QrCodeTheme {
+        YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
+        GREEN("#ff486804", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
+        BLUE("#ff025c7f", "#ffeff4f7", R.string.fancy_qr_code_theme_name_blue),
+        RED("#ff922c15", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
+        PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
 
-	private static final Logger log = LoggerFactory.getLogger(Qr.class);
+        private int fgColor;
+        private int bgColor;
+        private int title;
 
-	public static Bitmap bitmap(@Nonnull final String content, final int size) {
-		try {
-			final Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
-			hints.put(EncodeHintType.MARGIN, 0);
-			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-			final BitMatrix result = QR_CODE_WRITER.encode(content,
-					BarcodeFormat.QR_CODE, size, size, hints);
+        QrCodeTheme(String fg, String bg, int title) {
+            fgColor = Color.parseColor(fg);
+            bgColor = Color.parseColor(bg);
+            this.title = title;
+        }
 
-			final int width = result.getWidth();
-			final int height = result.getHeight();
-			final int[] pixels = new int[width * height];
+        public int getFgColor() {
+            return fgColor;
+        }
 
-			for (int y = 0; y < height; y++) {
-				final int offset = y * width;
-				for (int x = 0; x < width; x++) {
-					pixels[offset + x] = result.get(x, y) ? Color.BLACK
-							: Color.TRANSPARENT;
-				}
-			}
+        public int getBgColor() {
+            return bgColor;
+        }
 
-			final Bitmap bitmap = Bitmap.createBitmap(width, height,
-					Bitmap.Config.ARGB_8888);
-			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-			return bitmap;
-		} catch (final WriterException x) {
-			log.info("problem creating qr code", x);
-			return null;
-		}
-	}
+        public String getTitle() {
+            return BitherApplication.mContext.getString(title);
+        }
+    }
 
-	public static String encodeBinary(@Nonnull final byte[] bytes) {
-		try {
-			final ByteArrayOutputStream bos = new ByteArrayOutputStream(
-					bytes.length);
-			final GZIPOutputStream gos = new GZIPOutputStream(bos);
-			gos.write(bytes);
-			gos.close();
+    private final static QRCodeWriter QR_CODE_WRITER = new QRCodeWriter();
 
-			final byte[] gzippedBytes = bos.toByteArray();
-			final boolean useCompressioon = gzippedBytes.length < bytes.length;
+    private static final Logger log = LoggerFactory.getLogger(Qr.class);
 
-			final StringBuilder str = new StringBuilder();
-			str.append(useCompressioon ? 'Z' : '-');
-			str.append(Base43.encode(useCompressioon ? gzippedBytes : bytes));
+    public static Bitmap bitmap(@Nonnull final String content, final int size) {
+        return bitmap(content, size, Color.BLACK, Color.TRANSPARENT);
+    }
 
-			return str.toString();
-		} catch (final IOException x) {
-			throw new RuntimeException(x);
-		}
-	}
+    public static Bitmap bitmap(@Nonnull final String content, final int size, int fgColor,
+                                int bgColor) {
+        try {
+            final Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
+            hints.put(EncodeHintType.MARGIN, 0);
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+            final BitMatrix result = QR_CODE_WRITER.encode(content,
+                    BarcodeFormat.QR_CODE, size, size, hints);
 
-	public static byte[] decodeBinary(@Nonnull final String content)
-			throws IOException {
-		final boolean useCompression = content.charAt(0) == 'Z';
-		final byte[] bytes = Base43.decode(content.substring(1));
+            final int width = result.getWidth();
+            final int height = result.getHeight();
+            final int[] pixels = new int[width * height];
 
-		InputStream is = new ByteArrayInputStream(bytes);
-		if (useCompression)
-			is = new GZIPInputStream(is);
-		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (int y = 0;
+                 y < height;
+                 y++) {
+                final int offset = y * width;
+                for (int x = 0;
+                     x < width;
+                     x++) {
+                    pixels[offset + x] = result.get(x, y) ? fgColor
+                            : bgColor;
+                }
+            }
 
-		final byte[] buf = new byte[4096];
-		int read;
-		while (-1 != (read = is.read(buf)))
-			baos.write(buf, 0, read);
-		baos.close();
-		is.close();
+            final Bitmap bitmap = Bitmap.createBitmap(width, height,
+                    Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+            return bitmap;
+        } catch (final WriterException x) {
+            log.info("problem creating qr code", x);
+            return null;
+        }
+    }
 
-		return baos.toByteArray();
-	}
+    public static String encodeBinary(@Nonnull final byte[] bytes) {
+        try {
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream(
+                    bytes.length);
+            final GZIPOutputStream gos = new GZIPOutputStream(bos);
+            gos.write(bytes);
+            gos.close();
 
-	public static void printQrContentSize() {
-		for (int versionNum = 1; versionNum <= 40; versionNum++) {
-			Version version = Version.getVersionForNumber(versionNum);
-			// numBytes = 196
-			int numBytes = version.getTotalCodewords();
-			// getNumECBytes = 130
-			Version.ECBlocks ecBlocks = version
-					.getECBlocksForLevel(ErrorCorrectionLevel.L);
-			int numEcBytes = ecBlocks.getTotalECCodewords();
-			// getNumDataBytes = 196 - 130 = 66
-			int numDataBytes = numBytes - numEcBytes;
-			int numInputBytes = numDataBytes * 8 - 7;
-			int length = (numInputBytes - 10) / 11 * 2;
-			LogUtil.d("Qr", "Version: " + versionNum + " numData bytes: "
-					+ numDataBytes + "  input: " + numInputBytes
-					+ "  string length: " + length);
-		}
-	}
+            final byte[] gzippedBytes = bos.toByteArray();
+            final boolean useCompressioon = gzippedBytes.length < bytes.length;
+
+            final StringBuilder str = new StringBuilder();
+            str.append(useCompressioon ? 'Z' : '-');
+            str.append(Base43.encode(useCompressioon ? gzippedBytes : bytes));
+
+            return str.toString();
+        } catch (final IOException x) {
+            throw new RuntimeException(x);
+        }
+    }
+
+    public static byte[] decodeBinary(@Nonnull final String content)
+            throws IOException {
+        final boolean useCompression = content.charAt(0) == 'Z';
+        final byte[] bytes = Base43.decode(content.substring(1));
+
+        InputStream is = new ByteArrayInputStream(bytes);
+        if (useCompression) {
+            is = new GZIPInputStream(is);
+        }
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        final byte[] buf = new byte[4096];
+        int read;
+        while (-1 != (read = is.read(buf))) {
+            baos.write(buf, 0, read);
+        }
+        baos.close();
+        is.close();
+
+        return baos.toByteArray();
+    }
+
+    public static void printQrContentSize() {
+        for (int versionNum = 1;
+             versionNum <= 40;
+             versionNum++) {
+            Version version = Version.getVersionForNumber(versionNum);
+            // numBytes = 196
+            int numBytes = version.getTotalCodewords();
+            // getNumECBytes = 130
+            Version.ECBlocks ecBlocks = version
+                    .getECBlocksForLevel(ErrorCorrectionLevel.L);
+            int numEcBytes = ecBlocks.getTotalECCodewords();
+            // getNumDataBytes = 196 - 130 = 66
+            int numDataBytes = numBytes - numEcBytes;
+            int numInputBytes = numDataBytes * 8 - 7;
+            int length = (numInputBytes - 10) / 11 * 2;
+            LogUtil.d("Qr", "Version: " + versionNum + " numData bytes: "
+                    + numDataBytes + "  input: " + numInputBytes
+                    + "  string length: " + length);
+        }
+    }
 }

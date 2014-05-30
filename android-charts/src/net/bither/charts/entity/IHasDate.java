@@ -21,32 +21,10 @@
 
 package net.bither.charts.entity;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/03/18 14:04:55
- * 
- */
 public interface IHasDate {
 
-	/**
-	 * @return the date
-	 */
-	long getDate();
+    long getDate();
 
-	/**
-	 * @param date
-	 *            the date to set
-	 */
-	void setDate(long date);
+    void setDate(long date);
 
 }

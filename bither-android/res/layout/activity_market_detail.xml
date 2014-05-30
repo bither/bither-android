@@ -1,155 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ff464646" >
+        android:background="#ff464646">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/title_bar_below_margin" >
+            android:layout_marginTop="@dimen/title_bar_below_margin">
 
             <net.bither.ui.base.OverScrollableScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none" >
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/ll_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#ff464646"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
-                    <RadioGroup
-                        android:id="@+id/rg"
+                    <LinearLayout
+                        android:id="@+id/ll_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal" >
+                        android:orientation="vertical">
 
-                        <RadioButton
-                            android:id="@+id/rb_one_minute"
-                            android:layout_width="0dp"
+                        <RadioGroup
+                            android:id="@+id/rg"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/market_kline_radio_button_left_selector"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:padding="5dp"
-                            android:text="@string/market_line_one_minute"
-                            android:textColor="@color/market_detail_radio_button_text_color"
-                            android:textSize="14sp" />
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="10dp"
+                            android:orientation="horizontal">
 
-                        <RadioButton
-                            android:id="@+id/rb_five_minute"
-                            android:layout_width="0dp"
+                            <RadioButton
+                                android:id="@+id/rb_one_minute"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/market_kline_radio_button_left_selector"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/market_line_one_minute"
+                                android:textColor="@color/market_detail_radio_button_text_color"
+                                android:textSize="14sp"/>
+
+                            <RadioButton
+                                android:id="@+id/rb_five_minute"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/market_kline_radio_button_middle_selector"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/market_line_five_minute"
+                                android:textColor="@color/market_detail_radio_button_text_color"
+                                android:textSize="14sp"/>
+
+                            <RadioButton
+                                android:id="@+id/rb_one_hour"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/market_kline_radio_button_middle_selector"
+                                android:button="@null"
+                                android:checked="true"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/market_line_one_hour"
+                                android:textColor="@color/market_detail_radio_button_text_color"
+                                android:textSize="14sp"/>
+
+                            <RadioButton
+                                android:id="@+id/rb_one_day"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/market_kline_radio_button_right_selector"
+                                android:button="@null"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/market_line_one_day"
+                                android:textColor="@color/market_detail_radio_button_text_color"
+                                android:textSize="14sp"/>
+                        </RadioGroup>
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/market_kline_radio_button_middle_selector"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:padding="5dp"
-                            android:text="@string/market_line_five_minute"
-                            android:textColor="@color/market_detail_radio_button_text_color"
-                            android:textSize="14sp" />
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp">
 
-                        <RadioButton
-                            android:id="@+id/rb_one_hour"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/market_kline_radio_button_middle_selector"
-                            android:button="@null"
-                            android:checked="true"
-                            android:gravity="center"
-                            android:padding="5dp"
-                            android:text="@string/market_line_one_hour"
-                            android:textColor="@color/market_detail_radio_button_text_color"
-                            android:textSize="14sp" />
+                            <net.bither.charts.view.MACandleStickChart
+                                android:id="@+id/macandlestickchart"
+                                android:layout_width="fill_parent"
+                                android:layout_height="240dip"
+                                android:background="@drawable/transparent"/>
 
-                        <RadioButton
-                            android:id="@+id/rb_one_day"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/market_kline_radio_button_right_selector"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:padding="5dp"
-                            android:text="@string/market_line_one_day"
-                            android:textColor="@color/market_detail_radio_button_text_color"
-                            android:textSize="14sp" />
-                    </RadioGroup>
+                            <net.bither.ui.base.KlineDetailView
+                                android:id="@+id/klinedetailview"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|left"
+                                android:visibility="invisible">
+                            </net.bither.ui.base.KlineDetailView>
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="5dp" >
+                            <TextView
+                                android:id="@+id/tv_kline_error"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/network_or_connection_error"
+                                android:textColor="@android:color/white"
+                                android:textSize="15sp"
+                                android:visibility="gone"/>
 
-                        <net.bither.charts.view.MACandleStickChart
-                            android:id="@+id/macandlestickchart"
-                            android:layout_width="fill_parent"
-                            android:layout_height="240dip"
-                            android:background="@drawable/transparent" />
-
-                        <net.bither.ui.base.KlineDetailView
-                            android:id="@+id/klinedetailview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|left"
-                            android:visibility="invisible" >
-                        </net.bither.ui.base.KlineDetailView>
-
-                        <TextView
-                            android:id="@+id/tv_kline_error"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/network_or_connection_error"
-                            android:textColor="@android:color/white"
-                            android:textSize="15sp"
-                            android:visibility="gone" />
-
-                        <ProgressBar
-                            android:id="@+id/pb_kline"
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_gravity="center"
-                            android:indeterminateDrawable="@drawable/check_progress_bar"
-                            android:indeterminateDuration="600"
-                            android:indeterminateOnly="true"
-                            android:visibility="gone" />
-                    </FrameLayout>
+                            <ProgressBar
+                                android:id="@+id/pb_kline"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:layout_gravity="center"
+                                android:indeterminateDrawable="@drawable/check_progress_bar"
+                                android:indeterminateDuration="600"
+                                android:indeterminateOnly="true"
+                                android:visibility="gone"/>
+                        </FrameLayout>
+                    </LinearLayout>
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="1px"
                         android:layout_marginBottom="10dp"
                         android:layout_marginTop="30dp"
-                        android:background="@android:color/black" />
+                        android:background="@android:color/black"/>
 
                     <LinearLayout
                         android:id="@+id/ll_ticker"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical" >
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -157,7 +163,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/market_detail_new_price"
                                 android:textColor="@color/yellow"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/tv_price"
@@ -165,7 +171,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="3dp"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
                         </LinearLayout>
 
                         <ImageView
@@ -173,14 +179,14 @@
                             android:layout_height="1px"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/black"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -188,7 +194,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/market_detail_buy_price"
                                 android:textColor="@color/yellow"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/tv_buy"
@@ -196,7 +202,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="3dp"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
                         </LinearLayout>
 
                         <ImageView
@@ -204,14 +210,14 @@
                             android:layout_height="1px"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/black"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -219,7 +225,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/market_detail_sell_price"
                                 android:textColor="@color/yellow"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/tv_sell"
@@ -227,7 +233,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="3dp"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
                         </LinearLayout>
 
                         <ImageView
@@ -235,14 +241,14 @@
                             android:layout_height="1px"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/black"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -250,7 +256,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/market_detail_high_price"
                                 android:textColor="@color/yellow"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/tv_high"
@@ -258,7 +264,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="3dp"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
                         </LinearLayout>
 
                         <ImageView
@@ -266,14 +272,14 @@
                             android:layout_height="1px"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/black"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="20dp"
                             android:layout_marginRight="20dp"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -281,7 +287,7 @@
                                 android:layout_weight="1"
                                 android:text="@string/market_detail_low_price"
                                 android:textColor="@color/yellow"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                             <TextView
                                 android:id="@+id/tv_low"
@@ -289,7 +295,7 @@
                                 android:layout_height="wrap_content"
                                 android:drawablePadding="3dp"
                                 android:textColor="@color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
                         </LinearLayout>
 
                         <ImageView
@@ -297,7 +303,7 @@
                             android:layout_height="1px"
                             android:layout_marginBottom="10dp"
                             android:layout_marginTop="10dp"
-                            android:background="@android:color/black" />
+                            android:background="@android:color/black"/>
                     </LinearLayout>
 
                     <TextView
@@ -307,7 +313,7 @@
                         android:gravity="center"
                         android:text="@string/market_detail_depth"
                         android:textColor="@color/yellow"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"/>
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -315,20 +321,20 @@
                         android:layout_marginBottom="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="5dp" >
+                        android:layout_marginTop="5dp">
 
                         <net.bither.charts.view.MarketDepthChart
                             android:id="@+id/marketdepthchart"
                             android:layout_width="fill_parent"
                             android:layout_height="240dip"
-                            android:background="@drawable/transparent" />
+                            android:background="@drawable/transparent"/>
 
                         <net.bither.ui.base.MarketDepthDetailView
                             android:id="@+id/market_depth_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom|left"
-                            android:visibility="invisible" >
+                            android:visibility="invisible">
                         </net.bither.ui.base.MarketDepthDetailView>
 
                         <TextView
@@ -339,7 +345,7 @@
                             android:text="@string/network_or_connection_error"
                             android:textColor="@android:color/white"
                             android:textSize="15sp"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
 
                         <ProgressBar
                             android:id="@+id/pb_depth"
@@ -349,12 +355,12 @@
                             android:indeterminateDrawable="@drawable/check_progress_bar"
                             android:indeterminateDuration="600"
                             android:indeterminateOnly="true"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
                     </FrameLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
-            <include layout="@layout/layout_dropdown_message" />
+            <include layout="@layout/layout_dropdown_message"/>
         </FrameLayout>
 
         <FrameLayout
@@ -362,26 +368,26 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/title_bar_below_margin"
             android:layout_alignParentTop="true"
-            android:background="@drawable/action_bar_black_bg" >
+            android:background="@drawable/action_bar_black_bg">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/tab_button_background"
                 android:duplicateParentState="true"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ImageButton
                     android:id="@+id/ibtn_back"
                     android:layout_width="@dimen/title_bar_height"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back" />
+                    android:src="@drawable/title_bar_back"/>
 
                 <ImageView
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator" />
+                    android:background="@drawable/title_bar_seperator"/>
 
                 <TextView
                     android:id="@+id/tv_market_name"
@@ -395,24 +401,24 @@
                     android:shadowRadius="0.5"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="1dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"/>
 
                 <ImageView
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator" />
+                    android:background="@drawable/title_bar_seperator"/>
 
                 <ImageButton
                     android:id="@+id/ibtn_option"
                     android:layout_width="@dimen/title_bar_height"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_option_icon" />
+                    android:src="@drawable/title_bar_option_icon"/>
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>

@@ -110,7 +110,6 @@ public class DialogDonate extends CenterDialog implements OnDismissListener,
 					}
 				}
 				addresses.addAll(availableAddresses);
-				Collections.sort(addresses, Collections.reverseOrder());
 				lv.post(new Runnable() {
 					@Override
 					public void run() {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/camera_bottom_button_filter_checked_pressed" android:state_checked="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/camera_bottom_button_filter_checked" android:state_checked="true"/>
+    <item android:drawable="@drawable/camera_bottom_button_filter_unchecked_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/camera_bottom_button_filter_unchecked"/>
+
+</selector>

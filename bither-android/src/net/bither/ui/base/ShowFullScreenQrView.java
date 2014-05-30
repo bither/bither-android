@@ -62,7 +62,7 @@ public class ShowFullScreenQrView extends FrameLayout {
 
 	private void firstInit() {
 		statusBarHeight = ImageManageUtil
-				.getStatusBarHeight(BitherApplication.warmActivity.getWindow());
+				.getStatusBarHeight(BitherApplication.hotActivity.getWindow());
 		screenHeight = UIUtil.getScreenHeight();
 		screenWidth = UIUtil.getScreenWidth();
 	}

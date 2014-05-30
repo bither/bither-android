@@ -21,21 +21,6 @@
 
 package net.bither.charts.entity;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/03/18 14:00:46
- * 
- */
 public interface IEntity {
 
 }

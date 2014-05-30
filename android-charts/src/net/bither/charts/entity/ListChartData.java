@@ -24,65 +24,38 @@ package net.bither.charts.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/03/18 15:18:47
- * 
- */
 public class ListChartData<T> implements IChartData<T> {
-	private List<T> datas;
+    private List<T> datas;
 
-	public int size() {
-		return datas.size();
-	}
+    public int size() {
+        return datas.size();
+    }
 
-	public T get(int i) {
-		return datas.get(i);
-	}
+    public T get(int i) {
+        return datas.get(i);
+    }
 
-	public boolean hasData() {
-		return datas != null && datas.size() > 0;
-	}
+    public boolean hasData() {
+        return datas != null && datas.size() > 0;
+    }
 
-	public boolean hasNoData() {
-		return hasData() == false;
-	}
+    public boolean hasNoData() {
+        return hasData() == false;
+    }
 
-	public void add(T data) {
-		if (null == datas || 0 == datas.size()) {
-			datas = new ArrayList<T>();
-		}
-		datas.add(data);
-	}
+    public void add(T data) {
+        if (null == datas || 0 == datas.size()) {
+            datas = new ArrayList<T>();
+        }
+        datas.add(data);
+    }
 
-	/**
-	 * <p>
-	 * Constructor of ListChartData
-	 * </p>
-	 * <p>
-	 * IChartData类对象的构造函数
-	 * </p>
-	 * <p>
-	 * IChartDataのコンストラクター
-	 * </p>
-	 * 
-	 */
-	public ListChartData() {
-		datas = new ArrayList<T>();
-	}
+    public ListChartData() {
+        datas = new ArrayList<T>();
+    }
 
-	public ListChartData(List<T> d) {
-		datas = new ArrayList<T>();
-		datas.addAll(d);
-	}
+    public ListChartData(List<T> d) {
+        datas = new ArrayList<T>();
+        datas.addAll(d);
+    }
 }

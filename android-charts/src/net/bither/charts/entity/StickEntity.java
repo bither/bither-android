@@ -21,190 +21,58 @@
 
 package net.bither.charts.entity;
 
-/**
- * <p>
- * Entity data which is use for display a stick in CCSStickChart
- * </p>
- * <p>
- * StickChartのスティック表示用データです、高安値を格納用オブジェクトです。
- * </p>
- * <p>
- * CCSStickChart保存柱条表示用的高低值的实体对象
- * </p>
- * 
- * @author limc
- * @version v1.0 2011/05/29 12:24:49
- */
 public class StickEntity implements IStickEntity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * <p>
-	 * High Value
-	 * </p>
-	 * <p>
-	 * 高値
-	 * </p>
-	 * <p>
-	 * 最高值
-	 * </p>
-	 * 
-	 */
-	private double high;
+    private double high;
+    private double low;
+    private long date;
+    private String title;
 
-	/**
-	 * <p>
-	 * Low Value
-	 * </p>
-	 * <p>
-	 * 低値
-	 * </p>
-	 * <p>
-	 * 最低值
-	 * </p>
-	 * 
-	 */
-	private double low;
+    public StickEntity(double high, double low, int date) {
+        super();
+        this.high = high;
+        this.low = low;
+        this.date = date;
+    }
 
-	/**
-	 * <p>
-	 * Date
-	 * </p>
-	 * <p>
-	 * 日付
-	 * </p>
-	 * <p>
-	 * 日期
-	 * </p>
-	 * 
-	 */
-	private long date;
+    public StickEntity() {
+        super();
+    }
 
-	/**
-	 * 
-	 * <p>
-	 * Constructor of StickEntity
-	 * </p>
-	 * <p>
-	 * StickEntity类对象的构造函数
-	 * </p>
-	 * <p>
-	 * StickEntityのコンストラクター
-	 * </p>
-	 * 
-	 * @param high
-	 *            <p>
-	 *            High Value
-	 *            </p>
-	 *            <p>
-	 *            高値
-	 *            </p>
-	 *            <p>
-	 *            最高价
-	 *            </p>
-	 * @param low
-	 *            <p>
-	 *            Low Value
-	 *            </p>
-	 *            <p>
-	 *            低値
-	 *            </p>
-	 *            <p>
-	 *            最低值
-	 *            </p>
-	 * @param date
-	 *            <p>
-	 *            Date
-	 *            </p>
-	 *            <p>
-	 *            日付
-	 *            </p>
-	 *            <p>
-	 *            日期
-	 *            </p>
-	 */
-	public StickEntity(double high, double low, int date) {
-		super();
-		this.high = high;
-		this.low = low;
-		this.date = date;
-	}
+    public double getHigh() {
+        return high;
+    }
 
-	/**
-	 * 
-	 * <p>
-	 * Constructor of StickEntity
-	 * </p>
-	 * <p>
-	 * StickEntity类对象的构造函数
-	 * </p>
-	 * <p>
-	 * StickEntityのコンストラクター
-	 * </p>
-	 * 
-	 */
-	public StickEntity() {
-		super();
-	}
+    public void setHigh(double high) {
+        this.high = high;
+    }
 
-	/**
-	 * @return the high
-	 */
-	public double getHigh() {
-		return high;
-	}
+    public double getLow() {
+        return low;
+    }
 
-	/**
-	 * @param high
-	 *            the high to set
-	 */
-	public void setHigh(double high) {
-		this.high = high;
-	}
+    public void setLow(double low) {
+        this.low = low;
+    }
 
-	/**
-	 * @return the low
-	 */
-	public double getLow() {
-		return low;
-	}
+    public long getDate() {
+        return date;
+    }
 
-	/**
-	 * @param low
-	 *            the low to set
-	 */
-	public void setLow(double low) {
-		this.low = low;
-	}
+    public void setDate(long date) {
+        this.date = date;
+    }
 
-	/**
-	 * @return the date
-	 */
-	public long getDate() {
-		return date;
-	}
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
 
-	/**
-	 * @param date
-	 *            the date to set
-	 */
-	public void setDate(long date) {
-		this.date = date;
-	}
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
 
-	@Override
-	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setTitle(String title) {
-		// TODO Auto-generated method stub
-
-	}
+    }
 }

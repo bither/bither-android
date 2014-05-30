@@ -45,4 +45,9 @@
         <item name="android:background">@color/card_bg_pressed</item>
     </style>
 
+    <style name="dialogCropPhotoTransit" parent="@style/tipsDialog">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@null</item>
+    </style>
+
 </resources>

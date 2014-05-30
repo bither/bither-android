@@ -21,45 +21,21 @@
 
 package net.bither.charts.entity;
 
-/**
- * <p>
- * en
- * </p>
- * <p>
- * jp
- * </p>
- * <p>
- * cn
- * </p>
- * 
- * @author limc
- * @version v1.0 2014/01/20 18:02:55
- * 
- */
 public class ColoredStickEntity extends StickEntity implements IHasColor {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private int color;
 
-	public ColoredStickEntity(double high, double low, int date, int color) {
-		super(high, low, date);
-		this.color = color;
-	}
+    private static final long serialVersionUID = 1L;
+    private int color;
 
-	/**
-	 * @return the color
-	 */
-	public int getColor() {
-		return color;
-	}
+    public ColoredStickEntity(double high, double low, int date, int color) {
+        super(high, low, date);
+        this.color = color;
+    }
 
-	/**
-	 * @param color
-	 *            the color to set
-	 */
-	public void setColor(int color) {
-		this.color = color;
-	}
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }
