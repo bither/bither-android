@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 public class Qr {
     public static enum QrCodeTheme {
         YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
-        GREEN("#ff759b04", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
+        GREEN("#ff486804", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
         BLUE("#ff025c7f", "#ffeff4f7", R.string.fancy_qr_code_theme_name_blue),
         RED("#ff922c15", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
         PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
