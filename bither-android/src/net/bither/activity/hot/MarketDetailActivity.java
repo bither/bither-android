@@ -163,6 +163,12 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         showMarket();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
     private void showMarket() {
         Market market = MarketUtil.getMarket(marketType);
         tvMarketName.setText(market.getName());
