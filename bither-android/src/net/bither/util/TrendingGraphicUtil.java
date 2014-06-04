@@ -16,12 +16,13 @@
 
 package net.bither.util;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import net.bither.BitherSetting.MarketType;
 import net.bither.api.GetExchangeTrendApi;
 import net.bither.model.TrendingGraphicData;
 import net.bither.runnable.BaseRunnable;
-import android.os.Handler;
-import android.os.Looper;
 
 public class TrendingGraphicUtil {
 

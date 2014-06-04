@@ -16,6 +16,8 @@
 
 package net.bither.util;
 
+import android.annotation.SuppressLint;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,8 +25,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
-
-import android.annotation.SuppressLint;
 
 @SuppressLint("SimpleDateFormat")
 public class Iso8601Format extends SimpleDateFormat {

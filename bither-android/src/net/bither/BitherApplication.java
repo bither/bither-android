@@ -16,23 +16,6 @@
 
 package net.bither;
 
-import java.io.File;
-
-import javax.annotation.Nonnull;
-
-import net.bither.activity.hot.HotActivity;
-import net.bither.exception.UEHandler;
-import net.bither.preference.AppSharedPreference;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DialogCropPhotoTransit;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.LinuxSecureRandom;
-import net.bither.util.LogUtil;
-import net.bither.util.TransactionsUtil;
-import net.bither.util.WalletUtils;
-
-import org.slf4j.LoggerFactory;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -44,6 +27,25 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 
+import com.google.bitcoin.core.BlockChain;
+import com.google.bitcoin.utils.Threading;
+
+import net.bither.activity.hot.HotActivity;
+import net.bither.exception.UEHandler;
+import net.bither.preference.AppSharedPreference;
+import net.bither.service.BlockchainService;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.LinuxSecureRandom;
+import net.bither.util.LogUtil;
+import net.bither.util.TransactionsUtil;
+import net.bither.util.WalletUtils;
+
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import javax.annotation.Nonnull;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -52,9 +54,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
-
-import com.google.bitcoin.core.BlockChain;
-import com.google.bitcoin.utils.Threading;
 
 public class BitherApplication extends Application {
 
@@ -113,6 +112,7 @@ public class BitherApplication extends Application {
         BroadcastUtil.removeAddressLoadCompleteState(this);
 
         WalletUtils.initWalletList();
+
 
     }
 

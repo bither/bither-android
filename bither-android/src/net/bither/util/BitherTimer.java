@@ -20,12 +20,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 
-import java.io.File;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
@@ -33,6 +27,9 @@ import net.bither.api.GetExchangeTickerApi;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
+
+import java.io.File;
+import java.util.List;
 
 public class BitherTimer {
     private Thread thread = null;

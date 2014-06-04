@@ -16,11 +16,12 @@
 
 package net.bither.util;
 
-import java.util.Date;
+import android.content.Intent;
 
 import net.bither.BitherApplication;
 import net.bither.service.BlockchainService;
-import android.content.Intent;
+
+import java.util.Date;
 
 public class ServiceUtil {
 	private ServiceUtil() {

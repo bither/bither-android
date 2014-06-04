@@ -16,8 +16,6 @@
 
 package net.bither.util;
 
-import net.bither.BitherApplication;
-import net.bither.R;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -32,6 +30,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import net.bither.BitherApplication;
+import net.bither.R;
 
 public class CurrencySymbolUtil {
 	private static final int MinBlackValue = 0;

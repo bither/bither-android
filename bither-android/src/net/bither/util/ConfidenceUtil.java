@@ -16,10 +16,10 @@
 
 package net.bither.util;
 
-import net.bither.BitherApplication;
-
 import com.google.bitcoin.core.TransactionConfidence;
 import com.google.bitcoin.core.TransactionConfidence.ConfidenceType;
+
+import net.bither.BitherApplication;
 
 public class ConfidenceUtil {
 	public static int getDepthInChain(TransactionConfidence confidence) {

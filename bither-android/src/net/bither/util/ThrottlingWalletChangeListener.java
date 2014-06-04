@@ -16,17 +16,17 @@
 
 package net.bither.util;
 
-import java.math.BigInteger;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
 import android.os.Handler;
 
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.Wallet;
 import com.google.bitcoin.core.WalletEventListener;
+
+import java.math.BigInteger;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class ThrottlingWalletChangeListener implements
 		WalletEventListener {

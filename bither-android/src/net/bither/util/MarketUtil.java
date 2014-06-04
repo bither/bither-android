@@ -16,13 +16,13 @@
 
 package net.bither.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.bither.BitherSetting.MarketType;
 import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MarketUtil {
 	private static ArrayList<Market> markets = new ArrayList<Market>();

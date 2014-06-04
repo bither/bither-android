@@ -16,9 +16,10 @@
 
 package net.bither.util;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import android.content.Intent;
+import android.provider.Settings;
+
+import com.google.bitcoin.core.ECKey;
 
 import net.bither.BitherApplication;
 import net.bither.R;
@@ -28,10 +29,10 @@ import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
-import android.content.Intent;
-import android.provider.Settings;
 
-import com.google.bitcoin.core.ECKey;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CheckUtil {
 	private CheckUtil() {
@@ -80,7 +81,7 @@ public class CheckUtil {
 					@Override
 					public boolean check() {
 						NetworkType networkType = NetworkUtil.isConnectedType();
-						if (networkType == NetworkType.ThirdG) {
+						if (networkType == NetworkType.Mobile) {
 							return false;
 						} else {
 							return true;

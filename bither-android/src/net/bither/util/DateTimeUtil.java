@@ -16,16 +16,17 @@
 
 package net.bither.util;
 
+import android.content.Context;
+import android.text.format.DateUtils;
+
+import net.bither.BitherSetting.KlineTimeType;
+import net.bither.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
-
-import net.bither.BitherSetting.KlineTimeType;
-import net.bither.R;
-import android.content.Context;
-import android.text.format.DateUtils;
 
 public class DateTimeUtil {
 

@@ -16,14 +16,6 @@
 
 package net.bither.util;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bither.model.BitherAddressWithPrivateKey;
-
-import org.bitcoinj.wallet.Protos.ScryptParameters;
-
 import android.util.Log;
 
 import com.google.bitcoin.core.ECKey;
@@ -32,6 +24,14 @@ import com.google.bitcoin.crypto.EncryptedPrivateKey;
 import com.google.bitcoin.crypto.KeyCrypter;
 import com.google.bitcoin.crypto.KeyCrypterScrypt;
 import com.google.protobuf.ByteString;
+
+import net.bither.model.BitherAddressWithPrivateKey;
+
+import org.bitcoinj.wallet.Protos.ScryptParameters;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PrivateKeyUtil {
 	public static String getPrivateKeyString(EncryptedPrivateKey key,

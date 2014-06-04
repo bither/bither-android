@@ -16,15 +16,7 @@
 
 package net.bither.util;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.security.SecureRandom;
-
-import javax.annotation.Nonnull;
+import android.util.Base64;
 
 import net.bither.BitherSetting;
 
@@ -39,7 +31,15 @@ import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.ParametersWithIV;
 
-import android.util.Base64;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.security.SecureRandom;
+
+import javax.annotation.Nonnull;
 
 public class Crypto {
 	/**

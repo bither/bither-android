@@ -16,14 +16,14 @@
 
 package net.bither.util;
 
-import java.io.File;
-import java.util.Date;
+import com.google.bitcoin.core.ECKey;
 
 import net.bither.BitherSetting.AppMode;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.BackupPrivateKeyRunnable;
 
-import com.google.bitcoin.core.ECKey;
+import java.io.File;
+import java.util.Date;
 
 // TODO : backup hot wallet's encrypted private keys & public keys in the rom
 public class BackupUtil {
