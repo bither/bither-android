@@ -33,7 +33,6 @@ import com.google.bitcoin.core.ECKey;
 import net.bither.R;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.FileUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -126,12 +125,16 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
             ThreadUtil.runOnMainThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent intent = new Intent(
-                            android.content.Intent.ACTION_SEND);
+                    Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(Intent.EXTRA_STREAM, uri);
                     intent.setType("image/jpg");
-                    getContext().startActivity(intent);
+                    try {
+                        getContext().startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
+                    }
                 }
             });
         }
