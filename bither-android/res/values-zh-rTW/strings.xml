@@ -131,6 +131,8 @@
     <string name="kline_amount">交易量: </string>
     <string name="market_price_alert_high_hint">高於</string>
     <string name="market_price_alert_low_hint">低於</string>
+    <string name="market_price_alert_high_error">價格預警最高值不應比當前價格低</string>
+    <string name="market_price_alert_low_error">價格預警最低值不應比當前價格高</string>
     <string name="market_price_alert_title">價格預警</string>
     <string name="price_alert_higher_than">%s價格高於 </string>
     <string name="price_alert_lower_than">%s價格低於 </string>

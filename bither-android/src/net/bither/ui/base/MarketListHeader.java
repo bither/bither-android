@@ -16,6 +16,7 @@
 
 package net.bither.ui.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
@@ -55,8 +56,8 @@ import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
-public class MarketListHeader extends FrameLayout implements
-        MarketTickerChangedObserver, ViewTreeObserver.OnGlobalLayoutListener {
+public class MarketListHeader extends FrameLayout implements MarketTickerChangedObserver,
+        ViewTreeObserver.OnGlobalLayoutListener {
     private static final int LightScanInterval = 1200;
     public static int BgAnimDuration = 600;
     private Animation refreshAnim = AnimationUtils.loadAnimation(getContext(),
@@ -95,8 +96,8 @@ public class MarketListHeader extends FrameLayout implements
     private void initView() {
         removeAllViews();
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        parent = LayoutInflater.from(getContext()).inflate(
-                R.layout.layout_market_list_header, null);
+        parent = LayoutInflater.from(getContext()).inflate(R.layout.layout_market_list_header,
+                null);
         addView(parent, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         flContainer = findViewById(R.id.fl_container);
         vContainer = findViewById(R.id.ll_container);
@@ -131,8 +132,7 @@ public class MarketListHeader extends FrameLayout implements
         refreshAnim.setFillBefore(false);
         refreshAnim.setRepeatCount(0);
         refreshAnim.setFillAfter(false);
-        ivVolumeSymbol
-                .setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvVolume));
+        ivVolumeSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvVolume));
         llTrending.setOnClickListener(new MarketDetailClick());
         llTrending.setOnTouchListener(new TrendingTouch());
         setMarket(MarketUtil.getDefaultMarket());
@@ -148,11 +148,9 @@ public class MarketListHeader extends FrameLayout implements
         String symbol = "";
         if (mMarket.getTicker() != null) {
             if (ExchangeUtil.getExchangeRate() > 0) {
-                symbol = AppSharedPreference.getInstance()
-                        .getDefaultExchangeType().getSymbol();
+                symbol = AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol();
             } else {
-                symbol = ExchangeUtil.getExchangeType(mMarket.getMarketType())
-                        .getSymbol();
+                symbol = ExchangeUtil.getExchangeType(mMarket.getMarketType()).getSymbol();
             }
         }
         tvSymbol.setText(symbol);
@@ -168,21 +166,15 @@ public class MarketListHeader extends FrameLayout implements
             tvSell.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             tvBuy.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
-            tvPrice.setText(StringUtil.formatDoubleToMoneyString(ticker
-                    .getDefaultExchangePrice()));
-            tvHigh.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvPrice.setText(StringUtil.formatDoubleToMoneyString(ticker.getDefaultExchangePrice()));
+            tvHigh.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeHigh()));
-            tvLow.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvLow.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeLow()));
-            tvVolume.setText(StringUtil.formatDoubleToMoneyString(ticker
-                    .getAmount()));
-            tvSell.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvVolume.setText(StringUtil.formatDoubleToMoneyString(ticker.getAmount()));
+            tvSell.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeSell()));
-            tvBuy.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvBuy.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         }
     }
@@ -282,6 +274,20 @@ public class MarketListHeader extends FrameLayout implements
         if (etAlertLow.getText().length() > 0) {
             low = Double.parseDouble(etAlertLow.getText().toString());
         }
+        if (mMarket.getTicker() != null) {
+            if (high > 0 && high <= mMarket.getTicker().getDefaultExchangePrice()) {
+                etAlertHigh.setText("");
+                DropdownMessage.showDropdownMessage((Activity) getContext(),
+                        R.string.market_price_alert_high_error);
+                return;
+            }
+            if (low > 0 && low >= mMarket.getTicker().getDefaultExchangePrice()) {
+                etAlertLow.setText("");
+                DropdownMessage.showDropdownMessage((Activity) getContext(),
+                        R.string.market_price_alert_low_error);
+                return;
+            }
+        }
         mMarket.setPriceAlert(low, high);
         if (BitherApplication.hotActivity != null && BitherApplication.hotActivity
                 .getFragmentAtIndex(0) != null && BitherApplication.hotActivity
@@ -362,10 +368,8 @@ public class MarketListHeader extends FrameLayout implements
             x = x + locationInWindow[0];
             y = y + locationInWindow[1];
             v.getLocationInWindow(locationInWindow);
-            if (x > locationInWindow[0]
-                    && x < locationInWindow[0] + v.getWidth()) {
-                if (y > locationInWindow[1]
-                        && y < locationInWindow[1] + v.getHeight()) {
+            if (x > locationInWindow[0] && x < locationInWindow[0] + v.getWidth()) {
+                if (y > locationInWindow[1] && y < locationInWindow[1] + v.getHeight()) {
                     return true;
                 }
             }
@@ -408,9 +412,9 @@ public class MarketListHeader extends FrameLayout implements
         public void showBottom() {
             if (!isShowing()) {
                 showAlert();
-                ObjectAnimator.ofInt(this, "bottom", getBottom(), llAlert.getHeight()).setDuration
-                        (AnimDuration * (llAlert.getHeight() - getBottom()) / llAlert.getHeight())
-                        .start();
+                ObjectAnimator.ofInt(this, "bottom", getBottom(),
+                        llAlert.getHeight()).setDuration(AnimDuration * (llAlert.getHeight() -
+                        getBottom()) / llAlert.getHeight()).start();
             }
         }
 
@@ -424,10 +428,8 @@ public class MarketListHeader extends FrameLayout implements
         @Override
         public void onClick(View v) {
             if (mMarket != null) {
-                Intent intent = new Intent(getContext(),
-                        MarketDetailActivity.class);
-                intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT,
-                        mMarket.getMarketType());
+                Intent intent = new Intent(getContext(), MarketDetailActivity.class);
+                intent.putExtra(BitherSetting.INTENT_REF.MARKET_INTENT, mMarket.getMarketType());
                 getContext().startActivity(intent);
             }
         }
@@ -450,16 +452,16 @@ public class MarketListHeader extends FrameLayout implements
         }
     }
 
-    private final class TextViewListener implements TextWatcher,
-            OnFocusChangeListener, TextView.OnEditorActionListener {
+    private final class TextViewListener implements TextWatcher, OnFocusChangeListener,
+            TextView.OnEditorActionListener {
         @Override
-        public void beforeTextChanged(final CharSequence s, final int start,
-                                      final int count, final int after) {
+        public void beforeTextChanged(final CharSequence s, final int start, final int count,
+                                      final int after) {
         }
 
         @Override
-        public void onTextChanged(final CharSequence s, final int start,
-                                  final int before, final int count) {
+        public void onTextChanged(final CharSequence s, final int start, final int before,
+                                  final int count) {
         }
 
         @Override
@@ -472,8 +474,7 @@ public class MarketListHeader extends FrameLayout implements
                 s.append(replaced);
             }
             if (s.length() > 0) {
-                WalletUtils.formatSignificant(s,
-                        true ? WalletUtils.SMALLER_SPAN : null);
+                WalletUtils.formatSignificant(s, true ? WalletUtils.SMALLER_SPAN : null);
             }
         }
 
@@ -491,8 +492,7 @@ public class MarketListHeader extends FrameLayout implements
         }
 
         @Override
-        public boolean onEditorAction(final TextView v, final int actionId,
-                                      final KeyEvent event) {
+        public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
             savePriceAlert();
             return true;
         }
@@ -528,8 +528,7 @@ public class MarketListHeader extends FrameLayout implements
             if (currentColor == endColor) {
                 setBg(currentColor);
             } else {
-                setBg((Integer) evaluator.evaluate(animProgress, startColor,
-                        endColor));
+                setBg((Integer) evaluator.evaluate(animProgress, startColor, endColor));
             }
         }
 
