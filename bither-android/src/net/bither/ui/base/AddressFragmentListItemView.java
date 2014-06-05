@@ -45,16 +45,6 @@ public class AddressFragmentListItemView extends FrameLayout implements
         AddressInfoChangedObserver, MarketTickerChangedObserver {
 
     private FragmentActivity activity;
-    private OnClickListener addressFullClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            ArrayMap<String, BigInteger> map = new ArrayMap<String, BigInteger>();
-            map.put(address.getAddress(), null);
-            DialogAddressFull dialog = new DialogAddressFull(activity, map);
-            dialog.show(v);
-        }
-    };
     private TextView tvAddress;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
@@ -69,8 +59,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
     public AddressFragmentListItemView(FragmentActivity activity) {
         super(activity);
         this.activity = activity;
-        View v = LayoutInflater.from(activity).inflate(
-                R.layout.list_item_address_fragment_warm, null);
+        View v = LayoutInflater.from(activity).inflate(R.layout.list_item_address_fragment_warm,
+                null);
         addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         initView();
     }
@@ -84,10 +74,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llMonitorFailed = findViewById(R.id.ll_monitor_failed);
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
         ivType = (ImageView) findViewById(R.id.iv_type);
-        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil
-                .getBtcSlimSymbol(tvBalance));
-        findViewById(R.id.ibtn_address_full).setOnClickListener(
-                addressFullClick);
+        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
+        findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
                 .v_transaction_immuture);
         vTransactionImmuture.setActivity(activity);
@@ -97,13 +85,11 @@ public class AddressFragmentListItemView extends FrameLayout implements
         super(context, attrs);
     }
 
-    private AddressFragmentListItemView(Context context, AttributeSet attrs,
-                                        int defStyle) {
+    private AddressFragmentListItemView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void setAddress(BitherAddress address, int loaderPosition,
-                           boolean isPrivate) {
+    public void setAddress(BitherAddress address, int loaderPosition, boolean isPrivate) {
         this.address = address;
 
         if (address != null) {
@@ -126,21 +112,18 @@ public class AddressFragmentListItemView extends FrameLayout implements
         } else {
             ivType.setImageResource(R.drawable.address_type_watchonly);
         }
-        if (this.address.getAddressInfo() != null && address.isReadyToShow()
-                && !address.isError()) {
-            tvBalance.setText(GenericUtils.formatValueWithBold(this.address
-                    .getAddressInfo().getBalance()));
-            tvBalanceMoney.setBigInteger(this.address.getAddressInfo()
-                    .getBalance());
-            tvTransactionCount.setText(Integer.toString(this.address
-                    .getAddressInfo().getTxCount()));
+        if (this.address.getAddressInfo() != null && address.isReadyToShow() && !address.isError
+                ()) {
+            tvBalance.setText(GenericUtils.formatValueWithBold(this.address.getAddressInfo()
+                    .getBalance()));
+            tvBalanceMoney.setBigInteger(this.address.getAddressInfo().getBalance());
+            tvTransactionCount.setText(Integer.toString(this.address.getAddressInfo().getTxCount
+                    ()));
             Transaction lastTransaction = WalletUtils.getLastTx(this.address);
-            if (lastTransaction != null
-                    && (lastTransaction.getConfidence().getConfidenceType() == ConfidenceType
-                    .BUILDING || lastTransaction
-                    .getConfidence().getConfidenceType() == ConfidenceType.PENDING)
-                    && ConfidenceUtil.getDepthInChain(lastTransaction
-                    .getConfidence()) < 6) {
+            if (lastTransaction != null && (lastTransaction.getConfidence().getConfidenceType()
+                    == ConfidenceType.BUILDING || lastTransaction.getConfidence()
+                    .getConfidenceType() == ConfidenceType.PENDING) && ConfidenceUtil
+                    .getDepthInChain(lastTransaction.getConfidence()) < 6) {
                 vTransactionImmuture.setVisibility(View.VISIBLE);
                 vTransactionImmuture.setTransaction(lastTransaction, address);
             } else {
@@ -176,6 +159,16 @@ public class AddressFragmentListItemView extends FrameLayout implements
             showAddressInfo();
         }
     }
+
+    private OnClickListener addressFullClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ArrayMap<String, BigInteger> map = new ArrayMap<String, BigInteger>();
+            map.put(address.getAddress(), null);
+            DialogAddressFull dialog = new DialogAddressFull(activity, map);
+            dialog.show(v);
+        }
+    };
 
     public void onPause() {
         vTransactionImmuture.onPause();
