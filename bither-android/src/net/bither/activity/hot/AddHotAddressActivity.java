@@ -80,14 +80,14 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
 
 	private AddAddressWatchOnlyFragment getWatchOnlyView() {
 		if (vWatchOnly == null) {
-			vWatchOnly = new AddAddressWatchOnlyFragment(this);
+			vWatchOnly = new AddAddressWatchOnlyFragment();
 		}
 		return vWatchOnly;
 	}
 
 	private AddAddressPrivateKeyFragment getPrivateKeyView() {
 		if (vPrivateKey == null) {
-			vPrivateKey = new AddAddressPrivateKeyFragment(this);
+			vPrivateKey = new AddAddressPrivateKeyFragment();
 		}
 		return vPrivateKey;
 	}
