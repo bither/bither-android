@@ -26,6 +26,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 
 /**
  * Created by songchenwen on 14-5-24.
@@ -35,7 +36,8 @@ public class FancyQrCodeThread extends Thread {
         public void generated(Bitmap bmp);
     }
 
-    public static final float AvatarSizeRate = 0.16f;
+    public static final float AvatarSizeRate = 0.2f;
+    public static final int MarginSize = UIUtil.dip2pix(16);
     private FancyQrCodeListener listener;
     private String content;
     private int size;
@@ -60,13 +62,14 @@ public class FancyQrCodeThread extends Thread {
 
     @Override
     public void run() {
-        final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor);
+        final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor, MarginSize);
+        final int qrCodeSize = Math.min(qrCode.getWidth(), qrCode.getHeight());
         if (addAvatar && AppSharedPreference.getInstance().hasUserAvatar()) {
             Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
             if (avatar != null) {
                 Canvas c = new Canvas(qrCode);
-                int avatarSize = (int) (size * AvatarSizeRate);
-                int avaterOffset = (size - avatarSize) / 2;
+                int avatarSize = (int) (qrCodeSize * AvatarSizeRate);
+                int avaterOffset = (qrCodeSize - avatarSize) / 2;
                 Paint paint = new Paint();
                 paint.setAntiAlias(true);
                 c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
