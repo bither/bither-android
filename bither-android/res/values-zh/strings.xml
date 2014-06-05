@@ -132,6 +132,8 @@
     <string name="kline_close">收盘: </string>
     <string name="market_price_alert_high_hint">高于</string>
     <string name="market_price_alert_low_hint">低于</string>
+    <string name="market_price_alert_high_error">价格预警最高值不应比当前价格低</string>
+    <string name="market_price_alert_low_error">价格预警最低值不应比当前价格高</string>
     <string name="market_price_alert_title">价格预警</string>
     <string name="price_alert_higher_than">%s价格高于 </string>
     <string name="price_alert_lower_than">%s价格低于 </string>
