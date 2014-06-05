@@ -16,43 +16,38 @@
 
 package net.bither.fragment.hot;
 
-import java.util.ArrayList;
-
-import net.bither.activity.hot.AddHotAddressActivity.AddAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.ui.base.AddAddressPrivateKeyView;
-import net.bither.ui.base.AddPrivateKeyActivity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class AddAddressPrivateKeyFragment extends Fragment implements
-		AddAddress {
-	private AddPrivateKeyActivity activity;
-	private AddAddressPrivateKeyView v;
+import net.bither.activity.hot.AddHotAddressActivity.AddAddress;
+import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.ui.base.AddAddressPrivateKeyView;
+import net.bither.ui.base.AddPrivateKeyActivity;
 
-	public AddAddressPrivateKeyFragment(AddPrivateKeyActivity activity) {
-		this.activity = activity;
-	}
+import java.util.ArrayList;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		v = new AddAddressPrivateKeyView(activity);
-		return v;
-	}
+public class AddAddressPrivateKeyFragment extends Fragment implements AddAddress {
+    private AddAddressPrivateKeyView v;
 
-	public ArrayList<String> getAddresses() {
-		ArrayList<BitherAddressWithPrivateKey> addresses = v.getAddresses();
-		ArrayList<String> as = new ArrayList<String>();
-		if (addresses.size() > 0) {
-			for (BitherAddressWithPrivateKey address : addresses) {
-				as.add(address.getAddress());
-			}
-		}
-		return as;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        v = new AddAddressPrivateKeyView((AddPrivateKeyActivity) getActivity());
+        return v;
+    }
+
+    public ArrayList<String> getAddresses() {
+        ArrayList<BitherAddressWithPrivateKey> addresses = v.getAddresses();
+        ArrayList<String> as = new ArrayList<String>();
+        if (addresses.size() > 0) {
+            for (BitherAddressWithPrivateKey address : addresses) {
+                as.add(address.getAddress());
+            }
+        }
+        return as;
+    }
 
 }

@@ -16,11 +16,6 @@
 
 package net.bither.fragment.hot;
 
-import java.util.ArrayList;
-
-import net.bither.activity.hot.AddHotAddressActivity.AddAddress;
-import net.bither.ui.base.AddAddressWatchOnlyView;
-import net.bither.ui.base.AddPrivateKeyActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,29 +23,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.bither.activity.hot.AddHotAddressActivity.AddAddress;
+import net.bither.ui.base.AddAddressWatchOnlyView;
+import net.bither.ui.base.AddPrivateKeyActivity;
+
+import java.util.ArrayList;
+
 public class AddAddressWatchOnlyFragment extends Fragment implements AddAddress {
-	private AddPrivateKeyActivity activity;
-	private AddAddressWatchOnlyView v;
+    private AddAddressWatchOnlyView v;
 
-	public AddAddressWatchOnlyFragment(AddPrivateKeyActivity activity) {
-		this.activity = activity;
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        v = new AddAddressWatchOnlyView((AddPrivateKeyActivity) getActivity(), this);
+        return v;
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		v = new AddAddressWatchOnlyView(activity, this);
-		return v;
-	}
+    public ArrayList<String> getAddresses() {
+        return v.getAddresses();
+    }
 
-	public ArrayList<String> getAddresses() {
-		return v.getAddresses();
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (!v.onActivityResult(requestCode, resultCode, data)) {
-			super.onActivityResult(requestCode, resultCode, data);
-		}
-	}
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!v.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
