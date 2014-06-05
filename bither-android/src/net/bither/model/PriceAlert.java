@@ -98,7 +98,6 @@ public class PriceAlert implements Serializable {
                     if (cache.equals(priceAlert)) {
                         if (cache.getLower() != priceAlert.getLower() || cache.getHigher() !=
                                 priceAlert.getHigher()) {
-                            priceAlertList.remove(cache);
                             isAdd = true;
                         }
                     }
@@ -108,6 +107,7 @@ public class PriceAlert implements Serializable {
             }
             if (isAdd) {
                 LogUtil.d("price", priceAlert.toString());
+                priceAlertList.remove(priceAlert);
                 priceAlertList.add(priceAlert);
                 saveFile();
             }
