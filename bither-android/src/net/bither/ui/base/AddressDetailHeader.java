@@ -43,7 +43,8 @@ import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
 
-public class AddressDetailHeader extends FrameLayout {
+public class AddressDetailHeader extends FrameLayout implements DialogFragmentFancyQrCodePager
+        .QrCodeThemeChangeListener {
     private AddressDetailActivity activity;
     private BitherAddress address;
     private FrameLayout flAddress;
@@ -170,7 +171,8 @@ public class AddressDetailHeader extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress()).show(activity
+            DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
+                    .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
                     .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
         }
     };
@@ -200,4 +202,9 @@ public class AddressDetailHeader extends FrameLayout {
             }
         }
     };
+
+    @Override
+    public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme) {
+        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+    }
 }

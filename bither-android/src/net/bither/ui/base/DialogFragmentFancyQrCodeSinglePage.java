@@ -18,7 +18,6 @@ package net.bither.ui.base;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,8 +28,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.ImageManageUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -46,8 +47,11 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     private static final int QrCodeSize = Math.min(UIUtil.getScreenHeight(),
             UIUtil.getScreenWidth());
 
+    private View.OnClickListener clickListener;
+
     private String content;
     private Qr.QrCodeTheme theme;
+    private View vContainer;
     private FrameLayout flQrContainer;
     private ImageView ivAvatar;
     private ImageView ivQr;
@@ -62,8 +66,6 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         bundle.putString(ContentTag, content);
         if (theme != null) {
             bundle.putInt(ThemeTag, theme.ordinal());
-        } else {
-            bundle.putInt(ThemeTag, -1);
         }
         page.setArguments(bundle);
         return page;
@@ -74,20 +76,15 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         content = bundle.getString(ContentTag);
-        int themeOrdinal = bundle.getInt(ThemeTag, -1);
+        int themeOrdinal = bundle.getInt(ThemeTag, 0);
         if (themeOrdinal >= 0 && themeOrdinal < Qr.QrCodeTheme.values().length) {
             theme = Qr.QrCodeTheme.values()[themeOrdinal];
         } else {
-            theme = null;
+            theme = Qr.QrCodeTheme.YELLOW;
         }
-        if (theme != null) {
-            new FancyQrCodeThread(content, QrCodeSize, theme.getFgColor(), theme.getBgColor(),
-                    this, false).start();
-        } else {
-            new FancyQrCodeThread(content, QrCodeSize, Color.BLACK, Color.WHITE, this,
-                    false).start();
-        }
-        if (theme != null) {
+        new FancyQrCodeThread(content, QrCodeSize, theme.getFgColor(), theme.getBgColor(), this,
+                false).start();
+        if (AppSharedPreference.getInstance().hasUserAvatar()) {
             new GetAvatarThread().start();
         }
     }
@@ -95,22 +92,32 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_qr_code_single_page, null);
-        flQrContainer = (FrameLayout) v.findViewById(R.id.fl_qr_container);
-        ivQr = (ImageView) v.findViewById(R.id.iv_qrcode);
-        ivAvatar = (ImageView) v.findViewById(R.id.iv_avatar);
-        pb = (ProgressBar) v.findViewById(R.id.pb);
+        vContainer = inflater.inflate(R.layout.fragment_qr_code_single_page, null);
+        flQrContainer = (FrameLayout) vContainer.findViewById(R.id.fl_qr_container);
+        ivQr = (ImageView) vContainer.findViewById(R.id.iv_qrcode);
+        ivAvatar = (ImageView) vContainer.findViewById(R.id.iv_avatar);
+        pb = (ProgressBar) vContainer.findViewById(R.id.pb);
         ivQr.getLayoutParams().height = ivQr.getLayoutParams().width = QrCodeSize;
         ivAvatar.getLayoutParams().height = ivAvatar.getLayoutParams().height = (int) (QrCodeSize
                 * FancyQrCodeThread.AvatarSizeRate);
+        vContainer.setOnClickListener(clickListener);
+        if (AppSharedPreference.getInstance().hasUserAvatar()) {
+            ivAvatar.setVisibility(View.VISIBLE);
+        } else {
+            ivAvatar.setVisibility(View.GONE);
+        }
         configureImages();
-        return v;
+        return vContainer;
     }
 
     public Bitmap getQrCode() {
         if (flQrContainer.getVisibility() == View.VISIBLE) {
             if (ivAvatar.getVisibility() == View.VISIBLE) {
-                return ImageManageUtil.getBitmapFromView(flQrContainer);
+                Bitmap bmp = ImageManageUtil.getBitmapFromView(flQrContainer);
+                if (bmp == null) {
+                    LogUtil.w("QR", "draw qr and avatar null");
+                }
+                return bmp;
             } else {
                 return qrCode;
             }
@@ -132,7 +139,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
                 if (qrCode != null && ivQr != null) {
                     ivQr.setImageBitmap(qrCode);
                 }
-                if (theme != null && avatar != null && ivAvatar != null) {
+                if (avatar != null && ivAvatar != null) {
                     ivAvatar.setImageBitmap(avatar);
                 }
                 configureProgress();
@@ -141,7 +148,8 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     }
 
     private void configureProgress() {
-        if (qrCode != null && (theme == null || avatar != null) && flQrContainer != null) {
+        if (qrCode != null && (!AppSharedPreference.getInstance().hasUserAvatar() || avatar !=
+                null) && flQrContainer != null) {
             flQrContainer.setVisibility(View.VISIBLE);
             pb.setVisibility(View.GONE);
         } else {
@@ -157,6 +165,17 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
             if (ivAvatar != null) {
                 configureImages();
             }
+        }
+    }
+
+    public Qr.QrCodeTheme getTheme() {
+        return theme;
+    }
+
+    public void setOnClickListener(View.OnClickListener clickListener) {
+        this.clickListener = clickListener;
+        if (vContainer != null) {
+            vContainer.setOnClickListener(clickListener);
         }
     }
 }

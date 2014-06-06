@@ -33,9 +33,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.ImageManageUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -45,6 +46,10 @@ import net.bither.util.UIUtil;
  * Created by songchenwen on 14-6-6.
  */
 public class DialogFragmentFancyQrCodePager extends DialogFragment implements View.OnClickListener {
+    public static interface QrCodeThemeChangeListener {
+        public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme);
+    }
+
     public static final String FragmentTag = "DialogFragmentFancyQrCodePager";
     public static final String ContentKey = "Content";
 
@@ -52,7 +57,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     private String content;
     private ViewPager pager;
     private PagerAdapter adapter;
-    private int clickedView = 0;
+    private QrCodeThemeChangeListener listener;
     private Activity activity;
 
     public static DialogFragmentFancyQrCodePager newInstance(String content) {
@@ -83,6 +88,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         pager.getLayoutParams().width = pager.getLayoutParams().height = size;
         pager.setAdapter(adapter);
+        pager.setCurrentItem(AppSharedPreference.getInstance().getFancyQrCodeTheme().ordinal());
         return vContainer;
     }
 
@@ -96,7 +102,6 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     @Override
     public void onStart() {
         activity = getActivity();
-        clickedView = 0;
         getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT);
         super.onStart();
@@ -104,18 +109,15 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        switch (clickedView) {
-            case R.id.ibtn_share:
-                share();
-                break;
-            case R.id.ibtn_save:
-                save();
-                break;
-            default:
-                break;
+        Qr.QrCodeTheme theme = getActiveTheme();
+        if (theme != null && theme.ordinal() != AppSharedPreference.getInstance()
+                .getFancyQrCodeTheme().ordinal()) {
+            AppSharedPreference.getInstance().setFancyQrCodeTheme(theme);
+            if (listener != null) {
+                listener.qrCodeThemeChangeTo(theme);
+            }
         }
-        clickedView = 0;
+        super.onDismiss(dialog);
     }
 
     private void share() {
@@ -128,8 +130,17 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
 
     @Override
     public void onClick(View v) {
-        clickedView = v.getId();
-        dismiss();
+        switch (v.getId()) {
+            case R.id.ibtn_share:
+                share();
+                break;
+            case R.id.ibtn_save:
+                save();
+                break;
+            default:
+                dismiss();
+                break;
+        }
     }
 
     private class PagerAdapter extends FragmentPagerAdapter {
@@ -144,20 +155,32 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             if (position >= 0 && position < Qr.QrCodeTheme.values().length) {
                 theme = Qr.QrCodeTheme.values()[position];
             }
-            return DialogFragmentFancyQrCodeSinglePage.newInstance(content, theme);
+            DialogFragmentFancyQrCodeSinglePage page = DialogFragmentFancyQrCodeSinglePage
+                    .newInstance(content, theme);
+            page.setOnClickListener(DialogFragmentFancyQrCodePager.this);
+            return page;
         }
 
         @Override
         public int getCount() {
-            return Qr.QrCodeTheme.values().length + 1;
+            return Qr.QrCodeTheme.values().length;
         }
     }
 
+    private void dismissInAnyThread() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                dismissAllowingStateLoss();
+            }
+        });
+    }
 
     private class SaveThread extends Thread {
         @Override
         public void run() {
             Bitmap bmp = getQrCode();
+            dismissInAnyThread();
             if (bmp == null) {
                 return;
             }
@@ -171,7 +194,9 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         @Override
         public void run() {
             Bitmap bmp = getQrCode();
+            dismissInAnyThread();
             if (bmp == null) {
+                LogUtil.w("QR", "share qr code null");
                 DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
                 return;
             }
@@ -200,9 +225,21 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
 
     public Bitmap getQrCode() {
         Fragment f = getActiveFragment();
+        if (f == null) {
+            LogUtil.w("QR", "share qr active fragment null");
+        }
         if (f != null && f instanceof DialogFragmentFancyQrCodeSinglePage) {
             DialogFragmentFancyQrCodeSinglePage page = (DialogFragmentFancyQrCodeSinglePage) f;
             return page.getQrCode();
+        }
+        return null;
+    }
+
+    public Qr.QrCodeTheme getActiveTheme() {
+        Fragment f = getActiveFragment();
+        if (f != null && f instanceof DialogFragmentFancyQrCodeSinglePage) {
+            DialogFragmentFancyQrCodeSinglePage page = (DialogFragmentFancyQrCodeSinglePage) f;
+            return page.getTheme();
         }
         return null;
     }
@@ -219,6 +256,12 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     public Fragment getFragmentAtIndex(int i) {
         String str = StringUtil.makeFragmentName(this.pager.getId(), i);
         return getChildFragmentManager().findFragmentByTag(str);
+    }
+
+    public DialogFragmentFancyQrCodePager setQrCodeThemeChangeListener(QrCodeThemeChangeListener
+                                                                               listener) {
+        this.listener = listener;
+        return this;
     }
 
 }

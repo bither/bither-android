@@ -46,6 +46,7 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
         findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
+        llOriginQRCode.setVisibility(View.GONE);
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
         dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getKeys().get(0));
