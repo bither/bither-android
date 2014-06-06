@@ -19,9 +19,7 @@ package net.bither.ui.base;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -52,10 +50,6 @@ public class OverScrollableListView extends ListView {
     private void initExtraFooter() {
         if (vExtraFooter == null) {
             vExtraFooter = new FrameLayout(getContext());
-            ImageView ivDivider = new ImageView(getContext());
-            ivDivider.setBackgroundDrawable(getDivider());
-            vExtraFooter.addView(ivDivider, ViewGroup.LayoutParams.MATCH_PARENT,
-                    getDividerHeight());
             super.addFooterView(vExtraFooter, null, false);
         }
     }
@@ -84,7 +78,8 @@ public class OverScrollableListView extends ListView {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         if (vExtraFooter != null && vExtraFooter.getLayoutParams() != null) {
-            vExtraFooter.getLayoutParams().height = getFooterViewHeight();
+            int height = getFooterViewHeight();
+            vExtraFooter.getLayoutParams().height = height;
         }
         super.onLayout(changed, l, t, r, b);
     }
@@ -122,7 +117,8 @@ public class OverScrollableListView extends ListView {
                 contentHeight += v.getHeight();
             }
         }
-        return Math.max(0, getHeight() - contentHeight);
+        int height = Math.max(0, getHeight() - contentHeight);
+        return height;
     }
 
     public void setOverScrollTopHeight(int topHeight) {
