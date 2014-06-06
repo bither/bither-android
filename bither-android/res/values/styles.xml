@@ -22,6 +22,11 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="QrCodePager" parent="@style/tipsDialog">
+        <item name="android:backgroundDimAmount">0.8</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
     <style name="activity_name_text">
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
