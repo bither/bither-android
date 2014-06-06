@@ -52,7 +52,8 @@ public class Qr {
         GREEN("#ff486804", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
         BLUE("#ff025c7f", "#ffeff4f7", R.string.fancy_qr_code_theme_name_blue),
         RED("#ff922c15", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
-        PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
+        PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple),
+        BLACK("#ff000000", "#ffffffff", R.string.fancy_qr_code_theme_name_black);
 
         private int fgColor;
         private int bgColor;

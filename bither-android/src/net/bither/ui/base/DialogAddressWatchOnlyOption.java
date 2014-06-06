@@ -28,7 +28,6 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddress;
-import net.bither.preference.AppSharedPreference;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
 
@@ -40,25 +39,49 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
     private TextView tvClose;
     private LinearLayout llOriginQRCode;
     private Activity activity;
+    private Runnable afterDelete;
+
+    public DialogAddressWatchOnlyOption(Activity context, BitherAddress address,
+                                        Runnable afterDelete) {
+        super(context);
+        this.activity = context;
+        this.address = address;
+        this.afterDelete = afterDelete;
+        setContentView(R.layout.dialog_address_watch_only_option);
+        tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
+        tvDelete = (TextView) findViewById(R.id.tv_delete);
+        tvClose = (TextView) findViewById(R.id.tv_close);
+        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
+        tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
+        tvDelete.setOnClickListener(deleteClick);
+        llOriginQRCode.setOnClickListener(originQrCodeClick);
+        llOriginQRCode.setVisibility(View.GONE);
+        tvClose.setOnClickListener(closeClick);
+        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+    }
+
     private View.OnClickListener viewOnBlockchainInfoClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             dismiss();
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://blockchain.info/address/"
-                            + address.getAddress())
-            )
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain" +
+                    ".info/address/" + address.getAddress())
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 getContext().startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.find_browser_error);
+                DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
             }
         }
     };
+
     private View.OnClickListener deleteClick = new View.OnClickListener() {
 
         @Override
@@ -70,18 +93,16 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
                 return;
             }
             if (BitherApplication.getBitherApplication().isCanStopMonitor()) {
-                BitherApplication.getBitherApplication().setCanStopMonitor(
-                        false);
-                new DialogConfirmTask(getContext(), getContext().getString(
-                        R.string.address_delete_confirmation), new Runnable() {
+                BitherApplication.getBitherApplication().setCanStopMonitor(false);
+                new DialogConfirmTask(getContext(), getContext().getString(R.string
+                        .address_delete_confirmation), new Runnable() {
                     @Override
                     public void run() {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 WalletUtils.removeBitherAddress(address);
-                                Fragment f = BitherApplication.hotActivity
-                                        .getFragmentAtIndex(1);
+                                Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
                                 if (f instanceof Refreshable) {
                                     ((Refreshable) f).doRefresh();
                                 }
@@ -98,7 +119,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
             }
         }
     };
-    private Runnable afterDelete;
+
     private View.OnClickListener originQrCodeClick = new View.OnClickListener() {
 
         @Override
@@ -112,6 +133,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
             }, 300);
         }
     };
+
     private View.OnClickListener closeClick = new View.OnClickListener() {
 
         @Override
@@ -119,28 +141,4 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
             dismiss();
         }
     };
-
-    public DialogAddressWatchOnlyOption(Activity context,
-                                        BitherAddress address, Runnable afterDelete) {
-        super(context);
-        this.activity = context;
-        this.address = address;
-        this.afterDelete = afterDelete;
-        setContentView(R.layout.dialog_address_watch_only_option);
-        tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
-        tvDelete = (TextView) findViewById(R.id.tv_delete);
-        tvClose = (TextView) findViewById(R.id.tv_close);
-        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
-        tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
-        tvDelete.setOnClickListener(deleteClick);
-        llOriginQRCode.setOnClickListener(originQrCodeClick);
-        tvClose.setOnClickListener(closeClick);
-        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-    }
-
-    @Override
-    public void show() {
-        super.show();
-    }
-
 }

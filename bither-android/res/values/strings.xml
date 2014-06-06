@@ -292,6 +292,7 @@
     <string name="fancy_qr_code_theme_name_red">Red</string>
     <string name="fancy_qr_code_theme_name_blue">Blue</string>
     <string name="fancy_qr_code_theme_name_purple">Purple</string>
+    <string name="fancy_qr_code_theme_name_black">Black</string>
 
     <!-- edit password -->
     <string name="edit_password_title">Change Password</string>

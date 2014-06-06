@@ -277,6 +277,7 @@
     <string name="fancy_qr_code_theme_name_red">红</string>
     <string name="fancy_qr_code_theme_name_blue">蓝</string>
     <string name="fancy_qr_code_theme_name_purple">紫</string>
+    <string name="fancy_qr_code_theme_name_black">黑</string>
 
     <!-- edit password -->
     <string name="edit_password_title">修改密码</string>

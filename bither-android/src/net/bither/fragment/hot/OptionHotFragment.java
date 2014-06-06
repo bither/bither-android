@@ -88,7 +88,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvWifi;
     private SettingSelectorView ssvTransactionFee;
-    private SettingSelectorView ssvQrCodeTheme;
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
@@ -305,37 +304,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
-    private SettingSelector fancyQrCodeThemeSelector = new SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            return Qr.QrCodeTheme.values().length;
-        }
-
-        @Override
-        public String getOptionName(int index) {
-            return Qr.QrCodeTheme.values()[index].getTitle();
-        }
-
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public String getSettingName() {
-            return getString(R.string.fancy_qr_code_theme);
-        }
-
-        @Override
-        public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getFancyQrCodeTheme().ordinal();
-        }
-
-        @Override
-        public void onOptionIndexSelected(int index) {
-            AppSharedPreference.getInstance().setFancyQrCodeTheme(Qr.QrCodeTheme.values()[index]);
-        }
-    };
     private OnClickListener checkClick = new OnClickListener() {
 
         @Override
@@ -493,7 +461,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvMarket = (SettingSelectorView) view.findViewById(R.id.ssv_market);
         ssvWifi = (SettingSelectorView) view.findViewById(R.id.ssv_wifi);
         ssvTransactionFee = (SettingSelectorView) view.findViewById(R.id.ssv_transaction_fee);
-        ssvQrCodeTheme = (SettingSelectorView) view.findViewById(R.id.ssv_fancy_qr_code_theme);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -507,7 +474,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
-        ssvQrCodeTheme.setSelector(fancyQrCodeThemeSelector);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;

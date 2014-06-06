@@ -40,8 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 public class QrCodeImageView extends FrameLayout implements OnClickListener {
     public static interface QrCodeFullScreenListener {
-        public void onShowFullScreenQr(String content, Bitmap placeHolder,
-                                       View fromView);
+        public void onShowFullScreenQr(String content, Bitmap placeHolder, View fromView);
     }
 
     private static ThreadPoolExecutor threadPool;
@@ -66,8 +65,7 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         bgColor = Color.TRANSPARENT;
         mainHandler = new Handler(Looper.getMainLooper());
         removeAllViews();
-        LayoutInflater.from(getContext()).inflate(
-                R.layout.layout_qr_code_imageview, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.layout_qr_code_imageview, this);
         iv = (ImageView) findViewById(R.id.iv_qr);
         pb = (ProgressBar) findViewById(R.id.pb_qr);
         setOnClickListener(this);
@@ -96,17 +94,20 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
     }
 
     public void setContent(String content, int fgColor, int bgColor) {
-        this.bgColor = bgColor;
-        this.fgColor = fgColor;
-        if (!StringUtil.compareString(this.content, content)) {
-            this.content = content;
+        if (!StringUtil.compareString(this.content, content) || bgColor != this.bgColor ||
+                fgColor != this.fgColor) {
+            this.bgColor = bgColor;
+            this.fgColor = fgColor;
             if (future != null) {
                 future.cancel(true);
                 future = null;
             }
             mainHandler.removeCallbacks(showRunnable);
             bmp = null;
-            iv.setImageBitmap(null);
+            if (!StringUtil.compareString(this.content, content)) {
+                iv.setImageBitmap(null);
+            }
+            this.content = content;
             if (getWidth() == 0 || getHeight() == 0) {
                 mainHandler.postDelayed(showRunnable, 50);
             } else {
@@ -141,6 +142,9 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         @Override
         public void run() {
             if (Thread.interrupted()) {
+                return;
+            }
+            if (StringUtil.isEmpty(content)) {
                 return;
             }
             bmp = Qr.bitmap(QrCodeImageView.this.content, size, fgColor, bgColor);
