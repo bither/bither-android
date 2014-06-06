@@ -33,6 +33,27 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
+            <ToggleButton
+                android:id="@+id/tbtn_show_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:drawableLeft="@drawable/fancy_qr_code_share_selector"
+                android:background="@drawable/transparent"
+                android:gravity="center"
+                android:text=""
+                android:textOff=""
+                android:textOn=""
+                android:checked="true"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"/>
+
+            <ImageView
+                android:id="@+id/iv_show_avatar_separator"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
             <ImageButton
                 android:id="@+id/ibtn_share"
                 android:layout_width="wrap_content"

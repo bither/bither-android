@@ -59,6 +59,8 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     private Bitmap avatar;
     private Bitmap qrCode;
 
+    private boolean isShowAvatar = true;
+
     public static DialogFragmentFancyQrCodeSinglePage newInstance(String content,
                                                                   Qr.QrCodeTheme theme) {
         DialogFragmentFancyQrCodeSinglePage page = new DialogFragmentFancyQrCodeSinglePage();
@@ -101,13 +103,25 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         ivAvatar.getLayoutParams().height = ivAvatar.getLayoutParams().height = (int) (QrCodeSize
                 * FancyQrCodeThread.AvatarSizeRate);
         vContainer.setOnClickListener(clickListener);
-        if (AppSharedPreference.getInstance().hasUserAvatar()) {
+        if (AppSharedPreference.getInstance().hasUserAvatar() && isShowAvatar) {
             ivAvatar.setVisibility(View.VISIBLE);
         } else {
             ivAvatar.setVisibility(View.GONE);
         }
         configureImages();
         return vContainer;
+    }
+
+    public DialogFragmentFancyQrCodeSinglePage setShowAvatar(boolean show) {
+        isShowAvatar = show;
+        if (ivAvatar != null) {
+            if (show && AppSharedPreference.getInstance().hasUserAvatar()) {
+                ivAvatar.setVisibility(View.VISIBLE);
+            } else {
+                ivAvatar.setVisibility(View.GONE);
+            }
+        }
+        return this;
     }
 
     public Bitmap getQrCode() {
@@ -172,10 +186,12 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         return theme;
     }
 
-    public void setOnClickListener(View.OnClickListener clickListener) {
+    public DialogFragmentFancyQrCodeSinglePage setOnClickListener(View.OnClickListener
+                                                                          clickListener) {
         this.clickListener = clickListener;
         if (vContainer != null) {
             vContainer.setOnClickListener(clickListener);
         }
+        return this;
     }
 }
