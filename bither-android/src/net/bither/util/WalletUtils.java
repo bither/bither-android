@@ -1192,6 +1192,11 @@ public class WalletUtils {
                 }
                 AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(addresses.get
                         (0)));
+                if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
+                    BackupUtil.backupColdKey(false);
+                } else {
+                    BackupUtil.backupHotKey();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
