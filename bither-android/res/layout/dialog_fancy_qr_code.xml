@@ -65,7 +65,6 @@
                 android:id="@+id/ibtn_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
                 android:src="@drawable/fancy_qr_code_save_selector"
                 android:background="@drawable/transparent"
                 android:paddingLeft="20dp"

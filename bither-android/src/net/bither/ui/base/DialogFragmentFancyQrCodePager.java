@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
@@ -61,7 +62,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     private View vContainer;
     private String content;
     private ViewPager pager;
-    private ToggleButton tbtnShowAvatar;
+    private CheckBox tbtnShowAvatar;
     private View ivShowAvatarSeparator;
     private PagerAdapter adapter;
     private QrCodeThemeChangeListener listener;
@@ -88,7 +89,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
                              Bundle savedInstanceState) {
         vContainer = inflater.inflate(R.layout.dialog_fancy_qr_code_pager, container, false);
         pager = (ViewPager) vContainer.findViewById(R.id.pager);
-        tbtnShowAvatar = (ToggleButton) vContainer.findViewById(R.id.tbtn_show_avatar);
+        tbtnShowAvatar = (CheckBox) vContainer.findViewById(R.id.cbx_show_avatar);
         ivShowAvatarSeparator = vContainer.findViewById(R.id.iv_show_avatar_separator);
         vContainer.setOnClickListener(this);
         vContainer.findViewById(R.id.ibtn_share).setOnClickListener(this);

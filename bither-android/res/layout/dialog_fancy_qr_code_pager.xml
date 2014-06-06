@@ -33,18 +33,19 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
-            <ToggleButton
-                android:id="@+id/tbtn_show_avatar"
+            <CheckBox
+                android:id="@+id/cbx_show_avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:drawableLeft="@drawable/fancy_qr_code_share_selector"
                 android:background="@drawable/transparent"
+                android:button="@drawable/fancy_qr_code_avatar_selector"
                 android:gravity="center"
                 android:text=""
-                android:textOff=""
-                android:textOn=""
+                android:textColor="@color/transparent"
                 android:checked="true"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"/>
 
@@ -61,6 +62,8 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/fancy_qr_code_share_selector"
                 android:background="@drawable/transparent"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"/>
 
@@ -74,9 +77,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
                 android:src="@drawable/fancy_qr_code_save_selector"
                 android:background="@drawable/transparent"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"/>
 

@@ -36,7 +36,7 @@ public class FancyQrCodeThread extends Thread {
         public void generated(Bitmap bmp);
     }
 
-    public static final float AvatarSizeRate = 0.2f;
+    public static final float AvatarSizeRate = 0.24f;
     public static final int MarginSize = UIUtil.dip2pix(16);
     private FancyQrCodeListener listener;
     private String content;
