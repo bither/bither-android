@@ -30,6 +30,7 @@ import net.bither.util.UIUtil;
 import java.math.BigInteger;
 
 public class DialogTotalBtc extends DialogWithArrow {
+    private static final float PieChartMarginRate = 0.05f;
 
     private TextView tvBtc;
     private PieChartView vPieChart;
@@ -52,6 +53,12 @@ public class DialogTotalBtc extends DialogWithArrow {
         flPieContainer = (FrameLayout) findViewById(R.id.fl_pie_container);
         flPieContainer.getLayoutParams().height = flPieContainer.getLayoutParams().width = UIUtil
                 .getScreenWidth() - UIUtil.dip2pix(80);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) vPieChart.getLayoutParams();
+        int margin = (int) (flPieContainer.getLayoutParams().width * PieChartMarginRate);
+        lp.topMargin = margin;
+        lp.leftMargin = margin;
+        lp.rightMargin = margin;
+        lp.bottomMargin = margin;
         ivPrivate = (ImageView) findViewById(R.id.iv_private);
         tvPrivate = (TextView) findViewById(R.id.tv_private);
         ivWatchOnly = (ImageView) findViewById(R.id.iv_watchonly);

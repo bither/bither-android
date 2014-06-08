@@ -45,7 +45,7 @@ public class PieChartView extends View {
     private static final int TransformDuration = 400;
     private static final Paint paint = new Paint();
     private static final float MaxTotalAngle = 360;
-    private static final float MinRate = 0.05f;
+    private static final float MinRate = 0.03f;
 
     static {
         paint.setAntiAlias(true);

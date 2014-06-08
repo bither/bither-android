@@ -39,8 +39,7 @@
             android:id="@+id/pie"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"/>
+            android:layout_gravity="center"/>
 
         <ImageView
             android:src="@drawable/pie_mask"
