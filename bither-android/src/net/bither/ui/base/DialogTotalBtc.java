@@ -67,12 +67,12 @@ public class DialogTotalBtc extends DialogWithArrow {
         this.btcPrivate = btcPrivate;
         this.btcWatchOnly = btcWatchOnly;
         if (btcPrivate != null && btcPrivate.signum() > 0) {
-            total.add(btcPrivate);
+            total = total.add(btcPrivate);
         }
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
-            total.add(btcWatchOnly);
+            total = total.add(btcWatchOnly);
         }
-        tvBtc.setText(GenericUtils.formatValue(btcPrivate.add(btcWatchOnly)));
+        tvBtc.setText(GenericUtils.formatValue(total));
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             tvPrivate.setText(GenericUtils.formatValue(btcPrivate));
             llPrivate.setVisibility(View.VISIBLE);

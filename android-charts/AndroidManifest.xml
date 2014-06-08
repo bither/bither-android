@@ -7,16 +7,4 @@
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="18" />
-
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
-        <activity
-            android:name="AndroidChartsActivity"
-            android:label="@string/app_name" >
-
-        </activity>
-    </application>
-
 </manifest>
