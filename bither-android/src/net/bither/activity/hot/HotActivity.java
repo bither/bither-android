@@ -138,38 +138,37 @@ public class HotActivity extends FragmentActivity {
             DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
                     new DialogPasswordListener() {
 
+                @Override
+                public void onPasswordEntered(final String password) {
+                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
+
                         @Override
-                        public void onPasswordEntered(final String password) {
-                            ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
-
+                        public void runWithService(BlockchainService service) {
+                            BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
+                            if (!WalletUtils.getBitherAddressList().contains(address)) {
+                                address.encrypt(password);
+                                WalletUtils.addAddressWithPrivateKey(service, address);
+                                preference.setHasPrivateKey(true);
+                            }
+                            HotActivity.this.runOnUiThread(new Runnable() {
                                 @Override
-                                public void runWithService(BlockchainService service) {
-                                    BitherAddressWithPrivateKey address = new
-                                            BitherAddressWithPrivateKey();
-                                    if (!WalletUtils.getBitherAddressList().contains(address)) {
-                                        address.encrypt(password);
-                                        WalletUtils.addAddressWithPrivateKey(service, address);
-                                        preference.setHasPrivateKey(true);
+                                public void run() {
+
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
                                     }
-                                    HotActivity.this.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
+                                    Fragment fragment = getFragmentAtIndex(1);
+                                    if (fragment instanceof Refreshable) {
+                                        ((Refreshable) fragment).doRefresh();
+                                    }
 
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
-                                            }
-                                            Fragment fragment = getFragmentAtIndex(1);
-                                            if (fragment instanceof Refreshable) {
-                                                ((Refreshable) fragment).doRefresh();
-                                            }
-
-                                        }
-                                    });
                                 }
-                            };
-                            thread.start();
+                            });
                         }
-                    }
+                    };
+                    thread.start();
+                }
+            }
             );
             dialogPassword.setCancelable(false);
             dialogPassword.show();
@@ -215,7 +214,7 @@ public class HotActivity extends FragmentActivity {
         configureTopBarSize();
 
         tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
-        tbtnMain.setBigInteger(null);
+        tbtnMain.setBigInteger(null, null);
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
         tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
 
@@ -417,22 +416,19 @@ public class HotActivity extends FragmentActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            BigInteger total = BigInteger.ZERO;
+            BigInteger btcPrivate = null, btcWatchOnly = null;
             if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PRIVATEKEY_TOTAL_BITCOIN)) {
-                BigInteger privateKeyTotal = (BigInteger) intent.getSerializableExtra(BroadcastUtil
+                btcPrivate = (BigInteger) intent.getSerializableExtra(BroadcastUtil
                         .ACTION_PRIVATEKEY_TOTAL_BITCOIN);
-                total = total.add(privateKeyTotal);
-
             }
             if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN)) {
-                BigInteger watchonlyTotal = (BigInteger) intent.getSerializableExtra
-                        (BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN);
-                total = total.add(watchonlyTotal);
+                btcWatchOnly = (BigInteger) intent.getSerializableExtra(BroadcastUtil
+                        .ACTION_WATCHONLY_TOTAL_BITCOIN);
             }
             if (!WalletUtils.hasAnyAddresses()) {
-                tbtnMain.setBigInteger(null);
+                tbtnMain.setBigInteger(null, null);
             } else {
-                tbtnMain.setBigInteger(total);
+                tbtnMain.setBigInteger(btcPrivate, btcWatchOnly);
             }
         }
     }

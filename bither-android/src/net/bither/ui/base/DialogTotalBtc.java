@@ -16,28 +16,87 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
+import android.content.Context;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.util.GenericUtils;
-import android.content.Context;
-import android.widget.TextView;
+import net.bither.util.UIUtil;
+
+import java.math.BigInteger;
 
 public class DialogTotalBtc extends DialogWithArrow {
 
-	private TextView tvBtc;
+    private TextView tvBtc;
+    private PieChartView vPieChart;
+    private FrameLayout flPieContainer;
+    private ImageView ivPrivate;
+    private TextView tvPrivate;
+    private ImageView ivWatchOnly;
+    private TextView tvWatchOnly;
+    private LinearLayout llPrivate;
+    private LinearLayout llWatchOnly;
 
-	public DialogTotalBtc(Context context) {
-		super(context);
-		setContentView(R.layout.dialog_total_btc);
-		tvBtc = (TextView) findViewById(R.id.tv_btc);
-	}
+    private BigInteger btcPrivate;
+    private BigInteger btcWatchOnly;
 
-	public void setBigInteger(BigInteger btc) {
+    public DialogTotalBtc(Context context) {
+        super(context);
+        setContentView(R.layout.dialog_total_btc);
+        tvBtc = (TextView) findViewById(R.id.tv_btc);
+        vPieChart = (PieChartView) findViewById(R.id.pie);
+        flPieContainer = (FrameLayout) findViewById(R.id.fl_pie_container);
+        flPieContainer.getLayoutParams().height = flPieContainer.getLayoutParams().width = UIUtil
+                .getScreenWidth() - UIUtil.dip2pix(80);
+        ivPrivate = (ImageView) findViewById(R.id.iv_private);
+        tvPrivate = (TextView) findViewById(R.id.tv_private);
+        ivWatchOnly = (ImageView) findViewById(R.id.iv_watchonly);
+        tvWatchOnly = (TextView) findViewById(R.id.tv_watchonly);
+        llPrivate = (LinearLayout) findViewById(R.id.ll_private);
+        llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
+        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
+        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
+    }
 
-		if (btc != null) {
-			tvBtc.setText(GenericUtils.formatValue(btc));
-		}
-	}
+    public void setPrivateAndWatchOnly(BigInteger btcPrivate, BigInteger btcWatchOnly) {
+        BigInteger total = BigInteger.ZERO;
+        this.btcPrivate = btcPrivate;
+        this.btcWatchOnly = btcWatchOnly;
+        if (btcPrivate != null && btcPrivate.signum() > 0) {
+            total = total.add(btcPrivate);
+        }
+        if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
+            total = total.add(btcWatchOnly);
+        }
+        tvBtc.setText(GenericUtils.formatValue(total));
+        if (btcPrivate != null && btcPrivate.signum() > 0) {
+            tvPrivate.setText(GenericUtils.formatValue(btcPrivate));
+            llPrivate.setVisibility(View.VISIBLE);
+        } else {
+            llPrivate.setVisibility(View.GONE);
+        }
+        if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
+            tvWatchOnly.setText(GenericUtils.formatValue(btcWatchOnly));
+            llWatchOnly.setVisibility(View.VISIBLE);
+        } else {
+            llWatchOnly.setVisibility(View.GONE);
+        }
+    }
 
+    @Override
+    public void show() {
+        vPieChart.setTotalAngle(0);
+        super.show();
+        vPieChart.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                vPieChart.setAmount(btcPrivate == null ? BigInteger.ZERO : btcPrivate,
+                        btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
+            }
+        }, 100);
+    }
 }
