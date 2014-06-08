@@ -96,6 +96,7 @@ public class DialogTotalBtc extends DialogWithArrow {
 
     @Override
     public void show() {
+        vPieChart.setStartAngle(PieChartView.DefaultStartAngle);
         vPieChart.setTotalAngle(0);
         super.show();
         vPieChart.postDelayed(new Runnable() {

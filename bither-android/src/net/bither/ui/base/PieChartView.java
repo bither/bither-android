@@ -26,9 +26,12 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.nineoldandroids.animation.ObjectAnimator;
+
+import net.bither.util.LogUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -42,6 +45,7 @@ public class PieChartView extends View {
             Color.rgb(100, 114, 253), Color.rgb(117, 140, 129), Color.rgb(200, 47, 217),
             Color.rgb(239, 204, 41), Color.rgb(253, 38, 38), Color.rgb(253, 160, 38),
             Color.rgb(144, 183, 177)};
+    public static final float DefaultStartAngle = 90;
     private static final int TransformDuration = 400;
     private static final Paint paint = new Paint();
     private static final float MaxTotalAngle = 360;
@@ -53,7 +57,7 @@ public class PieChartView extends View {
 
     private BigInteger[] amounts;
     private BigInteger total;
-    private float startAngle = 90;
+    private float startAngle = DefaultStartAngle;
 
     private float totalAngle = 0;
 
@@ -90,6 +94,10 @@ public class PieChartView extends View {
 
     public void setStartAngle(float angle) {
         this.startAngle = angle;
+        if (startAngle > 360) {
+            startAngle = startAngle - 360;
+        }
+        LogUtil.i("Pie", "StartAngle: " + startAngle);
         causeDraw();
     }
 
@@ -167,6 +175,37 @@ public class PieChartView extends View {
             postInvalidate();
         }
     }
+
+
+    // rotation start
+    double fingerRotation;
+    double newFingerRotation;
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        final float x = event.getX();
+        final float y = event.getY();
+
+        final float xc = getWidth() / 2;
+        final float yc = getHeight() / 2;
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                fingerRotation = Math.toDegrees(Math.atan2(x - xc, yc - y));
+                break;
+            case MotionEvent.ACTION_MOVE:
+                newFingerRotation = Math.toDegrees(Math.atan2(x - xc, yc - y));
+                setStartAngle((float) (getStartAngle() + newFingerRotation - fingerRotation));
+                fingerRotation = newFingerRotation;
+                break;
+            case MotionEvent.ACTION_UP:
+                fingerRotation = newFingerRotation = 0.0f;
+                break;
+        }
+        return true;
+    }
+
+    // rotation end
 
     public Drawable getSymbolForIndex(int index) {
         int color = Colors[0];
