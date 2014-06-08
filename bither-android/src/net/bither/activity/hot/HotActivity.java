@@ -424,9 +424,9 @@ public class HotActivity extends FragmentActivity {
                 total = total.add(privateKeyTotal);
 
             }
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHPNLY_TOTAL_BITCOIN)) {
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN)) {
                 BigInteger watchonlyTotal = (BigInteger) intent.getSerializableExtra
-                        (BroadcastUtil.ACTION_WATCHPNLY_TOTAL_BITCOIN);
+                        (BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN);
                 total = total.add(watchonlyTotal);
             }
             if (!WalletUtils.hasAnyAddresses()) {

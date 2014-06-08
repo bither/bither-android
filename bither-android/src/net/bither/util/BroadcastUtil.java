@@ -38,7 +38,7 @@ public class BroadcastUtil {
     public static final String ACTION_TOTAL_BITCOIN_STATE = R.class
             .getPackage().getName() + ".total_state";
     public static final String ACTION_PRIVATEKEY_TOTAL_BITCOIN = "total_private_key_bitcoin";
-    public static final String ACTION_WATCHPNLY_TOTAL_BITCOIN = "total_watchonly_bitcoin";
+    public static final String ACTION_WATCHONLY_TOTAL_BITCOIN = "total_watchonly_bitcoin";
 
     public static final String ACTION_ADDRESS_STATE = R.class.getPackage()
             .getName() + ".address";
@@ -76,7 +76,7 @@ public class BroadcastUtil {
 
         final Intent broadcast = new Intent(ACTION_TOTAL_BITCOIN_STATE);
         broadcast.putExtra(ACTION_PRIVATEKEY_TOTAL_BITCOIN, privateKeyBig);
-        broadcast.putExtra(ACTION_WATCHPNLY_TOTAL_BITCOIN, watchonlyBig);
+        broadcast.putExtra(ACTION_WATCHONLY_TOTAL_BITCOIN, watchonlyBig);
         BitherApplication.mContext.sendStickyBroadcast(broadcast);
         LogUtil.d("total",
                 "sendBroadcastTotalBitcoinState:privatekey" + privateKeyBig.toString() + "," +
