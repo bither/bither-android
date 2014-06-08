@@ -31,6 +31,7 @@ import android.view.View;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 /**
  * Created by songchenwen on 14-6-8.
@@ -39,11 +40,12 @@ public class PieChartView extends View {
     public static final int[] Colors = new int[]{Color.rgb(254, 35, 93), Color.rgb(36, 182, 212),
             Color.rgb(38, 230, 91), Color.rgb(194, 253, 70), Color.rgb(237, 193, 155),
             Color.rgb(100, 114, 253), Color.rgb(117, 140, 129), Color.rgb(200, 47, 217),
-            Color.rgb(239, 204, 41), Color.rgb(253, 38, 38),
-            Color.rgb(253, 160, 38), Color.rgb(144, 183, 177)};
+            Color.rgb(239, 204, 41), Color.rgb(253, 38, 38), Color.rgb(253, 160, 38),
+            Color.rgb(144, 183, 177)};
     private static final int TransformDuration = 400;
     private static final Paint paint = new Paint();
     private static final float MaxTotalAngle = 360;
+    private static final float MinRate = 0.05f;
 
     static {
         paint.setAntiAlias(true);
@@ -111,12 +113,42 @@ public class PieChartView extends View {
         canvas.drawARGB(0, 0, 0, 0);
         RectF rect = new RectF(0, 0, getWidth(), getHeight());
         float angle = this.startAngle;
+        ArrayList<Integer> minIndexes = new ArrayList<Integer>();
         if (amounts != null && amounts.length > 0 && total.signum() > 0) {
+            float[] rates = new float[amounts.length];
             for (int i = 0;
                  i < amounts.length;
                  i++) {
-                float rate = amounts[i].floatValue() / total.floatValue();
-                float sweepAngle = rate * totalAngle;
+                rates[i] = amounts[i].floatValue() / total.floatValue();
+                if (rates[i] < MinRate) {
+                    minIndexes.add(i);
+                    rates[i] = MinRate;
+                }
+            }
+
+            if (minIndexes.size() > 0) {
+                BigInteger total = BigInteger.ZERO;
+                for (int i = 0;
+                     i < amounts.length;
+                     i++) {
+                    if (!minIndexes.contains(Integer.valueOf(i))) {
+                        total = total.add(amounts[i]);
+                    }
+                }
+                float restRate = 1.0f - minIndexes.size() * MinRate;
+                for (int i = 0;
+                     i < amounts.length;
+                     i++) {
+                    if (!minIndexes.contains(Integer.valueOf(i))) {
+                        rates[i] = amounts[i].floatValue() / total.floatValue() * restRate;
+                    }
+                }
+            }
+
+            for (int i = 0;
+                 i < amounts.length;
+                 i++) {
+                float sweepAngle = rates[i] * totalAngle;
                 paint.setColor(Colors[i]);
                 canvas.drawArc(rect, angle, sweepAngle, true, paint);
                 angle += sweepAngle;
