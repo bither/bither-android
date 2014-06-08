@@ -82,7 +82,7 @@ public class HotActivity extends FragmentActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
                 .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         registerReceiver(totalBitcoinBroadcastReceiver, new IntentFilter(BroadcastUtil
-                        .ACTION_TOTAL_BITCOIN_STATE));
+                .ACTION_TOTAL_BITCOIN_STATE));
         mPager.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -138,37 +138,38 @@ public class HotActivity extends FragmentActivity {
             DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
                     new DialogPasswordListener() {
 
-                @Override
-                public void onPasswordEntered(final String password) {
-                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
-
                         @Override
-                        public void runWithService(BlockchainService service) {
-                            BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
-                            if (!WalletUtils.getBitherAddressList().contains(address)) {
-                                address.encrypt(password);
-                                WalletUtils.addAddressWithPrivateKey(service, address);
-                                preference.setHasPrivateKey(true);
-                            }
-                            HotActivity.this.runOnUiThread(new Runnable() {
+                        public void onPasswordEntered(final String password) {
+                            ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
+
                                 @Override
-                                public void run() {
-
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
+                                public void runWithService(BlockchainService service) {
+                                    BitherAddressWithPrivateKey address = new
+                                            BitherAddressWithPrivateKey();
+                                    if (!WalletUtils.getBitherAddressList().contains(address)) {
+                                        address.encrypt(password);
+                                        WalletUtils.addAddressWithPrivateKey(service, address);
+                                        preference.setHasPrivateKey(true);
                                     }
-                                    Fragment fragment = getFragmentAtIndex(1);
-                                    if (fragment instanceof Refreshable) {
-                                        ((Refreshable) fragment).doRefresh();
-                                    }
+                                    HotActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
 
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            Fragment fragment = getFragmentAtIndex(1);
+                                            if (fragment instanceof Refreshable) {
+                                                ((Refreshable) fragment).doRefresh();
+                                            }
+
+                                        }
+                                    });
                                 }
-                            });
+                            };
+                            thread.start();
                         }
-                    };
-                    thread.start();
-                }
-            }
+                    }
             );
             dialogPassword.setCancelable(false);
             dialogPassword.show();
@@ -416,14 +417,22 @@ public class HotActivity extends FragmentActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            BigInteger total = BigInteger.ZERO;
             if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PRIVATEKEY_TOTAL_BITCOIN)) {
-                BigInteger btc = (BigInteger) intent.getSerializableExtra(BroadcastUtil
+                BigInteger privateKeyTotal = (BigInteger) intent.getSerializableExtra(BroadcastUtil
                         .ACTION_PRIVATEKEY_TOTAL_BITCOIN);
-                if (!WalletUtils.hasAnyAddresses()) {
-                    tbtnMain.setBigInteger(null);
-                } else {
-                    tbtnMain.setBigInteger(btc);
-                }
+                total = total.add(privateKeyTotal);
+
+            }
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHPNLY_TOTAL_BITCOIN)) {
+                BigInteger watchonlyTotal = (BigInteger) intent.getSerializableExtra
+                        (BroadcastUtil.ACTION_WATCHPNLY_TOTAL_BITCOIN);
+                total = total.add(watchonlyTotal);
+            }
+            if (!WalletUtils.hasAnyAddresses()) {
+                tbtnMain.setBigInteger(null);
+            } else {
+                tbtnMain.setBigInteger(total);
             }
         }
     }
