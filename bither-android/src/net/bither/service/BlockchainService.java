@@ -654,6 +654,18 @@ public class BlockchainService extends android.app.Service {
                     .addAction(BroadcastUtil.ACTION_START_DOWLOAD_BLOCK_STATE);
             registerReceiver(connectivityReceiver, intentFilter);
             initSyncBlockChain();
+//            if(blockChain!=null) {
+//                List<StoredBlock> blocks = getRecentBlocks(3000000);
+//                if (blocks != null && blocks.size() > 0) {
+//                    LogUtil.d("storedblock", blocks.size() + ",");
+//                    for (StoredBlock storedBlock : blocks) {
+//                        LogUtil.d("storedblock", storedBlock.getHeight() + ",
+// " + storedBlock.getHeader().getHashAsString());
+//
+//
+//                    }
+//                }
+//            }
             try {
                 if (!SyncWalletUtil.noConnectPeer(BlockchainService.this)) {
                     beginInitBlockAndWalletInUiThread();

@@ -31,21 +31,18 @@ import com.google.bitcoin.core.StoredBlock;
 
 public class DownloadSpvApi extends HttpGetResponse<List<StoredBlock>> {
 
-	public DownloadSpvApi() {
-		setUrl(BitherUrl.BITHER_GET_SPVBLOCK_API);
-	}
+    public DownloadSpvApi() {
+        setUrl(BitherUrl.BITHER_GET_ONE_SPVBLOCK_API);
+    }
 
-	@Override
-	public void setResult(String response) throws Exception {
-		LogUtil.d("http", response);
-		JSONArray jsonArray = new JSONArray(response);
-		List<StoredBlock> storedBlocks = new ArrayList<StoredBlock>();
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-			storedBlocks.add(BlockUtil.formatStoredBlock(jsonObject));
-		}
-		this.result = storedBlocks;
+    @Override
+    public void setResult(String response) throws Exception {
+        LogUtil.d("http", response);
+        List<StoredBlock> storedBlocks = new ArrayList<StoredBlock>();
+        JSONObject jsonObject = new JSONObject(response);
+        storedBlocks.add(BlockUtil.formatStoredBlock(jsonObject));
+        this.result = storedBlocks;
 
-	}
+    }
 
 }
