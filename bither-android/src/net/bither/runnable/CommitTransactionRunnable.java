@@ -28,74 +28,73 @@ import net.bither.util.WalletUtils;
 import com.google.bitcoin.core.Transaction;
 
 public class CommitTransactionRunnable extends BaseRunnable {
-	private int addressPosition;
-	private BitherAddress wallet;
-	private Transaction tx;
+    private int addressPosition;
+    private BitherAddress wallet;
+    private Transaction tx;
 
-	public CommitTransactionRunnable(int addressPosition, Transaction tx)
-			throws Exception {
-		this(addressPosition, tx, true);
-	}
+    public CommitTransactionRunnable(int addressPosition, Transaction tx)
+            throws Exception {
+        this(addressPosition, tx, true);
+    }
 
-	public CommitTransactionRunnable(int addressPosition, Transaction tx,
-			boolean withPrivateKey) throws Exception {
-		this.addressPosition = addressPosition;
-		if (withPrivateKey) {
-			BitherAddress a = WalletUtils.getPrivateAddressList().get(
-					addressPosition);
-			if (a instanceof BitherAddressWithPrivateKey) {
-				wallet = (BitherAddressWithPrivateKey) a;
-			} else {
-				throw new Exception("address not with private key");
-			}
-		} else {
-			wallet = WalletUtils.getWatchOnlyAddressList().get(addressPosition);
-		}
-		this.tx = tx;
-	}
+    public CommitTransactionRunnable(int addressPosition, Transaction tx,
+                                     boolean withPrivateKey) throws Exception {
+        this.addressPosition = addressPosition;
+        if (withPrivateKey) {
+            BitherAddress a = WalletUtils.getPrivateAddressList().get(
+                    addressPosition);
+            if (a instanceof BitherAddressWithPrivateKey) {
+                wallet = (BitherAddressWithPrivateKey) a;
+            } else {
+                throw new Exception("address not with private key");
+            }
+        } else {
+            wallet = WalletUtils.getWatchOnlyAddressList().get(addressPosition);
+        }
+        this.tx = tx;
+    }
 
-	@Override
-	public void run() {
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		try {
-			wallet.commitTx(tx);
-			WalletUtils.notifyAddressInfo(wallet);
-			List<BitherAddress> watchonlys = WalletUtils
-					.getWatchOnlyAddressList();
-			for (BitherAddress a : watchonlys) {
-				if (a != wallet) {
-					if (a.isPendingTransactionRelevant(tx)) {
-						if (a.getTransaction(tx.getHash()) == null) {
-							a.receivePending(tx, null);
-							WalletUtils.notifyAddressInfo(a);
-						}
-					}
-				}
-			}
+    @Override
+    public void run() {
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        try {
+            wallet.commitTx(tx);
+            WalletUtils.notifyAddressInfo(wallet);
+            List<BitherAddress> watchonlys = WalletUtils
+                    .getWatchOnlyAddressList();
+            for (BitherAddress a : watchonlys) {
+                if (a != wallet) {
+                    if (a.isPendingTransactionRelevant(tx)) {
+                        if (a.getTransaction(tx.getHash()) == null) {
+                            a.receivePending(tx, null);
+                            WalletUtils.notifyAddressInfo(a);
+                        }
+                    }
+                }
+            }
 
-			List<BitherAddressWithPrivateKey> privates = WalletUtils
-					.getPrivateAddressList();
-			for (BitherAddressWithPrivateKey a : privates) {
-				if (a != wallet) {
-					if (a.isPendingTransactionRelevant(tx)) {
-						if (a.getTransaction(tx.getHash()) == null) {
-							a.receivePending(tx, null);
-							WalletUtils.notifyAddressInfo(a);
-						}
-					}
-				}
-			}
+            List<BitherAddressWithPrivateKey> privates = WalletUtils
+                    .getPrivateAddressList();
+            for (BitherAddressWithPrivateKey a : privates) {
+                if (a != wallet) {
+                    if (a.isPendingTransactionRelevant(tx)) {
+                        if (a.getTransaction(tx.getHash()) == null) {
+                            a.receivePending(tx, null);
+                            WalletUtils.notifyAddressInfo(a);
+                        }
+                    }
+                }
+            }
 
-			BroadcastUtil.sendBroadcastTx(tx, addressPosition,
-					wallet.hasPrivateKey());
-			BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-					.getTotalBitcoin());
-			TransactionsUtil.removeSignTx(new UnSignTransaction(tx, wallet
-					.getAddress()));
-			obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
-		} catch (Exception e) {
-			e.printStackTrace();
-			obtainMessage(HandlerMessage.MSG_FAILURE);
-		}
-	}
+            BroadcastUtil.sendBroadcastTx(tx, addressPosition,
+                    wallet.hasPrivateKey());
+            WalletUtils.sendTotalBroadcast();
+            TransactionsUtil.removeSignTx(new UnSignTransaction(tx, wallet
+                    .getAddress()));
+            obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
+        } catch (Exception e) {
+            e.printStackTrace();
+            obtainMessage(HandlerMessage.MSG_FAILURE);
+        }
+    }
 }

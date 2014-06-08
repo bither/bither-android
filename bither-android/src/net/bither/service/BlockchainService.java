@@ -176,9 +176,7 @@ public class BlockchainService extends android.app.Service {
         @Override
         public void onCoinsReceived(final Wallet wallet, final Transaction tx,
                                     final BigInteger prevBalance, final BigInteger newBalance) {
-
-            BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                    .getTotalBitcoin());
+            WalletUtils.sendTotalBroadcast();
             BroadcastUtil.sendBroadcastAddressState((BitherAddress) wallet);
 
             if (tx.getConfidence().getSource() == Source.SELF) {
@@ -222,8 +220,7 @@ public class BlockchainService extends android.app.Service {
         public void onCoinsSent(final Wallet wallet, final Transaction tx,
                                 final BigInteger prevBalance, final BigInteger newBalance) {
 
-            BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                    .getTotalBitcoin());
+            WalletUtils.sendTotalBroadcast();
             BroadcastUtil.sendBroadcastAddressState((BitherAddress) wallet);
 
             if (tx.getConfidence().getSource() == Source.SELF) {
@@ -328,8 +325,7 @@ public class BlockchainService extends android.app.Service {
                             }
                         }
                     }
-                    BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                            .getTotalBitcoin());
+                    WalletUtils.sendTotalBroadcast();
                 }
             }
         }

@@ -427,11 +427,9 @@ public class WalletUtils {
                         .getAppMode();
                 initAddressList(watchOnlys, errors, privates);
                 if (appMode == AppMode.HOT) {
-                    BigInteger total = BigInteger.ZERO;
                     if (privateAddressList.size() + watchOnlyAddressList.size() > 0) {
-                        total = total.add(getTotalBitcoin());
+                        sendTotalBroadcast();
                     }
-                    BroadcastUtil.sendBroadcastTotalBitcoinState(total);
                     BroadcastUtil.sendBroadcastDowloadBlockState();
                 }
                 BroadcastUtil.sendBroadcastAddressLoadCompleteState(true);
@@ -439,6 +437,14 @@ public class WalletUtils {
             }
         }).start();
 
+    }
+
+    public static void sendTotalBroadcast() {
+        if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
+            BigInteger privateKeyBig = getPrivateKeyTotal();
+            BigInteger watchOnlyBig = getWatchOnlyTotal();
+            BroadcastUtil.sendBroadcastTotalBitcoinState(privateKeyBig, watchOnlyBig);
+        }
     }
 
     private static void initAddressList(List<BitherAddress> watchOnlys,
@@ -545,20 +551,23 @@ public class WalletUtils {
         return addresses;
     }
 
-    public static BigInteger getTotalBitcoin() {
+    private static BigInteger getWatchOnlyTotal() {
         BigInteger total = BigInteger.ZERO;
-        List<BitherAddress> watchOnly = getWatchOnlyAddressList();
-        List<BitherAddressWithPrivateKey> privates = getPrivateAddressList();
-        if (watchOnly != null) {
-            for (BitherAddress bitherAddress : watchOnly) {
+        if (watchOnlyAddressList != null && watchOnlyAddressList.size() > 0) {
+            for (BitherAddress bitherAddress : watchOnlyAddressList) {
                 if (!bitherAddress.isError()) {
                     total = total.add(bitherAddress
                             .getBalance(BalanceType.ESTIMATED));
                 }
             }
         }
-        if (privates != null) {
-            for (BitherAddress bitherAddress : privates) {
+        return total;
+    }
+
+    private static BigInteger getPrivateKeyTotal() {
+        BigInteger total = BigInteger.ZERO;
+        if (privateAddressList != null && privateAddressList.size() > 0) {
+            for (BitherAddress bitherAddress : privateAddressList) {
                 if (!bitherAddress.isError()) {
                     total = total.add(bitherAddress
                             .getBalance(BalanceType.ESTIMATED));
@@ -604,10 +613,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        if (appMode == AppMode.HOT) {
-                            BroadcastUtil
-                                    .sendBroadcastTotalBitcoinState(getTotalBitcoin());
-                        }
+                        sendTotalBroadcast();
                         BackupUtil.backupColdKey(false);
                         BackupUtil.backupHotKey();
 
@@ -650,8 +656,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        BroadcastUtil
-                                .sendBroadcastTotalBitcoinState(getTotalBitcoin());
+                       sendTotalBroadcast();
                     }
                 }).start();
             }
@@ -762,8 +767,7 @@ public class WalletUtils {
                         }
                         saveWatchOnlyAddressSequence();
                         BroadcastUtil.sendBroadcastProgressState(1.0);
-                        BroadcastUtil
-                                .sendBroadcastTotalBitcoinState(getTotalBitcoin());
+                        sendTotalBroadcast();
                         if (service != null) {
                             service.beginInitBlockAndWalletInUiThread();
                         }
@@ -1146,8 +1150,7 @@ public class WalletUtils {
         }
         log.info("fix wallet: " + wallet.getAddress());
         WalletUtils.saveBitherAddress(wallet);
-        BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                .getTotalBitcoin());
+        sendTotalBroadcast();
         BroadcastUtil.sendBroadcastAddressState(wallet);
     }
 

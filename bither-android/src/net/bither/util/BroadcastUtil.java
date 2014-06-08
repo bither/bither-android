@@ -32,140 +32,144 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class BroadcastUtil {
-	public static final String ACTION_START_DOWLOAD_BLOCK_STATE = R.class
-			.getPackage().getName() + ".start_dowload_block_state";
+    public static final String ACTION_START_DOWLOAD_BLOCK_STATE = R.class
+            .getPackage().getName() + ".start_dowload_block_state";
 
-	public static final String ACTION_TOTAL_BITCOIN_STATE = R.class
-			.getPackage().getName() + ".total_state";
-	public static final String ACTION_TOTAL_BITCOIN = "total_bitcoin";
+    public static final String ACTION_TOTAL_BITCOIN_STATE = R.class
+            .getPackage().getName() + ".total_state";
+    public static final String ACTION_PRIVATEKEY_TOTAL_BITCOIN = "total_private_key_bitcoin";
+    public static final String ACTION_WATCHPNLY_TOTAL_BITCOIN = "total_watchonly_bitcoin";
 
-	public static final String ACTION_ADDRESS_STATE = R.class.getPackage()
-			.getName() + ".address";
+    public static final String ACTION_ADDRESS_STATE = R.class.getPackage()
+            .getName() + ".address";
 
-	public static final String ACTION_ADDRESS_INFO = "address_info";
-	public static final String ACTION_ADDRESS_ERROR = "address_error";
+    public static final String ACTION_ADDRESS_INFO = "address_info";
+    public static final String ACTION_ADDRESS_ERROR = "address_error";
 
-	public static final String ACTION_MARKET = R.class.getPackage().getName()
-			+ ".market";
+    public static final String ACTION_MARKET = R.class.getPackage().getName()
+            + ".market";
 
-	public static final String ACTION_TICKER_INFO = "ticker_info";
+    public static final String ACTION_TICKER_INFO = "ticker_info";
 
-	public static final String ACTION_SYNC_BLOCK_AND_WALLET_STATE = R.class
-			.getPackage().getName() + ".sync_block_wallet";
-	public static final String ACTION_PROGRESS_INFO = "progress_info";
+    public static final String ACTION_SYNC_BLOCK_AND_WALLET_STATE = R.class
+            .getPackage().getName() + ".sync_block_wallet";
+    public static final String ACTION_PROGRESS_INFO = "progress_info";
 
-	public static final String ACTION_ADDRESS_LOAD_COMPLETE_STATE = R.class
-			.getPackage().getName() + ".load_complete";
+    public static final String ACTION_ADDRESS_LOAD_COMPLETE_STATE = R.class
+            .getPackage().getName() + ".load_complete";
 
-	public static final String ACTION_DOWLOAD_SPV_BLOCK = R.class.getPackage()
-			.getName() + ".dowload_block_api_complete";
-	public static final String ACTION_DOWLOAD_SPV_BLOCK_STATE = "complete";
+    public static final String ACTION_DOWLOAD_SPV_BLOCK = R.class.getPackage()
+            .getName() + ".dowload_block_api_complete";
+    public static final String ACTION_DOWLOAD_SPV_BLOCK_STATE = "complete";
 
-	public static final String ACTION_ADDRESS_LOAD_COMPLETE_INFO = "load_complete";
+    public static final String ACTION_ADDRESS_LOAD_COMPLETE_INFO = "load_complete";
 
-	// public static final String ACTION_SYNC_BEGIN = "sync_begin_info";
-	// public static final String ACTION_SYNC_END = "sync_end_info";
-	public static void sendBroadcastDowloadBlockState() {
-		final Intent broadcast = new Intent(ACTION_START_DOWLOAD_BLOCK_STATE);
-		BitherApplication.mContext.sendBroadcast(broadcast);
-	}
+    // public static final String ACTION_SYNC_BEGIN = "sync_begin_info";
+    // public static final String ACTION_SYNC_END = "sync_end_info";
+    public static void sendBroadcastDowloadBlockState() {
+        final Intent broadcast = new Intent(ACTION_START_DOWLOAD_BLOCK_STATE);
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
 
-	public static void sendBroadcastTotalBitcoinState(BigInteger bigInteger) {
+    public static void sendBroadcastTotalBitcoinState(BigInteger privateKeyBig,
+                                                      BigInteger watchonlyBig) {
 
-		final Intent broadcast = new Intent(ACTION_TOTAL_BITCOIN_STATE);
-		broadcast.putExtra(ACTION_TOTAL_BITCOIN, bigInteger);
-		BitherApplication.mContext.sendStickyBroadcast(broadcast);
-		LogUtil.d("total",
-				"sendBroadcastTotalBitcoinState" + bigInteger.toString());
-	}
+        final Intent broadcast = new Intent(ACTION_TOTAL_BITCOIN_STATE);
+        broadcast.putExtra(ACTION_PRIVATEKEY_TOTAL_BITCOIN, privateKeyBig);
+        broadcast.putExtra(ACTION_WATCHPNLY_TOTAL_BITCOIN, watchonlyBig);
+        BitherApplication.mContext.sendStickyBroadcast(broadcast);
+        LogUtil.d("total",
+                "sendBroadcastTotalBitcoinState:privatekey" + privateKeyBig.toString() + "," +
+                        "watchonly:" + watchonlyBig.toString());
+    }
 
-	public static void removeBroadcastTotalBitcoinState() {
-		BitherApplication.mContext.removeStickyBroadcast(new Intent(
-				ACTION_TOTAL_BITCOIN_STATE));
-	}
+    public static void removeBroadcastTotalBitcoinState() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent(
+                ACTION_TOTAL_BITCOIN_STATE));
+    }
 
-	public static void sendBroadcastAddressState(BitherAddress bitherAddress) {
-		final Intent broadcast = new Intent(ACTION_ADDRESS_STATE);
-		AddressInfo addressInfo = new AddressInfo(bitherAddress);
-		bitherAddress.setAddressInfo(addressInfo);
-		broadcast.putExtra(ACTION_ADDRESS_INFO, addressInfo);
-		broadcast.putExtra(ACTION_ADDRESS_STATE, bitherAddress.getAddress());
-		BitherApplication.mContext.sendBroadcast(broadcast);
-	}
+    public static void sendBroadcastAddressState(BitherAddress bitherAddress) {
+        final Intent broadcast = new Intent(ACTION_ADDRESS_STATE);
+        AddressInfo addressInfo = new AddressInfo(bitherAddress);
+        bitherAddress.setAddressInfo(addressInfo);
+        broadcast.putExtra(ACTION_ADDRESS_INFO, addressInfo);
+        broadcast.putExtra(ACTION_ADDRESS_STATE, bitherAddress.getAddress());
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
 
-	public static void sendBroadcastAddressState(BitherAddress bitherAddress,
-			int errorCode, Object obj) {
-		final Intent broadcast = new Intent(ACTION_ADDRESS_STATE);
-		broadcast.putExtra(ACTION_ADDRESS_ERROR, errorCode);
-		broadcast.putExtra(ACTION_ADDRESS_STATE, bitherAddress.getAddress());
-		BitherApplication.mContext.sendBroadcast(broadcast);
-	}
+    public static void sendBroadcastAddressState(BitherAddress bitherAddress,
+                                                 int errorCode, Object obj) {
+        final Intent broadcast = new Intent(ACTION_ADDRESS_STATE);
+        broadcast.putExtra(ACTION_ADDRESS_ERROR, errorCode);
+        broadcast.putExtra(ACTION_ADDRESS_STATE, bitherAddress.getAddress());
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
 
-	public static void removeAddressBitcoinState() {
-		BitherApplication.mContext.removeStickyBroadcast(new Intent(
-				ACTION_ADDRESS_STATE));
-	}
+    public static void removeAddressBitcoinState() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent(
+                ACTION_ADDRESS_STATE));
+    }
 
-	public static void sendBroadcastMarketState(List<Ticker> tickers) {
-		if (tickers != null && tickers.size() > 0) {
-			MarketUtil.setTickerList(tickers);
-			final Intent broadcast = new Intent(ACTION_MARKET);
-			BitherApplication.mContext.sendBroadcast(broadcast);
-		}
-	}
+    public static void sendBroadcastMarketState(List<Ticker> tickers) {
+        if (tickers != null && tickers.size() > 0) {
+            MarketUtil.setTickerList(tickers);
+            final Intent broadcast = new Intent(ACTION_MARKET);
+            BitherApplication.mContext.sendBroadcast(broadcast);
+        }
+    }
 
-	public static void removeMarketState() {
-		BitherApplication.mContext.removeStickyBroadcast(new Intent(
-				ACTION_MARKET));
-	}
+    public static void removeMarketState() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent(
+                ACTION_MARKET));
+    }
 
-	public static void sendBroadcastProgressState(double value) {
-		final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
-		broadcast.putExtra(ACTION_PROGRESS_INFO, value);
-		BitherApplication.mContext.sendBroadcast(broadcast);
-	}
+    public static void sendBroadcastProgressState(double value) {
+        final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
+        broadcast.putExtra(ACTION_PROGRESS_INFO, value);
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
 
-	public static void sendBroadcastTx(Transaction tx, int addressPosition,
-			boolean hasPrivateKey) {
-		final Intent intent = new Intent(
-				BlockchainService.ACTION_BROADCAST_TRANSACTION, null,
-				BitherApplication.mContext, BlockchainService.class);
-		intent.putExtra(BlockchainService.ACTION_BROADCAST_TRANSACTION_HASH, tx
-				.getHash().getBytes());
-		intent.putExtra(
-				BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-				addressPosition);
-		intent.putExtra(
-				BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
-				hasPrivateKey);
-		BitherApplication.mContext.startService(intent);
-	}
+    public static void sendBroadcastTx(Transaction tx, int addressPosition,
+                                       boolean hasPrivateKey) {
+        final Intent intent = new Intent(
+                BlockchainService.ACTION_BROADCAST_TRANSACTION, null,
+                BitherApplication.mContext, BlockchainService.class);
+        intent.putExtra(BlockchainService.ACTION_BROADCAST_TRANSACTION_HASH, tx
+                .getHash().getBytes());
+        intent.putExtra(
+                BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                addressPosition);
+        intent.putExtra(
+                BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
+                hasPrivateKey);
+        BitherApplication.mContext.startService(intent);
+    }
 
-	public static void removeProgressState() {
-		BitherApplication.mContext.removeStickyBroadcast(new Intent(
-				ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+    public static void removeProgressState() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent(
+                ACTION_SYNC_BLOCK_AND_WALLET_STATE));
 
-	}
+    }
 
-	public static void sendBroadcastAddressLoadCompleteState(boolean value) {
-		final Intent broadcast = new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE);
-		broadcast.putExtra(ACTION_ADDRESS_LOAD_COMPLETE_INFO, value);
-		BitherApplication.mContext.sendStickyBroadcast(broadcast);
-	}
+    public static void sendBroadcastAddressLoadCompleteState(boolean value) {
+        final Intent broadcast = new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE);
+        broadcast.putExtra(ACTION_ADDRESS_LOAD_COMPLETE_INFO, value);
+        BitherApplication.mContext.sendStickyBroadcast(broadcast);
+    }
 
-	public static void sendBroadcastGetSpvBlockComplete(boolean isComplete) {
-		final Intent intent = new Intent(ACTION_DOWLOAD_SPV_BLOCK);
-		intent.putExtra(ACTION_DOWLOAD_SPV_BLOCK_STATE, isComplete);
-		BitherApplication.mContext.sendStickyBroadcast(intent);
-		LogUtil.d("broadcase", "sendBroadcastAddressGetBlockComplete");
-	}
+    public static void sendBroadcastGetSpvBlockComplete(boolean isComplete) {
+        final Intent intent = new Intent(ACTION_DOWLOAD_SPV_BLOCK);
+        intent.putExtra(ACTION_DOWLOAD_SPV_BLOCK_STATE, isComplete);
+        BitherApplication.mContext.sendStickyBroadcast(intent);
+        LogUtil.d("broadcase", "sendBroadcastAddressGetBlockComplete");
+    }
 
-	public static void removeBroadcastGetSpvBlockCompelte() {
-		BitherApplication.mContext.removeStickyBroadcast(new Intent(
-				ACTION_DOWLOAD_SPV_BLOCK));
-	}
+    public static void removeBroadcastGetSpvBlockCompelte() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent(
+                ACTION_DOWLOAD_SPV_BLOCK));
+    }
 
-	public static void removeAddressLoadCompleteState(BitherApplication app) {
-		app.removeStickyBroadcast(new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE));
-	}
+    public static void removeAddressLoadCompleteState(BitherApplication app) {
+        app.removeStickyBroadcast(new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+    }
 }

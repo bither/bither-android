@@ -416,9 +416,9 @@ public class HotActivity extends FragmentActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_TOTAL_BITCOIN)) {
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PRIVATEKEY_TOTAL_BITCOIN)) {
                 BigInteger btc = (BigInteger) intent.getSerializableExtra(BroadcastUtil
-                        .ACTION_TOTAL_BITCOIN);
+                        .ACTION_PRIVATEKEY_TOTAL_BITCOIN);
                 if (!WalletUtils.hasAnyAddresses()) {
                     tbtnMain.setBigInteger(null);
                 } else {
