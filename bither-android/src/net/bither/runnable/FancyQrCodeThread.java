@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.listener.GetAvatarListener;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
@@ -65,16 +66,26 @@ public class FancyQrCodeThread extends Thread {
         final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor, MarginSize);
         final int qrCodeSize = Math.min(qrCode.getWidth(), qrCode.getHeight());
         if (addAvatar && AppSharedPreference.getInstance().hasUserAvatar()) {
-            Bitmap avatar = ImageManageUtil.getAvatarForFancyQrCode();
-            if (avatar != null) {
-                Canvas c = new Canvas(qrCode);
-                int avatarSize = (int) (qrCodeSize * AvatarSizeRate);
-                int avaterOffset = (qrCodeSize - avatarSize) / 2;
-                Paint paint = new Paint();
-                paint.setAntiAlias(true);
-                c.drawBitmap(avatar, null, new Rect(avaterOffset, avaterOffset,
-                        avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
-            }
+            ImageManageUtil.getAvatarForFancyQrCode(new GetAvatarListener() {
+                @Override
+                public void success(Bitmap bit) {
+                    if (bit != null) {
+                        Canvas c = new Canvas(qrCode);
+                        int avatarSize = (int) (qrCodeSize * AvatarSizeRate);
+                        int avaterOffset = (qrCodeSize - avatarSize) / 2;
+                        Paint paint = new Paint();
+                        paint.setAntiAlias(true);
+                        c.drawBitmap(bit, null, new Rect(avaterOffset, avaterOffset,
+                                avaterOffset + avatarSize, avaterOffset + avatarSize), paint);
+                    }
+                }
+
+                @Override
+                public void fileNoExist() {
+
+                }
+            });
+
         }
 
         if (listener != null) {

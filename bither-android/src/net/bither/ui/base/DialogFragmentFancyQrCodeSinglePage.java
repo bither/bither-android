@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
+import net.bither.ui.base.listener.GetAvatarListener;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.Qr;
@@ -162,8 +163,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     }
 
     private void configureProgress() {
-        if (qrCode != null && (!AppSharedPreference.getInstance().hasUserAvatar() || avatar !=
-                null) && flQrContainer != null) {
+        if (qrCode != null && getAvatarFinish && flQrContainer != null) {
             flQrContainer.setVisibility(View.VISIBLE);
             pb.setVisibility(View.GONE);
         } else {
@@ -172,13 +172,29 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         }
     }
 
+    private boolean getAvatarFinish = false;
+
     private class GetAvatarThread extends Thread {
         @Override
         public void run() {
-            avatar = ImageManageUtil.getAvatarForFancyQrCode();
-            if (ivAvatar != null) {
-                configureImages();
-            }
+            ImageManageUtil.getAvatarForFancyQrCode(new GetAvatarListener() {
+                @Override
+                public void success(Bitmap bitmap) {
+                    avatar = bitmap;
+                    getAvatarFinish = true;
+                    if (ivAvatar != null) {
+                        configureImages();
+                    }
+
+                }
+
+                @Override
+                public void fileNoExist() {
+                    getAvatarFinish = true;
+
+                }
+            });
+
         }
     }
 
