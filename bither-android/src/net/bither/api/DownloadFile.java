@@ -20,6 +20,12 @@ import android.os.Build;
 
 import net.bither.http.HttpRequestException;
 import net.bither.http.HttpSetting;
+import net.bither.preference.PersistentCookieStore;
+import net.bither.preference.SerializableCookie;
+import net.bither.util.LogUtil;
+import net.bither.util.StringUtil;
+
+import org.apache.http.cookie.Cookie;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -50,6 +56,9 @@ public class DownloadFile {
             urlConnection
                     .setConnectTimeout(HttpSetting.HTTP_CONNECTION_TIMEOUT);
             urlConnection.setReadTimeout(HttpSetting.HTTP_SO_TIMEOUT);
+            String sCookies = getCookie();
+            LogUtil.d("cookie",sCookies);
+            urlConnection.setRequestProperty("Cookie", sCookies);
             int httpCode = urlConnection.getResponseCode();
             if (httpCode != 200) {
                 throw new HttpRequestException("http exception " + httpCode);
@@ -153,6 +162,19 @@ public class DownloadFile {
         if (file.exists() && !file.delete()) {
             throw new IOException();
         }
+    }
+
+    private String getCookie() {
+        String cookieStr = "";
+        for (Cookie cookie : PersistentCookieStore.getInstance().getCookies()) {
+            cookieStr = cookie.getName() + "=" + cookie.getValue() + ";";
+        }
+        //LogUtil.d("cookie",cookieStr);
+        if (!StringUtil.isEmpty(cookieStr)){
+            cookieStr=cookieStr.substring(0,cookieStr.length()-1);
+        }
+        //LogUtil.d("cookie","substring:"+cookieStr);
+        return cookieStr;
     }
 
     public File downloadFile(String urlString, File file)

@@ -42,6 +42,7 @@ import net.bither.fragment.hot.MarketFragment;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
+import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.service.BlockchainService;
@@ -138,37 +139,38 @@ public class HotActivity extends FragmentActivity {
             DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
                     new DialogPasswordListener() {
 
-                @Override
-                public void onPasswordEntered(final String password) {
-                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
-
                         @Override
-                        public void runWithService(BlockchainService service) {
-                            BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
-                            if (!WalletUtils.getBitherAddressList().contains(address)) {
-                                address.encrypt(password);
-                                WalletUtils.addAddressWithPrivateKey(service, address);
-                                preference.setHasPrivateKey(true);
-                            }
-                            HotActivity.this.runOnUiThread(new Runnable() {
+                        public void onPasswordEntered(final String password) {
+                            ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
+
                                 @Override
-                                public void run() {
-
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
+                                public void runWithService(BlockchainService service) {
+                                    BitherAddressWithPrivateKey address = new
+                                            BitherAddressWithPrivateKey();
+                                    if (!WalletUtils.getBitherAddressList().contains(address)) {
+                                        address.encrypt(password);
+                                        WalletUtils.addAddressWithPrivateKey(service, address);
+                                        preference.setHasPrivateKey(true);
                                     }
-                                    Fragment fragment = getFragmentAtIndex(1);
-                                    if (fragment instanceof Refreshable) {
-                                        ((Refreshable) fragment).doRefresh();
-                                    }
+                                    HotActivity.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
 
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            Fragment fragment = getFragmentAtIndex(1);
+                                            if (fragment instanceof Refreshable) {
+                                                ((Refreshable) fragment).doRefresh();
+                                            }
+
+                                        }
+                                    });
                                 }
-                            });
+                            };
+                            thread.start();
                         }
-                    };
-                    thread.start();
-                }
-            }
+                    }
             );
             dialogPassword.setCancelable(false);
             dialogPassword.show();
@@ -387,6 +389,8 @@ public class HotActivity extends FragmentActivity {
                 addErrorMsgRunnable.run();
                 UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
                 uploadAvatarRunnable.run();
+                DownloadAvatarRunnable downloadAvatarRunnable = new DownloadAvatarRunnable();
+                downloadAvatarRunnable.run();
 
             }
         }).start();
