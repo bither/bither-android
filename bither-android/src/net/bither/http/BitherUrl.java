@@ -44,6 +44,7 @@ public class BitherUrl {
     public static final String BITHER_TREND_URL = BITHER_API_URL
             + "api/v1/exchange/%d/trend";
     public static final String BITHER_UPLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
+    public static final String DOWNLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
 
 
     // matket website

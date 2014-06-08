@@ -31,6 +31,8 @@ import android.view.Window;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.api.DownloadFile;
+import net.bither.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
 
 import java.io.File;
@@ -99,13 +101,7 @@ public class ImageManageUtil {
         Paint avatarPaint = new Paint();
         avatarPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         avatarPaint.setAntiAlias(true);
-        String avatar = AppSharedPreference.getInstance().getUserAvatar();
-        Bitmap avatarBit = null;
-        if (!StringUtil.isEmpty(avatar)) {
-            File file = ImageFileUtil.getSmallAvatarFile(avatar);
-            avatarBit = ImageManageUtil.getBitmapNearestSize(file,
-                    ImageManageUtil.IMAGE_SMALL_SIZE);
-        }
+        Bitmap avatarBit = getAvatarBit();
         if (avatarBit == null) {
             return null;
         }
@@ -117,6 +113,17 @@ public class ImageManageUtil {
         c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
         overlay = null;
         return result;
+    }
+
+    private static Bitmap getAvatarBit() {
+        String avatar = AppSharedPreference.getInstance().getUserAvatar();
+        Bitmap avatarBit = null;
+        if (!StringUtil.isEmpty(avatar)) {
+            File file = ImageFileUtil.getSmallAvatarFile(avatar);
+            avatarBit = ImageManageUtil.getBitmapNearestSize(file,
+                    ImageManageUtil.IMAGE_SMALL_SIZE);
+        }
+        return avatarBit;
     }
 
 
