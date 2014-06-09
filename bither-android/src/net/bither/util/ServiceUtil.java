@@ -17,6 +17,7 @@
 package net.bither.util;
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.bitcoin.core.Utils;
 
@@ -29,8 +30,13 @@ import java.util.Date;
 import java.util.List;
 
 public class ServiceUtil {
+
+    private ServiceUtil() {
+
+    }
+
     private static List<Long> peerTimeList = new ArrayList<Long>();
-    private static final long ALLOWED_TIME_DRIFT = 1 * 24 * 60 * 60;
+    private static final long ALLOWED_TIME_DRIFT = 2 * 24 * 60 * 60;
 
     public static void addPeerTime(long peerTime) {
         peerTimeList.add(peerTime);
@@ -40,23 +46,44 @@ public class ServiceUtil {
         if (peerTimeList.size() < 3) {
             return false;
         }
+        // LogUtil.d("localTimeIsWrong","timeList:"+peerTimeList.size());
         Collections.sort(peerTimeList);
-        long result = 0;
-        for (int i = 1;
-             i < peerTimeList.size() - 1;
-             i++) {
-            result = result + peerTimeList.get(i);
+        List<Long> timeList = new ArrayList<Long>();
+        timeList.addAll(peerTimeList);
+        while (timeList.size() > 2) {
+            timeList = trimTimeList(timeList);
+            //   LogUtil.d("localTimeIsWrong","timeList:"+timeList.size());
         }
-        long average = result / (peerTimeList.size() - 2);
+        long average = getAverage(timeList);
         long currentTime = Utils.currentTimeMillis() / 1000;
+        //LogUtil.d("localTimeIsWrong","average:"+average+",currentTime:"+currentTime);
         return average > currentTime + ALLOWED_TIME_DRIFT;
     }
 
-    private ServiceUtil() {
+    public static List<Long> trimTimeList(List<Long> timeList) {
+        if (timeList.size() > 2) {
+            long average = getAverage(timeList);
+            long firstDiff = Math.abs(timeList.get(0) - average);
+            long lastDiff = Math.abs(timeList.get(timeList.size() - 1) - average);
+            if (firstDiff > lastDiff) {
+                timeList.remove(0);
+            } else {
+                timeList.remove(timeList.size() - 1);
+            }
 
+        }
+        return timeList;
     }
 
-    ;
+    public static long getAverage(List<Long> list) {
+        long result = 0;
+        for (long item : list) {
+            result = result + item;
+        }
+        long average = result / list.size();
+        return average;
+    }
+
 
     public static void doMarkTimerTask(boolean isRunning) {
         Intent intent = new Intent(BlockchainService.ACTION__TIMER_TASK_STAT,

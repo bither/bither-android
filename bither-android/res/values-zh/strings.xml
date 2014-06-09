@@ -253,7 +253,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_title">扫描冷钱包的二维码</string>
     <string name="scan_for_all_addresses_in_bither_cold_success">监控冷钱包成功</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">监控冷钱包失败</string>
-    <string name="time_is_wrong">手机时间错误, 请重新设置</string>
+    <string name="time_is_wrong">系统时间错误, 请重新设置</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">请选择从哪个地址发送</string>

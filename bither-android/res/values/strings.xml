@@ -262,7 +262,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_title">Scan Qr Code to watch Bither Cold</string>
     <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
-    <string name="time_is_wrong">Local time is Wrong, Please check your time</string>
+    <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>
