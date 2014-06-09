@@ -114,6 +114,8 @@ public class PieChartView extends View {
     public void setTotalAngle(float total) {
         if (total <= MaxTotalAngle) {
             totalAngle = total;
+            inertia.reset();
+            setStartAngle(DefaultStartAngle);
             causeDraw();
         }
     }
@@ -228,11 +230,7 @@ public class PieChartView extends View {
         private ArrayList<TimeAndRotation> rotations = new ArrayList<TimeAndRotation>();
 
         public void beginCollectSpeed() {
-            rotations.clear();
-            removeCallbacks(collectRotationRunnable);
-            removeCallbacks(inertiaDrawRunnable);
-            inertiaSpeed = 0;
-            lastInertialDrawTime = System.currentTimeMillis();
+            reset();
             collectRotationRunnable.run();
         }
 
@@ -258,6 +256,14 @@ public class PieChartView extends View {
                 }
             }
             setStartAngle(getStartAngle());
+        }
+
+        public void reset(){
+            rotations.clear();
+            removeCallbacks(collectRotationRunnable);
+            removeCallbacks(inertiaDrawRunnable);
+            inertiaSpeed = 0;
+            lastInertialDrawTime = System.currentTimeMillis();
         }
 
         private Runnable collectRotationRunnable = new Runnable() {
