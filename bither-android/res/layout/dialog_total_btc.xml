@@ -76,7 +76,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:text="@string/address_group_private"/>
 
             <ImageView
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:textSize="13sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -112,7 +112,7 @@
                 android:layout_marginLeft="3dp"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:text="@string/address_group_watch_only"/>
 
             <ImageView
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:textSize="13sp"/>
         </LinearLayout>
     </LinearLayout>
 

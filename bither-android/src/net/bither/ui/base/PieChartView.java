@@ -94,11 +94,17 @@ public class PieChartView extends View {
 
     public void setStartAngle(float angle) {
         this.startAngle = angle;
-        if (startAngle > 360) {
-            startAngle = startAngle - 360;
-        }
-        LogUtil.i("Pie", "StartAngle: " + startAngle);
         causeDraw();
+    }
+
+    public void setStartAngleRound360(float angle) {
+        if (angle < 0) {
+            angle = angle + (float) Math.ceil(angle / -360.0) * 360.0f;
+        }
+        if (angle >= 360) {
+            angle = angle % 360;
+        }
+        setStartAngle(angle);
     }
 
     public float getStartAngle() {
@@ -128,7 +134,7 @@ public class PieChartView extends View {
                  i < amounts.length;
                  i++) {
                 rates[i] = amounts[i].floatValue() / total.floatValue();
-                if (rates[i] < MinRate) {
+                if (rates[i] > 0 && rates[i] < MinRate) {
                     minIndexes.add(i);
                     rates[i] = MinRate;
                 }
@@ -180,7 +186,7 @@ public class PieChartView extends View {
     // rotation start
     double fingerRotation;
     double newFingerRotation;
-    
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         final float x = event.getX();
@@ -191,18 +197,140 @@ public class PieChartView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                setStartAngleRound360(getStartAngle());
                 fingerRotation = Math.toDegrees(Math.atan2(x - xc, yc - y));
+                inertia.beginCollectSpeed();
                 break;
             case MotionEvent.ACTION_MOVE:
                 newFingerRotation = Math.toDegrees(Math.atan2(x - xc, yc - y));
-                setStartAngle((float) (getStartAngle() + newFingerRotation - fingerRotation));
+                double rotationDelta = newFingerRotation - fingerRotation;
+                if (Math.abs(rotationDelta) > 360.0 / 6) {
+                    break;
+                }
+                setStartAngle((float) (getStartAngle() + rotationDelta));
                 fingerRotation = newFingerRotation;
                 break;
             case MotionEvent.ACTION_UP:
                 fingerRotation = newFingerRotation = 0.0f;
+                inertia.endCollectSpeed();
                 break;
         }
         return true;
+    }
+
+    private Inertia inertia = new Inertia();
+
+    private class Inertia {
+        private final int SpeedCollectionDuration = 150;
+        private final float InertiaResistance = 0.0005f;
+        private final int InertiaDrawInterval = 20;
+
+        private ArrayList<TimeAndRotation> rotations = new ArrayList<TimeAndRotation>();
+
+        public void beginCollectSpeed() {
+            rotations.clear();
+            removeCallbacks(collectRotationRunnable);
+            removeCallbacks(inertiaDrawRunnable);
+            inertiaSpeed = 0;
+            lastInertialDrawTime = System.currentTimeMillis();
+            collectRotationRunnable.run();
+        }
+
+        public void endCollectSpeed() {
+            removeCallbacks(collectRotationRunnable);
+            removeCallbacks(inertiaDrawRunnable);
+            TimeAndRotation currentRotation = new TimeAndRotation();
+            if (rotations.size() > 0) {
+                TimeAndRotation lastRotation = null;
+                for (int i = rotations.size() - 1;
+                     i >= 0;
+                     i--) {
+                    TimeAndRotation r = rotations.get(i);
+                    if (currentRotation.timeStamp - r.timeStamp >= SpeedCollectionDuration) {
+                        lastRotation = r;
+                        break;
+                    }
+                }
+                rotations.clear();
+                if (lastRotation != null) {
+                    handleInertia(currentRotation, lastRotation);
+                    return;
+                }
+            }
+            setStartAngle(getStartAngle());
+        }
+
+        private Runnable collectRotationRunnable = new Runnable() {
+            @Override
+            public void run() {
+                removeCallbacks(collectRotationRunnable);
+                TimeAndRotation cr = new TimeAndRotation();
+                for (int i = rotations.size() - 1;
+                     i >= 0;
+                     i--) {
+                    TimeAndRotation r = rotations.get(i);
+                    if (cr.timeStamp - r.timeStamp > SpeedCollectionDuration * 1.5f) {
+                        rotations.remove(r);
+                    }
+                }
+                rotations.add(cr);
+                postDelayed(collectRotationRunnable, SpeedCollectionDuration);
+            }
+        };
+
+        private class TimeAndRotation {
+            public long timeStamp;
+            public float rotation;
+
+            public TimeAndRotation() {
+                timeStamp = System.currentTimeMillis();
+                rotation = getStartAngle();
+            }
+        }
+
+        // handle inertial draw begin
+        private float inertiaSpeed;
+        private long lastInertialDrawTime;
+
+        private void handleInertia(TimeAndRotation currentRotation, TimeAndRotation lastRotation) {
+            removeCallbacks(inertiaDrawRunnable);
+            inertiaSpeed = (currentRotation.rotation - lastRotation.rotation) / (float)
+                    (currentRotation.timeStamp - lastRotation.timeStamp);
+            lastInertialDrawTime = System.currentTimeMillis();
+            LogUtil.i("Pie", "inertia initial speed: " + inertiaSpeed + " = " + currentRotation
+                    .rotation + " - " + lastRotation.rotation);
+            postDelayed(inertiaDrawRunnable, InertiaDrawInterval);
+        }
+
+        private Runnable inertiaDrawRunnable = new Runnable() {
+            @Override
+            public void run() {
+                removeCallbacks(inertiaDrawRunnable);
+                if (Math.abs(inertiaSpeed) < InertiaResistance * (float) InertiaDrawInterval) {
+                    return;
+                }
+                long drawTime = System.currentTimeMillis();
+                long duration = drawTime - lastInertialDrawTime;
+                float angleDelta = inertiaSpeed * duration;
+                setStartAngle(getStartAngle() + angleDelta);
+                float speedDelta = InertiaResistance * (duration);
+                if (inertiaSpeed > 0) {
+                    if (inertiaSpeed > speedDelta) {
+                        inertiaSpeed -= speedDelta;
+                        lastInertialDrawTime = drawTime;
+                        postDelayed(inertiaDrawRunnable, InertiaDrawInterval);
+                    }
+                } else {
+                    if (inertiaSpeed < speedDelta) {
+                        inertiaSpeed += speedDelta;
+                        lastInertialDrawTime = drawTime;
+                        postDelayed(inertiaDrawRunnable, InertiaDrawInterval);
+                    }
+                }
+            }
+        };
+
+        // handle inertial draw end
     }
 
     // rotation end
