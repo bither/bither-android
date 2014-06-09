@@ -297,8 +297,6 @@ public class PieChartView extends View {
             inertiaSpeed = (currentRotation.rotation - lastRotation.rotation) / (float)
                     (currentRotation.timeStamp - lastRotation.timeStamp);
             lastInertialDrawTime = System.currentTimeMillis();
-            LogUtil.i("Pie", "inertia initial speed: " + inertiaSpeed + " = " + currentRotation
-                    .rotation + " - " + lastRotation.rotation);
             postDelayed(inertiaDrawRunnable, InertiaDrawInterval);
         }
 
