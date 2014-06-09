@@ -163,7 +163,8 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     }
 
     private void configureProgress() {
-        if (qrCode != null && getAvatarFinish && flQrContainer != null) {
+        if (qrCode != null && (!AppSharedPreference.getInstance().hasUserAvatar() ||
+                getAvatarFinish) && flQrContainer != null) {
             flQrContainer.setVisibility(View.VISIBLE);
             pb.setVisibility(View.GONE);
         } else {
