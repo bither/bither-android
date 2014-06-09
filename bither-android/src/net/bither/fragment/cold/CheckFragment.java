@@ -204,6 +204,10 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
 		}
 	}
 
+    public void check(){
+        vCheckHeader.check();
+    }
+
 	private BaseAdapter adapter = new BaseAdapter() {
 
 		@Override

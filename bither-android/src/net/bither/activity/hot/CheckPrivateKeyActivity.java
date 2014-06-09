@@ -16,17 +16,25 @@
 
 package net.bither.activity.hot;
 
-import net.bither.R;
-import net.bither.ui.base.SwipeRightFragmentActivity;
-import net.bither.ui.base.listener.BackClickListener;
 import android.os.Bundle;
 
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.fragment.cold.CheckFragment;
+import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.listener.BackClickListener;
+
 public class CheckPrivateKeyActivity extends SwipeRightFragmentActivity {
-	@Override
-	protected void onCreate(Bundle arg0) {
-		super.onCreate(arg0);
-		setContentView(R.layout.activity_check);
-		findViewById(R.id.ibtn_back)
-				.setOnClickListener(new BackClickListener());
-	}
+    @Override
+    protected void onCreate(Bundle arg0) {
+        super.onCreate(arg0);
+        setContentView(R.layout.activity_check);
+        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
+        if (getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
+                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
+            CheckFragment checkFragment = (CheckFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.f_check);
+            checkFragment.check();
+        }
+    }
 }

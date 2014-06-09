@@ -46,6 +46,7 @@ import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.DialogProgress;
@@ -56,6 +57,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
@@ -139,38 +141,57 @@ public class HotActivity extends FragmentActivity {
             DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
                     new DialogPasswordListener() {
 
-                        @Override
-                        public void onPasswordEntered(final String password) {
-                            ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
+                @Override
+                public void onPasswordEntered(final String password) {
+                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
 
+                        @Override
+                        public void runWithService(BlockchainService service) {
+                            BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
+                            if (!WalletUtils.getBitherAddressList().contains(address)) {
+                                address.encrypt(password);
+                                WalletUtils.addAddressWithPrivateKey(service, address);
+                                preference.setHasPrivateKey(true);
+                            }
+                            HotActivity.this.runOnUiThread(new Runnable() {
                                 @Override
-                                public void runWithService(BlockchainService service) {
-                                    BitherAddressWithPrivateKey address = new
-                                            BitherAddressWithPrivateKey();
-                                    if (!WalletUtils.getBitherAddressList().contains(address)) {
-                                        address.encrypt(password);
-                                        WalletUtils.addAddressWithPrivateKey(service, address);
-                                        preference.setHasPrivateKey(true);
+                                public void run() {
+
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
                                     }
-                                    HotActivity.this.runOnUiThread(new Runnable() {
+                                    Fragment fragment = getFragmentAtIndex(1);
+                                    if (fragment instanceof Refreshable) {
+                                        ((Refreshable) fragment).doRefresh();
+                                    }
+
+                                    new DialogConfirmTask(HotActivity.this,
+                                            getString(R.string
+                                                    .first_add_private_key_check_suggest),
+                                            new Runnable() {
                                         @Override
                                         public void run() {
-
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
-                                            }
-                                            Fragment fragment = getFragmentAtIndex(1);
-                                            if (fragment instanceof Refreshable) {
-                                                ((Refreshable) fragment).doRefresh();
-                                            }
-
+                                            ThreadUtil.runOnMainThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent intent = new Intent(HotActivity.this,
+                                                            CheckPrivateKeyActivity.class);
+                                                    intent.putExtra(BitherSetting.INTENT_REF
+                                                                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, true
+                                                    );
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
-                                    });
+                                    }
+                                    ).show();
                                 }
-                            };
-                            thread.start();
+                            });
                         }
-                    }
+                    };
+                    thread.start();
+                }
+            }
             );
             dialogPassword.setCancelable(false);
             dialogPassword.show();

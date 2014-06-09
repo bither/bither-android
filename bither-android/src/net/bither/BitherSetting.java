@@ -115,6 +115,7 @@ public class BitherSetting {
                 "address_has_private_key_pass_value_tag";
         public static final String ADDRESS_POSITION_PASS_VALUE_TAG =
                 "address_position_pass_value_tag";
+        public static final String ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG = "add_private_key_suggest_check_tag";
         public static final String SCAN_ADDRESS_POSITION_TAG = "scan_address_position";
         public static final int SEND_REQUEST_CODE = 437;
         public static final String PRIVATE_KEY_PASSWORD = "private_key_password";

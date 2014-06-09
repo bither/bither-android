@@ -247,6 +247,7 @@
     <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
     <string name="generate_address_count_label">How many private keys to generate?</string>
     <string name="recover_from_backup_of_cold">Find previous back up of Bither Cold on SD card. Recover from it?</string>
+    <string name="first_add_private_key_check_suggest">Would you check your private keys now?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">Init Transaction</string>

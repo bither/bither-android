@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.AddAddressPrivateKeyView;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import android.app.Activity;
@@ -42,6 +43,8 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 	private AddAddressPrivateKeyView vPrivateKey;
 	private InputMethodManager imm;
 
+    private boolean shouldSuggestCheck = false;
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -49,6 +52,11 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 				R.anim.activity_out_back);
 		setContentView(R.layout.activity_add_cold_address);
 		initView();
+        if(AppSharedPreference.getInstance().getPasswordSeed() == null){
+            shouldSuggestCheck = true;
+        }else{
+            shouldSuggestCheck = false;
+        }
 		flContainer.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -100,6 +108,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 				intent.putExtra(
 						BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
 						as);
+                intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, shouldSuggestCheck);
 				setResult(Activity.RESULT_OK, intent);
 				finish();
 			}
