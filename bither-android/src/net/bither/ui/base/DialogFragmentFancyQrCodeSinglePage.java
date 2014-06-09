@@ -191,6 +191,9 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
                 @Override
                 public void fileNoExist() {
                     getAvatarFinish = true;
+                    if (ivAvatar != null) {
+                        configureImages();
+                    }
 
                 }
             });
