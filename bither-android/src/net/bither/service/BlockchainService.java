@@ -16,46 +16,6 @@
 
 package net.bither.service;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
-import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-import net.bither.BitherSetting.AppMode;
-import net.bither.R;
-import net.bither.activity.hot.HotActivity;
-import net.bither.exception.NoAddressException;
-import net.bither.model.BitherAddress;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.SyncBlockAndWalletMutiThread;
-import net.bither.util.BitherTimer;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.FileUtil;
-import net.bither.util.GenericUtils;
-import net.bither.util.LogUtil;
-import net.bither.util.NetworkUtil;
-import net.bither.util.NetworkUtil.NetworkType;
-import net.bither.util.SyncWalletUtil;
-import net.bither.util.SystemUtil;
-import net.bither.util.ThrottlingWalletChangeListener;
-import net.bither.util.WalletUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -94,6 +54,47 @@ import com.google.bitcoin.script.Script;
 import com.google.bitcoin.store.BlockStore;
 import com.google.bitcoin.store.BlockStoreException;
 import com.google.bitcoin.store.SPVBlockStore;
+
+import net.bither.BitherApplication;
+import net.bither.BitherSetting;
+import net.bither.BitherSetting.AppMode;
+import net.bither.R;
+import net.bither.activity.hot.HotActivity;
+import net.bither.exception.NoAddressException;
+import net.bither.model.BitherAddress;
+import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.SyncBlockAndWalletMutiThread;
+import net.bither.util.BitherTimer;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.FileUtil;
+import net.bither.util.GenericUtils;
+import net.bither.util.LogUtil;
+import net.bither.util.NetworkUtil;
+import net.bither.util.NetworkUtil.NetworkType;
+import net.bither.util.ServiceUtil;
+import net.bither.util.SyncWalletUtil;
+import net.bither.util.SystemUtil;
+import net.bither.util.ThrottlingWalletChangeListener;
+import net.bither.util.WalletUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.math.BigInteger;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 public class BlockchainService extends android.app.Service {
 
@@ -292,6 +293,7 @@ public class BlockchainService extends android.app.Service {
 
         @Override
         public void onPeerConnected(final Peer peer, final int peerCount) {
+            ServiceUtil.addPeerTime(peer.getPeerVersionMessage().time);
             this.peerCount = peerCount;
             changed(this.peerCount);
         }

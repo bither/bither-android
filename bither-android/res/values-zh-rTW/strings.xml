@@ -254,6 +254,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_title">掃描冷錢包的二維碼</string>
     <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">監控冷錢包失敗</string>
+    <string name="time_is_wrong">手機時間錯誤, 請重新設置</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">請選擇從哪個地址發送</string>
