@@ -110,6 +110,14 @@ public class HotActivity extends FragmentActivity {
             }
         }, 500);
         addNewPrivateKey();
+        mPager.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ServiceUtil.localTimeIsWrong()) {
+                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.time_is_wrong);
+                }
+            }
+        }, 2 * 1000);
     }
 
     @Override
