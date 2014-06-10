@@ -17,6 +17,7 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,8 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
         public String getOptionName(int index);
 
         public String getOptionNote(int index);
+
+        public Drawable getOptionDrawable(int index);
 
         public String getSettingName();
 
@@ -77,9 +80,8 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
         llSetting.setOnClickListener(this);
         preTopSpace = llSetting.getPaddingTop();
         preSettingBottomSpace = llSetting.getPaddingBottom();
-        llSetting.setPadding(llSetting.getPaddingLeft(),
-                preTopSpace + topSpace, llSetting.getPaddingRight(),
-                llSetting.getPaddingBottom());
+        llSetting.setPadding(llSetting.getPaddingLeft(), preTopSpace + topSpace,
+                llSetting.getPaddingRight(), llSetting.getPaddingBottom());
     }
 
     public SettingSelectorView(Context context, AttributeSet attrs) {
@@ -94,20 +96,18 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
 
     public void setTopSpace(int topSpace) {
         this.topSpace = topSpace;
-        llSetting.setPadding(llSetting.getPaddingLeft(),
-                topSpace + preTopSpace, llSetting.getPaddingRight(),
-                llSetting.getPaddingBottom());
+        llSetting.setPadding(llSetting.getPaddingLeft(), topSpace + preTopSpace,
+                llSetting.getPaddingRight(), llSetting.getPaddingBottom());
     }
 
     public void setBottomSpace(int bottomSpace) {
         this.bottomSpace = bottomSpace;
-        llSetting.setPadding(llSetting.getPaddingLeft(),
-                llSetting.getPaddingTop(), llSetting.getPaddingRight(),
-                preSettingBottomSpace + bottomSpace);
+        llSetting.setPadding(llSetting.getPaddingLeft(), llSetting.getPaddingTop(),
+                llSetting.getPaddingRight(), preSettingBottomSpace + bottomSpace);
         if (llOptions.getChildCount() > 0) {
             View v = llOptions.getChildAt(llOptions.getChildCount() - 1);
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(),
-                    v.getPaddingRight(), preOptionBottomSpace + bottomSpace);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                    preOptionBottomSpace + bottomSpace);
         }
     }
 
@@ -124,8 +124,7 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
         tvSettingName.setText(selector.getSettingName());
         if (selector.getCurrentOptionIndex() >= 0 && selector.getCurrentOptionIndex() < selector
                 .getOptionCount()) {
-            tvCurrentOption.setText(selector.getOptionName(selector
-                    .getCurrentOptionIndex()));
+            tvCurrentOption.setText(selector.getOptionName(selector.getCurrentOptionIndex()));
         } else {
             tvCurrentOption.setText("");
         }
@@ -135,13 +134,11 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
             for (int i = 0;
                  i < count;
                  i++) {
-                View v = inflater.inflate(R.layout.list_item_setting_option,
-                        null);
+                View v = inflater.inflate(R.layout.list_item_setting_option, null);
                 llOptions.addView(v, LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
                 TextView tv = (TextView) v.findViewById(R.id.tv_option_name);
-                TextView tvNote = (TextView) v
-                        .findViewById(R.id.tv_option_note);
+                TextView tvNote = (TextView) v.findViewById(R.id.tv_option_note);
                 ImageView iv = (ImageView) v.findViewById(R.id.iv_check);
                 tv.setText(selector.getOptionName(i));
                 String note = selector.getOptionNote(i);
@@ -150,6 +147,8 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
                 } else {
                     tvNote.setText(note);
                 }
+                tvNote.setCompoundDrawablesWithIntrinsicBounds(null, null,
+                        selector.getOptionDrawable(i), null);
                 if (i == selector.getCurrentOptionIndex()) {
                     iv.setVisibility(View.VISIBLE);
                 } else {
@@ -158,10 +157,8 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
                 v.setOnClickListener(new OptionClick(i));
                 if (i == count - 1) {
                     preOptionBottomSpace = v.getPaddingBottom();
-                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(),
-                            v.getPaddingRight(), preOptionBottomSpace
-                                    + bottomSpace
-                    );
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                            preOptionBottomSpace + bottomSpace);
                 }
             }
         }
@@ -190,16 +187,14 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
         if (llOptions.getVisibility() == View.VISIBLE) {
             llOptions.setVisibility(View.GONE);
             if (bottomSpace != 0) {
-                llSetting.setPadding(llSetting.getPaddingLeft(),
-                        llSetting.getPaddingTop(), llSetting.getPaddingRight(),
-                        preSettingBottomSpace + bottomSpace);
+                llSetting.setPadding(llSetting.getPaddingLeft(), llSetting.getPaddingTop(),
+                        llSetting.getPaddingRight(), preSettingBottomSpace + bottomSpace);
             }
         } else {
             llOptions.setVisibility(View.VISIBLE);
             if (bottomSpace != 0) {
-                llSetting.setPadding(llSetting.getPaddingLeft(),
-                        llSetting.getPaddingTop(), llSetting.getPaddingRight(),
-                        preSettingBottomSpace);
+                llSetting.setPadding(llSetting.getPaddingLeft(), llSetting.getPaddingTop(),
+                        llSetting.getPaddingRight(), preSettingBottomSpace);
             }
         }
     }

@@ -30,7 +30,8 @@ public class CheckPrivateKeyActivity extends SwipeRightFragmentActivity {
         super.onCreate(arg0);
         setContentView(R.layout.activity_check);
         findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
-        if (getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
+        Bundle extra = getIntent().getExtras();
+        if (extra != null && extra.getBoolean(BitherSetting.INTENT_REF
                 .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
             CheckFragment checkFragment = (CheckFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.f_check);
