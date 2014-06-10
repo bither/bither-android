@@ -85,6 +85,10 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
+            }else if(!StringUtil.validBitcoinPrivateKey(s)){
+                tvError.setVisibility(View.VISIBLE);
+                shake();
+                return;
             }
             privateKeyString = et.getText().toString();
         }
