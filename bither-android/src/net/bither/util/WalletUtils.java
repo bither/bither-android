@@ -485,20 +485,22 @@ public class WalletUtils {
                 ArrayList<BitherAddressWithPrivateKey>();
         for (File walletFile : fs) {
             String name = walletFile.getName();
-            BitherAddressWithPrivateKey bit = (BitherAddressWithPrivateKey)
-                    loadAddressWithPrivateKeyFromProtobuf(walletFile);
+            if (StringUtil.validBicoinAddress(name)) {
+                BitherAddressWithPrivateKey bit = (BitherAddressWithPrivateKey)
+                        loadAddressWithPrivateKeyFromProtobuf(walletFile);
 
-            if (bit != null) {
-                bit.setError(false);
-                bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
-                AddressInfo addressInfo = new AddressInfo(bit);
-                bit.setAddressInfo(addressInfo);
-                if (!bit.isConsistent()) {
-                    Log.e("wallet error", name + " :error of isConsistent");
-                } else {
-                    Log.d("wallet", name + " :sucess");
+                if (bit != null) {
+                    bit.setError(false);
+                    bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
+                    AddressInfo addressInfo = new AddressInfo(bit);
+                    bit.setAddressInfo(addressInfo);
+                    if (!bit.isConsistent()) {
+                        Log.e("wallet error", name + " :error of isConsistent");
+                    } else {
+                        Log.d("wallet", name + " :sucess");
+                    }
+                    addresses.add(bit);
                 }
-                addresses.add(bit);
             }
         }
         BackupUtil.backupColdKey(true);
@@ -515,20 +517,21 @@ public class WalletUtils {
         ArrayList<BitherAddress> addresses = new ArrayList<BitherAddress>();
         for (File walletFile : fs) {
             String name = walletFile.getName();
-            BitherAddress bit = loadWalletFromProtobuf(walletFile);
+            if (StringUtil.validBicoinAddress(name)) {
+                BitherAddress bit = loadWalletFromProtobuf(walletFile);
+                if (bit != null) {
+                    bit.setError(false);
+                    bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
+                    AddressInfo addressInfo = new AddressInfo(bit);
+                    bit.setAddressInfo(addressInfo);
+                    if (!bit.isConsistent()) {
+                        Log.e("wallet error", name + " :error of isConsistent");
+                    } else {
+                        Log.d("wallet", name + " :sucess");
+                    }
+                    addresses.add(bit);
 
-            if (bit != null) {
-                bit.setError(false);
-                bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
-                AddressInfo addressInfo = new AddressInfo(bit);
-                bit.setAddressInfo(addressInfo);
-                if (!bit.isConsistent()) {
-                    Log.e("wallet error", name + " :error of isConsistent");
-                } else {
-                    Log.d("wallet", name + " :sucess");
                 }
-                addresses.add(bit);
-
             }
         }
         return addresses;
@@ -656,7 +659,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                       sendTotalBroadcast();
+                        sendTotalBroadcast();
                     }
                 }).start();
             }
