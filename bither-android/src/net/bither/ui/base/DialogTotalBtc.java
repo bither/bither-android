@@ -108,7 +108,7 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         vPieChart.postDelayed(new Runnable() {
             @Override
             public void run() {
-                vPieChart.setAmount(btcPrivate == null ? BigInteger.ZERO : btcPrivate,
+                vPieChart.setAmounts(btcPrivate == null ? BigInteger.ZERO : btcPrivate,
                         btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
             }
         }, 100);

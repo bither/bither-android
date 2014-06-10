@@ -77,7 +77,7 @@ public class PieChartView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setAmounts(BigInteger[] amounts) {
+    public void setAmounts(BigInteger... amounts) {
         this.amounts = amounts;
         total = BigInteger.ZERO;
         if (amounts != null) {
@@ -90,10 +90,6 @@ public class PieChartView extends View {
             ObjectAnimator.ofFloat(this, "totalAngle", MaxTotalAngle).setDuration
                     (TransformDuration).start();
         }
-    }
-
-    public void setAmount(BigInteger... amounts) {
-        setAmounts(amounts);
     }
 
     public void setStartAngle(float angle) {
@@ -211,7 +207,7 @@ public class PieChartView extends View {
             case MotionEvent.ACTION_MOVE:
                 newFingerRotation = Math.toDegrees(Math.atan2(x - xc, yc - y));
                 double rotationDelta = newFingerRotation - fingerRotation;
-                if (Math.abs(rotationDelta) > 360.0 / 6) {
+                if (Math.abs(rotationDelta) > 360.0 / 4) {
                     break;
                 }
                 setStartAngle((float) (getStartAngle() + rotationDelta));
@@ -228,8 +224,8 @@ public class PieChartView extends View {
     private Inertia inertia = new Inertia();
 
     private class Inertia {
-        private final int SpeedCollectionDuration = 150;
-        private final float InertiaResistance = 0.0005f;
+        private final int SpeedCollectionDuration = 60;
+        private final float InertiaResistance = 0.001f;
         private final int InertiaDrawInterval = 20;
 
         private ArrayList<TimeAndRotation> rotations = new ArrayList<TimeAndRotation>();
