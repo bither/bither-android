@@ -41,6 +41,20 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"/>
 
+        <net.bither.ui.base.RotatableFrameLayout
+            android:id="@+id/fl_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:src="@drawable/dialog_total_btc_pie_chart_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"/>
+        </net.bither.ui.base.RotatableFrameLayout>
+
         <ImageView
             android:src="@drawable/pie_mask"
             android:layout_width="match_parent"

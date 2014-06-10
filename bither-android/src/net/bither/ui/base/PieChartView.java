@@ -31,8 +31,6 @@ import android.view.View;
 
 import com.nineoldandroids.animation.ObjectAnimator;
 
-import net.bither.util.LogUtil;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -40,6 +38,10 @@ import java.util.ArrayList;
  * Created by songchenwen on 14-6-8.
  */
 public class PieChartView extends View {
+    public static interface RotateListener {
+        public void onRotationChanged(float rotation);
+    }
+
     public static final int[] Colors = new int[]{Color.rgb(254, 35, 93), Color.rgb(36, 182, 212),
             Color.rgb(38, 230, 91), Color.rgb(194, 253, 70), Color.rgb(237, 193, 155),
             Color.rgb(100, 114, 253), Color.rgb(117, 140, 129), Color.rgb(200, 47, 217),
@@ -47,9 +49,9 @@ public class PieChartView extends View {
             Color.rgb(144, 183, 177)};
     public static final float DefaultStartAngle = 90;
     private static final int TransformDuration = 400;
-    private static final Paint paint = new Paint();
     private static final float MaxTotalAngle = 360;
     private static final float MinRate = 0.03f;
+    private static final Paint paint = new Paint();
 
     static {
         paint.setAntiAlias(true);
@@ -60,6 +62,8 @@ public class PieChartView extends View {
     private float startAngle = DefaultStartAngle;
 
     private float totalAngle = 0;
+
+    private RotateListener rotateListener;
 
     public PieChartView(Context context) {
         super(context);
@@ -94,6 +98,7 @@ public class PieChartView extends View {
 
     public void setStartAngle(float angle) {
         this.startAngle = angle;
+        notifyRotateListener();
         causeDraw();
     }
 
@@ -258,7 +263,7 @@ public class PieChartView extends View {
             setStartAngle(getStartAngle());
         }
 
-        public void reset(){
+        public void reset() {
             rotations.clear();
             removeCallbacks(collectRotationRunnable);
             removeCallbacks(inertiaDrawRunnable);
@@ -338,6 +343,17 @@ public class PieChartView extends View {
     }
 
     // rotation end
+
+    public void setRotateListener(RotateListener listener) {
+        rotateListener = listener;
+        notifyRotateListener();
+    }
+
+    private void notifyRotateListener() {
+        if (rotateListener != null) {
+            rotateListener.onRotationChanged(getStartAngle() - DefaultStartAngle);
+        }
+    }
 
     public Drawable getSymbolForIndex(int index) {
         int color = Colors[0];

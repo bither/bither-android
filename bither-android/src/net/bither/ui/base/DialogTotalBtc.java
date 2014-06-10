@@ -29,8 +29,9 @@ import net.bither.util.UIUtil;
 
 import java.math.BigInteger;
 
-public class DialogTotalBtc extends DialogWithArrow {
+public class DialogTotalBtc extends DialogWithArrow implements PieChartView.RotateListener {
     private static final float PieChartMarginRate = 0.05f;
+    private static final float LogoSizeRate = 200.0f / 640.0f;
 
     private TextView tvBtc;
     private PieChartView vPieChart;
@@ -41,6 +42,7 @@ public class DialogTotalBtc extends DialogWithArrow {
     private TextView tvWatchOnly;
     private LinearLayout llPrivate;
     private LinearLayout llWatchOnly;
+    private RotatableFrameLayout flLogo;
 
     private BigInteger btcPrivate;
     private BigInteger btcWatchOnly;
@@ -65,8 +67,12 @@ public class DialogTotalBtc extends DialogWithArrow {
         tvWatchOnly = (TextView) findViewById(R.id.tv_watchonly);
         llPrivate = (LinearLayout) findViewById(R.id.ll_private);
         llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
+        flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
         ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
         ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
+        flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
+                .getLayoutParams().width * LogoSizeRate);
+        vPieChart.setRotateListener(this);
     }
 
     public void setPrivateAndWatchOnly(BigInteger btcPrivate, BigInteger btcWatchOnly) {
@@ -106,5 +112,10 @@ public class DialogTotalBtc extends DialogWithArrow {
                         btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
             }
         }, 100);
+    }
+
+    @Override
+    public void onRotationChanged(float rotation) {
+        flLogo.setRotation(rotation);
     }
 }
