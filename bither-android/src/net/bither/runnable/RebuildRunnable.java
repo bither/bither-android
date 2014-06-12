@@ -70,9 +70,6 @@ public class RebuildRunnable extends BaseRunnable {
 			}
 			List<StoredBlock> storedBlocks = mBlockchainService
 					.getRecentBlocks(blockStoreHight);
-			log.info("size:" + storedBlocks.size() + ",minLastHeight:"
-					+ minLastSeenHeight + ",blockHeight:"
-					+ mBlockchainService.getBlockStore().getHeight());
 			File tempFile = new File(mBlockchainService.getDir("blockstore",
 					Context.MODE_PRIVATE), "temp");
 			if (tempFile.exists()) {
