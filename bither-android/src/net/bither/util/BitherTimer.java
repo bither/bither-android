@@ -79,7 +79,7 @@ public class BitherTimer {
             ExchangeUtil.setExcchangeRate(exchangeRate);
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
-                comporePriceAlert(tickers);
+                comparePriceAlert(tickers);
                 FileUtil.serializeObject(file, tickers);
                 BroadcastUtil.sendBroadcastMarketState(tickers);
             }
@@ -89,7 +89,7 @@ public class BitherTimer {
         }
     }
 
-    private void comporePriceAlert(List<Ticker> tickerList) {
+    private void comparePriceAlert(List<Ticker> tickerList) {
         LogUtil.d("price", "comparePriceAlert:" + tickerList.size());
         List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
         for (PriceAlert priceAlert : priceAlertList) {
