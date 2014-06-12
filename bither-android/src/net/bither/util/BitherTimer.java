@@ -90,7 +90,7 @@ public class BitherTimer {
     }
 
     private void comporePriceAlert(List<Ticker> tickerList) {
-        LogUtil.d("price", "comporePriceAlert:" + tickerList.size());
+        LogUtil.d("price", "comparePriceAlert:" + tickerList.size());
         List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {

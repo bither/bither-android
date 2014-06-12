@@ -16,9 +16,9 @@
 
 package net.bither.runnable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.google.bitcoin.core.StoredBlock;
+import com.google.bitcoin.store.BlockStore;
+import com.google.bitcoin.store.SPVBlockStore;
 
 import net.bither.BitherSetting;
 import net.bither.model.BitherAddress;
@@ -28,18 +28,13 @@ import net.bither.util.WalletUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.Context;
-
-import com.google.bitcoin.core.StoredBlock;
-import com.google.bitcoin.core.Utils;
-import com.google.bitcoin.store.BlockStore;
-import com.google.bitcoin.store.SPVBlockStore;
+import java.io.File;
+import java.util.List;
 
 public class RebuildRunnable extends BaseRunnable {
     private BlockchainService mBlockchainService;
     private File mBlockFile;
-    private static final Logger log = LoggerFactory
-            .getLogger(RebuildRunnable.class);
+    private static final Logger log = LoggerFactory.getLogger(RebuildRunnable.class);
 
     public RebuildRunnable(BlockchainService blockchainService, File blockFile) {
         this.mBlockchainService = blockchainService;
@@ -51,31 +46,29 @@ public class RebuildRunnable extends BaseRunnable {
         obtainMessage(HandlerMessage.MSG_PREPARE);
 
         try {
-            int blockStoreHight = mBlockchainService.getBlockStore()
-                    .getHeight();
-            List<BitherAddress> bitherAddresses = WalletUtils
-                    .getBitherAddressList(true);
+            int blockStoreHight = mBlockchainService.getBlockStore().getHeight();
+            List<BitherAddress> bitherAddresses = WalletUtils.getBitherAddressList(true);
             int minLastSeenHeight = Integer.MAX_VALUE;
             for (BitherAddress bitherAddress : bitherAddresses) {
                 int lastSeenHeight = bitherAddress.getLastBlockSeenHeight();
                 if (blockStoreHight - lastSeenHeight < BitherSetting
                         .MAX_DISTANCE_HIGH_OF_API_STORE) {
                     if (minLastSeenHeight > lastSeenHeight) {
-                        minLastSeenHeight = bitherAddress
-                                .getLastBlockSeenHeight();
-                        log.info("address:" + bitherAddress.getAddress()
-                                + ",minLastHeight:" + minLastSeenHeight);
+                        minLastSeenHeight = bitherAddress.getLastBlockSeenHeight();
+                        log.info("address:" + bitherAddress.getAddress() + "," +
+                                "minLastHeight:" + minLastSeenHeight);
                     }
                 }
             }
 
-            BlockStore blockStore = new SPVBlockStore(
-                    BitherSetting.NETWORK_PARAMETERS, this.mBlockFile);
+            BlockStore blockStore = new SPVBlockStore(BitherSetting.NETWORK_PARAMETERS,
+                    this.mBlockFile);
             StoredBlock storedBlock = blockStore.getChainHead();
 
             while (storedBlock.getHeight() > minLastSeenHeight) {
                 storedBlock = blockStore.get(storedBlock.getHeader().getPrevBlockHash());
             }
+            // TODO need to remodel spv
             blockStore.setChainHead(storedBlock);
             obtainMessage(HandlerMessage.MSG_SUCCESS);
         } catch (Exception e) {
