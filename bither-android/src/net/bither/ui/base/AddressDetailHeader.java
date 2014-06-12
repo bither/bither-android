@@ -121,6 +121,9 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 } else {
                     Drawable d = getContext().getResources().getDrawable(R.drawable
                             .unsigned_transaction_button_icon);
+                    int size = UIUtil.dip2pix(20);
+                    int topOffset = UIUtil.dip2pix(0.5f);
+                    d.setBounds(0, topOffset, size, size + topOffset);
                     btnSend.setCompoundDrawables(null, null, d, null);
                 }
             } else {
