@@ -66,7 +66,6 @@ public class RebuildRunnable extends BaseRunnable {
 								+ ",minLastHeight:" + minLastSeenHeight);
 					}
 				}
-
 			}
 			List<StoredBlock> storedBlocks = mBlockchainService
 					.getRecentBlocks(blockStoreHight);
