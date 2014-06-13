@@ -270,7 +270,7 @@
     <string name="donate_no_address">您沒有可以用來捐贈的比特幣</string>
     <string name="donate_receiving_address_label">捐贈給開發者</string>
     <string name="donate_sending_verb">捐贈</string>
-    <string name="donate_unsigned_transaction_verb">未簽名捐贈二維碼</string>
+    <string name="donate_unsigned_transaction_verb">捐贈</string>
 
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">分享</string>

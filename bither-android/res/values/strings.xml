@@ -278,7 +278,7 @@
     <string name="donate_no_address">No bitcoins available for donation.</string>
     <string name="donate_receiving_address_label">Donate to developers</string>
     <string name="donate_sending_verb">Donate</string>
-    <string name="donate_unsigned_transaction_verb">Donation QR Code</string>
+    <string name="donate_unsigned_transaction_verb">Donate</string>
 
     <!-- bitcoin wallet -->
     <string name="network_monitor_activity_title">Network Monitor</string>
