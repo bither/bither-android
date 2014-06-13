@@ -28,8 +28,8 @@
     <string name="total_btc_prefix">總計:</string>
     <string name="total_address_prefix">私鑰數:</string>
     <string name="please_wait">請稍候…</string>
-    <string name="address_group_watch_only">地址(監控)</string>
-    <string name="address_group_private">地址(有私鑰)</string>
+    <string name="address_group_watch_only">冷錢包地址</string>
+    <string name="address_group_private">熱錢包地址</string>
     <string name="network_or_connection_error">網絡錯誤</string>
     <string name="high_api_is_too_old">請等待服務器數據更新</string>
     <string name="find_browser_error">您的手機上未安裝瀏覽器</string>
