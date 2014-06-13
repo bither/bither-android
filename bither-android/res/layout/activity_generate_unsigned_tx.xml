@@ -127,6 +127,7 @@
                             android:enabled="false"
                             android:padding="10dp"
                             android:text="@string/address_detail_send"
+                            android:drawableLeft="@drawable/unsigned_transaction_button_icon_mirror_transparent"
                             android:drawableRight="@drawable/unsigned_transaction_button_icon"
                             android:textColor="@color/white"
                             android:textSize="20sp"
