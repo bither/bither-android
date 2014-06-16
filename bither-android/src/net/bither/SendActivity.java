@@ -41,6 +41,7 @@ import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -123,6 +124,7 @@ public class SendActivity extends SwipeRightActivity {
 				.getBalance()));
 		ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil
 				.getBtcSymbol(tvBalance));
+        UIUtil.configurePasswordEditText(etPassword);
 		etPassword.addTextChangedListener(passwordWatcher);
 		final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
 		btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));

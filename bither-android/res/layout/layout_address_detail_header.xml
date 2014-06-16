@@ -76,6 +76,7 @@
                 android:background="@drawable/detail_send_button_selector"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:drawablePadding="6dp"
                 android:text="@string/address_detail_send"
                 android:textColor="@color/white"
                 android:textSize="16sp" />

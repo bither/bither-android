@@ -33,8 +33,8 @@
     <string name="total_btc_prefix">Total:</string>
     <string name="total_address_prefix">Private Key Count:</string>
     <string name="please_wait">Please wait…</string>
-    <string name="address_group_watch_only">Address (Watch Only)</string>
-    <string name="address_group_private">Address (With Private Key)</string>
+    <string name="address_group_watch_only">Cold Wallet Address</string>
+    <string name="address_group_private">Hot Wallet Address</string>
     <string name="network_or_connection_error">Network failure.</string>
     <string name="high_api_is_too_old">Service data is too old ,Please wait</string>
     <string name="find_browser_error">You don\'t have a browser</string>
@@ -278,7 +278,7 @@
     <string name="donate_no_address">No bitcoins available for donation.</string>
     <string name="donate_receiving_address_label">Donate to developers</string>
     <string name="donate_sending_verb">Donate</string>
-    <string name="donate_unsigned_transaction_verb">Donation QR Code</string>
+    <string name="donate_unsigned_transaction_verb">Donate</string>
 
     <!-- bitcoin wallet -->
     <string name="network_monitor_activity_title">Network Monitor</string>

@@ -18,6 +18,7 @@ package net.bither.ui.base;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ import net.bither.model.BitherAddress;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.Qr;
 import net.bither.util.StringUtil;
+import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
@@ -115,11 +117,14 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 }
                 btnBalance.setBigInteger(address.getAddressInfo().getBalance());
                 if (address.hasPrivateKey()) {
-                    btnSend.setText(R.string.address_detail_send);
-                    btnSend.setVisibility(View.VISIBLE);
+                    btnSend.setCompoundDrawables(null, null, null, null);
                 } else {
-                    btnSend.setText(R.string.address_detail_unsigned_transaction);
-                    btnSend.setVisibility(View.VISIBLE);
+                    Drawable d = getContext().getResources().getDrawable(R.drawable
+                            .unsigned_transaction_button_icon);
+                    int size = UIUtil.dip2pix(20);
+                    int topOffset = UIUtil.dip2pix(0.5f);
+                    d.setBounds(0, topOffset, size, size + topOffset);
+                    btnSend.setCompoundDrawables(null, null, d, null);
                 }
             } else {
                 llMore.setVisibility(View.GONE);
