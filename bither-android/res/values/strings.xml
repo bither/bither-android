@@ -33,8 +33,8 @@
     <string name="total_btc_prefix">Total:</string>
     <string name="total_address_prefix">Private Key Count:</string>
     <string name="please_wait">Please wait…</string>
-    <string name="address_group_watch_only">Address (Watch Only)</string>
-    <string name="address_group_private">Address (With Private Key)</string>
+    <string name="address_group_watch_only">Cold Wallet Address</string>
+    <string name="address_group_private">Hot Wallet Address</string>
     <string name="network_or_connection_error">Network failure.</string>
     <string name="high_api_is_too_old">Service data is too old ,Please wait</string>
     <string name="find_browser_error">You don\'t have a browser</string>
@@ -139,6 +139,8 @@
     <string name="market_price_alert_high_hint">Higher Than</string>
     <string name="market_price_alert_low_hint">Lower Than</string>
     <string name="market_price_alert_title">Price Alert</string>
+    <string name="market_price_alert_high_error">High end can\'t be lower than current price.</string>
+    <string name="market_price_alert_low_error">Low end can\'t be higher than current price.</string>
     <string name="price_alert_higher_than">Price on %s is higher than </string>
     <string name="price_alert_lower_than">Price on %s is lower than </string>
 
@@ -161,7 +163,11 @@
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
-    <string name="import_private_key_qr_code">Import Private Key QR Code</string>
+    <string name="setting_name_import_private_key">Import Private Key</string>
+    <string name="import_private_key_qr_code">From Private Key QR Code</string>
+    <string name="import_private_key_text">From Private Key Text</string>
+    <string name="import_private_key_text_hint">Enter your private key text</string>
+    <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
@@ -245,6 +251,7 @@
     <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
     <string name="generate_address_count_label">How many private keys to generate?</string>
     <string name="recover_from_backup_of_cold">Find previous back up of Bither Cold on SD card. Recover from it?</string>
+    <string name="first_add_private_key_check_suggest">Would you check your private keys now?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">Init Transaction</string>
@@ -260,6 +267,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_title">Scan Qr Code to watch Bither Cold</string>
     <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
+    <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>
@@ -270,7 +278,7 @@
     <string name="donate_no_address">No bitcoins available for donation.</string>
     <string name="donate_receiving_address_label">Donate to developers</string>
     <string name="donate_sending_verb">Donate</string>
-    <string name="donate_unsigned_transaction_verb">Donation QR Code</string>
+    <string name="donate_unsigned_transaction_verb">Donate</string>
 
     <!-- bitcoin wallet -->
     <string name="network_monitor_activity_title">Network Monitor</string>
@@ -290,6 +298,7 @@
     <string name="fancy_qr_code_theme_name_red">Red</string>
     <string name="fancy_qr_code_theme_name_blue">Blue</string>
     <string name="fancy_qr_code_theme_name_purple">Purple</string>
+    <string name="fancy_qr_code_theme_name_black">Black</string>
 
     <!-- edit password -->
     <string name="edit_password_title">Change Password</string>

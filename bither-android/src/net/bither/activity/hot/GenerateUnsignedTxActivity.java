@@ -526,7 +526,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity {
 			etAddress.clearFocus();
 			ibtnScan.setVisibility(View.GONE);
 		} else {
-			btnSend.setText(R.string.generate_unsigned_tx_button);
+			btnSend.setText(R.string.address_detail_send);
 			tvAddressLabel
 					.setText(R.string.send_coins_fragment_receiving_address_label);
 			etAddress.setEnabled(true);

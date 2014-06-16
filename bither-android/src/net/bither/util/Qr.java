@@ -43,13 +43,17 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Created by songchenwen on 14-5-20.
+ */
 public class Qr {
     public static enum QrCodeTheme {
         YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
         GREEN("#ff486804", "#fffcfdf9", R.string.fancy_qr_code_theme_name_green),
         BLUE("#ff025c7f", "#ffeff4f7", R.string.fancy_qr_code_theme_name_blue),
         RED("#ff922c15", "#fffefaf9", R.string.fancy_qr_code_theme_name_red),
-        PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple);
+        PURPLE("#ff8f127f", "#ffe2f5ee", R.string.fancy_qr_code_theme_name_purple),
+        BLACK("#ff000000", "#ffffffff", R.string.fancy_qr_code_theme_name_black);
 
         private int fgColor;
         private int bgColor;
@@ -84,32 +88,62 @@ public class Qr {
 
     public static Bitmap bitmap(@Nonnull final String content, final int size, int fgColor,
                                 int bgColor) {
+        return bitmap(content, size, fgColor, bgColor, -1);
+    }
+
+    public static Bitmap bitmap(@Nonnull final String content, final int size, int fgColor,
+                                int bgColor, int margin) {
         try {
             final Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.MARGIN, 0);
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-            final BitMatrix result = QR_CODE_WRITER.encode(content,
-                    BarcodeFormat.QR_CODE, size, size, hints);
+            final BitMatrix result = QR_CODE_WRITER.encode(content, BarcodeFormat.QR_CODE, size,
+                    size, hints);
+            int[] drawBeginLocation = new int[]{0, 0};
+            int dataWidth = result.getWidth();
+            int dataHeight = result.getHeight();
+            int outWidth = result.getWidth();
+            int outHeight = result.getHeight();
+            if (margin >= 0) {
+                int[] drawRectangle = result.getEnclosingRectangle();
+                int left = drawRectangle[0];
+                int top = drawRectangle[1];
+                int right = outWidth - drawRectangle[2] - left;
+                int bottom = outHeight - drawRectangle[3] - top;
+                int maxOriMargin = Math.max(Math.max(top, bottom), Math.max(left, right));
+                if (margin > maxOriMargin) {
+                    dataWidth = drawRectangle[2];
+                    dataHeight = drawRectangle[3];
+                    drawBeginLocation[0] = drawRectangle[0];
+                    drawBeginLocation[1] = drawRectangle[1];
+                    outWidth = dataWidth + margin * 2;
+                    outHeight = dataHeight + margin * 2;
+                }
+            }
+            final int[] pixels = new int[outWidth * outHeight];
 
-            final int width = result.getWidth();
-            final int height = result.getHeight();
-            final int[] pixels = new int[width * height];
+            int startX = (outWidth - dataWidth) / 2;
+            int startY = (outHeight - dataHeight) / 2;
 
             for (int y = 0;
-                 y < height;
+                 y < outHeight;
                  y++) {
-                final int offset = y * width;
+                final int offset = y * outWidth;
                 for (int x = 0;
-                     x < width;
+                     x < outWidth;
                      x++) {
-                    pixels[offset + x] = result.get(x, y) ? fgColor
-                            : bgColor;
+                    if (x >= startX && x < dataWidth + startX && y >= startY && y < dataHeight +
+                            startY) {
+                        pixels[offset + x] = result.get(x - startX + drawBeginLocation[0],
+                                y - startY + drawBeginLocation[1]) ? fgColor : bgColor;
+                    } else {
+                        pixels[offset + x] = bgColor;
+                    }
                 }
             }
 
-            final Bitmap bitmap = Bitmap.createBitmap(width, height,
-                    Bitmap.Config.ARGB_8888);
-            bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+            final Bitmap bitmap = Bitmap.createBitmap(outWidth, outHeight, Bitmap.Config.ARGB_8888);
+            bitmap.setPixels(pixels, 0, outWidth, 0, 0, outWidth, outHeight);
             return bitmap;
         } catch (final WriterException x) {
             log.info("problem creating qr code", x);
@@ -119,8 +153,7 @@ public class Qr {
 
     public static String encodeBinary(@Nonnull final byte[] bytes) {
         try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(
-                    bytes.length);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream(bytes.length);
             final GZIPOutputStream gos = new GZIPOutputStream(bos);
             gos.write(bytes);
             gos.close();
@@ -138,8 +171,7 @@ public class Qr {
         }
     }
 
-    public static byte[] decodeBinary(@Nonnull final String content)
-            throws IOException {
+    public static byte[] decodeBinary(@Nonnull final String content) throws IOException {
         final boolean useCompression = content.charAt(0) == 'Z';
         final byte[] bytes = Base43.decode(content.substring(1));
 
@@ -168,16 +200,14 @@ public class Qr {
             // numBytes = 196
             int numBytes = version.getTotalCodewords();
             // getNumECBytes = 130
-            Version.ECBlocks ecBlocks = version
-                    .getECBlocksForLevel(ErrorCorrectionLevel.L);
+            Version.ECBlocks ecBlocks = version.getECBlocksForLevel(ErrorCorrectionLevel.L);
             int numEcBytes = ecBlocks.getTotalECCodewords();
             // getNumDataBytes = 196 - 130 = 66
             int numDataBytes = numBytes - numEcBytes;
             int numInputBytes = numDataBytes * 8 - 7;
             int length = (numInputBytes - 10) / 11 * 2;
-            LogUtil.d("Qr", "Version: " + versionNum + " numData bytes: "
-                    + numDataBytes + "  input: " + numInputBytes
-                    + "  string length: " + length);
+            LogUtil.d("Qr", "Version: " + versionNum + " numData bytes: " + numDataBytes + "  " +
+                    "input: " + numInputBytes + "  string length: " + length);
         }
     }
 }

@@ -53,6 +53,14 @@ public class PriceAlert implements Serializable {
         return this.higher;
     }
 
+    public void setLower(double lower) {
+        this.lower = lower;
+    }
+
+    public void setHigher(double higher) {
+        this.higher = higher;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof PriceAlert) {
@@ -80,11 +88,15 @@ public class PriceAlert implements Serializable {
     public static void removePriceAlert(PriceAlert priceAlert) {
         synchronized (paLock) {
             boolean removed = false;
-            if (priceAlertList.contains(priceAlert)) {
-                priceAlertList.remove(priceAlert);
-                removed = true;
-            }
-            if (removed) {
+            if (priceAlert.getHigher() <= 0 && priceAlert.getLower() <= 0) {
+                if (priceAlertList.contains(priceAlert)) {
+                    priceAlertList.remove(priceAlert);
+                    removed = true;
+                }
+                if (removed) {
+                    saveFile();
+                }
+            } else {
                 saveFile();
             }
         }
@@ -98,7 +110,6 @@ public class PriceAlert implements Serializable {
                     if (cache.equals(priceAlert)) {
                         if (cache.getLower() != priceAlert.getLower() || cache.getHigher() !=
                                 priceAlert.getHigher()) {
-                            priceAlertList.remove(cache);
                             isAdd = true;
                         }
                     }
@@ -108,6 +119,7 @@ public class PriceAlert implements Serializable {
             }
             if (isAdd) {
                 LogUtil.d("price", priceAlert.toString());
+                priceAlertList.remove(priceAlert);
                 priceAlertList.add(priceAlert);
                 saveFile();
             }

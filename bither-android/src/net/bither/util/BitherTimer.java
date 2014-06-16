@@ -20,12 +20,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 
-import java.io.File;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
@@ -33,6 +27,9 @@ import net.bither.api.GetExchangeTickerApi;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
+
+import java.io.File;
+import java.util.List;
 
 public class BitherTimer {
     private Thread thread = null;
@@ -82,7 +79,7 @@ public class BitherTimer {
             ExchangeUtil.setExcchangeRate(exchangeRate);
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
-                comporePriceAlert(tickers);
+                comparePriceAlert(tickers);
                 FileUtil.serializeObject(file, tickers);
                 BroadcastUtil.sendBroadcastMarketState(tickers);
             }
@@ -92,22 +89,24 @@ public class BitherTimer {
         }
     }
 
-    private void comporePriceAlert(List<Ticker> tickerList) {
-        LogUtil.d("price", "comporePriceAlert:" + tickerList.size());
+    private void comparePriceAlert(List<Ticker> tickerList) {
+        LogUtil.d("price", "comparePriceAlert:" + tickerList.size());
         List<PriceAlert> priceAlertList = PriceAlert.getPriceAlertList();
         for (PriceAlert priceAlert : priceAlertList) {
             for (Ticker ticker : tickerList) {
                 if (priceAlert.getMarketType() == ticker.getMarketType()) {
-                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangePrice()>=
+                    if (priceAlert.getExchangeHigher() > 0 && ticker.getDefaultExchangePrice() >=
                             priceAlert
                                     .getExchangeHigher()) {
                         notif(ticker.getMarketType(), true, priceAlert.getExchangeHigher());
+                        priceAlert.setHigher(-1);
                         PriceAlert.removePriceAlert(priceAlert);
                     }
                     if (priceAlert.getExchangeLower() > 0 && ticker.getDefaultExchangePrice() <=
                             priceAlert
                                     .getExchangeLower()) {
                         notif(ticker.getMarketType(), false, priceAlert.getExchangeLower());
+                        priceAlert.setLower(-1);
                         PriceAlert.removePriceAlert(priceAlert);
                     }
                 }

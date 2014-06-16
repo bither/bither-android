@@ -16,13 +16,14 @@
 
 package net.bither.util;
 
-import net.bither.BitherApplication;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.util.SparseArray;
+
+import net.bither.BitherApplication;
 
 public class PlaySound {
 	public interface PlaySoundCompletionListener {

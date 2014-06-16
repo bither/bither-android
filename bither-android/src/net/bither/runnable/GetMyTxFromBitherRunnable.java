@@ -109,8 +109,7 @@ public class GetMyTxFromBitherRunnable extends BaseRunnable {
                 BroadcastUtil.sendBroadcastAddressState(address);
                 BroadcastUtil
                         .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
-                BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                        .getTotalBitcoin());
+                WalletUtils.sendTotalBroadcast();
                 Collections.sort(transactions, new ComparatorTx());
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS);

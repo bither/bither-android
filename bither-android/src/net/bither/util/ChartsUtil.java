@@ -16,9 +16,7 @@
 
 package net.bither.util;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import android.graphics.Color;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting.KlineTimeType;
@@ -39,7 +37,9 @@ import net.bither.model.Depth;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.graphics.Color;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ChartsUtil {
 	public static List<IStickEntity> formatJsonArray(MarketType marketType,

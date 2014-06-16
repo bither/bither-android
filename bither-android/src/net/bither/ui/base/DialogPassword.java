@@ -176,8 +176,6 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         }
     };
 
-    ;
-
     public DialogPassword(Context context, DialogPasswordListener listener) {
         super(context);
         setContentView(R.layout.dialog_password);

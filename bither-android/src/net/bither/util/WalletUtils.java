@@ -427,11 +427,9 @@ public class WalletUtils {
                         .getAppMode();
                 initAddressList(watchOnlys, errors, privates);
                 if (appMode == AppMode.HOT) {
-                    BigInteger total = BigInteger.ZERO;
                     if (privateAddressList.size() + watchOnlyAddressList.size() > 0) {
-                        total = total.add(getTotalBitcoin());
+                        sendTotalBroadcast();
                     }
-                    BroadcastUtil.sendBroadcastTotalBitcoinState(total);
                     BroadcastUtil.sendBroadcastDowloadBlockState();
                 }
                 BroadcastUtil.sendBroadcastAddressLoadCompleteState(true);
@@ -439,6 +437,14 @@ public class WalletUtils {
             }
         }).start();
 
+    }
+
+    public static void sendTotalBroadcast() {
+        if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
+            BigInteger privateKeyBig = getPrivateKeyTotal();
+            BigInteger watchOnlyBig = getWatchOnlyTotal();
+            BroadcastUtil.sendBroadcastTotalBitcoinState(privateKeyBig, watchOnlyBig);
+        }
     }
 
     private static void initAddressList(List<BitherAddress> watchOnlys,
@@ -479,20 +485,22 @@ public class WalletUtils {
                 ArrayList<BitherAddressWithPrivateKey>();
         for (File walletFile : fs) {
             String name = walletFile.getName();
-            BitherAddressWithPrivateKey bit = (BitherAddressWithPrivateKey)
-                    loadAddressWithPrivateKeyFromProtobuf(walletFile);
+            if (StringUtil.validBicoinAddress(name)) {
+                BitherAddressWithPrivateKey bit = (BitherAddressWithPrivateKey)
+                        loadAddressWithPrivateKeyFromProtobuf(walletFile);
 
-            if (bit != null) {
-                bit.setError(false);
-                bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
-                AddressInfo addressInfo = new AddressInfo(bit);
-                bit.setAddressInfo(addressInfo);
-                if (!bit.isConsistent()) {
-                    Log.e("wallet error", name + " :error of isConsistent");
-                } else {
-                    Log.d("wallet", name + " :sucess");
+                if (bit != null) {
+                    bit.setError(false);
+                    bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
+                    AddressInfo addressInfo = new AddressInfo(bit);
+                    bit.setAddressInfo(addressInfo);
+                    if (!bit.isConsistent()) {
+                        Log.e("wallet error", name + " :error of isConsistent");
+                    } else {
+                        Log.d("wallet", name + " :sucess");
+                    }
+                    addresses.add(bit);
                 }
-                addresses.add(bit);
             }
         }
         BackupUtil.backupColdKey(true);
@@ -509,20 +517,21 @@ public class WalletUtils {
         ArrayList<BitherAddress> addresses = new ArrayList<BitherAddress>();
         for (File walletFile : fs) {
             String name = walletFile.getName();
-            BitherAddress bit = loadWalletFromProtobuf(walletFile);
+            if (StringUtil.validBicoinAddress(name)) {
+                BitherAddress bit = loadWalletFromProtobuf(walletFile);
+                if (bit != null) {
+                    bit.setError(false);
+                    bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
+                    AddressInfo addressInfo = new AddressInfo(bit);
+                    bit.setAddressInfo(addressInfo);
+                    if (!bit.isConsistent()) {
+                        Log.e("wallet error", name + " :error of isConsistent");
+                    } else {
+                        Log.d("wallet", name + " :sucess");
+                    }
+                    addresses.add(bit);
 
-            if (bit != null) {
-                bit.setError(false);
-                bit.autosaveToFile(walletFile, 1, TimeUnit.SECONDS, null);
-                AddressInfo addressInfo = new AddressInfo(bit);
-                bit.setAddressInfo(addressInfo);
-                if (!bit.isConsistent()) {
-                    Log.e("wallet error", name + " :error of isConsistent");
-                } else {
-                    Log.d("wallet", name + " :sucess");
                 }
-                addresses.add(bit);
-
             }
         }
         return addresses;
@@ -545,20 +554,23 @@ public class WalletUtils {
         return addresses;
     }
 
-    public static BigInteger getTotalBitcoin() {
+    private static BigInteger getWatchOnlyTotal() {
         BigInteger total = BigInteger.ZERO;
-        List<BitherAddress> watchOnly = getWatchOnlyAddressList();
-        List<BitherAddressWithPrivateKey> privates = getPrivateAddressList();
-        if (watchOnly != null) {
-            for (BitherAddress bitherAddress : watchOnly) {
+        if (watchOnlyAddressList != null && watchOnlyAddressList.size() > 0) {
+            for (BitherAddress bitherAddress : watchOnlyAddressList) {
                 if (!bitherAddress.isError()) {
                     total = total.add(bitherAddress
                             .getBalance(BalanceType.ESTIMATED));
                 }
             }
         }
-        if (privates != null) {
-            for (BitherAddress bitherAddress : privates) {
+        return total;
+    }
+
+    private static BigInteger getPrivateKeyTotal() {
+        BigInteger total = BigInteger.ZERO;
+        if (privateAddressList != null && privateAddressList.size() > 0) {
+            for (BitherAddress bitherAddress : privateAddressList) {
                 if (!bitherAddress.isError()) {
                     total = total.add(bitherAddress
                             .getBalance(BalanceType.ESTIMATED));
@@ -604,10 +616,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        if (appMode == AppMode.HOT) {
-                            BroadcastUtil
-                                    .sendBroadcastTotalBitcoinState(getTotalBitcoin());
-                        }
+                        sendTotalBroadcast();
                         BackupUtil.backupColdKey(false);
                         BackupUtil.backupHotKey();
 
@@ -650,8 +659,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        BroadcastUtil
-                                .sendBroadcastTotalBitcoinState(getTotalBitcoin());
+                        sendTotalBroadcast();
                     }
                 }).start();
             }
@@ -762,8 +770,7 @@ public class WalletUtils {
                         }
                         saveWatchOnlyAddressSequence();
                         BroadcastUtil.sendBroadcastProgressState(1.0);
-                        BroadcastUtil
-                                .sendBroadcastTotalBitcoinState(getTotalBitcoin());
+                        sendTotalBroadcast();
                         if (service != null) {
                             service.beginInitBlockAndWalletInUiThread();
                         }
@@ -1146,8 +1153,7 @@ public class WalletUtils {
         }
         log.info("fix wallet: " + wallet.getAddress());
         WalletUtils.saveBitherAddress(wallet);
-        BroadcastUtil.sendBroadcastTotalBitcoinState(WalletUtils
-                .getTotalBitcoin());
+        sendTotalBroadcast();
         BroadcastUtil.sendBroadcastAddressState(wallet);
     }
 
@@ -1192,6 +1198,11 @@ public class WalletUtils {
                 }
                 AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(addresses.get
                         (0)));
+                if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
+                    BackupUtil.backupColdKey(false);
+                } else {
+                    BackupUtil.backupHotKey();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;

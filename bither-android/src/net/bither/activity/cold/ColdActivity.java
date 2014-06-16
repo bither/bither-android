@@ -34,6 +34,7 @@ import net.bither.adapter.cold.ColdFragmentPagerAdapter;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
+import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
@@ -97,17 +98,39 @@ public class ColdActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         LogUtil.d("request", "code:" + requestCode);
-        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE
-                && resultCode == RESULT_OK) {
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             configureTabArrow();
             Fragment f = getFragmentAtIndex(1);
             if (f != null && f instanceof ColdAddressFragment) {
-                ArrayList<String> addresses = (ArrayList<String>) data
-                        .getExtras()
-                        .getSerializable(
-                                BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+                ArrayList<String> addresses = (ArrayList<String>) data.getExtras()
+                        .getSerializable(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
                 ColdAddressFragment af = (ColdAddressFragment) f;
                 af.showAddressesAdded(addresses);
+            }
+            if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
+                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
+                new DialogConfirmTask(this, getString(R.string
+                        .first_add_private_key_check_suggest), new Runnable() {
+                    @Override
+                    public void run() {
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPager.setCurrentItem(0, true);
+                                mPager.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Fragment f = getFragmentAtIndex(0);
+                                        if (f != null && f instanceof CheckFragment) {
+                                            CheckFragment c = (CheckFragment) f;
+                                            c.check();
+                                        }
+                                    }
+                                }, 300);
+                            }
+                        });
+                    }
+                }).show();
             }
             if (f != null && f instanceof Refreshable) {
                 Refreshable r = (Refreshable) f;
@@ -128,10 +151,8 @@ public class ColdActivity extends FragmentActivity {
                             R.string.private_key_count_limit);
                     return;
                 }
-                Intent intent = new Intent(ColdActivity.this,
-                        AddColdAddressActivity.class);
-                startActivityForResult(intent,
-                        BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                Intent intent = new Intent(ColdActivity.this, AddColdAddressActivity.class);
+                startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
             }
         });
 
@@ -146,12 +167,9 @@ public class ColdActivity extends FragmentActivity {
 
         configureTopBarSize();
 
-        tbtnMain.setIconResource(R.drawable.tab_main,
-                R.drawable.tab_main_checked);
-        tbtnMessage.setIconResource(R.drawable.tab_guard,
-                R.drawable.tab_guard_checked);
-        tbtnMe.setIconResource(R.drawable.tab_option,
-                R.drawable.tab_option_checked);
+        tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        tbtnMessage.setIconResource(R.drawable.tab_guard, R.drawable.tab_guard_checked);
+        tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
         tbtnMain.setDialog(new DialogColdAddressCount(this));
         configureTabArrow();
 
@@ -160,8 +178,8 @@ public class ColdActivity extends FragmentActivity {
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(1);
         mPager.setOffscreenPageLimit(2);
-        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{
-                tbtnMessage, tbtnMain, tbtnMe}, mPager));
+        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
+                tbtnMain, tbtnMe}, mPager));
     }
 
     private class PageChangeListener implements OnPageChangeListener {
@@ -189,8 +207,7 @@ public class ColdActivity extends FragmentActivity {
 
         }
 
-        public void onPageScrolled(int position, float positionOffset,
-                                   int positionOffsetPixels) {
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
         }
 
@@ -259,8 +276,7 @@ public class ColdActivity extends FragmentActivity {
     }
 
     private void configureTopBarSize() {
-        int sideBarSize = UIUtil.getScreenWidth() / 3 - UIUtil.getScreenWidth()
-                / 18;
+        int sideBarSize = UIUtil.getScreenWidth() / 3 - UIUtil.getScreenWidth() / 18;
         tbtnMessage.getLayoutParams().width = sideBarSize;
         tbtnMe.getLayoutParams().width = sideBarSize;
     }
@@ -313,11 +329,11 @@ public class ColdActivity extends FragmentActivity {
     private void showDialogPassword() {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
                 new DialogPassword.DialogPasswordListener() {
-                    @Override
-                    public void onPasswordEntered(String password) {
-                        importWalletFromBackup(password);
-                    }
-                }
+            @Override
+            public void onPasswordEntered(String password) {
+                importWalletFromBackup(password);
+            }
+        }
         );
         dialogPassword.setCheckPre(false);
         dialogPassword.show();
@@ -326,7 +342,7 @@ public class ColdActivity extends FragmentActivity {
     private void importWalletFromBackup(final String password) {
         List<File> fileList = FileUtil.getBackupFileListOfCold();
         final File file = fileList.get(0);
-        LogUtil.d("backup",file.getName());
+        LogUtil.d("backup", file.getName());
         if (pd == null) {
             pd = new ProgressDialog(ColdActivity.this, getString(R.string.please_wait), null);
         }
@@ -334,13 +350,10 @@ public class ColdActivity extends FragmentActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String[] strings = BackupUtil.getBackupKeyStrList
-                        (file);
+                String[] strings = BackupUtil.getBackupKeyStrList(file);
                 if (strings != null && strings.length > 0) {
-                    PasswordSeed passwordSeed = new PasswordSeed
-                            (strings[0]);
-                    boolean check = passwordSeed.checkPassword
-                            (password);
+                    PasswordSeed passwordSeed = new PasswordSeed(strings[0]);
+                    boolean check = passwordSeed.checkPassword(password);
                     if (!check) {
                         checkPasswordWrong();
                     } else {
@@ -354,8 +367,7 @@ public class ColdActivity extends FragmentActivity {
                             ECKey key = passwordSeed.getECKey();
                             if (key != null) {
                                 BitherAddressWithPrivateKey wallet = new
-                                        BitherAddressWithPrivateKey(
-                                        false);
+                                        BitherAddressWithPrivateKey(false);
                                 wallet.setKeyCrypter(key.getKeyCrypter());
                                 wallet.addKey(key);
                                 WalletUtils.addAddressWithPrivateKey(null, wallet);
@@ -377,9 +389,7 @@ public class ColdActivity extends FragmentActivity {
                 if (pd != null) {
                     pd.dismiss();
                 }
-                DropdownMessage.showDropdownMessage
-                        (ColdActivity.this,
-                                R.string.password_wrong);
+                DropdownMessage.showDropdownMessage(ColdActivity.this, R.string.password_wrong);
                 showDialogPassword();
             }
         });

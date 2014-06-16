@@ -16,12 +16,6 @@
 
 package net.bither.util;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Locale;
-
-import javax.annotation.Nonnull;
-
 import android.graphics.Typeface;
 import android.os.Build;
 import android.text.Spannable;
@@ -34,6 +28,12 @@ import com.google.bitcoin.core.NetworkParameters;
 import com.google.bitcoin.core.ScriptException;
 import com.google.bitcoin.core.Utils;
 import com.google.bitcoin.script.Script;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
 
 public class GenericUtils {
 	public static final BigInteger ONE_BTC = new BigInteger("100000000", 10);

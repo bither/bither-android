@@ -16,12 +16,12 @@
 
 package net.bither.util;
 
+import net.bither.BitherSetting.MarketType;
+import net.bither.model.Depth;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.bither.BitherSetting.MarketType;
-import net.bither.model.Depth;
 
 public class DepthUtil {
 	private static List<Depth> depths = init();

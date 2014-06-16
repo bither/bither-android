@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -58,6 +59,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogEditPassword;
+import net.bither.ui.base.DialogImportPrivateKeyText;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
@@ -71,7 +73,6 @@ import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.PrivateKeyUtil;
-import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
@@ -88,12 +89,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvWifi;
     private SettingSelectorView ssvTransactionFee;
-    private SettingSelectorView ssvQrCodeTheme;
+    private SettingSelectorView ssvImportPrivateKey;
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
     private Button btnEditPassword;
-    private Button btnImportPrivateKey;
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
@@ -104,8 +104,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(),
-                    NetworkMonitorActivity.class);
+            Intent intent = new Intent(getActivity(), NetworkMonitorActivity.class);
             startActivity(intent);
         }
     };
@@ -119,11 +118,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void onOptionIndexSelected(int index) {
             if (index == 0) {
-                AppSharedPreference.getInstance().setExchangeType(
-                        ExchangeType.USD);
+                AppSharedPreference.getInstance().setExchangeType(ExchangeType.USD);
             } else {
-                AppSharedPreference.getInstance().setExchangeType(
-                        ExchangeType.CNY);
+                AppSharedPreference.getInstance().setExchangeType(ExchangeType.CNY);
             }
         }
 
@@ -143,12 +140,16 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getDefaultExchangeType()
-                    .ordinal();
+            return AppSharedPreference.getInstance().getDefaultExchangeType().ordinal();
         }
 
         @Override
         public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
             return null;
         }
     };
@@ -182,8 +183,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            boolean onlyUseWifi = AppSharedPreference.getInstance()
-                    .getSyncBlockOnlyWifi();
+            boolean onlyUseWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
             if (onlyUseWifi) {
                 return 1;
             } else {
@@ -196,14 +196,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public String getOptionNote(int index) {
             return null;
         }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
     };
     private SettingSelector marketSelector = new SettingSelector() {
         private List<Market> markets = MarketUtil.getMarkets();
 
         @Override
         public void onOptionIndexSelected(int index) {
-            AppSharedPreference.getInstance().setMarketType(
-                    markets.get(index).getMarketType());
+            AppSharedPreference.getInstance().setMarketType(markets.get(index).getMarketType());
         }
 
         @Override
@@ -230,34 +234,35 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public String getOptionNote(int index) {
             return null;
         }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
     };
     private SettingSelector transactionFeeModeSelector = new SettingSelector() {
 
         @Override
         public void onOptionIndexSelected(int index) {
             if (index == TransactionFeeMode.Low.ordinal()) {
-                DialogConfirmTask dialog = new DialogConfirmTask(
-                        getActivity(),
-                        getString(R.string.setting_name_transaction_fee_low_warn),
-                        new Runnable() {
+                DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
+                        getString(R.string.setting_name_transaction_fee_low_warn), new Runnable() {
+                    @Override
+                    public void run() {
+                        ssvTransactionFee.post(new Runnable() {
                             @Override
                             public void run() {
-                                ssvTransactionFee.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AppSharedPreference.getInstance()
-                                                .setTransactionFeeMode(
-                                                        TransactionFeeMode.Low);
-                                        ssvTransactionFee.loadData();
-                                    }
-                                });
+                                AppSharedPreference.getInstance().setTransactionFeeMode
+                                        (TransactionFeeMode.Low);
+                                ssvTransactionFee.loadData();
                             }
-                        }
+                        });
+                    }
+                }
                 );
                 dialog.show();
             } else {
-                AppSharedPreference.getInstance().setTransactionFeeMode(
-                        getModeByIndex(index));
+                AppSharedPreference.getInstance().setTransactionFeeMode(getModeByIndex(index));
             }
         }
 
@@ -283,8 +288,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getTransactionFeeMode()
-                    .ordinal();
+            return AppSharedPreference.getInstance().getTransactionFeeMode().ordinal();
         }
 
         private TransactionFeeMode getModeByIndex(int index) {
@@ -303,17 +307,29 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     return getString(R.string.setting_name_transaction_fee_normal_note);
             }
         }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
     };
 
-    private SettingSelector fancyQrCodeThemeSelector = new SettingSelector() {
+    private SettingSelector importPrivateKeySelector = new SettingSelector() {
         @Override
         public int getOptionCount() {
-            return Qr.QrCodeTheme.values().length;
+            return 2;
         }
 
         @Override
         public String getOptionName(int index) {
-            return Qr.QrCodeTheme.values()[index].getTitle();
+            switch (index) {
+                case 0:
+                    return getString(R.string.import_private_key_qr_code);
+                case 1:
+                    return getString(R.string.import_private_key_text);
+                default:
+                    return "";
+            }
         }
 
         @Override
@@ -322,32 +338,52 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
 
         @Override
+        public Drawable getOptionDrawable(int index) {
+            switch (index) {
+                case 0:
+                    return getResources().getDrawable(R.drawable.scan_button_icon);
+                case 1:
+                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                default:
+                    return null;
+            }
+        }
+
+        @Override
         public String getSettingName() {
-            return getString(R.string.fancy_qr_code_theme);
+            return getString(R.string.setting_name_import_private_key);
         }
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getFancyQrCodeTheme().ordinal();
+            return -1;
         }
 
         @Override
         public void onOptionIndexSelected(int index) {
-            AppSharedPreference.getInstance().setFancyQrCodeTheme(Qr.QrCodeTheme.values()[index]);
+            switch (index) {
+                case 0:
+                    importPrivateKeyFromQrCode();
+                    return;
+                case 1:
+                    importPrivateKeyFromText();
+                    return;
+                default:
+                    return;
+            }
         }
     };
+
     private OnClickListener checkClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (WalletUtils.getPrivateAddressList() == null
-                    || WalletUtils.getPrivateAddressList().size() == 0) {
-                DropdownMessage.showDropdownMessage(getActivity(),
-                        R.string.private_key_is_empty);
+            if (WalletUtils.getPrivateAddressList() == null || WalletUtils.getPrivateAddressList
+                    ().size() == 0) {
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
-            Intent intent = new Intent(getActivity(),
-                    CheckPrivateKeyActivity.class);
+            Intent intent = new Intent(getActivity(), CheckPrivateKeyActivity.class);
             startActivity(intent);
         }
     };
@@ -377,29 +413,27 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://bither.net/"))
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bither.net/"))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 startActivity(intent);
             } catch (Exception e) {
                 e.printStackTrace();
-                DropdownMessage.showDropdownMessage(getActivity(),
-                        R.string.find_browser_error);
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.find_browser_error);
             }
         }
     };
-    private OnClickListener importPrivateKeyClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getActivity(),
-                    ScanQRCodeTransportActivity.class);
-            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-                    getString(R.string.import_private_key_qr_code_scan_title));
-            startActivityForResult(intent,
-                    BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
-        }
-    };
+
+    private void importPrivateKeyFromQrCode() {
+        Intent intent = new Intent(getActivity(), ScanQRCodeTransportActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                getString(R.string.import_private_key_qr_code_scan_title));
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
+    }
+
+    private void importPrivateKeyFromText() {
+        new DialogImportPrivateKeyText(getActivity()).show();
+    }
 
     @Override
     public void avatarFromCamera() {
@@ -461,8 +495,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 }
                 break;
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
-                String content = data
-                        .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPassword dialogPassword = new DialogPassword(getActivity(),
                         new ImportPrivateKeyPasswordListener(content));
                 dialogPassword.setCheckPre(false);
@@ -481,19 +514,16 @@ public class OptionHotFragment extends Fragment implements Selectable,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_hot_option, container,
-                false);
+        View view = inflater.inflate(R.layout.fragment_hot_option, container, false);
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        ssvCurrency = (SettingSelectorView) view
-                .findViewById(R.id.ssv_currency);
+        ssvCurrency = (SettingSelectorView) view.findViewById(R.id.ssv_currency);
         ssvMarket = (SettingSelectorView) view.findViewById(R.id.ssv_market);
         ssvWifi = (SettingSelectorView) view.findViewById(R.id.ssv_wifi);
         ssvTransactionFee = (SettingSelectorView) view.findViewById(R.id.ssv_transaction_fee);
-        ssvQrCodeTheme = (SettingSelectorView) view.findViewById(R.id.ssv_fancy_qr_code_theme);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -502,18 +532,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
         btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
-        btnImportPrivateKey = (Button) view.findViewById(R.id.btn_import_private_key);
+        ssvImportPrivateKey = (SettingSelectorView) view.findViewById(R.id.ssv_import_private_key);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
-        ssvQrCodeTheme.setSelector(fancyQrCodeThemeSelector);
+        ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;
         try {
-            version = getActivity().getPackageManager().getPackageInfo(
-                    getActivity().getPackageName(), 0).versionName;
+            version = getActivity().getPackageManager().getPackageInfo(getActivity()
+                    .getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -527,7 +557,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
         btnEditPassword.setOnClickListener(editPasswordClick);
-        btnImportPrivateKey.setOnClickListener(importPrivateKeyClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
@@ -570,8 +599,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 Canvas c = new Canvas(result);
                 c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding,
                                 result.getWidth() - borderPadding,
-                                result.getHeight() - borderPadding),
-                        null
+                                result.getHeight() - borderPadding), null
                 );
                 c.drawBitmap(bmpBorder, 0, 0, null);
                 final BitmapDrawable d = new BitmapDrawable(getResources(), result);
@@ -621,8 +649,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void runWithService(BlockchainService service) {
-            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content,
-                    password);
+            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
             if (key == null) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -637,8 +664,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 });
                 return;
             }
-            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(
-                    false);
+            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
             wallet.setKeyCrypter(key.getKeyCrypter());
             wallet.addKey(key);
             if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
@@ -668,22 +694,21 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 });
                 return;
             } else {
-                WalletUtils.addAddressWithPrivateKey(service, wallet);
-            }
-
-            if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
+                if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                            DropdownMessage.showDropdownMessage(getActivity(),
+                                    R.string.import_private_key_qr_code_failed_different_password);
                         }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed_different_password);
-                    }
-                });
-                return;
+                    });
+                    return;
+                }
+                WalletUtils.addAddressWithPrivateKey(service, wallet);
             }
 
             getActivity().runOnUiThread(new Runnable() {

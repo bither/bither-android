@@ -124,17 +124,21 @@ public class CheckHeaderView extends FrameLayout implements
 
 		@Override
 		public void onClick(View v) {
-			if (WalletUtils.getPrivateAddressList() == null
-					|| WalletUtils.getPrivateAddressList().size() == 0) {
-				DropdownMessage.showDropdownMessage((Activity) getContext(),
-						R.string.private_key_is_empty);
-				return;
-			}
-			DialogPassword dialog = new DialogPassword(getContext(),
-					CheckHeaderView.this);
-			dialog.show();
+            check();
 		}
 	};
+
+    public void check(){
+        if (WalletUtils.getPrivateAddressList() == null
+                || WalletUtils.getPrivateAddressList().size() == 0) {
+            DropdownMessage.showDropdownMessage((Activity) getContext(),
+                    R.string.private_key_is_empty);
+            return;
+        }
+        DialogPassword dialog = new DialogPassword(getContext(),
+                CheckHeaderView.this);
+        dialog.show();
+    }
 
 	@Override
 	public void onPasswordEntered(String password) {

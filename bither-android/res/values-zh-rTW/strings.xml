@@ -28,8 +28,8 @@
     <string name="total_btc_prefix">總計:</string>
     <string name="total_address_prefix">私鑰數:</string>
     <string name="please_wait">請稍候…</string>
-    <string name="address_group_watch_only">地址(監控)</string>
-    <string name="address_group_private">地址(有私鑰)</string>
+    <string name="address_group_watch_only">冷錢包地址</string>
+    <string name="address_group_private">熱錢包地址</string>
     <string name="network_or_connection_error">網絡錯誤</string>
     <string name="high_api_is_too_old">請等待服務器數據更新</string>
     <string name="find_browser_error">您的手機上未安裝瀏覽器</string>
@@ -131,6 +131,8 @@
     <string name="kline_amount">交易量: </string>
     <string name="market_price_alert_high_hint">高於</string>
     <string name="market_price_alert_low_hint">低於</string>
+    <string name="market_price_alert_high_error">價格預警最高值不應比當前價格低</string>
+    <string name="market_price_alert_low_error">價格預警最低值不應比當前價格高</string>
     <string name="market_price_alert_title">價格預警</string>
     <string name="price_alert_higher_than">%s價格高於 </string>
     <string name="price_alert_lower_than">%s價格低於 </string>
@@ -156,7 +158,11 @@
     <string name="set_avatar_camera">來自相機</string>
     <string name="set_avatar_gallery">來自圖庫</string>
     <string name="edit_password_button">修改密碼</string>
-    <string name="import_private_key_qr_code">導入私鑰二維碼</string>
+    <string name="setting_name_import_private_key">導入私鑰</string>
+    <string name="import_private_key_qr_code">來自私鑰二維碼</string>
+    <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="import_private_key_text_hint">輸入私鑰明文</string>
+    <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
     <string name="import_private_key_qr_code_success">導入成功</string>
@@ -239,6 +245,7 @@
     <string name="watch_only_address_count_limit">已達到監控地址上限</string>
     <string name="generate_address_count_label">生成多少個私鑰?</string>
     <string name="recover_from_backup_of_cold">檢測到sd卡上有過去的冷錢包備份，是否從備份中恢復？</string>
+    <string name="first_add_private_key_check_suggest">是否現在一鍵檢測私鑰安全?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">初始化交易</string>
@@ -252,6 +259,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_title">掃描冷錢包的二維碼</string>
     <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">監控冷錢包失敗</string>
+    <string name="time_is_wrong">系統時間錯誤, 請重新設置</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">請選擇從哪個地址發送</string>
@@ -262,7 +270,7 @@
     <string name="donate_no_address">您沒有可以用來捐贈的比特幣</string>
     <string name="donate_receiving_address_label">捐贈給開發者</string>
     <string name="donate_sending_verb">捐贈</string>
-    <string name="donate_unsigned_transaction_verb">未簽名捐贈二維碼</string>
+    <string name="donate_unsigned_transaction_verb">捐贈</string>
 
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">分享</string>
@@ -276,6 +284,7 @@
     <string name="fancy_qr_code_theme_name_red">紅</string>
     <string name="fancy_qr_code_theme_name_blue">藍</string>
     <string name="fancy_qr_code_theme_name_purple">紫</string>
+    <string name="fancy_qr_code_theme_name_black">黑</string>
 
     <!-- edit password -->
     <string name="edit_password_title">修改密碼</string>

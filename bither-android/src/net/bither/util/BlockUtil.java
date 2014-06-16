@@ -16,18 +16,18 @@
 
 package net.bither.util;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
+import com.google.bitcoin.core.Block;
+import com.google.bitcoin.core.Sha256Hash;
+import com.google.bitcoin.core.StoredBlock;
+import com.google.bitcoin.core.Transaction;
 
 import net.bither.BitherSetting;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.bitcoin.core.Block;
-import com.google.bitcoin.core.Sha256Hash;
-import com.google.bitcoin.core.StoredBlock;
-import com.google.bitcoin.core.Transaction;
+import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class BlockUtil {
 

@@ -16,13 +16,13 @@
 
 package net.bither.util;
 
-import java.io.File;
-import java.io.IOException;
-
 import net.bither.BitherSetting.MarketType;
 import net.bither.preference.AppSharedPreference;
 
 import org.apache.commons.lang.StringEscapeUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ExchangeUtil {
     private ExchangeUtil() {

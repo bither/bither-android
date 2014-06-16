@@ -27,7 +27,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 public abstract class ThreadNeedService extends Thread {
-	private DialogProgress dp;
+	protected DialogProgress dp;
 	private BlockchainService service;
 	private Context context;
 	private boolean connected = false;

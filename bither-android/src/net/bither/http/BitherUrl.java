@@ -31,6 +31,8 @@ public class BitherUrl {
             + "api/v1/address/%s/transaction";
     public static final String BITHER_GET_SPVBLOCK_API = BITHER_API_URL
             + "api/v1/block/spv";
+    public static final String BITHER_GET_ONE_SPVBLOCK_API = BITHER_API_URL +
+            "api/v1/block/spv/one";
     public static final String BITHER_ERROR_API = BITHER_API_URL
             + "api/v1/error";
     public static final String BITHER_EXCHANGE_TICKER = BITHER_API_URL
@@ -42,6 +44,8 @@ public class BitherUrl {
     public static final String BITHER_TREND_URL = BITHER_API_URL
             + "api/v1/exchange/%d/trend";
     public static final String BITHER_UPLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
+    public static final String BITHER_DOWNLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
+
 
     // matket website
     public static final String BITSTAMP_URL = "https://www.bitstamp.net/";

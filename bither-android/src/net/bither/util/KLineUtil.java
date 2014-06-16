@@ -16,13 +16,13 @@
 
 package net.bither.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
 import net.bither.model.KLine;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KLineUtil {
 	private static List<KLine> kLines = init();

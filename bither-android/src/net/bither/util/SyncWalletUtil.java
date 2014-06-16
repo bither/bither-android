@@ -16,11 +16,8 @@
 
 package net.bither.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
+import com.google.bitcoin.core.StoredBlock;
+import com.google.bitcoin.store.BlockStoreException;
 
 import net.bither.BitherSetting;
 import net.bither.exception.NoAddressException;
@@ -33,8 +30,11 @@ import net.bither.runnable.RebuildRunnable;
 import net.bither.runnable.SyncBlockAndWalletMutiThread;
 import net.bither.service.BlockchainService;
 
-import com.google.bitcoin.core.StoredBlock;
-import com.google.bitcoin.store.BlockStoreException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class SyncWalletUtil {
 

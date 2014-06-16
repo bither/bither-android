@@ -16,9 +16,6 @@
 
 package net.bither.util;
 
-import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -32,6 +29,9 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 
 public class SystemUtil {
     private static PackageInfo packageInfo;

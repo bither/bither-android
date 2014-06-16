@@ -16,7 +16,21 @@
 
 package net.bither.activity.hot;
 
-import java.util.Date;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
@@ -50,24 +64,10 @@ import net.bither.util.ImageManageUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
+import java.util.Date;
 
-public class MarketDetailActivity extends SwipeRightActivity implements
-        OnCheckedChangeListener, MarketDetailDialogDelegate {
+public class MarketDetailActivity extends SwipeRightActivity implements OnCheckedChangeListener,
+        MarketDetailDialogDelegate {
     private final int DISAPPEAR_TIME = 3 * 1000;
 
     private TextView tvMarketName;
@@ -102,10 +102,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         Intent intent = getIntent();
-        if (intent != null
-                && intent.hasExtra(BitherSetting.INTENT_REF.MARKET_INTENT)) {
-            marketType = (MarketType) intent
-                    .getSerializableExtra(BitherSetting.INTENT_REF.MARKET_INTENT);
+        if (intent != null && intent.hasExtra(BitherSetting.INTENT_REF.MARKET_INTENT)) {
+            marketType = (MarketType) intent.getSerializableExtra(BitherSetting.INTENT_REF
+                    .MARKET_INTENT);
         }
         boolean isFromNotif = false;
         if (intent != null && intent.hasExtra(BitherSetting.INTENT_REF.INTENT_FROM_NOTIF)) {
@@ -132,8 +131,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_back)
-                .setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         tvMarketName = (TextView) findViewById(R.id.tv_market_name);
         pbKline = (ProgressBar) findViewById(R.id.pb_kline);
@@ -163,6 +161,12 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         showMarket();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
     private void showMarket() {
         Market market = MarketUtil.getMarket(marketType);
         tvMarketName.setText(market.getName());
@@ -171,25 +175,19 @@ public class MarketDetailActivity extends SwipeRightActivity implements
             llTicker.setVisibility(View.VISIBLE);
             String symbol;
             if (ExchangeUtil.getExchangeRate() > 0) {
-                symbol = AppSharedPreference.getInstance()
-                        .getDefaultExchangeType().getSymbol();
+                symbol = AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol();
             } else {
                 symbol = ExchangeUtil.getExchangeType(marketType).getSymbol();
             }
-            tvPrice.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvPrice.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangePrice()));
-            tvHigh.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvHigh.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeHigh()));
-            tvLow.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvLow.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeLow()));
-            tvSell.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvSell.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeSell()));
-            tvBuy.setText(symbol
-                    + StringUtil.formatDoubleToMoneyString(ticker
+            tvBuy.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         } else {
             llTicker.setVisibility(View.GONE);
@@ -202,8 +200,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         chartKline.setVisibility(View.INVISIBLE);
         tvKlineError.setVisibility(View.GONE);
         setKlineRadioButtonEnabled(false);
-        GetKLineRunnable getKLineRunnable = new GetKLineRunnable(marketType,
-                klineTimeType);
+        GetKLineRunnable getKLineRunnable = new GetKLineRunnable(marketType, klineTimeType);
         getKLineRunnable.setHandler(loadKlineDataHandler);
         new Thread(getKLineRunnable).start();
     }
@@ -212,8 +209,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         pbDepth.setVisibility(View.VISIBLE);
         tvDepthError.setVisibility(View.GONE);
         chartDepth.setVisibility(View.INVISIBLE);
-        GetExchangeDepthRunnable getExchangeDepthRunnable = new GetExchangeDepthRunnable(
-                marketType);
+        GetExchangeDepthRunnable getExchangeDepthRunnable = new GetExchangeDepthRunnable
+                (marketType);
         getExchangeDepthRunnable.setHandler(loadDepthHandler);
         new Thread(getExchangeDepthRunnable).start();
 
@@ -228,8 +225,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
                 case HandlerMessage.MSG_SUCCESS_FROM_CACHE:
                     if (msg.obj != null) {
                         Depth depth = (Depth) msg.obj;
-                        ChartsUtil.initMarketDepth(chartDepth, depth,
-                                isMarketDepthRefresh);
+                        ChartsUtil.initMarketDepth(chartDepth, depth, isMarketDepthRefresh);
                         isMarketDepthRefresh = true;
                         pbDepth.setVisibility(View.GONE);
                         tvDepthError.setVisibility(View.GONE);
@@ -238,8 +234,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
                     break;
                 case HandlerMessage.MSG_SUCCESS:
                     Depth depth = (Depth) msg.obj;
-                    ChartsUtil.initMarketDepth(chartDepth, depth,
-                            isMarketDepthRefresh);
+                    ChartsUtil.initMarketDepth(chartDepth, depth, isMarketDepthRefresh);
                     isMarketDepthRefresh = true;
                     pbDepth.setVisibility(View.GONE);
                     tvDepthError.setVisibility(View.GONE);
@@ -266,8 +261,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
                 case HandlerMessage.MSG_SUCCESS_FROM_CACHE:
                     if (msg.obj != null) {
                         KLine kLine = (KLine) msg.obj;
-                        ChartsUtil.initMACandleStickChart(chartKline,
-                                kLine.getStickEntities(), isKlineRefresh);
+                        ChartsUtil.initMACandleStickChart(chartKline, kLine.getStickEntities(),
+                                isKlineRefresh);
                         if (!isKlineRefresh) {
                             isKlineRefresh = true;
                         }
@@ -279,8 +274,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
                     break;
                 case HandlerMessage.MSG_SUCCESS:
                     KLine kLine = (KLine) msg.obj;
-                    ChartsUtil.initMACandleStickChart(chartKline,
-                            kLine.getStickEntities(), isKlineRefresh);
+                    ChartsUtil.initMACandleStickChart(chartKline, kLine.getStickEntities(),
+                            isKlineRefresh);
                     if (!isKlineRefresh) {
                         isKlineRefresh = true;
                     }
@@ -347,8 +342,8 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         @Override
         public void run() {
             Bitmap bmpContent = ImageManageUtil.getBitmapFromView(llContent);
-            View v = LayoutInflater.from(MarketDetailActivity.this).inflate(
-                    R.layout.layout_market_share_image, null);
+            View v = LayoutInflater.from(MarketDetailActivity.this).inflate(R.layout
+                    .layout_market_share_image, null);
             TextView tvTitle = (TextView) v.findViewById(R.id.tv_market_name);
             ImageView iv = (ImageView) v.findViewById(R.id.iv);
             tvTitle.setText(tvMarketName.getText());
@@ -366,15 +361,19 @@ public class MarketDetailActivity extends SwipeRightActivity implements
                         dp.dismiss();
                     }
                     if (uri != null) {
-                        Intent intent = new Intent(
-                                android.content.Intent.ACTION_SEND);
+                        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(Intent.EXTRA_STREAM, uri);
                         intent.setType("image/jpg");
-                        startActivity(intent);
+                        try {
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            DropdownMessage.showDropdownMessage(MarketDetailActivity.this,
+                                    R.string.market_share_failed);
+                        }
                     } else {
-                        DropdownMessage.showDropdownMessage(
-                                MarketDetailActivity.this,
+                        DropdownMessage.showDropdownMessage(MarketDetailActivity.this,
                                 R.string.market_share_failed);
                     }
                 }
@@ -434,8 +433,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         @Override
         public void notifyTouchPointMove(int x, int y) {
             handler.removeCallbacks(disappearKlineRunnable);
-            mKLineDetailView.notifyViewMove(x, y, chartKline.getWidth(),
-                    chartKline.getHeight());
+            mKLineDetailView.notifyViewMove(x, y, chartKline.getWidth(), chartKline.getHeight());
             handler.postDelayed(disappearKlineRunnable, DISAPPEAR_TIME);
         }
 
@@ -443,9 +441,9 @@ public class MarketDetailActivity extends SwipeRightActivity implements
         public void notifyTouchContentChange(Object[] objs) {
             Date date = new Date(Long.valueOf(objs[0].toString()));
             String dateString = DateTimeUtil.getShortDateTimeString(date);
-            mKLineDetailView.setContent(dateString, objs[1].toString(),
-                    objs[2].toString(), objs[3].toString(), objs[4].toString(),
-                    objs[5].toString(), objs[6].toString(), objs[7].toString());
+            mKLineDetailView.setContent(dateString, objs[1].toString(), objs[2].toString(),
+                    objs[3].toString(), objs[4].toString(), objs[5].toString(),
+                    objs[6].toString(), objs[7].toString());
 
         }
 

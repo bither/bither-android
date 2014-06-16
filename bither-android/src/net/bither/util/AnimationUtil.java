@@ -16,8 +16,6 @@
 
 package net.bither.util;
 
-import net.bither.ui.base.WrapFrameLayoutForAnimation;
-
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -26,6 +24,8 @@ import android.widget.FrameLayout;
 
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
+
+import net.bither.ui.base.WrapFrameLayoutForAnimation;
 
 public class AnimationUtil {
     private static final int FADE_DURATION = 500;

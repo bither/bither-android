@@ -16,38 +16,6 @@
 
 package net.bither.activity.hot;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.adapter.hot.HotFragmentPagerAdapter;
-import net.bither.fragment.Refreshable;
-import net.bither.fragment.Selectable;
-import net.bither.fragment.Unselectable;
-import net.bither.fragment.hot.HotAddressFragment;
-import net.bither.fragment.hot.MarketFragment;
-import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.AddErrorMsgRunnable;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.runnable.UploadAvatarRunnable;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DialogPassword.DialogPasswordListener;
-import net.bither.ui.base.DialogProgress;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.SyncProgressView;
-import net.bither.ui.base.TabButton;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.LogUtil;
-import net.bither.util.ServiceUtil;
-import net.bither.util.StringUtil;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
-
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -61,6 +29,41 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+
+import net.bither.BitherApplication;
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.adapter.hot.HotFragmentPagerAdapter;
+import net.bither.fragment.Refreshable;
+import net.bither.fragment.Selectable;
+import net.bither.fragment.Unselectable;
+import net.bither.fragment.hot.HotAddressFragment;
+import net.bither.fragment.hot.MarketFragment;
+import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.AddErrorMsgRunnable;
+import net.bither.runnable.DownloadAvatarRunnable;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.service.BlockchainService;
+import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogPassword;
+import net.bither.ui.base.DialogPassword.DialogPasswordListener;
+import net.bither.ui.base.DialogProgress;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.SyncProgressView;
+import net.bither.ui.base.TabButton;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
+import net.bither.util.ServiceUtil;
+import net.bither.util.StringUtil;
+import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HotActivity extends FragmentActivity {
     private TabButton tbtnMessage;
@@ -79,6 +82,10 @@ public class HotActivity extends FragmentActivity {
         BitherApplication.hotActivity = this;
         setContentView(R.layout.activity_hot);
         initView();
+        registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
+                .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+        registerReceiver(totalBitcoinBroadcastReceiver, new IntentFilter(BroadcastUtil
+                .ACTION_TOTAL_BITCOIN_STATE));
         mPager.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -99,17 +106,18 @@ public class HotActivity extends FragmentActivity {
                     }
                 }, 500);
                 onNewIntent(getIntent());
-
-                registerReceiver(broadcastReceiver, new IntentFilter(
-                        BroadcastUtil.ACTION_SYNC_BLOCK_AND_WALLET_STATE));
-                registerReceiver(totalBitcoinBroadcastReceiver,
-                        new IntentFilter(
-                                BroadcastUtil.ACTION_TOTAL_BITCOIN_STATE)
-                );
                 ServiceUtil.doMarkTimerTask(true);
             }
         }, 500);
         addNewPrivateKey();
+        mPager.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ServiceUtil.localTimeIsWrong()) {
+                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.time_is_wrong);
+                }
+            }
+        }, 2 * 1000);
     }
 
     @Override
@@ -134,46 +142,59 @@ public class HotActivity extends FragmentActivity {
     }
 
     private void addNewPrivateKey() {
-        final AppSharedPreference preference = AppSharedPreference
-                .getInstance();
+        final AppSharedPreference preference = AppSharedPreference.getInstance();
         if (!preference.hasPrivateKey()) {
             dp = new DialogProgress(HotActivity.this, R.string.please_wait);
             dp.setCancelable(false);
-            DialogPassword dialogPassword = new DialogPassword(
-                    HotActivity.this, new DialogPasswordListener() {
+            DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
+                    new DialogPasswordListener() {
 
                 @Override
                 public void onPasswordEntered(final String password) {
-                    ThreadNeedService thread = new ThreadNeedService(
-                            dp, HotActivity.this) {
+                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
 
                         @Override
-                        public void runWithService(
-                                BlockchainService service) {
+                        public void runWithService(BlockchainService service) {
                             BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
-                            if (!WalletUtils.getBitherAddressList()
-                                    .contains(address)) {
+                            if (!WalletUtils.getBitherAddressList().contains(address)) {
                                 address.encrypt(password);
-                                WalletUtils.addAddressWithPrivateKey(
-                                        service, address);
+                                WalletUtils.addAddressWithPrivateKey(service, address);
                                 preference.setHasPrivateKey(true);
                             }
-                            HotActivity.this
-                                    .runOnUiThread(new Runnable() {
+                            HotActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    Fragment fragment = getFragmentAtIndex(1);
+                                    if (fragment instanceof Refreshable) {
+                                        ((Refreshable) fragment).doRefresh();
+                                    }
+
+                                    new DialogConfirmTask(HotActivity.this,
+                                            getString(R.string
+                                                    .first_add_private_key_check_suggest),
+                                            new Runnable() {
                                         @Override
                                         public void run() {
-
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
-                                            }
-                                            Fragment fragment = getFragmentAtIndex(1);
-                                            if (fragment instanceof Refreshable) {
-                                                ((Refreshable) fragment)
-                                                        .doRefresh();
-                                            }
-
+                                            ThreadUtil.runOnMainThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent intent = new Intent(HotActivity.this,
+                                                            CheckPrivateKeyActivity.class);
+                                                    intent.putExtra(BitherSetting.INTENT_REF
+                                                                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, true
+                                                    );
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
-                                    });
+                                    }
+                                    ).show();
+                                }
+                            });
                         }
                     };
                     thread.start();
@@ -188,19 +209,16 @@ public class HotActivity extends FragmentActivity {
     private void deleteNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context
                 .NOTIFICATION_SERVICE);
-        notificationManager
-                .cancel(BitherSetting.NOTIFICATION_ID_COINS_RECEIVED);
+        notificationManager.cancel(BitherSetting.NOTIFICATION_ID_COINS_RECEIVED);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         deleteNotification();
-        if (intent != null
-                && intent.getExtras() != null
-                && intent.getExtras().containsKey(
-                BitherSetting.INTENT_REF.NOTIFICATION_ADDRESS)) {
-            final String address = intent.getExtras().getString(
-                    BitherSetting.INTENT_REF.NOTIFICATION_ADDRESS);
+        if (intent != null && intent.getExtras() != null && intent.getExtras().containsKey
+                (BitherSetting.INTENT_REF.NOTIFICATION_ADDRESS)) {
+            final String address = intent.getExtras().getString(BitherSetting.INTENT_REF
+                    .NOTIFICATION_ADDRESS);
             mPager.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -208,10 +226,8 @@ public class HotActivity extends FragmentActivity {
                         mPager.setCurrentItem(1, false);
                     }
                     Fragment fragment = getFragmentAtIndex(1);
-                    if (fragment != null
-                            && fragment instanceof HotAddressFragment) {
-                        ((HotAddressFragment) fragment)
-                                .scrollToAddress(address);
+                    if (fragment != null && fragment instanceof HotAddressFragment) {
+                        ((HotAddressFragment) fragment).scrollToAddress(address);
                     }
                 }
             }, 400);
@@ -228,21 +244,18 @@ public class HotActivity extends FragmentActivity {
 
         configureTopBarSize();
 
-        tbtnMain.setIconResource(R.drawable.tab_main,
-                R.drawable.tab_main_checked);
-        tbtnMain.setBigInteger(null);
-        tbtnMessage.setIconResource(R.drawable.tab_market,
-                R.drawable.tab_market_checked);
-        tbtnMe.setIconResource(R.drawable.tab_option,
-                R.drawable.tab_option_checked);
+        tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        tbtnMain.setBigInteger(null, null);
+        tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
+        tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
 
         mPager = (ViewPager) findViewById(R.id.pager);
         mAdapter = new HotFragmentPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
         mPager.setCurrentItem(1);
         mPager.setOffscreenPageLimit(2);
-        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{
-                tbtnMessage, tbtnMain, tbtnMe}, mPager));
+        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
+                tbtnMain, tbtnMe}, mPager));
     }
 
     private void initClick() {
@@ -261,10 +274,8 @@ public class HotActivity extends FragmentActivity {
                                 R.string.watch_only_address_count_limit);
                         return;
                     }
-                    Intent intent = new Intent(HotActivity.this,
-                            AddHotAddressActivity.class);
-                    startActivityForResult(intent,
-                            BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                    Intent intent = new Intent(HotActivity.this, AddHotAddressActivity.class);
+                    startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
                 } else {
                     DropdownMessage.showDropdownMessage(HotActivity.this, R.string.wallet_loading);
                 }
@@ -276,15 +287,12 @@ public class HotActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE
-                && resultCode == RESULT_OK) {
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             Fragment f = getFragmentAtIndex(1);
             if (f != null && f instanceof HotAddressFragment) {
-                @SuppressWarnings("unchecked")
-                ArrayList<String> addresses = (ArrayList<String>) data
-                        .getExtras()
-                        .getSerializable(
-                                BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+                @SuppressWarnings("unchecked") ArrayList<String> addresses = (ArrayList<String>)
+                        data.getExtras().getSerializable(BitherSetting.INTENT_REF
+                                .ADDRESS_POSITION_PASS_VALUE_TAG);
                 HotAddressFragment af = (HotAddressFragment) f;
                 af.showAddressesAdded(addresses);
             }
@@ -295,8 +303,8 @@ public class HotActivity extends FragmentActivity {
             return;
         }
 
-        if (requestCode == SelectAddressToSendActivity.SEND_REQUEST_CODE
-                && resultCode == RESULT_OK) {
+        if (requestCode == SelectAddressToSendActivity.SEND_REQUEST_CODE && resultCode ==
+                RESULT_OK) {
             DropdownMessage.showDropdownMessage(this, R.string.donate_thanks);
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -328,8 +336,7 @@ public class HotActivity extends FragmentActivity {
 
         }
 
-        public void onPageScrolled(int position, float positionOffset,
-                                   int positionOffsetPixels) {
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
         }
 
@@ -384,8 +391,7 @@ public class HotActivity extends FragmentActivity {
     }
 
     private void configureTopBarSize() {
-        int sideBarSize = UIUtil.getScreenWidth() / 3 - UIUtil.getScreenWidth()
-                / 18;
+        int sideBarSize = UIUtil.getScreenWidth() / 3 - UIUtil.getScreenWidth() / 18;
         tbtnMessage.getLayoutParams().width = sideBarSize;
         tbtnMe.getLayoutParams().width = sideBarSize;
     }
@@ -412,6 +418,8 @@ public class HotActivity extends FragmentActivity {
                 addErrorMsgRunnable.run();
                 UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
                 uploadAvatarRunnable.run();
+                DownloadAvatarRunnable downloadAvatarRunnable = new DownloadAvatarRunnable();
+                downloadAvatarRunnable.run();
 
             }
         }).start();
@@ -426,10 +434,8 @@ public class HotActivity extends FragmentActivity {
     private final class BlockchainBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            if (intent != null
-                    && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
-                double progress = intent.getDoubleExtra(
-                        BroadcastUtil.ACTION_PROGRESS_INFO, 0);
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
+                double progress = intent.getDoubleExtra(BroadcastUtil.ACTION_PROGRESS_INFO, 0);
                 LogUtil.d("progress", "BlockchainBroadcastReceiver" + progress);
                 pbSync.setProgress(progress);
             }
@@ -443,15 +449,19 @@ public class HotActivity extends FragmentActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null
-                    && intent.hasExtra(BroadcastUtil.ACTION_TOTAL_BITCOIN)) {
-                BigInteger btc = (BigInteger) intent
-                        .getSerializableExtra(BroadcastUtil.ACTION_TOTAL_BITCOIN);
-                if (!WalletUtils.hasAnyAddresses()) {
-                    tbtnMain.setBigInteger(null);
-                } else {
-                    tbtnMain.setBigInteger(btc);
-                }
+            BigInteger btcPrivate = null, btcWatchOnly = null;
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PRIVATEKEY_TOTAL_BITCOIN)) {
+                btcPrivate = (BigInteger) intent.getSerializableExtra(BroadcastUtil
+                        .ACTION_PRIVATEKEY_TOTAL_BITCOIN);
+            }
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN)) {
+                btcWatchOnly = (BigInteger) intent.getSerializableExtra(BroadcastUtil
+                        .ACTION_WATCHONLY_TOTAL_BITCOIN);
+            }
+            if (!WalletUtils.hasAnyAddresses()) {
+                tbtnMain.setBigInteger(null, null);
+            } else {
+                tbtnMain.setBigInteger(btcPrivate, btcWatchOnly);
             }
         }
     }

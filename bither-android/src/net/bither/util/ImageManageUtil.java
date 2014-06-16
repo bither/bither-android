@@ -31,7 +31,10 @@ import android.view.Window;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.api.DownloadFile;
+import net.bither.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.listener.GetAvatarListener;
 
 import java.io.File;
 
@@ -87,7 +90,7 @@ public class ImageManageUtil {
         }
     }
 
-    public static Bitmap getAvatarForFancyQrCode() {
+    public static void getAvatarForFancyQrCode(GetAvatarListener getAvatarListener) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         Resources res = BitherApplication.mContext.getResources();
@@ -95,10 +98,29 @@ public class ImageManageUtil {
         Bitmap result = Bitmap.createBitmap(shape.getWidth(), shape.getHeight(), shape.getConfig());
         Canvas c = new Canvas(result);
         c.drawBitmap(shape, 0, 0, paint);
-        shape = null;
         Paint avatarPaint = new Paint();
         avatarPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         avatarPaint.setAntiAlias(true);
+        Bitmap avatarBit = getAvatarBit();
+        if (avatarBit == null) {
+            if (getAvatarListener != null) {
+                getAvatarListener.fileNoExist();
+            }
+            return;
+        }
+        c.drawBitmap(avatarBit, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
+                avatarPaint);
+        Bitmap overlay = BitmapFactory.decodeResource(res,
+                R.drawable.avatar_for_fancy_qr_code_overlay);
+        c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
+        if (result != null) {
+            if (getAvatarListener != null) {
+                getAvatarListener.success(result);
+            }
+        }
+    }
+
+    private static Bitmap getAvatarBit() {
         String avatar = AppSharedPreference.getInstance().getUserAvatar();
         Bitmap avatarBit = null;
         if (!StringUtil.isEmpty(avatar)) {
@@ -106,17 +128,7 @@ public class ImageManageUtil {
             avatarBit = ImageManageUtil.getBitmapNearestSize(file,
                     ImageManageUtil.IMAGE_SMALL_SIZE);
         }
-        if (avatarBit == null) {
-            return null;
-        }
-        c.drawBitmap(avatarBit, null, new Rect(0, 0, result.getWidth(), result.getHeight()),
-                avatarPaint);
-        avatarBit = null;
-        Bitmap overlay = BitmapFactory.decodeResource(res,
-                R.drawable.avatar_for_fancy_qr_code_overlay);
-        c.drawBitmap(overlay, null, new Rect(0, 0, result.getWidth(), result.getHeight()), paint);
-        overlay = null;
-        return result;
+        return avatarBit;
     }
 
 

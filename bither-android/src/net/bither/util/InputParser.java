@@ -16,16 +16,6 @@
 
 package net.bither.util;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-
 import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.Base58;
@@ -35,6 +25,16 @@ import com.google.bitcoin.core.ProtocolException;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.uri.BitcoinURI;
 import com.google.bitcoin.uri.BitcoinURIParseException;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class InputParser {
 	public abstract static class StringInputParser extends InputParser {

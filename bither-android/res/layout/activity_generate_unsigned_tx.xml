@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffffff" >
+        android:background="#ffffffff">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/title_bar_below_margin" >
+            android:layout_marginTop="@dimen/title_bar_below_margin">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingLeft="6dp"
-                    android:paddingRight="6dp" >
+                    android:paddingRight="6dp">
 
                     <TextView
                         android:id="@+id/tv_address_label"
@@ -34,13 +34,13 @@
                         android:text="@string/send_coins_fragment_receiving_address_label"
                         android:textColor="@color/text_field_light_text_color"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <EditText
                             android:id="@+id/et_address"
@@ -52,14 +52,14 @@
                             android:hint="@string/add_address_watch_only_hint"
                             android:singleLine="true"
                             android:textColor="@color/text_field_text_color"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                         <ImageButton
                             android:id="@+id/ibtn_scan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="5dp"
-                            android:background="@drawable/scan_button_selector" />
+                            android:background="@drawable/scan_button_selector"/>
                     </LinearLayout>
 
                     <TextView
@@ -70,19 +70,19 @@
                         android:text="@string/send_coins_fragment_amount_label"
                         android:textColor="@color/text_field_light_text_color"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <net.bither.ui.base.CurrencyAmountView
                             android:id="@+id/cav_btc"
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" >
+                            android:layout_weight="1">
 
                             <EditText
                                 android:id="@+id/send_coins_amount_btc_edittext"
@@ -90,7 +90,7 @@
                                 android:layout_height="40dp"
                                 android:background="@drawable/text_field_holo_light_background"
                                 android:imeOptions="flagNoExtractUi"
-                                android:textSize="18sp" />
+                                android:textSize="18sp"/>
                         </net.bither.ui.base.CurrencyAmountView>
 
                         <net.bither.ui.base.CurrencyAmountView
@@ -98,7 +98,7 @@
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:layout_weight="1" >
+                            android:layout_weight="1">
 
                             <EditText
                                 android:id="@+id/send_coins_amount_local_edittext"
@@ -106,7 +106,7 @@
                                 android:layout_height="40dp"
                                 android:background="@drawable/text_field_holo_light_background"
                                 android:imeOptions="flagNoExtractUi"
-                                android:textSize="18sp" />
+                                android:textSize="18sp"/>
                         </net.bither.ui.base.CurrencyAmountView>
                     </LinearLayout>
 
@@ -114,7 +114,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:orientation="horizontal" >
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/btn_send"
@@ -126,15 +126,17 @@
                             android:background="@drawable/btn_small_send_selector"
                             android:enabled="false"
                             android:padding="10dp"
-                            android:text="@string/generate_unsigned_tx_button"
+                            android:text="@string/address_detail_send"
+                            android:drawableLeft="@drawable/unsigned_transaction_button_icon_mirror_transparent"
+                            android:drawableRight="@drawable/unsigned_transaction_button_icon"
                             android:textColor="@color/white"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/layout_dropdown_message" />
+            <include layout="@layout/layout_dropdown_message"/>
         </FrameLayout>
 
         <LinearLayout
@@ -143,7 +145,7 @@
             android:layout_height="49.0dip"
             android:layout_gravity="top"
             android:background="@drawable/action_bar_black_bg"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btn_cancel"
@@ -151,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|center"
                 android:background="@drawable/action_bar_black_left_button"
-                android:src="@drawable/action_bar_glyph_cancel" />
+                android:src="@drawable/action_bar_glyph_cancel"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -164,14 +166,14 @@
                 android:shadowRadius="0.5"
                 android:text="@string/activity_name_generate_unsigned_tx"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
             <ImageView
                 android:id="@+id/iv_balance_symbol"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="5dp" />
+                android:layout_marginLeft="5dp"/>
 
             <TextView
                 android:id="@+id/tv_balance"
@@ -185,7 +187,7 @@
                 android:shadowRadius="0.5"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -198,13 +200,13 @@
                 android:shadowRadius="0.5"
                 android:text="@string/bitcoin_symbol"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical" >
+                android:orientation="vertical">
             </LinearLayout>
         </LinearLayout>
     </net.bither.ui.base.SwipeRightTouchView>
