@@ -53,8 +53,8 @@ public class QRCodeTransportPage {
 		this.mContent = mContent;
 	}
 
-	public static String fotmatQRCodeTran(
-			List<QRCodeTransportPage> qrCodeTransportPages) {
+	public static String formatQRCodeTran(
+            List<QRCodeTransportPage> qrCodeTransportPages) {
 		String transportString = "";
 		for (QRCodeTransportPage qCodetTransportPage : qrCodeTransportPages) {
 			if (!StringUtil.isEmpty(qCodetTransportPage.getContent())) {
