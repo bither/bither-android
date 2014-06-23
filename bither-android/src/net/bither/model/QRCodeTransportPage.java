@@ -42,7 +42,7 @@ public class QRCodeTransportPage {
 	}
 
 	public boolean hasNextPage() {
-		return this.mCurrentPage < this.mSumPage;
+		return this.mCurrentPage+1 < this.mSumPage;
 	}
 
 	public String getContent() {
