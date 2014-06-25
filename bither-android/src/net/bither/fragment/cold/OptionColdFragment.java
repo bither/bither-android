@@ -62,6 +62,7 @@ import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -380,6 +381,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
+            List<BitherAddressWithPrivateKey> wallets = new
+                    ArrayList<BitherAddressWithPrivateKey>();
             for (int i = keys.size() - 1;
                  i >= 0;
                  i--) {
@@ -388,8 +391,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
                         false);
                 wallet.setKeyCrypter(key.getKeyCrypter());
                 wallet.addKey(key);
-                WalletUtils.addAddressWithPrivateKey(null, wallet);
+                wallets.add(wallet);
             }
+            WalletUtils.addAddressWithPrivateKey(null, wallets);
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

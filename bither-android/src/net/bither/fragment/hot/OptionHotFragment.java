@@ -80,6 +80,7 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable,
@@ -708,7 +709,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     });
                     return;
                 }
-                WalletUtils.addAddressWithPrivateKey(service, wallet);
+                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                wallets.add(wallet);
+                WalletUtils.addAddressWithPrivateKey(service, wallets);
             }
 
             getActivity().runOnUiThread(new Runnable() {

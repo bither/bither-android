@@ -102,10 +102,10 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
 					if (!WalletUtils.getBitherAddressList().contains(address)) {
 						address.encrypt(password);
 						addresses.add(address);
-						WalletUtils.addAddressWithPrivateKey(service, address);
 						LogUtil.d("Generate", "Address: " + addresses.size());
 					}
 				}
+                WalletUtils.addAddressWithPrivateKey(service,addresses);
 				Collections.reverse(addresses);
 				activity.runOnUiThread(new Runnable() {
 					@Override

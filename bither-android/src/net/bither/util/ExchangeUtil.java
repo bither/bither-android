@@ -44,7 +44,7 @@ public class ExchangeUtil {
 
     private static double mRate = -1;
 
-    public static void setExcchangeRate(double rate) throws IOException {
+    public static void setExchangeRate(double rate) throws IOException {
         mRate = rate;
         String rateString = Double.toString(rate);
         File file = FileUtil.getExchangeRateFile();
