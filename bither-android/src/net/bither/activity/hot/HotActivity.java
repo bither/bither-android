@@ -158,7 +158,10 @@ public class HotActivity extends FragmentActivity {
                             BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
                             if (!WalletUtils.getBitherAddressList().contains(address)) {
                                 address.encrypt(password);
-                                WalletUtils.addAddressWithPrivateKey(service, address);
+                                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                                wallets.add(address);
+
+                                WalletUtils.addAddressWithPrivateKey(service, wallets);
                                 preference.setHasPrivateKey(true);
                             }
                             HotActivity.this.runOnUiThread(new Runnable() {

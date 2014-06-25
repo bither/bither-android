@@ -582,11 +582,20 @@ public class WalletUtils {
 
     public static void addAddressWithPrivateKey(
             final BlockchainService blockchainService,
-            final BitherAddressWithPrivateKey address) {
-        address.setAddressInfo(new AddressInfo(address));
+            final List<BitherAddressWithPrivateKey> addresses) {
+        final List<BitherAddressWithPrivateKey> addList = new
+                ArrayList<BitherAddressWithPrivateKey>();
         AppSharedPreference prefs = AppSharedPreference.getInstance();
-        if (prefs.getPasswordSeed() == null) {
-            prefs.setPasswordSeed(new PasswordSeed(address));
+        for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addresses) {
+            if (!privateAddressList.contains(bitherAddressWithPrivateKey)) {
+                bitherAddressWithPrivateKey.setAddressInfo(new AddressInfo
+                        (bitherAddressWithPrivateKey));
+                addList.add(bitherAddressWithPrivateKey);
+                if (prefs.getPasswordSeed() == null) {
+                    prefs.setPasswordSeed(new PasswordSeed(bitherAddressWithPrivateKey));
+                }
+            }
+
         }
         synchronized (addressLock) {
             final AppMode appMode = AppSharedPreference.getInstance()
@@ -594,36 +603,38 @@ public class WalletUtils {
             if (appMode == AppMode.HOT && blockchainService != null) {
                 blockchainService.stopPeerGroup();
             }
-            final boolean hasAddress = privateAddressList.contains(address);
-            if (!hasAddress) {
-                privateAddressList.add(0, address);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        savePrivateAddressSequence();
+            for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addList) {
+                privateAddressList.add(0, bitherAddressWithPrivateKey);
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    savePrivateAddressSequence();
+                    for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addList) {
                         File walletFile = FileUtil
-                                .getWalletFileFromPrivate(address.getAddress());
-                        LogUtil.i("save wallet", address.toString());
+                                .getWalletFileFromPrivate(bitherAddressWithPrivateKey.getAddress());
+                        LogUtil.i("save wallet", bitherAddressWithPrivateKey.toString());
                         try {
-                            WalletUtils.protobufSerializeWallet(address,
+                            WalletUtils.protobufSerializeWallet(bitherAddressWithPrivateKey,
                                     walletFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        address.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
+                        bitherAddressWithPrivateKey.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
                                 null);
-                        if (appMode == AppMode.HOT && blockchainService != null) {
-                            blockchainService
-                                    .beginInitBlockAndWalletInUiThread();
-                        }
-
-                        BackupUtil.backupColdKey(false);
-                        BackupUtil.backupHotKey();
-
+                    }
+                    if (appMode == AppMode.HOT && blockchainService != null) {
+                        blockchainService
+                                .beginInitBlockAndWalletInUiThread();
                     }
 
-                }).start();
-            }
+                    BackupUtil.backupColdKey(false);
+                    BackupUtil.backupHotKey();
+
+                }
+
+            }).start();
+
         }
     }
 

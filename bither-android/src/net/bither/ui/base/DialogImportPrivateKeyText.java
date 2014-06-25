@@ -42,6 +42,9 @@ import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by songchenwen on 14-6-10.
  */
@@ -194,7 +197,9 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 });
                 return;
             } else {
-                WalletUtils.addAddressWithPrivateKey(service, wallet);
+                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                wallets.add(wallet);
+                WalletUtils.addAddressWithPrivateKey(service, wallets);
             }
 
             ThreadUtil.runOnMainThread(new Runnable() {
