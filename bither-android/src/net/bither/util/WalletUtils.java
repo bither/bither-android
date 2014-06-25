@@ -616,7 +616,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        sendTotalBroadcast();
+
                         BackupUtil.backupColdKey(false);
                         BackupUtil.backupHotKey();
 
@@ -659,7 +659,7 @@ public class WalletUtils {
                             blockchainService
                                     .beginInitBlockAndWalletInUiThread();
                         }
-                        sendTotalBroadcast();
+
                     }
                 }).start();
             }
