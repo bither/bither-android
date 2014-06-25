@@ -629,40 +629,48 @@ public class WalletUtils {
 
     public static void addBitherAddress(
             final BlockchainService blockchainService,
-            final BitherAddress address) {
-        address.setAddressInfo(new AddressInfo(address));
+            final List<BitherAddress> addresses) {
+        final List<BitherAddress> addList = new ArrayList<BitherAddress>();
+        for (BitherAddress bitherAddress : addresses) {
+            if (!watchOnlyAddressList.contains(bitherAddress)) {
+                bitherAddress.setAddressInfo(new AddressInfo(bitherAddress));
+                addList.add(bitherAddress);
+            }
+        }
         synchronized (addressLock) {
             final AppMode appMode = AppSharedPreference.getInstance()
                     .getAppMode();
             if (appMode == AppMode.HOT && blockchainService != null) {
                 blockchainService.stopPeerGroup();
             }
-            final boolean hasAddress = watchOnlyAddressList.contains(address);
-            if (!hasAddress) {
-                watchOnlyAddressList.add(0, address);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        saveWatchOnlyAddressSequence();
+            for (BitherAddress bitherAddress : addList) {
+                watchOnlyAddressList.add(0, bitherAddress);
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    saveWatchOnlyAddressSequence();
+                    for (BitherAddress bitherAddress : addList) {
                         File walletFile = FileUtil
-                                .getWalletFileFromWatch(address.getAddress());
-                        LogUtil.i("save wallet", address.toString());
+                                .getWalletFileFromWatch(bitherAddress.getAddress());
+                        LogUtil.i("save wallet", bitherAddress.toString());
                         try {
-                            WalletUtils.protobufSerializeWallet(address,
+                            WalletUtils.protobufSerializeWallet(bitherAddress,
                                     walletFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        address.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
+                        bitherAddress.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
                                 null);
-                        if (appMode == AppMode.HOT && blockchainService != null) {
-                            blockchainService
-                                    .beginInitBlockAndWalletInUiThread();
-                        }
-
                     }
-                }).start();
-            }
+                    if (appMode == AppMode.HOT && blockchainService != null) {
+                        blockchainService
+                                .beginInitBlockAndWalletInUiThread();
+                    }
+
+                }
+            }).start();
+
         }
     }
 

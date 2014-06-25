@@ -153,9 +153,9 @@ public class AddAddressWatchOnlyView extends FrameLayout {
 				wallets.add(address);
 			}
 			Collections.reverse(wallets);
+            WalletUtils.addBitherAddress(service, wallets);
 			for (BitherAddress address : wallets) {
 				if (!WalletUtils.getBitherAddressList().contains(address)) {
-					WalletUtils.addBitherAddress(service, address);
 					addresses.add(address.getAddress());
 				}
 			}
