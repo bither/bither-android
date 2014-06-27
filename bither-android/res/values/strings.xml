@@ -220,7 +220,7 @@
     <string name="check_private_key_safe">Private keys are safe.</string>
     <string name="checking_private_key">Checking private keys</string>
     <string name="check_private_key_button">Check Private Keys</string>
-    <string name="check_points">Points</string>
+    <string name="check_points">%</string>
     <string name="private_key_is_empty">You don\'t have any private key, please add some</string>
     <string name="next_page">Next page</string>
     <string name="can_not_find_private_key">Can not find private key </string>

@@ -71,7 +71,7 @@
             android:shadowRadius="4"
             android:text="@string/check_points"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
     </LinearLayout>
 
