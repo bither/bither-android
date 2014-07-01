@@ -70,8 +70,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain" +
-                    ".info/address/" + address.getAddress())
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain.info/address/" + address.getAddress())
             ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 getContext().startActivity(intent);
