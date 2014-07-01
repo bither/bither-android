@@ -10,5 +10,7 @@
 *.iml
 *.class
 */build/*
+build/*
 gradle/wrapper/*
+gradlew*
 local.properties
