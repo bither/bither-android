@@ -26,6 +26,7 @@ import net.bither.ScanQRCodeTransportActivity;
 import net.bither.model.BitherAddress;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
@@ -112,7 +113,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
                 final String content = data
                         .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (StringUtil.isEmpty(content) && !checkQrCodeContent(content)) {
+                if (StringUtil.isEmpty(content) || !checkQrCodeContent(content)) {
                     DropdownMessage
                             .showDropdownMessage(
                                     activity,
