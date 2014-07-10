@@ -16,35 +16,52 @@
 
 package net.bither.http;
 
+import net.bither.util.StringUtil;
+
 public class BitherUrl {
+    public static final class BITHER_DNS {
+        private static final String FOTMAT_HTTP = "http://%s/";
 
-    public static final String BITHER_API_URL = "http://b.getcai.com/";
-    public static final String BITHER_GET_COOKIE_URL = BITHER_API_URL
+        public static final String BITHER_BITCOIN_DOMAIN = "b.getcai.com";
+        public static final String BITHER_USER_DOMAIN = "bu.getcai.com";
+        public static final String BITHER_STATS_DOMAIN = "bs.getcai.com";
+
+        public static final String BITHER_BITCOIN = StringUtil.format(FOTMAT_HTTP, BITHER_BITCOIN_DOMAIN);
+        public static final String BITHER_USER = StringUtil.format(FOTMAT_HTTP, BITHER_USER_DOMAIN);
+        public static final String BITHER_STATS = StringUtil.format(FOTMAT_HTTP, BITHER_STATS_DOMAIN);
+
+
+    }
+
+    //bither user
+    public static final String BITHER_GET_COOKIE_URL = BITHER_DNS.BITHER_USER
             + "api/v1/cookie";
-
-    public static final String BITHER_Q_GETBLOCK_COUNT_URL = BITHER_API_URL
-            + "api/v1/block/count";
-
-    public static final String BITHER_BLOCKHEADER = BITHER_API_URL
-            + "api/v1/block/%d/list";
-    public static final String BITHER_Q_MYTRANSACTIONS = BITHER_API_URL
-            + "api/v1/address/%s/transaction";
-    public static final String BITHER_GET_SPVBLOCK_API = BITHER_API_URL
-            + "api/v1/block/spv";
-    public static final String BITHER_GET_ONE_SPVBLOCK_API = BITHER_API_URL +
-            "api/v1/block/spv/one";
-    public static final String BITHER_ERROR_API = BITHER_API_URL
+    public static final String BITHER_UPLOAD_AVATAR = BITHER_DNS.BITHER_USER + "api/v1/avatar";
+    public static final String BITHER_DOWNLOAD_AVATAR = BITHER_DNS.BITHER_USER + "api/v1/avatar";
+    public static final String BITHER_ERROR_API = BITHER_DNS.BITHER_USER
             + "api/v1/error";
-    public static final String BITHER_EXCHANGE_TICKER = BITHER_API_URL
+
+    //bither bitcoin
+    public static final String BITHER_Q_GETBLOCK_COUNT_URL = BITHER_DNS.BITHER_BITCOIN
+            + "api/v1/block/count";
+    public static final String BITHER_BLOCKHEADER = BITHER_DNS.BITHER_BITCOIN
+            + "api/v1/block/%d/list";
+    public static final String BITHER_Q_MYTRANSACTIONS = BITHER_DNS.BITHER_BITCOIN
+            + "api/v1/address/%s/transaction";
+    public static final String BITHER_GET_SPVBLOCK_API = BITHER_DNS.BITHER_BITCOIN
+            + "api/v1/block/spv";
+    public static final String BITHER_GET_ONE_SPVBLOCK_API = BITHER_DNS.BITHER_BITCOIN +
+            "api/v1/block/spv/one";
+
+    //bither stats
+    public static final String BITHER_EXCHANGE_TICKER = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/ticker";
-    public static final String BITHER_KLINE_URL = BITHER_API_URL
+    public static final String BITHER_KLINE_URL = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/%d/kline/%d";
-    public static final String BITHER_DEPTH_URL = BITHER_API_URL
+    public static final String BITHER_DEPTH_URL = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/%d/depth";
-    public static final String BITHER_TREND_URL = BITHER_API_URL
+    public static final String BITHER_TREND_URL = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/%d/trend";
-    public static final String BITHER_UPLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
-    public static final String BITHER_DOWNLOAD_AVATAR = BITHER_API_URL + "api/v1/avatar";
 
 
     // matket website
