@@ -20,6 +20,7 @@ import java.io.File;
 
 import net.bither.api.BitherErrorApi;
 import net.bither.util.FileUtil;
+import net.bither.util.StringUtil;
 
 public class AddErrorMsgRunnable extends BaseRunnable {
 
@@ -30,8 +31,10 @@ public class AddErrorMsgRunnable extends BaseRunnable {
 			File errorFile = FileUtil.getErrorLogFile();
 			if (errorFile.exists()) {
 				String errorMsg = FileUtil.readFile(errorFile);
-				BitherErrorApi addFeedbackApi = new BitherErrorApi(errorMsg);
-				addFeedbackApi.handleHttpPost();
+                if (!StringUtil.isEmpty(errorMsg)) {
+                    BitherErrorApi addFeedbackApi = new BitherErrorApi(errorMsg);
+                    addFeedbackApi.handleHttpPost();
+                }
 				errorFile.delete();
 				obtainMessage(HandlerMessage.MSG_SUCCESS);
 			}

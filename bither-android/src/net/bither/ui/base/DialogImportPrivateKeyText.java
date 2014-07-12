@@ -29,7 +29,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
+import com.google.bitcoin.params.MainNetParams;
 
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
@@ -84,15 +87,29 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
+            tvError.setText(R.string.import_private_key_text_format_erro);
             if (StringUtil.isEmpty(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
-            }else if(!StringUtil.validBitcoinPrivateKey(s)){
+            } else if (!StringUtil.validBitcoinPrivateKey(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
             }
+            try {
+                ECKey key = new DumpedPrivateKey(MainNetParams.get(), s).getKey();
+                if (!key.isCompressed()) {
+                    tvError.setText(R.string.only_supports_the_compressed_private_key);
+                    tvError.setVisibility(View.VISIBLE);
+                    shake();
+                    return;
+
+                }
+            } catch (AddressFormatException e) {
+                e.printStackTrace();
+            }
+
             privateKeyString = et.getText().toString();
         }
         dismiss();
@@ -150,21 +167,26 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             this.password = password;
         }
 
+        private void dpDismissWithError(final int stringId) {
+            ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dp != null && dp.isShowing()) {
+                        dp.setThread(null);
+                        dp.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(activity, stringId
+                    );
+                }
+            });
+
+        }
+
         @Override
         public void runWithService(BlockchainService service) {
             ECKey key = PrivateKeyUtil.getEncryptedECKey(privateKey, password);
             if (key == null) {
-                ThreadUtil.runOnMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(activity,
-                                R.string.import_private_key_qr_code_failed);
-                    }
-                });
+                dpDismissWithError(R.string.import_private_key_qr_code_failed);
                 return;
             }
             BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
@@ -197,7 +219,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 });
                 return;
             } else {
-                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                List<BitherAddressWithPrivateKey> wallets = new ArrayList<BitherAddressWithPrivateKey>();
                 wallets.add(wallet);
                 WalletUtils.addAddressWithPrivateKey(service, wallets);
             }
