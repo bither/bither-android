@@ -171,7 +171,7 @@ public class MarketFragment extends Fragment implements Refreshable,
         lp.topMargin = fromY - containerOffset[1];
         lp.leftMargin = fromX - containerOffset[0];
         int marketIndex = markets.indexOf(toMarket);
-        if (marketIndex < lv.getFirstVisiblePosition() && marketIndex > lv.getLastVisiblePosition
+        if (marketIndex < lv.getFirstVisiblePosition() || marketIndex > lv.getLastVisiblePosition
                 ()) {
             lv.setSelection(marketIndex);
         }
