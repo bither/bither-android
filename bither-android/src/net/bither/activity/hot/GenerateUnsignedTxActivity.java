@@ -136,7 +136,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity {
 	}
 
 	private void initView() {
-		findViewById(R.id.btn_cancel).setOnClickListener(
+		findViewById(R.id.ibtn_cancel).setOnClickListener(
 				new BackClickListener());
 		tvAddressLabel = (TextView) findViewById(R.id.tv_address_label);
 		etAddress = (EditText) findViewById(R.id.et_address);

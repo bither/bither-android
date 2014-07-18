@@ -74,7 +74,7 @@ public class SignTxActivity extends SwipeRightActivity implements
 	}
 
 	private void initView() {
-		findViewById(R.id.btn_cancel).setOnClickListener(
+		findViewById(R.id.ibtn_cancel).setOnClickListener(
 				new BackClickListener(0, R.anim.slide_out_right));
 		tvFrom = (TextView) findViewById(R.id.tv_address_from);
 		tvTo = (TextView) findViewById(R.id.tv_address_to);

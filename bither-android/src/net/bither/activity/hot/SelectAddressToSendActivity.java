@@ -85,7 +85,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
 		if (!isAppInternal) {
 			mTouchView.addIgnoreView(mTouchView);
 		}
-		findViewById(R.id.btn_cancel).setOnClickListener(
+		findViewById(R.id.ibtn_cancel).setOnClickListener(
 				new BackClickListener());
 		tvAddress = (TextView) findViewById(R.id.tv_address);
 		tvAmount = (TextView) findViewById(R.id.tv_btc);

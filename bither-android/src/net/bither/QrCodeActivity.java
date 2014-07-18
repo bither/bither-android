@@ -61,7 +61,7 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
 	}
 
 	private void initView() {
-		findViewById(R.id.btn_cancel).setOnClickListener(
+		findViewById(R.id.ibtn_cancel).setOnClickListener(
 				new BackClickListener(0, R.anim.slide_out_right));
 		pager = (ViewPager) findViewById(R.id.pager);
 		tvTitle = (TextView) findViewById(R.id.tv_title);
