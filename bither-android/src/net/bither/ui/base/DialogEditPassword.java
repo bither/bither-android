@@ -17,13 +17,15 @@
 package net.bither.ui.base;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,9 +37,9 @@ import net.bither.model.Check;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.EditPasswordThread;
+import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.StringUtil;
-import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -45,10 +47,10 @@ import java.util.concurrent.ExecutorService;
 /**
  * Created by songchenwen on 14-5-24.
  */
-public class DialogEditPassword extends CenterDialog implements DialogInterface.OnShowListener,
-        Check.CheckListener, Check.ICheckAction, View.OnClickListener,
-        EditPasswordThread.EditPasswordListener {
+public class DialogEditPassword extends Dialog implements Check.CheckListener,
+        Check.ICheckAction, View.OnClickListener, EditPasswordThread.EditPasswordListener, TextView.OnEditorActionListener {
     private Activity activity;
+    private View container;
     private LinearLayout llInput;
     private LinearLayout llEditing;
     private TextView tvError;
@@ -56,18 +58,17 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     private EditText etNewPassword;
     private EditText etNewPasswordConfirm;
     private Button btnOk;
+    private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
     private Check passwordCheck = new Check("", this);
-    private InputMethodManager imm;
     private ExecutorService executor;
 
     public DialogEditPassword(Activity context) {
-        super(context);
+        super(context, R.style.password_dialog);
         activity = context;
         setContentView(R.layout.dialog_edit_password);
         setCanceledOnTouchOutside(false);
         setCancelable(false);
-        setOnShowListener(this);
         passwordSeed = getPasswordSeed();
         initView();
     }
@@ -77,6 +78,7 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     }
 
     private void initView() {
+        container = findViewById(R.id.fl_container);
         llInput = (LinearLayout) findViewById(R.id.ll_input);
         llEditing = (LinearLayout) findViewById(R.id.ll_editing);
         tvError = (TextView) findViewById(R.id.tv_error);
@@ -84,6 +86,7 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         etNewPassword = (EditText) findViewById(R.id.et_new_password);
         etNewPasswordConfirm = (EditText) findViewById(R.id.et_new_password_confirm);
         btnOk = (Button) findViewById(R.id.btn_ok);
+        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         PasswordWatcher watcher = new PasswordWatcher();
         etOldPassword.addTextChangedListener(watcher);
         etNewPassword.addTextChangedListener(watcher);
@@ -92,11 +95,11 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         findViewById(R.id.btn_cancel).setOnClickListener(this);
         btnOk.setEnabled(false);
         passwordCheck.setCheckListener(this);
-        imm = (InputMethodManager) getContext().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        UIUtil.configurePasswordEditText(etOldPassword);
-        UIUtil.configurePasswordEditText(etNewPassword);
-        UIUtil.configurePasswordEditText(etNewPasswordConfirm);
+        etOldPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_NEXT);
+        etNewPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_NEXT);
+        etNewPasswordConfirm.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
+        etNewPasswordConfirm.setOnEditorActionListener(this);
+        kv.registerEditText(etOldPassword, etNewPassword, etNewPasswordConfirm);
     }
 
     @Override
@@ -106,22 +109,11 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         }
     }
 
-    public void dismiss() {
-        imm.hideSoftInputFromWindow(etNewPassword.getWindowToken(), 0);
-        super.dismiss();
-    }
-
-    @Override
-    public void onShow(DialogInterface dialog) {
-        imm.showSoftInput(etOldPassword, 0);
-    }
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
-            if (!StringUtil
-                    .compareString(etNewPassword.getText().toString(),
-                            etNewPasswordConfirm.getText().toString())) {
+            if (!StringUtil.compareString(etNewPassword.getText().toString(),
+                    etNewPasswordConfirm.getText().toString())) {
                 shake();
                 tvError.setText(R.string.add_address_generate_address_password_not_same);
                 tvError.setVisibility(View.VISIBLE);
@@ -149,16 +141,14 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     }
 
     private void shake() {
-        Animation shake = AnimationUtils.loadAnimation(getContext(),
-                R.anim.password_wrong_warning);
+        Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.password_wrong_warning);
         container.startAnimation(shake);
     }
 
     @Override
     public boolean check() {
         if (passwordSeed != null) {
-            return passwordSeed.checkPassword(etOldPassword.getText()
-                    .toString());
+            return passwordSeed.checkPassword(etOldPassword.getText().toString());
         } else {
             return true;
         }
@@ -168,7 +158,7 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     public void onCheckBegin(Check check) {
         llEditing.setVisibility(View.VISIBLE);
         llInput.setVisibility(View.INVISIBLE);
-        imm.hideSoftInputFromWindow(etOldPassword.getWindowToken(), 0);
+        kv.hideKeyboard();
     }
 
     @Override
@@ -187,7 +177,7 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
             tvError.setText(R.string.password_wrong);
             tvError.setVisibility(View.VISIBLE);
             shake();
-            imm.showSoftInput(etOldPassword, 0);
+            kv.showKeyboard();
         }
     }
 
@@ -199,12 +189,14 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     private void checkValid() {
         btnOk.setEnabled(false);
         String passwordOld = etOldPassword.getText().toString();
-        if (passwordOld.length() >= 6 && passwordOld.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
+        if (passwordOld.length() >= 6 && passwordOld.length() <= getContext().getResources()
+                .getInteger(R.integer.password_length_max)) {
             String password = etNewPassword.getText().toString();
-            if (password.length() >= 6 && password.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
+            if (password.length() >= 6 && password.length() <= getContext().getResources()
+                    .getInteger(R.integer.password_length_max)) {
                 String passwordConfirm = etNewPasswordConfirm.getText().toString();
-                if (passwordConfirm.length() >= 6
-                        && passwordConfirm.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
+                if (passwordConfirm.length() >= 6 && passwordConfirm.length() <= getContext()
+                        .getResources().getInteger(R.integer.password_length_max)) {
                     btnOk.setEnabled(true);
                 }
             }
@@ -222,6 +214,14 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         dismiss();
         DropdownMessage.showDropdownMessage(activity, R.string.edit_password_fail);
     }
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(v == etNewPasswordConfirm && btnOk.isEnabled()){
+            onClick(btnOk);
+            return true;
+        }
+        return false;
+    }
 
     private class PasswordWatcher implements TextWatcher {
         private String passwordOld;
@@ -229,16 +229,14 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
         private String passwordNewConfirm;
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             passwordOld = etOldPassword.getText().toString();
             passwordNew = etNewPassword.getText().toString();
             passwordNewConfirm = etNewPasswordConfirm.getText().toString();
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before,
-                                  int count) {
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
 
         }
 

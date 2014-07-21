@@ -312,6 +312,7 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
         }
         if(v == etPasswordConfirm && btnOk.isEnabled()){
             okClick.onClick(btnOk);
+            return true;
         }
         return false;
     }
