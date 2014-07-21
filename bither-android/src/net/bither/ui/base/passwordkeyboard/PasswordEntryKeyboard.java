@@ -234,16 +234,6 @@ public class PasswordEntryKeyboard extends Keyboard {
             if (!mEnabled) {
                 return false;
             }
-            final int code = codes[0];
-            if (code == KEYCODE_SHIFT || code == KEYCODE_DELETE) {
-                y -= height / 10;
-                if (code == KEYCODE_SHIFT) {
-                    x += width / 6;
-                }
-                if (code == KEYCODE_DELETE) {
-                    x -= width / 6;
-                }
-            }
             return super.isInside(x, y);
         }
     }
