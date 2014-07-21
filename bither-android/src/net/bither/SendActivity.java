@@ -21,7 +21,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -57,7 +56,6 @@ import net.bither.ui.base.DialogSendConfirm.SendConfirmListener;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.BackClickListener;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardHelper;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
@@ -143,7 +141,7 @@ public class SendActivity extends SwipeRightActivity {
         dp = new DialogProgress(this, R.string.please_wait);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
-        new PasswordEntryKeyboardHelper(this, kv, etPassword).registerEditText(etPassword);
+        kv.registerEditText(etPassword);
     }
 
     private OnClickListener scanClick = new OnClickListener() {
@@ -288,8 +286,8 @@ public class SendActivity extends SwipeRightActivity {
     private TextView.OnEditorActionListener passwordAction = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                if(btnSend.isEnabled()){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                if (btnSend.isEnabled()) {
                     sendClick.onClick(btnSend);
                 }
                 return true;
@@ -413,7 +411,8 @@ public class SendActivity extends SwipeRightActivity {
         }
         boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
         String password = etPassword.getText().toString();
-        boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 && password.length() <= 30;
+        boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 &&
+                password.length() <= 30;
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
     }
 
