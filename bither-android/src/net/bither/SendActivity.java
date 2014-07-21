@@ -58,6 +58,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardHelper;
+import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -81,7 +82,7 @@ public class SendActivity extends SwipeRightActivity {
     private DialogProgress dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
-    private KeyboardView kv;
+    private PasswordEntryKeyboardView kv;
 
     private boolean isDonate = false;
 
@@ -120,7 +121,7 @@ public class SendActivity extends SwipeRightActivity {
         etPassword = (EditText) findViewById(R.id.et_password);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
-        kv = (KeyboardView) findViewById(R.id.kv);
+        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo().getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);

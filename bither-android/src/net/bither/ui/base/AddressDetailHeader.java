@@ -189,7 +189,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 if (address.getAddressInfo().getBalance().compareTo(BigInteger.ZERO) <= 0) {
                     DropdownMessage.showDropdownMessage(activity,
                             R.string.address_detail_send_balance_zero);
-                   // return;
+                    return;
                 }
                 if (address.hasPrivateKey()) {
                     Intent intent = new Intent(activity, SendActivity.class);
