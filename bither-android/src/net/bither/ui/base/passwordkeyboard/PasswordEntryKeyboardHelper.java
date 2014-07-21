@@ -16,26 +16,32 @@
 package net.bither.ui.base.passwordkeyboard;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.os.SystemClock;
-import android.provider.Settings;
-import android.util.Log;
-import android.view.HapticFeedbackConstants;
+import android.text.InputType;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import net.bither.R;
 import net.bither.util.LogUtil;
+import net.bither.util.ThreadUtil;
 
 import java.lang.reflect.Method;
 
 /**
  * Created by songchenwen on 14-7-18.
  */
-public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActionListener {
+public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActionListener,
+        View.OnFocusChangeListener, View.OnClickListener, View.OnTouchListener {
+
+    public static final int AnimDuration = 400;
 
     public static final int KEYBOARD_MODE_ALPHA = 0;
     public static final int KEYBOARD_MODE_NUMERIC = 1;
@@ -51,39 +57,28 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
     private final Context mContext;
     private final View mTargetView;
     private final KeyboardView mKeyboardView;
-    private long[] mVibratePattern;
-    private boolean mEnableHaptics = false;
+    private final InputMethodManager imm;
 
     private static final int NUMERIC = 0;
     private static final int QWERTY = 1;
     private static final int QWERTY_SHIFTED = 2;
-    private static final int SYMBOLS = 3;
-    private static final int SYMBOLS_SHIFTED = 4;
 
     private Object viewRootImpl;
 
     int mLayouts[] = new int[]{R.xml.password_keyboard_number, R.xml.password_keyboard_letter,
             R.xml.password_keyboard_letter};
 
-    private boolean mUsingScreenWidth;
-
     public PasswordEntryKeyboardHelper(Context context, KeyboardView keyboardView,
                                        View targetView) {
-        this(context, keyboardView, targetView, true, null);
+        this(context, keyboardView, targetView, null);
     }
 
     public PasswordEntryKeyboardHelper(Context context, KeyboardView keyboardView,
-                                       View targetView, boolean useFullScreenWidth) {
-        this(context, keyboardView, targetView, useFullScreenWidth, null);
-    }
-
-    public PasswordEntryKeyboardHelper(Context context, KeyboardView keyboardView,
-                                       View targetView, boolean useFullScreenWidth, int layouts[]) {
+                                       View targetView, int layouts[]) {
         mContext = context;
         mTargetView = targetView;
         mKeyboardView = keyboardView;
         mKeyboardView.setOnKeyboardActionListener(this);
-        mUsingScreenWidth = useFullScreenWidth;
         if (layouts != null) {
             if (layouts.length != mLayouts.length) {
                 throw new RuntimeException("Wrong number of layouts");
@@ -94,16 +89,14 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
                 mLayouts[i] = layouts[i];
             }
         }
+        imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         getViewRootImpl();
         createKeyboards();
+        setKeyboardMode(KEYBOARD_MODE_NUMERIC);
     }
 
     public void createKeyboards() {
         createKeyboardsWithDefaultWidth();
-    }
-
-    public void setEnableHaptics(boolean enabled) {
-        mEnableHaptics = enabled;
     }
 
     public boolean isAlpha() {
@@ -125,10 +118,7 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
             case KEYBOARD_MODE_ALPHA:
                 mKeyboardView.setKeyboard(mQwertyKeyboard);
                 mKeyboardState = KEYBOARD_STATE_NORMAL;
-                final boolean visiblePassword = Settings.System.getInt(mContext
-                        .getContentResolver(), Settings.System.TEXT_SHOW_PASSWORD, 1) != 0;
-                final boolean enablePreview = false; // TODO: grab from configuration
-                mKeyboardView.setPreviewEnabled(visiblePassword && enablePreview);
+                mKeyboardView.setPreviewEnabled(false);
                 break;
             case KEYBOARD_MODE_NUMERIC:
                 mKeyboardView.setKeyboard(mNumericKeyboard);
@@ -208,32 +198,6 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
         }
     }
 
-    /**
-     * Sets and enables vibrate pattern.  If id is 0 (or can't be loaded), vibrate is disabled.
-     *
-     * @param id resource id for array containing vibrate pattern.
-     */
-    public void setVibratePattern(int id) {
-        int[] tmpArray = null;
-        try {
-            tmpArray = mContext.getResources().getIntArray(id);
-        } catch (Resources.NotFoundException e) {
-            if (id != 0) {
-                Log.e(TAG, "Vibrate pattern missing", e);
-            }
-        }
-        if (tmpArray == null) {
-            mVibratePattern = null;
-            return;
-        }
-        mVibratePattern = new long[tmpArray.length];
-        for (int i = 0;
-             i < tmpArray.length;
-             i++) {
-            mVibratePattern[i] = tmpArray[i];
-        }
-    }
-
     private void handleModeChange() {
         final Keyboard current = mKeyboardView.getKeyboard();
         Keyboard next = null;
@@ -250,7 +214,6 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
 
     public void handleBackspace() {
         sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL);
-        performHapticFeedback();
     }
 
     private void handleShift() {
@@ -288,7 +251,7 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
     }
 
     private void handleClose() {
-
+        hideKeyboard();
     }
 
     private void getViewRootImpl() {
@@ -306,17 +269,17 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
         }
     }
 
-    public void onPress(int primaryCode) {
-        performHapticFeedback();
+    public int getKeyboardHeight() {
+        Keyboard keyboard = mKeyboardView.getKeyboard();
+        if (keyboard == null) {
+            return 0;
+        }
+        return keyboard.getHeight();
     }
 
-    private void performHapticFeedback() {
-        if (mEnableHaptics) {
-            mKeyboardView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
-                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING | HapticFeedbackConstants
-                            .FLAG_IGNORE_GLOBAL_SETTING
-            );
-        }
+    @Override
+    public void onPress(int primaryCode) {
+
     }
 
     public void onRelease(int primaryCode) {
@@ -341,5 +304,93 @@ public class PasswordEntryKeyboardHelper implements KeyboardView.OnKeyboardActio
 
     public void swipeUp() {
 
+    }
+
+    public boolean isKeyboardShown() {
+        if (mKeyboardView == null) {
+            return false;
+        }
+        return mKeyboardView.getHeight() >= getKeyboardHeight();
+    }
+
+    public void showKeyboard() {
+        if (mKeyboardView == null) {
+            return;
+        }
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+              boolean result = imm.hideSoftInputFromWindow(mKeyboardView.getWindowToken(), 0,
+                        new ResultReceiver(null) {
+                            @Override
+                            protected void onReceiveResult(int resultCode, Bundle resultData) {
+                                if (resultCode == InputMethodManager.RESULT_HIDDEN || resultCode
+                                        == InputMethodManager.RESULT_UNCHANGED_HIDDEN) {
+                                    mKeyboardView.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mKeyboardView.setVisibility(View.VISIBLE);
+                                            mKeyboardView.setEnabled(true);
+                                        }
+                                    }, 50);
+                                }
+                                super.onReceiveResult(resultCode, resultData);
+                            }
+                        }
+                );
+                if(!result){
+                    mKeyboardView.setVisibility(View.VISIBLE);
+                    mKeyboardView.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    public void hideKeyboard() {
+        if (mKeyboardView == null) {
+            return;
+        }
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                imm.hideSoftInputFromWindow(mKeyboardView.getWindowToken(), 0, null);
+                mKeyboardView.setVisibility(View.GONE);
+                mKeyboardView.setEnabled(false);
+            }
+        });
+    }
+
+    public PasswordEntryKeyboardHelper registerEditText(EditText et) {
+        et.setOnFocusChangeListener(this);
+        et.setOnClickListener(this);
+        et.setOnTouchListener(this);
+        return this;
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+            showKeyboard();
+        } else {
+            hideKeyboard();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        showKeyboard();
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (v instanceof EditText) {
+            EditText edittext = (EditText) v;
+            int inType = edittext.getInputType();       // Backup the input type
+            edittext.setInputType(InputType.TYPE_NULL); // Disable standard keyboard
+            edittext.onTouchEvent(event);               // Call native handler
+            edittext.setInputType(inType);              // Restore input type
+            return true;
+        }
+        return false;
     }
 }

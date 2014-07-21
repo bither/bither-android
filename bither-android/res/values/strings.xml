@@ -310,4 +310,8 @@
     <string name="edit_password_fail">Change password failed.</string>
     <string name="edit_password_new_old_same">New password is same to the old.</string>
     <string name="edit_password_editing">Changing password…\nDo Not turn off the screen.</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">Done</string>
+    <string name="password_keyboard_next">Next</string>
 </resources>

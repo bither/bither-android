@@ -294,4 +294,8 @@
     <string name="edit_password_fail">修改密码失败</string>
     <string name="edit_password_new_old_same">新密码不能和旧密码相同</string>
     <string name="edit_password_editing">正在修改密码…\n请不要关闭手机屏幕</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">完成</string>
+    <string name="password_keyboard_next">下一项</string>
 </resources>

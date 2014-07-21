@@ -16,35 +16,6 @@
 
 package net.bither;
 
-import java.math.BigInteger;
-
-import net.bither.BitherSetting.MarketType;
-import net.bither.activity.hot.SelectAddressToSendActivity;
-import net.bither.model.BitherAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.model.Ticker;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.CommitTransactionRunnable;
-import net.bither.runnable.CompleteTransactionRunnable;
-import net.bither.runnable.HandlerMessage;
-import net.bither.ui.base.CurrencyAmountView;
-import net.bither.ui.base.CurrencyCalculatorLink;
-import net.bither.ui.base.DialogProgress;
-import net.bither.ui.base.DialogSendConfirm;
-import net.bither.ui.base.DialogSendConfirm.SendConfirmListener;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.SwipeRightActivity;
-import net.bither.ui.base.listener.BackClickListener;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardHelper;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
-import net.bither.util.InputParser.StringInputParser;
-import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -68,6 +39,32 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.Transaction;
 import com.google.bitcoin.core.Wallet.BalanceType;
 import com.google.bitcoin.core.Wallet.SendRequest;
+
+import net.bither.activity.hot.SelectAddressToSendActivity;
+import net.bither.model.BitherAddress;
+import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.model.Ticker;
+import net.bither.runnable.CommitTransactionRunnable;
+import net.bither.runnable.CompleteTransactionRunnable;
+import net.bither.runnable.HandlerMessage;
+import net.bither.ui.base.CurrencyAmountView;
+import net.bither.ui.base.CurrencyCalculatorLink;
+import net.bither.ui.base.DialogProgress;
+import net.bither.ui.base.DialogSendConfirm;
+import net.bither.ui.base.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardHelper;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.CurrencySymbolUtil;
+import net.bither.util.GenericUtils;
+import net.bither.util.InputParser.StringInputParser;
+import net.bither.util.MarketUtil;
+import net.bither.util.StringUtil;
+import net.bither.util.WalletUtils;
+
+import java.math.BigInteger;
 
 public class SendActivity extends SwipeRightActivity {
     private int addressPosition;
@@ -122,10 +119,8 @@ public class SendActivity extends SwipeRightActivity {
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
         kv = (KeyboardView) findViewById(R.id.kv);
-        new PasswordEntryKeyboardHelper(this, kv, etPassword, true).setKeyboardMode(PasswordEntryKeyboardHelper.KEYBOARD_MODE_NUMERIC);
         tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo().getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
-        UIUtil.configurePasswordEditText(etPassword);
         etPassword.addTextChangedListener(passwordWatcher);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
@@ -144,6 +139,7 @@ public class SendActivity extends SwipeRightActivity {
         dp = new DialogProgress(this, R.string.please_wait);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
+        new PasswordEntryKeyboardHelper(this, kv, etPassword).registerEditText(etPassword);
     }
 
     private OnClickListener scanClick = new OnClickListener() {
@@ -400,7 +396,7 @@ public class SendActivity extends SwipeRightActivity {
         }
         boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
         String password = etPassword.getText().toString();
-        boolean isValidPassword = (password.length() >= 6 && password.length() <= 20);
+        boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 && password.length() <= 30;
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
     }
 
