@@ -32,7 +32,6 @@ import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -426,7 +425,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
         String password = etPassword.getText().toString();
         boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 &&
-                password.length() <= 30;
+                password.length() <= getResources().getInteger(R.integer.password_length_max);
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
     }
 

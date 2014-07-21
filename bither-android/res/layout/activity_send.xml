@@ -130,7 +130,7 @@
                         android:hint="@string/add_address_generate_address_password_hint"
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textPassword"
-                        android:maxLength="20"
+                        android:maxLength="@integer/password_length_max"
                         android:imeActionId="6"
                         android:password="true"
                         android:textSize="16sp"/>

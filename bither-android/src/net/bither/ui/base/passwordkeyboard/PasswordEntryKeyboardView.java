@@ -6,6 +6,7 @@ import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyCharacterMap;
@@ -55,6 +56,8 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private Object viewRootImpl;
 
     private PasswordEntryKeyboardViewListener listener;
+
+    private boolean canGetViewRootImpl;
 
     public PasswordEntryKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -111,7 +114,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     }
 
     private void sendKeyEventsToTarget(int character) {
-        if (viewRootImpl == null) {
+        if (viewRootImpl == null && canGetViewRootImpl) {
             getViewRootImpl();
         }
         KeyEvent[] events = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD).getEvents(new
@@ -138,7 +141,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     }
 
     public void sendDownUpKeyEvents(int keyEventCode) {
-        if (viewRootImpl == null) {
+        if (viewRootImpl == null && canGetViewRootImpl) {
             getViewRootImpl();
         }
         long eventTime = SystemClock.uptimeMillis();
@@ -177,6 +180,34 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                 // skip to the unlocked state
                 mKeyboardState = KEYBOARD_STATE_CAPSLOCK;
                 handleShift();
+            }
+        }
+    }
+
+    private void handleCharacter(int primaryCode, int[] keyCodes) {
+        // Maybe turn off shift if not in capslock mode.
+        if (isShifted() && primaryCode != ' ' && primaryCode != '\n') {
+            primaryCode = Character.toUpperCase(primaryCode);
+        }
+        if (canGetViewRootImpl) {
+            sendKeyEventsToTarget(primaryCode);
+        } else {
+            EditText editText = getCurrentInputView();
+            int start = editText.getSelectionStart();
+            Editable editable = editText.getText();
+            editable.insert(start, Character.toString((char) primaryCode));
+        }
+    }
+
+    public void handleBackspace() {
+        if (canGetViewRootImpl) {
+            sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL);
+        } else {
+            EditText editText = getCurrentInputView();
+            int start = editText.getSelectionStart();
+            Editable editable = editText.getText();
+            if (editable != null && start > 0) {
+                editable.delete(start - 1, start);
             }
         }
     }
@@ -222,10 +253,6 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         }
     }
 
-    public void handleBackspace() {
-        sendDownUpKeyEvents(KeyEvent.KEYCODE_DEL);
-    }
-
     private void handleShift() {
         Keyboard current = getKeyboard();
         PasswordEntryKeyboard next = null;
@@ -249,14 +276,6 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         }
     }
 
-    private void handleCharacter(int primaryCode, int[] keyCodes) {
-        // Maybe turn off shift if not in capslock mode.
-        if (isShifted() && primaryCode != ' ' && primaryCode != '\n') {
-            primaryCode = Character.toUpperCase(primaryCode);
-        }
-        sendKeyEventsToTarget(primaryCode);
-    }
-
     private void handleClose() {
         hideKeyboard();
     }
@@ -266,10 +285,21 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             Method method = View.class.getDeclaredMethod("getViewRootImpl");
             method.setAccessible(true);
             viewRootImpl = method.invoke(this);
+            if (viewRootImpl != null) {
+                viewRootImpl.getClass().getDeclaredMethod("dispatchKeyFromIme", KeyEvent.class);
+            }
+            canGetViewRootImpl = true;
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e(TAG, "can not get view root imp");
+            canGetViewRootImpl = false;
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getViewRootImpl();
     }
 
     public int getKeyboardHeight() {
@@ -417,9 +447,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                 mNumericKeyboard.setEnterKeyText(currentFocusEt.getImeActionLabel());
                 mQwertyKeyboard.setEnterKeyText(currentFocusEt.getImeActionLabel());
                 mQwertyKeyboardShifted.setEnterKeyText(currentFocusEt.getImeActionLabel());
-                return;
-            }
-            if (currentFocusEt.getImeActionId() > 0) {
+            } else if (currentFocusEt.getImeActionId() > 0) {
                 switch (currentFocusEt.getImeActionId()) {
                     case EditorInfo.IME_ACTION_DONE:
                     case EditorInfo.IME_ACTION_GO:
@@ -430,7 +458,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                                 R.string.password_keyboard_done);
                         mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(),
                                 0, 0, R.string.password_keyboard_done);
-                        return;
+                        break;
                     case EditorInfo.IME_ACTION_NEXT:
                         mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
                                 R.string.password_keyboard_next);
@@ -438,26 +466,27 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                                 R.string.password_keyboard_next);
                         mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(),
                                 0, 0, R.string.password_keyboard_next);
-                        return;
+                        break;
                     default:
                         break;
                 }
-            }
-            View nextFocusView = currentFocusEt.focusSearch(View.FOCUS_DOWN);
-            if (nextFocusView != null) {
-                mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_next);
-                mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_next);
-                mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_next);
             } else {
-                mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_done);
-                mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_done);
-                mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0, 0,
-                        R.string.password_keyboard_done);
+                View nextFocusView = currentFocusEt.focusSearch(View.FOCUS_DOWN);
+                if (nextFocusView != null) {
+                    mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
+                            R.string.password_keyboard_next);
+                    mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
+                            R.string.password_keyboard_next);
+                    mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0,
+                            0, R.string.password_keyboard_next);
+                } else {
+                    mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
+                            R.string.password_keyboard_done);
+                    mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
+                            R.string.password_keyboard_done);
+                    mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0,
+                            0, R.string.password_keyboard_done);
+                }
             }
             PasswordEntryKeyboard keyboard = (PasswordEntryKeyboard) getKeyboard();
             invalidateKey(keyboard.getEnterKeyIndex());
@@ -483,5 +512,13 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                 listener.onPasswordEntryKeyboardHide(this);
             }
         }
+    }
+
+    private EditText getCurrentInputView() {
+        View v = getRootView().findFocus();
+        if (v != null && v instanceof EditText) {
+            return (EditText) v;
+        }
+        return null;
     }
 }

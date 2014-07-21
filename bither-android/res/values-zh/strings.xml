@@ -73,7 +73,7 @@
     <string name="addresses_already_monitored">这个冷钱包已经被监控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">请输入密码</string>
-    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">请设置密码</string>
     <string name="add_address_generate_address_password_hint">密码</string>
     <string name="add_address_generate_address_password_confirm_hint">确认密码</string>

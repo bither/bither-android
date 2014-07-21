@@ -199,12 +199,12 @@ public class DialogEditPassword extends CenterDialog implements DialogInterface.
     private void checkValid() {
         btnOk.setEnabled(false);
         String passwordOld = etOldPassword.getText().toString();
-        if (passwordOld.length() >= 6 && passwordOld.length() <= 30) {
+        if (passwordOld.length() >= 6 && passwordOld.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
             String password = etNewPassword.getText().toString();
-            if (password.length() >= 6 && password.length() <= 30) {
+            if (password.length() >= 6 && password.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
                 String passwordConfirm = etNewPasswordConfirm.getText().toString();
                 if (passwordConfirm.length() >= 6
-                        && passwordConfirm.length() <= 30) {
+                        && passwordConfirm.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
                     btnOk.setEnabled(true);
                 }
             }

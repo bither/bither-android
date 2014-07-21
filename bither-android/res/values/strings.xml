@@ -79,7 +79,7 @@
     <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
     <string name="add_address_generate_address_password_label">Enter password</string>
-    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">Set password</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
