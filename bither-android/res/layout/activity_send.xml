@@ -131,6 +131,7 @@
                         android:imeOptions="flagNoExtractUi"
                         android:inputType="textPassword"
                         android:maxLength="20"
+                        android:imeActionId="6"
                         android:password="true"
                         android:textSize="16sp"/>
 

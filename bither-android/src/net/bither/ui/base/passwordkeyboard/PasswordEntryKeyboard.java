@@ -28,6 +28,8 @@ import net.bither.R;
  * Created by songchenwen on 14-7-18.
  */
 public class PasswordEntryKeyboard extends Keyboard {
+    public static final int KEYCODE_ENTER = 10;
+
     private static final int SHIFT_OFF = 0;
     private static final int SHIFT_ON = 1;
     private static final int SHIFT_LOCKED = 2;
@@ -72,7 +74,7 @@ public class PasswordEntryKeyboard extends Keyboard {
             key.setEnabled(false);
         }
         switch (key.codes[0]) {
-            case 10:
+            case KEYCODE_ENTER:
                 mEnterKey = key;
                 break;
         }
@@ -87,16 +89,21 @@ public class PasswordEntryKeyboard extends Keyboard {
      * @param iconId    normal drawable shown on enter key
      * @param labelId   string shown on enter key
      */
-    void setEnterKeyResources(Resources res, int previewId, int iconId, int labelId) {
+    public void setEnterKeyResources(Resources res, int previewId, int iconId, int labelId) {
         if (mEnterKey != null) {
             // Reset some of the rarely used attributes.
             mEnterKey.popupCharacters = null;
             mEnterKey.popupResId = 0;
             mEnterKey.text = null;
-
-            mEnterKey.iconPreview = res.getDrawable(previewId);
-            mEnterKey.icon = res.getDrawable(iconId);
-            mEnterKey.label = res.getText(labelId);
+            if(previewId != 0){
+                mEnterKey.iconPreview = res.getDrawable(previewId);
+            }
+            if(iconId != 0){
+                mEnterKey.icon = res.getDrawable(iconId);
+            }
+            if(labelId != 0){
+                mEnterKey.label = res.getText(labelId);
+            }
 
             // Set the initial size of the preview icon
             if (mEnterKey.iconPreview != null) {
@@ -104,6 +111,14 @@ public class PasswordEntryKeyboard extends Keyboard {
                         mEnterKey.iconPreview.getIntrinsicHeight());
             }
         }
+    }
+
+    public void setEnterKeyText(CharSequence text){
+        mEnterKey.label = text;
+    }
+
+    public int getEnterKeyIndex(){
+        return getKeys().indexOf(mEnterKey);
     }
 
     /**

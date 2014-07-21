@@ -26,9 +26,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -122,6 +124,7 @@ public class SendActivity extends SwipeRightActivity {
         tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo().getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
+        etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
         btcAmountView.setInputPrecision(8);
@@ -278,6 +281,19 @@ public class SendActivity extends SwipeRightActivity {
                     DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
                 }
             }
+        }
+    };
+
+    private TextView.OnEditorActionListener passwordAction = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if(actionId == EditorInfo.IME_ACTION_DONE){
+                if(btnSend.isEnabled()){
+                    sendClick.onClick(btnSend);
+                }
+                return true;
+            }
+            return false;
         }
     };
 
