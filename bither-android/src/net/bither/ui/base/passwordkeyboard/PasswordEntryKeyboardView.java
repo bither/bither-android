@@ -29,6 +29,12 @@ import java.lang.reflect.Method;
 public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardView
         .OnKeyboardActionListener, View.OnFocusChangeListener, View.OnClickListener,
         View.OnTouchListener {
+    public static interface PasswordEntryKeyboardViewListener {
+        public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v);
+
+        public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v);
+    }
+
     private static final String TAG = "PasswordEntryKeyboardHelper";
 
     public static final int KEYBOARD_MODE_ALPHA = 0;
@@ -48,6 +54,8 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
 
     private Object viewRootImpl;
 
+    private PasswordEntryKeyboardViewListener listener;
+
     public PasswordEntryKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
@@ -58,7 +66,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         init();
     }
 
-    private void init(){
+    private void init() {
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         setOnKeyboardActionListener(PasswordEntryKeyboardView.this);
         getViewRootImpl();
@@ -331,8 +339,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                         }
                 );
                 if (!result) {
-                    setVisibility(View.VISIBLE);
-                    setEnabled(true);
+                    showKeyboardRunnable.run();
                 }
             }
         });
@@ -454,6 +461,26 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             }
             PasswordEntryKeyboard keyboard = (PasswordEntryKeyboard) getKeyboard();
             invalidateKey(keyboard.getEnterKeyIndex());
+        }
+    }
+
+    public PasswordEntryKeyboardViewListener getListener() {
+        return listener;
+    }
+
+    public void setListener(PasswordEntryKeyboardViewListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        if (listener != null) {
+            if (visibility == View.VISIBLE) {
+                listener.onPasswordEntryKeyboardShow(this);
+            } else {
+                listener.onPasswordEntryKeyboardHide(this);
+            }
         }
     }
 }
