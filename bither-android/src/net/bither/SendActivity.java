@@ -32,6 +32,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -67,7 +68,8 @@ import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
 
-public class SendActivity extends SwipeRightActivity {
+public class SendActivity extends SwipeRightActivity implements PasswordEntryKeyboardView
+        .PasswordEntryKeyboardViewListener {
     private int addressPosition;
     private BitherAddressWithPrivateKey address;
     private TextView tvAddressLabel;
@@ -81,6 +83,7 @@ public class SendActivity extends SwipeRightActivity {
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private PasswordEntryKeyboardView kv;
+    private View vKeyboardContainer;
 
     private boolean isDonate = false;
 
@@ -120,6 +123,7 @@ public class SendActivity extends SwipeRightActivity {
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
         kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
+        vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo().getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
@@ -141,7 +145,7 @@ public class SendActivity extends SwipeRightActivity {
         dp = new DialogProgress(this, R.string.please_wait);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
-        kv.registerEditText(etPassword);
+        kv.registerEditText(etPassword).setListener(this);
     }
 
     private OnClickListener scanClick = new OnClickListener() {
@@ -327,6 +331,16 @@ public class SendActivity extends SwipeRightActivity {
 
         }
 
+    }
+
+    @Override
+    public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.VISIBLE);
     }
 
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {

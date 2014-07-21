@@ -468,8 +468,9 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         return listener;
     }
 
-    public void setListener(PasswordEntryKeyboardViewListener listener) {
+    public PasswordEntryKeyboardView setListener(PasswordEntryKeyboardViewListener listener) {
         this.listener = listener;
+        return this;
     }
 
     @Override
