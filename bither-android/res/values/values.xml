@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-
+    <integer name="password_length_max">43</integer> <!-- 43 x [0..9 a..z A..Z] > 2^256  -->
 </resources>
