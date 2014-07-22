@@ -37,6 +37,7 @@ import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.DialogAddressWatchOnlyOption;
 import net.bither.ui.base.DialogAddressWithPrivateKeyOption;
+import net.bither.ui.base.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 
@@ -193,12 +194,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         BitherAddress a;
         if (isPrivate(groupPosition)) {
             a = privates.get(childPosition);
+            view.ivType.setOnLongClickListener(new AddressLongClick(childPosition, isPrivate(groupPosition)));
         } else {
             a = watchOnlys.get(childPosition);
         }
         view.setAddress(a, childPosition, isPrivate(groupPosition));
         view.setOnClickListener(new AddressDetailClick(childPosition, isPrivate(groupPosition)));
-        view.setOnLongClickListener(new AddressLongClick(childPosition, isPrivate(groupPosition)));
         return convertView;
     }
 
@@ -213,12 +214,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
         @Override
         public boolean onLongClick(View v) {
-            Dialog dialog;
-            if (isPrivate) {
-                dialog = new DialogAddressWithPrivateKeyOption(activity, privates.get(position));
-            } else {
-                dialog = new DialogAddressWatchOnlyOption(activity, watchOnlys.get(position), null);
-            }
+            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey(activity, privates.get(position));
             dialog.show();
             return true;
         }

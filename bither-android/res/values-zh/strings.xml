@@ -47,6 +47,7 @@
     <string name="copy_address">复制</string>
     <string name="qr_code">二维码</string>
     <string name="copy_address_success">地址已复制</string>
+    <string name="copy_private_key_success">私钥已复制</string>
     <string name="confirmations_postfix">确认</string>
     <string name="confirmation_postfix">确认</string>
     <string name="unconfirmed">未确认</string>
@@ -160,6 +161,7 @@
     <string name="setting_name_import_private_key">导入私钥</string>
     <string name="import_private_key_qr_code">来自私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
+    <string name="private_key_text">私钥明文</string>
     <string name="import_private_key_text_hint">输入私钥明文</string>
     <string name="import_private_key_text_format_erro">不符合私钥格式</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>

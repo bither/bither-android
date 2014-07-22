@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_view_show_private_key"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/private_key_text"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff"/>
+
+    <LinearLayout
+        android:id="@+id/ll_origin_qr_code"
+        android:orientation="vertical"
+        android:background="@drawable/ui_touchable_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:padding="10dp"
+            android:text="@string/fancy_qr_code_view_origin"
+            android:textColor="@color/dialog_text_color_selector"
+            android:textSize="18sp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#22ffffff"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_private_key_qr_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/address_detail_private_key_qr_code"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff"/>
+
+    <TextView
+        android:id="@+id/tv_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/close"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp"/>
+
+</LinearLayout>

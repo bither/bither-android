@@ -52,6 +52,7 @@
     <string name="copy_address">Copy</string>
     <string name="qr_code">QR Code</string>
     <string name="copy_address_success">Address copied</string>
+    <string name="copy_private_key_success">Private key copied</string>
     <string name="confirmations_postfix">Confirmations</string>
     <string name="confirmation_postfix">Confirmation</string>
     <string name="unconfirmed">Unconfirmed</string>
@@ -166,6 +167,7 @@
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="private_key_text">Private Key Text</string>
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>

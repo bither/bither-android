@@ -47,6 +47,7 @@
     <string name="copy_address">複製</string>
     <string name="qr_code">二​​維碼</string>
     <string name="copy_address_success">地址已復制</string>
+    <string name="copy_private_key_success">私鑰已復制</string>
     <string name="confirmations_postfix">確認</string>
     <string name="confirmation_postfix">確認</string>
     <string name="unconfirmed">未確認</string>
@@ -161,6 +162,7 @@
     <string name="setting_name_import_private_key">導入私鑰</string>
     <string name="import_private_key_qr_code">來自私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="private_key_text">私鑰明文</string>
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>

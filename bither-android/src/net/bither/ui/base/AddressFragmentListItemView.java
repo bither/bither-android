@@ -49,7 +49,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private BtcToMoneyTextView tvBalanceMoney;
-    private ImageView ivType;
+    public ImageView ivType;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
     private TextView tvTransactionCount;
