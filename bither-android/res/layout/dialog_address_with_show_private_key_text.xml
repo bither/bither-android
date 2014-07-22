@@ -6,11 +6,10 @@
 
     <TextView
         android:id="@+id/tv_view_show_private_key_text"
-        android:layout_width="180dp"
+        android:layout_width="205dp"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
         android:padding="10dp"
-
         android:textColor="@color/dialog_text_color_selector"
         android:textSize="18sp" />
 
@@ -21,6 +20,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
         android:padding="10dp"
+        android:gravity="center"
         android:text="@string/copy_address"
         android:textColor="@color/dialog_text_color_selector"
         android:textSize="18sp" />

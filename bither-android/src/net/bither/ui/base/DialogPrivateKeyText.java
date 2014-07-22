@@ -25,6 +25,7 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.model.BitherAddress;
 import net.bither.util.StringUtil;
+import net.bither.util.WalletUtils;
 
 /**
  * Created by nn on 14-7-22.
@@ -37,12 +38,12 @@ public class DialogPrivateKeyText extends CenterDialog implements View
 
     public DialogPrivateKeyText(Activity context, String privateKeyText) {
         super(context);
-        this.mPrivateKeyText=privateKeyText;
+        this.mPrivateKeyText = privateKeyText;
         this.activity = context;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_show_private_key_text);
-        tvPrivateKeyText=(TextView)findViewById(R.id.tv_view_show_private_key_text);
-        tvPrivateKeyText.setText(privateKeyText);
+        tvPrivateKeyText = (TextView) findViewById(R.id.tv_view_show_private_key_text);
+        tvPrivateKeyText.setText(WalletUtils.formatHash(this.mPrivateKeyText, 4, 16));
         findViewById(R.id.tv_copy).setOnClickListener(this);
     }
 
@@ -54,7 +55,7 @@ public class DialogPrivateKeyText extends CenterDialog implements View
     public void onClick(View v) {
         dismiss();
         StringUtil.copyString(this.mPrivateKeyText);
-        DropdownMessage.showDropdownMessage(activity,R.string.copy_private_key_success);
+        DropdownMessage.showDropdownMessage(activity, R.string.copy_private_key_success);
     }
 
 
