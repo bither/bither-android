@@ -12,5 +12,8 @@
     <dimen name="horizontal_edge_padding">25dp</dimen>
     <dimen name="avatar_size_in_list">40dp</dimen>
     <dimen name="address_detail_list_item_padding">10dp</dimen>
+    <dimen name="password_keyboard_key_text_size">23sp</dimen>
+    <dimen name="password_keyboard_label_text_size">16sp</dimen>
+    <dimen name="password_keyboard_key_preview_offset">0dp</dimen>
 
 </resources>

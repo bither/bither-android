@@ -1,7 +1,6 @@
 package net.bither.ui.base.passwordkeyboard;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
@@ -18,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.util.LogUtil;
@@ -56,6 +56,8 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         Arrays.sort(ActionKeyCodes);
     }
 
+    private static final float NormalKeyShadowRadius = 3;
+    private static final float ActionKeyShadowRadius = 2;
 
     private int mKeyboardMode = KEYBOARD_MODE_ALPHA;
     private int mKeyboardState = KEYBOARD_STATE_NORMAL;
@@ -85,7 +87,6 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private void init() {
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         setOnKeyboardActionListener(PasswordEntryKeyboardView.this);
-        getViewRootImpl();
         createKeyboards();
         setKeyboardMode(KEYBOARD_MODE_NUMERIC);
     }
@@ -119,12 +120,10 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             case KEYBOARD_MODE_ALPHA:
                 setKeyboard(mQwertyKeyboard);
                 mKeyboardState = KEYBOARD_STATE_NORMAL;
-                setPreviewEnabled(false);
                 break;
             case KEYBOARD_MODE_NUMERIC:
                 setKeyboard(mNumericKeyboard);
                 mKeyboardState = KEYBOARD_STATE_NORMAL;
-                setPreviewEnabled(false); // never show popup for numeric keypad
                 break;
         }
         mKeyboardMode = mode;
@@ -329,7 +328,6 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
 
     @Override
     public void onPress(int primaryCode) {
-
     }
 
     public void onRelease(int primaryCode) {
@@ -546,18 +544,36 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             states = Arrays.copyOf(states, states.length + 1);
             states[states.length - 1] = android.R.attr.state_active;
         }
+
         try {
             Paint paint = getPaint();
-            if(isActionKey){
-                paint.setColor(Color.BLUE);
-                setShadowColor(Color.WHITE);
-            }else{
-                paint.setColor(getKeyTextColor());
-                setShadowColor(Color.RED);
+            if (isActionKey) {
+                paint.setColor(getContext().getResources().getColor(R.color
+                        .password_keyboard_action_key_text));
+                setShadowColor(getContext().getResources().getColor(R.color
+                        .password_keyboard_action_key_shadow));
+                setShadowRadius(ActionKeyShadowRadius);
+            } else {
+                paint.setColor(getContext().getResources().getColor(R.color
+                        .password_keyboard_normal_key_text));
+                setShadowColor(getContext().getResources().getColor(R.color
+                        .password_keyboard_normal_key_shadow));
+                setShadowRadius(NormalKeyShadowRadius);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e(TAG, "can not use different text color");
+        }
+
+        boolean preventPreview = isActionKey || key.codes[0] == Keyboard.KEYCODE_SHIFT;
+        setPreviewEnabled(!preventPreview);
+        if (preventPreview) {
+            try {
+                getPreviewText().setVisibility(INVISIBLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "can not hide preview");
+            }
         }
         return states;
     }
@@ -568,21 +584,27 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         return (Paint) field.get(this);
     }
 
-    private int getKeyTextColor() throws Exception{
+    private int getKeyTextColor() throws Exception {
         Field field = KeyboardView.class.getDeclaredField("mKeyTextColor");
         field.setAccessible(true);
         return field.getInt(this);
     }
 
-    private void setShadowColor(int color) throws Exception{
+    private void setShadowColor(int color) throws Exception {
         Field field = KeyboardView.class.getDeclaredField("mShadowColor");
         field.setAccessible(true);
         field.setInt(this, color);
     }
 
-    private void setShadowRadius(float radius) throws Exception{
+    private void setShadowRadius(float radius) throws Exception {
         Field field = KeyboardView.class.getDeclaredField("mShadowRadius");
         field.setAccessible(true);
         field.setFloat(this, radius);
+    }
+
+    private TextView getPreviewText() throws Exception {
+        Field field = KeyboardView.class.getDeclaredField("mPreviewText");
+        field.setAccessible(true);
+        return (TextView) field.get(this);
     }
 }
