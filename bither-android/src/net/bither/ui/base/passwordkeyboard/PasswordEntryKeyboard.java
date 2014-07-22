@@ -24,10 +24,16 @@ import android.inputmethodservice.Keyboard;
 
 import net.bither.R;
 
+import java.util.Arrays;
+
 /**
  * Created by songchenwen on 14-7-18.
  */
 public class PasswordEntryKeyboard extends Keyboard {
+    public static interface DrawKeyListener {
+        public int[] beforeDrawKeyWithStates(Key key, int[] states);
+    }
+
     public static final int KEYCODE_ENTER = 10;
 
     private static final int SHIFT_OFF = 0;
@@ -95,13 +101,13 @@ public class PasswordEntryKeyboard extends Keyboard {
             mEnterKey.popupCharacters = null;
             mEnterKey.popupResId = 0;
             mEnterKey.text = null;
-            if(previewId != 0){
+            if (previewId != 0) {
                 mEnterKey.iconPreview = res.getDrawable(previewId);
             }
-            if(iconId != 0){
+            if (iconId != 0) {
                 mEnterKey.icon = res.getDrawable(iconId);
             }
-            if(labelId != 0){
+            if (labelId != 0) {
                 mEnterKey.label = res.getText(labelId);
             }
 
@@ -113,11 +119,11 @@ public class PasswordEntryKeyboard extends Keyboard {
         }
     }
 
-    public void setEnterKeyText(CharSequence text){
+    public void setEnterKeyText(CharSequence text) {
         mEnterKey.label = text;
     }
 
-    public int getEnterKeyIndex(){
+    public int getEnterKeyIndex() {
         return getKeys().indexOf(mEnterKey);
     }
 
@@ -196,9 +202,18 @@ public class PasswordEntryKeyboard extends Keyboard {
         }
     }
 
-    static class LatinKey extends Keyboard.Key {
+    public void setDrawKeyListener(DrawKeyListener l) {
+        for(Key k : getKeys()){
+            if(k instanceof LatinKey){
+                ((LatinKey)k).setDrawListener(l);
+            }
+        }
+    }
+
+    public static class LatinKey extends Keyboard.Key {
         private boolean mShiftLockEnabled;
         private boolean mEnabled = true;
+        private DrawKeyListener drawListener;
 
         public LatinKey(Resources res, Keyboard.Row parent, int x, int y,
                         XmlResourceParser parser) {
@@ -226,6 +241,14 @@ public class PasswordEntryKeyboard extends Keyboard {
             }
         }
 
+        @Override
+        public int[] getCurrentDrawableState() {
+            if (drawListener != null) {
+                return drawListener.beforeDrawKeyWithStates(this, super.getCurrentDrawableState());
+            }
+            return super.getCurrentDrawableState();
+        }
+
         /**
          * Overriding this method so that we can reduce the target area for certain keys.
          */
@@ -235,6 +258,10 @@ public class PasswordEntryKeyboard extends Keyboard {
                 return false;
             }
             return super.isInside(x, y);
+        }
+
+        public void setDrawListener(DrawKeyListener l) {
+            drawListener = l;
         }
     }
 }

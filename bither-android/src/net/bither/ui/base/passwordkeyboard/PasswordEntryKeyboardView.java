@@ -1,6 +1,8 @@
 package net.bither.ui.base.passwordkeyboard;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
@@ -22,14 +24,16 @@ import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Created by songchenwen on 14-7-21.
  */
 public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardView
         .OnKeyboardActionListener, View.OnFocusChangeListener, View.OnClickListener,
-        View.OnTouchListener {
+        View.OnTouchListener, PasswordEntryKeyboard.DrawKeyListener {
     public static interface PasswordEntryKeyboardViewListener {
         public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v);
 
@@ -43,6 +47,15 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private static final int KEYBOARD_STATE_NORMAL = 0;
     private static final int KEYBOARD_STATE_SHIFTED = 1;
     private static final int KEYBOARD_STATE_CAPSLOCK = 2;
+
+    public static final int[] ActionKeyCodes = new int[]{Keyboard.KEYCODE_DELETE,
+            Keyboard.KEYCODE_CANCEL, Keyboard.KEYCODE_MODE_CHANGE,
+            PasswordEntryKeyboard.KEYCODE_ENTER};
+
+    static {
+        Arrays.sort(ActionKeyCodes);
+    }
+
 
     private int mKeyboardMode = KEYBOARD_MODE_ALPHA;
     private int mKeyboardState = KEYBOARD_STATE_NORMAL;
@@ -95,6 +108,10 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                 R.xml.password_keyboard_letter, 0);
         mQwertyKeyboardShifted.enableShiftLock();
         mQwertyKeyboardShifted.setShifted(true); // always shifted.
+
+        mNumericKeyboard.setDrawKeyListener(this);
+        mQwertyKeyboard.setDrawKeyListener(this);
+        mQwertyKeyboardShifted.setDrawKeyListener(this);
     }
 
     public void setKeyboardMode(int mode) {
@@ -520,5 +537,52 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             return (EditText) v;
         }
         return null;
+    }
+
+    @Override
+    public int[] beforeDrawKeyWithStates(Keyboard.Key key, int[] states) {
+        boolean isActionKey = Arrays.binarySearch(ActionKeyCodes, key.codes[0]) > -1;
+        if (isActionKey) {
+            states = Arrays.copyOf(states, states.length + 1);
+            states[states.length - 1] = android.R.attr.state_active;
+        }
+        try {
+            Paint paint = getPaint();
+            if(isActionKey){
+                paint.setColor(Color.BLUE);
+                setShadowColor(Color.WHITE);
+            }else{
+                paint.setColor(getKeyTextColor());
+                setShadowColor(Color.RED);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            LogUtil.e(TAG, "can not use different text color");
+        }
+        return states;
+    }
+
+    private Paint getPaint() throws Exception {
+        Field field = KeyboardView.class.getDeclaredField("mPaint");
+        field.setAccessible(true);
+        return (Paint) field.get(this);
+    }
+
+    private int getKeyTextColor() throws Exception{
+        Field field = KeyboardView.class.getDeclaredField("mKeyTextColor");
+        field.setAccessible(true);
+        return field.getInt(this);
+    }
+
+    private void setShadowColor(int color) throws Exception{
+        Field field = KeyboardView.class.getDeclaredField("mShadowColor");
+        field.setAccessible(true);
+        field.setInt(this, color);
+    }
+
+    private void setShadowRadius(float radius) throws Exception{
+        Field field = KeyboardView.class.getDeclaredField("mShadowRadius");
+        field.setAccessible(true);
+        field.setFloat(this, radius);
     }
 }
