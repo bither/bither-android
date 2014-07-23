@@ -66,4 +66,11 @@
     <color name="ten_kline">#ffd9d500</color>
     <color name="thrity_kline">#ff8495a7</color>
 
+    <!-- password keyboard -->
+    <color name="password_keyboard_action_key_shadow">#000</color>
+    <color name="password_keyboard_normal_key_shadow">#fff</color>
+    <color name="password_keyboard_action_key_text">#fff</color>
+    <color name="password_keyboard_normal_key_text">#000</color>
+    <color name="password_keyboard_background_above_dark">#77000000</color>
+    <color name="password_keyboard_background_above_light">#cc000000</color>
 </resources>

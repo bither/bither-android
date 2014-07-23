@@ -69,7 +69,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
 	private void initView() {
 		flContainer = (FrameLayout) findViewById(R.id.fl_container);
-		ibtnCancel = (ImageButton) findViewById(R.id.btn_cancel);
+		ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
 		ibtnCancel.setOnClickListener(cancelClick);

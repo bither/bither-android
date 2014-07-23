@@ -74,7 +74,7 @@
     <string name="addresses_already_monitored">这个冷钱包已经被监控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">请输入密码</string>
-    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">请设置密码</string>
     <string name="add_address_generate_address_password_hint">密码</string>
     <string name="add_address_generate_address_password_confirm_hint">确认密码</string>
@@ -296,4 +296,8 @@
     <string name="edit_password_fail">修改密码失败</string>
     <string name="edit_password_new_old_same">新密码不能和旧密码相同</string>
     <string name="edit_password_editing">正在修改密码…\n请不要关闭手机屏幕</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">完成</string>
+    <string name="password_keyboard_next">下一项</string>
 </resources>

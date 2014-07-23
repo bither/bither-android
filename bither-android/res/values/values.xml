@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="password_length_max">43</integer> <!-- 43 x [0..9 a..z A..Z] > 2^256  -->
 
+    <fraction name="password_keyboard_letter_key_width">9.5%p</fraction>
+    <fraction name="password_keyboard_letter_key_horizontal_gap">0.5%p</fraction>
 
+    <fraction name="password_keyboard_number_key_width">22.5%p</fraction>
+    <fraction name="password_keyboard_number_key_horizontal_gap">2%p</fraction>
 </resources>

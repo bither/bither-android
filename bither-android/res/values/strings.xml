@@ -80,7 +80,7 @@
     <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
     <string name="add_address_generate_address_password_label">Enter password</string>
-    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">Set password</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
@@ -312,4 +312,8 @@
     <string name="edit_password_fail">Change password failed.</string>
     <string name="edit_password_new_old_same">New password is same to the old.</string>
     <string name="edit_password_editing">Changing password…\nDo Not turn off the screen.</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">Done</string>
+    <string name="password_keyboard_next">Next</string>
 </resources>
