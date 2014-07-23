@@ -319,4 +319,7 @@
     <!-- password keyboard -->
     <string name="password_keyboard_done">Done</string>
     <string name="password_keyboard_next">Next</string>
+
+    <!-- advance -->
+    <string name="activity_name_advance">Advance Options</string>
 </resources>
