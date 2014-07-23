@@ -296,8 +296,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     }
 
-    ;
-
     private void showBackupTime() {
 
         if (FileUtil.existSdCardMounted()) {
