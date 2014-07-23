@@ -17,7 +17,6 @@
 package net.bither.adapter.hot;
 
 import android.annotation.TargetApi;
-import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -35,8 +34,6 @@ import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.model.BitherAddress;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.ui.base.AddressFragmentListItemView;
-import net.bither.ui.base.DialogAddressWatchOnlyOption;
-import net.bither.ui.base.DialogAddressWithPrivateKeyOption;
 import net.bither.ui.base.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
@@ -194,7 +191,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         BitherAddress a;
         if (isPrivate(groupPosition)) {
             a = privates.get(childPosition);
-            view.ivType.setOnLongClickListener(new AddressLongClick(childPosition, isPrivate(groupPosition)));
+            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition, isPrivate(groupPosition)));
         } else {
             a = watchOnlys.get(childPosition);
         }

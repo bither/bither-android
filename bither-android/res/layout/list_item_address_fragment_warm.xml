@@ -5,18 +5,18 @@
     android:background="@color/bg"
     android:duplicateParentState="true"
     android:paddingLeft="@dimen/card_list_padding"
-    android:paddingRight="@dimen/card_list_padding" >
+    android:paddingRight="@dimen/card_list_padding">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:duplicateParentState="true" >
+        android:duplicateParentState="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,12 +26,12 @@
                 android:paddingBottom="10dp"
                 android:paddingLeft="@dimen/card_padding"
                 android:paddingRight="@dimen/card_padding"
-                android:paddingTop="20dp" >
+                android:paddingTop="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_address"
@@ -95,7 +95,7 @@
                 android:paddingBottom="11dp"
                 android:paddingLeft="@dimen/card_padding"
                 android:paddingRight="@dimen/card_padding"
-                android:paddingTop="5dp" >
+                android:paddingTop="5dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -123,7 +123,7 @@
                 android:paddingBottom="11dp"
                 android:paddingLeft="@dimen/card_padding"
                 android:paddingRight="@dimen/card_padding"
-                android:paddingTop="5dp" >
+                android:paddingTop="5dp">
 
                 <TextView
                     android:id="@+id/tv_transaction_count"
@@ -149,12 +149,20 @@
                     android:layout_weight="1" />
 
                 <ImageView
-                    android:id="@+id/iv_type"
+                    android:id="@+id/iv_type_watchonly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/address_type_watchonly" />
+
+                <ImageView
+                    android:id="@+id/iv_type_private"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/address_type_private_selector" />
             </LinearLayout>
         </LinearLayout>
 
