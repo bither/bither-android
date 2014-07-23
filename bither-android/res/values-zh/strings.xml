@@ -105,6 +105,7 @@
     <string name="send_confirm_amount">金额:</string>
     <string name="send_confirm_fee">手续费:</string>
     <string name="send_confirm_low_priority_warn">交易中有小于0.01BTC的支出,\n手续费较低.\n<b>确认时间可能很长</b>.</string>
+    <string name="unsigned_transaction_exit_waring">放弃签名吗?\n此交易将不会被广播</string>
 
     <!-- market -->
     <string name="market_sell">卖一:</string>

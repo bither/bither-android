@@ -110,6 +110,7 @@
     <string name="send_confirm_amount">Amount:</string>
     <string name="send_confirm_fee">Fee:</string>
     <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction fee is low.\n<b>Confirmation may be very slow</b>.</string>
+    <string name="unsigned_transaction_exit_waring">Give up signing?\nThis transaction will not get broadcasted.</string>
 
     <!-- market -->
     <string name="market_sell">Sell:</string>
