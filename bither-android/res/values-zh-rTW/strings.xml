@@ -62,6 +62,8 @@
     <string name="address_detail_cannot_stop_monitoring">一分鐘內只能停止監控一個地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
     <string name="address_detail_private_key_qr_code">私鑰二維碼</string>
+    <string name="address_detail_private_key_qr_code_encrypted">私鑰二維碼 (加密)</string>
+    <string name="address_detail_private_key_qr_code_decrypted">私鑰二維碼 (解密)</string>
     <string name="address_detail_private_key_qr_code_backup">備份私鑰</string>
 
     <!-- add address -->

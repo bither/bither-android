@@ -61,7 +61,8 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         setContentView(R.layout.dialog_address_with_show_private_key);
         llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
         findViewById(R.id.tv_view_show_private_key).setOnClickListener(this);
-        findViewById(R.id.tv_private_key_qr_code).setOnClickListener(this);
+        findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
+        findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
         findViewById(R.id.tv_close).setOnClickListener(this);
@@ -85,7 +86,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new DialogPassword(activity, this).show();
                 showPrivateText = true;
                 break;
-            case R.id.tv_private_key_qr_code:
+            case R.id.tv_private_key_qr_code_encrypted:
                 new DialogPassword(activity, this).show();
                 showPrivateText = false;
                 break;

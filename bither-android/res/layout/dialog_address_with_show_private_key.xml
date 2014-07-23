@@ -42,12 +42,21 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_private_key_qr_code"
+        android:id="@+id/tv_private_key_qr_code_encrypted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
         android:padding="10dp"
-        android:text="@string/address_detail_private_key_qr_code"
+        android:text="@string/address_detail_private_key_qr_code_encrypted"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/tv_private_key_qr_code_decrypted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/address_detail_private_key_qr_code_decrypted"
         android:textColor="@color/dialog_text_color_selector"
         android:textSize="18sp"/>
 
