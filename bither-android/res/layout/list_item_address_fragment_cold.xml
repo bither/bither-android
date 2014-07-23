@@ -52,6 +52,10 @@
                 android:background="@drawable/qrcode_frame" />
 
         </LinearLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/card_separator_color" />
 
         <LinearLayout
             android:id="@+id/ll_extra"

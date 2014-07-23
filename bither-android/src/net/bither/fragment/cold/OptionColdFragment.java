@@ -519,8 +519,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             } else {
-                PasswordSeed passwordSeed=AppSharedPreference.getInstance().getPasswordSeed();
-                if (passwordSeed!=null&&!passwordSeed.checkPassword(password)) {
+                PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+                if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -534,7 +534,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                     });
                     return;
                 }
-                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                List<BitherAddressWithPrivateKey> wallets = new ArrayList<BitherAddressWithPrivateKey>();
                 wallets.add(wallet);
                 WalletUtils.addAddressWithPrivateKey(null, wallets);
             }

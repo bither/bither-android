@@ -52,6 +52,7 @@ import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.Market;
+import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
@@ -469,7 +470,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
-        ssvImportPrivateKey.setSelector( new ImportPrivateKeySelector(OptionHotFragment.this));
+        ssvImportPrivateKey.setSelector(new ImportPrivateKeySelector(OptionHotFragment.this));
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;
@@ -626,7 +627,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 });
                 return;
             } else {
-                if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {
+                PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+                if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -640,7 +642,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     });
                     return;
                 }
-                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                List<BitherAddressWithPrivateKey> wallets = new ArrayList<BitherAddressWithPrivateKey>();
                 wallets.add(wallet);
                 WalletUtils.addAddressWithPrivateKey(service, wallets);
             }
