@@ -105,6 +105,7 @@
     <string name="send_confirm_amount">金額:</string>
     <string name="send_confirm_fee">手續費:</string>
     <string name="send_confirm_low_priority_warn">交易中有小於0.01BTC的支出,\n手續費較低.\n<b>確認時間可能很長</b>.</string>
+    <string name="unsigned_transaction_exit_waring">放棄簽名嗎?\n此交易將不會被廣播</string>
 
     <!-- market -->
     <string name="market_sell">賣一:</string>
