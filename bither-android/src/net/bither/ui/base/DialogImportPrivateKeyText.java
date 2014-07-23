@@ -36,6 +36,7 @@ import com.google.bitcoin.params.MainNetParams;
 
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
+import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.runnable.ThreadNeedService;
@@ -231,16 +232,8 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.import_private_key_qr_code_success);
-                    if (activity instanceof HotActivity) {
-                        HotActivity a = (HotActivity) activity;
-                        Fragment f = a.getFragmentAtIndex(1);
-                        if (f != null && f instanceof Refreshable) {
-                            Refreshable r = (Refreshable) f;
-                            r.doRefresh();
-                        }
-                        a.scrollToFragmentAt(1);
+                    if(activity instanceof HotAdvanceActivity){
+                        ((HotAdvanceActivity)activity).showImportSuccess();
                     }
                 }
             });
