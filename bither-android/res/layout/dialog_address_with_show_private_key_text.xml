@@ -15,13 +15,13 @@
 
 
     <TextView
-        android:id="@+id/tv_copy"
+        android:id="@+id/tv_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
         android:padding="10dp"
         android:gravity="center"
-        android:text="@string/copy_address"
+        android:text="@string/cancel"
         android:textColor="@color/dialog_text_color_selector"
         android:textSize="18sp" />
 

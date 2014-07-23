@@ -44,7 +44,7 @@ public class DialogPrivateKeyText extends CenterDialog implements View
         setContentView(R.layout.dialog_address_with_show_private_key_text);
         tvPrivateKeyText = (TextView) findViewById(R.id.tv_view_show_private_key_text);
         tvPrivateKeyText.setText(WalletUtils.formatHash(this.mPrivateKeyText, 4, 16));
-        findViewById(R.id.tv_copy).setOnClickListener(this);
+        findViewById(R.id.tv_close).setOnClickListener(this);
     }
 
     @Override
@@ -54,8 +54,6 @@ public class DialogPrivateKeyText extends CenterDialog implements View
     @Override
     public void onClick(View v) {
         dismiss();
-        StringUtil.copyString(this.mPrivateKeyText);
-        DropdownMessage.showDropdownMessage(activity, R.string.copy_private_key_success);
     }
 
 
