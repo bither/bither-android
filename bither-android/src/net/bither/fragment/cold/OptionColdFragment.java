@@ -454,8 +454,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void onPasswordEntered(String password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
+                dp.show();
                 ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(content, password);
                 importPrivateKeyThread.start();
+
             }
         }
     }
