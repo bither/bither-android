@@ -30,6 +30,7 @@ import android.os.StrictMode;
 import com.google.bitcoin.core.BlockChain;
 import com.google.bitcoin.utils.Threading;
 
+import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.exception.UEHandler;
 import net.bither.preference.AppSharedPreference;
@@ -72,6 +73,7 @@ public class BitherApplication extends Application {
 
     public static Context mContext;
     public static HotActivity hotActivity;
+    public static ColdActivity coldActivity;
     public static UEHandler ueHandler;
     public static Activity initialActivity;
     public static boolean isFirstIn = false;

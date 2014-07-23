@@ -42,21 +42,17 @@ import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
 import net.bither.activity.cold.ColdActivity;
+import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
-import net.bither.activity.hot.HotActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DialogConfirmTask;
-import net.bither.ui.base.DialogEditPassword;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.ImportPrivateKeySelector;
-import net.bither.ui.base.SettingSelectorView;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
@@ -74,18 +70,16 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private OnClickListener backupTimeListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            long backupTime = AppSharedPreference.getInstance()
-                    .getLastBackupkeyTime().getTime();
+            long backupTime = AppSharedPreference.getInstance().getLastBackupkeyTime().getTime();
             if (backupTime + ONE_HOUR < System.currentTimeMillis()) {
                 backupPrivateKey();
             } else {
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(
-                        getActivity(), getString(R.string.backup_again),
-                        new Runnable() {
-                            public void run() {
-                                backupPrivateKey();
-                            }
-                        }
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(getActivity(),
+                        getString(R.string.backup_again), new Runnable() {
+                    public void run() {
+                        backupPrivateKey();
+                    }
+                }
                 );
                 dialogConfirmTask.show();
             }
@@ -95,22 +89,20 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private Button btnCloneTo;
     private Button btnCloneFrom;
     private Button btnBackupTime;
-    private Button btnEditPassword;
+    private Button btnAdvance;
     private FrameLayout flBackTime;
     private ProgressBar pbBackTime;
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
-    private SettingSelectorView ssvImportPrivateKey;
 
     private OnClickListener toSignActivityClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (WalletUtils.getPrivateAddressList() == null
-                    || WalletUtils.getPrivateAddressList().size() == 0) {
-                DropdownMessage.showDropdownMessage(getActivity(),
-                        R.string.private_key_is_empty);
+            if (WalletUtils.getPrivateAddressList() == null || WalletUtils.getPrivateAddressList
+                    ().size() == 0) {
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
             Intent intent = new Intent(getActivity(), SignTxActivity.class);
@@ -124,8 +116,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
             new DialogPassword(getActivity(), new DialogPasswordListener() {
                 @Override
                 public void onPasswordEntered(String password) {
-                    String content = PrivateKeyUtil
-                            .getPrivateKeyStringFromAllPrivateAddresses();
+                    String content = PrivateKeyUtil.getPrivateKeyStringFromAllPrivateAddresses();
                     Intent intent = new Intent(getActivity(), QrCodeActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                             getString(R.string.clone_to_title));
@@ -139,12 +130,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(),
-                    ScanQRCodeTransportActivity.class);
+            Intent intent = new Intent(getActivity(), ScanQRCodeTransportActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.clone_from_title));
-            startActivityForResult(intent,
-                    BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE);
+            startActivityForResult(intent, BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE);
         }
 
         ;
@@ -154,13 +143,12 @@ public class OptionColdFragment extends Fragment implements Selectable {
         @Override
         public void onClick(View v) {
             String content = "";
-            List<BitherAddressWithPrivateKey> addresses = WalletUtils
-                    .getPrivateAddressList();
+            List<BitherAddressWithPrivateKey> addresses = WalletUtils.getPrivateAddressList();
             for (int i = 0;
                  i < addresses.size();
                  i++) {
-                String pubStr = Utils.bytesToHexString(addresses.get(i)
-                        .getKeys().get(0).getPubKey());
+                String pubStr = Utils.bytesToHexString(addresses.get(i).getKeys().get(0)
+                        .getPubKey());
                 content += pubStr;
                 if (i < addresses.size() - 1) {
                     content += StringUtil.QR_CODE_SPLIT;
@@ -174,11 +162,11 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
     };
 
-    private OnClickListener editPasswordClick = new OnClickListener() {
+    private OnClickListener advanceClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            DialogEditPassword dialog = new DialogEditPassword(getActivity());
-            dialog.show();
+            Intent intent = new Intent(getActivity(), ColdAdvanceActivity.class);
+            startActivity(intent);
         }
     };
 
@@ -189,8 +177,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureCloneButton() {
-        if (WalletUtils.getPrivateAddressList() != null
-                && WalletUtils.getPrivateAddressList().size() > 0) {
+        if (WalletUtils.getPrivateAddressList() != null && WalletUtils.getPrivateAddressList()
+                .size() > 0) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
         } else {
@@ -200,8 +188,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureQrForAll() {
-        if (WalletUtils.getPrivateAddressList() != null
-                && WalletUtils.getPrivateAddressList().size() > 0) {
+        if (WalletUtils.getPrivateAddressList() != null && WalletUtils.getPrivateAddressList()
+                .size() > 0) {
             llQrForAll.setVisibility(View.VISIBLE);
         } else {
             llQrForAll.setVisibility(View.GONE);
@@ -214,24 +202,13 @@ public class OptionColdFragment extends Fragment implements Selectable {
             DialogPassword dialogPassword;
             switch (requestCode) {
                 case BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE:
-                    content = data
-                            .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                    content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                     dialogPassword = new DialogPassword(getActivity(),
                             new CloneFromPasswordListener(content));
                     dialogPassword.setCheckPre(false);
                     dialogPassword.setTitle(R.string.clone_from_password);
                     dialogPassword.show();
-
                     break;
-                case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
-                    content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                    dialogPassword = new DialogPassword(getActivity(),
-                            new ImportPrivateKeyPasswordListener(content));
-                    dialogPassword.setCheckPre(false);
-                    dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
-                    dialogPassword.show();
-                    break;
-
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -245,8 +222,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cold_option, container,
-                false);
+        View view = inflater.inflate(R.layout.fragment_cold_option, container, false);
         initView(view);
         return view;
     }
@@ -263,18 +239,16 @@ public class OptionColdFragment extends Fragment implements Selectable {
         btnGetSign = (Button) view.findViewById(R.id.btn_get_sign);
         btnCloneTo = (Button) view.findViewById(R.id.btn_clone_to);
         btnCloneFrom = (Button) view.findViewById(R.id.btn_clone_from);
-        btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
+        btnAdvance = (Button) view.findViewById(R.id.btn_advance);
         llQrForAll = (LinearLayout) view.findViewById(R.id.ll_qr_all_keys);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         flBackTime = (FrameLayout) view.findViewById(R.id.ll_back_up);
         pbBackTime = (ProgressBar) view.findViewById(R.id.pb_back_up);
-        ssvImportPrivateKey = (SettingSelectorView) view.findViewById(R.id.ssv_import_private_key);
-        ssvImportPrivateKey.setSelector(new ImportPrivateKeySelector(OptionColdFragment.this));
         setPbBackTimeSize();
         String version = null;
         try {
-            version = getActivity().getPackageManager().getPackageInfo(
-                    getActivity().getPackageName(), 0).versionName;
+            version = getActivity().getPackageManager().getPackageInfo(getActivity()
+                    .getPackageName(), 0).versionName;
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -288,30 +262,25 @@ public class OptionColdFragment extends Fragment implements Selectable {
         btnGetSign.setOnClickListener(toSignActivityClickListener);
         btnCloneTo.setOnClickListener(cloneToClick);
         btnCloneFrom.setOnClickListener(cloneFromClick);
-        btnEditPassword.setOnClickListener(editPasswordClick);
         llQrForAll.setOnClickListener(qrForAllClick);
+        btnAdvance.setOnClickListener(advanceClick);
         btnBackupTime = (Button) view.findViewById(R.id.btn_backup_time);
         btnBackupTime.setOnClickListener(backupTimeListener);
         showBackupTime();
 
     }
 
-    ;
-
     private void showBackupTime() {
 
         if (FileUtil.existSdCardMounted()) {
-            Date date = AppSharedPreference.getInstance()
-                    .getLastBackupkeyTime();
+            Date date = AppSharedPreference.getInstance().getLastBackupkeyTime();
             if (date == null) {
                 flBackTime.setVisibility(View.GONE);
             } else {
                 flBackTime.setVisibility(View.VISIBLE);
-                String relativeDate = DateTimeUtil.getRelativeDate(
-                        getActivity(), date).toString();
-                btnBackupTime.setText(StringUtil.format(
-                        getString(R.string.last_time_of_back_up) + " ",
-                        relativeDate));
+                String relativeDate = DateTimeUtil.getRelativeDate(getActivity(), date).toString();
+                btnBackupTime.setText(StringUtil.format(getString(R.string.last_time_of_back_up)
+                        + " ", relativeDate));
             }
         } else {
             flBackTime.setVisibility(View.VISIBLE);
@@ -386,8 +355,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
 
         public void run() {
-            List<ECKey> keys = PrivateKeyUtil.getECKeysFromString(content,
-                    password);
+            List<ECKey> keys = PrivateKeyUtil.getECKeysFromString(content, password);
             if (keys == null || keys.size() == 0) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -408,8 +376,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                  i >= 0;
                  i--) {
                 ECKey key = keys.get(i);
-                BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(
-                        false);
+                BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
                 wallet.setKeyCrypter(key.getKeyCrypter());
                 wallet.addKey(key);
                 wallets.add(wallet);
@@ -425,131 +392,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(getActivity(),
-                            R.string.clone_from_success);
-                    if (getActivity() instanceof ColdActivity) {
-                        ColdActivity activity = (ColdActivity) getActivity();
-                        Fragment f = activity.getFragmentAtIndex(1);
-                        if (f != null && f instanceof Refreshable) {
-                            Refreshable r = (Refreshable) f;
-                            r.doRefresh();
-                        }
-                        activity.scrollToFragmentAt(1);
-                    }
-                }
-            });
-        }
-    }
-
-    private class ImportPrivateKeyPasswordListener implements DialogPassword
-            .DialogPasswordListener {
-        private String content;
-
-        public ImportPrivateKeyPasswordListener(String content) {
-            this.content = content;
-
-        }
-
-        @Override
-        public void onPasswordEntered(String password) {
-            if (dp != null && !dp.isShowing()) {
-                dp.setMessage(R.string.import_private_key_qr_code_importing);
-                dp.show();
-                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(content, password);
-                importPrivateKeyThread.start();
-
-            }
-        }
-    }
-
-
-    private class ImportPrivateKeyThread extends Thread {
-        private String content;
-        private String password;
-
-
-        public ImportPrivateKeyThread(String content, String password) {
-
-            this.content = content;
-            this.password = password;
-        }
-
-        @Override
-        public void run() {
-            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
-            if (key == null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed);
-                    }
-                });
-                return;
-            }
-            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
-            wallet.setKeyCrypter(key.getKeyCrypter());
-            wallet.addKey(key);
-            if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed_monitored);
-                    }
-                });
-                return;
-            } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed_duplicate);
-                    }
-                });
-                return;
-            } else {
-                PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
-                if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp != null && dp.isShowing()) {
-                                dp.setThread(null);
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(getActivity(),
-                                    R.string.import_private_key_qr_code_failed_different_password);
-                        }
-                    });
-                    return;
-                }
-                List<BitherAddressWithPrivateKey> wallets = new ArrayList<BitherAddressWithPrivateKey>();
-                wallets.add(wallet);
-                WalletUtils.addAddressWithPrivateKey(null, wallets);
-            }
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(getActivity(),
-                            R.string.import_private_key_qr_code_success);
+                    DropdownMessage.showDropdownMessage(getActivity(), R.string.clone_from_success);
                     if (getActivity() instanceof ColdActivity) {
                         ColdActivity activity = (ColdActivity) getActivity();
                         Fragment f = activity.getFragmentAtIndex(1);

@@ -38,35 +38,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.bitcoin.core.ECKey;
-
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
-import net.bither.activity.hot.HotActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
-import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
-import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.Market;
-import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
-import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
-import net.bither.ui.base.DialogEditPassword;
-import net.bither.ui.base.DialogImportPrivateKeyText;
-import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.ImportPrivateKeySelector;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.util.ExchangeUtil.ExchangeType;
@@ -75,7 +61,6 @@ import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
-import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil.TransactionFeeMode;
@@ -83,7 +68,6 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable,
