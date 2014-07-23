@@ -88,13 +88,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private static Uri imageUri;
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
-    private SettingSelectorView ssvWifi;
     private SettingSelectorView ssvTransactionFee;
-    private SettingSelectorView ssvImportPrivateKey;
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
-    private Button btnEditPassword;
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
@@ -142,55 +139,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public int getCurrentOptionIndex() {
             return AppSharedPreference.getInstance().getDefaultExchangeType().ordinal();
-        }
-
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            return null;
-        }
-    };
-    private SettingSelector wifiSelector = new SettingSelector() {
-
-        @Override
-        public void onOptionIndexSelected(int index) {
-            final boolean isOnlyWifi = index == 1;
-            AppSharedPreference.getInstance().setSyncBlockOnlyWifi(isOnlyWifi);
-        }
-
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_wifi);
-        }
-
-        @Override
-        public String getOptionName(int index) {
-            if (index == 1) {
-                return getString(R.string.setting_name_wifi_yes);
-            } else {
-                return getString(R.string.setting_name_wifi_no);
-
-            }
-        }
-
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
-
-        @Override
-        public int getCurrentOptionIndex() {
-            boolean onlyUseWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
-            if (onlyUseWifi) {
-                return 1;
-            } else {
-                return 0;
-            }
-
         }
 
         @Override
@@ -315,66 +263,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
-    private SettingSelector importPrivateKeySelector = new SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
-
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
-
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
-
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
-
-        @Override
-        public void onOptionIndexSelected(int index) {
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode();
-                    return;
-                case 1:
-                    importPrivateKeyFromText();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
-
     private OnClickListener checkClick = new OnClickListener() {
 
         @Override
@@ -403,13 +291,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
             dialog.show();
         }
     };
-    private OnClickListener editPasswordClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DialogEditPassword dialog = new DialogEditPassword(getActivity());
-            dialog.show();
-        }
-    };
+
     private OnClickListener websiteClick = new OnClickListener() {
 
         @Override
@@ -424,17 +306,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
             }
         }
     };
-
-    private void importPrivateKeyFromQrCode() {
-        Intent intent = new Intent(getActivity(), ScanQRCodeTransportActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-                getString(R.string.import_private_key_qr_code_scan_title));
-        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
-    }
-
-    private void importPrivateKeyFromText() {
-        new DialogImportPrivateKeyText(getActivity()).show();
-    }
 
     @Override
     public void avatarFromCamera() {
@@ -495,16 +366,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     }
                 }
                 break;
-            case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
-                String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                DialogPassword dialogPassword = new DialogPassword(getActivity(),
-                        new ImportPrivateKeyPasswordListener(content));
-                dialogPassword.setCheckPre(false);
-                dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
-                dialogPassword.show();
-                break;
         }
-
     }
 
     @Override
@@ -523,7 +385,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private void initView(View view) {
         ssvCurrency = (SettingSelectorView) view.findViewById(R.id.ssv_currency);
         ssvMarket = (SettingSelectorView) view.findViewById(R.id.ssv_market);
-        ssvWifi = (SettingSelectorView) view.findViewById(R.id.ssv_wifi);
         ssvTransactionFee = (SettingSelectorView) view.findViewById(R.id.ssv_transaction_fee);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
@@ -532,13 +393,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
-        btnEditPassword = (Button) view.findViewById(R.id.btn_edit_password);
-        ssvImportPrivateKey = (SettingSelectorView) view.findViewById(R.id.ssv_import_private_key);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
-        ssvWifi.setSelector(wifiSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
-        ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;
@@ -557,7 +414,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnCheck.setOnClickListener(checkClick);
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
-        btnEditPassword.setOnClickListener(editPasswordClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
@@ -614,126 +470,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
             }
             UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
             uploadAvatarRunnable.run();
-        }
-    }
-
-    private class ImportPrivateKeyPasswordListener implements DialogPassword
-            .DialogPasswordListener {
-        private String content;
-
-        public ImportPrivateKeyPasswordListener(String content) {
-            this.content = content;
-        }
-
-        @Override
-        public void onPasswordEntered(String password) {
-            if (dp != null && !dp.isShowing()) {
-                dp.setMessage(R.string.import_private_key_qr_code_importing);
-                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(dp,
-                        content, password);
-                importPrivateKeyThread.start();
-            }
-        }
-    }
-
-    private class ImportPrivateKeyThread extends ThreadNeedService {
-        private String content;
-        private String password;
-        private DialogProgress dp;
-
-        public ImportPrivateKeyThread(DialogProgress dp, String content, String password) {
-            super(dp, getActivity());
-            this.dp = dp;
-            this.content = content;
-            this.password = password;
-        }
-
-        @Override
-        public void runWithService(BlockchainService service) {
-            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
-            if (key == null) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed);
-                    }
-                });
-                return;
-            }
-            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
-            wallet.setKeyCrypter(key.getKeyCrypter());
-            wallet.addKey(key);
-            if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed_monitored);
-                    }
-                });
-                return;
-            } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.import_private_key_qr_code_failed_duplicate);
-                    }
-                });
-                return;
-            } else {
-                if (!AppSharedPreference.getInstance().getPasswordSeed().checkPassword(password)) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp != null && dp.isShowing()) {
-                                dp.setThread(null);
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(getActivity(),
-                                    R.string.import_private_key_qr_code_failed_different_password);
-                        }
-                    });
-                    return;
-                }
-                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
-                wallets.add(wallet);
-                WalletUtils.addAddressWithPrivateKey(service, wallets);
-            }
-
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(getActivity(),
-                            R.string.import_private_key_qr_code_success);
-                    if (getActivity() instanceof HotActivity) {
-                        HotActivity activity = (HotActivity) getActivity();
-                        Fragment f = activity.getFragmentAtIndex(1);
-                        if (f != null && f instanceof Refreshable) {
-                            Refreshable r = (Refreshable) f;
-                            r.doRefresh();
-                        }
-                        activity.scrollToFragmentAt(1);
-                    }
-                }
-            });
         }
     }
 }
