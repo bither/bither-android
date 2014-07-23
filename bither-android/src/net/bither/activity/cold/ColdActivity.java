@@ -28,6 +28,7 @@ import android.widget.FrameLayout;
 
 import com.google.bitcoin.core.ECKey;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
@@ -70,6 +71,7 @@ public class ColdActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        BitherApplication.coldActivity = this;
         setContentView(R.layout.activity_cold);
         initView();
         mPager.postDelayed(new Runnable() {
@@ -412,5 +414,11 @@ public class ColdActivity extends FragmentActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        BitherApplication.coldActivity = null;
+        super.onDestroy();
     }
 }

@@ -37,8 +37,6 @@ import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogEditPassword;
 import net.bither.ui.base.DialogImportPrivateKeyText;
 import net.bither.ui.base.DialogPassword;
@@ -65,7 +63,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hot_advance_options);
+        setContentView(R.layout.activity_cold_advance_options);
         initView();
     }
 
@@ -192,8 +190,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         public void onPasswordEntered(String password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
-                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(dp,
-                        content, password);
+                dp.show();
+                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread
+                        (content, password);
                 importPrivateKeyThread.start();
             }
         }
@@ -207,8 +206,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 R.string.import_private_key_qr_code_success, new Runnable() {
                     @Override
                     public void run() {
-                        if (BitherApplication.hotActivity != null) {
-                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
+                        if (BitherApplication.coldActivity != null) {
+                            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
                             if (f != null && f instanceof Refreshable) {
                                 Refreshable r = (Refreshable) f;
                                 r.doRefresh();
@@ -218,11 +217,11 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                             return;
                         }
                         finish();
-                        if (BitherApplication.hotActivity != null) {
+                        if (BitherApplication.coldActivity != null) {
                             ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    BitherApplication.hotActivity.scrollToFragmentAt(1);
+                                    BitherApplication.coldActivity.scrollToFragmentAt(1);
                                 }
                             }, getFinishAnimationDuration());
                         }
@@ -231,20 +230,18 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         );
     }
 
-    private class ImportPrivateKeyThread extends ThreadNeedService {
+    private class ImportPrivateKeyThread extends Thread {
         private String content;
         private String password;
-        private DialogProgress dp;
 
-        public ImportPrivateKeyThread(DialogProgress dp, String content, String password) {
-            super(dp, ColdAdvanceActivity.this);
-            this.dp = dp;
+
+        public ImportPrivateKeyThread(String content, String password) {
             this.content = content;
             this.password = password;
         }
 
         @Override
-        public void runWithService(BlockchainService service) {
+        public void run() {
             ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
             if (key == null) {
                 runOnUiThread(new Runnable() {
@@ -308,7 +305,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 List<BitherAddressWithPrivateKey> wallets = new
                         ArrayList<BitherAddressWithPrivateKey>();
                 wallets.add(wallet);
-                WalletUtils.addAddressWithPrivateKey(service, wallets);
+                WalletUtils.addAddressWithPrivateKey(null, wallets);
             }
 
             runOnUiThread(new Runnable() {
