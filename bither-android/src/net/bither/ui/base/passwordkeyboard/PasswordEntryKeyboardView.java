@@ -19,10 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -59,6 +61,13 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private static final float NormalKeyShadowRadius = 3;
     private static final float ActionKeyShadowRadius = 2;
 
+    private static int QwertyKeyWidth = (int) (UIUtil.getScreenWidth() * BitherApplication
+            .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
+                    1, 1));
+    private static int QwertyKeyLeftGap = (int) (UIUtil.getScreenWidth() * BitherApplication
+            .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
+                    1, 1));
+
     private int mKeyboardMode = KEYBOARD_MODE_ALPHA;
     private int mKeyboardState = KEYBOARD_STATE_NORMAL;
 
@@ -89,6 +98,9 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         setOnKeyboardActionListener(PasswordEntryKeyboardView.this);
         createKeyboards();
         setKeyboardMode(KEYBOARD_MODE_NUMERIC);
+        LogUtil.i(TAG,"fraction: " + BitherApplication
+                .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
+                        1, 1));
     }
 
     public void createKeyboards() {
@@ -576,6 +588,27 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             }
         }
         return states;
+    }
+
+    @Override
+    public void getLocationInWindow(int[] location) {
+        // override to make preview centered
+        super.getLocationInWindow(location);
+        if (getKeyboard() == mQwertyKeyboard || getKeyboard() == mQwertyKeyboardShifted) {
+            try {
+                TextView previewText = getPreviewText();
+                previewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                int previewWidth = previewText.getMeasuredWidth();
+                if (previewWidth > QwertyKeyWidth) {
+                    location[0] = location[0] + QwertyKeyWidth / 2 - previewWidth / 2 +
+                            QwertyKeyLeftGap * 2;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtil.e(TAG, "can not center preview");
+            }
+        }
     }
 
     private Paint getPaint() throws Exception {
