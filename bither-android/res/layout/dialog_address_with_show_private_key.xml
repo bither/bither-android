@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#22ffffff"/>
 
     <LinearLayout
         android:id="@+id/ll_origin_qr_code"
@@ -25,12 +19,12 @@
             android:padding="10dp"
             android:text="@string/fancy_qr_code_view_origin"
             android:textColor="@color/dialog_text_color_selector"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#22ffffff"/>
+            android:background="#22ffffff" />
     </LinearLayout>
 
     <TextView
@@ -41,11 +35,12 @@
         android:padding="10dp"
         android:text="@string/address_detail_private_key_qr_code_encrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff"/>
+        android:background="#22ffffff" />
 
     <TextView
         android:id="@+id/tv_private_key_qr_code_decrypted"
@@ -55,11 +50,12 @@
         android:padding="10dp"
         android:text="@string/address_detail_private_key_qr_code_decrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff"/>
+        android:background="#22ffffff" />
 
     <TextView
         android:id="@+id/tv_view_show_private_key"
@@ -69,12 +65,12 @@
         android:padding="10dp"
         android:text="@string/private_key_text"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff"/>
+        android:background="#22ffffff" />
 
     <TextView
         android:id="@+id/tv_close"
@@ -84,6 +80,6 @@
         android:padding="10dp"
         android:text="@string/close"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
 </LinearLayout>
