@@ -492,6 +492,13 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(!kv.handleBack()){
+            super.onBackPressed();
+        }
+    }
+
     private void configureDonate() {
         if (isDonate) {
             btnSend.setText(R.string.donate_sending_verb);

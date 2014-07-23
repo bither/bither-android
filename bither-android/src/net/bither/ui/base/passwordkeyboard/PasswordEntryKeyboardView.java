@@ -427,6 +427,17 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         });
     }
 
+    @Override
+    public boolean handleBack() {
+        if (super.handleBack()) {
+            return true;
+        } else if (isKeyboardShown()) {
+            hideKeyboard();
+            return true;
+        }
+        return false;
+    }
+
     public PasswordEntryKeyboardView registerEditText(EditText... ets) {
         for (EditText et : ets) {
             et.setOnFocusChangeListener(this);
