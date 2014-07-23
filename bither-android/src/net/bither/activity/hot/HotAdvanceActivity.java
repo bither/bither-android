@@ -96,7 +96,6 @@ public class HotAdvanceActivity extends SwipeRightActivity {
                 return getString(R.string.setting_name_wifi_yes);
             } else {
                 return getString(R.string.setting_name_wifi_no);
-
             }
         }
 
