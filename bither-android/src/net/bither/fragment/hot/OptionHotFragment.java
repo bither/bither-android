@@ -46,6 +46,7 @@ import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.HotActivity;
+import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -92,6 +93,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
+    private Button btnAdvance;
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
@@ -307,6 +309,14 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener advanceClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), HotAdvanceActivity.class);
+            startActivity(intent);
+        }
+    };
+
     @Override
     public void avatarFromCamera() {
         if (FileUtil.existSdCardMounted()) {
@@ -393,6 +403,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
+        btnAdvance = (Button) view.findViewById(R.id.btn_advance);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
@@ -414,6 +425,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnCheck.setOnClickListener(checkClick);
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
+        btnAdvance.setOnClickListener(advanceClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
