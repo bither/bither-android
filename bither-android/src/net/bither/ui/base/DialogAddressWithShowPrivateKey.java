@@ -87,6 +87,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
             case R.id.tv_private_key_qr_code_encrypted:
                 new DialogPassword(activity, this).show();
                 break;
+            case R.id.tv_private_key_qr_code_decrypted:
+                new DialogPassword(activity, this).show();
+                break;
             default:
                 return;
         }
@@ -101,12 +104,13 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
 
     @Override
     public void onPasswordEntered(final String password) {
+        final  DialogProgress dialogProgress;
         switch (clickedView) {
             case R.id.tv_private_key_qr_code_encrypted:
                 dialogPrivateKey.show();
                 break;
             case R.id.tv_view_show_private_key:
-                final DialogProgress dialogProgress = new DialogProgress(this.activity, R.string.please_wait);
+                dialogProgress = new DialogProgress(this.activity, R.string.please_wait);
                 dialogProgress.show();
                 new Thread(new Runnable() {
                     @Override
@@ -121,6 +125,28 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                                 dialogProgress.dismiss();
                                 DialogPrivateKeyText dialogPrivateKeyText = new DialogPrivateKeyText(activity, str);
                                 dialogPrivateKeyText.show();
+                            }
+                        });
+                    }
+                }).start();
+
+                break;
+            case  R.id.tv_private_key_qr_code_decrypted:
+                dialogProgress = new DialogProgress(this.activity, R.string.please_wait);
+                dialogProgress.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        KeyParameter keyParameter = address.getKeyCrypter().deriveKey(password);
+                        com.google.bitcoin.core.ECKey decryptedECKey = address.getKeys().get(0);
+                        decryptedECKey = decryptedECKey.decrypt(decryptedECKey.getKeyCrypter(), keyParameter);
+                        final String str = decryptedECKey.getPrivateKeyEncoded(BitherSetting.NETWORK_PARAMETERS).toString();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialogProgress.dismiss();
+                                DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str);
+                                dialogPrivateKeyTextQrCode.show();
                             }
                         });
                     }
