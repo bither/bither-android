@@ -25,9 +25,11 @@ import android.widget.TextView;
 
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
+import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.StringUtil;
+import net.bither.util.ThreadUtil;
 
 import java.util.List;
 
@@ -124,7 +126,28 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
         public int pageCount() {
             return contents.size();
         }
+    }
 
+    @Override
+    public void finish() {
+        String exitWarning = getIntent().getExtras().getString(BitherSetting.INTENT_REF
+                .QR_CODE_EXIT_WARNING);
+        if (!StringUtil.isEmpty(exitWarning)) {
+            DialogConfirmTask dialog = new DialogConfirmTask(this, exitWarning, new Runnable() {
+                @Override
+                public void run() {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            QrCodeActivity.super.finish();
+                        }
+                    });
+                }
+            });
+            dialog.show();
+            return;
+        }
+        super.finish();
     }
 
     private FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
