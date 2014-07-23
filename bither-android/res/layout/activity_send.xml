@@ -51,7 +51,6 @@
                             android:background="@drawable/text_field_holo_light_background"
                             android:hint="@string/add_address_watch_only_hint"
                             android:singleLine="true"
-                            android:inputType="textPassword"
                             android:textColor="@color/text_field_text_color"
                             android:textSize="14sp"/>
 
