@@ -16,25 +16,45 @@
 
 package net.bither.activity.hot;
 
+import android.content.Intent;
+
 import net.bither.BitherSetting;
 import net.bither.QrCodeActivity;
 import net.bither.R;
 import net.bither.ScanQRCodeTransportActivity;
-import android.content.Intent;
+import net.bither.ui.base.DialogConfirmTask;
+import net.bither.util.ThreadUtil;
 
 public class UnsignedTxQrCodeActivity extends QrCodeActivity {
-	@Override
-	protected void complete() {
-		Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-		intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-				getString(R.string.scan_transaction_signature_title));
-		startActivity(intent);
-		finish();
-	}
+    @Override
+    protected void complete() {
+        Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                getString(R.string.scan_transaction_signature_title));
+        startActivity(intent);
+        finish();
+    }
 
-	@Override
-	protected String getCompleteButtonTitle() {
-		return getString(R.string.unsigned_transaction_qr_code_complete);
-	}
+    @Override
+    protected String getCompleteButtonTitle() {
+        return getString(R.string.unsigned_transaction_qr_code_complete);
+    }
+
+    @Override
+    public void finish() {
+        DialogConfirmTask dialog = new DialogConfirmTask(this,
+                getString(R.string.unsigned_transaction_exit_waring), new Runnable() {
+            @Override
+            public void run() {
+                ThreadUtil.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        UnsignedTxQrCodeActivity.super.finish();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
 }
