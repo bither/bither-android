@@ -48,7 +48,6 @@ import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.UploadAvatarRunnable;
-import net.bither.ui.base.DialogConfirmTask;
 import net.bither.ui.base.DialogDonate;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
@@ -181,26 +180,29 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onOptionIndexSelected(int index) {
-            if (index == TransactionFeeMode.Low.ordinal()) {
-                DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
-                        getString(R.string.setting_name_transaction_fee_low_warn), new Runnable() {
-                    @Override
-                    public void run() {
-                        ssvTransactionFee.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                AppSharedPreference.getInstance().setTransactionFeeMode
-                                        (TransactionFeeMode.Low);
-                                ssvTransactionFee.loadData();
-                            }
-                        });
-                    }
-                }
-                );
-                dialog.show();
-            } else {
-                AppSharedPreference.getInstance().setTransactionFeeMode(getModeByIndex(index));
-            }
+            // This warning is no longer needed. As more and more mining pool upgrade their
+            // bitcoin client to 0.9.+, low fee transactions get confirmed soon enough.
+//            if (index == TransactionFeeMode.Low.ordinal()) {
+//
+//                DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
+//                        getString(R.string.setting_name_transaction_fee_low_warn),
+//new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ssvTransactionFee.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                AppSharedPreference.getInstance().setTransactionFeeMode
+//                                        (TransactionFeeMode.Low);
+//                                ssvTransactionFee.loadData();
+//                            }
+//                        });
+//                    }
+//                }
+//                );
+//                dialog.show();
+//            }
+            AppSharedPreference.getInstance().setTransactionFeeMode(getModeByIndex(index));
         }
 
         @Override
