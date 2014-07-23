@@ -52,7 +52,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
 
     public static final int[] ActionKeyCodes = new int[]{Keyboard.KEYCODE_DELETE,
             Keyboard.KEYCODE_CANCEL, Keyboard.KEYCODE_MODE_CHANGE,
-            PasswordEntryKeyboard.KEYCODE_ENTER};
+            PasswordEntryKeyboard.KEYCODE_SHIFT, PasswordEntryKeyboard.KEYCODE_ENTER};
 
     static {
         Arrays.sort(ActionKeyCodes);
@@ -579,9 +579,8 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             LogUtil.e(TAG, "can not use different text color");
         }
 
-        boolean preventPreview = isActionKey || key.codes[0] == Keyboard.KEYCODE_SHIFT;
-        setPreviewEnabled(!preventPreview);
-        if (preventPreview) {
+        setPreviewEnabled(!isActionKey);
+        if (isActionKey) {
             try {
                 getPreviewText().setVisibility(INVISIBLE);
             } catch (Exception e) {
@@ -604,8 +603,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                     MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
             int previewWidth = previewText.getMeasuredWidth();
             if (previewWidth > keyWidth) {
-                location[0] = (int) (location[0] + keyWidth / 2 - previewWidth / 2 +
-                        keyGap * 2);
+                location[0] = (int) (location[0] + keyWidth / 2 - previewWidth / 2 + keyGap * 2);
             }
         } catch (Exception e) {
             e.printStackTrace();
