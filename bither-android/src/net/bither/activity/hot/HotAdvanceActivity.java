@@ -22,15 +22,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 
 import com.google.bitcoin.core.ECKey;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
@@ -41,9 +44,10 @@ import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
-import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ import java.util.List;
 /**
  * Created by songchenwen on 14-7-23.
  */
-public class HotAdvanceActivity extends SwipeRightActivity {
+public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
@@ -81,6 +85,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
 
         @Override
         public void onOptionIndexSelected(int index) {
+            hasAnyAction = true;
             final boolean isOnlyWifi = index == 1;
             AppSharedPreference.getInstance().setSyncBlockOnlyWifi(isOnlyWifi);
         }
@@ -101,6 +106,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
 
         @Override
         public int getOptionCount() {
+            hasAnyAction = true;
             return 2;
         }
 
@@ -129,6 +135,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            hasAnyAction = true;
             DialogEditPassword dialog = new DialogEditPassword(HotAdvanceActivity.this);
             dialog.show();
         }
@@ -138,6 +145,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
             SettingSelectorView.SettingSelector() {
         @Override
         public int getOptionCount() {
+            hasAnyAction = true;
             return 2;
         }
 
@@ -182,6 +190,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
 
         @Override
         public void onOptionIndexSelected(int index) {
+            hasAnyAction = true;
             switch (index) {
                 case 0:
                     importPrivateKeyFromQrCode();
@@ -242,6 +251,38 @@ public class HotAdvanceActivity extends SwipeRightActivity {
                 importPrivateKeyThread.start();
             }
         }
+    }
+
+    private boolean hasAnyAction = false;
+
+    public void showImportSuccess() {
+        hasAnyAction = false;
+        DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                R.string.import_private_key_qr_code_success, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (BitherApplication.hotActivity != null) {
+                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
+                            if (f != null && f instanceof Refreshable) {
+                                Refreshable r = (Refreshable) f;
+                                r.doRefresh();
+                            }
+                        }
+                        if (hasAnyAction) {
+                            return;
+                        }
+                        finish();
+                        if (BitherApplication.hotActivity != null) {
+                            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BitherApplication.hotActivity.scrollToFragmentAt(1);
+                                }
+                            }, getFinishAnimationDuration());
+                        }
+                    }
+                }
+        );
     }
 
     private class ImportPrivateKeyThread extends ThreadNeedService {
@@ -330,8 +371,7 @@ public class HotAdvanceActivity extends SwipeRightActivity {
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                            R.string.import_private_key_qr_code_success);
+                    showImportSuccess();
                 }
             });
         }
