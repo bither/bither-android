@@ -61,12 +61,17 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private static final float NormalKeyShadowRadius = 3;
     private static final float ActionKeyShadowRadius = 2;
 
-    private static int QwertyKeyWidth = (int) (UIUtil.getScreenWidth() * BitherApplication
-            .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
-                    1, 1));
-    private static int QwertyKeyLeftGap = (int) (UIUtil.getScreenWidth() * BitherApplication
-            .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
-                    1, 1));
+    private static float QwertyKeyWidth = BitherApplication.mContext.getResources().getFraction(R
+            .fraction.password_keyboard_letter_key_width, 1, UIUtil.getScreenWidth());
+    private static float QwertyKeyHorizontalGap = BitherApplication.mContext.getResources()
+            .getFraction(R.fraction.password_keyboard_letter_key_horizontal_gap, 1,
+                    UIUtil.getScreenWidth());
+
+    private static float NumberKeyWidth = BitherApplication.mContext.getResources().getFraction(R
+            .fraction.password_keyboard_number_key_width, 1, UIUtil.getScreenWidth());
+    private static float NumberKeyHorizontalGap = BitherApplication.mContext.getResources()
+            .getFraction(R.fraction.password_keyboard_number_key_horizontal_gap, 1,
+                    UIUtil.getScreenWidth());
 
     private int mKeyboardMode = KEYBOARD_MODE_ALPHA;
     private int mKeyboardState = KEYBOARD_STATE_NORMAL;
@@ -98,9 +103,6 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         setOnKeyboardActionListener(PasswordEntryKeyboardView.this);
         createKeyboards();
         setKeyboardMode(KEYBOARD_MODE_NUMERIC);
-        LogUtil.i(TAG,"fraction: " + BitherApplication
-                .mContext.getResources().getFraction(R.fraction.password_keyboard_letter_key_width,
-                        1, 1));
     }
 
     public void createKeyboards() {
@@ -594,21 +596,41 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     public void getLocationInWindow(int[] location) {
         // override to make preview centered
         super.getLocationInWindow(location);
-        if (getKeyboard() == mQwertyKeyboard || getKeyboard() == mQwertyKeyboardShifted) {
-            try {
-                TextView previewText = getPreviewText();
-                previewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                int previewWidth = previewText.getMeasuredWidth();
-                if (previewWidth > QwertyKeyWidth) {
-                    location[0] = location[0] + QwertyKeyWidth / 2 - previewWidth / 2 +
-                            QwertyKeyLeftGap * 2;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                LogUtil.e(TAG, "can not center preview");
+        try {
+            TextView previewText = getPreviewText();
+            float keyWidth = getKeyWidth();
+            float keyGap = getKeyHorizontalGap();
+            previewText.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                    MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+            int previewWidth = previewText.getMeasuredWidth();
+            if (previewWidth > keyWidth) {
+                location[0] = (int) (location[0] + keyWidth / 2 - previewWidth / 2 +
+                        keyGap * 2);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.e(TAG, "can not center preview");
         }
+    }
+
+    public float getKeyWidth() {
+        if (getKeyboard() == null) {
+            return 0;
+        }
+        if (getKeyboard() == mNumericKeyboard) {
+            return NumberKeyWidth;
+        }
+        return QwertyKeyWidth;
+    }
+
+    public float getKeyHorizontalGap() {
+        if (getKeyboard() == null) {
+            return 0;
+        }
+        if (getKeyboard() == mNumericKeyboard) {
+            return NumberKeyHorizontalGap;
+        }
+        return QwertyKeyHorizontalGap;
     }
 
     private Paint getPaint() throws Exception {
