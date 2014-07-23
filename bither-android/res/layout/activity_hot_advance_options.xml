@@ -29,6 +29,32 @@
                     android:orientation="vertical"
                     android:paddingBottom="6dp"
                     android:paddingTop="10dp">
+
+                    <net.bither.ui.base.SettingSelectorView
+                        android:id="@+id/ssv_wifi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <Button
+                        android:id="@+id/btn_edit_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ui_touchable_bg"
+                        android:drawableRight="@drawable/edit_password_button_icon"
+                        android:gravity="left"
+                        android:padding="10dp"
+                        android:text="@string/edit_password_button"
+                        android:textColor="@color/text_field_text_color"
+                        android:textSize="18sp"/>
+
+                    <include layout="@layout/layout_vertical_seperator"/>
+
+                    <net.bither.ui.base.SettingSelectorView
+                        android:id="@+id/ssv_import_private_key"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
                 <include layout="@layout/layout_card_foreground_single"/>
