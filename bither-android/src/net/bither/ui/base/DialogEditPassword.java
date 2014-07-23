@@ -106,6 +106,8 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     public void show() {
         if (passwordSeed != null) {
             super.show();
+        }else if(activity != null){
+            DropdownMessage.showDropdownMessage(activity, R.string.private_key_is_empty);
         }
     }
 
