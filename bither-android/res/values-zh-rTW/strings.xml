@@ -304,4 +304,7 @@
     <!-- password keyboard -->
     <string name="password_keyboard_done">完成</string>
     <string name="password_keyboard_next">下一項</string>
+
+    <!-- advance -->
+    <string name="activity_name_advance">高級選項</string>
 </resources>
