@@ -14,29 +14,11 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/title_bar_below_margin">
 
-            <LinearLayout
+            <net.bither.ui.base.OverScrollableViewPager
+                android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/tv_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
-                    android:layout_marginTop="20dp"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp"/>
-
-
-                <net.bither.ui.base.OverScrollableViewPager
-                    android:id="@+id/pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
+                android:layout_weight="1"/>
 
             <include layout="@layout/layout_dropdown_message"/>
         </FrameLayout>
@@ -58,6 +40,7 @@
                 android:src="@drawable/action_bar_glyph_cancel"/>
 
             <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
@@ -68,8 +51,7 @@
                 android:shadowRadius="0.5"
                 android:text="@string/activity_name_qr_code"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textSize="13sp"/>
         </LinearLayout>
     </net.bither.ui.base.SwipeRightTouchView>
 
