@@ -64,6 +64,7 @@ import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.ImportPrivateKeySelector;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.util.ExchangeUtil.ExchangeType;
@@ -315,66 +316,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
-    private SettingSelector importPrivateKeySelector = new SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
-
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
-
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
-
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
-
-        @Override
-        public void onOptionIndexSelected(int index) {
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode();
-                    return;
-                case 1:
-                    importPrivateKeyFromText();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
-
     private OnClickListener checkClick = new OnClickListener() {
 
         @Override
@@ -425,16 +366,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
-    private void importPrivateKeyFromQrCode() {
-        Intent intent = new Intent(getActivity(), ScanQRCodeTransportActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-                getString(R.string.import_private_key_qr_code_scan_title));
-        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
-    }
-
-    private void importPrivateKeyFromText() {
-        new DialogImportPrivateKeyText(getActivity()).show();
-    }
 
     @Override
     public void avatarFromCamera() {
@@ -538,7 +469,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvMarket.setSelector(marketSelector);
         ssvWifi.setSelector(wifiSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
-        ssvImportPrivateKey.setSelector(importPrivateKeySelector);
+        ssvImportPrivateKey.setSelector( new ImportPrivateKeySelector(OptionHotFragment.this));
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;

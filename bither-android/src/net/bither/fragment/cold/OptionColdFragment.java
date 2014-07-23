@@ -53,6 +53,8 @@ import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.ImportPrivateKeySelector;
+import net.bither.ui.base.SettingSelectorView;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
@@ -98,6 +100,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
+    private SettingSelectorView ssvImportPrivateKey;
+
     private OnClickListener toSignActivityClickListener = new OnClickListener() {
 
         @Override
@@ -249,6 +253,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         flBackTime = (FrameLayout) view.findViewById(R.id.ll_back_up);
         pbBackTime = (ProgressBar) view.findViewById(R.id.pb_back_up);
+        ssvImportPrivateKey = (SettingSelectorView) view.findViewById(R.id.ssv_import_private_key);
+        ssvImportPrivateKey.setSelector(new ImportPrivateKeySelector(OptionColdFragment.this));
         setPbBackTimeSize();
         String version = null;
         try {
