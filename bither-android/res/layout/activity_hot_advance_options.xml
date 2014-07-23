@@ -9,57 +9,64 @@
         android:layout_height="match_parent"
         android:background="@color/bg">
 
-        <net.bither.ui.base.OverScrollableScrollView
-            android:layout_marginTop="@dimen/title_bar_below_margin"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
 
-            <FrameLayout
+            <net.bither.ui.base.OverScrollableScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/bg"
-                android:paddingLeft="@dimen/card_list_padding"
-                android:paddingRight="@dimen/card_list_padding">
+                android:layout_height="match_parent">
 
-
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:paddingBottom="6dp"
-                    android:paddingTop="10dp">
-
-                    <net.bither.ui.base.SettingSelectorView
-                        android:id="@+id/ssv_wifi"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                    android:background="@color/bg"
+                    android:paddingLeft="@dimen/card_list_padding"
+                    android:paddingRight="@dimen/card_list_padding">
 
 
-                    <Button
-                        android:id="@+id/btn_edit_password"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@drawable/ui_touchable_bg"
-                        android:drawableRight="@drawable/edit_password_button_icon"
-                        android:gravity="left"
-                        android:padding="10dp"
-                        android:text="@string/edit_password_button"
-                        android:textColor="@color/text_field_text_color"
-                        android:textSize="18sp"/>
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:paddingBottom="6dp"
+                        android:paddingTop="10dp">
 
-                    <include layout="@layout/layout_vertical_seperator"/>
+                        <net.bither.ui.base.SettingSelectorView
+                            android:id="@+id/ssv_wifi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
 
-                    <net.bither.ui.base.SettingSelectorView
-                        android:id="@+id/ssv_import_private_key"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
 
-                <include layout="@layout/layout_card_foreground_single"/>
-            </FrameLayout>
-        </net.bither.ui.base.OverScrollableScrollView>
+                        <Button
+                            android:id="@+id/btn_edit_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ui_touchable_bg"
+                            android:drawableRight="@drawable/edit_password_button_icon"
+                            android:gravity="left"
+                            android:padding="10dp"
+                            android:text="@string/edit_password_button"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
+
+                        <include layout="@layout/layout_vertical_seperator"/>
+
+                        <net.bither.ui.base.SettingSelectorView
+                            android:id="@+id/ssv_import_private_key"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_card_foreground_single"/>
+                </FrameLayout>
+            </net.bither.ui.base.OverScrollableScrollView>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/fl_title_bar"
