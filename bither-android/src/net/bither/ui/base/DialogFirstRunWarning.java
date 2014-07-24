@@ -30,6 +30,7 @@ public class DialogFirstRunWarning extends CenterDialog implements View.OnClickL
     public DialogFirstRunWarning(Context context) {
         super(context);
         setContentView(R.layout.dialog_first_run_warning);
+        setCanceledOnTouchOutside(false);
         findViewById(R.id.btn_ok).setOnClickListener(this);
     }
 

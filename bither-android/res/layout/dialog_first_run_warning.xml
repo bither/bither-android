@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:layout_marginTop="10dp"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:text="@string/OK"
         android:background="@drawable/dialog_btn_bg_selector"/>
 </LinearLayout>
