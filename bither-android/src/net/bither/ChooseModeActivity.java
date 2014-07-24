@@ -26,6 +26,7 @@ import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogFirstRunWarning;
 import net.bither.ui.base.ProgressDialog;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.util.BroadcastUtil;
@@ -92,7 +93,6 @@ public class ChooseModeActivity extends Activity {
         } else {
             initActivity();
         }
-
     }
 
     private void initActivity() {
@@ -102,6 +102,7 @@ public class ChooseModeActivity extends Activity {
             BitherApplication.getBitherApplication().startBlockchainService(
                     false);
             initView();
+            showFirstRunWarning();
         } else {
             if (appMode == AppMode.COLD) {
                 vColdWalletInitCheck = (ColdWalletInitCheckView) findViewById(R.id
@@ -126,8 +127,11 @@ public class ChooseModeActivity extends Activity {
                     return;
                 }
             }
-
         }
+    }
+
+    private void showFirstRunWarning(){
+        new DialogFirstRunWarning(this).show();
     }
 
     private Handler upgradeV4Handler = new Handler() {
