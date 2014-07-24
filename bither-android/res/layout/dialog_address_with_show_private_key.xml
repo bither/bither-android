@@ -16,10 +16,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:duplicateParentState="true"
-            android:padding="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:text="@string/fancy_qr_code_view_origin"
             android:textColor="@color/dialog_text_color_selector"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
         <ImageView
             android:layout_width="match_parent"
@@ -32,10 +35,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="@string/address_detail_private_key_qr_code_encrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -44,13 +50,17 @@
 
     <TextView
         android:id="@+id/tv_private_key_qr_code_decrypted"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="200dp"
         android:background="@drawable/ui_touchable_foreground"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="@string/address_detail_private_key_qr_code_decrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -59,13 +69,16 @@
 
     <TextView
         android:id="@+id/tv_view_show_private_key"
-        android:layout_width="180dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="@string/private_key_text"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -77,9 +90,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="@string/close"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp" />
+        android:textSize="15sp" />
 
 </LinearLayout>
