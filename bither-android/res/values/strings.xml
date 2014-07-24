@@ -322,4 +322,9 @@
 
     <!-- advance -->
     <string name="activity_name_advance">Advance Options</string>
+
+    <!-- first run dialog -->
+    <string name="first_run_dialog_title">To protect your bitcoin:</string>
+    <string name="first_run_dialog_line_1">NOT to UNINSTALL Bither</string>
+    <string name="first_run_dialog_line_2">NOT to CLEAR DATA of Bither</string>
 </resources>
