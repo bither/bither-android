@@ -52,7 +52,7 @@
         android:id="@+id/tv_private_key_qr_code_decrypted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="200dp"
+        android:minWidth="180dp"
         android:background="@drawable/ui_touchable_foreground"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
