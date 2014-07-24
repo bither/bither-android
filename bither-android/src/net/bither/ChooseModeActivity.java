@@ -102,6 +102,7 @@ public class ChooseModeActivity extends Activity {
             BitherApplication.getBitherApplication().startBlockchainService(
                     false);
             initView();
+            showFirstRunWarning();
         } else {
             if (appMode == AppMode.COLD) {
                 vColdWalletInitCheck = (ColdWalletInitCheckView) findViewById(R.id
@@ -126,8 +127,11 @@ public class ChooseModeActivity extends Activity {
                     return;
                 }
             }
-
         }
+    }
+
+    private void showFirstRunWarning(){
+
     }
 
     private Handler upgradeV4Handler = new Handler() {
