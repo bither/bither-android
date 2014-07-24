@@ -16,12 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.model.BitherAddress;
-import net.bither.util.StringUtil;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
@@ -31,6 +25,12 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import net.bither.R;
+import net.bither.model.BitherAddress;
+import net.bither.util.StringUtil;
+import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
 
 public class ColdAddressFragmentListItemView extends FrameLayout {
     private Activity activity;
@@ -43,8 +43,8 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     public ColdAddressFragmentListItemView(Activity context) {
         super(context);
         activity = context;
-        View v = LayoutInflater.from(activity).inflate(
-                R.layout.list_item_address_fragment_cold, null);
+        View v = LayoutInflater.from(activity).inflate(R.layout.list_item_address_fragment_cold,
+                null);
         addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         initView();
     }
@@ -69,7 +69,8 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     private OnLongClickListener typeClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey(activity, address);
+            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
+                    (activity, address);
             dialog.show();
             return true;
         }
@@ -82,8 +83,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
             if (address != null) {
                 String text = address.getAddress();
                 StringUtil.copyString(text);
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.copy_address_success);
+                DropdownMessage.showDropdownMessage(activity, R.string.copy_address_success);
             }
         }
     };
@@ -93,14 +93,12 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         @Override
         public void onClick(View v) {
             if (address != null) {
-                int size = Math.min(UIUtil.getScreenHeight(),
-                        UIUtil.getScreenWidth());
+                int size = Math.min(UIUtil.getScreenHeight(), UIUtil.getScreenWidth());
                 QrCodeImageView iv = new QrCodeImageView(getContext());
                 iv.setBackgroundColor(Color.WHITE);
-                final Dialog dialog = new Dialog(getContext(),
-                        R.style.tipsDialog);
-                dialog.getWindow().addFlags(
-                        WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                int margin = UIUtil.dip2pix(18);
+                final Dialog dialog = new Dialog(getContext(), R.style.tipsDialog);
+                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                 dialog.getWindow().getAttributes().dimAmount = 0.85f;
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.setContentView(iv, new LayoutParams(size, size));
@@ -111,7 +109,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
                         dialog.dismiss();
                     }
                 });
-                iv.setContent(address.getAddress());
+                iv.setContent(address.getAddress(), Color.BLACK, Color.WHITE, margin);
             }
         }
     };

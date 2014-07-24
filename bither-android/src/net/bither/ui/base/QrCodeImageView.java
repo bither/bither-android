@@ -54,21 +54,11 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
     private BmpRunnable bmpRunnable;
     private Future<?> future;
     private Handler mainHandler;
+    private int qrCodeMargin = 0;
 
     public QrCodeImageView(Context context) {
         super(context);
         initView();
-    }
-
-    private void initView() {
-        fgColor = Color.BLACK;
-        bgColor = Color.TRANSPARENT;
-        mainHandler = new Handler(Looper.getMainLooper());
-        removeAllViews();
-        LayoutInflater.from(getContext()).inflate(R.layout.layout_qr_code_imageview, this);
-        iv = (ImageView) findViewById(R.id.iv_qr);
-        pb = (ProgressBar) findViewById(R.id.pb_qr);
-        setOnClickListener(this);
     }
 
     public QrCodeImageView(Context context, AttributeSet attrs) {
@@ -85,6 +75,17 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
         this.listener = listener;
     }
 
+    private void initView() {
+        fgColor = Color.BLACK;
+        bgColor = Color.TRANSPARENT;
+        mainHandler = new Handler(Looper.getMainLooper());
+        removeAllViews();
+        LayoutInflater.from(getContext()).inflate(R.layout.layout_qr_code_imageview, this);
+        iv = (ImageView) findViewById(R.id.iv_qr);
+        pb = (ProgressBar) findViewById(R.id.pb_qr);
+        setOnClickListener(this);
+    }
+
     public String getContent() {
         return content;
     }
@@ -94,10 +95,15 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
     }
 
     public void setContent(String content, int fgColor, int bgColor) {
+        setContent(content, fgColor, bgColor, 0);
+    }
+
+    public void setContent(String content, int fgColor, int bgColor, int qrCodeMargin) {
         if (!StringUtil.compareString(this.content, content) || bgColor != this.bgColor ||
-                fgColor != this.fgColor) {
+                fgColor != this.fgColor || this.qrCodeMargin != qrCodeMargin) {
             this.bgColor = bgColor;
             this.fgColor = fgColor;
+            this.qrCodeMargin = qrCodeMargin;
             if (future != null) {
                 future.cancel(true);
                 future = null;
@@ -147,7 +153,7 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
             if (StringUtil.isEmpty(content)) {
                 return;
             }
-            bmp = Qr.bitmap(QrCodeImageView.this.content, size, fgColor, bgColor);
+            bmp = Qr.bitmap(QrCodeImageView.this.content, size, fgColor, bgColor, qrCodeMargin);
             if (Thread.interrupted()) {
                 return;
             }
