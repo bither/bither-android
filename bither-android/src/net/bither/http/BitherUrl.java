@@ -63,13 +63,4 @@ public class BitherUrl {
     public static final String BITHER_TREND_URL = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/%d/trend";
 
-
-    // matket website
-    public static final String BITSTAMP_URL = "https://www.bitstamp.net/";
-    public static final String BTC_E_URL = "https://btc-e.com/";
-    public static final String HUOBI_URL = "http://www.huobi.com/";
-    public static final String OKCOIN_URL = "https://www.okcoin.com/";
-    public static final String BTCCHINA_URL = "https://vip.btcchina.com/";
-    public static final String CHBTC_URL = "https://www.chbtc.com/";
-
 }
