@@ -126,10 +126,7 @@ public class TransactionsUtil {
 						JSONObject tranOutJson = tranOutArray.getJSONObject(i);
 						BigInteger value = BigInteger.valueOf(tranOutJson
 								.getLong(BITHER_VALUE));
-						if (!tranOutJson.isNull(EXPLORER_OUT_ADDRESS)) {
-							Address address = new Address(
-									BitherSetting.NETWORK_PARAMETERS,
-									tranOutJson.getString(EXPLORER_OUT_ADDRESS));
+						if (!tranOutJson.isNull(SCRIPT_PUB_KEY)) {
 							String str = tranOutJson.getString(SCRIPT_PUB_KEY);
 							// Script script = new Script(
 							// );
