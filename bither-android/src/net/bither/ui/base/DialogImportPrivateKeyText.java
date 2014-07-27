@@ -19,6 +19,8 @@ package net.bither.ui.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,17 +31,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.AddressFormatException;
 import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.params.MainNetParams;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.runnable.CheckAddressRunnable;
+import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.util.PrivateKeyUtil;
@@ -62,6 +68,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     private InputMethodManager imm;
 
     private String privateKeyString;
+    private ProgressDialog pd;
 
     public DialogImportPrivateKeyText(Activity context) {
         super(context);
@@ -108,14 +115,50 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                     return;
 
                 }
+                Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
+                CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(address.toString());
+                checkAddressRunnable.setHandler(checkAddressHandler);
+                new Thread(checkAddressRunnable).start();
             } catch (AddressFormatException e) {
                 e.printStackTrace();
             }
-
-            privateKeyString = et.getText().toString();
+        } else {
+            dismiss();
         }
-        dismiss();
     }
+
+    Handler checkAddressHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case HandlerMessage.MSG_PREPARE:
+                    if (pd == null) {
+                        pd = new ProgressDialog(activity, activity.getString(R.string.please_wait), null);
+                    }
+                    pd.show();
+                    break;
+                case HandlerMessage.MSG_SUCCESS:
+                    if (pd != null) {
+                        pd.dismiss();
+                    }
+                    boolean isCheck = Boolean.valueOf(msg.obj.toString());
+                    if (isCheck) {
+                        privateKeyString = et.getText().toString();
+                        dismiss();
+
+                    } else {
+                        DropdownMessage.showDropdownMessage(activity, R.string.please_wait);
+                    }
+                    break;
+                case HandlerMessage.MSG_FAILURE:
+                    if (pd != null) {
+                        pd.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onShow(DialogInterface dialog) {
@@ -129,6 +172,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             d.show();
         }
         et.setText("");
+
     }
 
     private TextWatcher textWatcher = new TextWatcher() {
@@ -233,8 +277,8 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    if(activity instanceof HotAdvanceActivity){
-                        ((HotAdvanceActivity)activity).showImportSuccess();
+                    if (activity instanceof HotAdvanceActivity) {
+                        ((HotAdvanceActivity) activity).showImportSuccess();
                     }
                     if (activity instanceof ColdActivity) {
                         ColdActivity a = (ColdActivity) activity;
