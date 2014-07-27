@@ -317,7 +317,7 @@
     <string name="activity_name_advance">高級選項</string>
 
     <!-- first run dialog -->
-    <string name="first_run_dialog_title">为了保护您的比特币:</string>
-    <string name="first_run_dialog_line_1">请不要卸载比太</string>
-    <string name="first_run_dialog_line_2">请不要对比太清空数据</string>
+    <string name="first_run_dialog_title">為了保護您的比特幣:</string>
+    <string name="first_run_dialog_line_1">請不要卸載比太錢包</string>
+    <string name="first_run_dialog_line_2">請不要清除比太數據</string>
 </resources>

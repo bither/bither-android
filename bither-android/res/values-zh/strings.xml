@@ -318,6 +318,6 @@
 
     <!-- first run dialog -->
     <string name="first_run_dialog_title">为了保护您的比特币:</string>
-    <string name="first_run_dialog_line_1">请不要卸载比太</string>
-    <string name="first_run_dialog_line_2">请不要对比太清空数据</string>
+    <string name="first_run_dialog_line_1">请不要卸载比太钱包</string>
+    <string name="first_run_dialog_line_2">请不要清除比太数据</string>
 </resources>

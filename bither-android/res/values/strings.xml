@@ -332,6 +332,6 @@
 
     <!-- first run dialog -->
     <string name="first_run_dialog_title">To protect your bitcoin:</string>
-    <string name="first_run_dialog_line_1">NOT to UNINSTALL Bither</string>
-    <string name="first_run_dialog_line_2">NOT to CLEAR DATA of Bither</string>
+    <string name="first_run_dialog_line_1">NEVER UNINSTALL Bither.</string>
+    <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
 </resources>
