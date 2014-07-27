@@ -40,10 +40,12 @@ import com.google.bitcoin.params.MainNetParams;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.cold.ColdActivity;
+import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.CheckAddressRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ThreadNeedService;
@@ -115,7 +117,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                     return;
 
                 }
-                if (activity instanceof HotActivity) {
+                if (AppSharedPreference.getInstance().getAppMode() == BitherSetting.AppMode.HOT) {
                     Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
                     List<String> addressList = new ArrayList<String>();
                     addressList.add(address.toString());
@@ -297,14 +299,8 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                     if (activity instanceof HotAdvanceActivity) {
                         ((HotAdvanceActivity) activity).showImportSuccess();
                     }
-                    if (activity instanceof ColdActivity) {
-                        ColdActivity a = (ColdActivity) activity;
-                        Fragment f = a.getFragmentAtIndex(1);
-                        if (f != null && f instanceof Refreshable) {
-                            Refreshable r = (Refreshable) f;
-                            r.doRefresh();
-                        }
-                        a.scrollToFragmentAt(1);
+                    if (activity instanceof ColdAdvanceActivity) {
+                        ((ColdAdvanceActivity) activity).showImportSuccess();
                     }
                 }
             });
