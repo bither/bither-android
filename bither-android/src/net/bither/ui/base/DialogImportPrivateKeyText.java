@@ -115,12 +115,18 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                     return;
 
                 }
-                Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
-                List<String> addressList = new ArrayList<String>();
-                addressList.add(address.toString());
-                CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
-                checkAddressRunnable.setHandler(checkAddressHandler);
-                new Thread(checkAddressRunnable).start();
+                if (activity instanceof HotActivity) {
+                    Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
+                    List<String> addressList = new ArrayList<String>();
+                    addressList.add(address.toString());
+                    CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
+                    checkAddressRunnable.setHandler(checkAddressHandler);
+                    new Thread(checkAddressRunnable).start();
+                } else {
+                    privateKeyString = et.getText().toString();
+                    dismiss();
+                }
+
             } catch (AddressFormatException e) {
                 e.printStackTrace();
             }
