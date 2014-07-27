@@ -74,44 +74,6 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         }
     };
 
-    private View.OnClickListener deleteClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(final View v) {
-            dismiss();
-            if (WalletUtils.getBitherAddressList().size() == 1) {
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.address_detail_empty_address_list_notice);
-                return;
-            }
-            if (BitherApplication.getBitherApplication().isCanStopMonitor()) {
-                BitherApplication.getBitherApplication().setCanStopMonitor(false);
-                new DialogConfirmTask(getContext(), getContext().getString(R.string
-                        .address_delete_confirmation), new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                WalletUtils.removeBitherAddress(address);
-                                Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
-                                if (f instanceof Refreshable) {
-                                    ((Refreshable) f).doRefresh();
-                                }
-                                if (afterDelete != null) {
-                                    activity.runOnUiThread(afterDelete);
-                                }
-                            }
-                        });
-                    }
-                }).show();
-            } else {
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.address_detail_cannot_stop_monitoring);
-            }
-        }
-    };
-
     private View.OnClickListener closeClick = new View.OnClickListener() {
 
         @Override

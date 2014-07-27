@@ -102,7 +102,7 @@ public class DialogAddressWatchOnlyLongClick extends CenterDialog implements Vie
                             new ThreadNeedService(dp, activity) {
                                 @Override
                                 public void runWithService(BlockchainService service) {
-
+                                    address.reset(service);
                                     activity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
