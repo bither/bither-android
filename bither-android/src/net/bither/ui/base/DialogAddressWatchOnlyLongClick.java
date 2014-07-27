@@ -103,6 +103,7 @@ public class DialogAddressWatchOnlyLongClick extends CenterDialog implements Vie
                                 @Override
                                 public void runWithService(BlockchainService service) {
                                     address.reset(service);
+                                    service.beginInitBlockAndWalletInUiThread();
                                     activity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -114,7 +115,7 @@ public class DialogAddressWatchOnlyLongClick extends CenterDialog implements Vie
                                         }
                                     });
                                 }
-                            };
+                            }.start();
                         }
                     }).show();
                 } else {
