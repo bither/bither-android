@@ -34,6 +34,7 @@ import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.model.BitherAddress;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.ui.base.AddressFragmentListItemView;
+import net.bither.ui.base.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
@@ -191,9 +192,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         BitherAddress a;
         if (isPrivate(groupPosition)) {
             a = privates.get(childPosition);
-            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition, isPrivate(groupPosition)));
+            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition,
+                    isPrivate(groupPosition)));
         } else {
             a = watchOnlys.get(childPosition);
+            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition,
+                    isPrivate(groupPosition)));
         }
         view.setAddress(a, childPosition, isPrivate(groupPosition));
         view.setOnClickListener(new AddressDetailClick(childPosition, isPrivate(groupPosition)));
@@ -211,11 +215,17 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
         @Override
         public boolean onLongClick(View v) {
-            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey(activity, privates.get(position));
-            dialog.show();
+            if (isPrivate) {
+                DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
+                        (activity, privates.get(position));
+                dialog.show();
+            } else {
+                DialogAddressWatchOnlyLongClick dialog = new DialogAddressWatchOnlyLongClick
+                        (activity, watchOnlys.get(position));
+                dialog.show();
+            }
             return true;
         }
-
     }
 
     private class AddressDetailClick implements OnClickListener {
