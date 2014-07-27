@@ -1150,10 +1150,47 @@ public class WalletUtils {
     public static void fixWalletTransactions(BitherAddress wallet) {
         List<Transaction> cloneTxList = new ArrayList<Transaction>();
         for (Transaction tx : wallet.getTransactionsByTime()) {
+            Sha256Hash txHash = tx.getHash();
+            //  LogUtil.d("fix","1,"+tx.getHashAsString());
             TransactionConfidence oldConfidence = tx.getConfidence();
-            Transaction newTx = (Transaction) SerializationUtils.clone(tx);
+            Transaction newTx = new Transaction(tx.getParams(), (int) tx.getVersion(), tx.getHash());
+            //LogUtil.d("fix","2,"+tx.getHashAsString());
+            for (TransactionInput input : tx.getInputs()) {
+                TransactionInput transactionInput = new TransactionInput(
+                        BitherSetting.NETWORK_PARAMETERS,
+                        newTx, input.getScriptBytes(),
+                        input.getOutpoint()
+                );
+
+                newTx.addInput(transactionInput);
+            }
+            //LogUtil.d("fix","3,"+tx.getHashAsString());
+            for (TransactionOutput output : tx.getOutputs()) {
+                TransactionOutput transactionOutput = new TransactionOutput(
+                        BitherSetting.NETWORK_PARAMETERS,
+                        newTx, output.getValue(),
+                        output.getScriptBytes());
+                newTx.addOutput(transactionOutput);
+            }
+            //LogUtil.d("fix","4,"+tx.getHashAsString());
+            newTx.getConfidence().setAppearedAtChainHeight(tx.getConfidence().getAppearedAtChainHeight());
+            newTx.getConfidence().setConfidenceType(tx.getConfidence().getConfidenceType());
+            newTx.getConfidence().setDepthInBlocks(tx.getConfidence().getDepthInBlocks());
+            newTx.setUpdateTime(tx.getUpdateTime());
+            // LogUtil.d("fix","5,"+tx.getHashAsString());
             TransactionConfidence newConfidence = newTx.getConfidence();
             copyConfidenceListeners(oldConfidence, newConfidence);
+            // LogUtil.d("fix","6,"+tx.getHashAsString());
+            try {
+                Field txField = Transaction.class.getDeclaredField("hash");
+                txField.setAccessible(true);
+                txField.set(newTx, txHash);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
             cloneTxList.add(newTx);
         }
 
@@ -1161,8 +1198,8 @@ public class WalletUtils {
             for (TransactionOutput trOutput : tx.getOutputs()) {
                 trOutput.markAsUnspent();
             }
+            //  LogUtil.d("fix", "tx," + tx.toString());
         }
-
         List<WalletTransaction> walletTxList = getWalletTx(wallet, cloneTxList);
 
         wallet.clearTransactionsWithoutSave();
