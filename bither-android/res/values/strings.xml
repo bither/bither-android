@@ -181,6 +181,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
     <string name="import_private_key_qr_code_importing">Importing…</string>
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
+    <string name="import_private_key_failed_tx_too_mush">Import failed ,this address has large amount of transactions. </string>
+    <string name="import_private_key_failed_special_address">Import failed ,this address is special address</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>

@@ -16,20 +16,20 @@
 
 package net.bither.runnable;
 
-import net.bither.api.BitherMytransactionsApi;
+import net.bither.BitherSetting;
+import net.bither.util.TransactionsUtil;
 
-import org.json.JSONObject;
+import java.util.List;
 
 /**
  * Created by nn on 14-7-27.
  */
 public class CheckAddressRunnable extends BaseRunnable {
-    private final static String SPECIAL_TYPE = "special_type";
 
-    private String address;
+    private List<String> addressList;
 
-    public CheckAddressRunnable(String address) {
-        this.address = address;
+    public CheckAddressRunnable(List<String> addressList) {
+        this.addressList = addressList;
 
     }
 
@@ -37,12 +37,8 @@ public class CheckAddressRunnable extends BaseRunnable {
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
-            BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(this.address);
-            bitherMytransactionsApi.handleHttpGet();
-            String result = bitherMytransactionsApi.getResult();
-            JSONObject json = new JSONObject(result);
-            boolean isCheck = json.isNull(SPECIAL_TYPE);
-            obtainMessage(HandlerMessage.MSG_SUCCESS, isCheck);
+            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(this.addressList);
+            obtainMessage(HandlerMessage.MSG_SUCCESS, addressType);
         } catch (Exception e) {
             e.printStackTrace();
             obtainMessage(HandlerMessage.MSG_FAILURE);

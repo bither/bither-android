@@ -22,6 +22,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 public class BitherMytransactionsApi extends HttpGetResponse<String> {
+
 	public BitherMytransactionsApi(String address) {
 		String url = StringUtil.format(BitherUrl.BITHER_Q_MYTRANSACTIONS,
 				address);

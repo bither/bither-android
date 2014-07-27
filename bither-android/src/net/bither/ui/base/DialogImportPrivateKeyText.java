@@ -116,7 +116,9 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
 
                 }
                 Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
-                CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(address.toString());
+                List<String> addressList = new ArrayList<String>();
+                addressList.add(address.toString());
+                CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
                 checkAddressRunnable.setHandler(checkAddressHandler);
                 new Thread(checkAddressRunnable).start();
             } catch (AddressFormatException e) {
@@ -141,14 +143,8 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                     if (pd != null) {
                         pd.dismiss();
                     }
-                    boolean isCheck = Boolean.valueOf(msg.obj.toString());
-                    if (isCheck) {
-                        privateKeyString = et.getText().toString();
-                        dismiss();
-
-                    } else {
-                        DropdownMessage.showDropdownMessage(activity, R.string.please_wait);
-                    }
+                    BitherSetting.AddressType addressType = (BitherSetting.AddressType) msg.obj;
+                    handlerResult(addressType);
                     break;
                 case HandlerMessage.MSG_FAILURE:
                     if (pd != null) {
@@ -159,6 +155,21 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             }
         }
     };
+
+    private void handlerResult(BitherSetting.AddressType addressType) {
+        switch (addressType) {
+            case Normal:
+                privateKeyString = et.getText().toString();
+                break;
+            case SpecialAddress:
+                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_special_address);
+                break;
+            case TxTooMuch:
+                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_tx_too_mush);
+                break;
+        }
+        dismiss();
+    }
 
     @Override
     public void onShow(DialogInterface dialog) {
