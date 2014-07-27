@@ -56,6 +56,9 @@
     <string name="address_detail_send_balance_zero">余额为零, 无法发送</string>
     <string name="address_detail_no_transactions">没有找到这个地址的交易, 它可能还没有在网络上使用过.</string>
     <string name="address_detail_monitor_failed">无法监控交易量过大的地址.</string>
+    <string name="address_detail_monitor_failed_tx_toomuch">此地址有太多交易 ,不能监控</string>
+    <string name="address_detail_monitor_failed_special_address">此地址有特殊交易 ,不能监控</string>
+
     <string name="address_detail_cancel_monitor">停止监控</string>
     <string name="address_detail_transaction_confidence_dialog_prefix">确认:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
@@ -176,6 +179,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">私钥已存在</string>
     <string name="import_private_key_qr_code_importing">正在导入…</string>
     <string name="import_private_key_qr_code_failed_different_password">导入私钥的密码与已有密码不同, 无法导入</string>
+    <string name="import_private_key_failed_tx_too_mush">此私钥有太多交易 ,不能导入</string>
+    <string name="import_private_key_failed_special_address">此私钥有特殊交易 ,不能导入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>

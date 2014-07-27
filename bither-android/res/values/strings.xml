@@ -61,6 +61,8 @@
     <string name="address_detail_send_balance_zero">You have no coins to send</string>
     <string name="address_detail_no_transactions">No transactions found for this address, it has probably not been used on the network yet.</string>
     <string name="address_detail_monitor_failed">Cannot monitor address with large amount of transactions.</string>
+    <string name="address_detail_monitor_failed_tx_toomuch">Cannot monitor address with large amount of transactions.</string>
+    <string name="address_detail_monitor_failed_special_address">Cannot monitor address with special transactions.</string>
     <string name="address_detail_cancel_monitor">Stop Monitoring</string>
     <string name="address_detail_transaction_confidence_dialog_prefix">Confirmation:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
@@ -181,6 +183,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
     <string name="import_private_key_qr_code_importing">Importing…</string>
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
+    <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
+    <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>

@@ -22,10 +22,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.ECKey;
 
 import net.bither.BitherApplication;
@@ -33,10 +36,13 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.api.BitherMytransactionsApi;
 import net.bither.fragment.Refreshable;
+import net.bither.http.HttpSetting;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogEditPassword;
@@ -49,7 +55,10 @@ import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.PrivateKeyUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.util.TransactionsUtil;
 import net.bither.util.WalletUtils;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,66 +153,66 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            hasAnyAction = true;
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    hasAnyAction = true;
+                    return 2;
+                }
 
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
+                @Override
+                public String getOptionName(int index) {
+                    switch (index) {
+                        case 0:
+                            return getString(R.string.import_private_key_qr_code);
+                        case 1:
+                            return getString(R.string.import_private_key_text);
+                        default:
+                            return "";
+                    }
+                }
 
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
+                @Override
+                public String getOptionNote(int index) {
                     return null;
-            }
-        }
+                }
 
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    switch (index) {
+                        case 0:
+                            return getResources().getDrawable(R.drawable.scan_button_icon);
+                        case 1:
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                        default:
+                            return null;
+                    }
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
+                @Override
+                public String getSettingName() {
+                    return getString(R.string.setting_name_import_private_key);
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            hasAnyAction = true;
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode();
-                    return;
-                case 1:
-                    importPrivateKeyFromText();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
+                @Override
+                public int getCurrentOptionIndex() {
+                    return -1;
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    hasAnyAction = true;
+                    switch (index) {
+                        case 0:
+                            importPrivateKeyFromQrCode();
+                            return;
+                        case 1:
+                            importPrivateKeyFromText();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
 
     private void importPrivateKeyFromQrCode() {
         Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
@@ -360,12 +369,36 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     });
                     return;
                 }
-                List<BitherAddressWithPrivateKey> wallets = new
-                        ArrayList<BitherAddressWithPrivateKey>();
-                wallets.add(wallet);
-                WalletUtils.addAddressWithPrivateKey(service, wallets);
+                Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
+                try {
+                    List<String> addressList = new ArrayList<String>();
+                    addressList.add(address.toString());
+                    BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+                    switch (addressType) {
+                        case Normal:
+                            List<BitherAddressWithPrivateKey> wallets = new
+                                    ArrayList<BitherAddressWithPrivateKey>();
+                            wallets.add(wallet);
+                            WalletUtils.addAddressWithPrivateKey(service, wallets);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showImportSuccess();
+                                }
+                            });
+                            break;
+                        case SpecialAddress:
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_special_address);
+                            break;
+                        case TxTooMuch:
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_tx_too_mush);
+                            break;
+                    }
+                } catch (Exception e) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.network_or_connection_error);
+                    e.printStackTrace();
+                }
             }
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -373,9 +406,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    showImportSuccess();
                 }
             });
         }
     }
+
 }
