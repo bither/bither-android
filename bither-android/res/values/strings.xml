@@ -25,8 +25,10 @@
     <string name="close">Cancel</string>
     <string name="operate">Set</string>
     <string name="address_option_delete">Stop monitoring</string>
+    <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
+    <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
     <string name="address_monitor_failed_too_much_tx">Can not monitor address with too much TXs</string>
     <string name="address_monitor_failed_multiple_address">Can not monitor special MultiSig address</string>
@@ -67,6 +69,7 @@
     <string name="address_detail_transaction_confidence_dialog_prefix">Confirmation:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
     <string name="address_detail_cannot_stop_monitoring">You can only stop monitoring one address in a minute.</string>
+    <string name="address_detail_cannot_remonitor">You can only remonitor one address in a minute.</string>
     <string name="address_detail_empty_address_list_notice">You can\'t empty address list.</string>
     <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
     <string name="address_detail_private_key_qr_code_encrypted">Private Key QR Code (Encrypted)</string>

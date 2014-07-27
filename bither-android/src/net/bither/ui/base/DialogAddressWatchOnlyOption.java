@@ -35,9 +35,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
     private DialogFancyQrCode dialogQr;
     private BitherAddress address;
     private TextView tvViewOnBlockchainInfo;
-    private TextView tvDelete;
     private TextView tvClose;
-    private LinearLayout llOriginQRCode;
     private Activity activity;
     private Runnable afterDelete;
 
@@ -49,13 +47,8 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         this.afterDelete = afterDelete;
         setContentView(R.layout.dialog_address_watch_only_option);
         tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
-        tvDelete = (TextView) findViewById(R.id.tv_delete);
         tvClose = (TextView) findViewById(R.id.tv_close);
-        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
         tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
-        tvDelete.setOnClickListener(deleteClick);
-        llOriginQRCode.setOnClickListener(originQrCodeClick);
-        llOriginQRCode.setVisibility(View.GONE);
         tvClose.setOnClickListener(closeClick);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
     }
@@ -116,20 +109,6 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
                 DropdownMessage.showDropdownMessage(activity,
                         R.string.address_detail_cannot_stop_monitoring);
             }
-        }
-    };
-
-    private View.OnClickListener originQrCodeClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            dismiss();
-            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dialogQr.show();
-                }
-            }, 300);
         }
     };
 
