@@ -20,8 +20,10 @@
     <string name="close">返回</string>
     <string name="operate">设置</string>
     <string name="address_option_delete">停止监控</string>
+    <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
     <string name="address_delete_confirmation">确认停止监控这个地址?</string>
+    <string name="address_remonitor_confirmation">确认重新监控这个地址?</string>
     <string name="address_monitor_failed">监控失败</string>
     <string name="address_monitor_failed_too_much_tx">不能监控交易过多的地址</string>
     <string name="address_monitor_failed_multiple_address">不能监控此类多签名地址</string>
@@ -63,6 +65,7 @@
     <string name="address_detail_transaction_confidence_dialog_prefix">确认:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分钟内只能停止监控一个地址.</string>
+    <string name="address_detail_cannot_remonitor">一分钟内只能重新监控一个地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
     <string name="address_detail_private_key_qr_code">私钥二维码</string>
     <string name="address_detail_private_key_qr_code_encrypted">私钥二维码 (加密)</string>
