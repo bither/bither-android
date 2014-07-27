@@ -18,6 +18,7 @@ package net.bither.ui.base;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -28,6 +29,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 
 import net.bither.util.StringUtil;
+import net.bither.util.TransactionsUtil;
 import net.bither.util.WalletUtils;
 
 import android.app.Activity;
@@ -161,8 +163,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                     addresses.add(address.getAddress());
                 }
             }
-            WalletUtils.addBitherAddress(service, wallets);
-            Collections.reverse(addresses);
+            checkAddress(service, wallets);
             activity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -182,6 +183,36 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             DropdownMessage.showDropdownMessage(activity,
                     R.string.scan_for_all_addresses_in_bither_cold_failed);
 
+        }
+    }
+
+    private void checkAddress(final BlockchainService service,
+                              final List<BitherAddress> wallets) {
+        try {
+            List<String> addressList = new ArrayList<String>();
+            for (BitherAddress bitherAddress : wallets) {
+                addressList.add(bitherAddress.getAddress());
+            }
+            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            switch (addressType) {
+                case Normal:
+                    WalletUtils.addBitherAddress(service, wallets);
+                    Collections.reverse(addresses);
+                    break;
+                case SpecialAddress:
+                    DropdownMessage.showDropdownMessage(activity,
+                            R.string.address_detail_monitor_failed_special_address);
+
+                    break;
+                case TxTooMuch:
+                    DropdownMessage.showDropdownMessage(activity,
+                            R.string.address_detail_monitor_failed_tx_toomuch);
+
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
         }
     }
 }

@@ -389,6 +389,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             break;
                     }
                 } catch (Exception e) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.network_or_connection_error);
                     e.printStackTrace();
                 }
             }
