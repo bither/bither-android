@@ -172,7 +172,6 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    activity.save();
                 }
             });
         } catch (Exception e) {
@@ -198,6 +197,12 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                 case Normal:
                     WalletUtils.addBitherAddress(service, wallets);
                     Collections.reverse(addresses);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            activity.save();
+                        }
+                    });
                     break;
                 case SpecialAddress:
                     DropdownMessage.showDropdownMessage(activity,

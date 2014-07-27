@@ -380,6 +380,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                                     ArrayList<BitherAddressWithPrivateKey>();
                             wallets.add(wallet);
                             WalletUtils.addAddressWithPrivateKey(service, wallets);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showImportSuccess();
+                                }
+                            });
                             break;
                         case SpecialAddress:
                             DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_special_address);
@@ -400,7 +406,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    showImportSuccess();
                 }
             });
         }
