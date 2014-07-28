@@ -41,6 +41,7 @@ import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.ui.base.DialogColdAddressCount;
 import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogFirstRunWarning;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.ProgressDialog;
@@ -95,6 +96,7 @@ public class ColdActivity extends FragmentActivity {
 
             }
         }, 500);
+        DialogFirstRunWarning.show(this);
     }
 
     @Override
@@ -335,8 +337,7 @@ public class ColdActivity extends FragmentActivity {
             public void onPasswordEntered(String password) {
                 importWalletFromBackup(password);
             }
-        }
-        );
+        });
         dialogPassword.setCheckPre(false);
         dialogPassword.show();
     }
@@ -359,7 +360,8 @@ public class ColdActivity extends FragmentActivity {
                     if (!check) {
                         checkPasswordWrong();
                     } else {
-                        List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                        List<BitherAddressWithPrivateKey> wallets = new
+                                ArrayList<BitherAddressWithPrivateKey>();
                         for (String keyString : strings) {
                             String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
                             if (strs.length != 4) {
@@ -377,7 +379,7 @@ public class ColdActivity extends FragmentActivity {
 
                             }
                         }
-                        WalletUtils.addAddressWithPrivateKey(null,wallets);
+                        WalletUtils.addAddressWithPrivateKey(null, wallets);
                         recoverBackupSuccess();
                     }
 

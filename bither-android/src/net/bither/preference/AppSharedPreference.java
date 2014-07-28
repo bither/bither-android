@@ -52,13 +52,14 @@ public class AppSharedPreference {
     private static final String PASSWORD_SEED = "password_seed";
     private static final String USER_AVATAR = "user_avatar";
     private static final String FANCY_QR_CODE_THEME = "fancy_qr_code_theme";
+    private static final String FIRST_RUN_DIALOG_SHOWN = "first_run_dialog_shown";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
     private SharedPreferences mPreferences;
 
     private AppSharedPreference() {
-        this.mPreferences = BitherApplication.mContext.getSharedPreferences(
-                APP_BITHER, Context.MODE_MULTI_PROCESS);
+        this.mPreferences = BitherApplication.mContext.getSharedPreferences(APP_BITHER,
+                Context.MODE_MULTI_PROCESS);
     }
 
     public static AppSharedPreference getInstance() {
@@ -70,8 +71,7 @@ public class AppSharedPreference {
     }
 
     public void setVerionCode(int versionCode) {
-        this.mPreferences.edit().putInt(PREFS_KEY_LAST_VERSION, versionCode)
-                .commit();
+        this.mPreferences.edit().putInt(PREFS_KEY_LAST_VERSION, versionCode).commit();
     }
 
     public MarketType getDefaultMarket() {
@@ -94,14 +94,13 @@ public class AppSharedPreference {
     }
 
     public void setMarketType(MarketType marketType) {
-        this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal())
-                .commit();
+        this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal()).commit();
     }
 
     private void setDefault() {
         String defaultCountry = Locale.getDefault().getCountry();
-        if (StringUtil.compareString(defaultCountry, "CN")
-                || StringUtil.compareString(defaultCountry, "cn")) {
+        if (StringUtil.compareString(defaultCountry, "CN") || StringUtil.compareString
+                (defaultCountry, "cn")) {
             setExchangeType(ExchangeType.CNY);
             setMarketType(MarketType.HUOBI);
         } else {
@@ -131,8 +130,7 @@ public class AppSharedPreference {
     }
 
     public void setExchangeType(ExchangeType exchangeType) {
-        this.mPreferences.edit()
-                .putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
+        this.mPreferences.edit().putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
     }
 
     public AppMode getAppMode() {
@@ -162,9 +160,7 @@ public class AppSharedPreference {
 
     public void setLastCheckPrivateKeyTime(Date date) {
         if (date != null) {
-            mPreferences.edit()
-                    .putLong(LAST_CHECK_PRIVATE_KEY_TIME, date.getTime())
-                    .commit();
+            mPreferences.edit().putLong(LAST_CHECK_PRIVATE_KEY_TIME, date.getTime()).commit();
         }
 
     }
@@ -180,9 +176,7 @@ public class AppSharedPreference {
 
     public void setLastBackupKeyTime(Date date) {
         if (date != null) {
-            mPreferences.edit()
-                    .putLong(LAST_BACK_UP_PRIVATE_KEY_TIME, date.getTime())
-                    .commit();
+            mPreferences.edit().putLong(LAST_BACK_UP_PRIVATE_KEY_TIME, date.getTime()).commit();
         }
     }
 
@@ -200,25 +194,21 @@ public class AppSharedPreference {
 
     // from service
     public String getPrecision() {
-        return mPreferences.getString(PREFS_KEY_BTC_PRECISION,
-                PREFS_DEFAULT_BTC_PRECISION);
+        return mPreferences.getString(PREFS_KEY_BTC_PRECISION, PREFS_DEFAULT_BTC_PRECISION);
     }
 
-    public void registerOnSharedPreferenceChangeListener(
-            OnSharedPreferenceChangeListener sharedPreferenceChangeListener) {
-        mPreferences
-                .registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener
+                                                                 sharedPreferenceChangeListener) {
+        mPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
-    public void unregisterOnSharedPreferenceChangeListener(
-            OnSharedPreferenceChangeListener sharedPreferenceChangeListener) {
-        mPreferences
-                .unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener
+                                                                   sharedPreferenceChangeListener) {
+        mPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
     public boolean getNotificationFlag() {
-        return mPreferences.getBoolean(PREFS_KEY_CONNECTIVITY_NOTIFICATION,
-                false);
+        return mPreferences.getBoolean(PREFS_KEY_CONNECTIVITY_NOTIFICATION, false);
     }
 
     public boolean getSyncBlockOnlyWifi() {
@@ -226,8 +216,7 @@ public class AppSharedPreference {
     }
 
     public void setSyncBlockOnlyWifi(boolean onlyWifi) {
-        this.mPreferences.edit().putBoolean(SYNC_BLOCK_ONLY_WIFI, onlyWifi)
-                .commit();
+        this.mPreferences.edit().putBoolean(SYNC_BLOCK_ONLY_WIFI, onlyWifi).commit();
     }
 
     public boolean getDownloadSpvFinish() {
@@ -235,8 +224,7 @@ public class AppSharedPreference {
     }
 
     public void setDownloadSpvFinish(boolean finish) {
-        this.mPreferences.edit().putBoolean(DOWNLOAD_SPV_FINISH, finish)
-                .commit();
+        this.mPreferences.edit().putBoolean(DOWNLOAD_SPV_FINISH, finish).commit();
     }
 
     public PasswordSeed getPasswordSeed() {
@@ -248,8 +236,7 @@ public class AppSharedPreference {
     }
 
     public void setPasswordSeed(PasswordSeed passwordSeed) {
-        this.mPreferences.edit()
-                .putString(PASSWORD_SEED, passwordSeed.toString()).commit();
+        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toString()).commit();
 
     }
 
@@ -265,8 +252,7 @@ public class AppSharedPreference {
         if (mode == null) {
             mode = TransactionFeeMode.Normal;
         }
-        this.mPreferences.edit().putInt(TRANSACTION_FEE_MODE, mode.ordinal())
-                .commit();
+        this.mPreferences.edit().putInt(TRANSACTION_FEE_MODE, mode.ordinal()).commit();
         TransactionsUtil.configureMinFee(mode.getMinFeeSatoshi());
     }
 
@@ -294,4 +280,11 @@ public class AppSharedPreference {
         mPreferences.edit().putInt(FANCY_QR_CODE_THEME, theme.ordinal()).commit();
     }
 
+    public boolean getFirstRunDialogShown() {
+        return mPreferences.getBoolean(FIRST_RUN_DIALOG_SHOWN, false);
+    }
+
+    public void setFirstRunDialogShown(boolean shown) {
+        mPreferences.edit().putBoolean(FIRST_RUN_DIALOG_SHOWN, shown).commit();
+    }
 }

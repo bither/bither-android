@@ -22,6 +22,7 @@ import android.content.Context;
 import android.view.View;
 
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 
 /**
  * Created by songchenwen on 14-7-24.
@@ -35,7 +36,21 @@ public class DialogFirstRunWarning extends CenterDialog implements View.OnClickL
     }
 
     @Override
+    public void show() {
+        if (!AppSharedPreference.getInstance().getFirstRunDialogShown()) {
+            AppSharedPreference.getInstance().setFirstRunDialogShown(true);
+            super.show();
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         dismiss();
+    }
+
+    public static final void show(Context context) {
+        if (!AppSharedPreference.getInstance().getFirstRunDialogShown()) {
+            new DialogFirstRunWarning(context).show();
+        }
     }
 }
