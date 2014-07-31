@@ -51,7 +51,7 @@ public class Ticker implements Serializable {
 	private double pNew;
 	private double mAmp;
 	private double pOpen;
-	private double pLast;
+
 	private double pSell;
 	private double pBuy;
 	/***
@@ -139,13 +139,6 @@ public class Ticker implements Serializable {
 		this.pOpen = pOpen;
 	}
 
-	public double getLast() {
-		return pLast;
-	}
-
-	public void setLast(double pLast) {
-		this.pLast = pLast;
-	}
 
 	public Date getDate() {
 		return mDate;

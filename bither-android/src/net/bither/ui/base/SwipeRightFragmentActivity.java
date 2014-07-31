@@ -67,8 +67,11 @@ public class SwipeRightFragmentActivity extends FragmentActivity {
 
 	public void onBackPressed() {
 		finish();
-
 	};
+
+    public int getFinishAnimationDuration(){
+        return 300;
+    }
 
 	@Override
 	public void finish() {

@@ -582,11 +582,20 @@ public class WalletUtils {
 
     public static void addAddressWithPrivateKey(
             final BlockchainService blockchainService,
-            final BitherAddressWithPrivateKey address) {
-        address.setAddressInfo(new AddressInfo(address));
+            final List<BitherAddressWithPrivateKey> addresses) {
+        final List<BitherAddressWithPrivateKey> addList = new
+                ArrayList<BitherAddressWithPrivateKey>();
         AppSharedPreference prefs = AppSharedPreference.getInstance();
-        if (prefs.getPasswordSeed() == null) {
-            prefs.setPasswordSeed(new PasswordSeed(address));
+        for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addresses) {
+            if (!privateAddressList.contains(bitherAddressWithPrivateKey)) {
+                bitherAddressWithPrivateKey.setAddressInfo(new AddressInfo
+                        (bitherAddressWithPrivateKey));
+                addList.add(bitherAddressWithPrivateKey);
+                if (prefs.getPasswordSeed() == null) {
+                    prefs.setPasswordSeed(new PasswordSeed(bitherAddressWithPrivateKey));
+                }
+            }
+
         }
         synchronized (addressLock) {
             final AppMode appMode = AppSharedPreference.getInstance()
@@ -594,75 +603,85 @@ public class WalletUtils {
             if (appMode == AppMode.HOT && blockchainService != null) {
                 blockchainService.stopPeerGroup();
             }
-            final boolean hasAddress = privateAddressList.contains(address);
-            if (!hasAddress) {
-                privateAddressList.add(0, address);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        savePrivateAddressSequence();
+            for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addList) {
+                privateAddressList.add(0, bitherAddressWithPrivateKey);
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    savePrivateAddressSequence();
+                    for (BitherAddressWithPrivateKey bitherAddressWithPrivateKey : addList) {
                         File walletFile = FileUtil
-                                .getWalletFileFromPrivate(address.getAddress());
-                        LogUtil.i("save wallet", address.toString());
+                                .getWalletFileFromPrivate(bitherAddressWithPrivateKey.getAddress());
+                        LogUtil.i("save wallet", bitherAddressWithPrivateKey.toString());
                         try {
-                            WalletUtils.protobufSerializeWallet(address,
+                            WalletUtils.protobufSerializeWallet(bitherAddressWithPrivateKey,
                                     walletFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        address.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
+                        bitherAddressWithPrivateKey.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
                                 null);
-                        if (appMode == AppMode.HOT && blockchainService != null) {
-                            blockchainService
-                                    .beginInitBlockAndWalletInUiThread();
-                        }
-                        sendTotalBroadcast();
-                        BackupUtil.backupColdKey(false);
-                        BackupUtil.backupHotKey();
-
+                    }
+                    if (appMode == AppMode.HOT && blockchainService != null) {
+                        blockchainService
+                                .beginInitBlockAndWalletInUiThread();
                     }
 
-                }).start();
-            }
+                    BackupUtil.backupColdKey(false);
+                    BackupUtil.backupHotKey();
+
+                }
+
+            }).start();
+
         }
     }
 
     public static void addBitherAddress(
             final BlockchainService blockchainService,
-            final BitherAddress address) {
-        address.setAddressInfo(new AddressInfo(address));
+            final List<BitherAddress> addresses) {
+        final List<BitherAddress> addList = new ArrayList<BitherAddress>();
+        for (BitherAddress bitherAddress : addresses) {
+            if (!watchOnlyAddressList.contains(bitherAddress)) {
+                bitherAddress.setAddressInfo(new AddressInfo(bitherAddress));
+                addList.add(bitherAddress);
+            }
+        }
         synchronized (addressLock) {
             final AppMode appMode = AppSharedPreference.getInstance()
                     .getAppMode();
             if (appMode == AppMode.HOT && blockchainService != null) {
                 blockchainService.stopPeerGroup();
             }
-            final boolean hasAddress = watchOnlyAddressList.contains(address);
-            if (!hasAddress) {
-                watchOnlyAddressList.add(0, address);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        saveWatchOnlyAddressSequence();
+            for (BitherAddress bitherAddress : addList) {
+                watchOnlyAddressList.add(0, bitherAddress);
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    saveWatchOnlyAddressSequence();
+                    for (BitherAddress bitherAddress : addList) {
                         File walletFile = FileUtil
-                                .getWalletFileFromWatch(address.getAddress());
-                        LogUtil.i("save wallet", address.toString());
+                                .getWalletFileFromWatch(bitherAddress.getAddress());
+                        LogUtil.i("save wallet", bitherAddress.toString());
                         try {
-                            WalletUtils.protobufSerializeWallet(address,
+                            WalletUtils.protobufSerializeWallet(bitherAddress,
                                     walletFile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        address.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
+                        bitherAddress.autosaveToFile(walletFile, 1, TimeUnit.SECONDS,
                                 null);
-                        if (appMode == AppMode.HOT && blockchainService != null) {
-                            blockchainService
-                                    .beginInitBlockAndWalletInUiThread();
-                        }
-                        sendTotalBroadcast();
                     }
-                }).start();
-            }
+                    if (appMode == AppMode.HOT && blockchainService != null) {
+                        blockchainService
+                                .beginInitBlockAndWalletInUiThread();
+                    }
+
+                }
+            }).start();
+
         }
     }
 
@@ -1131,10 +1150,47 @@ public class WalletUtils {
     public static void fixWalletTransactions(BitherAddress wallet) {
         List<Transaction> cloneTxList = new ArrayList<Transaction>();
         for (Transaction tx : wallet.getTransactionsByTime()) {
+            Sha256Hash txHash = tx.getHash();
+            //  LogUtil.d("fix","1,"+tx.getHashAsString());
             TransactionConfidence oldConfidence = tx.getConfidence();
-            Transaction newTx = (Transaction) SerializationUtils.clone(tx);
+            Transaction newTx = new Transaction(tx.getParams(), (int) tx.getVersion(), tx.getHash());
+            //LogUtil.d("fix","2,"+tx.getHashAsString());
+            for (TransactionInput input : tx.getInputs()) {
+                TransactionInput transactionInput = new TransactionInput(
+                        BitherSetting.NETWORK_PARAMETERS,
+                        newTx, input.getScriptBytes(),
+                        input.getOutpoint()
+                );
+
+                newTx.addInput(transactionInput);
+            }
+            //LogUtil.d("fix","3,"+tx.getHashAsString());
+            for (TransactionOutput output : tx.getOutputs()) {
+                TransactionOutput transactionOutput = new TransactionOutput(
+                        BitherSetting.NETWORK_PARAMETERS,
+                        newTx, output.getValue(),
+                        output.getScriptBytes());
+                newTx.addOutput(transactionOutput);
+            }
+            //LogUtil.d("fix","4,"+tx.getHashAsString());
+            newTx.getConfidence().setAppearedAtChainHeight(tx.getConfidence().getAppearedAtChainHeight());
+            newTx.getConfidence().setConfidenceType(tx.getConfidence().getConfidenceType());
+            newTx.getConfidence().setDepthInBlocks(tx.getConfidence().getDepthInBlocks());
+            newTx.setUpdateTime(tx.getUpdateTime());
+            // LogUtil.d("fix","5,"+tx.getHashAsString());
             TransactionConfidence newConfidence = newTx.getConfidence();
             copyConfidenceListeners(oldConfidence, newConfidence);
+            // LogUtil.d("fix","6,"+tx.getHashAsString());
+            try {
+                Field txField = Transaction.class.getDeclaredField("hash");
+                txField.setAccessible(true);
+                txField.set(newTx, txHash);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
             cloneTxList.add(newTx);
         }
 
@@ -1142,8 +1198,8 @@ public class WalletUtils {
             for (TransactionOutput trOutput : tx.getOutputs()) {
                 trOutput.markAsUnspent();
             }
+            //  LogUtil.d("fix", "tx," + tx.toString());
         }
-
         List<WalletTransaction> walletTxList = getWalletTx(wallet, cloneTxList);
 
         wallet.clearTransactionsWithoutSave();

@@ -49,7 +49,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private BtcToMoneyTextView tvBalanceMoney;
-    private ImageView ivType;
+    public ImageView ivWatchOnlyType;
+    public ImageView ivPrivateType;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
     private TextView tvTransactionCount;
@@ -73,7 +74,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llExtra = findViewById(R.id.ll_extra);
         llMonitorFailed = findViewById(R.id.ll_monitor_failed);
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
-        ivType = (ImageView) findViewById(R.id.iv_type);
+        ivWatchOnlyType = (ImageView) findViewById(R.id.iv_type_watchonly);
+        ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
@@ -108,9 +110,11 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
         if (address.hasPrivateKey()) {
-            ivType.setImageResource(R.drawable.address_type_private);
+            ivWatchOnlyType.setVisibility(GONE);
+            ivPrivateType.setVisibility(VISIBLE);
         } else {
-            ivType.setImageResource(R.drawable.address_type_watchonly);
+            ivWatchOnlyType.setVisibility(VISIBLE);
+            ivPrivateType.setVisibility(GONE);
         }
         if (this.address.getAddressInfo() != null && address.isReadyToShow() && !address.isError
                 ()) {

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <net.bither.ui.base.OverScrollableScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/bg"
+                    android:paddingLeft="@dimen/card_list_padding"
+                    android:paddingRight="@dimen/card_list_padding">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:paddingBottom="6dp"
+                        android:paddingTop="10dp">
+
+                        <net.bither.ui.base.SettingSelectorView
+                            android:id="@+id/ssv_wifi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+
+                        <Button
+                            android:id="@+id/btn_edit_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@drawable/ui_touchable_bg"
+                            android:drawableRight="@drawable/edit_password_button_icon"
+                            android:gravity="left"
+                            android:padding="10dp"
+                            android:text="@string/edit_password_button"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
+
+                        <include layout="@layout/layout_vertical_seperator"/>
+
+                        <net.bither.ui.base.SettingSelectorView
+                            android:id="@+id/ssv_import_private_key"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_card_foreground_single"/>
+                </FrameLayout>
+            </net.bither.ui.base.OverScrollableScrollView>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/activity_name_advance"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

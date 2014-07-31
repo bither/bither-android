@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<net.bither.ui.base.OverScrollableScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<net.bither.ui.base.OverScrollableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,23 +85,6 @@
                         android:textSize="18sp"/>
                 </LinearLayout>
 
-                <include layout="@layout/layout_vertical_seperator"/>
-
-                <Button
-                    android:id="@+id/btn_edit_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@drawable/ui_touchable_bg"
-                    android:drawableRight="@drawable/edit_password_button_icon"
-                    android:gravity="left"
-                    android:padding="10dp"
-                    android:text="@string/edit_password_button"
-                    android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp"/>
-
-                <include layout="@layout/layout_vertical_seperator"/>
-
                 <FrameLayout
                     android:id="@+id/ll_back_up"
                     android:layout_width="match_parent"
@@ -135,10 +117,30 @@
                             android:indeterminateDrawable="@drawable/check_progress_bar"
                             android:indeterminateDuration="600"
                             android:indeterminateOnly="true"
-                            android:visibility="invisible"
-                            />
+                            android:visibility="invisible"/>
                     </LinearLayout>
+
+                    <include
+                        layout="@layout/layout_vertical_seperator"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_gravity="top"/>
                 </FrameLayout>
+
+                <include layout="@layout/layout_vertical_seperator"/>
+
+                <Button
+                    android:id="@+id/btn_advance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ui_touchable_bg"
+                    android:drawableRight="@drawable/advance_button_icon"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="@string/activity_name_advance"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="18sp"/>
             </LinearLayout>
 
             <include layout="@layout/layout_card_foreground_single"/>

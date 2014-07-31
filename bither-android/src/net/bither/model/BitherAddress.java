@@ -31,6 +31,7 @@ import com.google.bitcoin.core.Wallet;
 import com.google.common.collect.Lists;
 
 import net.bither.BitherSetting;
+import net.bither.service.BlockchainService;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
@@ -272,6 +273,15 @@ public class BitherAddress extends Wallet {
         }
         return result;
 
+    }
+
+    public void reset(BlockchainService service) {
+        if (service != null) {
+            service.stopPeerGroup();
+        }
+        setLastBlockSeenHash(Sha256Hash.ZERO_HASH);
+        setLastBlockSeenHeight(0);
+        clearTransactions(0);
     }
     // try to save sync
     // @Override

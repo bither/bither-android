@@ -164,14 +164,16 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
                             false);
             if (hasPrivateKey) {
                 if (addressPosition >= 0
-                        && addressPosition < WalletUtils
-                        .getPrivateAddressList().size()) {
+                        && WalletUtils.getPrivateAddressList() != null && addressPosition <
+                        WalletUtils
+                                .getPrivateAddressList().size()) {
                     address = WalletUtils.getPrivateAddressList().get(
                             addressPosition);
                 }
             } else {
                 if (addressPosition >= 0
-                        && addressPosition < WalletUtils
+                        && WalletUtils.getWatchOnlyAddressList() != null && addressPosition <
+                        WalletUtils
                         .getWatchOnlyAddressList().size()) {
                     address = WalletUtils.getWatchOnlyAddressList().get(
                             addressPosition);

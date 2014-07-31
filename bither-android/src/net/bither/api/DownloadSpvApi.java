@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import com.google.bitcoin.core.StoredBlock;
 
-public class DownloadSpvApi extends HttpGetResponse<List<StoredBlock>> {
+public class DownloadSpvApi extends HttpGetResponse<StoredBlock> {
 
     public DownloadSpvApi() {
         setUrl(BitherUrl.BITHER_GET_ONE_SPVBLOCK_API);
@@ -40,8 +40,7 @@ public class DownloadSpvApi extends HttpGetResponse<List<StoredBlock>> {
         LogUtil.d("http", response);
         List<StoredBlock> storedBlocks = new ArrayList<StoredBlock>();
         JSONObject jsonObject = new JSONObject(response);
-        storedBlocks.add(BlockUtil.formatStoredBlock(jsonObject));
-        this.result = storedBlocks;
+        this.result = BlockUtil.formatStoredBlock(jsonObject);
 
     }
 

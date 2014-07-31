@@ -68,7 +68,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         tbtnPrivateKey = (ToggleButton) findViewById(R.id.tbtn_private_key);
         tbtnWatchOnly = (ToggleButton) findViewById(R.id.tbtn_watch_only);
         pager = (ViewPager) findViewById(R.id.pager);
-        ibtnCancel = (ImageButton) findViewById(R.id.btn_cancel);
+        ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
         tbtnPrivateKey.setOnClickListener(new IndicatorClick(0));
         tbtnWatchOnly.setOnClickListener(new IndicatorClick(1));
         ibtnCancel.setOnClickListener(cancelClick);

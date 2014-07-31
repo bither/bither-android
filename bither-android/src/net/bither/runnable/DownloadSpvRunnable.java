@@ -16,10 +16,15 @@
 
 package net.bither.runnable;
 
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import net.bither.BitherSetting;
 import net.bither.api.DownloadSpvApi;
 import net.bither.service.BlockchainService;
+import net.bither.util.LogUtil;
 
 import com.google.bitcoin.core.StoredBlock;
 
@@ -37,10 +42,17 @@ public class DownloadSpvRunnable extends BaseRunnable {
 		try {
 			DownloadSpvApi downloadSpvApi = new DownloadSpvApi();
 			downloadSpvApi.handleHttpGet();
-			List<StoredBlock> storedBlocks = downloadSpvApi.getResult();
-			this.mBlockchainService.initSpvFile(storedBlocks);
-			this.mBlockchainService.setDownloadSpvFinish(true);
-			obtainMessage(HandlerMessage.MSG_SUCCESS);
+			StoredBlock storedBlock = downloadSpvApi.getResult();
+            List<StoredBlock> blocks=new ArrayList<StoredBlock>();
+            blocks.add(storedBlock);
+            if (storedBlock.getHeight()% BitherSetting.NETWORK_PARAMETERS.getInterval()==0) {
+                this.mBlockchainService.initSpvFile(blocks);
+                this.mBlockchainService.setDownloadSpvFinish(true);
+                obtainMessage(HandlerMessage.MSG_SUCCESS);
+            }else{
+                Log.e("spv", "service is not vaild");
+                obtainMessage(HandlerMessage.MSG_FAILURE);
+            }
 		} catch (Exception e) {
 			obtainMessage(HandlerMessage.MSG_FAILURE);
 			e.printStackTrace();

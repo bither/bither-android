@@ -29,12 +29,7 @@ public class HttpSetting {
 	 */
 	public static final int HTTP_SO_TIMEOUT = 1400 * 1000;
 
-	// session
-	public static final String SESSION_ID = "sessionid";
-	public static final String CSRF_TOKEN = "csrftoken";
-	public static final String TOKEN = "token";
-	public static final String CSRF_MIDDLE_WARE_TOKEN = "csrfmiddlewaretoken";
-
+	public final static String SPECIAL_TYPE = "special_type";
 	// enum
 	public enum HttpType {
 		BitherApi, OtherApi, GetBitherCookie

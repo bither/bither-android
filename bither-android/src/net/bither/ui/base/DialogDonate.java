@@ -16,20 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.SendActivity;
-import net.bither.activity.hot.GenerateUnsignedTxActivity;
-import net.bither.activity.hot.SelectAddressToSendActivity;
-import net.bither.model.BitherAddress;
-import net.bither.util.GenericUtils;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,212 +36,212 @@ import android.widget.TextView;
 
 import com.google.bitcoin.core.Wallet.BalanceType;
 
-public class DialogDonate extends CenterDialog implements OnDismissListener,
-		OnShowListener {
-	private static final int ListItemHeight = UIUtil.dip2pix(45);
-	private static final int MinListHeight = UIUtil.dip2pix(100);
-	private static final int MaxListHeight = Math.min(UIUtil.dip2pix(360),
-			UIUtil.getScreenHeight() - UIUtil.dip2pix(70));
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.SendActivity;
+import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.SelectAddressToSendActivity;
+import net.bither.model.BitherAddress;
+import net.bither.util.GenericUtils;
+import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
 
-	private ListView lv;
-	private ProgressBar pb;
-	private TextView tvNoAddress;
-	private FrameLayout fl;
-	private ArrayList<AddressBalance> addresses = new ArrayList<AddressBalance>();
-	private Intent intent;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
-	public DialogDonate(Context context) {
-		super(context);
-		setContentView(R.layout.dialog_donate);
-		setOnDismissListener(this);
-		setOnShowListener(this);
-		tvNoAddress = (TextView) findViewById(R.id.tv_no_address);
-		lv = (ListView) findViewById(R.id.lv);
-		pb = (ProgressBar) findViewById(R.id.pb);
-		fl = (FrameLayout) findViewById(R.id.fl);
-		lv.setAdapter(adapter);
-	}
+public class DialogDonate extends CenterDialog implements OnDismissListener, OnShowListener {
+    private static final int ListItemHeight = UIUtil.dip2pix(45);
+    private static final int MinListHeight = UIUtil.dip2pix(100);
+    private static final int MaxListHeight = Math.min(UIUtil.dip2pix(360),
+            UIUtil.getScreenHeight() - UIUtil.dip2pix(70));
 
-	@Override
-	public void onShow(DialogInterface dialog) {
-		loadData();
-	}
+    private ListView lv;
+    private ProgressBar pb;
+    private TextView tvNoAddress;
+    private FrameLayout fl;
+    private ArrayList<AddressBalance> addresses = new ArrayList<AddressBalance>();
+    private Intent intent;
 
-	@Override
-	public void onDismiss(DialogInterface dialog) {
-		if (intent != null) {
-			if (getContext() instanceof Activity) {
-				Activity a = (Activity) getContext();
-				a.startActivityForResult(intent,
-						SelectAddressToSendActivity.SEND_REQUEST_CODE);
-			} else {
-				getContext().startActivity(intent);
-			}
-		}
-	}
+    public DialogDonate(Context context) {
+        super(context);
+        setContentView(R.layout.dialog_donate);
+        setOnDismissListener(this);
+        setOnShowListener(this);
+        tvNoAddress = (TextView) findViewById(R.id.tv_no_address);
+        lv = (ListView) findViewById(R.id.lv);
+        pb = (ProgressBar) findViewById(R.id.pb);
+        fl = (FrameLayout) findViewById(R.id.fl);
+        lv.setAdapter(adapter);
+    }
 
-	private void loadData() {
-		pb.setVisibility(View.VISIBLE);
-		lv.setVisibility(View.INVISIBLE);
-		tvNoAddress.setVisibility(View.GONE);
-		addresses.clear();
-		new Thread() {
-			public void run() {
-				List<BitherAddress> as = WalletUtils.getBitherAddressList(true);
-				ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
-				for (BitherAddress a : as) {
-					BigInteger balance = a.getBalance(BalanceType.AVAILABLE);
-					if (balance.compareTo(BigInteger.ZERO) > 0) {
-						availableAddresses.add(new AddressBalance(a, balance));
-					}
-				}
-				addresses.addAll(availableAddresses);
-				lv.post(new Runnable() {
-					@Override
-					public void run() {
-						fl.getLayoutParams().height = getFlHeight();
-						adapter.notifyDataSetChanged();
-						if (addresses.size() > 0) {
-							lv.setVisibility(View.VISIBLE);
-							tvNoAddress.setVisibility(View.GONE);
-						} else {
-							lv.setVisibility(View.GONE);
-							tvNoAddress.setVisibility(View.VISIBLE);
-						}
-						pb.setVisibility(View.GONE);
-					}
-				});
-			}
-		}.start();
-	}
+    @Override
+    public void onShow(DialogInterface dialog) {
+        loadData();
+    }
 
-	private BaseAdapter adapter = new BaseAdapter() {
-		private LayoutInflater inflater;
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (intent != null) {
+            if (getContext() instanceof Activity) {
+                Activity a = (Activity) getContext();
+                a.startActivityForResult(intent, SelectAddressToSendActivity.SEND_REQUEST_CODE);
+            } else {
+                getContext().startActivity(intent);
+            }
+        }
+    }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (inflater == null) {
-				inflater = LayoutInflater.from(getContext());
-			}
-			ViewHolder h;
-			if (convertView != null) {
-				h = (ViewHolder) convertView.getTag();
-			} else {
-				convertView = inflater.inflate(
-						R.layout.list_item_select_address_to_send, null);
-				h = new ViewHolder(convertView);
-				convertView.setTag(h);
-			}
-			AddressBalance a = getItem(position);
-			h.tvAddress.setText(a.address.getShortAddress());
-			h.tvBalance.setText(GenericUtils.formatValueWithBold(a.balance));
-			if (a.address.hasPrivateKey()) {
-				h.ivType.setImageResource(R.drawable.address_type_private);
-			} else {
-				h.ivType.setImageResource(R.drawable.address_type_watchonly);
-			}
-			h.ibtnAddressFull.setVisibility(View.GONE);
-			convertView.setOnClickListener(new ListItemClick(a));
-			return convertView;
-		}
+    private void loadData() {
+        pb.setVisibility(View.VISIBLE);
+        lv.setVisibility(View.INVISIBLE);
+        tvNoAddress.setVisibility(View.GONE);
+        addresses.clear();
+        new Thread() {
+            public void run() {
+                List<BitherAddress> as = WalletUtils.getBitherAddressList(true);
+                ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
+                for (BitherAddress a : as) {
+                    BigInteger balance = a.getBalance(BalanceType.AVAILABLE);
+                    if (balance.compareTo(BigInteger.ZERO) > 0) {
+                        availableAddresses.add(new AddressBalance(a, balance));
+                    }
+                }
+                addresses.addAll(availableAddresses);
+                lv.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        fl.getLayoutParams().height = getFlHeight();
+                        adapter.notifyDataSetChanged();
+                        if (addresses.size() > 0) {
+                            lv.setVisibility(View.VISIBLE);
+                            tvNoAddress.setVisibility(View.GONE);
+                        } else {
+                            lv.setVisibility(View.GONE);
+                            tvNoAddress.setVisibility(View.VISIBLE);
+                        }
+                        pb.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }.start();
+    }
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+    private BaseAdapter adapter = new BaseAdapter() {
+        private LayoutInflater inflater;
 
-		@Override
-		public AddressBalance getItem(int position) {
-			return addresses.get(position);
-		}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (inflater == null) {
+                inflater = LayoutInflater.from(getContext());
+            }
+            ViewHolder h;
+            if (convertView != null && convertView.getTag() != null && convertView.getTag()
+                    instanceof ViewHolder) {
+                h = (ViewHolder) convertView.getTag();
+            } else {
+                convertView = inflater.inflate(R.layout.list_item_select_address_to_send, null);
+                h = new ViewHolder(convertView);
+                convertView.setTag(h);
+            }
+            AddressBalance a = getItem(position);
+            h.tvAddress.setText(a.address.getShortAddress());
+            h.tvBalance.setText(GenericUtils.formatValueWithBold(a.balance));
+            if (a.address.hasPrivateKey()) {
+                h.ivType.setImageResource(R.drawable.address_type_private);
+            } else {
+                h.ivType.setImageResource(R.drawable.address_type_watchonly);
+            }
+            h.ibtnAddressFull.setVisibility(View.GONE);
+            convertView.setOnClickListener(new ListItemClick(a));
+            return convertView;
+        }
 
-		@Override
-		public int getCount() {
-			return addresses.size();
-		}
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-		class ViewHolder {
-			TextView tvAddress;
-			TextView tvBalance;
-			ImageView ivType;
-			ImageButton ibtnAddressFull;
+        @Override
+        public AddressBalance getItem(int position) {
+            return addresses.get(position);
+        }
 
-			public ViewHolder(View v) {
-				tvAddress = (TextView) v.findViewById(R.id.tv_address);
-				tvBalance = (TextView) v.findViewById(R.id.tv_balance);
-				ivType = (ImageView) v.findViewById(R.id.iv_type);
-				ibtnAddressFull = (ImageButton) v
-						.findViewById(R.id.ibtn_address_full);
-				tvAddress.setTextColor(Color.WHITE);
-				tvBalance.setTextColor(Color.WHITE);
-			}
-		}
-	};
+        @Override
+        public int getCount() {
+            return addresses.size();
+        }
 
-	private class ListItemClick implements View.OnClickListener {
-		private AddressBalance address;
+        class ViewHolder {
+            TextView tvAddress;
+            TextView tvBalance;
+            ImageView ivType;
+            ImageButton ibtnAddressFull;
 
-		public ListItemClick(AddressBalance address) {
-			this.address = address;
-		}
+            public ViewHolder(View v) {
+                tvAddress = (TextView) v.findViewById(R.id.tv_address);
+                tvBalance = (TextView) v.findViewById(R.id.tv_balance);
+                ivType = (ImageView) v.findViewById(R.id.iv_type);
+                ibtnAddressFull = (ImageButton) v.findViewById(R.id.ibtn_address_full);
+                tvAddress.setTextColor(Color.WHITE);
+                tvBalance.setTextColor(Color.WHITE);
+            }
+        }
+    };
 
-		@Override
-		public void onClick(View v) {
-			int position;
-			Class<?> target;
-			if (address.address.hasPrivateKey()) {
-				position = WalletUtils.getPrivateAddressList().indexOf(
-						address.address);
-				target = SendActivity.class;
-			} else {
-				position = WalletUtils.getWatchOnlyAddressList().indexOf(
-						address.address);
-				target = GenerateUnsignedTxActivity.class;
-			}
-			intent = new Intent(getContext(), target);
-			intent.putExtra(
-					BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-					position);
-			intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS,
-					BitherSetting.DONATE_ADDRESS);
-			if (address.balance.subtract(BitherSetting.DONATE_AMOUNT).signum() > 0) {
-				intent.putExtra(
-						SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT,
-						BitherSetting.DONATE_AMOUNT);
-			} else {
-				intent.putExtra(
-						SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT,
-						address.balance);
-			}
-			dismiss();
-		}
-	}
+    private class ListItemClick implements View.OnClickListener {
+        private AddressBalance address;
 
-	private static final class AddressBalance implements
-			Comparable<AddressBalance> {
-		public BitherAddress address;
-		public BigInteger balance;
+        public ListItemClick(AddressBalance address) {
+            this.address = address;
+        }
 
-		public AddressBalance(BitherAddress address, BigInteger balance) {
-			this.address = address;
-			this.balance = balance;
-		}
+        @Override
+        public void onClick(View v) {
+            int position;
+            Class<?> target;
+            if (address.address.hasPrivateKey()) {
+                position = WalletUtils.getPrivateAddressList().indexOf(address.address);
+                target = SendActivity.class;
+            } else {
+                position = WalletUtils.getWatchOnlyAddressList().indexOf(address.address);
+                target = GenerateUnsignedTxActivity.class;
+            }
+            intent = new Intent(getContext(), target);
+            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
+            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS, BitherSetting.DONATE_ADDRESS);
+            if (address.balance.subtract(BitherSetting.DONATE_AMOUNT).signum() > 0) {
+                intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT, BitherSetting.DONATE_AMOUNT);
+            } else {
+                intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT, address.balance);
+            }
+            dismiss();
+        }
+    }
 
-		@Override
-		public int compareTo(AddressBalance another) {
-			if (address.hasPrivateKey() && !another.address.hasPrivateKey()) {
-				return 1;
-			}
-			if (!address.hasPrivateKey() && another.address.hasPrivateKey()) {
-				return -1;
-			}
-			return balance.compareTo(another.balance);
-		}
-	}
+    private static final class AddressBalance implements Comparable<AddressBalance> {
+        public BitherAddress address;
+        public BigInteger balance;
 
-	private int getFlHeight() {
-		int listHeight = addresses.size() * ListItemHeight
-				+ (addresses.size() - 1) * lv.getDividerHeight();
-		return Math.min(MaxListHeight, Math.max(listHeight, MinListHeight));
-	}
+        public AddressBalance(BitherAddress address, BigInteger balance) {
+            this.address = address;
+            this.balance = balance;
+        }
+
+        @Override
+        public int compareTo(AddressBalance another) {
+            if (address.hasPrivateKey() && !another.address.hasPrivateKey()) {
+                return 1;
+            }
+            if (!address.hasPrivateKey() && another.address.hasPrivateKey()) {
+                return -1;
+            }
+            return balance.compareTo(another.balance);
+        }
+    }
+
+    private int getFlHeight() {
+        int listHeight = addresses.size() * ListItemHeight + (addresses.size() - 1) * lv.getDividerHeight();
+        return Math.min(MaxListHeight, Math.max(listHeight, MinListHeight));
+    }
 }

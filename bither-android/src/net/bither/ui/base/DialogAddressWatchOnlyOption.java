@@ -35,9 +35,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
     private DialogFancyQrCode dialogQr;
     private BitherAddress address;
     private TextView tvViewOnBlockchainInfo;
-    private TextView tvDelete;
     private TextView tvClose;
-    private LinearLayout llOriginQRCode;
     private Activity activity;
     private Runnable afterDelete;
 
@@ -49,13 +47,8 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         this.afterDelete = afterDelete;
         setContentView(R.layout.dialog_address_watch_only_option);
         tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
-        tvDelete = (TextView) findViewById(R.id.tv_delete);
         tvClose = (TextView) findViewById(R.id.tv_close);
-        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
         tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
-        tvDelete.setOnClickListener(deleteClick);
-        llOriginQRCode.setOnClickListener(originQrCodeClick);
-        llOriginQRCode.setVisibility(View.GONE);
         tvClose.setOnClickListener(closeClick);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
     }
@@ -70,8 +63,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain" +
-                    ".info/address/" + address.getAddress())
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain.info/address/" + address.getAddress())
             ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 getContext().startActivity(intent);
@@ -79,58 +71,6 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
                 e.printStackTrace();
                 DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
             }
-        }
-    };
-
-    private View.OnClickListener deleteClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(final View v) {
-            dismiss();
-            if (WalletUtils.getBitherAddressList().size() == 1) {
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.address_detail_empty_address_list_notice);
-                return;
-            }
-            if (BitherApplication.getBitherApplication().isCanStopMonitor()) {
-                BitherApplication.getBitherApplication().setCanStopMonitor(false);
-                new DialogConfirmTask(getContext(), getContext().getString(R.string
-                        .address_delete_confirmation), new Runnable() {
-                    @Override
-                    public void run() {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                WalletUtils.removeBitherAddress(address);
-                                Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
-                                if (f instanceof Refreshable) {
-                                    ((Refreshable) f).doRefresh();
-                                }
-                                if (afterDelete != null) {
-                                    activity.runOnUiThread(afterDelete);
-                                }
-                            }
-                        });
-                    }
-                }).show();
-            } else {
-                DropdownMessage.showDropdownMessage(activity,
-                        R.string.address_detail_cannot_stop_monitoring);
-            }
-        }
-    };
-
-    private View.OnClickListener originQrCodeClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            dismiss();
-            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dialogQr.show();
-                }
-            }, 300);
         }
     };
 

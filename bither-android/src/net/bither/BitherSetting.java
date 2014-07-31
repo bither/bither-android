@@ -156,6 +156,10 @@ public class BitherSetting {
         }
     }
 
+    public enum AddressType {
+        Normal, TxTooMuch, SpecialAddress
+    }
+
     public static String getMarketName(MarketType marketType) {
         String name = "";
         switch (marketType) {

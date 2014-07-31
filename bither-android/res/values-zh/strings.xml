@@ -20,8 +20,10 @@
     <string name="close">返回</string>
     <string name="operate">设置</string>
     <string name="address_option_delete">停止监控</string>
+    <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
     <string name="address_delete_confirmation">确认停止监控这个地址?</string>
+    <string name="address_remonitor_confirmation">确认重新监控这个地址?</string>
     <string name="address_monitor_failed">监控失败</string>
     <string name="address_monitor_failed_too_much_tx">不能监控交易过多的地址</string>
     <string name="address_monitor_failed_multiple_address">不能监控此类多签名地址</string>
@@ -47,6 +49,7 @@
     <string name="copy_address">复制</string>
     <string name="qr_code">二维码</string>
     <string name="copy_address_success">地址已复制</string>
+    <string name="copy_private_key_success">私钥已复制</string>
     <string name="confirmations_postfix">确认</string>
     <string name="confirmation_postfix">确认</string>
     <string name="unconfirmed">未确认</string>
@@ -55,12 +58,19 @@
     <string name="address_detail_send_balance_zero">余额为零, 无法发送</string>
     <string name="address_detail_no_transactions">没有找到这个地址的交易, 它可能还没有在网络上使用过.</string>
     <string name="address_detail_monitor_failed">无法监控交易量过大的地址.</string>
+    <string name="address_detail_monitor_failed_tx_toomuch">此地址有太多交易 ,不能监控</string>
+    <string name="address_detail_monitor_failed_special_address">此地址有特殊交易 ,不能监控</string>
+
     <string name="address_detail_cancel_monitor">停止监控</string>
     <string name="address_detail_transaction_confidence_dialog_prefix">确认:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止监控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分钟内只能停止监控一个地址.</string>
+    <string name="address_detail_cannot_remonitor">一分钟内只能重新监控一个地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
     <string name="address_detail_private_key_qr_code">私钥二维码</string>
+    <string name="address_detail_private_key_qr_code_encrypted">私钥二维码 (加密)</string>
+    <string name="address_detail_private_key_qr_code_decrypted">私钥二维码 (解密)</string>
+
     <string name="address_detail_private_key_qr_code_backup">备份私钥</string>
 
     <!-- add address -->
@@ -73,7 +83,7 @@
     <string name="addresses_already_monitored">这个冷钱包已经被监控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">请输入密码</string>
-    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">长度: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">请设置密码</string>
     <string name="add_address_generate_address_password_hint">密码</string>
     <string name="add_address_generate_address_password_confirm_hint">确认密码</string>
@@ -101,6 +111,7 @@
     <string name="send_confirm_amount">金额:</string>
     <string name="send_confirm_fee">手续费:</string>
     <string name="send_confirm_low_priority_warn">交易中有小于0.01BTC的支出,\n手续费较低.\n<b>确认时间可能很长</b>.</string>
+    <string name="unsigned_transaction_exit_waring">放弃签名吗?\n此交易将不会被广播</string>
 
     <!-- market -->
     <string name="market_sell">卖一:</string>
@@ -160,6 +171,7 @@
     <string name="setting_name_import_private_key">导入私钥</string>
     <string name="import_private_key_qr_code">来自私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
+    <string name="private_key_text">私钥明文</string>
     <string name="import_private_key_text_hint">输入私钥明文</string>
     <string name="import_private_key_text_format_erro">不符合私钥格式</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
@@ -170,6 +182,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">私钥已存在</string>
     <string name="import_private_key_qr_code_importing">正在导入…</string>
     <string name="import_private_key_qr_code_failed_different_password">导入私钥的密码与已有密码不同, 无法导入</string>
+    <string name="import_private_key_failed_tx_too_mush">此私钥有太多交易 ,不能导入</string>
+    <string name="import_private_key_failed_special_address">此私钥有特殊交易 ,不能导入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
@@ -212,8 +226,7 @@
     <string name="check_address_password">密码正确</string>
     <string name="check_private_key_safe">您的私钥很安全</string>
     <string name="checking_private_key">正在检查私钥</string>
-    <string name="check_private_key_button">一键检查私钥安全</string>
-    <string name="check_points">分</string>
+    <string name="check_private_key_button">一键检查私钥</string>
     <string name="private_key_is_empty">你还没有添加私钥, 请先添加私钥</string>
     <string name="next_page">下一张</string>
     <string name="can_not_find_private_key">没有找到对应的私钥</string>
@@ -244,7 +257,7 @@
     <string name="watch_only_address_count_limit">已达到监控地址上限</string>
     <string name="generate_address_count_label">生成多少个私钥?</string>
     <string name="recover_from_backup_of_cold">检测到sd卡上有过去的冷钱包备份，是否从备份中恢复？</string>
-    <string name="first_add_private_key_check_suggest">是否现在一键检测私钥安全?</string>
+    <string name="first_add_private_key_check_suggest">是否现在一键检测私钥?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">初始化交易</string>
@@ -259,6 +272,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_success">监控冷钱包成功</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">监控冷钱包失败</string>
     <string name="time_is_wrong">系统时间错误, 请重新设置</string>
+    <string name="only_supports_the_compressed_private_key">只支持压缩格式的私钥</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">请选择从哪个地址发送</string>
@@ -294,4 +308,16 @@
     <string name="edit_password_fail">修改密码失败</string>
     <string name="edit_password_new_old_same">新密码不能和旧密码相同</string>
     <string name="edit_password_editing">正在修改密码…\n请不要关闭手机屏幕</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">完成</string>
+    <string name="password_keyboard_next">下一项</string>
+
+    <!-- advance -->
+    <string name="activity_name_advance">高级选项</string>
+
+    <!-- first run dialog -->
+    <string name="first_run_dialog_title">为了保护您的比特币:</string>
+    <string name="first_run_dialog_line_1">请不要卸载比太钱包</string>
+    <string name="first_run_dialog_line_2">请不要清除比太数据</string>
 </resources>

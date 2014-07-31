@@ -47,6 +47,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogFirstRunWarning;
 import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.DialogProgress;
@@ -118,6 +119,7 @@ public class HotActivity extends FragmentActivity {
                 }
             }
         }, 2 * 1000);
+        DialogFirstRunWarning.show(this);
     }
 
     @Override
@@ -158,7 +160,10 @@ public class HotActivity extends FragmentActivity {
                             BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
                             if (!WalletUtils.getBitherAddressList().contains(address)) {
                                 address.encrypt(password);
-                                WalletUtils.addAddressWithPrivateKey(service, address);
+                                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
+                                wallets.add(address);
+
+                                WalletUtils.addAddressWithPrivateKey(service, wallets);
                                 preference.setHasPrivateKey(true);
                             }
                             HotActivity.this.runOnUiThread(new Runnable() {

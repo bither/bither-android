@@ -27,9 +27,8 @@ import net.bither.R;
 import net.bither.model.BitherAddress;
 
 public class DialogAddressWithPrivateKeyOption extends CenterDialog implements View
-        .OnClickListener, DialogInterface.OnDismissListener, DialogPassword.DialogPasswordListener {
+        .OnClickListener, DialogInterface.OnDismissListener {
     private DialogFancyQrCode dialogQr;
-    private DialogPrivateKeyQrCode dialogPrivateKey;
     private BitherAddress address;
     private LinearLayout llOriginQRCode;
     private Activity activity;
@@ -44,12 +43,10 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
         setContentView(R.layout.dialog_address_with_private_key_option);
         llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
         findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
-        findViewById(R.id.tv_private_key_qr_code).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getKeys().get(0));
     }
 
     @Override
@@ -78,9 +75,6 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
                             R.string.find_browser_error);
                 }
                 break;
-            case R.id.tv_private_key_qr_code:
-                new DialogPassword(activity, this).show();
-                break;
             default:
                 return;
         }
@@ -90,11 +84,5 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     public void onClick(View v) {
         clickedView = v.getId();
         dismiss();
-    }
-
-
-    @Override
-    public void onPasswordEntered(String password) {
-        dialogPrivateKey.show();
     }
 }

@@ -122,7 +122,7 @@ public class Market {
             case BTCE:
                 return "btc-e.com";
             case OKCOIN:
-                return "okcoin.com";
+                return "okcoin.cn";
             case CHBTC:
                 return "chbtc.com";
             case BTCCHINA:

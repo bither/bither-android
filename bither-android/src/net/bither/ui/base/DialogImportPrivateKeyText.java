@@ -19,6 +19,8 @@ package net.bither.ui.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,18 +31,32 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.bitcoin.core.Address;
+import com.google.bitcoin.core.AddressFormatException;
+import com.google.bitcoin.core.DumpedPrivateKey;
 import com.google.bitcoin.core.ECKey;
+import com.google.bitcoin.params.MainNetParams;
 
+import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.cold.ColdActivity;
+import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotActivity;
+import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.fragment.Refreshable;
 import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.CheckAddressRunnable;
+import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.util.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 14-6-10.
@@ -54,6 +70,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     private InputMethodManager imm;
 
     private String privateKeyString;
+    private ProgressDialog pd;
 
     public DialogImportPrivateKeyText(Activity context) {
         super(context);
@@ -81,16 +98,83 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
+            tvError.setText(R.string.import_private_key_text_format_erro);
             if (StringUtil.isEmpty(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
-            }else if(!StringUtil.validBitcoinPrivateKey(s)){
+            } else if (!StringUtil.validBitcoinPrivateKey(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
             }
-            privateKeyString = et.getText().toString();
+            try {
+                ECKey key = new DumpedPrivateKey(MainNetParams.get(), s).getKey();
+                if (!key.isCompressed()) {
+                    tvError.setText(R.string.only_supports_the_compressed_private_key);
+                    tvError.setVisibility(View.VISIBLE);
+                    shake();
+                    return;
+
+                }
+                if (AppSharedPreference.getInstance().getAppMode() == BitherSetting.AppMode.HOT) {
+                    Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
+                    List<String> addressList = new ArrayList<String>();
+                    addressList.add(address.toString());
+                    CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
+                    checkAddressRunnable.setHandler(checkAddressHandler);
+                    new Thread(checkAddressRunnable).start();
+                } else {
+                    privateKeyString = et.getText().toString();
+                    dismiss();
+                }
+
+            } catch (AddressFormatException e) {
+                e.printStackTrace();
+            }
+        } else {
+            dismiss();
+        }
+    }
+
+    Handler checkAddressHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case HandlerMessage.MSG_PREPARE:
+                    if (pd == null) {
+                        pd = new ProgressDialog(activity, activity.getString(R.string.please_wait), null);
+                    }
+                    pd.show();
+                    break;
+                case HandlerMessage.MSG_SUCCESS:
+                    if (pd != null) {
+                        pd.dismiss();
+                    }
+                    BitherSetting.AddressType addressType = (BitherSetting.AddressType) msg.obj;
+                    handlerResult(addressType);
+                    break;
+                case HandlerMessage.MSG_FAILURE:
+                    if (pd != null) {
+                        pd.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
+                    break;
+            }
+        }
+    };
+
+    private void handlerResult(BitherSetting.AddressType addressType) {
+        switch (addressType) {
+            case Normal:
+                privateKeyString = et.getText().toString();
+                break;
+            case SpecialAddress:
+                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_special_address);
+                break;
+            case TxTooMuch:
+                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_tx_too_mush);
+                break;
         }
         dismiss();
     }
@@ -107,6 +191,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             d.show();
         }
         et.setText("");
+
     }
 
     private TextWatcher textWatcher = new TextWatcher() {
@@ -147,21 +232,26 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             this.password = password;
         }
 
+        private void dpDismissWithError(final int stringId) {
+            ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dp != null && dp.isShowing()) {
+                        dp.setThread(null);
+                        dp.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(activity, stringId
+                    );
+                }
+            });
+
+        }
+
         @Override
         public void runWithService(BlockchainService service) {
             ECKey key = PrivateKeyUtil.getEncryptedECKey(privateKey, password);
             if (key == null) {
-                ThreadUtil.runOnMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(activity,
-                                R.string.import_private_key_qr_code_failed);
-                    }
-                });
+                dpDismissWithError(R.string.import_private_key_qr_code_failed);
                 return;
             }
             BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
@@ -194,7 +284,9 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 });
                 return;
             } else {
-                WalletUtils.addAddressWithPrivateKey(service, wallet);
+                List<BitherAddressWithPrivateKey> wallets = new ArrayList<BitherAddressWithPrivateKey>();
+                wallets.add(wallet);
+                WalletUtils.addAddressWithPrivateKey(service, wallets);
             }
 
             ThreadUtil.runOnMainThread(new Runnable() {
@@ -204,16 +296,11 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                         dp.setThread(null);
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.import_private_key_qr_code_success);
-                    if (activity instanceof HotActivity) {
-                        HotActivity a = (HotActivity) activity;
-                        Fragment f = a.getFragmentAtIndex(1);
-                        if (f != null && f instanceof Refreshable) {
-                            Refreshable r = (Refreshable) f;
-                            r.doRefresh();
-                        }
-                        a.scrollToFragmentAt(1);
+                    if (activity instanceof HotAdvanceActivity) {
+                        ((HotAdvanceActivity) activity).showImportSuccess();
+                    }
+                    if (activity instanceof ColdAdvanceActivity) {
+                        ((ColdAdvanceActivity) activity).showImportSuccess();
                     }
                 }
             });

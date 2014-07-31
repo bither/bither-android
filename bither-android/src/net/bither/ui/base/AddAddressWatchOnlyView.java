@@ -18,6 +18,7 @@ package net.bither.ui.base;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -26,8 +27,11 @@ import net.bither.ScanQRCodeTransportActivity;
 import net.bither.model.BitherAddress;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+
 import net.bither.util.StringUtil;
+import net.bither.util.TransactionsUtil;
 import net.bither.util.WalletUtils;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -40,146 +44,180 @@ import android.widget.FrameLayout;
 
 public class AddAddressWatchOnlyView extends FrameLayout {
 
-	private AddPrivateKeyActivity activity;
-	private Button btnScan;
-	private DialogProgress dp;
-	private ArrayList<String> addresses = new ArrayList<String>();
-	private Fragment fragment;
+    private AddPrivateKeyActivity activity;
+    private Button btnScan;
+    private DialogProgress dp;
+    private ArrayList<String> addresses = new ArrayList<String>();
+    private Fragment fragment;
 
-	public AddAddressWatchOnlyView(AddPrivateKeyActivity context,
-			Fragment fragment) {
-		super(context);
-		this.activity = context;
-		this.fragment = fragment;
-		initView();
-	}
+    public AddAddressWatchOnlyView(AddPrivateKeyActivity context,
+                                   Fragment fragment) {
+        super(context);
+        this.activity = context;
+        this.fragment = fragment;
+        initView();
+    }
 
-	public AddAddressWatchOnlyView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    public AddAddressWatchOnlyView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
 
-	public AddAddressWatchOnlyView(Context context, AttributeSet attrs,
-			int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    public AddAddressWatchOnlyView(Context context, AttributeSet attrs,
+                                   int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
 
-	private void initView() {
-		removeAllViews();
-		View v = LayoutInflater.from(getContext()).inflate(
-				R.layout.fragment_add_address_watch_only, null);
-		addView(v, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		btnScan = (Button) findViewById(R.id.btn_scan);
-		btnScan.setOnClickListener(scanClick);
-		dp = new DialogProgress(getContext(), R.string.please_wait);
-		dp.setCancelable(false);
-	}
+    private void initView() {
+        removeAllViews();
+        View v = LayoutInflater.from(getContext()).inflate(
+                R.layout.fragment_add_address_watch_only, null);
+        addView(v, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        btnScan = (Button) findViewById(R.id.btn_scan);
+        btnScan.setOnClickListener(scanClick);
+        dp = new DialogProgress(getContext(), R.string.please_wait);
+        dp.setCancelable(false);
+    }
 
-	private OnClickListener scanClick = new OnClickListener() {
+    private OnClickListener scanClick = new OnClickListener() {
 
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent(activity,
-					ScanQRCodeTransportActivity.class);
-			intent.putExtra(
-					BitherSetting.INTENT_REF.TITLE_STRING,
-					getContext()
-							.getString(
-									R.string.scan_for_all_addresses_in_bither_cold_title));
-			if (fragment != null) {
-				fragment.startActivityForResult(
-						intent,
-						BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE);
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(activity,
+                    ScanQRCodeTransportActivity.class);
+            intent.putExtra(
+                    BitherSetting.INTENT_REF.TITLE_STRING,
+                    getContext()
+                            .getString(
+                                    R.string.scan_for_all_addresses_in_bither_cold_title)
+            );
+            if (fragment != null) {
+                fragment.startActivityForResult(
+                        intent,
+                        BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE);
 
-			} else {
-				activity.startActivityForResult(
-						intent,
-						BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE);
-			}
-		}
-	};
+            } else {
+                activity.startActivityForResult(
+                        intent,
+                        BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE);
+            }
+        }
+    };
 
-	public ArrayList<String> getAddresses() {
-		return addresses;
-	}
+    public ArrayList<String> getAddresses() {
+        return addresses;
+    }
 
-	public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE
-				&& resultCode == Activity.RESULT_OK) {
-			if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
-				final String content = data
-						.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-				if (StringUtil.isEmpty(content) && !checkQrCodeContent(content)) {
-					DropdownMessage
-							.showDropdownMessage(
-									activity,
-									R.string.scan_for_all_addresses_in_bither_cold_failed);
-					return true;
-				}
-				ThreadNeedService thread = new ThreadNeedService(dp, activity) {
+    public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_ALL_IN_BITHER_COLD_REUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
+            if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
+                final String content = data
+                        .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (StringUtil.isEmpty(content) || !checkQrCodeContent(content)) {
+                    DropdownMessage
+                            .showDropdownMessage(
+                                    activity,
+                                    R.string.scan_for_all_addresses_in_bither_cold_failed);
+                    return true;
+                }
+                ThreadNeedService thread = new ThreadNeedService(dp, activity) {
 
-					@Override
-					public void runWithService(BlockchainService service) {
-						processQrCodeContent(content, service);
+                    @Override
+                    public void runWithService(BlockchainService service) {
+                        processQrCodeContent(content, service);
 
-					}
-				};
-				thread.start();
-			}
-			return true;
-		}
-		return false;
-	}
+                    }
+                };
+                thread.start();
+            }
+            return true;
+        }
+        return false;
+    }
 
-	private boolean checkQrCodeContent(String content) {
-		String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
-		for (String str : strs) {
-			if (str.length() != 66) {
-				return false;
-			}
-		}
-		return true;
-	}
+    private boolean checkQrCodeContent(String content) {
+        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
+        for (String str : strs) {
+            if (str.length() != 66) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	private void processQrCodeContent(String content, BlockchainService service) {
-		String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
-		ArrayList<BitherAddress> wallets = new ArrayList<BitherAddress>();
-		addresses.clear();
-		try {
-			for (String str : strs) {
-				byte[] pub = StringUtil.hexStringToByteArray(str);
-				BitherAddress address = new BitherAddress(pub);
-				wallets.add(address);
-			}
-			Collections.reverse(wallets);
-			for (BitherAddress address : wallets) {
-				if (!WalletUtils.getBitherAddressList().contains(address)) {
-					WalletUtils.addBitherAddress(service, address);
-					addresses.add(address.getAddress());
-				}
-			}
+    private void processQrCodeContent(String content, BlockchainService service) {
+        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
+        ArrayList<BitherAddress> wallets = new ArrayList<BitherAddress>();
+        addresses.clear();
+        try {
+            for (String str : strs) {
+                byte[] pub = StringUtil.hexStringToByteArray(str);
+                BitherAddress address = new BitherAddress(pub);
+                wallets.add(address);
+            }
+            Collections.reverse(wallets);
+            for (BitherAddress address : wallets) {
+                if (!WalletUtils.getBitherAddressList().contains(address)) {
+                    addresses.add(address.getAddress());
+                }
+            }
+            checkAddress(service, wallets);
+            activity.runOnUiThread(new Runnable() {
 
-			Collections.reverse(addresses);
-			activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dp.isShowing()) {
+                        dp.setThread(null);
+                        dp.dismiss();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            if (dp.isShowing()) {
+                dp.setThread(null);
+                dp.dismiss();
+            }
+            DropdownMessage.showDropdownMessage(activity,
+                    R.string.scan_for_all_addresses_in_bither_cold_failed);
 
-				@Override
-				public void run() {
-					if (dp.isShowing()) {
-						dp.setThread(null);
-						dp.dismiss();
-					}
-					activity.save();
-				}
-			});
-		} catch (Exception e) {
-			if (dp.isShowing()) {
-				dp.setThread(null);
-				dp.dismiss();
-			}
-			DropdownMessage.showDropdownMessage(activity,
-					R.string.scan_for_all_addresses_in_bither_cold_failed);
+        }
+    }
 
-		}
-	}
+    private void checkAddress(final BlockchainService service,
+                              final List<BitherAddress> wallets) {
+        try {
+            List<String> addressList = new ArrayList<String>();
+            for (BitherAddress bitherAddress : wallets) {
+                addressList.add(bitherAddress.getAddress());
+            }
+            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            switch (addressType) {
+                case Normal:
+                    WalletUtils.addBitherAddress(service, wallets);
+                    Collections.reverse(addresses);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            activity.save();
+                        }
+                    });
+                    break;
+                case SpecialAddress:
+                    DropdownMessage.showDropdownMessage(activity,
+                            R.string.address_detail_monitor_failed_special_address);
+
+                    break;
+                case TxTooMuch:
+                    DropdownMessage.showDropdownMessage(activity,
+                            R.string.address_detail_monitor_failed_tx_toomuch);
+
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
+        }
+    }
 }

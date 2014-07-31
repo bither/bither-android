@@ -73,7 +73,7 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 
 	private void complete() {
 		try {
-			String string = QRCodeTransportPage.fotmatQRCodeTran(pages);
+			String string = QRCodeTransportPage.formatQRCodeTran(pages);
 			Intent intent = getIntent();
 			intent.putExtra(INTENT_EXTRA_RESULT, string);
 			setResult(RESULT_OK, getIntent());

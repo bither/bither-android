@@ -12,7 +12,7 @@
     <string name="market_name_huobi">HUOBI</string>
     <string name="market_name_bitstamp">Bitstamp</string>
     <string name="market_name_btce">BTC-E</string>
-    <string name="market_name_okcoin">OKCoin</string>
+    <string name="market_name_okcoin">OKCoin.CN</string>
     <string name="market_name_chbtc">CHBTC</string>
     <string name="market_name_btcchina">BTCChina</string>
     <string name="activity_name_address_detail">Detail</string>
@@ -25,8 +25,10 @@
     <string name="close">Cancel</string>
     <string name="operate">Set</string>
     <string name="address_option_delete">Stop monitoring</string>
+    <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
+    <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
     <string name="address_monitor_failed_too_much_tx">Can not monitor address with too much TXs</string>
     <string name="address_monitor_failed_multiple_address">Can not monitor special MultiSig address</string>
@@ -52,6 +54,7 @@
     <string name="copy_address">Copy</string>
     <string name="qr_code">QR Code</string>
     <string name="copy_address_success">Address copied</string>
+    <string name="copy_private_key_success">Private key copied</string>
     <string name="confirmations_postfix">Confirmations</string>
     <string name="confirmation_postfix">Confirmation</string>
     <string name="unconfirmed">Unconfirmed</string>
@@ -60,12 +63,17 @@
     <string name="address_detail_send_balance_zero">You have no coins to send</string>
     <string name="address_detail_no_transactions">No transactions found for this address, it has probably not been used on the network yet.</string>
     <string name="address_detail_monitor_failed">Cannot monitor address with large amount of transactions.</string>
+    <string name="address_detail_monitor_failed_tx_toomuch">Cannot monitor address with large amount of transactions.</string>
+    <string name="address_detail_monitor_failed_special_address">Cannot monitor address with special transactions.</string>
     <string name="address_detail_cancel_monitor">Stop Monitoring</string>
     <string name="address_detail_transaction_confidence_dialog_prefix">Confirmation:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">Stopping Monitoring…</string>
     <string name="address_detail_cannot_stop_monitoring">You can only stop monitoring one address in a minute.</string>
+    <string name="address_detail_cannot_remonitor">You can only remonitor one address in a minute.</string>
     <string name="address_detail_empty_address_list_notice">You can\'t empty address list.</string>
     <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
+    <string name="address_detail_private_key_qr_code_encrypted">Private Key QR Code (Encrypted)</string>
+    <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
@@ -79,7 +87,7 @@
     <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
     <string name="add_address_generate_address_password_label">Enter password</string>
-    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">Set password</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
@@ -107,6 +115,7 @@
     <string name="send_confirm_amount">Amount:</string>
     <string name="send_confirm_fee">Fee:</string>
     <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction fee is low.\n<b>Confirmation may be very slow</b>.</string>
+    <string name="unsigned_transaction_exit_waring">Give up signing?\nThis transaction will not get broadcasted.</string>
 
     <!-- market -->
     <string name="market_sell">Sell:</string>
@@ -166,6 +175,7 @@
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="private_key_text">Private Key Text</string>
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
@@ -176,6 +186,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
     <string name="import_private_key_qr_code_importing">Importing…</string>
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
+    <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
+    <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
@@ -220,7 +232,7 @@
     <string name="check_private_key_safe">Private keys are safe.</string>
     <string name="checking_private_key">Checking private keys</string>
     <string name="check_private_key_button">Check Private Keys</string>
-    <string name="check_points">Points</string>
+    <string name="check_points">%</string>
     <string name="private_key_is_empty">You don\'t have any private key, please add some</string>
     <string name="next_page">Next page</string>
     <string name="can_not_find_private_key">Can not find private key </string>
@@ -268,6 +280,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
     <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
+    <string name="only_supports_the_compressed_private_key">Only supports the compressed format of private key</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>
@@ -309,4 +322,16 @@
     <string name="edit_password_fail">Change password failed.</string>
     <string name="edit_password_new_old_same">New password is same to the old.</string>
     <string name="edit_password_editing">Changing password…\nDo Not turn off the screen.</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">Done</string>
+    <string name="password_keyboard_next">Next</string>
+
+    <!-- advance -->
+    <string name="activity_name_advance">Advance Options</string>
+
+    <!-- first run dialog -->
+    <string name="first_run_dialog_title">To protect your bitcoin:</string>
+    <string name="first_run_dialog_line_1">NEVER UNINSTALL Bither.</string>
+    <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
 </resources>

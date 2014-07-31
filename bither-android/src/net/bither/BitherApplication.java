@@ -30,6 +30,7 @@ import android.os.StrictMode;
 import com.google.bitcoin.core.BlockChain;
 import com.google.bitcoin.utils.Threading;
 
+import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.exception.UEHandler;
 import net.bither.preference.AppSharedPreference;
@@ -59,8 +60,7 @@ public class BitherApplication extends Application {
 
     private ActivityManager activityManager;
 
-    private static org.slf4j.Logger log = LoggerFactory
-            .getLogger(BitherApplication.class);
+    private static org.slf4j.Logger log = LoggerFactory.getLogger(BitherApplication.class);
 
     private Intent blockchainServiceIntent;
     private Intent blockchainServiceCancelCoinsReceivedIntent;
@@ -72,20 +72,21 @@ public class BitherApplication extends Application {
 
     public static Context mContext;
     public static HotActivity hotActivity;
+    public static ColdActivity coldActivity;
     public static UEHandler ueHandler;
     public static Activity initialActivity;
     public static boolean isFirstIn = false;
 
     private boolean canStopMonitor = true;// TODO to be removed
+    private boolean canRemonitor = true;
 
     @Override
     public void onCreate() {
         new LinuxSecureRandom(); // init proper random number generator
         initLogging();
 
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll().permitDiskReads().permitDiskWrites().penaltyLog()
-                .build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
+                .permitDiskReads().permitDiskWrites().penaltyLog().build());
         Threading.throwOnLockCycles();
 
         super.onCreate();
@@ -94,19 +95,16 @@ public class BitherApplication extends Application {
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
 
-        LogUtil.i("application", "configuration: "
-                + (BitherSetting.TEST ? "test" : "prod") + ", "
-                + BitherSetting.NETWORK_PARAMETERS.getId());
+        LogUtil.i("application", "configuration: " + (BitherSetting.TEST ? "test" : "prod") + ", " +
+                "" + BitherSetting.NETWORK_PARAMETERS.getId());
         configureTransactionMinFee();
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 
         blockchainServiceIntent = new Intent(this, BlockchainService.class);
-        blockchainServiceCancelCoinsReceivedIntent = new Intent(
-                BlockchainService.ACTION_CANCEL_COINS_RECEIVED, null, this,
-                BlockchainService.class);
-        blockchainServiceResetBlockchainIntent = new Intent(
-                BlockchainService.ACTION_RESET_BLOCKCHAIN, null, this,
-                BlockchainService.class);
+        blockchainServiceCancelCoinsReceivedIntent = new Intent(BlockchainService
+                .ACTION_CANCEL_COINS_RECEIVED, null, this, BlockchainService.class);
+        blockchainServiceResetBlockchainIntent = new Intent(BlockchainService
+                .ACTION_RESET_BLOCKCHAIN, null, this, BlockchainService.class);
 
         BroadcastUtil.removeBroadcastTotalBitcoinState();
         BroadcastUtil.removeAddressLoadCompleteState(this);
@@ -117,17 +115,15 @@ public class BitherApplication extends Application {
     }
 
     private void initLogging() {
-        final File logDir = getDir("log",
-                BitherSetting.TEST ? Context.MODE_WORLD_READABLE : MODE_PRIVATE);
+        final File logDir = getDir("log", BitherSetting.TEST ? Context.MODE_WORLD_READABLE :
+                MODE_PRIVATE);
         final File logFile = new File(logDir, "wallet.log");
 
-        final LoggerContext context = (LoggerContext) LoggerFactory
-                .getILoggerFactory();
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
         final PatternLayoutEncoder filePattern = new PatternLayoutEncoder();
         filePattern.setContext(context);
-        filePattern
-                .setPattern("%d{HH:mm:ss.SSS} [%thread] %logger{0} - %msg%n");
+        filePattern.setPattern("%d{HH:mm:ss.SSS} [%thread] %logger{0} - %msg%n");
         filePattern.start();
 
         final RollingFileAppender<ILoggingEvent> fileAppender = new
@@ -139,8 +135,7 @@ public class BitherApplication extends Application {
                 TimeBasedRollingPolicy<ILoggingEvent>();
         rollingPolicy.setContext(context);
         rollingPolicy.setParent(fileAppender);
-        rollingPolicy.setFileNamePattern(logDir.getAbsolutePath()
-                + "/wallet.%d.log.gz");
+        rollingPolicy.setFileNamePattern(logDir.getAbsolutePath() + "/wallet.%d.log.gz");
         rollingPolicy.setMaxHistory(7);
         rollingPolicy.start();
 
@@ -164,8 +159,7 @@ public class BitherApplication extends Application {
         logcatAppender.setEncoder(logcatPattern);
         logcatAppender.start();
 
-        final ch.qos.logback.classic.Logger log = context
-                .getLogger(Logger.ROOT_LOGGER_NAME);
+        final ch.qos.logback.classic.Logger log = context.getLogger(Logger.ROOT_LOGGER_NAME);
         log.addAppender(fileAppender);
         log.addAppender(logcatAppender);
         log.setLevel(Level.INFO);
@@ -212,11 +206,10 @@ public class BitherApplication extends Application {
         }
     }
 
-    public static void scheduleStartBlockchainService(
-            @Nonnull final Context context) {
+    public static void scheduleStartBlockchainService(@Nonnull final Context context) {
         log.info("Schedule service restart after 15 minutes");
-        final AlarmManager alarmManager = (AlarmManager) context
-                .getSystemService(Context.ALARM_SERVICE);
+        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
+                .ALARM_SERVICE);
         final PendingIntent alarmIntent = PendingIntent.getService(context, 0,
                 new Intent(context, BlockchainService.class), 0);
         alarmManager.cancel(alarmIntent);
@@ -225,13 +218,12 @@ public class BitherApplication extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
         // as of KitKat, set() is inexact
         {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval,
-                    alarmIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval, alarmIntent);
         } else
         // workaround for no inexact set() before KitKat
         {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now
-                    + alarmInterval, AlarmManager.INTERVAL_HOUR, alarmIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
+                    AlarmManager.INTERVAL_HOUR, alarmIntent);
         }
     }
 
@@ -251,6 +243,22 @@ public class BitherApplication extends Application {
         }
     }
 
+    public boolean isCanRemonitor() {
+        return canRemonitor;
+    }
+
+    public void setCanRemonitor(boolean canStopMonitor) {
+        this.canRemonitor = canStopMonitor;
+        if (canRemonitor == false) {
+            new Handler(getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setCanRemonitor(true);
+                }
+            }, 60000);
+        }
+    }
+
     public static void updateChainHeight(BlockChain blockChain) {
         if (blockChain != null) {
             ChainHeight = blockChain.getChainHead().getHeight();
@@ -258,8 +266,8 @@ public class BitherApplication extends Application {
     }
 
     private void configureTransactionMinFee() {
-        TransactionsUtil.configureMinFee(AppSharedPreference.getInstance()
-                .getTransactionFeeMode().getMinFeeSatoshi());
+        TransactionsUtil.configureMinFee(AppSharedPreference.getInstance().getTransactionFeeMode
+                ().getMinFeeSatoshi());
     }
 
 

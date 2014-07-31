@@ -507,7 +507,13 @@ public class BlockchainService extends android.app.Service {
                     log.debug("acquiring wakelock");
                     if ((wakeLock != null) && // we have a WakeLock
                             !wakeLock.isHeld()) { // but we don't hold it
-                        wakeLock.acquire();
+                        try {
+                            // WakeLock.acquireLocked(PowerManager.java:329) sdk16 nullpoint
+                            wakeLock.acquire();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
                     }
                     startPeerGroup();
                 } else if (!hasEverything && peerGroup != null) {
@@ -878,8 +884,9 @@ public class BlockchainService extends android.app.Service {
             }
             LogUtil.i("save service", "destoy:" + str);
             WalletUtils.saveWallet();
-            if (wakeLock.isHeld()) {
+            if (wakeLock!=null&&wakeLock.isHeld()) {
                 wakeLock.release();
+                wakeLock=null;
             }
 
             if (resetBlockchainOnShutdown) {

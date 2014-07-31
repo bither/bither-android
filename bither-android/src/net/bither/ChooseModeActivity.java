@@ -26,6 +26,7 @@ import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.DialogFirstRunWarning;
 import net.bither.ui.base.ProgressDialog;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.util.BroadcastUtil;
@@ -92,7 +93,6 @@ public class ChooseModeActivity extends Activity {
         } else {
             initActivity();
         }
-
     }
 
     private void initActivity() {
@@ -126,8 +126,8 @@ public class ChooseModeActivity extends Activity {
                     return;
                 }
             }
-
         }
+        DialogFirstRunWarning.show(this);
     }
 
     private Handler upgradeV4Handler = new Handler() {

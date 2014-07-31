@@ -16,15 +16,19 @@
 
 package net.bither.ui.base;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.DialogInterface.OnShowListener;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +41,7 @@ import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
@@ -44,12 +49,12 @@ import net.bither.util.UIUtil;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-public class DialogPassword extends CenterDialog implements OnDismissListener,
-        OnShowListener {
+public class DialogPassword extends Dialog implements OnDismissListener, TextView.OnEditorActionListener {
     public static interface DialogPasswordListener {
         public void onPasswordEntered(String password);
     }
 
+    private View container;
     private LinearLayout llInput;
     private LinearLayout llChecking;
     private TextView tvTitle;
@@ -58,139 +63,25 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
     private EditText etPasswordConfirm;
     private Button btnOk;
     private Button btnCancel;
+    private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
-    private Check passwordCheck = new Check("", new ICheckAction() {
-        @Override
-        public boolean check() {
-            if (passwordSeed != null) {
-                return passwordSeed.checkPassword(etPassword.getText()
-                        .toString());
-            } else {
-                return true;
-            }
-        }
-    });
     private DialogPasswordListener listener;
     private boolean passwordEntered = false;
-    private View.OnClickListener cancelClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            passwordEntered = false;
-            dismiss();
-        }
-    };
     private boolean checkPre = true;
     private boolean cancelable = true;
-    private InputMethodManager imm;
     private ExecutorService executor;
-    private View.OnClickListener okClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (passwordSeed == null
-                    && !StringUtil
-                    .compareString(etPassword.getText().toString(),
-                            etPasswordConfirm.getText().toString())
-                    && checkPre) {
-                tvError.setText(R.string.add_address_generate_address_password_not_same);
-                tvError.setVisibility(View.VISIBLE);
-                etPasswordConfirm.requestFocus();
-                return;
-            }
-            if (passwordSeed != null && checkPre) {
-                ArrayList<Check> checks = new ArrayList<Check>();
-                checks.add(passwordCheck);
-                executor = CheckUtil.runChecks(checks, 1);
-            } else {
-                passwordEntered = true;
-                dismiss();
-            }
-        }
-    };
-    private CheckListener passwordCheckListener = new CheckListener() {
-
-        @Override
-        public void onCheckBegin(Check check) {
-            llChecking.setVisibility(View.VISIBLE);
-            llInput.setVisibility(View.INVISIBLE);
-            imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-        }
-
-        @Override
-        public void onCheckEnd(Check check, boolean success) {
-            if (executor != null) {
-                executor.shutdown();
-                executor = null;
-            }
-            if (success) {
-                passwordEntered = true;
-                dismiss();
-            } else {
-                llChecking.setVisibility(View.GONE);
-                llInput.setVisibility(View.VISIBLE);
-                etPassword.setText("");
-                checkValid();
-                tvError.setText(R.string.password_wrong);
-                tvError.setVisibility(View.VISIBLE);
-                shake();
-                imm.showSoftInput(etPassword, 0);
-            }
-        }
-    };
-    private TextWatcher passwordWatcher = new TextWatcher() {
-        private String password;
-        private String passwordConfirm;
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                                      int after) {
-            password = etPassword.getText().toString();
-            passwordConfirm = etPasswordConfirm.getText().toString();
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before,
-                                  int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            tvError.setVisibility(View.GONE);
-            String p = etPassword.getText().toString();
-            if (p.length() > 0) {
-                if (!StringUtil.validPassword(p)) {
-                    etPassword.setText(password);
-                }
-            }
-            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-                String pc = etPasswordConfirm.getText().toString();
-                if (pc.length() > 0) {
-                    if (!StringUtil.validPassword(pc)) {
-                        etPasswordConfirm.setText(passwordConfirm);
-                    }
-                }
-            }
-            checkValid();
-        }
-    };
 
     public DialogPassword(Context context, DialogPasswordListener listener) {
-        super(context);
+        super(context, R.style.password_dialog);
         setContentView(R.layout.dialog_password);
         this.listener = listener;
         setOnDismissListener(this);
-        setOnShowListener(this);
         passwordSeed = getPasswordSeed();
         initView();
     }
 
-    private PasswordSeed getPasswordSeed() {
-        return AppSharedPreference.getInstance().getPasswordSeed();
-    }
-
     private void initView() {
+        container = findViewById(R.id.fl_container);
         llInput = (LinearLayout) findViewById(R.id.ll_input);
         llChecking = (LinearLayout) findViewById(R.id.ll_checking);
         tvTitle = (TextView) findViewById(R.id.tv_title);
@@ -199,17 +90,22 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         etPasswordConfirm = (EditText) findViewById(R.id.et_password_confirm);
         btnOk = (Button) findViewById(R.id.btn_ok);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
+        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         etPassword.addTextChangedListener(passwordWatcher);
         etPasswordConfirm.addTextChangedListener(passwordWatcher);
+        etPassword.setOnEditorActionListener(this);
+        etPasswordConfirm.setOnEditorActionListener(this);
         configureCheckPre();
+        configureEditTextActionId();
         btnOk.setOnClickListener(okClick);
         btnCancel.setOnClickListener(cancelClick);
         btnOk.setEnabled(false);
         passwordCheck.setCheckListener(passwordCheckListener);
-        imm = (InputMethodManager) getContext().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        UIUtil.configurePasswordEditText(etPassword);
-        UIUtil.configurePasswordEditText(etPasswordConfirm);
+        kv.registerEditText(etPassword, etPasswordConfirm);
+    }
+
+    private PasswordSeed getPasswordSeed() {
+        return AppSharedPreference.getInstance().getPasswordSeed();
     }
 
     private void configureCheckPre() {
@@ -234,11 +130,10 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
     private void checkValid() {
         btnOk.setEnabled(false);
         String password = etPassword.getText().toString();
-        if (password.length() >= 6 && password.length() <= 30) {
+        if (password.length() >= 6 && password.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
                 String passwordConfirm = etPasswordConfirm.getText().toString();
-                if (passwordConfirm.length() >= 6
-                        && passwordConfirm.length() <= 30) {
+                if (passwordConfirm.length() >= 6 && passwordConfirm.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
                     btnOk.setEnabled(true);
                 } else {
                     btnOk.setEnabled(false);
@@ -249,14 +144,8 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         }
     }
 
-    @Override
-    public void onShow(DialogInterface dialog) {
-        imm.showSoftInput(etPassword, 0);
-    }
-
     private void shake() {
-        Animation shake = AnimationUtils.loadAnimation(getContext(),
-                R.anim.password_wrong_warning);
+        Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.password_wrong_warning);
         container.startAnimation(shake);
     }
 
@@ -281,16 +170,96 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
         super.show();
     }
 
-    public void dismiss() {
-        imm.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
-        super.dismiss();
-    }
-
-    ;
-
     public void setTitle(int resource) {
         tvTitle.setText(resource);
     }
+
+    private View.OnClickListener okClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (passwordSeed == null && !StringUtil.compareString(etPassword.getText().toString()
+                    , etPasswordConfirm.getText().toString()) && checkPre) {
+                tvError.setText(R.string.add_address_generate_address_password_not_same);
+                tvError.setVisibility(View.VISIBLE);
+                etPasswordConfirm.requestFocus();
+                return;
+            }
+            if (passwordSeed != null && checkPre) {
+                ArrayList<Check> checks = new ArrayList<Check>();
+                checks.add(passwordCheck);
+                executor = CheckUtil.runChecks(checks, 1);
+            } else {
+                passwordEntered = true;
+                dismiss();
+            }
+        }
+    };
+    private CheckListener passwordCheckListener = new CheckListener() {
+
+        @Override
+        public void onCheckBegin(Check check) {
+            llChecking.setVisibility(View.VISIBLE);
+            llInput.setVisibility(View.INVISIBLE);
+            kv.hideKeyboard();
+        }
+
+        @Override
+        public void onCheckEnd(Check check, boolean success) {
+            if (executor != null) {
+                executor.shutdown();
+                executor = null;
+            }
+            if (success) {
+                passwordEntered = true;
+                dismiss();
+            } else {
+                llChecking.setVisibility(View.GONE);
+                llInput.setVisibility(View.VISIBLE);
+                etPassword.setText("");
+                checkValid();
+                tvError.setText(R.string.password_wrong);
+                tvError.setVisibility(View.VISIBLE);
+                shake();
+                kv.showKeyboard();
+            }
+        }
+    };
+    private TextWatcher passwordWatcher = new TextWatcher() {
+        private String password;
+        private String passwordConfirm;
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            password = etPassword.getText().toString();
+            passwordConfirm = etPasswordConfirm.getText().toString();
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            tvError.setVisibility(View.GONE);
+            String p = etPassword.getText().toString();
+            if (p.length() > 0) {
+                if (!StringUtil.validPassword(p)) {
+                    etPassword.setText(password);
+                }
+            }
+            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
+                String pc = etPasswordConfirm.getText().toString();
+                if (pc.length() > 0) {
+                    if (!StringUtil.validPassword(pc)) {
+                        etPasswordConfirm.setText(passwordConfirm);
+                    }
+                }
+            }
+            checkValid();
+        }
+    };
 
     @Override
     public void setCancelable(boolean flag) {
@@ -300,5 +269,51 @@ public class DialogPassword extends CenterDialog implements OnDismissListener,
 
     public void setTitle(String title) {
         tvTitle.setText(title);
+    }
+
+    private View.OnClickListener cancelClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            passwordEntered = false;
+            dismiss();
+        }
+    };
+
+    private Check passwordCheck = new Check("", new ICheckAction() {
+        @Override
+        public boolean check() {
+            if (passwordSeed != null) {
+                return passwordSeed.checkPassword(etPassword.getText().toString());
+            } else {
+                return true;
+            }
+        }
+    });
+
+    private void configureEditTextActionId(){
+        if(etPasswordConfirm.getVisibility() == View.VISIBLE){
+            etPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_NEXT);
+        }else{
+            etPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
+        }
+        etPasswordConfirm.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if(v == etPassword){
+            if(etPasswordConfirm.getVisibility() == View.VISIBLE){
+                return false;
+            }else if(btnOk.isEnabled()){
+                okClick.onClick(btnOk);
+                return true;
+            }
+        }
+        if(v == etPasswordConfirm && btnOk.isEnabled()){
+            okClick.onClick(btnOk);
+            return true;
+        }
+        return false;
     }
 }

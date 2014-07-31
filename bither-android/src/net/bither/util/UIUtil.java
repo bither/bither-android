@@ -40,27 +40,4 @@ public class UIUtil {
     public static int getScreenHeight() {
         return BitherApplication.mContext.getResources().getDisplayMetrics().heightPixels;
     }
-
-    public static void configurePasswordEditText(EditText et) {
-        et.setImeActionLabel("abc", SwitchToAbcActionId);
-        et.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD | EditorInfo
-                .TYPE_CLASS_NUMBER);
-        et.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == SwitchToAbcActionId) {
-                    v.setImeActionLabel("123", SwitchTo123ActionId);
-                    v.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
-                    return true;
-                }
-                if (actionId == SwitchTo123ActionId) {
-                    v.setImeActionLabel("abc", SwitchToAbcActionId);
-                    v.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD | EditorInfo
-                            .TYPE_CLASS_NUMBER);
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
 }

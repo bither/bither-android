@@ -20,8 +20,10 @@
     <string name="close">返回</string>
     <string name="operate">設置</string>
     <string name="address_option_delete">停止監控</string>
+    <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
     <string name="address_delete_confirmation">確認停止監控這個地址?</string>
+    <string name="address_remonitor_confirmation">確認重新監控這個地址?</string>
     <string name="address_monitor_failed">監控失敗</string>
     <string name="address_monitor_failed_too_much_tx">不能監控交易過多的地址</string>
     <string name="address_monitor_failed_multiple_address">不能監控此類多簽名地址</string>
@@ -47,6 +49,7 @@
     <string name="copy_address">複製</string>
     <string name="qr_code">二​​維碼</string>
     <string name="copy_address_success">地址已復制</string>
+    <string name="copy_private_key_success">私鑰已復制</string>
     <string name="confirmations_postfix">確認</string>
     <string name="confirmation_postfix">確認</string>
     <string name="unconfirmed">未確認</string>
@@ -55,12 +58,18 @@
     <string name="address_detail_send_balance_zero">餘額為零, 無法發送</string>
     <string name="address_detail_no_transactions">沒有找到這個地址的交易, 它可能還沒有在網絡上使用過.</string>
     <string name="address_detail_monitor_failed">無法監控交易量過大的地址.</string>
+    <string name="address_detail_monitor_failed_tx_toomuch">此地址有太多交易 ,不能監控</string>
+    <string name="address_detail_monitor_failed_special_address">此地址有特殊交易 ,不能監控</string>
+
     <string name="address_detail_cancel_monitor">停止監控</string>
     <string name="address_detail_transaction_confidence_dialog_prefix">確認:</string>
     <string name="address_detail_stop_monitoring_progress_dialog">正在停止監控…</string>
     <string name="address_detail_cannot_stop_monitoring">一分鐘內只能停止監控一個地址.</string>
+    <string name="address_detail_cannot_remonitor">一分鐘內只能重新監控一個地址.</string>
     <string name="address_detail_empty_address_list_notice">不能清空地址列表</string>
     <string name="address_detail_private_key_qr_code">私鑰二維碼</string>
+    <string name="address_detail_private_key_qr_code_encrypted">私鑰二維碼 (加密)</string>
+    <string name="address_detail_private_key_qr_code_decrypted">私鑰二維碼 (解密)</string>
     <string name="address_detail_private_key_qr_code_backup">備份私鑰</string>
 
     <!-- add address -->
@@ -73,7 +82,7 @@
     <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
     <string name="add_address_generate_address_password_label">請輸入密碼</string>
-    <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;30</string>
+    <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;43</string>
     <string name="add_address_generate_address_password_set_label">請設置密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
@@ -102,6 +111,7 @@
     <string name="send_confirm_amount">金額:</string>
     <string name="send_confirm_fee">手續費:</string>
     <string name="send_confirm_low_priority_warn">交易中有小於0.01BTC的支出,\n手續費較低.\n<b>確認時間可能很長</b>.</string>
+    <string name="unsigned_transaction_exit_waring">放棄簽名嗎?\n此交易將不會被廣播</string>
 
     <!-- market -->
     <string name="market_sell">賣一:</string>
@@ -161,6 +171,7 @@
     <string name="setting_name_import_private_key">導入私鑰</string>
     <string name="import_private_key_qr_code">來自私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="private_key_text">私鑰明文</string>
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
@@ -171,6 +182,8 @@
     <string name="import_private_key_qr_code_failed_duplicate">私鑰已存在</string>
     <string name="import_private_key_qr_code_importing">正在導入…</string>
     <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
+    <string name="import_private_key_failed_tx_too_mush">此私鑰有太多交易 ,不能導入</string>
+    <string name="import_private_key_failed_special_address">此私鑰有特殊交易 ,不能導入</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
@@ -213,8 +226,7 @@
     <string name="check_address_password">密碼正確</string>
     <string name="check_private_key_safe">您的私鑰很安全</string>
     <string name="checking_private_key">正在檢查私鑰</string>
-    <string name="check_private_key_button">一鍵檢查私鑰安全</string>
-    <string name="check_points">分</string>
+    <string name="check_private_key_button">一鍵檢查私鑰</string>
     <string name="private_key_is_empty">你還沒有添加私鑰, 請先添加私鑰</string>
     <string name="next_page">下壹張</string>
     <string name="can_not_find_private_key">沒有找到對應的私鑰</string>
@@ -245,7 +257,7 @@
     <string name="watch_only_address_count_limit">已達到監控地址上限</string>
     <string name="generate_address_count_label">生成多少個私鑰?</string>
     <string name="recover_from_backup_of_cold">檢測到sd卡上有過去的冷錢包備份，是否從備份中恢復？</string>
-    <string name="first_add_private_key_check_suggest">是否現在一鍵檢測私鑰安全?</string>
+    <string name="first_add_private_key_check_suggest">是否現在一鍵檢測私鑰?</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">初始化交易</string>
@@ -260,6 +272,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">監控冷錢包失敗</string>
     <string name="time_is_wrong">系統時間錯誤, 請重新設置</string>
+    <string name="only_supports_the_compressed_private_key">只支持壓縮格式的私鑰</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">請選擇從哪個地址發送</string>
@@ -295,4 +308,16 @@
     <string name="edit_password_fail">修改密碼失敗</string>
     <string name="edit_password_new_old_same">新密碼不能和舊密碼相同</string>
     <string name="edit_password_editing">正在修改密碼…\n請不要關閉手機屏幕</string>
+
+    <!-- password keyboard -->
+    <string name="password_keyboard_done">完成</string>
+    <string name="password_keyboard_next">下一項</string>
+
+    <!-- advance -->
+    <string name="activity_name_advance">高級選項</string>
+
+    <!-- first run dialog -->
+    <string name="first_run_dialog_title">為了保護您的比特幣:</string>
+    <string name="first_run_dialog_line_1">請不要卸載比太錢包</string>
+    <string name="first_run_dialog_line_2">請不要清除比太數據</string>
 </resources>
