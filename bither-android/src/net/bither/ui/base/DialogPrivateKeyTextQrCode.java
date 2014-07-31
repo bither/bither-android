@@ -67,7 +67,7 @@ public class DialogPrivateKeyTextQrCode extends Dialog implements View.OnClickLi
         ivQr = (ImageView) findViewById(R.id.iv_qrcode);
         pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ll_container).setOnClickListener(this);
-        findViewById(R.id.ll_back_up).setOnClickListener(this);
+        findViewById(R.id.ll_back_up).setVisibility(View.GONE);
         ivQr.setOnClickListener(this);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
@@ -88,20 +88,12 @@ public class DialogPrivateKeyTextQrCode extends Dialog implements View.OnClickLi
     @Override
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
-            case R.id.ll_back_up:
-                share();
-                break;
             default:
                 break;
         }
     }
 
-    private void share() {
-        if (qrCode != null) {
-            new ShareThread().start();
-        }
-    }
-
+   
     @Override
     public void generated(Bitmap bmp) {
         pb.setVisibility(View.GONE);
@@ -109,29 +101,5 @@ public class DialogPrivateKeyTextQrCode extends Dialog implements View.OnClickLi
         ivQr.setImageBitmap(bmp);
     }
 
-    private class ShareThread extends Thread {
-        @Override
-        public void run() {
-            final Uri uri = FileUtil.saveShareImage(qrCode);
-            if (uri == null) {
-                DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                return;
-            }
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setType("image/jpg");
-                    try {
-                        getContext().startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                    }
-                }
-            });
-        }
-    }
+
 }

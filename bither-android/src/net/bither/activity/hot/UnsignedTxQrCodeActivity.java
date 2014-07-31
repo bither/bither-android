@@ -33,7 +33,7 @@ public class UnsignedTxQrCodeActivity extends QrCodeActivity {
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                 getString(R.string.scan_transaction_signature_title));
         startActivity(intent);
-        finish();
+        super.finish();
     }
 
     @Override
