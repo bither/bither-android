@@ -16,70 +16,70 @@
 
 package net.bither.model;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-
-import net.bither.util.StringUtil;
-
-import org.spongycastle.crypto.params.KeyParameter;
-
 import com.google.bitcoin.core.ECKey;
 import com.google.bitcoin.crypto.EncryptedPrivateKey;
 import com.google.bitcoin.crypto.KeyCrypter;
 import com.google.bitcoin.crypto.KeyCrypterException;
 
+import net.bither.util.PrivateKeyUtil;
+import net.bither.util.StringUtil;
+
+import org.spongycastle.crypto.params.KeyParameter;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+
 public class BitherAddressWithPrivateKey extends BitherAddress {
-	private static final long serialVersionUID = 8947862254125936326L;
+    private static final long serialVersionUID = 8947862254125936326L;
 
-	public BitherAddressWithPrivateKey() {
-		this(true);
-	}
+    public BitherAddressWithPrivateKey() {
+        this(true);
+    }
 
-	public BitherAddressWithPrivateKey(boolean generatePrivateKey) {
-		super();
-		if (generatePrivateKey) {
-			super.addKey(new ECKey());
-		}
-	}
+    public BitherAddressWithPrivateKey(boolean generatePrivateKey) {
+        super();
+        if (generatePrivateKey) {
+            super.addKey(new ECKey());
+        }
+    }
 
-	@Override
-	public boolean hasPrivateKey() {
-		return true;
-	}
+    @Override
+    public boolean hasPrivateKey() {
+        return true;
+    }
 
-	public boolean checkPrivateKeyDecryption(String password) {
-		if (StringUtil.isEmpty(password)) {
-			return false;
-		}
-		KeyCrypter keyCrypter = getKeyCrypter();
-		ECKey key = null;
-		List<ECKey> keys = getKeys();
-		if (keys.size() >= 0) {
-			key = keys.get(0);
-		}
-		if (keyCrypter == null || key == null) {
-			return false;
-		}
-		EncryptedPrivateKey encryptedPrivateKey = key.getEncryptedPrivateKey();
-		KeyParameter aesKey = keyCrypter.deriveKey(password);
-		if (encryptedPrivateKey == null || aesKey == null) {
-			return false;
-		}
-		byte[] decrypted = null;
-		try {
-			decrypted = keyCrypter.decrypt(encryptedPrivateKey, aesKey);
-		} catch (KeyCrypterException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (decrypted == null) {
-			return false;
-		}
-		BigInteger privateKeyForSigning = new BigInteger(1, decrypted);
-		return Arrays.equals(
-				key.getPubKey(),
-				ECKey.publicKeyFromPrivate(privateKeyForSigning,
-						key.isCompressed()));
-	}
+    public boolean checkPrivateKeyDecryption(String password) {
+        if (StringUtil.isEmpty(password)) {
+            return false;
+        }
+        KeyCrypter keyCrypter = getKeyCrypter();
+        ECKey key = null;
+        List<ECKey> keys = getKeys();
+        if (keys.size() >= 0) {
+            key = keys.get(0);
+        }
+        if (keyCrypter == null || key == null) {
+            return false;
+        }
+        EncryptedPrivateKey encryptedPrivateKey = key.getEncryptedPrivateKey();
+        KeyParameter aesKey = keyCrypter.deriveKey(password);
+        if (encryptedPrivateKey == null || aesKey == null) {
+            return false;
+        }
+        byte[] decrypted = null;
+        try {
+            decrypted = keyCrypter.decrypt(encryptedPrivateKey, aesKey);
+        } catch (KeyCrypterException e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (decrypted == null) {
+            return false;
+        }
+        byte[] pubKey = ECKey.publicKeyFromPrivate(new BigInteger(1, decrypted),
+                key.isCompressed());
+        PrivateKeyUtil.wipeDecryptedPrivateKey(decrypted);
+        return Arrays.equals(key.getPubKey(), pubKey);
+    }
 }

@@ -33,6 +33,7 @@ import org.bitcoinj.wallet.Protos.ScryptParameters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PrivateKeyUtil {
@@ -74,9 +75,9 @@ public class PrivateKeyUtil {
         KeyCrypterScrypt crypter = new KeyCrypterScrypt(ScryptParameters.newBuilder().setSalt
                 (ByteString.copyFrom(salt)).build());
         try {
-            byte[] pub = ECKey.publicKeyFromPrivate(new BigInteger(1, crypter.decrypt(epk,
-                            crypter.deriveKey(password))), true
-            );
+            byte[] decrypted = crypter.decrypt(epk, crypter.deriveKey(password));
+            byte[] pub = ECKey.publicKeyFromPrivate(new BigInteger(1, decrypted), true);
+            PrivateKeyUtil.wipeDecryptedPrivateKey(decrypted);
             return new ECKey(epk, pub, crypter);
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,6 +113,12 @@ public class PrivateKeyUtil {
             return key.encrypt(crypter, crypter.deriveKey(password));
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static void wipeDecryptedPrivateKey(byte[] decryted) {
+        if (decryted != null) {
+            Arrays.fill(decryted, (byte) 0);
         }
     }
 }
