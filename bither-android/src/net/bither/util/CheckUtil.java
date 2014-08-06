@@ -124,7 +124,7 @@ public class CheckUtil {
 	}
 
 	public static Check initCheckForPrivateKey(
-			final BitherAddressWithPrivateKey address, final String password) {
+			final BitherAddressWithPrivateKey address, final SecureCharSequence password) {
 		String title = String.format(BitherApplication.mContext
 				.getString(R.string.check_address_private_key_title), address
 				.getShortAddress());
@@ -140,6 +140,7 @@ public class CheckUtil {
 					}
 					ECKey eckeyFromBackup = BackupUtil.getEckeyFromBackup(
 							address.getAddress(), password);
+                    password.wipe();
 					if (oldKey != null) {
 						result = address.replaceEckey(oldKey, eckeyFromBackup);
 					} else {

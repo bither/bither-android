@@ -30,6 +30,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogPassword.DialogPasswordListener;
 import net.bither.util.LogUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.WalletUtils;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -89,7 +90,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
 	};
 
 	@Override
-	public void onPasswordEntered(final String password) {
+	public void onPasswordEntered(final SecureCharSequence password) {
 		wvCount.setKeepScreenOn(true);
 		ThreadNeedService thread = new ThreadNeedService(dp, activity) {
 
@@ -105,6 +106,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
 						LogUtil.d("Generate", "Address: " + addresses.size());
 					}
 				}
+                password.wipe();
                 WalletUtils.addAddressWithPrivateKey(service,addresses);
 				Collections.reverse(addresses);
 				activity.runOnUiThread(new Runnable() {

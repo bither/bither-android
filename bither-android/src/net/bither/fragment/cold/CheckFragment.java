@@ -29,6 +29,7 @@ import net.bither.ui.base.CheckHeaderView.CheckHeaderViewListener;
 import net.bither.ui.base.DialogAddressFull;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.util.CheckUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 import android.os.Bundle;
@@ -161,7 +162,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
 	}
 
 	@Override
-	public void beginCheck(String password) {
+	public void beginCheck(SecureCharSequence password) {
 		final List<BitherAddressWithPrivateKey> addresses = WalletUtils
 				.getPrivateAddressList();
 		checkPoints.clear();
@@ -170,9 +171,10 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
 			BitherAddressWithPrivateKey address = addresses.get(i);
 			CheckPoint point = new CheckPoint(address.getAddress());
 			checkPoints.add(point);
-			checks.add(CheckUtil.initCheckForPrivateKey(address, password)
+			checks.add(CheckUtil.initCheckForPrivateKey(address, new SecureCharSequence(password))
 					.setCheckListener(point));
 		}
+        password.wipe();
 		adapter.notifyDataSetChanged();
 		if (lv.getHeight() <= 0) {
 			int lvHeight = flContainer.getHeight() - vCheckHeader.getHeight();

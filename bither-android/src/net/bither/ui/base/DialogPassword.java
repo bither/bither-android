@@ -20,16 +20,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.DialogInterface.OnShowListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -43,15 +40,16 @@ import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
-import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-public class DialogPassword extends Dialog implements OnDismissListener, TextView.OnEditorActionListener {
+public class DialogPassword extends Dialog implements OnDismissListener,
+        TextView.OnEditorActionListener {
     public static interface DialogPasswordListener {
-        public void onPasswordEntered(String password);
+        public void onPasswordEntered(SecureCharSequence password);
     }
 
     private View container;
@@ -123,17 +121,21 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (passwordEntered && listener != null) {
-            listener.onPasswordEntered(etPassword.getText().toString());
+            listener.onPasswordEntered(new SecureCharSequence(etPassword));
+            etPassword.setText("");
+            etPasswordConfirm.setText("");
         }
     }
 
     private void checkValid() {
         btnOk.setEnabled(false);
-        String password = etPassword.getText().toString();
-        if (password.length() >= 6 && password.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
+        int passwordLength = etPassword.length();
+        if (passwordLength >= 6 && passwordLength <= getContext().getResources().getInteger(R
+                .integer.password_length_max)) {
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-                String passwordConfirm = etPasswordConfirm.getText().toString();
-                if (passwordConfirm.length() >= 6 && passwordConfirm.length() <= getContext().getResources().getInteger(R.integer.password_length_max)) {
+                int passwordConfirmLength = etPasswordConfirm.length();
+                if (passwordConfirmLength >= 6 && passwordConfirmLength <= getContext()
+                        .getResources().getInteger(R.integer.password_length_max)) {
                     btnOk.setEnabled(true);
                 } else {
                     btnOk.setEnabled(false);
@@ -178,13 +180,18 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
 
         @Override
         public void onClick(View v) {
-            if (passwordSeed == null && !StringUtil.compareString(etPassword.getText().toString()
-                    , etPasswordConfirm.getText().toString()) && checkPre) {
+            SecureCharSequence password = new SecureCharSequence(etPassword);
+            SecureCharSequence passwordConfirm = new SecureCharSequence(etPasswordConfirm);
+            if (passwordSeed == null && !password.equals(passwordConfirm) && checkPre) {
+                password.wipe();
+                passwordConfirm.wipe();
                 tvError.setText(R.string.add_address_generate_address_password_not_same);
                 tvError.setVisibility(View.VISIBLE);
                 etPasswordConfirm.requestFocus();
                 return;
             }
+            password.wipe();
+            passwordConfirm.wipe();
             if (passwordSeed != null && checkPre) {
                 ArrayList<Check> checks = new ArrayList<Check>();
                 checks.add(passwordCheck);
@@ -226,13 +233,19 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
         }
     };
     private TextWatcher passwordWatcher = new TextWatcher() {
-        private String password;
-        private String passwordConfirm;
+        private SecureCharSequence password;
+        private SecureCharSequence passwordConfirm;
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            password = etPassword.getText().toString();
-            passwordConfirm = etPasswordConfirm.getText().toString();
+            if (password != null) {
+                password.wipe();
+            }
+            if (passwordConfirm != null) {
+                passwordConfirm.wipe();
+            }
+            password = new SecureCharSequence(etPassword);
+            passwordConfirm = new SecureCharSequence(etPasswordConfirm);
         }
 
         @Override
@@ -243,21 +256,25 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
         @Override
         public void afterTextChanged(Editable s) {
             tvError.setVisibility(View.GONE);
-            String p = etPassword.getText().toString();
+            SecureCharSequence p = new SecureCharSequence(etPassword);
             if (p.length() > 0) {
                 if (!StringUtil.validPassword(p)) {
                     etPassword.setText(password);
                 }
             }
+            p.wipe();
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-                String pc = etPasswordConfirm.getText().toString();
+                SecureCharSequence pc = new SecureCharSequence(etPasswordConfirm);
                 if (pc.length() > 0) {
                     if (!StringUtil.validPassword(pc)) {
                         etPasswordConfirm.setText(passwordConfirm);
                     }
                 }
+                pc.wipe();
             }
             checkValid();
+            password.wipe();
+            passwordConfirm.wipe();
         }
     };
 
@@ -284,17 +301,20 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
         @Override
         public boolean check() {
             if (passwordSeed != null) {
-                return passwordSeed.checkPassword(etPassword.getText().toString());
+                SecureCharSequence password = new SecureCharSequence(etPassword);
+                boolean result = passwordSeed.checkPassword(password);
+                password.wipe();
+                return result;
             } else {
                 return true;
             }
         }
     });
 
-    private void configureEditTextActionId(){
-        if(etPasswordConfirm.getVisibility() == View.VISIBLE){
+    private void configureEditTextActionId() {
+        if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
             etPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_NEXT);
-        }else{
+        } else {
             etPassword.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
         }
         etPasswordConfirm.setImeActionLabel(null, EditorInfo.IME_ACTION_DONE);
@@ -302,15 +322,15 @@ public class DialogPassword extends Dialog implements OnDismissListener, TextVie
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(v == etPassword){
-            if(etPasswordConfirm.getVisibility() == View.VISIBLE){
+        if (v == etPassword) {
+            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
                 return false;
-            }else if(btnOk.isEnabled()){
+            } else if (btnOk.isEnabled()) {
                 okClick.onClick(btnOk);
                 return true;
             }
         }
-        if(v == etPasswordConfirm && btnOk.isEnabled()){
+        if (v == etPasswordConfirm && btnOk.isEnabled()) {
             okClick.onClick(btnOk);
             return true;
         }

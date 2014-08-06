@@ -49,8 +49,8 @@ public class BitherAddressWithPrivateKey extends BitherAddress {
         return true;
     }
 
-    public boolean checkPrivateKeyDecryption(String password) {
-        if (StringUtil.isEmpty(password)) {
+    public boolean checkPrivateKeyDecryption(CharSequence password) {
+        if (password == null || password.length() == 0) {
             return false;
         }
         KeyCrypter keyCrypter = getKeyCrypter();

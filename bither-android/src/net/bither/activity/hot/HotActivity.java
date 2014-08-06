@@ -56,6 +56,7 @@ import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -152,7 +153,7 @@ public class HotActivity extends FragmentActivity {
                     new DialogPasswordListener() {
 
                 @Override
-                public void onPasswordEntered(final String password) {
+                public void onPasswordEntered(final SecureCharSequence password) {
                     ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
 
                         @Override
@@ -160,12 +161,14 @@ public class HotActivity extends FragmentActivity {
                             BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
                             if (!WalletUtils.getBitherAddressList().contains(address)) {
                                 address.encrypt(password);
+                                password.wipe();
                                 List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
                                 wallets.add(address);
 
                                 WalletUtils.addAddressWithPrivateKey(service, wallets);
                                 preference.setHasPrivateKey(true);
                             }
+                            password.wipe();
                             HotActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

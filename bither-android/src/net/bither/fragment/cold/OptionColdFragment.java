@@ -58,6 +58,7 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
@@ -115,7 +116,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void onClick(View v) {
             new DialogPassword(getActivity(), new DialogPasswordListener() {
                 @Override
-                public void onPasswordEntered(String password) {
+                public void onPasswordEntered(SecureCharSequence password) {
+                    password.wipe();
                     String content = PrivateKeyUtil.getPrivateKeyStringFromAllPrivateAddresses();
                     Intent intent = new Intent(getActivity(), QrCodeActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
@@ -334,7 +336,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
 
         @Override
-        public void onPasswordEntered(String password) {
+        public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.clone_from_waiting);
                 CloneThread cloneThread = new CloneThread(content, password);
@@ -347,15 +349,16 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     private class CloneThread extends Thread {
         private String content;
-        private String password;
+        private SecureCharSequence password;
 
-        public CloneThread(String content, String password) {
+        public CloneThread(String content, SecureCharSequence password) {
             this.content = content;
             this.password = password;
         }
 
         public void run() {
             List<ECKey> keys = PrivateKeyUtil.getECKeysFromString(content, password);
+            password.wipe();
             if (keys == null || keys.size() == 0) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

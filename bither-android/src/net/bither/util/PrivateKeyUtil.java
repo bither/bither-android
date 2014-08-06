@@ -63,7 +63,7 @@ public class PrivateKeyUtil {
         return content;
     }
 
-    public static ECKey getECKeyFromSingleString(String str, String password) {
+    public static ECKey getECKeyFromSingleString(String str, CharSequence password) {
         String[] strs = str.split(StringUtil.QR_CODE_SPLIT);
         if (strs.length != 3) {
             Log.e("Backup", "PrivateKeyFromString format error");
@@ -85,7 +85,7 @@ public class PrivateKeyUtil {
         }
     }
 
-    public static List<ECKey> getECKeysFromString(String str, String password) {
+    public static List<ECKey> getECKeysFromString(String str, CharSequence password) {
         String[] strs = str.split(StringUtil.QR_CODE_SPLIT);
         if (strs.length % 3 != 0) {
             Log.e("Backup", "PrivateKeyFromString format error");
@@ -106,7 +106,7 @@ public class PrivateKeyUtil {
         return list;
     }
 
-    public static ECKey getEncryptedECKey(String decrypted, String password) {
+    public static ECKey getEncryptedECKey(String decrypted, CharSequence password) {
         try {
             ECKey key = new DumpedPrivateKey(MainNetParams.get(), decrypted).getKey();
             KeyCrypterScrypt crypter = new KeyCrypterScrypt();

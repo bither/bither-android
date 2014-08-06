@@ -37,6 +37,7 @@ import net.bither.model.BitherAddress;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.SecureCharSequence;
 
 import org.spongycastle.crypto.params.KeyParameter;
 
@@ -103,7 +104,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
 
 
     @Override
-    public void onPasswordEntered(final String password) {
+    public void onPasswordEntered(final SecureCharSequence password) {
         final  DialogProgress dialogProgress;
         switch (clickedView) {
             case R.id.tv_private_key_qr_code_encrypted:
@@ -116,6 +117,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                     @Override
                     public void run() {
                         KeyParameter keyParameter = address.getKeyCrypter().deriveKey(password);
+                        password.wipe();
                         com.google.bitcoin.core.ECKey decryptedECKey = address.getKeys().get(0);
                         decryptedECKey = decryptedECKey.decrypt(decryptedECKey.getKeyCrypter(), keyParameter);
                         final String str = decryptedECKey.getPrivateKeyEncoded(BitherSetting.NETWORK_PARAMETERS).toString();
@@ -138,6 +140,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                     @Override
                     public void run() {
                         KeyParameter keyParameter = address.getKeyCrypter().deriveKey(password);
+                        password.wipe();
                         com.google.bitcoin.core.ECKey decryptedECKey = address.getKeys().get(0);
                         decryptedECKey = decryptedECKey.decrypt(decryptedECKey.getKeyCrypter(), keyParameter);
                         final String str = decryptedECKey.getPrivateKeyEncoded(BitherSetting.NETWORK_PARAMETERS).toString();

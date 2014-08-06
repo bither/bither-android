@@ -49,6 +49,7 @@ import net.bither.ui.base.TabButton;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -334,7 +335,7 @@ public class ColdActivity extends FragmentActivity {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
                 new DialogPassword.DialogPasswordListener() {
             @Override
-            public void onPasswordEntered(String password) {
+            public void onPasswordEntered(SecureCharSequence password) {
                 importWalletFromBackup(password);
             }
         });
@@ -342,7 +343,7 @@ public class ColdActivity extends FragmentActivity {
         dialogPassword.show();
     }
 
-    private void importWalletFromBackup(final String password) {
+    private void importWalletFromBackup(final SecureCharSequence password) {
         List<File> fileList = FileUtil.getBackupFileListOfCold();
         final File file = fileList.get(0);
         LogUtil.d("backup", file.getName());
@@ -379,6 +380,7 @@ public class ColdActivity extends FragmentActivity {
 
                             }
                         }
+                        password.wipe();
                         WalletUtils.addAddressWithPrivateKey(null, wallets);
                         recoverBackupSuccess();
                     }

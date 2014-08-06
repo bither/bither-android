@@ -41,7 +41,7 @@ public class PasswordSeed {
                 address.getKeyCrypter());
     }
 
-    public boolean checkPassword(String password) {
+    public boolean checkPassword(CharSequence password) {
         this.ecKey = PrivateKeyUtil.getECKeyFromSingleString(keyStr, password);
         if (this.ecKey == null) {
             return false;

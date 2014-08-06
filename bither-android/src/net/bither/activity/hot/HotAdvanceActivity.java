@@ -49,6 +49,7 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 import net.bither.util.WalletUtils;
@@ -246,7 +247,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
 
         @Override
-        public void onPasswordEntered(String password) {
+        public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread(dp,
@@ -290,10 +291,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private class ImportPrivateKeyThread extends ThreadNeedService {
         private String content;
-        private String password;
+        private SecureCharSequence password;
         private DialogProgress dp;
 
-        public ImportPrivateKeyThread(DialogProgress dp, String content, String password) {
+        public ImportPrivateKeyThread(DialogProgress dp, String content, SecureCharSequence password) {
             super(dp, HotAdvanceActivity.this);
             this.dp = dp;
             this.content = content;
@@ -304,6 +305,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void runWithService(BlockchainService service) {
             ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
             if (key == null) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -321,6 +323,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             wallet.setKeyCrypter(key.getKeyCrypter());
             wallet.addKey(key);
             if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -334,6 +337,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 });
                 return;
             } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -349,6 +353,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             } else {
                 PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
                 if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
+                    password.wipe();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -362,6 +367,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     });
                     return;
                 }
+                password.wipe();
                 Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
                 try {
                     List<String> addressList = new ArrayList<String>();

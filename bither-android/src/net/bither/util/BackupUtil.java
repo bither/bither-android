@@ -46,7 +46,7 @@ public class BackupUtil {
 
     ;
 
-    public static ECKey getEckeyFromBackup(String address, String password) {
+    public static ECKey getEckeyFromBackup(String address, CharSequence password) {
         if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
             return getEckeyFormBackupCold(address, password);
         } else {
@@ -55,7 +55,7 @@ public class BackupUtil {
 
     }
 
-    private static ECKey getEckeyFormBackupHot(String address, String password) {
+    private static ECKey getEckeyFormBackupHot(String address, CharSequence password) {
         File file = FileUtil.getBackupKeyOfHot();
         String str = FileUtil.readFile(file);
         if (str.contains(address)) {
@@ -76,7 +76,7 @@ public class BackupUtil {
         return null;
     }
 
-    private static ECKey getEckeyFormBackupCold(String address, String password) {
+    private static ECKey getEckeyFormBackupCold(String address, CharSequence password) {
         if (!FileUtil.existSdCardMounted()) {
             return null;
         }

@@ -32,6 +32,7 @@ import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.GenericUtils;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 import android.app.Activity;
@@ -134,12 +135,13 @@ public class SignTxActivity extends SwipeRightActivity implements
 	};
 
 	@Override
-	public void onPasswordEntered(final String password) {
+	public void onPasswordEntered(final SecureCharSequence password) {
 		Thread thread = new Thread() {
 			public void run() {
 				BitherAddressWithPrivateKey address = WalletUtils
 						.findPrivateKey(qrCodeTransport.getMyAddress());
 				List<String> strings = signHash(address, password);
+                password.wipe();
 				String result = "";
 				for (int i = 0; i < strings.size(); i++) {
 					if (i < strings.size() - 1) {
@@ -175,7 +177,7 @@ public class SignTxActivity extends SwipeRightActivity implements
 
 	private List<String> signHash(
 			BitherAddressWithPrivateKey bitherAddressWithPrivateKey,
-			String password) {
+			SecureCharSequence password) {
 		ECKey ecKey = bitherAddressWithPrivateKey.getKeys().get(0);
 		List<String> strings = new ArrayList<String>();
 		for (String hashStr : qrCodeTransport.getHashList()) {

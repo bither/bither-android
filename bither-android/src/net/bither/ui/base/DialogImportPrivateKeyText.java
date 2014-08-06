@@ -51,6 +51,7 @@ import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.util.PrivateKeyUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
@@ -217,15 +218,15 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     }
 
     @Override
-    public void onPasswordEntered(String password) {
+    public void onPasswordEntered(SecureCharSequence password) {
         new ImportPrivateKeyThread(privateKeyString, password).start();
     }
 
     private class ImportPrivateKeyThread extends ThreadNeedService {
         private String privateKey;
-        private String password;
+        private SecureCharSequence password;
 
-        public ImportPrivateKeyThread(String privateKey, String password) {
+        public ImportPrivateKeyThread(String privateKey, SecureCharSequence password) {
             super(new DialogProgress(getContext(), R.string.import_private_key_qr_code_importing)
                     , getContext());
             this.privateKey = privateKey;
@@ -250,6 +251,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         @Override
         public void runWithService(BlockchainService service) {
             ECKey key = PrivateKeyUtil.getEncryptedECKey(privateKey, password);
+            password.wipe();
             if (key == null) {
                 dpDismissWithError(R.string.import_private_key_qr_code_failed);
                 return;
