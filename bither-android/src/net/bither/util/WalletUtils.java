@@ -1230,7 +1230,7 @@ public class WalletUtils {
         BroadcastUtil.sendBroadcastAddressState(address);
     }
 
-    public static boolean editPassword(String oldPassword, String newPassword) {
+    public static boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
         synchronized (addressLock) {
             List<BitherAddressWithPrivateKey> addresses = WalletUtils.getPrivateAddressList();
             try {

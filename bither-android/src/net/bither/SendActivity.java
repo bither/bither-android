@@ -62,6 +62,7 @@ import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
@@ -160,6 +161,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
         @Override
         public void onConfirm(SendRequest request) {
+            etPassword.setText("");
             try {
                 CommitTransactionRunnable runnable = new CommitTransactionRunnable
                         (addressPosition, request.tx);
@@ -266,7 +268,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
                         request.emptyWallet = btc.equals(address.getBalance(BalanceType.AVAILABLE));
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition, request,
-                                etPassword.getText().toString());
+                             new SecureCharSequence(etPassword));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -388,7 +390,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
     private TextWatcher passwordWatcher = new TextWatcher() {
 
-        private String password;
+        private SecureCharSequence password;
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -397,18 +399,23 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            password = etPassword.getText().toString();
+            if(password != null){
+                password.wipe();
+            }
+            password = new SecureCharSequence(etPassword);
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            String p = etPassword.getText().toString();
+            SecureCharSequence p =  new SecureCharSequence(etPassword);
             if (p.length() > 0) {
                 if (!StringUtil.validPassword(p)) {
                     etPassword.setText(password);
                 }
             }
+            p.wipe();
             validateValues();
+            password.wipe();
         }
     };
 
@@ -423,9 +430,10 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         } else {
         }
         boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
-        String password = etPassword.getText().toString();
+        SecureCharSequence password = new SecureCharSequence(etPassword);
         boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
+        password.wipe();
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
     }
 

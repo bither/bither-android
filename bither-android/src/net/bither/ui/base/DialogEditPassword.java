@@ -18,7 +18,6 @@ package net.bither.ui.base;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -26,7 +25,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -39,6 +37,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.EditPasswordThread;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
@@ -48,7 +47,8 @@ import java.util.concurrent.ExecutorService;
  * Created by songchenwen on 14-5-24.
  */
 public class DialogEditPassword extends Dialog implements Check.CheckListener,
-        Check.ICheckAction, View.OnClickListener, EditPasswordThread.EditPasswordListener, TextView.OnEditorActionListener {
+        Check.ICheckAction, View.OnClickListener, EditPasswordThread.EditPasswordListener,
+        TextView.OnEditorActionListener {
     private Activity activity;
     private View container;
     private LinearLayout llInput;
@@ -106,7 +106,7 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     public void show() {
         if (passwordSeed != null) {
             super.show();
-        }else if(activity != null){
+        } else if (activity != null) {
             DropdownMessage.showDropdownMessage(activity, R.string.private_key_is_empty);
         }
     }
@@ -114,22 +114,32 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
-            if (!StringUtil.compareString(etNewPassword.getText().toString(),
-                    etNewPasswordConfirm.getText().toString())) {
+            SecureCharSequence oldP = new SecureCharSequence(etOldPassword);
+            SecureCharSequence newP = new SecureCharSequence(etNewPassword);
+            SecureCharSequence newCP = new SecureCharSequence(etNewPasswordConfirm);
+            if (!newP.equals(newCP)) {
                 shake();
                 tvError.setText(R.string.add_address_generate_address_password_not_same);
                 tvError.setVisibility(View.VISIBLE);
                 etNewPasswordConfirm.requestFocus();
+                oldP.wipe();
+                newP.wipe();
+                newCP.wipe();
                 return;
             }
-            if (StringUtil.compareString(etOldPassword.getText().toString(),
-                    etNewPassword.getText().toString())) {
+            if (oldP.equals(newP)) {
                 shake();
                 tvError.setText(R.string.edit_password_new_old_same);
                 tvError.setVisibility(View.VISIBLE);
                 etNewPasswordConfirm.requestFocus();
+                oldP.wipe();
+                newP.wipe();
+                newCP.wipe();
                 return;
             }
+            oldP.wipe();
+            newP.wipe();
+            newCP.wipe();
             if (passwordSeed != null) {
                 ArrayList<Check> checks = new ArrayList<Check>();
                 checks.add(passwordCheck);
@@ -150,7 +160,10 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     @Override
     public boolean check() {
         if (passwordSeed != null) {
-            return passwordSeed.checkPassword(etOldPassword.getText().toString());
+            SecureCharSequence password = new SecureCharSequence(etOldPassword);
+            boolean result = passwordSeed.checkPassword(password);
+            password.wipe();
+            return result;
         } else {
             return true;
         }
@@ -184,20 +197,20 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     }
 
     private void editPassword() {
-        new EditPasswordThread(etOldPassword.getText().toString(),
-                etNewPassword.getText().toString(), this).start();
+        new EditPasswordThread(new SecureCharSequence(etOldPassword),
+                new SecureCharSequence(etNewPassword), this).start();
     }
 
     private void checkValid() {
         btnOk.setEnabled(false);
-        String passwordOld = etOldPassword.getText().toString();
-        if (passwordOld.length() >= 6 && passwordOld.length() <= getContext().getResources()
-                .getInteger(R.integer.password_length_max)) {
-            String password = etNewPassword.getText().toString();
-            if (password.length() >= 6 && password.length() <= getContext().getResources()
-                    .getInteger(R.integer.password_length_max)) {
-                String passwordConfirm = etNewPasswordConfirm.getText().toString();
-                if (passwordConfirm.length() >= 6 && passwordConfirm.length() <= getContext()
+        int passwordOldLength = etOldPassword.length();
+        if (passwordOldLength >= 6 && passwordOldLength <= getContext().getResources().getInteger
+                (R.integer.password_length_max)) {
+            int passwordLength = etNewPassword.length();
+            if (passwordLength >= 6 && passwordLength <= getContext().getResources().getInteger(R
+                    .integer.password_length_max)) {
+                int passwordConfirmLength = etNewPasswordConfirm.length();
+                if (passwordConfirmLength >= 6 && passwordConfirmLength <= getContext()
                         .getResources().getInteger(R.integer.password_length_max)) {
                     btnOk.setEnabled(true);
                 }
@@ -216,9 +229,18 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
         dismiss();
         DropdownMessage.showDropdownMessage(activity, R.string.edit_password_fail);
     }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        etOldPassword.setText("");
+        etNewPassword.setText("");
+        etNewPasswordConfirm.setText("");
+    }
+
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(v == etNewPasswordConfirm && btnOk.isEnabled()){
+        if (v == etNewPasswordConfirm && btnOk.isEnabled()) {
             onClick(btnOk);
             return true;
         }
@@ -226,15 +248,24 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     }
 
     private class PasswordWatcher implements TextWatcher {
-        private String passwordOld;
-        private String passwordNew;
-        private String passwordNewConfirm;
+        private SecureCharSequence passwordOld;
+        private SecureCharSequence passwordNew;
+        private SecureCharSequence passwordNewConfirm;
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            passwordOld = etOldPassword.getText().toString();
-            passwordNew = etNewPassword.getText().toString();
-            passwordNewConfirm = etNewPasswordConfirm.getText().toString();
+            if (passwordOld != null) {
+                passwordOld.wipe();
+            }
+            if (passwordNew != null) {
+                passwordNew.wipe();
+            }
+            if (passwordNewConfirm != null) {
+                passwordNewConfirm.wipe();
+            }
+            passwordOld = new SecureCharSequence(etOldPassword);
+            passwordNew = new SecureCharSequence(etNewPassword);
+            passwordNewConfirm = new SecureCharSequence(etNewPasswordConfirm);
         }
 
         @Override
@@ -245,25 +276,31 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
         @Override
         public void afterTextChanged(Editable s) {
             tvError.setVisibility(View.GONE);
-            String p = etNewPassword.getText().toString();
+            SecureCharSequence p = new SecureCharSequence(etNewPassword);
             if (p.length() > 0) {
                 if (!StringUtil.validPassword(p)) {
                     etNewPassword.setText(passwordNew);
                 }
             }
-            String pc = etNewPasswordConfirm.getText().toString();
+            p.wipe();
+            SecureCharSequence pc = new SecureCharSequence(etNewPasswordConfirm);
             if (pc.length() > 0) {
                 if (!StringUtil.validPassword(pc)) {
                     etNewPasswordConfirm.setText(passwordNewConfirm);
                 }
             }
-            String po = etOldPassword.getText().toString();
+            pc.wipe();
+            SecureCharSequence po = new SecureCharSequence(etOldPassword);
             if (po.length() > 0) {
                 if (!StringUtil.validPassword(po)) {
                     etOldPassword.setText(passwordOld);
                 }
             }
+            po.wipe();
             checkValid();
+            passwordOld.wipe();
+            passwordNew.wipe();
+            passwordNewConfirm.wipe();
         }
     }
 }

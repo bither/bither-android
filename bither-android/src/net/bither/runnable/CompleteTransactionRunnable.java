@@ -24,6 +24,7 @@ import net.bither.model.BitherAddress;
 import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.UnSignTransaction;
 import net.bither.util.GenericUtils;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 import net.bither.util.WalletUtils;
@@ -38,12 +39,12 @@ import com.google.bitcoin.core.Wallet.SendRequest;
 public class CompleteTransactionRunnable extends BaseRunnable {
 	private BitherAddress wallet;
 	private SendRequest request;
-	private String password;
+	private SecureCharSequence password;
 	private boolean isPreSign = false;
 
 	public CompleteTransactionRunnable(int addressPosition,
-			SendRequest request, String password) throws Exception {
-		if (StringUtil.isEmpty(password)) {
+			SendRequest request, SecureCharSequence password) throws Exception {
+		if (password == null || password.length() == 0) {
 			BitherAddress a = WalletUtils.getWatchOnlyAddressList().get(
 					addressPosition);
 			wallet = a;
@@ -67,8 +68,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 	public void run() {
 		obtainMessage(HandlerMessage.MSG_PREPARE);
 		try {
-			if (!StringUtil.isEmpty(password)) {
+			if (password != null && password.length() > 0) {
 				request.aesKey = wallet.getKeyCrypter().deriveKey(password);
+                password.wipe();
 				if (!wallet.checkAESKey(request.aesKey)) {
 					obtainMessage(HandlerMessage.MSG_PASSWORD_WRONG);
 					return;

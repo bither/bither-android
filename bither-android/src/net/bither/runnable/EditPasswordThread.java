@@ -16,6 +16,7 @@
 
 package net.bither.runnable;
 
+import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
 
@@ -23,11 +24,11 @@ import net.bither.util.WalletUtils;
  * Created by songchenwen on 14-5-24.
  */
 public class EditPasswordThread extends Thread {
-    private String oldPassword;
-    private String newPassword;
+    private SecureCharSequence oldPassword;
+    private SecureCharSequence newPassword;
     private EditPasswordListener listener;
 
-    public EditPasswordThread(String oldPassword, String newPassword,
+    public EditPasswordThread(SecureCharSequence oldPassword, SecureCharSequence newPassword,
                               EditPasswordListener listener) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
@@ -37,6 +38,8 @@ public class EditPasswordThread extends Thread {
     @Override
     public void run() {
         final boolean result = WalletUtils.editPassword(oldPassword, newPassword);
+        oldPassword.wipe();
+        newPassword.wipe();
         if (listener != null) {
             ThreadUtil.runOnMainThread(new Runnable() {
                 @Override
