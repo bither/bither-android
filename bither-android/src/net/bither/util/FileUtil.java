@@ -96,7 +96,7 @@ public class FileUtil {
     private static final String IMAGE_CACHE_150 = IMAGE_CACHE_DIR + "/150";
 
     // share to weibo
-    private static int MAX_SHARE_SIZE =800;
+    private static int MAX_SHARE_SIZE = 800;
 
     /**
      * sdCard exist
@@ -544,8 +544,9 @@ public class FileUtil {
             byte[] bytes = new byte[1024];
 
             arrayOutputStream = new ByteArrayOutputStream();
-            while (is.read(bytes) != -1) {
-                arrayOutputStream.write(bytes, 0, bytes.length);
+            int count = -1;
+            while ((count = is.read(bytes)) != -1) {
+                arrayOutputStream.write(bytes, 0, count);
             }
             is.close();
             arrayOutputStream.close();
