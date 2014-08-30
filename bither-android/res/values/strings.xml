@@ -338,6 +338,6 @@
     <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
 
     <!-- upgrade -->
-    <string name="begin_upgrade">Upgrading is about to start .\nDo not exit Bither .\nDo not turn off the phone .\nDo not turn off the screen .</string>
+    <string name="begin_upgrade">Ready to upgrade?\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
     <string name="upgrading">Upgrading...</string>
 </resources>
