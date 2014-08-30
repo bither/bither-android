@@ -227,7 +227,7 @@ public final class BlockListFragment extends ListFragment {
 
         @Override
         public long getItemId(final int position) {
-            return Utils.longHash(blocks.get(position).getBlockHash());
+            return Utils.longHash(Utils.reverseBytes(blocks.get(position).getBlockHash()));
         }
 
         @Override
@@ -264,7 +264,7 @@ public final class BlockListFragment extends ListFragment {
             final TextView rowHash = (TextView) row
                     .findViewById(R.id.block_list_row_hash);
             rowHash.setText(WalletUtils.formatHash(null,
-                    Utils.bytesToHexString(storedBlock.getBlockHash()), 8, 0, ' '));
+                    Utils.bytesToHexString(Utils.reverseBytes(storedBlock.getBlockHash())), 8, 0, ' '));
 
             final int transactionChildCount = row.getChildCount()
                     - ROW_BASE_CHILD_COUNT;

@@ -181,4 +181,10 @@ public class ImageManageUtil {
         }
         return sampleSize;
     }
+
+    public static final int dip2pix(float dip) {
+        final float scale = BitherApplication.mContext.getResources()
+                .getDisplayMetrics().density;
+        return (int) (dip * scale + 0.5f);
+    }
 }
