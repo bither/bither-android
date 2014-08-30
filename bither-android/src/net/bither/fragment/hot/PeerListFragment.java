@@ -60,7 +60,6 @@ public final class PeerListFragment extends ListFragment {
     private Activity activity;
     private LoaderManager loaderManager;
 
-    private BlockchainService service;
     private ArrayAdapter<Peer> adapter;
 
     private final Handler handler = new Handler();
@@ -86,9 +85,6 @@ public final class PeerListFragment extends ListFragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        activity.bindService(new Intent(activity, BlockchainService.class),
-                serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -158,6 +154,7 @@ public final class PeerListFragment extends ListFragment {
             }
         };
         setListAdapter(adapter);
+        loaderManager.initLoader(ID_PEER_LOADER, null, peerLoaderCallbacks);
     }
 
     @Override
@@ -205,40 +202,23 @@ public final class PeerListFragment extends ListFragment {
 
     @Override
     public void onDestroy() {
-        activity.unbindService(serviceConnection);
 
         loaderManager.destroyLoader(ID_REVERSE_DNS_LOADER);
+        loaderManager.destroyLoader(ID_PEER_LOADER);
 
         super.onDestroy();
     }
 
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(final ComponentName name,
-                                       final IBinder binder) {
-            service = ((LocalBinder) binder).getService();
-
-            loaderManager.initLoader(ID_PEER_LOADER, null, peerLoaderCallbacks);
-        }
-
-        @Override
-        public void onServiceDisconnected(final ComponentName name) {
-            loaderManager.destroyLoader(ID_PEER_LOADER);
-
-            service = null;
-        }
-    };
 
     private static class PeerLoader extends AsyncTaskLoader<List<Peer>> {
         private Context context;
-        private BlockchainService service;
 
-        private PeerLoader(final Context context,
-                           @Nonnull final BlockchainService service) {
+
+        private PeerLoader(final Context context) {
             super(context);
 
             this.context = context.getApplicationContext();
-            this.service = service;
+
         }
 
         @Override
@@ -277,7 +257,7 @@ public final class PeerListFragment extends ListFragment {
     private final LoaderCallbacks<List<Peer>> peerLoaderCallbacks = new LoaderCallbacks<List<Peer>>() {
         @Override
         public Loader<List<Peer>> onCreateLoader(final int id, final Bundle args) {
-            return new PeerLoader(activity, service);
+            return new PeerLoader(activity);
         }
 
         @Override
