@@ -33,9 +33,10 @@ import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
-import net.bither.ui.base.DialogPassword.DialogPasswordListener;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.WalletUtils;
 
 public class CheckHeaderView extends FrameLayout implements DialogPasswordListener {
     public static interface CheckHeaderViewListener {
@@ -128,7 +129,7 @@ public class CheckHeaderView extends FrameLayout implements DialogPasswordListen
     };
 
     public void check() {
-        if (WalletUtils.getPrivateAddressList() == null || WalletUtils.getPrivateAddressList()
+        if (AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses()
                 .size() == 0) {
             DropdownMessage.showDropdownMessage((Activity) getContext(),
                     R.string.private_key_is_empty);

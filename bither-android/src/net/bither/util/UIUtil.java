@@ -16,11 +16,6 @@
 
 package net.bither.util;
 
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import net.bither.BitherApplication;
 
 public class UIUtil {

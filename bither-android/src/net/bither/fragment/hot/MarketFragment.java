@@ -46,6 +46,7 @@ import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.MarketUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MarketFragment extends Fragment implements Refreshable,
@@ -83,7 +84,7 @@ public class MarketFragment extends Fragment implements Refreshable,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        markets = MarketUtil.getMarkets();
+        markets = new ArrayList<Market>(MarketUtil.getMarkets());
         mAdaper = new MarketFragmentListAdapter(getActivity(), markets);
     }
 

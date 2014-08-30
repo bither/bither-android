@@ -16,16 +16,17 @@
 
 package net.bither.exception;
 
+import android.os.Build;
+import android.util.Log;
+
+import net.bither.BitherApplication;
+import net.bither.util.SystemUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-
-import net.bither.BitherApplication;
-import net.bither.util.SystemUtil;
-import android.os.Build;
-import android.util.Log;
 
 public class UEHandler implements UncaughtExceptionHandler {
 

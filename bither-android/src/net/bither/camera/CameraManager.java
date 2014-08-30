@@ -16,16 +16,6 @@
 
 package net.bither.camera;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -34,6 +24,16 @@ import android.hardware.Camera.PreviewCallback;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.PlanarYUVLuminanceSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public final class CameraManager {
 	private static final int MIN_FRAME_SIZE = 240;
@@ -246,6 +246,10 @@ public final class CameraManager {
 		if (enabled != getTorchEnabled(camera))
 			setTorchEnabled(camera, enabled);
 	}
+
+    public boolean torchEnabled(){
+        return getTorchEnabled(camera);
+    }
 
 	private static boolean getTorchEnabled(final Camera camera) {
 		final Camera.Parameters parameters = camera.getParameters();

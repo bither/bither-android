@@ -23,11 +23,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.bither.activity.hot.AddHotAddressActivity.AddAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.bitherj.core.Address;
 import net.bither.ui.base.AddAddressPrivateKeyView;
 import net.bither.ui.base.AddPrivateKeyActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddAddressPrivateKeyFragment extends Fragment implements AddAddress {
     private AddAddressPrivateKeyView v;
@@ -40,11 +41,11 @@ public class AddAddressPrivateKeyFragment extends Fragment implements AddAddress
     }
 
     public ArrayList<String> getAddresses() {
-        ArrayList<BitherAddressWithPrivateKey> addresses = v.getAddresses();
+        List<Address> addresses = v.getAddresses();
         ArrayList<String> as = new ArrayList<String>();
         if (addresses.size() > 0) {
-            for (BitherAddressWithPrivateKey address : addresses) {
-                as.add(address.getAddress());
+            for (int i = addresses.size() - 1; i >= 0; i--) {
+                as.add(addresses.get(i).getAddress());
             }
         }
         return as;

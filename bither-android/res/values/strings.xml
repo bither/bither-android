@@ -100,12 +100,9 @@
     <string name="send_progress_dialog_message">Sending</string>
     <string name="send_success">Send success</string>
     <string name="send_failed">Send failed</string>
-    <string name="send_failed_not_enough_available">Send failed. You don\'t have enough coins available. </string>
-    <string name="send_failed_missing_btc">Send failed. Lack of %s BTC. </string>
-    <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be igored.</string>
-    <string name="send_failed_pendding">%s BTC to be confirmed.</string>
-    <string name="send_failed_waiting_for_another_confirmation">Please wait for another confirmation.</string>
-    <string name="send_failed_not_enough_for_fee">Send failed. You don\'t have enough coins available for transaction fee. </string>
+    <string name="send_failed_missing_btc">Send failed. Lack of %s BTC.</string>
+    <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be ignored.</string>
+    <string name="send_failed_pendding">Send failed. %s BTC to be confirmed.\nPlease wait for another confirmation.</string>
     <string name="send_coins_fragment_sending_address_label">From</string>
     <string name="send_coins_fragment_receiving_address_label">Pay to</string>
     <string name="send_coins_fragment_amount_label">Amount to pay</string>
@@ -172,6 +169,9 @@
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
+    <string name="export_log">Export Log</string>
+    <string name="reload_tx">Reload Transaction</string>
+    <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
@@ -188,7 +188,9 @@
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
     <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
     <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
-
+    <string name="reload_tx_need_too_much_time">It may take some time to reload transactions. Sure to continue?</string>
+    <string name="reload_tx_failed">Reload transactions failed , Please retry again. </string>
+    <string name="reload_tx_success">Reload transactions success </string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>
@@ -334,4 +336,8 @@
     <string name="first_run_dialog_title">To protect your bitcoin:</string>
     <string name="first_run_dialog_line_1">NEVER UNINSTALL Bither.</string>
     <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
+
+    <!-- upgrade -->
+    <string name="begin_upgrade">Upgrading is about to start .\nDo not exit Bither .\nDo not turn off the phone .\nDo not turn off the screen .</string>
+    <string name="upgrading">Upgrading...</string>
 </resources>

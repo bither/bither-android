@@ -2103,7 +2103,7 @@ public class AndroidChartsActivity extends Activity implements
 
 	@Override
 	public void clearTounchPoint() {
-		// TODO Auto-generated method stub
+
 
 	}
 

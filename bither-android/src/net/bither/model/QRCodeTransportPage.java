@@ -16,9 +16,9 @@
 
 package net.bither.model;
 
-import java.util.List;
-
 import net.bither.util.StringUtil;
+
+import java.util.List;
 
 public class QRCodeTransportPage {
 	private int mCurrentPage;

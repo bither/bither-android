@@ -16,13 +16,14 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.util.LogUtil;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import net.bither.R;
+import net.bither.bitherj.utils.LogUtil;
 
 public class SyncProgressView extends FrameLayout {
 

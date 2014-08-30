@@ -31,8 +31,6 @@ import android.view.Window;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.api.DownloadFile;
-import net.bither.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.GetAvatarListener;
 

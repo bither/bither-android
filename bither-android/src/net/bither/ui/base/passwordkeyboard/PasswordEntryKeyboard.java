@@ -24,8 +24,6 @@ import android.inputmethodservice.Keyboard;
 
 import net.bither.R;
 
-import java.util.Arrays;
-
 /**
  * Created by songchenwen on 14-7-18.
  */

@@ -32,10 +32,12 @@ import android.widget.ExpandableListView;
 
 import net.bither.R;
 import net.bither.adapter.hot.HotAddressFragmentListAdapter;
+import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
-import net.bither.model.BitherAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.runnable.HandlerMessage;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.AddressInfoChangedObserver;
@@ -44,10 +46,8 @@ import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +56,10 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private HotAddressFragmentListAdapter mAdapter;
     private PinnedHeaderAddressExpandableListView lv;
     private View ivNoAddress;
-    private List<BitherAddress> watchOnlys;
-    private List<BitherAddressWithPrivateKey> privates;
+    private List<Address> watchOnlys;
+    private List<Address> privates;
     private boolean isLoading = false;
-    private boolean isWalletReady = false;
+
     private SelectedThread selectedThread;
     private IntentFilter broadcastIntentFilter = new IntentFilter();
     private List<String> addressesToShowAdded;
@@ -68,24 +68,16 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     @Override
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
-        broadcastIntentFilter.addAction(BroadcastUtil.ACTION_ADDRESS_STATE);
         broadcastIntentFilter.addAction(BroadcastUtil.ACTION_MARKET);
-        watchOnlys = new ArrayList<BitherAddress>();
-        privates = new ArrayList<BitherAddressWithPrivateKey>();
-        List<BitherAddressWithPrivateKey> ps = WalletUtils.getPrivateAddressList();
-        List<BitherAddress> ws = WalletUtils.getWatchOnlyAddressList();
-        if (ws != null) {
-            watchOnlys.addAll(ws);
-        }
-        if (ps != null) {
-            privates.addAll(ps);
-        }
+        watchOnlys = new ArrayList<Address>();
+        privates = new ArrayList<Address>();
+
     }
 
     public void refresh() {
-        if (isWalletReady) {
-            List<BitherAddressWithPrivateKey> ps = WalletUtils.getPrivateAddressList();
-            List<BitherAddress> ws = WalletUtils.getWatchOnlyAddressList();
+        if (BitherjApplication.addressIsReady) {
+            List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
+            List<Address> ws = AddressManager.getInstance().getWatchOnlyAddresses();
             watchOnlys.clear();
             privates.clear();
             if (ws != null) {
@@ -120,21 +112,19 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().registerReceiver(walletReadyReceiver, new IntentFilter(BroadcastUtil
-                        .ACTION_ADDRESS_LOAD_COMPLETE_STATE)
-        );
         View view = inflater.inflate(R.layout.fragment_hot_address, container, false);
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
         mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, lv);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
+        refresh();
         return view;
+
     }
 
     @Override
     public void onDestroyView() {
-        getActivity().unregisterReceiver(walletReadyReceiver);
         super.onDestroyView();
     }
 
@@ -355,24 +345,12 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         }
     };
 
-    private BroadcastReceiver walletReadyReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            isWalletReady = true;
-            LogUtil.d("Wallet", "WalletReady");
-            refresh();
-        }
-    };
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             // getString("","") is api 12
             String a = null;
-            if (intent.hasExtra(BroadcastUtil.ACTION_ADDRESS_STATE)) {
-                a = intent.getExtras().getString(BroadcastUtil.ACTION_ADDRESS_STATE);
-            }
 
             if (intent.hasExtra(BroadcastUtil.ACTION_ADDRESS_ERROR)) {
                 int errorCode = intent.getExtras().getInt(BroadcastUtil.ACTION_ADDRESS_ERROR);
@@ -400,7 +378,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             }
         }
     };
-    
+
     private OnScrollListener listScroll = new OnScrollListener() {
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }

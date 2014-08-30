@@ -16,20 +16,20 @@
 
 package net.bither.receiver;
 
-import net.bither.BitherSetting;
-import net.bither.BitherSetting.AppMode;
-import net.bither.ChooseModeActivity;
-import net.bither.R;
-import net.bither.preference.AppSharedPreference;
-import net.bither.util.LogUtil;
-import net.bither.util.NetworkUtil;
-import net.bither.util.ServiceUtil;
-import net.bither.util.SystemUtil;
-
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import net.bither.BitherSetting;
+import net.bither.ChooseModeActivity;
+import net.bither.R;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.NetworkUtil;
+import net.bither.util.ServiceUtil;
+import net.bither.util.SystemUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
@@ -40,7 +40,7 @@ public class NetworkReceiver extends BroadcastReceiver {
         }
         String action = intent.getAction();
         LogUtil.d("receiver", action);
-        if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             if (NetworkUtil.isConnected() || NetworkUtil.BluetoothIsConnected()) {
                 NotificationManager nm = (NotificationManager) context
                         .getSystemService(Context.NOTIFICATION_SERVICE);

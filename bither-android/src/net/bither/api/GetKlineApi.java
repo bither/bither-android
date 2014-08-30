@@ -16,8 +16,6 @@
 
 package net.bither.api;
 
-import java.util.List;
-
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
 import net.bither.charts.entity.IStickEntity;
@@ -27,6 +25,8 @@ import net.bither.util.ChartsUtil;
 import net.bither.util.StringUtil;
 
 import org.json.JSONArray;
+
+import java.util.List;
 
 public class GetKlineApi extends HttpGetResponse<List<IStickEntity>> {
 

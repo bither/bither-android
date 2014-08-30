@@ -16,20 +16,15 @@
 
 package net.bither.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.bither.bitherj.core.Block;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.util.BlockUtil;
-import net.bither.util.LogUtil;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.bitcoin.core.StoredBlock;
 
-public class DownloadSpvApi extends HttpGetResponse<StoredBlock> {
+public class DownloadSpvApi extends HttpGetResponse<Block> {
 
     public DownloadSpvApi() {
         setUrl(BitherUrl.BITHER_GET_ONE_SPVBLOCK_API);
@@ -37,8 +32,8 @@ public class DownloadSpvApi extends HttpGetResponse<StoredBlock> {
 
     @Override
     public void setResult(String response) throws Exception {
-        LogUtil.d("http", response);
-        List<StoredBlock> storedBlocks = new ArrayList<StoredBlock>();
+
+
         JSONObject jsonObject = new JSONObject(response);
         this.result = BlockUtil.formatStoredBlock(jsonObject);
 

@@ -1,23 +1,20 @@
 repositories {
     mavenLocal()
-    maven { url 'http://distribution.bitcoinj.googlecode.com/git/releases/' }
     mavenCentral()
 }
 dependencies {
     compile 'commons-lang:commons-lang:2.6@jar'
-    compile ('com.github.tony19:logback-android-classic:1.0.10-2@jar'){
-        // Work around for gradle 0.9 and 0.10
-        transitive = true
-    }
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.google.protobuf:protobuf-java:2.5.0'
+    compile 'com.android.support:appcompat-v7:19.+'
+
+
     compile 'com.nineoldandroids:library:2.4.+'
     compile 'com.google.zxing:core:2.2@jar'
-    compile ('com.google:bitcoinj:0.11.2@jar'){
-        transitive = true
-    }
-    compile 'com.lambdaworks:scrypt:1.4.0@jar'
+
+
     compile 'org.apache.httpcomponents:httpmime:4.1@jar'
     compile 'org.apache.james:apache-mime4j-core:0.7.1@jar'
+    compile project(':bitherj')
     compile project(':wheel')
     compile project(':android-charts')
 }

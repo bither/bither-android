@@ -1,0 +1,4 @@
+[submodule "bitherj"]
+	path = bitherj
+	url = git@github.com:bither/bitherj.git
+	branch = develop

@@ -16,16 +16,17 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.util.GenericUtils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.util.GenericUtils;
+
+import java.math.BigInteger;
 
 public class BtcAndMoneyAmountVerticalView extends FrameLayout {
 
@@ -70,7 +71,7 @@ public class BtcAndMoneyAmountVerticalView extends FrameLayout {
 			tvBtc.setTextColor(getContext().getResources()
 					.getColor(R.color.red));
 		}
-		tvBtc.setText(GenericUtils.formatValue(btc));
+		tvBtc.setText(GenericUtils.formatValue(btc.longValue()));
 		tvMoney.setBigInteger(btc);
 	}
 

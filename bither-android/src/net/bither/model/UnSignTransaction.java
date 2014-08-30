@@ -16,52 +16,51 @@
 
 package net.bither.model;
 
-import java.io.Serializable;
-
+import net.bither.bitherj.core.Tx;
 import net.bither.util.StringUtil;
 
-import com.google.bitcoin.core.Transaction;
+import java.io.Serializable;
 
 public class UnSignTransaction implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	public UnSignTransaction(Transaction tx, String address) {
-		this.mTx = tx;
-		this.mAddress = address;
-	}
+    public UnSignTransaction(Tx tx, String address) {
+        this.mTx = tx;
+        this.mAddress = address;
+    }
 
-	private Transaction mTx;
+    private Tx mTx;
 
-	private String mAddress;
+    private String mAddress;
 
-	public Transaction getTx() {
-		return mTx;
-	}
+    public Tx getTx() {
+        return mTx;
+    }
 
-	public void setTx(Transaction mTx) {
-		this.mTx = mTx;
-	}
+    public void setTx(Tx mTx) {
+        this.mTx = mTx;
+    }
 
-	public String getAddress() {
-		return mAddress;
-	}
+    public String getAddress() {
+        return mAddress;
+    }
 
-	public void setAddress(String mAddress) {
-		this.mAddress = mAddress;
-	}
+    public void setAddress(String mAddress) {
+        this.mAddress = mAddress;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof UnSignTransaction) {
-			UnSignTransaction unSignTransaction = (UnSignTransaction) o;
-			return StringUtil.compareString(getAddress(),
-					unSignTransaction.getAddress());
-		}
-		return super.equals(o);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof UnSignTransaction) {
+            UnSignTransaction unSignTransaction = (UnSignTransaction) o;
+            return StringUtil.compareString(getAddress(),
+                    unSignTransaction.getAddress());
+        }
+        return super.equals(o);
+    }
 
 }

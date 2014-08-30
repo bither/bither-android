@@ -16,7 +16,10 @@
 
 package net.bither.activity.cold;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -26,29 +29,34 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 
-import com.google.bitcoin.core.ECKey;
-
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.NotificationUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.model.PasswordSeed;
-import net.bither.ui.base.DialogColdAddressCount;
-import net.bither.ui.base.DialogConfirmTask;
-import net.bither.ui.base.DialogFirstRunWarning;
-import net.bither.ui.base.DialogPassword;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.ProgressDialog;
 import net.bither.ui.base.TabButton;
+import net.bither.ui.base.dialog.DialogColdAddressCount;
+import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
-import net.bither.util.LogUtil;
+import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -69,6 +77,7 @@ public class ColdActivity extends FragmentActivity {
     private ColdFragmentPagerAdapter mAdapter;
     private ViewPager mPager;
     private ProgressDialog pd;
+    private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -88,10 +97,8 @@ public class ColdActivity extends FragmentActivity {
                         if (f instanceof Selectable) {
                             ((Selectable) f).onSelected();
                         }
-                        if (WalletUtils.getPrivateAddressList() != null && WalletUtils
-                                .getPrivateAddressList().size() == 0) {
-                            checkBackup();
-                        }
+
+                        BackupUtil.backupColdKey(true);
                     }
                 }, 100);
 
@@ -111,6 +118,7 @@ public class ColdActivity extends FragmentActivity {
                         .getSerializable(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
                 ColdAddressFragment af = (ColdAddressFragment) f;
                 af.showAddressesAdded(addresses);
+
             }
             if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
                     .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
@@ -185,6 +193,8 @@ public class ColdActivity extends FragmentActivity {
         mPager.setOffscreenPageLimit(2);
         mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
                 tbtnMain, tbtnMe}, mPager));
+        registerReceiver(addressIsLoadedReceiver,
+                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     private class PageChangeListener implements OnPageChangeListener {
@@ -287,7 +297,7 @@ public class ColdActivity extends FragmentActivity {
     }
 
     private void configureTabArrow() {
-        if (WalletUtils.getBitherAddressList().size() > 0) {
+        if (AddressManager.getInstance().getAllAddresses().size() > 0) {
             tbtnMain.setArrowVisible(true, true);
         } else {
             tbtnMain.setArrowVisible(false, false);
@@ -334,11 +344,11 @@ public class ColdActivity extends FragmentActivity {
     private void showDialogPassword() {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
                 new DialogPassword.DialogPasswordListener() {
-            @Override
-            public void onPasswordEntered(SecureCharSequence password) {
-                importWalletFromBackup(password);
-            }
-        });
+                    @Override
+                    public void onPasswordEntered(SecureCharSequence password) {
+                        importWalletFromBackup(password);
+                    }
+                });
         dialogPassword.setCheckPre(false);
         dialogPassword.show();
     }
@@ -361,8 +371,8 @@ public class ColdActivity extends FragmentActivity {
                     if (!check) {
                         checkPasswordWrong();
                     } else {
-                        List<BitherAddressWithPrivateKey> wallets = new
-                                ArrayList<BitherAddressWithPrivateKey>();
+                        List<Address> addressList = new
+                                ArrayList<Address>();
                         for (String keyString : strings) {
                             String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
                             if (strs.length != 4) {
@@ -372,16 +382,12 @@ public class ColdActivity extends FragmentActivity {
                             passwordSeed.checkPassword(password);
                             ECKey key = passwordSeed.getECKey();
                             if (key != null) {
-                                BitherAddressWithPrivateKey wallet = new
-                                        BitherAddressWithPrivateKey(false);
-                                wallet.setKeyCrypter(key.getKeyCrypter());
-                                wallet.addKey(key);
-                                wallets.add(wallet);
+                                addressList.add(new Address(key.toAddress(), key.getPubKey(), PrivateKeyUtil.getPrivateKeyString(key)));
 
                             }
                         }
                         password.wipe();
-                        WalletUtils.addAddressWithPrivateKey(null, wallets);
+                        KeyUtil.addAddressList(null, addressList);
                         recoverBackupSuccess();
                     }
 
@@ -424,5 +430,23 @@ public class ColdActivity extends FragmentActivity {
     protected void onDestroy() {
         BitherApplication.coldActivity = null;
         super.onDestroy();
+    }
+
+    private final class AddressIsLoadedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+                return;
+            }
+            BitherApplication.addressIsReady = true;
+            Fragment fragment = getFragmentAtIndex(1);
+            if (fragment != null && fragment instanceof HotAddressFragment) {
+                ((ColdAddressFragment) fragment).refresh();
+            }
+            if (AddressManager.getInstance().getPrivKeyAddresses() != null
+                    && AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
+                checkBackup();
+            }
+        }
     }
 }

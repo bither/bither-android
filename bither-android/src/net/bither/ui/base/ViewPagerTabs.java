@@ -16,9 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -30,6 +27,9 @@ import android.os.Parcelable;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewPagerTabs extends View implements OnPageChangeListener {
 	private final List<String> labels = new ArrayList<String>();

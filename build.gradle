@@ -1,3 +1,5 @@
+apply plugin: 'android-library'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -6,6 +8,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:0.12.+'
     }
 }
+
 project(':bither-android') {
     apply plugin: 'android'
 }
@@ -15,7 +18,11 @@ project(':wheel') {
 project(':android-charts') {
     apply plugin: 'android-library'
 }
+project(':bitherj') {
+    apply plugin: 'android-library'
+}
 subprojects {
+
     android {
         compileSdkVersion 19
         buildToolsVersion '19.1'
@@ -29,8 +36,6 @@ subprojects {
                 jniLibs.srcDirs = ['native-libs']
                 jni.srcDirs = []
             }
-
-            instrumentTest.setRoot('tests')
 
             // Move the build types to build-types/<type>
             // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
@@ -48,9 +53,9 @@ subprojects {
             exclude 'META-INF/LICENSE'
             exclude 'META-INF/DEPENDENCIES'
             exclude 'org/apache/http/entity/mime/version.properties'
-            exclude 'com/google/bitcoin/crypto/mnemonic/wordlist/english.txt'
-            exclude 'com/google/bitcoin/protocols/payments/cacerts'
             exclude 'lib/x86_64/darwin/libscrypt.dylib'
+            exclude 'lib/x86_64/freebsd/libscrypt.so'
+            exclude 'lib/x86_64/linux/libscrypt.so'
         }
         lintOptions {
             abortOnError false

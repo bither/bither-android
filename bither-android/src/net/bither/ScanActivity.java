@@ -16,16 +16,6 @@
 
 package net.bither;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.Map;
-
-import net.bither.camera.CameraManager;
-import net.bither.ui.base.ScannerView;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +38,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 
 import com.google.zxing.BinaryBitmap;
@@ -60,7 +52,17 @@ import com.google.zxing.ResultPointCallback;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
-public class ScanActivity extends Activity implements SurfaceHolder.Callback {
+import net.bither.camera.CameraManager;
+import net.bither.ui.base.ScannerView;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
+
+public class ScanActivity extends Activity implements SurfaceHolder.Callback, CompoundButton.OnCheckedChangeListener {
 	public static final String INTENT_EXTRA_RESULT = "result";
 
 	private static final long VIBRATE_DURATION = 50L;
@@ -94,6 +96,7 @@ public class ScanActivity extends Activity implements SurfaceHolder.Callback {
 		setContentView(R.layout.scan_activity);
 		flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
 		scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
+        ((CheckBox) findViewById(R.id.cbx_torch)).setOnCheckedChangeListener(this);
 	}
 
 	public void setOverlay(View v) {
@@ -261,7 +264,20 @@ public class ScanActivity extends Activity implements SurfaceHolder.Callback {
 		}
 	};
 
-	private final class AutoFocusRunnable implements Runnable {
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+        if(buttonView.getId() == R.id.cbx_torch){
+            cameraHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    cameraManager
+                            .setTorch(isChecked);
+                }
+            });
+        }
+    }
+
+    private final class AutoFocusRunnable implements Runnable {
 		private final Camera camera;
 
 		public AutoFocusRunnable(final Camera camera) {

@@ -26,20 +26,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionConfidence.ConfidenceType;
-
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.model.AddressInfo;
-import net.bither.model.BitherAddress;
-import net.bither.util.ConfidenceUtil;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.Tx;
+import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class AddressFragmentListItemView extends FrameLayout implements
         AddressInfoChangedObserver, MarketTickerChangedObserver {
@@ -55,7 +52,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private View llExtra;
     private TextView tvTransactionCount;
     private View llMonitorFailed;
-    private BitherAddress address;
+    private Address address;
 
     public AddressFragmentListItemView(FragmentActivity activity) {
         super(activity);
@@ -91,7 +88,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         super(context, attrs, defStyle);
     }
 
-    public void setAddress(BitherAddress address, int loaderPosition, boolean isPrivate) {
+    public void setAddress(Address address, int loaderPosition, boolean isPrivate) {
         this.address = address;
 
         if (address != null) {
@@ -109,25 +106,26 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llExtra.setVisibility(View.VISIBLE);
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
-        if (address.hasPrivateKey()) {
+        if (address.hasPrivKey()) {
             ivWatchOnlyType.setVisibility(GONE);
             ivPrivateType.setVisibility(VISIBLE);
         } else {
             ivWatchOnlyType.setVisibility(VISIBLE);
             ivPrivateType.setVisibility(GONE);
         }
-        if (this.address.getAddressInfo() != null && address.isReadyToShow() && !address.isError
-                ()) {
-            tvBalance.setText(GenericUtils.formatValueWithBold(this.address.getAddressInfo()
-                    .getBalance()));
-            tvBalanceMoney.setBigInteger(this.address.getAddressInfo().getBalance());
-            tvTransactionCount.setText(Integer.toString(this.address.getAddressInfo().getTxCount
-                    ()));
-            Transaction lastTransaction = WalletUtils.getLastTx(this.address);
-            if (lastTransaction != null && (lastTransaction.getConfidence().getConfidenceType()
-                    == ConfidenceType.BUILDING || lastTransaction.getConfidence()
-                    .getConfidenceType() == ConfidenceType.PENDING) && ConfidenceUtil
-                    .getDepthInChain(lastTransaction.getConfidence()) < 6) {
+        if (this.address != null && this.address.isSyncComplete()) {
+            tvBalance.setText(GenericUtils.formatValueWithBold(this.address.getBalance()));
+            tvBalanceMoney.setBigInteger(BigInteger.valueOf(this.address.getBalance()));
+            tvTransactionCount.setText(Integer.toString(this.address.txCount()));
+
+            Tx lastTransaction = null;
+            if (this.address.txCount() > 0) {
+                List<Tx> txList = this.address.getRecentlyTxsWithConfirmationCntLessThan(6, 1);
+                if (txList.size() > 0) {
+                    lastTransaction = txList.get(0);
+                }
+            }
+            if (lastTransaction != null && lastTransaction.getConfirmationCount() < 6) {
                 vTransactionImmuture.setVisibility(View.VISIBLE);
                 vTransactionImmuture.setTransaction(lastTransaction, address);
             } else {
@@ -141,16 +139,13 @@ public class AddressFragmentListItemView extends FrameLayout implements
             tvBalance.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             tvBalanceMoney.setBigInteger(null);
             vTransactionImmuture.setVisibility(View.GONE);
-            if (address.isError()) {
-                llExtra.setVisibility(View.GONE);
-                llMonitorFailed.setVisibility(View.VISIBLE);
-            }
+//            if (address.isError()) {
+//                llExtra.setVisibility(View.GONE);
+//                llMonitorFailed.setVisibility(View.VISIBLE);
+//            }
         }
     }
 
-    public AddressInfo getAddressInfo() {
-        return this.address.getAddressInfo();
-    }
 
     @Override
     public void onMarketTickerChanged() {
@@ -167,8 +162,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private OnClickListener addressFullClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ArrayMap<String, BigInteger> map = new ArrayMap<String, BigInteger>();
-            map.put(address.getAddress(), null);
+            ArrayMap<String, Long> map = new ArrayMap<String, Long>();
+            map.put(address.getAddress(), 0L);
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);
         }

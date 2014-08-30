@@ -96,12 +96,9 @@
     <string name="send_progress_dialog_message">发送中</string>
     <string name="send_success">发送成功</string>
     <string name="send_failed">发送失败</string>
-    <string name="send_failed_not_enough_available">发送失败. 可用余额不足.</string>
     <string name="send_failed_missing_btc">发送失败. 可用余额中缺少 %s BTC.</string>
     <string name="send_failed_dust_out_put">发送失败. 这样小额的交易会被忽略.</string>
-    <string name="send_failed_pendding">%s BTC 正在等待确认.</string>
-    <string name="send_failed_waiting_for_another_confirmation">请等待一个新的确认后再交易.</string>
-    <string name="send_failed_not_enough_for_fee">发送失败. 可用余额不足以支付手续费.</string>
+    <string name="send_failed_pendding">发送失败. %s BTC 正在等待确认.\n请等待一个新的确认后再交易.</string>
     <string name="send_coins_fragment_sending_address_label">从</string>
     <string name="send_coins_fragment_receiving_address_label">发送给</string>
     <string name="send_coins_fragment_amount_label">金额</string>
@@ -168,6 +165,9 @@
     <string name="set_avatar_camera">来自相机</string>
     <string name="set_avatar_gallery">来自图库</string>
     <string name="edit_password_button">修改密码</string>
+    <string name="export_log">导出日志</string>
+    <string name="reload_tx">重载交易</string>
+    <string name="export_success">日志已导出到 :</string>
     <string name="setting_name_import_private_key">导入私钥</string>
     <string name="import_private_key_qr_code">来自私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
@@ -184,6 +184,9 @@
     <string name="import_private_key_qr_code_failed_different_password">导入私钥的密码与已有密码不同, 无法导入</string>
     <string name="import_private_key_failed_tx_too_mush">此私钥有太多交易 ,不能导入</string>
     <string name="import_private_key_failed_special_address">此私钥有特殊交易 ,不能导入</string>
+    <string name="reload_tx_need_too_much_time">重载交易需要些时间，是否继续？</string>
+    <string name="reload_tx_failed">重载交易失败 , 请重试 . </string>
+    <string name="reload_tx_success">重载交易成功 </string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">无法分类输入:\n%s</string>
@@ -320,4 +323,8 @@
     <string name="first_run_dialog_title">为了保护您的比特币:</string>
     <string name="first_run_dialog_line_1">请不要卸载比太钱包</string>
     <string name="first_run_dialog_line_2">请不要清除比太数据</string>
+
+    <!-- upgrade -->
+    <string name="begin_upgrade">即将开始升级…\n请不要退出应用\n请不要关闭手机\n请不要关闭手机屏幕</string>
+    <string name="upgrading">升级中...</string>
 </resources>

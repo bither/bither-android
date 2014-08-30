@@ -24,7 +24,7 @@ import android.view.View;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ui.base.ProgressDialog;
+import net.bither.ui.base.dialog.ProgressDialog;
 
 
 /**

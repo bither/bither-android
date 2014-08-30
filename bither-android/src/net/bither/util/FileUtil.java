@@ -29,13 +29,10 @@ import android.provider.MediaStore;
 import com.pi.common.util.NativeUtil;
 
 import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-import net.bither.BitherSetting.AppMode;
-import net.bither.preference.AppSharedPreference;
+import net.bither.bitherj.utils.Utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -53,8 +50,6 @@ import java.util.List;
 
 public class FileUtil {
 
-    // old watch only dir
-    private static final String WALLET_WATCH_ONLY_OLD = "w";
 
     // old tickerName file
     private static final String HUOBI_TICKER_NAME = "huobi.ticker";
@@ -64,26 +59,18 @@ public class FileUtil {
     private static final String CHBTC_TICKER_NAME = "chbtc.ticker";
     private static final String BTCCHINA_TICKER_NAME = "btcchina.ticker";
 
-    private static final String WALLET_ROM_CACHE = "wallet";
-    private static final String WALLET_WATCH_ONLY = "watch";
-    private static final String WALLET_HOT = "hot";
-    private static final String WALLET_COLD = "cold";
-    private static final String WALLET_ERROR = "error";
-    private static final String UNSIGN_TXS = "unsign_txs";
 
     private static final String BITHER_BACKUP_SDCARD_DIR = "BitherBackup";
     private static final String BITHER_BACKUP_ROM_DIR = "backup";
 
     private static final String BITHER_BACKUP_HOT_FILE_NAME = "keys";
 
-    private static final String WALLET_SEQUENCE_WATCH_ONLY = "sequence_watch_only";
-    private static final String WALLET_SEQUENCE_PRIVATE = "sequence_private";
 
     private static final String EXCAHNGE_TICKER_NAME = "exchange.ticker";
     private static final String EXCHANGE_KLINE_NAME = "exchange.kline";
     private static final String EXCHANGE_DEPTH_NAME = "exchange.depth";
     private static final String PRICE_ALERT = "price.alert";
-    private static final String ADDRESS_LIST = "address_list";
+
 
     private static final String EXCHANGERATE = "exchangerate";
     private static final String MARKET_CAHER = "mark";
@@ -95,8 +82,6 @@ public class FileUtil {
     private static final String IMAGE_CACHE_612 = IMAGE_CACHE_DIR + "/612";
     private static final String IMAGE_CACHE_150 = IMAGE_CACHE_DIR + "/150";
 
-    // share to weibo
-    private static int MAX_SHARE_SIZE = 800;
 
     /**
      * sdCard exist
@@ -147,7 +132,7 @@ public class FileUtil {
     }
 
     private static File getBackupRomDir() {
-        File backupDir = new File(getWalletRomCache(), BITHER_BACKUP_ROM_DIR);
+        File backupDir = new File(Utils.getWalletRomCache(), BITHER_BACKUP_ROM_DIR);
 
         if (!backupDir.exists()) {
             backupDir.mkdirs();
@@ -222,97 +207,8 @@ public class FileUtil {
         return true;
     }
 
-    public static File getWalletErrorFile(String address) {
-        File file = getWatchErrorDir();
-        return new File(file, address);
 
-    }
 
-    public static File getPrivateCacheDir() {
-        File file = getWalletRomCache();
-        String dirName = WALLET_HOT;
-        if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
-            dirName = WALLET_COLD;
-        }
-        file = new File(file, dirName);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file;
-    }
-
-    public static File getWalletFileFromPrivate(String address) {
-        File file = null;
-        file = getPrivateCacheDir();
-        return new File(file, address);
-    }
-
-    public static File getWarmPrivateAddressSequenceFile() {
-        File dir = getWalletRomCache();
-        File file = new File(dir, WALLET_SEQUENCE_PRIVATE);
-        return file;
-    }
-
-    public static File getWatchOnlyAddressSequenceFile() {
-        File dir = getWalletRomCache();
-        File file = new File(dir, WALLET_SEQUENCE_WATCH_ONLY);
-        return file;
-    }
-
-    public static File getAddressListFile() {
-        File file = BitherApplication.mContext.getFileStreamPath(ADDRESS_LIST);
-        return file;
-    }
-
-    public static File getWalletRomCache() {
-        File file = BitherApplication.mContext.getDir(WALLET_ROM_CACHE,
-                Context.MODE_PRIVATE);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file;
-    }
-
-    public static File getUnSignTxsCacheFile() {
-        File file = getWalletRomCache();
-        return new File(file, UNSIGN_TXS);
-    }
-
-    public static File getWatchOnlyCacheDir() {
-        File file = getWalletRomCache();
-        file = new File(file, WALLET_WATCH_ONLY);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file;
-    }
-
-    public static File getOldWatchOnlyCacheDir() {
-        File file = getWalletRomCache();
-        file = new File(file, WALLET_WATCH_ONLY_OLD);
-        return file;
-    }
-
-    public static File getWatchErrorDir() {
-        File file = getWalletRomCache();
-        file = new File(file, WALLET_ERROR);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        return file;
-    }
-
-    public static File getWalletFileFromWatch(String address) {
-        File file = getWatchOnlyCacheDir();
-        return new File(file, address);
-    }
-
-    public static File getBlockChainFile() {
-        return new File(BitherApplication.mContext.getDir(
-                BitherSetting.BLOCKCHAIN_FOLDER, Context.MODE_PRIVATE),
-                BitherSetting.BLOCKCHAIN_FILENAME
-        );
-    }
 
     private static File getMarketCache() {
         return getDiskDir(MARKET_CAHER, false);
@@ -360,21 +256,6 @@ public class FileUtil {
         return file;
     }
 
-    public static void writeFile(byte[] data, File tar) throws IOException {
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(tar);
-            outputStream.write(data);
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (outputStream != null) {
-                outputStream.close();
-            }
-        }
-    }
 
     @SuppressWarnings("resource")
     public static Object deserialize(File file) {
@@ -533,33 +414,6 @@ public class FileUtil {
         }
     }
 
-    public static String readFile(File file) {
-        if (!file.exists()) {
-            return null;
-        }
-        FileInputStream is = null;
-        ByteArrayOutputStream arrayOutputStream = null;
-        try {
-            is = new FileInputStream(file);
-            byte[] bytes = new byte[1024];
-
-            arrayOutputStream = new ByteArrayOutputStream();
-            int count = -1;
-            while ((count = is.read(bytes)) != -1) {
-                arrayOutputStream.write(bytes, 0, count);
-            }
-            is.close();
-            arrayOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new String(arrayOutputStream.toByteArray());
-
-    }
 
     public static void upgradeTickerFile() {
         File marketDir = getMarketCache();

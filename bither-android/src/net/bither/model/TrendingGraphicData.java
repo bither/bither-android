@@ -16,12 +16,13 @@
 
 package net.bither.model;
 
-import static com.google.common.base.Preconditions.checkState;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.TrendingGraphicUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import static com.google.common.base.Preconditions.checkState;
 
 public class TrendingGraphicData {
 

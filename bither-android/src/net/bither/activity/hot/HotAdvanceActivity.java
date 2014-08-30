@@ -26,34 +26,41 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
-
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.db.TxProvider;
+import net.bither.bitherj.utils.NotificationUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
-import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
-import net.bither.ui.base.DialogEditPassword;
-import net.bither.ui.base.DialogImportPrivateKeyText;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.BackClickListener;
-import net.bither.util.PrivateKeyUtil;
+import net.bither.util.FileUtil;
+import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
-import net.bither.util.WalletUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +71,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
+    private Button btnExportLog;
+    private Button btnResetTx;
     private DialogProgress dp;
 
     @Override
@@ -82,6 +91,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         dp = new DialogProgress(this, R.string.please_wait);
+        btnExportLog = (Button) findViewById(R.id.btn_export_log);
+        btnExportLog.setOnClickListener(exportLogClick);
+        btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
+        btnResetTx.setOnClickListener(resetTxListener);
     }
 
     private SettingSelectorView.SettingSelector wifiSelector = new SettingSelectorView
@@ -144,6 +157,141 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             dialog.show();
         }
     };
+
+    private View.OnClickListener exportLogClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    final File logTagDir = FileUtil.getDiskDir("log", true);
+                    try {
+                        File logDir = Utils.getLogDir();
+
+                        FileUtil.copyFile(logDir, logTagDir);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                    getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
+                        }
+                    });
+                }
+            }).start();
+
+        }
+    };
+
+    private View.OnClickListener resetTxListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Runnable confirmRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+                    if (passwordSeed == null) {
+                        resetTx();
+                    } else {
+                        callPassword();
+                    }
+                }
+            };
+            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this,
+                    getString(R.string.reload_tx_need_too_much_time), confirmRunnable
+            );
+            dialogConfirmTask.show();
+
+        }
+    };
+
+    private void callPassword() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new DialogPassword.DialogPasswordListener() {
+                    @Override
+                    public void onPasswordEntered(SecureCharSequence password) {
+                        resetTx();
+
+                    }
+                });
+                dialogPassword.show();
+
+            }
+        });
+    }
+
+    private void resetTx() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dp == null) {
+                    dp = new DialogProgress(HotAdvanceActivity.this, R.string.please_wait);
+                }
+                dp.show();
+            }
+        });
+        ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
+            @Override
+            public void runWithService(BlockchainService service) {
+                try {
+                    service.stopAndUnregister();
+                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                        address.setSyncComplete(false);
+                        address.savePubKey();
+
+                    }
+                    TxProvider.getInstance().clearAllTx();
+                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                        address.notificatTx(null, Tx.TxNotificationType.txFromApi);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dp.dismiss();
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.reload_tx_failed);
+                        }
+                    });
+                    return;
+                }
+                try {
+                    if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                        TransactionsUtil.getMyTxFromBither();
+                    }
+                    service.startAndRegister();
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dp.dismiss();
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.reload_tx_success);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dp.dismiss();
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.network_or_connection_error);
+                        }
+                    });
+
+                }
+            }
+        };
+        threadNeedService.start();
+
+
+    }
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
@@ -303,6 +451,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void runWithService(BlockchainService service) {
+
             ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
             if (key == null) {
                 password.wipe();
@@ -314,15 +463,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             dp.dismiss();
                         }
                         DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                R.string.import_private_key_qr_code_failed);
+                                R.string.password_wrong);
                     }
                 });
                 return;
             }
-            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
-            wallet.setKeyCrypter(key.getKeyCrypter());
-            wallet.addKey(key);
-            if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
+            Address address = new Address(key.toAddress(), key.getPubKey(), PrivateKeyUtil.getPrivateKeyString(key));
+            if (AddressManager.getInstance().getWatchOnlyAddresses().contains(address)) {
                 password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -336,7 +483,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 });
                 return;
-            } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
+            } else if (AddressManager.getInstance().getPrivKeyAddresses().contains(address)) {
                 password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -368,17 +515,17 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     return;
                 }
                 password.wipe();
-                Address address = key.toAddress(BitherSetting.NETWORK_PARAMETERS);
+
                 try {
                     List<String> addressList = new ArrayList<String>();
-                    addressList.add(address.toString());
+                    addressList.add(key.toAddress());
                     BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
                     switch (addressType) {
                         case Normal:
-                            List<BitherAddressWithPrivateKey> wallets = new
-                                    ArrayList<BitherAddressWithPrivateKey>();
-                            wallets.add(wallet);
-                            WalletUtils.addAddressWithPrivateKey(service, wallets);
+                            List<Address> wallets = new
+                                    ArrayList<Address>();
+                            wallets.add(address);
+                            KeyUtil.addAddressList(service, wallets);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

@@ -16,33 +16,34 @@
 
 package net.bither.runnable;
 
-import java.io.File;
-
 import net.bither.api.BitherErrorApi;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.FileUtil;
 import net.bither.util.StringUtil;
 
+import java.io.File;
+
 public class AddErrorMsgRunnable extends BaseRunnable {
 
-	@Override
-	public void run() {
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		try {
-			File errorFile = FileUtil.getErrorLogFile();
-			if (errorFile.exists()) {
-				String errorMsg = FileUtil.readFile(errorFile);
+    @Override
+    public void run() {
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        try {
+            File errorFile = FileUtil.getErrorLogFile();
+            if (errorFile.exists()) {
+                String errorMsg = Utils.readFile(errorFile);
                 if (!StringUtil.isEmpty(errorMsg)) {
                     BitherErrorApi addFeedbackApi = new BitherErrorApi(errorMsg);
                     addFeedbackApi.handleHttpPost();
                 }
-				errorFile.delete();
-				obtainMessage(HandlerMessage.MSG_SUCCESS);
-			}
+                errorFile.delete();
+                obtainMessage(HandlerMessage.MSG_SUCCESS);
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			obtainMessage(HandlerMessage.MSG_FAILURE_NETWORK);
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+            obtainMessage(HandlerMessage.MSG_FAILURE_NETWORK);
+        }
 
-	}
+    }
 }

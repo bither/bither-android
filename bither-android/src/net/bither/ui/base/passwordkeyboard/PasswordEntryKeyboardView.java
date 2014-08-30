@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.util.LogUtil;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;

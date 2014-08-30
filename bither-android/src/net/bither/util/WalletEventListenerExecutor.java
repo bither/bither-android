@@ -16,6 +16,8 @@
 
 package net.bither.util;
 
+import net.bither.bitherj.utils.LogUtil;
+
 import java.util.concurrent.Executor;
 
 public class WalletEventListenerExecutor implements Executor {
@@ -70,7 +72,7 @@ public class WalletEventListenerExecutor implements Executor {
 				currentRunnable = penddingCommand;
 			}
 			LogUtil.d("WalletEvent", "WalletEvent executed: " + executedCount
-					+ " , aborted: " + abortedCount);
+                    + " , aborted: " + abortedCount);
 			runningThread = null;
 		}
 	}

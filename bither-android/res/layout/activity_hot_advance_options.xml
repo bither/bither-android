@@ -59,6 +59,30 @@
                             android:id="@+id/ssv_import_private_key"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
+
+                        <Button
+                            android:id="@+id/btn_reset_tx"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ui_touchable_bg"
+                            android:gravity="left"
+                            android:padding="10dp"
+                            android:text="@string/reload_tx"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
+
+                        <include layout="@layout/layout_vertical_seperator"/>
+
+                        <Button
+                            android:id="@+id/btn_export_log"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ui_touchable_bg"
+                            android:gravity="left"
+                            android:padding="10dp"
+                            android:text="@string/export_log"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
                     </LinearLayout>
 
                     <include layout="@layout/layout_card_foreground_single"/>

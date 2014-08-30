@@ -16,9 +16,17 @@
 
 package net.bither.runnable;
 
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.model.PasswordSeed;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.BackupUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
-import net.bither.util.WalletUtils;
+
+import java.util.List;
 
 /**
  * Created by songchenwen on 14-5-24.
@@ -37,7 +45,7 @@ public class EditPasswordThread extends Thread {
 
     @Override
     public void run() {
-        final boolean result = WalletUtils.editPassword(oldPassword, newPassword);
+        final boolean result = editPassword(oldPassword, newPassword);
         oldPassword.wipe();
         newPassword.wipe();
         if (listener != null) {
@@ -59,4 +67,33 @@ public class EditPasswordThread extends Thread {
 
         public void onFailed();
     }
+
+    public boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
+        List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
+        if (addresses.size() == 0) {
+            return true;
+        }
+        try {
+            for (Address a : addresses) {
+                String encryptedStr = a.getEncryptPrivKey();
+                String newEncryptedStr = PrivateKeyUtil.changePassword(encryptedStr, oldPassword, newPassword);
+                a.setEncryptPrivKey(newEncryptedStr);
+            }
+            AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(addresses.get
+                    (0)));
+            for (Address address : addresses) {
+                address.savePrivateKey();
+            }
+            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+                BackupUtil.backupColdKey(false);
+            } else {
+                BackupUtil.backupHotKey();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 }

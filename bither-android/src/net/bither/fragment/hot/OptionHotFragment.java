@@ -43,28 +43,28 @@ import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.UploadAvatarRunnable;
-import net.bither.ui.base.DialogDonate;
-import net.bither.ui.base.DialogProgress;
-import net.bither.ui.base.DialogSetAvatar;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
+import net.bither.ui.base.dialog.DialogDonate;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSetAvatar;
 import net.bither.util.ExchangeUtil.ExchangeType;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil.TransactionFeeMode;
 import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
 
 import java.io.File;
 import java.util.List;
@@ -212,7 +212,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public String getOptionName(int index) {
-            switch (getModeByIndex(index)) {
+            BitherjSettings.TransactionFeeMode transactionFeeMode = getModeByIndex(index);
+            switch (transactionFeeMode) {
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low);
                 default:
@@ -222,7 +223,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getOptionCount() {
-            return TransactionFeeMode.values().length;
+            return BitherjSettings.TransactionFeeMode.values().length;
         }
 
         @Override
@@ -230,11 +231,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
             return AppSharedPreference.getInstance().getTransactionFeeMode().ordinal();
         }
 
-        private TransactionFeeMode getModeByIndex(int index) {
-            if (index >= 0 && index < TransactionFeeMode.values().length) {
-                return TransactionFeeMode.values()[index];
+        private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
+            if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
+                return BitherjSettings.TransactionFeeMode.values()[index];
             }
-            return TransactionFeeMode.Normal;
+            return BitherjSettings.TransactionFeeMode.Normal;
         }
 
         @Override
@@ -257,8 +258,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            if (WalletUtils.getPrivateAddressList() == null || WalletUtils.getPrivateAddressList
-                    ().size() == 0) {
+            if (AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
