@@ -18,15 +18,12 @@ package net.bither.fragment.hot;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -42,8 +39,6 @@ import net.bither.R;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.NotificationUtil;
-import net.bither.service.BlockchainService;
-import net.bither.service.LocalBinder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
