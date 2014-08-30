@@ -326,6 +326,6 @@
     <string name="first_run_dialog_line_2">請不要清除比太數據</string>
 
     <!-- upgrade -->
-    <string name="begin_upgrade">即將開始升級…\n請不要退出應用\n請不要關閉手機\n請不要關閉手機屏幕</string>
+    <string name="begin_upgrade">即將開始升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
     <string name="upgrading">升級中...</string>
 </resources>
