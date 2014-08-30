@@ -122,7 +122,7 @@ public final class PeerListFragment extends ListFragment {
 
                 final TextView rowHeight = (TextView) row
                         .findViewById(R.id.peer_list_row_height);
-                final long bestHeight = peer.getLastBlockHeight();
+                final long bestHeight = peer.getDisplayLastBlockHeight();
                 rowHeight.setText(bestHeight > 0 ? bestHeight + " blocks"
                         : null);
                 rowHeight.setTypeface(isDownloading ? Typeface.DEFAULT_BOLD
