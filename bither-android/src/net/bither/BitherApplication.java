@@ -45,7 +45,6 @@ public class BitherApplication extends BitherjApplication {
 
     private static org.slf4j.Logger log = LoggerFactory.getLogger(BitherApplication.class);
 
-
     private static BitherApplication mBitherApplication;
 
 
