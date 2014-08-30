@@ -76,6 +76,7 @@
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
+
     <!-- add address -->
     <string name="add_address_tab_watch_only">Watch Only</string>
     <string name="add_address_tab_private_key">Private Key</string>
@@ -258,6 +259,7 @@
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
     <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>
+    <string name="backup_finish">Back Up Finish !</string>
     <string name="no_sd_card">SD card failure</string>
     <string name="last_time_of_back_up">The last backup: %s </string>
     <string name="just_now">Just now</string>

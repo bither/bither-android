@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -53,6 +54,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.AnimationUtil;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
@@ -66,6 +68,7 @@ import java.util.List;
 
 public class OptionColdFragment extends Fragment implements Selectable {
     private int ONE_HOUR = 1 * 60 * 60 * 1000;
+    private final int duration = 1000;
 
     private Button btnGetSign;
     private Button btnCloneTo;
@@ -77,6 +80,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
+
 
     private OnClickListener toSignActivityClickListener = new OnClickListener() {
 
@@ -302,6 +306,50 @@ public class OptionColdFragment extends Fragment implements Selectable {
         pbBackTime.setLayoutParams(layoutParams);
     }
 
+    private void backupFinish() {
+        pbBackTime.setVisibility(View.INVISIBLE);
+        btnBackupTime.setText(R.string.backup_finish);
+        AnimationUtil.fadeOut(btnBackupTime, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fadeinBackupTime();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        }, duration);
+
+    }
+
+    private void fadeinBackupTime() {
+        AnimationUtil.fadeIn(btnBackupTime, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                btnBackupTime.setVisibility(View.INVISIBLE);
+                showBackupTime();
+                AnimationUtil.fadeOut(btnBackupTime);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        }, duration);
+
+
+    }
+
     private void backupPrivateKey() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -316,8 +364,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        pbBackTime.setVisibility(View.INVISIBLE);
-                        showBackupTime();
+
+                        backupFinish();
+
                     }
                 }, 1000);
             }

@@ -254,6 +254,7 @@
     <string name="qr_code_for_all_addresses">冷錢包監控二維碼</string>
     <string name="qr_code_for_all_addresses_title">使用熱錢包掃描來監控冷錢包</string>
     <string name="no_sd_card_of_back_up">沒有SD卡，無法自動備份</string>
+    <string name="backup_finish">備份成功 !</string>
     <string name="no_sd_card">SD卡錯誤</string>
     <string name="last_time_of_back_up">上一次備份時間: %s </string>
     <string name="just_now">剛剛</string>
