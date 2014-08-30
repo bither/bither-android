@@ -105,6 +105,8 @@ public class ColdActivity extends FragmentActivity {
             }
         }, 500);
         DialogFirstRunWarning.show(this);
+        registerReceiver(addressIsLoadedReceiver,
+                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
@@ -193,8 +195,7 @@ public class ColdActivity extends FragmentActivity {
         mPager.setOffscreenPageLimit(2);
         mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
                 tbtnMain, tbtnMe}, mPager));
-        registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+
     }
 
     private class PageChangeListener implements OnPageChangeListener {
@@ -429,6 +430,7 @@ public class ColdActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         BitherApplication.coldActivity = null;
+        unregisterReceiver(addressIsLoadedReceiver);
         super.onDestroy();
     }
 
