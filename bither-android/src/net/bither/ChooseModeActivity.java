@@ -112,6 +112,7 @@ public class ChooseModeActivity extends Activity {
         };
         DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this,
                 getUpgradeString(), confirmRunnable, cancelRunnable);
+        dialogConfirmTask.setCancelable(false);
         dialogConfirmTask.show();
 
     }
@@ -131,6 +132,7 @@ public class ChooseModeActivity extends Activity {
                         progressDialog.dismiss();
                     }
                     setVersionCode();
+                    BitherApplication.addressIsReady = true;
                     initActivity();
                     break;
                 case HandlerMessage.MSG_FAILURE:
@@ -214,24 +216,24 @@ public class ChooseModeActivity extends Activity {
             DialogConfirmTask dialog = new DialogConfirmTask(ChooseModeActivity.this,
                     getStyledConfirmString(getString(R.string.choose_mode_cold_confirm)),
                     new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            modeSelected(BitherjSettings.AppMode.COLD);
-                            vColdWalletInitCheck.check();
-                            ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView(new
-                                    View[]{vColdExtra}, new View[]{rlWarm, vWarmBg}), "Progress",
-                                    1).setDuration(AnimHideDuration);
-                            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                            vColdWalletInitCheck.prepareAnim();
-                            animator.addListener(coldClickAnimListener);
-                            animator.start();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    modeSelected(BitherjSettings.AppMode.COLD);
+                                    vColdWalletInitCheck.check();
+                                    ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView(new
+                                                    View[]{vColdExtra}, new View[]{rlWarm, vWarmBg}), "Progress",
+                                            1).setDuration(AnimHideDuration);
+                                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                                    vColdWalletInitCheck.prepareAnim();
+                                    animator.addListener(coldClickAnimListener);
+                                    animator.start();
+                                }
+                            });
                         }
                     });
-                }
-            });
             dialog.show();
         }
     };
@@ -243,33 +245,33 @@ public class ChooseModeActivity extends Activity {
             DialogConfirmTask dialog = new DialogConfirmTask(ChooseModeActivity.this,
                     getStyledConfirmString(getString(R.string.choose_mode_warm_confirm)),
                     new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            modeSelected(BitherjSettings.AppMode.HOT);
-                            llWarmExtraError.setVisibility(View.GONE);
-                            llWarmExtraWaiting.setVisibility(View.VISIBLE);
-                            if (AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-                                ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView
-                                        (new View[]{}, new View[]{vColdBg, rlCold}), "Progress",
-                                        1).setDuration(AnimHideDuration);
-                                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                                animator.addListener(warmClickAnimListener);
-                                animator.start();
-                            } else {
-                                ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView
-                                        (new View[]{vWarmExtra}, new View[]{vColdBg, rlCold}),
-                                        "Progress", 1).setDuration(AnimHideDuration);
-                                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                                animator.addListener(warmClickAnimListener);
-                                animator.start();
-                            }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    modeSelected(BitherjSettings.AppMode.HOT);
+                                    llWarmExtraError.setVisibility(View.GONE);
+                                    llWarmExtraWaiting.setVisibility(View.VISIBLE);
+                                    if (AppSharedPreference.getInstance().getDownloadSpvFinish()) {
+                                        ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView
+                                                        (new View[]{}, new View[]{vColdBg, rlCold}), "Progress",
+                                                1).setDuration(AnimHideDuration);
+                                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                                        animator.addListener(warmClickAnimListener);
+                                        animator.start();
+                                    } else {
+                                        ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView
+                                                        (new View[]{vWarmExtra}, new View[]{vColdBg, rlCold}),
+                                                "Progress", 1).setDuration(AnimHideDuration);
+                                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                                        animator.addListener(warmClickAnimListener);
+                                        animator.start();
+                                    }
+                                }
+                            });
                         }
                     });
-                }
-            });
             dialog.show();
         }
     };
@@ -451,7 +453,7 @@ public class ChooseModeActivity extends Activity {
                     @Override
                     public void run() {
                         ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView(new
-                                View[]{}, new View[]{vColdExtra}), "Progress",
+                                        View[]{}, new View[]{vColdExtra}), "Progress",
                                 1).setDuration(AnimHideDuration);
                         animator.setInterpolator(new AccelerateDecelerateInterpolator());
                         animator.addListener(coldCheckAnimListener);
@@ -529,7 +531,7 @@ public class ChooseModeActivity extends Activity {
                     @Override
                     public void run() {
                         ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView(new
-                                View[]{}, new View[]{vWarmExtra}), "Progress",
+                                        View[]{}, new View[]{vWarmExtra}), "Progress",
                                 1).setDuration(AnimHideDuration);
                         animator.setInterpolator(new AccelerateDecelerateInterpolator());
                         animator.addListener(warmClickAnimListener);

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import net.bither.BitherApplication;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.preference.AppSharedPreference;
@@ -96,7 +97,7 @@ public class TickReceiver extends BroadcastReceiver {
                 }
 
                 // if idling, shutdown service
-                if (isIdle) {
+                if (isIdle && !BitherApplication.isApplicationRunInForeground()) {
                     log.info("idling detected, stopping service");
                     this.blockchainService.stopSelf();
                 }
