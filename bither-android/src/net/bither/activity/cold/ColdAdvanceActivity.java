@@ -53,9 +53,7 @@ import net.bither.util.ThreadUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-7-23.
- */
+
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;

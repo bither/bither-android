@@ -55,9 +55,6 @@ import net.bither.util.ThreadUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-6-10.
- */
 public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         DialogPassword.DialogPasswordListener {

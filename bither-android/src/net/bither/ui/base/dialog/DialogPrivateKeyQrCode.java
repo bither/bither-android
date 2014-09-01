@@ -37,9 +37,6 @@ import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
 
-/**
- * Created by songchenwen on 14-5-27.
- */
 public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListener,
         DialogInterface.OnDismissListener, FancyQrCodeThread.FancyQrCodeListener {
     private Activity activity;

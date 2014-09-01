@@ -31,9 +31,6 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.util.KeyUtil;
 
-/**
- * Created by songchenwen on 14-7-27.
- */
 public class DialogAddressWatchOnlyLongClick extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener {
     private Activity activity;

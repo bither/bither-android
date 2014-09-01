@@ -14,9 +14,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.util.GenericUtils;
 import net.bither.util.SystemUtil;
 
-/**
- * Created by nn on 14-8-26.
- */
+
 public class TxReceiver extends BroadcastReceiver {
 
     private BlockchainService blockchainService;

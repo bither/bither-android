@@ -1,8 +1,6 @@
 package net.bither.service;
 
-/**
- * Created by nn on 14-8-23.
- */
+
 public class ActivityHistoryEntry {
     public final int numTransactionsReceived;
     public final int numBlocksDownloaded;

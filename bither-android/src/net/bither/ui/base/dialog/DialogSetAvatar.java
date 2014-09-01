@@ -22,9 +22,6 @@ import android.view.View;
 
 import net.bither.R;
 
-/**
- * Created by songchenwen on 14-5-23.
- */
 public class DialogSetAvatar extends CenterDialog implements View.OnClickListener, DialogInterface.OnDismissListener {
 
     public static interface SetAvatarDelegate {

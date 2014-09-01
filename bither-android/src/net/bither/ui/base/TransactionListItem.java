@@ -40,9 +40,6 @@ import net.bither.util.StringUtil;
 
 import java.util.Date;
 
-/**
- * Created by songchenwen on 14-5-28.
- */
 public class TransactionListItem extends FrameLayout implements MarketTickerChangedObserver {
 
     private Activity activity;

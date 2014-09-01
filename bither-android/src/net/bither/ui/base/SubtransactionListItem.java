@@ -31,9 +31,6 @@ import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
-/**
- * Created by songchenwen on 14-5-28.
- */
 public class SubtransactionListItem extends FrameLayout implements View.OnClickListener {
     public static final int Height = UIUtil.dip2pix(70);
     public static final int MessageHeight = UIUtil.dip2pix(40);

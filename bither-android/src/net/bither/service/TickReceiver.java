@@ -15,9 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by nn on 14-8-23.
- */
 public class TickReceiver extends BroadcastReceiver {
 
     private static final int MIN_COLLECT_HISTORY = 2;

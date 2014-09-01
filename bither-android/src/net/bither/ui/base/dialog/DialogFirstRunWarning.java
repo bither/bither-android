@@ -24,9 +24,6 @@ import android.view.View;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 
-/**
- * Created by songchenwen on 14-7-24.
- */
 public class DialogFirstRunWarning extends CenterDialog implements View.OnClickListener {
     public DialogFirstRunWarning(Context context) {
         super(context);

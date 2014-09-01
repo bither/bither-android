@@ -48,9 +48,6 @@ import net.bither.util.UIUtil;
 
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-6-6.
- */
 public class DialogFragmentFancyQrCodePager extends DialogFragment implements View.OnClickListener {
     public static interface QrCodeThemeChangeListener {
         public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme);
