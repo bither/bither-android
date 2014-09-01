@@ -44,9 +44,6 @@ import net.bither.util.StringUtil;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
 public class DialogEditPassword extends Dialog implements Check.CheckListener,
         Check.ICheckAction, View.OnClickListener, EditPasswordThread.EditPasswordListener,
         TextView.OnEditorActionListener {

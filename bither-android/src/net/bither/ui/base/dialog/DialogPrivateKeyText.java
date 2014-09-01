@@ -24,9 +24,6 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.util.WalletUtils;
 
-/**
- * Created by nn on 14-7-22.
- */
 public class DialogPrivateKeyText extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener {
     private Activity activity;

@@ -37,9 +37,6 @@ import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
-/**
- * Created by songchenwen on 14-6-6.
- */
 public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements FancyQrCodeThread
         .FancyQrCodeListener {
     public static final String ContentTag = "Content";

@@ -30,9 +30,6 @@ import net.bither.R;
 import net.bither.ui.base.SubtransactionListItem;
 import net.bither.util.UIUtil;
 
-/**
- * Created by songchenwen on 14-5-28.
- */
 public class DialogAddressFull extends DialogWithArrow {
     private static final int MaxHeight = UIUtil.getScreenHeight()
             - UIUtil.dip2pix(100);

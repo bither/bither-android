@@ -23,9 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
+
 public class OverScrollableListView extends ListView {
 
     private int overScrollTopHeight = -1;

@@ -22,9 +22,6 @@ import android.graphics.Paint;
 import android.text.TextPaint;
 import android.text.style.LineHeightSpan;
 
-/**
- * Created by songchenwen on 14-8-30.
- */
 public class RelativeLineHeightSpan implements LineHeightSpan.WithDensity {
     private float rate;
 

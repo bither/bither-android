@@ -28,9 +28,6 @@ import net.bither.util.ThreadUtil;
 
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
 public class EditPasswordThread extends Thread {
     private SecureCharSequence oldPassword;
     private SecureCharSequence newPassword;

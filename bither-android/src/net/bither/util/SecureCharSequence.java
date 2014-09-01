@@ -22,9 +22,6 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 
-/**
- * Created by songchenwen on 14-8-6.
- */
 public class SecureCharSequence implements CharSequence {
     private char[] chars;
 

@@ -24,9 +24,6 @@ import android.inputmethodservice.Keyboard;
 
 import net.bither.R;
 
-/**
- * Created by songchenwen on 14-7-18.
- */
 public class PasswordEntryKeyboard extends Keyboard {
     public static interface DrawKeyListener {
         public int[] beforeDrawKeyWithStates(Key key, int[] states);
