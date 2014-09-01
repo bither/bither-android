@@ -192,6 +192,7 @@
     <string name="reload_tx_need_too_much_time">It may take some time to reload transactions. Sure to continue?</string>
     <string name="reload_tx_failed">Reload transactions failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions success </string>
+    <string name="tx_cannot_reloding">You can only reload transactions in a hour..</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>

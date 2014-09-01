@@ -190,21 +190,27 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Runnable confirmRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
-                    if (passwordSeed == null) {
-                        resetTx();
-                    } else {
-                        callPassword();
+            if (BitherApplication.canReloadTx()) {
+                Runnable confirmRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        BitherApplication.reloadTxTime = System.currentTimeMillis();
+                        PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+                        if (passwordSeed == null) {
+                            resetTx();
+                        } else {
+                            callPassword();
+                        }
                     }
-                }
-            };
-            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this,
-                    getString(R.string.reload_tx_need_too_much_time), confirmRunnable
-            );
-            dialogConfirmTask.show();
+                };
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this,
+                        getString(R.string.reload_tx_need_too_much_time), confirmRunnable
+                );
+                dialogConfirmTask.show();
+
+            } else {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.tx_cannot_reloding);
+            }
 
         }
     };

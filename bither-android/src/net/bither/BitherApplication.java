@@ -53,6 +53,7 @@ public class BitherApplication extends BitherjApplication {
     public static UEHandler ueHandler;
     public static Activity initialActivity;
     public static boolean isFirstIn = false;
+    public static long reloadTxTime = -1;
 
 
     @Override
@@ -129,6 +130,14 @@ public class BitherApplication extends BitherjApplication {
         {
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
                     AlarmManager.INTERVAL_HOUR, alarmIntent);
+        }
+    }
+
+    public static boolean canReloadTx() {
+        if (reloadTxTime == -1) {
+            return true;
+        } else {
+            return reloadTxTime + 60 * 60 * 1000 < System.currentTimeMillis();
         }
     }
 

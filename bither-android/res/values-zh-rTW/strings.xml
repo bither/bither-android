@@ -187,7 +187,7 @@
     <string name="reload_tx_need_too_much_time">重載交易需要些時間，是否繼續？</string>
     <string name="reload_tx_failed">重載交易失敗 , 請重試 . </string>
     <string name="reload_tx_success">重載交易成功 </string>
-
+    <string name="tx_cannot_reloding">壹個小時內只能重載交易壹次.</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
