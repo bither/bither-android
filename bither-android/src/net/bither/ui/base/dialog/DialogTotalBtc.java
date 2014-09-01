@@ -17,6 +17,7 @@
 package net.bither.ui.base.dialog;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -24,9 +25,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PieChartView;
 import net.bither.ui.base.RotatableFrameLayout;
+import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
+import net.bither.util.MarketUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 
 import java.math.BigInteger;
@@ -40,14 +46,20 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
     private FrameLayout flPieContainer;
     private ImageView ivPrivate;
     private TextView tvPrivate;
+    private TextView tvPrivateMoney;
+    private ImageView ivPrivateSymbol;
     private ImageView ivWatchOnly;
     private TextView tvWatchOnly;
+    private TextView tvWatchOnlyMoney;
+    private ImageView ivWatchOnlySymbol;
     private LinearLayout llPrivate;
     private LinearLayout llWatchOnly;
     private RotatableFrameLayout flLogo;
 
     private BigInteger btcPrivate;
     private BigInteger btcWatchOnly;
+
+    private double price = 0;
 
     public DialogTotalBtc(Context context) {
         super(context);
@@ -65,8 +77,12 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         lp.bottomMargin = margin;
         ivPrivate = (ImageView) findViewById(R.id.iv_private);
         tvPrivate = (TextView) findViewById(R.id.tv_private);
+        tvPrivateMoney = (TextView) findViewById(R.id.tv_private_money);
+        ivPrivateSymbol = (ImageView) findViewById(R.id.iv_private_symbol);
         ivWatchOnly = (ImageView) findViewById(R.id.iv_watchonly);
         tvWatchOnly = (TextView) findViewById(R.id.tv_watchonly);
+        tvWatchOnlyMoney = (TextView) findViewById(R.id.tv_watchonly_money);
+        ivWatchOnlySymbol = (ImageView) findViewById(R.id.iv_watchonly_symbol);
         llPrivate = (LinearLayout) findViewById(R.id.ll_private);
         llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
         flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
@@ -78,6 +94,12 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
     }
 
     public void setPrivateAndWatchOnly(BigInteger btcPrivate, BigInteger btcWatchOnly) {
+        Ticker ticker = MarketUtil.getTickerOfDefaultMarket();
+        if (ticker != null) {
+            price = ticker.getDefaultExchangePrice();
+        } else {
+            price = 0;
+        }
         BigInteger total = BigInteger.ZERO;
         this.btcPrivate = btcPrivate;
         this.btcWatchOnly = btcWatchOnly;
@@ -88,15 +110,32 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
             total = total.add(btcWatchOnly);
         }
         tvBtc.setText(GenericUtils.formatValue(total.longValue()));
+        Bitmap btcSymbol = CurrencySymbolUtil.getBtcSlimSymbol(tvPrivate);
+        String currencySymbol = AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol();
+        ivPrivateSymbol.setImageBitmap(btcSymbol);
+        ivWatchOnlySymbol.setImageBitmap(btcSymbol);
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             tvPrivate.setText(GenericUtils.formatValue(btcPrivate.longValue()));
             llPrivate.setVisibility(View.VISIBLE);
+            if(price > 0){
+                tvPrivateMoney.setVisibility(View.VISIBLE);
+                tvPrivateMoney.setText(currencySymbol + StringUtil.formatDoubleToMoneyString((double) btcPrivate.longValue() / 100000000.0 * price));
+            }else{
+                tvPrivateMoney.setVisibility(View.GONE);
+            }
         } else {
             llPrivate.setVisibility(View.GONE);
         }
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
             tvWatchOnly.setText(GenericUtils.formatValue(btcWatchOnly.longValue()));
             llWatchOnly.setVisibility(View.VISIBLE);
+            if(price > 0){
+                tvWatchOnlyMoney.setVisibility(View.VISIBLE);
+                tvWatchOnlyMoney.setText(currencySymbol + StringUtil.formatDoubleToMoneyString(
+                        (double) btcWatchOnly.longValue() / 100000000.0 * price));
+            }else{
+                tvWatchOnlyMoney.setVisibility(View.GONE);
+            }
         } else {
             llWatchOnly.setVisibility(View.GONE);
         }
