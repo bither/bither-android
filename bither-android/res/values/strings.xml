@@ -171,6 +171,7 @@
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
     <string name="export_log">Export Log</string>
+    <string name="export_log_prompt">Confirm to export logs to sdcard ?</string>
     <string name="reload_tx">Reload Transaction</string>
     <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
@@ -189,7 +190,7 @@
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
     <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
     <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
-    <string name="reload_tx_need_too_much_time">It may take some time to reload transactions. Sure to continue?</string>
+    <string name="reload_tx_need_too_much_time">Reload txs?\nNeed long time.\nConsume network data.\nDo this only with wrong data.</string>
     <string name="reload_tx_failed">Reload transactions failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions success </string>
     <string name="tx_cannot_reloding">You can only reload transactions in a hour..</string>

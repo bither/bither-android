@@ -157,29 +157,35 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener exportLogClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (FileUtil.existSdCardMounted()) {
+                Runnable confirmRunnable = new Runnable() {
 
-            new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final File logTagDir = FileUtil.getDiskDir("log", true);
+                        try {
+                            File logDir = Utils.getLogDir();
 
-                @Override
-                public void run() {
-                    final File logTagDir = FileUtil.getDiskDir("log", true);
-                    try {
-                        File logDir = Utils.getLogDir();
-
-                        FileUtil.copyFile(logDir, logTagDir);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                    getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
+                            FileUtil.copyFile(logDir, logTagDir);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
-            }).start();
+                        HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                        getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
+                            }
+                        });
+                    }
+                };
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this
+                        , getString(R.string.export_log_prompt), confirmRunnable);
+                dialogConfirmTask.show();
+            } else {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
+            }
 
         }
     };
@@ -187,6 +193,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             if (BitherApplication.canReloadTx()) {
                 Runnable confirmRunnable = new Runnable() {
                     @Override
@@ -209,7 +216,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.tx_cannot_reloding);
             }
 
+
         }
+
+
     };
 
     private void callPassword() {

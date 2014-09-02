@@ -166,6 +166,7 @@
     <string name="set_avatar_gallery">來自圖庫</string>
     <string name="edit_password_button">修改密碼</string>
     <string name="export_log">導出日志</string>
+    <string name="export_log_prompt">確認導出日志到sd卡？</string>
     <string name="reload_tx">重載交易</string>
     <string name="export_success">日志已導出到 :</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
@@ -184,7 +185,7 @@
     <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
     <string name="import_private_key_failed_tx_too_mush">此私鑰有太多交易 ,不能導入</string>
     <string name="import_private_key_failed_special_address">此私鑰有特殊交易 ,不能導入</string>
-    <string name="reload_tx_need_too_much_time">重載交易需要些時間，是否繼續？</string>
+    <string name="reload_tx_need_too_much_time">確認重載交易?\n需要較長時間\n消耗網絡流量\n只應在數據出錯時嘗試</string>
     <string name="reload_tx_failed">重載交易失敗 , 請重試 . </string>
     <string name="reload_tx_success">重載交易成功 </string>
     <string name="tx_cannot_reloding">壹個小時內只能重載交易壹次.</string>
