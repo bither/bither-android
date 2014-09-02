@@ -440,9 +440,8 @@ public class ColdActivity extends FragmentActivity {
             if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
-            BitherApplication.addressIsReady = true;
             Fragment fragment = getFragmentAtIndex(1);
-            if (fragment != null && fragment instanceof HotAddressFragment) {
+            if (fragment != null && fragment instanceof ColdAddressFragment) {
                 ((ColdAddressFragment) fragment).refresh();
             }
             if (AddressManager.getInstance().getPrivKeyAddresses() != null

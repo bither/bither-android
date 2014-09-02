@@ -132,7 +132,6 @@ public class ChooseModeActivity extends Activity {
                         progressDialog.dismiss();
                     }
                     setVersionCode();
-                    BitherApplication.addressIsReady = true;
                     initActivity();
                     break;
                 case HandlerMessage.MSG_FAILURE:

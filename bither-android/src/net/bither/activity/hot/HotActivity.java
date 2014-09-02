@@ -453,8 +453,6 @@ public class HotActivity extends FragmentActivity {
             if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
-
-            BitherApplication.addressIsReady = true;
             refreshTotalBalance();
             Fragment fragment = getFragmentAtIndex(1);
             if (fragment != null && fragment instanceof HotAddressFragment) {
