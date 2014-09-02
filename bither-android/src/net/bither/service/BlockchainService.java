@@ -234,7 +234,7 @@ public class BlockchainService extends android.app.Service {
                 if (hasEverything && BlockChain.getInstance() != null) {
                     log.debug("acquiring wakelock");
                     callWekelock();
-                    if (!PeerManager.instance().isAvailable()) {
+                    if (!PeerManager.instance().isConnected()) {
                         startPeer();
                     }
                 } else if (!hasEverything) {
@@ -287,7 +287,7 @@ public class BlockchainService extends android.app.Service {
             }
             if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
                 if (!AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()) {
-                    if (!PeerManager.instance().isAvailable()) {
+                    if (!PeerManager.instance().isConnected()) {
                         PeerManager.instance().start();
                         if (!spvFinishedReceivered) {
                             final IntentFilter intentFilter = new IntentFilter();
@@ -315,7 +315,7 @@ public class BlockchainService extends android.app.Service {
         if (AddressManager.getInstance().addressIsSyncComplete()
                 && AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()
                 && AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-            if (!PeerManager.instance().isAvailable()) {
+            if (!PeerManager.instance().isConnected()) {
                 PeerManager.instance().start();
             }
         }
