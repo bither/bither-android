@@ -185,7 +185,7 @@
     <string name="import_private_key_qr_code_failed_different_password">导入私钥的密码与已有密码不同, 无法导入</string>
     <string name="import_private_key_failed_tx_too_mush">此私钥有太多交易 ,不能导入</string>
     <string name="import_private_key_failed_special_address">此私钥有特殊交易 ,不能导入</string>
-    <string name="reload_tx_need_too_much_time">确认重载交易数据 ?\n需要较长时间\n消耗网络流量\n只应在数据出错时尝试</string>
+    <string name="reload_tx_need_too_much_time">确认重载交易数据 ?\n需要较长时间\n消耗网络流量\n建议只在数据出错时尝试</string>
     <string name="reload_tx_failed">重载交易数据失败 , 请重试 . </string>
     <string name="reload_tx_success">重载交易数据成功 </string>
     <string name="tx_cannot_reloding">一个小时内只能重载交易数据一次.</string>

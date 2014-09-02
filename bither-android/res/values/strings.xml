@@ -190,7 +190,7 @@
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
     <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
     <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
-    <string name="reload_tx_need_too_much_time">Reload Transactions data?\nNeed long time.\nConsume network data.\nDo this only with wrong data.</string>
+    <string name="reload_tx_need_too_much_time">Reload Transactions data?\nNeed long time.\nConsume network data.\nRecommand trying only with wrong data.</string>
     <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions data success </string>
     <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
