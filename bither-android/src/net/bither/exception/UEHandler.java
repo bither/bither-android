@@ -31,26 +31,24 @@ import java.lang.Thread.UncaughtExceptionHandler;
 
 public class UEHandler implements UncaughtExceptionHandler {
 
-    private String mExternalCacheDir;
-    private String appInfo = "";
+    private static String logCacheDir = getLogCacheDir();
+    private static String appInfo = "";
 
-    public UEHandler() {
-        setExternalCacheDir();
+    public static String getErrorLogFile() {
+        return logCacheDir;
     }
 
-    public String getErrorLogFile() {
-        return mExternalCacheDir;
-    }
-
-    public void setExternalCacheDir() {
+    private static String getLogCacheDir() {
+        String logDir;
         if (BitherApplication.mContext.getExternalCacheDir() != null) {
-            mExternalCacheDir = BitherApplication.mContext.getExternalCacheDir().getAbsolutePath();
+            logDir = BitherApplication.mContext.getExternalCacheDir().getAbsolutePath();
         } else {
-            mExternalCacheDir = BitherjApplication.mContext.getCacheDir().getAbsolutePath();
+            logDir = BitherjApplication.mContext.getCacheDir().getAbsolutePath();
         }
-        mExternalCacheDir = mExternalCacheDir + File.separator + "bither";
+        logDir = logDir + File.separator + "bither";
         appInfo = "ver:" + Integer.toString(SystemUtil.getAppVersionCode())
                 + ",sdk:" + Build.VERSION.SDK_INT + ",";
+        return logDir;
     }
 
     public void uncaughtException(Thread thread, final Throwable ex) {
@@ -64,7 +62,7 @@ public class UEHandler implements UncaughtExceptionHandler {
                 ByteArrayOutputStream baos = null;
                 try {
                     baos = new ByteArrayOutputStream();
-                    File path = new File(mExternalCacheDir);
+                    File path = new File(logCacheDir);
                     if (!path.exists()) {
                         path.mkdirs();
                     }
