@@ -16,9 +16,9 @@
 
 package net.bither.runnable;
 
+import net.bither.BitherApplication;
 import net.bither.api.BitherErrorApi;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.FileUtil;
 import net.bither.util.StringUtil;
 
 import java.io.File;
@@ -29,7 +29,7 @@ public class AddErrorMsgRunnable extends BaseRunnable {
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
-            File errorFile = FileUtil.getErrorLogFile();
+            File errorFile = new File(BitherApplication.ueHandler.getErrorLogFile());
             if (errorFile.exists()) {
                 String errorMsg = Utils.readFile(errorFile);
                 if (!StringUtil.isEmpty(errorMsg)) {

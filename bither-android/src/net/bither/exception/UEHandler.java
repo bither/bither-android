@@ -20,6 +20,7 @@ import android.os.Build;
 import android.util.Log;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.BitherjApplication;
 import net.bither.util.SystemUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -30,69 +31,77 @@ import java.lang.Thread.UncaughtExceptionHandler;
 
 public class UEHandler implements UncaughtExceptionHandler {
 
-	private String mExternalCacheDir;
-	private String appInfo = "";
+    private String mExternalCacheDir;
+    private String appInfo = "";
 
-	public UEHandler() {
-		setExternalCacheDir();
-	}
+    public UEHandler() {
+        setExternalCacheDir();
+    }
 
-	public void setExternalCacheDir() {
-		mExternalCacheDir = BitherApplication.mContext.getExternalCacheDir()
-				+ File.separator + "bither";
-		appInfo = "ver:" + Integer.toString(SystemUtil.getAppVersionCode())
-				+ ",sdk:" + Build.VERSION.SDK_INT + ",";
-	}
+    public String getErrorLogFile() {
+        return mExternalCacheDir;
+    }
 
-	public void uncaughtException(Thread thread, final Throwable ex) {
+    public void setExternalCacheDir() {
+        if (BitherApplication.mContext.getExternalCacheDir() != null) {
+            mExternalCacheDir = BitherApplication.mContext.getExternalCacheDir().getAbsolutePath();
+        } else {
+            mExternalCacheDir = BitherjApplication.mContext.getCacheDir().getAbsolutePath();
+        }
+        mExternalCacheDir = mExternalCacheDir + File.separator + "bither";
+        appInfo = "ver:" + Integer.toString(SystemUtil.getAppVersionCode())
+                + ",sdk:" + Build.VERSION.SDK_INT + ",";
+    }
 
-		new Thread(new Runnable() {
+    public void uncaughtException(Thread thread, final Throwable ex) {
 
-			public void run() {
-				String info = null;
-				FileOutputStream fileOutPutStream = null;
-				PrintStream printStream = null;
-				ByteArrayOutputStream baos = null;
-				try {
-					baos = new ByteArrayOutputStream();
-					File path = new File(mExternalCacheDir);
-					if (!path.exists()) {
-						path.mkdirs();
-					}
-					path = new File(path, "error.log");
+        new Thread(new Runnable() {
 
-					fileOutPutStream = new FileOutputStream(path);
-					baos.write(appInfo.getBytes());
-					printStream = new PrintStream(baos);
-					ex.printStackTrace(printStream);
-					byte[] data = baos.toByteArray();
-					info = new String(data);
-					fileOutPutStream.write(data);
-					Log.e("UEHandler", info);
+            public void run() {
+                String info = null;
+                FileOutputStream fileOutPutStream = null;
+                PrintStream printStream = null;
+                ByteArrayOutputStream baos = null;
+                try {
+                    baos = new ByteArrayOutputStream();
+                    File path = new File(mExternalCacheDir);
+                    if (!path.exists()) {
+                        path.mkdirs();
+                    }
+                    path = new File(path, "error.log");
 
-					android.os.Process.killProcess(android.os.Process.myPid());
+                    fileOutPutStream = new FileOutputStream(path);
+                    baos.write(appInfo.getBytes());
+                    printStream = new PrintStream(baos);
+                    ex.printStackTrace(printStream);
+                    byte[] data = baos.toByteArray();
+                    info = new String(data);
+                    fileOutPutStream.write(data);
+                    Log.e("UEHandler", info);
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						if (printStream != null) {
-							printStream.close();
-						}
-						if (fileOutPutStream != null) {
-							fileOutPutStream.flush();
-							fileOutPutStream.close();
-						}
-						if (baos != null) {
-							baos.close();
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+                    android.os.Process.killProcess(android.os.Process.myPid());
 
-			}
-		}).start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (printStream != null) {
+                            printStream.close();
+                        }
+                        if (fileOutPutStream != null) {
+                            fileOutPutStream.flush();
+                            fileOutPutStream.close();
+                        }
+                        if (baos != null) {
+                            baos.close();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-	}
+            }
+        }).start();
+
+    }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.preference.AppSharedPreference;
 
@@ -47,8 +48,11 @@ public class TickReceiver extends BroadcastReceiver {
             return;
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-
-            final int chainHeight = BlockChain.getInstance().getLastBlock().getBlockNo();
+            Block block = BlockChain.getInstance().getLastBlock();
+            if (block == null) {
+                return;
+            }
+            final int chainHeight = block.getBlockNo();
 
             if (lastChainHeight > 0) {
                 final int numBlocksDownloaded = chainHeight

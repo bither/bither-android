@@ -183,11 +183,6 @@ public class FileUtil {
                 + cacheDir);
     }
 
-    public static File getErrorLogFile() {
-        File path = new File(BitherApplication.mContext.getExternalCacheDir(),
-                "bither");
-        return new File(path, "error.log");
-    }
 
     public static File getDiskCacheDir(Context context, String uniqueName) {
         File extCacheDir = getExternalCacheDir(context);
