@@ -49,11 +49,10 @@ public class TickReceiver extends BroadcastReceiver {
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
             Block block = BlockChain.getInstance().getLastBlock();
-            if (block == null) {
-                return;
+            int chainHeight = 0;
+            if (block != null) {
+                chainHeight = block.getBlockNo();
             }
-            final int chainHeight = block.getBlockNo();
-
             if (lastChainHeight > 0) {
                 final int numBlocksDownloaded = chainHeight
                         - lastChainHeight;
