@@ -16,11 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.preference.AppSharedPreference;
-import net.bither.util.AnimationUtil;
-import net.bither.util.CurrencySymbolUtil;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
@@ -29,6 +24,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import net.bither.R;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.AnimationUtil;
+import net.bither.util.CurrencySymbolUtil;
 
 public class MarketDepthDetailView extends LinearLayout {
 

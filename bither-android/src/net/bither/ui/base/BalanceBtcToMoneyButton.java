@@ -16,9 +16,10 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
 import android.content.Context;
 import android.util.AttributeSet;
+
+import net.bither.R;
 
 public class BalanceBtcToMoneyButton extends BtcToMoneyButton {
 

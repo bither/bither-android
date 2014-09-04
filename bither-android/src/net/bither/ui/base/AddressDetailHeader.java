@@ -35,20 +35,27 @@ import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.bitherj.core.Address;
 import net.bither.fragment.Refreshable;
-import net.bither.model.BitherAddress;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogBalanceDetail;
+import net.bither.ui.base.dialog.DialogFragmentFancyQrCodePager;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.KeyUtil;
 import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
-import java.math.BigInteger;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 public class AddressDetailHeader extends FrameLayout implements DialogFragmentFancyQrCodePager
         .QrCodeThemeChangeListener {
     private AddressDetailActivity activity;
-    private BitherAddress address;
+    private Address address;
     private FrameLayout flAddress;
     private TextView tvAddress;
     private QrCodeImageView ivQr;
@@ -60,6 +67,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private ImageButton ibtnBalanceDetail;
     private BalanceBtcToMoneyButton btnBalance;
     private int addressPosition;
+    private DialogProgress dp;
+    private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -70,8 +79,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private void initView() {
         removeAllViews();
         addView(LayoutInflater.from(getContext()).inflate(R.layout.layout_address_detail_header,
-                        null), LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
-        );
+                null), LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         flAddress = (FrameLayout) findViewById(R.id.fl_address);
         ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
         tvAddress = (TextView) findViewById(R.id.tv_address);
@@ -97,7 +105,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         super(context, attrs, defStyle);
     }
 
-    public void showAddress(final BitherAddress address, int addressPosition) {
+    public void showAddress(final Address address, int addressPosition) {
         this.addressPosition = addressPosition;
         if (address.getAddress() == null) {
             return;
@@ -107,35 +115,39 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
             ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
         }
-        if (!address.isError()) {
-            if (address.getAddressInfo() != null) {
-                llMore.setVisibility(View.VISIBLE);
-                if (address.getAddressInfo().getTxCount() == 0) {
-                    tvNoTransactions.setVisibility(View.VISIBLE);
-                } else {
-                    tvNoTransactions.setVisibility(View.GONE);
-                }
-                btnBalance.setBigInteger(address.getAddressInfo().getBalance());
-                if (address.hasPrivateKey()) {
-                    btnSend.setCompoundDrawables(null, null, null, null);
-                } else {
-                    Drawable d = getContext().getResources().getDrawable(R.drawable
-                            .unsigned_transaction_button_icon);
-                    int size = UIUtil.dip2pix(20);
-                    int topOffset = UIUtil.dip2pix(0.5f);
-                    d.setBounds(0, topOffset, size, size + topOffset);
-                    btnSend.setCompoundDrawables(null, null, d, null);
-                }
-            } else {
-                llMore.setVisibility(View.GONE);
-            }
-            llMonitorFailed.setVisibility(View.GONE);
+
+        llMore.setVisibility(View.VISIBLE);
+        if (address.txCount() == 0) {
+            tvNoTransactions.setVisibility(View.VISIBLE);
         } else {
-            llMore.setVisibility(View.GONE);
             tvNoTransactions.setVisibility(View.GONE);
-            llMonitorFailed.setVisibility(View.VISIBLE);
         }
+        btnBalance.setAmount(address.getBalance());
+        if (address.hasPrivKey()) {
+            btnSend.setCompoundDrawables(null, null, null, null);
+        } else {
+            Drawable d = getContext().getResources().getDrawable(R.drawable
+                    .unsigned_transaction_button_icon);
+            int size = UIUtil.dip2pix(20);
+            int topOffset = UIUtil.dip2pix(0.5f);
+            d.setBounds(0, topOffset, size, size + topOffset);
+            btnSend.setCompoundDrawables(null, null, d, null);
+        }
+//        } else {
+//            llMore.setVisibility(View.GONE);
+//        }
+        llMonitorFailed.setVisibility(View.GONE);
+//        } else {
+//            llMore.setVisibility(View.GONE);
+//            tvNoTransactions.setVisibility(View.GONE);
+//            llMonitorFailed.setVisibility(View.VISIBLE);
+//        }
         this.address = address;
+        if(balanceDetailFuture != null){
+            balanceDetailFuture.cancel(true);
+        }
+        balanceDetailFuture = new FutureTask<DialogBalanceDetail.Info>(getBalanceInfo);
+        new Thread(balanceDetailFuture).start();
     }
 
     private OnClickListener copyClick = new OnClickListener() {
@@ -153,25 +165,52 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            if (address != null) {
-                WalletUtils.removeBitherAddress(address);
-            }
-            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
-            if (f instanceof Refreshable) {
-                ((Refreshable) f).doRefresh();
-            }
-            activity.finish();
+            dp = new DialogProgress(activity, R.string.please_wait);
+            ThreadNeedService threadNeedService = new ThreadNeedService(dp, activity) {
+                @Override
+                public void runWithService(BlockchainService service) {
+                    if (address != null) {
+
+                        KeyUtil.stopMonitor(service, address);
+                    }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
+                            if (f instanceof Refreshable) {
+                                ((Refreshable) f).doRefresh();
+                            }
+                            activity.finish();
+                        }
+                    });
+                }
+            };
+            threadNeedService.start();
+
         }
     };
     private OnClickListener balanceDetailClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            DialogBalanceDetail dialog = new DialogBalanceDetail(activity,
-                    address.getAddressInfo());
-            dialog.show(v);
+            try {
+                DialogBalanceDetail dialog = new DialogBalanceDetail(activity,
+                        balanceDetailFuture.get());
+                dialog.show(v);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     };
+
+    private Callable<DialogBalanceDetail.Info> getBalanceInfo = new Callable<DialogBalanceDetail
+            .Info>() {
+        @Override
+        public DialogBalanceDetail.Info call() throws Exception {
+            return new DialogBalanceDetail.Info(address);
+        }
+    };
+
     private OnClickListener qrClick = new OnClickListener() {
 
         @Override
@@ -186,12 +225,12 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         @Override
         public void onClick(View v) {
             if (address != null) {
-                if (address.getAddressInfo().getBalance().compareTo(BigInteger.ZERO) <= 0) {
+                if (address.getBalance() <= 0) {
                     DropdownMessage.showDropdownMessage(activity,
                             R.string.address_detail_send_balance_zero);
                     return;
                 }
-                if (address.hasPrivateKey()) {
+                if (address.hasPrivKey()) {
                     Intent intent = new Intent(activity, SendActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
                             addressPosition);

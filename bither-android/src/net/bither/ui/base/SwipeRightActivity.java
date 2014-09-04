@@ -16,11 +16,12 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+
+import net.bither.R;
 
 public class SwipeRightActivity extends Activity {
 	protected SwipeRightTouchView mTouchView;

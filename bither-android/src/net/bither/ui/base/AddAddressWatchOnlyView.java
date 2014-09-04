@@ -16,22 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
-import net.bither.model.BitherAddress;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.service.BlockchainService;
-
-import net.bither.util.StringUtil;
-import net.bither.util.TransactionsUtil;
-import net.bither.util.WalletUtils;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +25,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.ScanActivity;
+import net.bither.ScanQRCodeTransportActivity;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.Utils;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.KeyUtil;
+import net.bither.util.StringUtil;
+import net.bither.util.TransactionsUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class AddAddressWatchOnlyView extends FrameLayout {
 
@@ -127,7 +129,6 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                     @Override
                     public void runWithService(BlockchainService service) {
                         processQrCodeContent(content, service);
-
                     }
                 };
                 thread.start();
@@ -149,20 +150,21 @@ public class AddAddressWatchOnlyView extends FrameLayout {
 
     private void processQrCodeContent(String content, BlockchainService service) {
         String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
-        ArrayList<BitherAddress> wallets = new ArrayList<BitherAddress>();
+        ArrayList<Address> wallets = new ArrayList<Address>();
         addresses.clear();
         try {
             for (String str : strs) {
                 byte[] pub = StringUtil.hexStringToByteArray(str);
-                BitherAddress address = new BitherAddress(pub);
+                String addString = Utils.toAddress(Utils.sha256hash160(pub));
+                Address address = new Address(addString, pub, null);
                 wallets.add(address);
             }
-            Collections.reverse(wallets);
-            for (BitherAddress address : wallets) {
-                if (!WalletUtils.getBitherAddressList().contains(address)) {
+            for (Address address : wallets) {
+                if (!AddressManager.getInstance().getAllAddresses().contains(address)) {
                     addresses.add(address.getAddress());
                 }
             }
+            Collections.reverse(wallets);
             checkAddress(service, wallets);
             activity.runOnUiThread(new Runnable() {
 
@@ -186,17 +188,16 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private void checkAddress(final BlockchainService service,
-                              final List<BitherAddress> wallets) {
+                              final List<Address> wallets) {
         try {
             List<String> addressList = new ArrayList<String>();
-            for (BitherAddress bitherAddress : wallets) {
+            for (Address bitherAddress : wallets) {
                 addressList.add(bitherAddress.getAddress());
             }
             BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
             switch (addressType) {
                 case Normal:
-                    WalletUtils.addBitherAddress(service, wallets);
-                    Collections.reverse(addresses);
+                    KeyUtil.addAddressList(service, wallets);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

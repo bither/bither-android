@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/torch_on_pressed" android:state_checked="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/torch_on" android:state_checked="true"/>
+    <item android:drawable="@drawable/torch_off_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/torch_off"/>
+</selector>

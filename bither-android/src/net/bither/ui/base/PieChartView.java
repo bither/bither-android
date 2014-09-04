@@ -34,9 +34,6 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-/**
- * Created by songchenwen on 14-6-8.
- */
 public class PieChartView extends View {
     public static interface RotateListener {
         public void onRotationChanged(float rotation);

@@ -20,9 +20,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ScrollView;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
 public class OverScrollableScrollView extends ScrollView {
 
     private int overScrollTopHeight = -1;

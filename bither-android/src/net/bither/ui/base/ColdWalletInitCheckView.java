@@ -16,12 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.ArrayList;
-
-import net.bither.R;
-import net.bither.model.Check;
-import net.bither.util.CheckUtil;
-import net.bither.util.UIUtil;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -31,6 +25,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.bither.R;
+import net.bither.model.Check;
+import net.bither.util.CheckUtil;
+import net.bither.util.UIUtil;
+
+import java.util.ArrayList;
 
 public class ColdWalletInitCheckView extends LinearLayout {
 	public static final int CheckAnimDuration = 1200;

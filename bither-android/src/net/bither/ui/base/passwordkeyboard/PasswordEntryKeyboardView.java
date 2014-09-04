@@ -37,7 +37,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.util.LogUtil;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -46,9 +46,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-/**
- * Created by songchenwen on 14-7-21.
- */
 public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardView
         .OnKeyboardActionListener, View.OnFocusChangeListener, View.OnClickListener,
         View.OnTouchListener, PasswordEntryKeyboard.DrawKeyListener {

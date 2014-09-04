@@ -16,14 +16,14 @@
 
 package net.bither.runnable;
 
-import java.util.List;
-
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
 import net.bither.api.GetKlineApi;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.model.KLine;
 import net.bither.util.KLineUtil;
+
+import java.util.List;
 
 public class GetKLineRunnable extends BaseRunnable {
 

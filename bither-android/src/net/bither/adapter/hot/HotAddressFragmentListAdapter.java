@@ -31,28 +31,27 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddressDetailActivity;
-import net.bither.model.BitherAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.bitherj.core.Address;
 import net.bither.ui.base.AddressFragmentListItemView;
-import net.bither.ui.base.DialogAddressWatchOnlyLongClick;
-import net.bither.ui.base.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
+import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
+import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 
 import java.util.List;
 
 public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter implements
         PinnedExpandableListViewAdapter {
     private FragmentActivity activity;
-    private List<BitherAddress> watchOnlys;
-    private List<BitherAddressWithPrivateKey> privates;
+    private List<Address> watchOnlys;
+    private List<Address> privates;
     private LayoutInflater mLayoutInflater;
     private PinnedHeaderAddressExpandableListView mListView;
     private boolean isHeaderNeedChange = false;
 
     public HotAddressFragmentListAdapter(FragmentActivity activity,
-                                         List<BitherAddress> watchOnlys,
-                                         List<BitherAddressWithPrivateKey> privates,
+                                         List<Address> watchOnlys,
+                                         List<Address> privates,
                                          PinnedHeaderAddressExpandableListView listView) {
         this.activity = activity;
         this.watchOnlys = watchOnlys;
@@ -152,7 +151,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         public ImageView ivType;
     }
 
-    public BitherAddress getChild(int groupPosition, int childPosition) {
+    public Address getChild(int groupPosition, int childPosition) {
         if (isPrivate(groupPosition)) {
             return privates.get(childPosition);
         } else {
@@ -161,7 +160,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     public long getChildId(int groupPosition, int childPosition) {
-        BitherAddress a = getChild(groupPosition, childPosition);
+        Address a = getChild(groupPosition, childPosition);
         return a.getAddress().hashCode();
     }
 
@@ -189,7 +188,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             convertView = new AddressFragmentListItemView(activity);
         }
         view = (AddressFragmentListItemView) convertView;
-        BitherAddress a;
+        Address a;
         if (isPrivate(groupPosition)) {
             a = privates.get(childPosition);
             view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition,

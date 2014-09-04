@@ -25,9 +25,6 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 
-/**
- * Created by songchenwen on 14-6-10.
- */
 
 @SuppressLint("NewApi")
 public class RotatableFrameLayout extends FrameLayout {

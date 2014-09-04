@@ -16,12 +16,13 @@
 
 package net.bither.adapter.hot;
 
-import net.bither.fragment.hot.MarketFragment;
-import net.bither.fragment.hot.OptionHotFragment;
-import net.bither.fragment.hot.HotAddressFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import net.bither.fragment.hot.HotAddressFragment;
+import net.bither.fragment.hot.MarketFragment;
+import net.bither.fragment.hot.OptionHotFragment;
 
 public class HotFragmentPagerAdapter extends FragmentPagerAdapter {
 

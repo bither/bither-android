@@ -20,9 +20,6 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
 public class OverScrollableViewPager extends ViewPager {
 
     private int overScrollLeftWidth = -1;

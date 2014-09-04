@@ -16,36 +16,6 @@
 
 package net.bither.activity.hot;
 
-import java.math.BigInteger;
-
-import net.bither.BitherSetting;
-import net.bither.BitherSetting.MarketType;
-import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.model.BitherAddress;
-import net.bither.model.QRCodeTxTransport;
-import net.bither.model.Ticker;
-import net.bither.model.UnSignTransaction;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.CommitTransactionRunnable;
-import net.bither.runnable.CompleteTransactionRunnable;
-import net.bither.runnable.HandlerMessage;
-import net.bither.ui.base.CurrencyAmountView;
-import net.bither.ui.base.CurrencyCalculatorLink;
-import net.bither.ui.base.DialogProgress;
-import net.bither.ui.base.DialogSendConfirm;
-import net.bither.ui.base.DialogSendConfirm.SendConfirmListener;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.SwipeRightActivity;
-import net.bither.ui.base.listener.BackClickListener;
-import net.bither.util.BroadcastUtil;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
-import net.bither.util.InputParser.StringInputParser;
-import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
-import net.bither.util.TransactionsUtil;
-import net.bither.util.WalletUtils;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -64,473 +34,437 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.Wallet.BalanceType;
-import com.google.bitcoin.core.Wallet.SendRequest;
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.ScanActivity;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Tx;
+import net.bither.model.QRCodeTxTransport;
+import net.bither.model.Ticker;
+import net.bither.model.UnSignTransaction;
+import net.bither.runnable.CommitTransactionThread;
+import net.bither.runnable.CompleteTransactionRunnable;
+import net.bither.runnable.HandlerMessage;
+import net.bither.ui.base.CurrencyAmountView;
+import net.bither.ui.base.CurrencyCalculatorLink;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSendConfirm;
+import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.listener.BackClickListener;
+import net.bither.util.BroadcastUtil;
+import net.bither.util.CurrencySymbolUtil;
+import net.bither.util.GenericUtils;
+import net.bither.util.InputParser.StringInputParser;
+import net.bither.util.MarketUtil;
+import net.bither.util.StringUtil;
+import net.bither.util.TransactionsUtil;
 
-public class GenerateUnsignedTxActivity extends SwipeRightActivity {
-	private static final String ADDRESS_POSITION_SAVE_KEY = "address_position";
 
-	private int addressPosition;
-	private BitherAddress address;
-	private TextView tvAddressLabel;
-	private EditText etAddress;
-	private ImageButton ibtnScan;
-	private CurrencyCalculatorLink amountCalculatorLink;
-	private Button btnSend;
-	private DialogProgress dp;
-	private TextView tvBalance;
-	private ImageView ivBalanceSymbol;
+public class GenerateUnsignedTxActivity extends SwipeRightActivity implements CommitTransactionThread.CommitTransactionListener{
+    private static final String ADDRESS_POSITION_SAVE_KEY = "address_position";
 
-	private Transaction tx;
+    private int addressPosition;
+    private Address address;
+    private TextView tvAddressLabel;
+    private EditText etAddress;
+    private ImageButton ibtnScan;
+    private CurrencyCalculatorLink amountCalculatorLink;
+    private Button btnSend;
+    private DialogProgress dp;
+    private TextView tvBalance;
+    private ImageView ivBalanceSymbol;
 
-	private boolean isDonate = false;
+    private Tx tx;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		overridePendingTransition(R.anim.slide_in_right, 0);
-		setContentView(R.layout.activity_generate_unsigned_tx);
-		if (getIntent().getExtras().containsKey(
-				BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG)) {
-			addressPosition = getIntent().getExtras().getInt(
-					BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
-			if (addressPosition >= 0
-					&& addressPosition < WalletUtils.getWatchOnlyAddressList()
-							.size()) {
-				address = WalletUtils.getWatchOnlyAddressList().get(
-						addressPosition);
-			}
-		}
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(ADDRESS_POSITION_SAVE_KEY)) {
-			addressPosition = savedInstanceState
-					.getInt(ADDRESS_POSITION_SAVE_KEY);
-			if (addressPosition >= 0
-					&& addressPosition < WalletUtils.getWatchOnlyAddressList()
-							.size()) {
-				address = WalletUtils.getWatchOnlyAddressList().get(
-						addressPosition);
-			}
-			if (address != null) {
-				UnSignTransaction utx = TransactionsUtil
-						.getUnsignTxFromCache(address.getAddress());
-				if (utx != null) {
-					tx = utx.getTx();
-				}
-			}
-		}
-		if (address == null) {
-			finish();
-			return;
-		}
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(ADDRESS_POSITION_SAVE_KEY)) {
-			tx = (Transaction) savedInstanceState
-					.getSerializable(ADDRESS_POSITION_SAVE_KEY);
-		}
-		initView();
-		processIntent();
-		configureDonate();
-	}
+    private boolean isDonate = false;
 
-	private void initView() {
-		findViewById(R.id.ibtn_cancel).setOnClickListener(
-				new BackClickListener());
-		tvAddressLabel = (TextView) findViewById(R.id.tv_address_label);
-		etAddress = (EditText) findViewById(R.id.et_address);
-		ibtnScan = (ImageButton) findViewById(R.id.ibtn_scan);
-		btnSend = (Button) findViewById(R.id.btn_send);
-		tvBalance = (TextView) findViewById(R.id.tv_balance);
-		ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
-		tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo()
-				.getBalance()));
-		ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil
-				.getBtcSymbol(tvBalance));
-		final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
-		btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
-		btcAmountView.setInputPrecision(8);
-		btcAmountView.setHintPrecision(4);
-		btcAmountView.setShift(0);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in_right, 0);
+        setContentView(R.layout.activity_generate_unsigned_tx);
+        if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
+                .ADDRESS_POSITION_PASS_VALUE_TAG)) {
+            addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
+                    .ADDRESS_POSITION_PASS_VALUE_TAG);
+            if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
+                    .getWatchOnlyAddresses().size()) {
+                address = AddressManager.getInstance().getWatchOnlyAddresses().get(addressPosition);
+            }
+        }
+        if (savedInstanceState != null && savedInstanceState.containsKey
+                (ADDRESS_POSITION_SAVE_KEY)) {
+            addressPosition = savedInstanceState.getInt(ADDRESS_POSITION_SAVE_KEY);
+            if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
+                    .getWatchOnlyAddresses().size()) {
+                address = AddressManager.getInstance().getWatchOnlyAddresses().get(addressPosition);
+            }
+            if (address != null) {
+                UnSignTransaction utx = TransactionsUtil.getUnsignTxFromCache(address.getAddress());
+                if (utx != null) {
+                    tx = utx.getTx();
+                }
+            }
+        }
+        if (address == null) {
+            finish();
+            return;
+        }
+        initView();
+        processIntent();
+        configureDonate();
+    }
 
-		final CurrencyAmountView localAmountView = (CurrencyAmountView) findViewById(R.id.cav_local);
-		localAmountView.setInputPrecision(2);
-		localAmountView.setHintPrecision(2);
-		amountCalculatorLink = new CurrencyCalculatorLink(btcAmountView,
-				localAmountView);
-		ReceivingAddressListener addressListener = new ReceivingAddressListener();
-		etAddress.setOnFocusChangeListener(addressListener);
-		etAddress.addTextChangedListener(addressListener);
-		dp = new DialogProgress(this, R.string.please_wait);
-		ibtnScan.setOnClickListener(scanClick);
-		btnSend.setOnClickListener(sendClick);
-	}
+    private void initView() {
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new BackClickListener());
+        tvAddressLabel = (TextView) findViewById(R.id.tv_address_label);
+        etAddress = (EditText) findViewById(R.id.et_address);
+        ibtnScan = (ImageButton) findViewById(R.id.ibtn_scan);
+        btnSend = (Button) findViewById(R.id.btn_send);
+        tvBalance = (TextView) findViewById(R.id.tv_balance);
+        ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
+        tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
+        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
+        final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
+        btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
+        btcAmountView.setInputPrecision(8);
+        btcAmountView.setHintPrecision(4);
+        btcAmountView.setShift(0);
 
-	private OnClickListener scanClick = new OnClickListener() {
+        final CurrencyAmountView localAmountView = (CurrencyAmountView) findViewById(R.id
+                .cav_local);
+        localAmountView.setInputPrecision(2);
+        localAmountView.setHintPrecision(2);
+        amountCalculatorLink = new CurrencyCalculatorLink(btcAmountView, localAmountView);
+        ReceivingAddressListener addressListener = new ReceivingAddressListener();
+        etAddress.setOnFocusChangeListener(addressListener);
+        etAddress.addTextChangedListener(addressListener);
+        dp = new DialogProgress(this, R.string.please_wait);
+        ibtnScan.setOnClickListener(scanClick);
+        btnSend.setOnClickListener(sendClick);
+    }
 
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent(GenerateUnsignedTxActivity.this,
-					ScanActivity.class);
-			startActivityForResult(intent,
-					BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
-		}
-	};
+    private OnClickListener scanClick = new OnClickListener() {
 
-	private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(GenerateUnsignedTxActivity.this, ScanActivity.class);
+            startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+        }
+    };
 
-		@Override
-		public void onConfirm(SendRequest request) {
-			GenerateUnsignedTxActivity.this.tx = request.tx;
-			Intent intent = new Intent(GenerateUnsignedTxActivity.this,
-					UnsignedTxQrCodeActivity.class);
-			intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-					QRCodeTxTransport.getPreSignString(QRCodeTxTransport
-							.fromSendRequestWithUnsignedTransaction(request,
-									address.getAddress())));
-			intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-					getString(R.string.unsigned_transaction_qr_code_title));
-			startActivityForResult(intent,
-					BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
-		}
+    private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
 
-		@Override
-		public void onCancel() {
+        @Override
+        public void onConfirm(Tx tx) {
+            GenerateUnsignedTxActivity.this.tx = tx;
+            Intent intent = new Intent(GenerateUnsignedTxActivity.this,
+                    UnsignedTxQrCodeActivity.class);
+            intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
+                    QRCodeTxTransport.getPreSignString(QRCodeTxTransport
+                            .fromSendRequestWithUnsignedTransaction(tx)));
+            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                    getString(R.string.unsigned_transaction_qr_code_title));
+            startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
+        }
 
-		}
-	};
+        @Override
+        public void onCancel() {
 
-	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(ADDRESS_POSITION_SAVE_KEY, addressPosition);
-		super.onSaveInstanceState(outState);
-	};
+        }
+    };
 
-	private Handler completeTransactionHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case HandlerMessage.MSG_SUCCESS:
-				if (dp.isShowing()) {
-					dp.dismiss();
-				}
-				if (msg.obj != null && msg.obj instanceof SendRequest) {
-					SendRequest request = (SendRequest) msg.obj;
-					DialogSendConfirm dialog = new DialogSendConfirm(
-							GenerateUnsignedTxActivity.this, request,
-							sendConfirmListener);
-					dialog.show();
-				} else {
-					DropdownMessage.showDropdownMessage(
-							GenerateUnsignedTxActivity.this,
-							R.string.password_wrong);
-				}
-				break;
-			case HandlerMessage.MSG_PASSWORD_WRONG:
-				if (dp.isShowing()) {
-					dp.dismiss();
-				}
-				DropdownMessage.showDropdownMessage(
-						GenerateUnsignedTxActivity.this,
-						R.string.password_wrong);
-				break;
-			case HandlerMessage.MSG_FAILURE:
-				if (dp.isShowing()) {
-					dp.dismiss();
-				}
-				String msgError = getString(R.string.send_failed);
-				if (msg.obj instanceof String) {
-					msgError = (String) msg.obj;
-				}
-				DropdownMessage.showDropdownMessage(
-						GenerateUnsignedTxActivity.this, msgError);
-				break;
-			default:
-				break;
-			}
-		}
-	};
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(ADDRESS_POSITION_SAVE_KEY, addressPosition);
+        super.onSaveInstanceState(outState);
+    }
 
-	private Handler commitTransactionHandler = new Handler() {
+    ;
 
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case HandlerMessage.MSG_SUCCESS:
-				if (dp.isShowing()) {
-					dp.dismiss();
-				}
-				Transaction tx = null;
-				if (msg.obj instanceof Transaction) {
-					tx = (Transaction) msg.obj;
-				}
-				Intent intent = getIntent();
-				if (tx != null) {
-					intent.putExtra(
-							SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
-							tx.getHashAsString());
-				}
-				setResult(RESULT_OK, intent);
-				finish();
-				break;
-			case HandlerMessage.MSG_FAILURE:
-				if (dp.isShowing()) {
-					dp.dismiss();
-				}
-				btnSend.setEnabled(true);
-				DropdownMessage.showDropdownMessage(
-						GenerateUnsignedTxActivity.this, R.string.send_failed);
-				break;
-			default:
-				break;
-			}
-		}
-	};
+    private Handler completeTransactionHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case HandlerMessage.MSG_SUCCESS:
+                    if (dp.isShowing()) {
+                        dp.dismiss();
+                    }
+                    if (msg.obj != null && msg.obj instanceof Tx) {
+                        Tx tx = (Tx) msg.obj;
+                        DialogSendConfirm dialog = new DialogSendConfirm
+                                (GenerateUnsignedTxActivity.this, tx, sendConfirmListener);
+                        dialog.show();
+                    } else {
+                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                                R.string.password_wrong);
+                    }
+                    break;
+                case HandlerMessage.MSG_PASSWORD_WRONG:
+                    if (dp.isShowing()) {
+                        dp.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                            R.string.password_wrong);
+                    break;
+                case HandlerMessage.MSG_FAILURE:
+                    if (dp.isShowing()) {
+                        dp.dismiss();
+                    }
+                    String msgError = getString(R.string.send_failed);
+                    if (msg.obj instanceof String) {
+                        msgError = (String) msg.obj;
+                    }
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this, msgError);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
-	private OnClickListener sendClick = new OnClickListener() {
+    @Override
+    public void onCommitTransactionSuccess(Tx tx) {
+        if (dp.isShowing()) {
+            dp.dismiss();
+        }
+        Intent intent = getIntent();
+        if (tx != null) {
+            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
+                    tx.getHashAsString());
+        }
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
-		@Override
-		public void onClick(View v) {
-			final BigInteger btc = amountCalculatorLink.getAmount();
-			if (btc != null) {
-				if (StringUtil.validBicoinAddress(etAddress.getText()
-						.toString())) {
-					try {
-						SendRequest request = SendRequest.to(new Address(
-								address.getNetworkParameters(), etAddress
-										.getText().toString()), btc);
-						request.emptyWallet = btc.equals(address
-								.getBalance(BalanceType.AVAILABLE));
-						CompleteTransactionRunnable completeRunnable = new CompleteTransactionRunnable(
-								addressPosition, request, null);
-						completeRunnable.setHandler(completeTransactionHandler);
-						Thread thread = new Thread(completeRunnable);
-						dp.setThread(thread);
-						if (!dp.isShowing()) {
-							dp.show();
-						}
-						thread.start();
-					} catch (Exception e) {
-						e.printStackTrace();
-						DropdownMessage.showDropdownMessage(
-								GenerateUnsignedTxActivity.this,
-								R.string.send_failed);
-					}
-				} else {
-					DropdownMessage.showDropdownMessage(
-							GenerateUnsignedTxActivity.this,
-							R.string.send_failed);
-				}
-			}
-		}
-	};
+    @Override
+    public void onCommitTransactionFailed() {
+        btnSend.setEnabled(true);
+        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                R.string.send_failed);
+    }
 
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE
-				&& resultCode == Activity.RESULT_OK) {
-			final String input = data
-					.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-			new StringInputParser(input) {
-				@Override
-				protected void bitcoinRequest(final Address address,
-						final String addressLabel, final BigInteger amount,
-						final String bluetoothMac) {
-					etAddress.setText(address.toString());
-					if (amount != null && amount.compareTo(BigInteger.ZERO) > 0) {
-						amountCalculatorLink.setBtcAmount(amount);
-					}
-					amountCalculatorLink.requestFocus();
-					validateValues();
-				}
+    private OnClickListener sendClick = new OnClickListener() {
 
-				@Override
-				protected void directTransaction(final Transaction tx) {
-					DropdownMessage.showDropdownMessage(
-							GenerateUnsignedTxActivity.this,
-							R.string.scan_watch_only_address_error);
-				}
+        @Override
+        public void onClick(View v) {
+            final long btc = amountCalculatorLink.getAmount();
+            if (btc > 0) {
+                if (StringUtil.validBicoinAddress(etAddress.getText().toString())) {
+                    try {
+                        CompleteTransactionRunnable completeRunnable = new
+                                CompleteTransactionRunnable(addressPosition,
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                null);
+                        completeRunnable.setHandler(completeTransactionHandler);
+                        Thread thread = new Thread(completeRunnable);
+                        dp.setThread(thread);
+                        if (!dp.isShowing()) {
+                            dp.show();
+                        }
+                        thread.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                                R.string.send_failed);
+                    }
+                } else {
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                            R.string.send_failed);
+                }
+            }
+        }
+    };
 
-				@Override
-				protected void error(final int messageResId,
-						final Object... messageArgs) {
-					DropdownMessage.showDropdownMessage(
-							GenerateUnsignedTxActivity.this,
-							R.string.scan_watch_only_address_error);
-				}
-			}.parse();
-			return;
-		}
-		if (requestCode == BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE
-				&& resultCode == RESULT_OK) {
-			final String qr = data
-					.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-			btnSend.setEnabled(false);
-			btnSend.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						TransactionsUtil.signTransaction(tx, qr);
-						CommitTransactionRunnable runnable = new CommitTransactionRunnable(
-								addressPosition, tx, false);
-						runnable.setHandler(commitTransactionHandler);
-						Thread thread = new Thread(runnable);
-						dp.setThread(thread);
-						if (!dp.isShowing()) {
-							dp.show();
-						}
-						thread.start();
-					} catch (Exception e) {
-						if (dp.isShowing()) {
-							dp.dismiss();
-						}
-						btnSend.setEnabled(true);
-						DropdownMessage.showDropdownMessage(
-								GenerateUnsignedTxActivity.this,
-								R.string.unsigned_transaction_sign_failed);
-						e.printStackTrace();
-					}
-				}
-			}, 500);
-		}
-	}
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
+                .RESULT_OK) {
+            final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            new StringInputParser(input) {
+                @Override
+                protected void bitcoinRequest(final String address, final String addressLabel,
+                                              final long amount, final String bluetoothMac) {
+                    etAddress.setText(address.toString());
+                    if (amount > 0) {
+                        amountCalculatorLink.setBtcAmount(amount);
+                    }
+                    amountCalculatorLink.requestFocus();
+                    validateValues();
+                }
 
-	private final class ReceivingAddressListener implements
-			OnFocusChangeListener, TextWatcher {
-		@Override
-		public void onFocusChange(final View v, final boolean hasFocus) {
-			if (!hasFocus)
-				validateValues();
-		}
+                @Override
+                protected void error(final int messageResId, final Object... messageArgs) {
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                            R.string.scan_watch_only_address_error);
+                }
+            }.parse();
+            return;
+        }
+        if (requestCode == BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE && resultCode ==
+                RESULT_OK) {
+            final String qr = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            btnSend.setEnabled(false);
+            btnSend.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    boolean success;
+                    try {
+                        success = TransactionsUtil.signTransaction(tx, qr);
+                    } catch (Exception e) {
+                        success = false;
+                        e.printStackTrace();
+                    }
+                    if(success){
+                        try {
+                            new CommitTransactionThread(dp, addressPosition, tx, false, GenerateUnsignedTxActivity.this).start();
+                            return;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    if (dp.isShowing()) {
+                        dp.dismiss();
+                    }
+                    btnSend.setEnabled(true);
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                            R.string.unsigned_transaction_sign_failed);
+                }
+            }, 500);
+        }
+    }
 
-		@Override
-		public void afterTextChanged(final Editable s) {
-			validateValues();
-		}
+    private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
+        @Override
+        public void onFocusChange(final View v, final boolean hasFocus) {
+            if (!hasFocus) {
+                validateValues();
+            }
+        }
 
-		@Override
-		public void beforeTextChanged(final CharSequence s, final int start,
-				final int count, final int after) {
-		}
+        @Override
+        public void afterTextChanged(final Editable s) {
+            validateValues();
+        }
 
-		@Override
-		public void onTextChanged(final CharSequence s, final int start,
-				final int before, final int count) {
-		}
-	}
+        @Override
+        public void beforeTextChanged(final CharSequence s, final int start, final int count,
+                                      final int after) {
+        }
 
-	private final CurrencyAmountView.Listener amountsListener = new CurrencyAmountView.Listener() {
-		@Override
-		public void changed() {
-			validateValues();
-		}
+        @Override
+        public void onTextChanged(final CharSequence s, final int start, final int before,
+                                  final int count) {
+        }
+    }
 
-		@Override
-		public void done() {
-			validateValues();
-			btnSend.requestFocusFromTouch();
-		}
+    private final CurrencyAmountView.Listener amountsListener = new CurrencyAmountView.Listener() {
+        @Override
+        public void changed() {
+            validateValues();
+        }
 
-		@Override
-		public void focusChanged(final boolean hasFocus) {
-			if (!hasFocus) {
-				validateValues();
-			}
-		}
-	};
+        @Override
+        public void done() {
+            validateValues();
+            btnSend.requestFocusFromTouch();
+        }
 
-	private void validateValues() {
-		boolean isValidAmounts = false;
+        @Override
+        public void focusChanged(final boolean hasFocus) {
+            if (!hasFocus) {
+                validateValues();
+            }
+        }
+    };
 
-		final BigInteger amount = amountCalculatorLink.getAmount();
+    private void validateValues() {
+        boolean isValidAmounts = false;
 
-		if (amount == null) {
-		} else if (amount.signum() > 0) {
-			isValidAmounts = true;
-		} else {
-		}
-		boolean isValidAddress = StringUtil.validBicoinAddress(etAddress
-				.getText().toString());
-		btnSend.setEnabled(isValidAddress && isValidAmounts);
-	}
+        final long amount = amountCalculatorLink.getAmount();
 
-	private double getExchangeRate() {
-		Ticker ticker = MarketUtil.getTickerOfDefaultMarket();
-		if (ticker != null) {
-			return ticker.getDefaultExchangePrice();
-		}
-		return 0;
-	}
+        if (amount > 0) {
+            isValidAmounts = true;
+        }
+        boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
+        btnSend.setEnabled(isValidAddress && isValidAmounts);
+    }
 
-	private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			amountCalculatorLink.setExchangeRate(getExchangeRate());
-		}
-	};
+    private double getExchangeRate() {
+        Ticker ticker = MarketUtil.getTickerOfDefaultMarket();
+        if (ticker != null) {
+            return ticker.getDefaultExchangePrice();
+        }
+        return 0;
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		amountCalculatorLink.setListener(amountsListener);
-		amountCalculatorLink.setExchangeRate(getExchangeRate());
-		IntentFilter marketFilter = new IntentFilter(
-				BroadcastUtil.ACTION_MARKET);
-		registerReceiver(marketBroadcastReceiver, marketFilter);
-	}
+    private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            amountCalculatorLink.setExchangeRate(getExchangeRate());
+        }
+    };
 
-	@Override
-	protected void onPause() {
-		amountCalculatorLink.setListener(null);
-		unregisterReceiver(marketBroadcastReceiver);
-		super.onPause();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        amountCalculatorLink.setListener(amountsListener);
+        amountCalculatorLink.setExchangeRate(getExchangeRate());
+        IntentFilter marketFilter = new IntentFilter(BroadcastUtil.ACTION_MARKET);
+        registerReceiver(marketBroadcastReceiver, marketFilter);
+    }
 
-	@Override
-	public void finish() {
-		super.finish();
-		overridePendingTransition(0, R.anim.slide_out_right);
-	}
+    @Override
+    protected void onPause() {
+        amountCalculatorLink.setListener(null);
+        unregisterReceiver(marketBroadcastReceiver);
+        super.onPause();
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
+    }
 
-	private void processIntent() {
-		isDonate = false;
-		Intent intent = getIntent();
-		if (intent.hasExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS)) {
-			String address = intent.getExtras().getString(
-					SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS);
-			if (StringUtil.validBicoinAddress(address)) {
-				if (StringUtil.compareString(address,
-						BitherSetting.DONATE_ADDRESS)) {
-					isDonate = true;
-				}
-				etAddress.setText(address);
-				BigInteger btc = (BigInteger) intent
-						.getExtras()
-						.getSerializable(
-								SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT);
-				if (btc != null && btc.signum() > 0) {
-					amountCalculatorLink.setBtcAmount(btc);
-				}
-				validateValues();
-			}
-		}
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
-	private void configureDonate() {
-		if (isDonate) {
-			btnSend.setText(R.string.donate_unsigned_transaction_verb);
-			tvAddressLabel.setText(R.string.donate_receiving_address_label);
-			etAddress.setEnabled(false);
-			etAddress.clearFocus();
-			ibtnScan.setVisibility(View.GONE);
-		} else {
-			btnSend.setText(R.string.address_detail_send);
-			tvAddressLabel
-					.setText(R.string.send_coins_fragment_receiving_address_label);
-			etAddress.setEnabled(true);
-			ibtnScan.setVisibility(View.VISIBLE);
-		}
-	}
+    private void processIntent() {
+        isDonate = false;
+        Intent intent = getIntent();
+        if (intent.hasExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS)) {
+            String address = intent.getExtras().getString(SelectAddressToSendActivity
+                    .INTENT_EXTRA_ADDRESS);
+            if (StringUtil.validBicoinAddress(address)) {
+                if (StringUtil.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                    isDonate = true;
+                }
+                etAddress.setText(address);
+                long btc = intent.getExtras().getLong(SelectAddressToSendActivity
+                        .INTENT_EXTRA_AMOUNT, 0);
+                if (btc > 0) {
+                    amountCalculatorLink.setBtcAmount(btc);
+                }
+                validateValues();
+            }
+        }
+    }
+
+    private void configureDonate() {
+        if (isDonate) {
+            btnSend.setText(R.string.donate_unsigned_transaction_verb);
+            tvAddressLabel.setText(R.string.donate_receiving_address_label);
+            etAddress.setEnabled(false);
+            etAddress.clearFocus();
+            ibtnScan.setVisibility(View.GONE);
+        } else {
+            btnSend.setText(R.string.address_detail_send);
+            tvAddressLabel.setText(R.string.send_coins_fragment_receiving_address_label);
+            etAddress.setEnabled(true);
+            ibtnScan.setVisibility(View.VISIBLE);
+        }
+    }
 }

@@ -16,12 +16,12 @@
 
 package net.bither.ui.base;
 
-import javax.annotation.Nonnull;
-
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+
+import javax.annotation.Nonnull;
 
 public final class CurrencySymbolDrawable extends Drawable {
 	private final Paint paint = new Paint();

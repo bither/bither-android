@@ -53,7 +53,7 @@ public class MACDChart extends SlipStickChart {
 
     public MACDChart(Context context) {
         super(context);
-        // TODO Auto-generated constructor stub
+
     }
 
     public MACDChart(Context context, AttributeSet attrs, int defStyle) {

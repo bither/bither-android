@@ -22,7 +22,7 @@ import net.bither.BitherSetting;
 import net.bither.QrCodeActivity;
 import net.bither.R;
 import net.bither.ScanQRCodeTransportActivity;
-import net.bither.ui.base.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.util.ThreadUtil;
 
 public class UnsignedTxQrCodeActivity extends QrCodeActivity {

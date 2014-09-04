@@ -16,12 +16,12 @@
 
 package net.bither.model;
 
-import net.bither.util.PrivateKeyUtil;
+
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.util.StringUtil;
 
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.params.MainNetParams;
 
 public class PasswordSeed {
     private String address;
@@ -34,11 +34,9 @@ public class PasswordSeed {
         this.keyStr = str.substring(indexOfSplit + 1);
     }
 
-    public PasswordSeed(BitherAddressWithPrivateKey address) {
+    public PasswordSeed(Address address) {
         this.address = address.getAddress();
-        this.keyStr = PrivateKeyUtil.getPrivateKeyString(
-                address.getKeys().get(0).getEncryptedPrivateKey(),
-                address.getKeyCrypter());
+        this.keyStr = address.getEncryptPrivKey();
     }
 
     public boolean checkPassword(CharSequence password) {
@@ -47,9 +45,8 @@ public class PasswordSeed {
             return false;
         }
         return StringUtil.compareString(address,
-                new Address(MainNetParams.get(), this.ecKey.getPubKeyHash())
-                        .toString()
-        );
+                this.ecKey.toAddress());
+
     }
 
     public ECKey getECKey() {

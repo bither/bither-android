@@ -16,8 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.model.BitherAddressWithPrivateKey;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -28,57 +26,60 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import net.bither.R;
+import net.bither.bitherj.core.Address;
+
 public class AddAddressWithPrivateKeyListItem extends FrameLayout {
 
-	private TextView tvAddress;
-	private ImageButton ibtnDelete;
-	private BitherAddressWithPrivateKey address;
+    private TextView tvAddress;
+    private ImageButton ibtnDelete;
+    private Address address;
 
-	public AddAddressWithPrivateKeyListItem(Context context) {
-		super(context);
-		initView();
-	}
+    public AddAddressWithPrivateKeyListItem(Context context) {
+        super(context);
+        initView();
+    }
 
-	private AddAddressWithPrivateKeyListItem(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    private AddAddressWithPrivateKeyListItem(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
 
-	private AddAddressWithPrivateKeyListItem(Context context,
-			AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    private AddAddressWithPrivateKeyListItem(Context context,
+                                             AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
 
-	private void initView() {
-		removeAllViews();
-		addView(LayoutInflater.from(getContext()).inflate(
-				R.layout.list_item_add_address_with_private_key, null),
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		tvAddress = (TextView) findViewById(R.id.tv_address);
-		ibtnDelete = (ImageButton) findViewById(R.id.ibtn_delete);
-		ibtnDelete.setOnClickListener(deleteClick);
-	}
+    private void initView() {
+        removeAllViews();
+        addView(LayoutInflater.from(getContext()).inflate(
+                        R.layout.list_item_add_address_with_private_key, null),
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        tvAddress = (TextView) findViewById(R.id.tv_address);
+        ibtnDelete = (ImageButton) findViewById(R.id.ibtn_delete);
+        ibtnDelete.setOnClickListener(deleteClick);
+    }
 
-	public void setAddress(BitherAddressWithPrivateKey address) {
-		this.address = address;
-		tvAddress.setText(address.getAddress());
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+        tvAddress.setText(address.getAddress());
+    }
 
-	public BitherAddressWithPrivateKey getAddress() {
-		return address;
-	}
+    public Address getAddress() {
+        return address;
+    }
 
-	private OnClickListener deleteClick = new OnClickListener() {
+    private OnClickListener deleteClick = new OnClickListener() {
 
-		@Override
-		public void onClick(View v) {
-			ViewParent parent = getParent();
-			if (parent != null && parent instanceof ViewGroup) {
-				ViewGroup group = (ViewGroup) parent;
-				group.removeView(AddAddressWithPrivateKeyListItem.this);
-			}
-		}
-	};
+        @Override
+        public void onClick(View v) {
+            ViewParent parent = getParent();
+            if (parent != null && parent instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) parent;
+                group.removeView(AddAddressWithPrivateKeyListItem.this);
+            }
+        }
+    };
 
 }

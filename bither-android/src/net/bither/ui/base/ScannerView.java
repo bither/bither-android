@@ -16,13 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import net.bither.R;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -34,6 +27,14 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.zxing.ResultPoint;
+
+import net.bither.R;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 public class ScannerView extends View {
 	private static final long LASER_ANIMATION_DELAY_MS = 100l;

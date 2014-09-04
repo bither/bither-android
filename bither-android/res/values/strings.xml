@@ -76,6 +76,7 @@
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
+
     <!-- add address -->
     <string name="add_address_tab_watch_only">Watch Only</string>
     <string name="add_address_tab_private_key">Private Key</string>
@@ -100,12 +101,9 @@
     <string name="send_progress_dialog_message">Sending</string>
     <string name="send_success">Send success</string>
     <string name="send_failed">Send failed</string>
-    <string name="send_failed_not_enough_available">Send failed. You don\'t have enough coins available. </string>
-    <string name="send_failed_missing_btc">Send failed. Lack of %s BTC. </string>
-    <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be igored.</string>
-    <string name="send_failed_pendding">%s BTC to be confirmed.</string>
-    <string name="send_failed_waiting_for_another_confirmation">Please wait for another confirmation.</string>
-    <string name="send_failed_not_enough_for_fee">Send failed. You don\'t have enough coins available for transaction fee. </string>
+    <string name="send_failed_missing_btc">Send failed. Lack of %s BTC.</string>
+    <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be ignored.</string>
+    <string name="send_failed_pendding">Send failed. %s BTC to be confirmed.\nPlease wait for another confirmation.</string>
     <string name="send_coins_fragment_sending_address_label">From</string>
     <string name="send_coins_fragment_receiving_address_label">Pay to</string>
     <string name="send_coins_fragment_amount_label">Amount to pay</string>
@@ -172,6 +170,10 @@
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
+    <string name="export_log">Export Log</string>
+    <string name="export_log_prompt">Confirm to export logs to sdcard ?</string>
+    <string name="reload_tx">Reload Transactions data</string>
+    <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
@@ -188,7 +190,10 @@
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
     <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
     <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
-
+    <string name="reload_tx_need_too_much_time">Reload Transactions data?\nNeed long time.\nConsume network data.\nRecommand trying only with wrong data.</string>
+    <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
+    <string name="reload_tx_success">Reload transactions data success </string>
+    <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>
@@ -256,6 +261,7 @@
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
     <string name="no_sd_card_of_back_up">SD card failure, Can not backup</string>
+    <string name="backup_finish">Back Up Finish !</string>
     <string name="no_sd_card">SD card failure</string>
     <string name="last_time_of_back_up">The last backup: %s </string>
     <string name="just_now">Just now</string>
@@ -334,4 +340,8 @@
     <string name="first_run_dialog_title">To protect your bitcoin:</string>
     <string name="first_run_dialog_line_1">NEVER UNINSTALL Bither.</string>
     <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
+
+    <!-- upgrade -->
+    <string name="begin_upgrade">Ready to upgrade?\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
+    <string name="upgrading">Upgrading...</string>
 </resources>

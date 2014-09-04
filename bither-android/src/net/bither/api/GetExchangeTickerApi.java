@@ -16,14 +16,14 @@
 
 package net.bither.api;
 
-import java.util.List;
-
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.model.Ticker;
-import net.bither.util.LogUtil;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class GetExchangeTickerApi extends HttpGetResponse<List<Ticker>> {
 

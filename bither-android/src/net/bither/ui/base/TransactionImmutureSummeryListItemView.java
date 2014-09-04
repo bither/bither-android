@@ -16,11 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
-
-import net.bither.R;
-import net.bither.model.BitherAddress;
-import net.bither.ui.base.TransactionImmutureConfidenceIconView.GrowListener;
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
@@ -28,91 +23,93 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionConfidence;
+import net.bither.R;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.Tx;
 
-public class TransactionImmutureSummeryListItemView extends FrameLayout
-		implements GrowListener {
-	private FragmentActivity activity;
-	private TransactionImmutureConfidenceIconView icon;
-	private BtcToMoneyButton btnBtc;
 
-	private Transaction transaction;
-	private BitherAddress address;
+public class TransactionImmutureSummeryListItemView extends FrameLayout {
 
-	public TransactionImmutureSummeryListItemView(FragmentActivity activity) {
-		super(activity);
-		removeAllViews();
-		this.setActivity(activity);
-		View v = LayoutInflater.from(activity).inflate(
-				R.layout.list_item_transaction_immature_summery, null);
-		addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		initView();
-	}
+    private FragmentActivity activity;
+    private TransactionImmutureConfidenceIconView icon;
+    private BtcToMoneyButton btnBtc;
 
-	public TransactionImmutureSummeryListItemView(Context context,
-			AttributeSet attrs) {
-		super(context, attrs);
-		removeAllViews();
-		View v = LayoutInflater.from(context).inflate(
-				R.layout.list_item_transaction_immature_summery, null);
-		addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		initView();
-	}
+    private Tx transaction;
+    private Address address;
 
-	public TransactionImmutureSummeryListItemView(Context context,
-			AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		removeAllViews();
-		View v = LayoutInflater.from(context).inflate(
-				R.layout.list_item_transaction_immature_summery, null);
-		addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		initView();
-	}
+    public TransactionImmutureSummeryListItemView(FragmentActivity activity) {
+        super(activity);
+        removeAllViews();
+        this.setActivity(activity);
+        View v = LayoutInflater.from(activity).inflate(
+                R.layout.list_item_transaction_immature_summery, null);
+        addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        initView();
+    }
 
-	private void initView() {
-		icon = (TransactionImmutureConfidenceIconView) findViewById(R.id.fl_confidence_icon);
-		btnBtc = (BtcToMoneyButton) findViewById(R.id.btn_btc);
-		icon.setListener(this);
-	}
+    public TransactionImmutureSummeryListItemView(Context context,
+                                                  AttributeSet attrs) {
+        super(context, attrs);
+        removeAllViews();
+        View v = LayoutInflater.from(context).inflate(
+                R.layout.list_item_transaction_immature_summery, null);
+        addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        initView();
+    }
 
-	public void setTransaction(Transaction transaction, BitherAddress address) {
-		this.transaction = transaction;
-		this.address = address;
-		showTransaction();
-	}
+    public TransactionImmutureSummeryListItemView(Context context,
+                                                  AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        removeAllViews();
+        View v = LayoutInflater.from(context).inflate(
+                R.layout.list_item_transaction_immature_summery, null);
+        addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        initView();
+    }
 
-	private void showTransaction() {
-		if (this.transaction == null || address == null) {
-			return;
-		}
-		BigInteger value;
-		try {
-			value = transaction.getValue(address);
-		} catch (Exception e) {
-			return;
-		}
-		icon.setConfidence(transaction.getConfidence());
-		btnBtc.setBigInteger(value);
-	}
+    private void initView() {
+        icon = (TransactionImmutureConfidenceIconView) findViewById(R.id.fl_confidence_icon);
+        btnBtc = (BtcToMoneyButton) findViewById(R.id.btn_btc);
+    }
 
-	public void onPause() {
-		icon.onPause();
-		btnBtc.onPause();
-	}
+    public void setTransaction(Tx transaction, Address address) {
+        this.transaction = transaction;
+        this.address = address;
+        showTransaction();
+    }
 
-	public void onResume() {
-		icon.onResume();
-		btnBtc.onResume();
-	}
+    private void showTransaction() {
+        if (this.transaction == null || address == null) {
+            return;
+        }
+        long value = 0;
 
-	@Override
-	public void onConfidenceBecomeMuture(TransactionConfidence confidence) {
-		setVisibility(View.INVISIBLE);
-	}
+        try {
+            value = transaction.deltaAmountFrom(address);
+        } catch (Exception e) {
+            return;
+        }
+        icon.setTx(transaction);
+        btnBtc.setAmount(value);
+    }
 
-	public void setActivity(FragmentActivity activity) {
-		this.activity = activity;
-	}
+    public void onPause() {
+        icon.onPause();
+        btnBtc.onPause();
+    }
+
+    public void onResume() {
+        icon.onResume();
+        btnBtc.onResume();
+    }
+
+
+    public void onConfidenceBecomeMuture(Tx confidence) {
+        setVisibility(View.INVISIBLE);
+    }
+
+    public void setActivity(FragmentActivity activity) {
+        this.activity = activity;
+    }
 
 }

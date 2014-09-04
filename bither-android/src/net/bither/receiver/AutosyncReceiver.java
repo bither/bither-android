@@ -16,15 +16,15 @@
 
 package net.bither.receiver;
 
-import net.bither.BitherApplication;
-import net.bither.BitherSetting.AppMode;
-import net.bither.preference.AppSharedPreference;
-import net.bither.util.LogUtil;
-import net.bither.util.StringUtil;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import net.bither.BitherApplication;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.StringUtil;
 
 public class AutosyncReceiver extends BroadcastReceiver {
 
@@ -34,13 +34,12 @@ public class AutosyncReceiver extends BroadcastReceiver {
             return;
         }
         LogUtil.d("receiver", intent.getAction());
-
         // make sure there is always an alarm scheduled
         if (!Intent.ACTION_PACKAGE_REPLACED.equals(intent.getAction())
-                || (StringUtil.compareString(intent.getDataString(),"package:" + context.getPackageName()))) {
-            if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
+                || (StringUtil.compareString(intent.getDataString(), "package:" + context.getPackageName()))) {
+            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
                 BitherApplication.getBitherApplication()
-                        .startBlockchainService(false);
+                        .startBlockchainService();
             }
         }
     }

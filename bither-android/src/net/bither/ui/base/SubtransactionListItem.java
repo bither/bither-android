@@ -31,11 +31,6 @@ import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
-import java.math.BigInteger;
-
-/**
- * Created by songchenwen on 14-5-28.
- */
 public class SubtransactionListItem extends FrameLayout implements View.OnClickListener {
     public static final int Height = UIUtil.dip2pix(70);
     public static final int MessageHeight = UIUtil.dip2pix(40);
@@ -76,7 +71,7 @@ public class SubtransactionListItem extends FrameLayout implements View.OnClickL
         tvBtc.setTextColor(color);
     }
 
-    public void setContent(String address, BigInteger value) {
+    public void setContent(String address, long value) {
         if (!isMessage(address)) {
             this.address = address;
             parent.getLayoutParams().height = Height;
@@ -89,7 +84,7 @@ public class SubtransactionListItem extends FrameLayout implements View.OnClickL
             flAddress.setVisibility(View.GONE);
             tvMessage.setVisibility(View.VISIBLE);
         }
-        if (value != null) {
+        if (value != 0) {
             tvBtc.setText(GenericUtils.formatValue(value));
         } else {
             tvBtc.setText("");

@@ -16,16 +16,16 @@
 
 package net.bither.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import net.bither.BitherSetting.MarketType;
 import net.bither.util.ExchangeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Ticker implements Serializable {
 	/**

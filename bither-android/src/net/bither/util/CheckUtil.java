@@ -19,14 +19,16 @@ package net.bither.util;
 import android.content.Intent;
 import android.provider.Settings;
 
-import com.google.bitcoin.core.ECKey;
-
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
+import net.bither.model.PasswordSeed;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 
@@ -35,121 +37,128 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CheckUtil {
-	private CheckUtil() {
+    private CheckUtil() {
 
-	};
+    }
 
-	public static ExecutorService runChecks(List<Check> checks, int threadCount) {
-		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-		for (Check check : checks) {
-			executor.execute(new CheckRunnable(check));
-		}
-		return executor;
-	}
+    public static ExecutorService runChecks(List<Check> checks, int threadCount) {
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        for (Check check : checks) {
+            executor.execute(new CheckRunnable(check));
+        }
+        return executor;
+    }
 
-	public static Check initCheckOfWifi() {
-		Check check = new Check(R.string.wifi_is_close,
-				R.string.wifi_not_close, R.string.wifi_is_close_checking,
-				new ICheckAction() {
+    public static Check initCheckOfWifi() {
+        Check check = new Check(R.string.wifi_is_close,
+                R.string.wifi_not_close, R.string.wifi_is_close_checking,
+                new ICheckAction() {
 
-					@Override
-					public boolean check() {
-						NetworkType networkType = NetworkUtil.isConnectedType();
-						if (networkType == NetworkType.Wifi) {
-							return false;
-						} else {
-							return true;
-						}
-					}
-				});
-		check.setCheckOperation(new CheckOperation() {
-			@Override
-			public void operate() {
-				Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				BitherApplication.mContext.startActivity(intent);
-			}
-		});
-		return check;
-	}
+                    @Override
+                    public boolean check() {
+                        NetworkType networkType = NetworkUtil.isConnectedType();
+                        if (networkType == NetworkType.Wifi) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+        check.setCheckOperation(new CheckOperation() {
+            @Override
+            public void operate() {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                BitherApplication.mContext.startActivity(intent);
+            }
+        });
+        return check;
+    }
 
-	public static Check initCheckOf3G() {
-		Check check = new Check(R.string.threeg_is_close,
-				R.string.threeg_not_close, R.string.threeg_is_close_checking,
-				new ICheckAction() {
+    public static Check initCheckOf3G() {
+        Check check = new Check(R.string.threeg_is_close,
+                R.string.threeg_not_close, R.string.threeg_is_close_checking,
+                new ICheckAction() {
 
-					@Override
-					public boolean check() {
-						NetworkType networkType = NetworkUtil.isConnectedType();
-						if (networkType == NetworkType.Mobile) {
-							return false;
-						} else {
-							return true;
-						}
-					}
-				});
-		check.setCheckOperation(new CheckOperation() {
-			@Override
-			public void operate() {
-				Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				BitherApplication.mContext.startActivity(intent);
-			}
-		});
-		return check;
-	}
+                    @Override
+                    public boolean check() {
+                        NetworkType networkType = NetworkUtil.isConnectedType();
+                        if (networkType == NetworkType.Mobile) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+        check.setCheckOperation(new CheckOperation() {
+            @Override
+            public void operate() {
+                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                BitherApplication.mContext.startActivity(intent);
+            }
+        });
+        return check;
+    }
 
-	public static Check initCheckOfBluetooth() {
-		Check check = new Check(R.string.bluetooth_is_close,
-				R.string.bluetooth_not_close,
-				R.string.bluetooth_is_close_checking, new ICheckAction() {
-					@Override
-					public boolean check() {
-						if (NetworkUtil.BluetoothIsConnected()) {
-							return false;
-						} else {
-							return true;
-						}
-					}
-				});
-		check.setCheckOperation(new CheckOperation() {
-			@Override
-			public void operate() {
-				Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				BitherApplication.mContext.startActivity(intent);
-			}
-		});
-		return check;
-	}
+    public static Check initCheckOfBluetooth() {
+        Check check = new Check(R.string.bluetooth_is_close,
+                R.string.bluetooth_not_close,
+                R.string.bluetooth_is_close_checking, new ICheckAction() {
+            @Override
+            public boolean check() {
+                if (NetworkUtil.BluetoothIsConnected()) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
+        check.setCheckOperation(new CheckOperation() {
+            @Override
+            public void operate() {
+                Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                BitherApplication.mContext.startActivity(intent);
+            }
+        });
+        return check;
+    }
 
-	public static Check initCheckForPrivateKey(
-			final BitherAddressWithPrivateKey address, final SecureCharSequence password) {
-		String title = String.format(BitherApplication.mContext
-				.getString(R.string.check_address_private_key_title), address
-				.getShortAddress());
-		Check check = new Check(title, new ICheckAction() {
+    public static Check initCheckForPrivateKey(
+            final Address address, final SecureCharSequence password) {
+        String title = String.format(BitherApplication.mContext
+                .getString(R.string.check_address_private_key_title), address
+                .getShortAddress());
+        Check check = new Check(title, new ICheckAction() {
 
-			@Override
-			public boolean check() {
-				boolean result = address.checkPrivateKeyDecryption(password);
-				if (!result) {
-					ECKey oldKey = null;
-					if (address.getKeys().size() > 0) {
-						oldKey = address.getKeys().get(0);
-					}
-					ECKey eckeyFromBackup = BackupUtil.getEckeyFromBackup(
-							address.getAddress(), password);
-                    password.wipe();
-					if (oldKey != null) {
-						result = address.replaceEckey(oldKey, eckeyFromBackup);
-					} else {
-						result = address.addKey(eckeyFromBackup);
-					}
-				}
-				return result;
-			}
-		});
-		return check;
-	}
+            @Override
+            public boolean check() {
+                boolean result = new PasswordSeed(address).checkPassword(password);
+                if (!result) {
+                    try {
+                        ECKey eckeyFromBackup = BackupUtil.getEckeyFromBackup(
+                                address.getAddress(), password);
+                        if (eckeyFromBackup != null) {
+                            String encryptPrivateKey = PrivateKeyUtil.getPrivateKeyString(eckeyFromBackup);
+                            if (!Utils.isEmpty(encryptPrivateKey)) {
+                                address.setEncryptPrivKey(encryptPrivateKey);
+                                address.savePrivateKey();
+                                result = true;
+                            }
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        password.wipe();
+                    }
+
+
+                }
+                return result;
+            }
+        });
+        return check;
+    }
 }

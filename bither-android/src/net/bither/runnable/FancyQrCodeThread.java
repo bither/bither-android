@@ -29,9 +29,6 @@ import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
-/**
- * Created by songchenwen on 14-5-24.
- */
 public class FancyQrCodeThread extends Thread {
     public static interface FancyQrCodeListener {
         public void generated(Bitmap bmp);

@@ -16,11 +16,8 @@
 
 package net.bither.runnable;
 
-import android.media.Image;
-
 import net.bither.api.UploadAvatarApi;
 import net.bither.preference.AppSharedPreference;
-import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.StringUtil;
 

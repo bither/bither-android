@@ -16,54 +16,57 @@
 
 package net.bither.adapter;
 
-import java.util.List;
-
-import net.bither.model.BitherAddress;
-import net.bither.ui.base.TransactionListItem;
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.google.bitcoin.core.Transaction;
+import com.google.common.primitives.Longs;
+
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.Tx;
+import net.bither.ui.base.TransactionListItem;
+
+import java.util.List;
+
 
 public class TransactionListAdapter extends BaseAdapter {
-	private Activity activity;
-	private List<Transaction> transactions;
-	private BitherAddress address;
+    private Activity activity;
+    private List<Tx> transactions;
+    private Address address;
 
-	public TransactionListAdapter(Activity activity,
-			List<Transaction> transactions, BitherAddress address) {
-		this.activity = activity;
-		this.transactions = transactions;
-		this.address = address;
-	}
+    public TransactionListAdapter(Activity activity,
+                                  List<Tx> transactions, Address address) {
+        this.activity = activity;
+        this.transactions = transactions;
+        this.address = address;
+    }
 
-	@Override
-	public int getCount() {
-		return transactions.size();
-	}
+    @Override
+    public int getCount() {
+        return transactions.size();
+    }
 
-	@Override
-	public Transaction getItem(int position) {
-		return transactions.get(position);
-	}
+    @Override
+    public Tx getItem(int position) {
+        return transactions.get(position);
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return transactions.get(position).getHash().toBigInteger().longValue();
-	}
+    @Override
+    public long getItemId(int position) {
+        return Longs.fromByteArray(transactions.get(position).getTxHash());
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		TransactionListItem view;
-		if (convertView == null
-				|| !(convertView instanceof TransactionListItem)) {
-			convertView = new TransactionListItem(activity);
-		}
-		view = (TransactionListItem) convertView;
-		view.setTransaction(transactions.get(position), address);
-		return convertView;
-	}
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        TransactionListItem view;
+        if (convertView == null
+                || !(convertView instanceof TransactionListItem)) {
+            convertView = new TransactionListItem(activity);
+        }
+        view = (TransactionListItem) convertView;
+        view.setTransaction(transactions.get(position), address);
+        return convertView;
+    }
 
 }

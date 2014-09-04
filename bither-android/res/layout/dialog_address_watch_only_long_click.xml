@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/tv_delete"
@@ -14,27 +14,13 @@
         android:padding="10dp"
         android:text="@string/address_option_delete"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff"/>
+        android:background="#22ffffff" />
 
-    <TextView
-        android:id="@+id/tv_remonitor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ui_touchable_foreground"
-        android:padding="10dp"
-        android:text="@string/address_option_remonitor"
-        android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#22ffffff"/>
 
     <TextView
         android:id="@+id/tv_close"
@@ -44,6 +30,6 @@
         android:padding="10dp"
         android:text="@string/close"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
 </LinearLayout>

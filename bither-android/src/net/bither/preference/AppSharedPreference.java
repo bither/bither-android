@@ -18,52 +18,96 @@ package net.bither.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 
 import net.bither.BitherApplication;
-import net.bither.BitherSetting.AppMode;
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
 import net.bither.util.Qr;
 import net.bither.util.StringUtil;
-import net.bither.util.TransactionsUtil;
-import net.bither.util.TransactionsUtil.TransactionFeeMode;
 
 import java.util.Date;
 import java.util.Locale;
 
 public class AppSharedPreference {
+
+
     private static final String APP_BITHER = "app_bither";
     private static final String PREFS_KEY_LAST_VERSION = "last_version";
     private static final String DEFAULT_MARKET = "default_market";
     private static final String DEFAULT_EXCHANGE_RATE = "default_exchange_rate";
-    private static final String APP_MODE = "app_mode";
+
     private static final String LAST_CHECK_PRIVATE_KEY_TIME = "last_check_private_key_time";
     private static final String LAST_BACK_UP_PRIVATE_KEY_TIME = "last_back_up_private_key_time";
-    private static final String HAS_PRIVATE_KEY = "has_private_key";
-    private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
+
+
     // from service
     private static final String SYNC_BLOCK_ONLY_WIFI = "sync_block_only_wifi";
-    private static final String PREFS_KEY_CONNECTIVITY_NOTIFICATION = "connectivity_notification";
-    private static final String PREFS_KEY_BTC_PRECISION = "btc_precision";
-    private static final String PREFS_DEFAULT_BTC_PRECISION = "4";
+
     private static final String DOWNLOAD_SPV_FINISH = "download_spv_finish";
     private static final String PASSWORD_SEED = "password_seed";
     private static final String USER_AVATAR = "user_avatar";
     private static final String FANCY_QR_CODE_THEME = "fancy_qr_code_theme";
     private static final String FIRST_RUN_DIALOG_SHOWN = "first_run_dialog_shown";
 
+    private static final String APP_MODE = "app_mode";
+    private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
+    private static final String BITHERJ_DONE_SYNC_FROM_SPV = "bitheri_done_sync_from_spv";
+
+
     private static AppSharedPreference mInstance = new AppSharedPreference();
+
     private SharedPreferences mPreferences;
+
+    public static AppSharedPreference getInstance() {
+        return mInstance;
+    }
 
     private AppSharedPreference() {
         this.mPreferences = BitherApplication.mContext.getSharedPreferences(APP_BITHER,
                 Context.MODE_MULTI_PROCESS);
     }
 
-    public static AppSharedPreference getInstance() {
-        return mInstance;
+    public BitherjSettings.AppMode getAppMode() {
+        int index = mPreferences.getInt(APP_MODE, -1);
+        if (index < 0 || index >= BitherjSettings.AppMode.values().length) {
+            return null;
+        }
+        return BitherjSettings.AppMode.values()[index];
+    }
+
+    public void setAppMode(BitherjSettings.AppMode mode) {
+        int index = -1;
+        if (mode != null) {
+            index = mode.ordinal();
+        }
+        mPreferences.edit().putInt(APP_MODE, index).commit();
+    }
+
+    public boolean getBitherjDoneSyncFromSpv() {
+        return mPreferences.getBoolean(BITHERJ_DONE_SYNC_FROM_SPV, false);
+    }
+
+    public void setBitherjDoneSyncFromSpv(boolean isDone) {
+        mPreferences.edit().putBoolean(BITHERJ_DONE_SYNC_FROM_SPV, isDone).commit();
+
+    }
+
+    public BitherjSettings.TransactionFeeMode getTransactionFeeMode() {
+        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
+        if (ordinal < BitherjSettings.TransactionFeeMode.values().length && ordinal >= 0) {
+            return BitherjSettings.TransactionFeeMode.values()[ordinal];
+        }
+        return BitherjSettings.TransactionFeeMode.Normal;
+    }
+
+    public void setTransactionFeeMode(BitherjSettings.TransactionFeeMode mode) {
+        if (mode == null) {
+            mode = BitherjSettings.TransactionFeeMode.Normal;
+        }
+        this.mPreferences.edit().putInt(TRANSACTION_FEE_MODE, mode.ordinal()).commit();
+
     }
 
     public int getVerionCode() {
@@ -133,21 +177,6 @@ public class AppSharedPreference {
         this.mPreferences.edit().putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
     }
 
-    public AppMode getAppMode() {
-        int index = mPreferences.getInt(APP_MODE, -1);
-        if (index < 0 || index >= AppMode.values().length) {
-            return null;
-        }
-        return AppMode.values()[index];
-    }
-
-    public void setAppMode(AppMode mode) {
-        int index = -1;
-        if (mode != null) {
-            index = mode.ordinal();
-        }
-        mPreferences.edit().putInt(APP_MODE, index).commit();
-    }
 
     public Date getLastCheckPrivateKeyTime() {
         Date date = null;
@@ -180,35 +209,8 @@ public class AppSharedPreference {
         }
     }
 
-    public boolean hasPrivateKey() {
-        return mPreferences.getBoolean(HAS_PRIVATE_KEY, false);
-    }
-
-    public void setHasPrivateKey(boolean hasPrivateKey) {
-        mPreferences.edit().putBoolean(HAS_PRIVATE_KEY, hasPrivateKey).commit();
-    }
-
     public void clear() {
         mPreferences.edit().clear().commit();
-    }
-
-    // from service
-    public String getPrecision() {
-        return mPreferences.getString(PREFS_KEY_BTC_PRECISION, PREFS_DEFAULT_BTC_PRECISION);
-    }
-
-    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener
-                                                                 sharedPreferenceChangeListener) {
-        mPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
-    }
-
-    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener
-                                                                   sharedPreferenceChangeListener) {
-        mPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
-    }
-
-    public boolean getNotificationFlag() {
-        return mPreferences.getBoolean(PREFS_KEY_CONNECTIVITY_NOTIFICATION, false);
     }
 
     public boolean getSyncBlockOnlyWifi() {
@@ -240,21 +242,6 @@ public class AppSharedPreference {
 
     }
 
-    public TransactionFeeMode getTransactionFeeMode() {
-        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
-        if (ordinal < TransactionFeeMode.values().length && ordinal >= 0) {
-            return TransactionFeeMode.values()[ordinal];
-        }
-        return TransactionFeeMode.Normal;
-    }
-
-    public void setTransactionFeeMode(TransactionFeeMode mode) {
-        if (mode == null) {
-            mode = TransactionFeeMode.Normal;
-        }
-        this.mPreferences.edit().putInt(TRANSACTION_FEE_MODE, mode.ordinal()).commit();
-        TransactionsUtil.configureMinFee(mode.getMinFeeSatoshi());
-    }
 
     public boolean hasUserAvatar() {
         return !StringUtil.isEmpty(getUserAvatar());

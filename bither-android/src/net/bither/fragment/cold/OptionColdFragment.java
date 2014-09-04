@@ -27,14 +27,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.bitcoin.core.ECKey;
-import com.google.bitcoin.core.Utils;
 
 import net.bither.BitherSetting;
 import net.bither.QrCodeActivity;
@@ -44,48 +42,34 @@ import net.bither.ScanQRCodeTransportActivity;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
-import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.DialogConfirmTask;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DialogPassword.DialogPasswordListener;
-import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.AnimationUtil;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
-import net.bither.util.PrivateKeyUtil;
+import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class OptionColdFragment extends Fragment implements Selectable {
     private int ONE_HOUR = 1 * 60 * 60 * 1000;
-    private OnClickListener backupTimeListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            long backupTime = AppSharedPreference.getInstance().getLastBackupkeyTime().getTime();
-            if (backupTime + ONE_HOUR < System.currentTimeMillis()) {
-                backupPrivateKey();
-            } else {
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(getActivity(),
-                        getString(R.string.backup_again), new Runnable() {
-                    public void run() {
-                        backupPrivateKey();
-                    }
-                }
-                );
-                dialogConfirmTask.show();
-            }
-        }
-    };
+    private final int duration = 1000;
+
     private Button btnGetSign;
     private Button btnCloneTo;
     private Button btnCloneFrom;
@@ -97,12 +81,13 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private LinearLayout llQrForAll;
     private DialogProgress dp;
 
+
     private OnClickListener toSignActivityClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (WalletUtils.getPrivateAddressList() == null || WalletUtils.getPrivateAddressList
-                    ().size() == 0) {
+            if (AddressManager.getInstance().getPrivKeyAddresses() == null
+                    || AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
@@ -145,12 +130,11 @@ public class OptionColdFragment extends Fragment implements Selectable {
         @Override
         public void onClick(View v) {
             String content = "";
-            List<BitherAddressWithPrivateKey> addresses = WalletUtils.getPrivateAddressList();
+            List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
             for (int i = 0;
                  i < addresses.size();
                  i++) {
-                String pubStr = Utils.bytesToHexString(addresses.get(i).getKeys().get(0)
-                        .getPubKey());
+                String pubStr = Utils.bytesToHexString(addresses.get(i).getPubKey());
                 content += pubStr;
                 if (i < addresses.size() - 1) {
                     content += StringUtil.QR_CODE_SPLIT;
@@ -172,6 +156,27 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
     };
 
+    private OnClickListener backupTimeListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (FileUtil.existSdCardMounted()) {
+                long backupTime = AppSharedPreference.getInstance().getLastBackupkeyTime().getTime();
+                if (backupTime + ONE_HOUR < System.currentTimeMillis()) {
+                    backupPrivateKey();
+                } else {
+                    DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(getActivity(),
+                            getString(R.string.backup_again), new Runnable() {
+                        public void run() {
+                            backupPrivateKey();
+                        }
+                    }
+                    );
+                    dialogConfirmTask.show();
+                }
+            }
+        }
+    };
+
     @Override
     public void onSelected() {
         configureCloneButton();
@@ -179,7 +184,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureCloneButton() {
-        if (WalletUtils.getPrivateAddressList() != null && WalletUtils.getPrivateAddressList()
+        if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
                 .size() > 0) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
@@ -190,7 +195,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureQrForAll() {
-        if (WalletUtils.getPrivateAddressList() != null && WalletUtils.getPrivateAddressList()
+        if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
                 .size() > 0) {
             llQrForAll.setVisibility(View.VISIBLE);
         } else {
@@ -301,6 +306,50 @@ public class OptionColdFragment extends Fragment implements Selectable {
         pbBackTime.setLayoutParams(layoutParams);
     }
 
+    private void backupFinish() {
+        pbBackTime.setVisibility(View.INVISIBLE);
+        btnBackupTime.setText(R.string.backup_finish);
+        AnimationUtil.fadeOut(btnBackupTime, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                fadeinBackupTime();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        }, duration);
+
+    }
+
+    private void fadeinBackupTime() {
+        AnimationUtil.fadeIn(btnBackupTime, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                btnBackupTime.setVisibility(View.INVISIBLE);
+                showBackupTime();
+                AnimationUtil.fadeOut(btnBackupTime);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        }, duration);
+
+
+    }
+
     private void backupPrivateKey() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -315,14 +364,22 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        pbBackTime.setVisibility(View.INVISIBLE);
-                        showBackupTime();
+
+                        backupFinish();
+
                     }
                 }, 1000);
             }
 
             @Override
             public void backupError() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pbBackTime.setVisibility(View.INVISIBLE);
+                        showBackupTime();
+                    }
+                }, 1000);
 
             }
         });
@@ -357,9 +414,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
 
         public void run() {
-            List<ECKey> keys = PrivateKeyUtil.getECKeysFromString(content, password);
+            List<Address> addressList = PrivateKeyUtil.getECKeysFromString(content, password);
             password.wipe();
-            if (keys == null || keys.size() == 0) {
+            if (addressList == null || addressList.size() == 0) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -373,18 +430,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
-            List<BitherAddressWithPrivateKey> wallets = new
-                    ArrayList<BitherAddressWithPrivateKey>();
-            for (int i = keys.size() - 1;
-                 i >= 0;
-                 i--) {
-                ECKey key = keys.get(i);
-                BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
-                wallet.setKeyCrypter(key.getKeyCrypter());
-                wallet.addKey(key);
-                wallets.add(wallet);
-            }
-            WalletUtils.addAddressWithPrivateKey(null, wallets);
+            KeyUtil.addAddressList(null, addressList);
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

@@ -96,12 +96,9 @@
     <string name="send_progress_dialog_message">發送中</string>
     <string name="send_success">發送成功</string>
     <string name="send_failed">發送失敗</string>
-    <string name="send_failed_not_enough_available">發送失敗. 可用餘額不足.</string>
     <string name="send_failed_missing_btc">發送失敗. 可用餘額中缺少%s BTC.</string>
     <string name="send_failed_dust_out_put">發送失敗. 這樣小額的交易會被忽略.</string>
-    <string name="send_failed_pendding">%s BTC 正在等待確認.</string>
-    <string name="send_failed_waiting_for_another_confirmation">請等待一個新的確認後再交易.</string>
-    <string name="send_failed_not_enough_for_fee">發送失敗. 可用餘額不足以支付手續費.</string>
+    <string name="send_failed_pendding">發送失敗. %s BTC 正在等待確認.\n請等待一個新的確認後再交易.</string>
     <string name="send_coins_fragment_sending_address_label">從</string>
     <string name="send_coins_fragment_receiving_address_label">發送給</string>
     <string name="send_coins_fragment_amount_label">金額</string>
@@ -168,6 +165,10 @@
     <string name="set_avatar_camera">來自相機</string>
     <string name="set_avatar_gallery">來自圖庫</string>
     <string name="edit_password_button">修改密碼</string>
+    <string name="export_log">導出日志</string>
+    <string name="export_log_prompt">確認導出日志到sd卡？</string>
+    <string name="reload_tx">重載交易數據</string>
+    <string name="export_success">日志已導出到 :</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
     <string name="import_private_key_qr_code">來自私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
@@ -184,6 +185,10 @@
     <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
     <string name="import_private_key_failed_tx_too_mush">此私鑰有太多交易 ,不能導入</string>
     <string name="import_private_key_failed_special_address">此私鑰有特殊交易 ,不能導入</string>
+    <string name="reload_tx_need_too_much_time">確認重載交易數據 ?\n需要較長時間\n消耗網絡流量\n建議只在數據出錯時嘗試</string>
+    <string name="reload_tx_failed">重載交易數據失敗 , 請重試 . </string>
+    <string name="reload_tx_success">重載交易數據成功 </string>
+    <string name="tx_cannot_reloding">壹個小時內只能重載交易數據壹次.</string>
 
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
@@ -250,6 +255,7 @@
     <string name="qr_code_for_all_addresses">冷錢包監控二維碼</string>
     <string name="qr_code_for_all_addresses_title">使用熱錢包掃描來監控冷錢包</string>
     <string name="no_sd_card_of_back_up">沒有SD卡，無法自動備份</string>
+    <string name="backup_finish">備份成功 !</string>
     <string name="no_sd_card">SD卡錯誤</string>
     <string name="last_time_of_back_up">上一次備份時間: %s </string>
     <string name="just_now">剛剛</string>
@@ -320,4 +326,8 @@
     <string name="first_run_dialog_title">為了保護您的比特幣:</string>
     <string name="first_run_dialog_line_1">請不要卸載比太錢包</string>
     <string name="first_run_dialog_line_2">請不要清除比太數據</string>
+
+    <!-- upgrade -->
+    <string name="begin_upgrade">即將開始升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
+    <string name="upgrading">升級中...</string>
 </resources>

@@ -16,10 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.util.StringUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +29,11 @@ import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.ScanActivity;
+import net.bither.util.StringUtil;
 
 public class AddAddressListItem extends FrameLayout {
 

@@ -136,7 +136,7 @@ public class Crypto {
 	/**
 	 * Password based encryption using AES - CBC 256 bits.
 	 * 
-	 * @param plainBytes
+	 * @param plainTextAsBytes
 	 *            The bytes to encrypt
 	 * @param password
 	 *            The password to use for encryption
@@ -208,7 +208,7 @@ public class Crypto {
 	 * 
 	 * @param bytesToDecode
 	 *            The bytes to decrypt
-	 * @param passwordbThe
+	 * @param password
 	 *            password to use for decryption
 	 * @return The decrypted bytes
 	 * @throws IOException

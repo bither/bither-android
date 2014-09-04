@@ -16,7 +16,9 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.model.Ticker;
@@ -24,9 +26,8 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.TextView;
+
+import java.math.BigInteger;
 
 public class BtcToMoneyTextView extends TextView implements
 		MarketTickerChangedObserver {

@@ -16,33 +16,35 @@
 
 package net.bither.util;
 
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.AddressFormatException;
-import com.google.bitcoin.core.ScriptException;
-import com.google.bitcoin.core.Sha256Hash;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionConfidence.ConfidenceType;
-import com.google.bitcoin.core.TransactionInput;
-import com.google.bitcoin.core.TransactionOutPoint;
-import com.google.bitcoin.core.TransactionOutput;
-import com.google.bitcoin.core.VerificationException;
-import com.google.bitcoin.core.Wallet.SendRequest;
-import com.google.bitcoin.core.WrongNetworkException;
-import com.google.bitcoin.script.Script;
-
 import net.bither.BitherSetting;
 import net.bither.api.BitherMytransactionsApi;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.core.Block;
+import net.bither.bitherj.core.BlockChain;
+import net.bither.bitherj.core.In;
+import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.exception.ScriptException;
+import net.bither.bitherj.exception.VerificationException;
+import net.bither.bitherj.script.Script;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.Sha256Hash;
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.HttpSetting;
 import net.bither.model.UnSignTransaction;
+import net.bither.preference.AppSharedPreference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -66,31 +68,18 @@ public class TransactionsUtil {
     private static final String PREV_TX_HASH = "prev";
     private static final String PREV_OUTPUT_SN = "n";
     private static final String SCRIPT_PUB_KEY = "script";
+    private static final String BLOCK_COUNT = "block_count";
 
     private static final byte[] EMPTY_BYTES = new byte[32];
 
     private static List<UnSignTransaction> unsignTxs = new ArrayList<UnSignTransaction>();
 
-    public static enum TransactionFeeMode {
-        Normal(10000), Low(1000);
-
-        private int satoshi;
-
-        TransactionFeeMode(int satoshi) {
-            this.satoshi = satoshi;
-        }
-
-        public int getMinFeeSatoshi() {
-            return satoshi;
-        }
-    }
-
-    public static List<Transaction> getTransactionsFromBither(
+    public static List<Tx> getTransactionsFromBither(
             JSONObject jsonObject, int storeBlockHeight) throws JSONException,
-            WrongNetworkException, AddressFormatException,
+            AddressFormatException,
             VerificationException, ParseException, NoSuchFieldException,
             IllegalAccessException, IllegalArgumentException {
-        List<Transaction> transactions = new ArrayList<Transaction>();
+        List<Tx> transactions = new ArrayList<Tx>();
 
         if (!jsonObject.isNull(TXS)) {
             JSONArray txArray = jsonObject.getJSONArray(TXS);
@@ -99,50 +88,42 @@ public class TransactionsUtil {
 
             for (int j = 0; j < txArray.length(); j++) {
                 JSONObject tranJsonObject = txArray.getJSONObject(j);
-                String blockHash = tranJsonObject.getString(BITHER_BLOCK_HASH);
                 String txHash = tranJsonObject.getString(TX_HASH);
+                byte[] txHashByte = Utils.reverseBytes(Utils.hexStringToByteArray(txHash));
                 int height = tranJsonObject.getInt(BITHER_BLOCK_NO);
                 if (height > storeBlockHeight && storeBlockHeight > 0) {
                     continue;
                 }
                 int version = 1;
-                Date updateTime = new Date();
+
+                int updateTime = (int) (new Date().getTime() / 1000);
                 if (!tranJsonObject.isNull(EXPLORER_TIME)) {
-                    updateTime = DateTimeUtil
+                    updateTime = (int) (DateTimeUtil
                             .getDateTimeForTimeZone(tranJsonObject
-                                    .getString(EXPLORER_TIME));
+                                    .getString(EXPLORER_TIME)).getTime() / 1000);
                 }
                 if (!tranJsonObject.isNull(EXPLORER_VERSION)) {
                     version = tranJsonObject.getInt(EXPLORER_VERSION);
 
                 }
-                Transaction transaction = new Transaction(
-                        BitherSetting.NETWORK_PARAMETERS, version,
-                        new Sha256Hash(txHash));
-                transaction.addBlockAppearance(new Sha256Hash(blockHash),
-                        height);
+                Tx tx = new Tx();
+                tx.setTxHash(txHashByte);
+                tx.setTxTime(updateTime);
                 if (!tranJsonObject.isNull(EXPLORER_OUT)) {
                     JSONArray tranOutArray = tranJsonObject
                             .getJSONArray(EXPLORER_OUT);
                     for (int i = 0; i < tranOutArray.length(); i++) {
                         JSONObject tranOutJson = tranOutArray.getJSONObject(i);
-                        BigInteger value = BigInteger.valueOf(tranOutJson
-                                .getLong(BITHER_VALUE));
+                        long value = tranOutJson
+                                .getLong(BITHER_VALUE);
                         if (!tranOutJson.isNull(SCRIPT_PUB_KEY)) {
                             String str = tranOutJson.getString(SCRIPT_PUB_KEY);
-                            // Script script = new Script(
-                            // );
-                            // byte[] bytes1 = ScriptBuilder.createOutputScript(
-                            // address).getProgram();
-                            // byte[] bytes2 = StringUtil
-                            // .hexStringToByteArray(str);
-                            // LogUtil.d("tx", Arrays.equals(bytes1, bytes2) +
-                            // ";");
-                            TransactionOutput transactionOutput = new TransactionOutput(
-                                    BitherSetting.NETWORK_PARAMETERS,
-                                    transaction, value,
-                                    StringUtil.hexStringToByteArray(str));
-                            transaction.addOutput(transactionOutput);
+                            Out out = new Out(
+                                    tx, value,
+                                    Utils.hexStringToByteArray(str));
+                            out.setTxHash(txHashByte);
+                            out.setOutSn(i);
+                            tx.addOutput(out);
                         }
 
                     }
@@ -154,54 +135,59 @@ public class TransactionsUtil {
                             .getJSONArray(EXPLORER_IN);
                     for (int i = 0; i < tranInArray.length(); i++) {
                         JSONObject tranInJson = tranInArray.getJSONObject(i);
-                        TransactionOutPoint transactionOutPoint = null;
+                        In in = new In();
+                        in.setTxHash(txHashByte);
                         if (!tranInJson.isNull(EXPLORER_COINBASE)) {
-                            long index = 0;
+                            int index = 0;
                             if (!tranInJson.isNull(EXPLORER_SEQUENCE)) {
-                                index = tranInJson.getLong(EXPLORER_SEQUENCE);
+                                index = tranInJson.getInt(EXPLORER_SEQUENCE);
                             }
-                            transactionOutPoint = new TransactionOutPoint(
-                                    BitherSetting.NETWORK_PARAMETERS, index,
-                                    Sha256Hash.ZERO_HASH);
-
+                            in.setPrevTxHash(Sha256Hash.ZERO_HASH.getBytes());
+                            in.setPrevOutSn(index);
                         } else {
 
                             String prevOutHash = tranInJson
                                     .getString(PREV_TX_HASH);
-                            long n = 0;
+                            int n = 0;
                             if (!tranInJson.isNull(PREV_OUTPUT_SN)) {
-                                n = tranInJson.getLong(PREV_OUTPUT_SN);
+                                n = tranInJson.getInt(PREV_OUTPUT_SN);
                             }
-                            transactionOutPoint = new TransactionOutPoint(
-                                    BitherSetting.NETWORK_PARAMETERS, n,
-                                    new Sha256Hash(prevOutHash));
+                            in.setPrevTxHash(Utils.reverseBytes(Utils.hexStringToByteArray(prevOutHash)));
+                            in.setPrevOutSn(n);
 
                         }
-                        // Log.d("transaction", transaction.toString());
-                        if (transactionOutPoint != null) {
-                            TransactionInput transactionInput = new TransactionInput(
-                                    BitherSetting.NETWORK_PARAMETERS,
-                                    transaction, Script.createInputScript(
-                                    EMPTY_BYTES, EMPTY_BYTES),
-                                    transactionOutPoint
-                            );
+                        in.setInSn(i);
+                        in.setPrevOutScript(Script.createInputScript(EMPTY_BYTES, EMPTY_BYTES));
+                        tx.addInput(in);
 
-                            transaction.addInput(transactionInput);
-                        }
 
                     }
                 }
-                transaction.getConfidence().setAppearedAtChainHeight(height);
-                transaction.getConfidence().setConfidenceType(
-                        ConfidenceType.BUILDING);
-                transaction.getConfidence().setDepthInBlocks(
-                        storeBlockHeight - height + 1);
-                transaction.setUpdateTime(updateTime);
-                // Log.d("transaction", "transaction.num:" + transaction);
-                Field txField = Transaction.class.getDeclaredField("hash");
-                txField.setAccessible(true);
-                txField.set(transaction, new Sha256Hash(txHash));
-                transactions.add(transaction);
+                tx.setTxVer(version);
+                tx.setBlockNo(height);
+                for (Tx temp : transactions) {
+                    if (temp.getBlockNo() == tx.getBlockNo()) {
+                        boolean marketSpent = false;
+                        for (In tempIn : temp.getIns()) {
+                            if (Arrays.equals(tempIn.getPrevTxHash(), tx.getTxHash())) {
+                                tx.setTxTime(temp.getTxTime() - 1);
+                                marketSpent = true;
+
+                            }
+                        }
+
+                        if (!marketSpent) {
+                            for (In tempIn : tx.getIns()) {
+                                if (Arrays.equals(tempIn.getPrevTxHash(), temp.getTxHash())) {
+                                    tx.setTxTime(temp.getTxTime() + 1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                transactions.add(tx);
+
                 count++;
                 double progress = BitherSetting.SYNC_TX_PROGRESS_BLOCK_HEIGHT
                         + BitherSetting.SYNC_TX_PROGRESS_STEP1
@@ -211,17 +197,22 @@ public class TransactionsUtil {
             }
 
         }
-
+        Collections.sort(transactions, new ComparatorTx());
         LogUtil.d("transaction", "transactions.num:" + transactions.size());
         return transactions;
 
     }
 
-    public static class ComparatorTx implements Comparator<Transaction> {
+    public static class ComparatorTx implements Comparator<Tx> {
 
         @Override
-        public int compare(Transaction lhs, Transaction rhs) {
-            return lhs.getUpdateTime().compareTo(rhs.getUpdateTime());
+        public int compare(Tx lhs, Tx rhs) {
+            if (lhs.getBlockNo() != rhs.getBlockNo()) {
+                return Integer.valueOf(lhs.getBlockNo()).compareTo(Integer.valueOf(rhs.getBlockNo()));
+            } else {
+                return Integer.valueOf(lhs.getTxTime()).compareTo(Integer.valueOf(rhs.getTxTime()));
+            }
+
         }
 
     }
@@ -257,39 +248,20 @@ public class TransactionsUtil {
         }
     }
 
-    public static void signTransaction(Transaction tx, String qrCodeContent)
+    public static boolean signTransaction(Tx tx, String qrCodeContent)
             throws ScriptException {
         String[] stringArray = qrCodeContent.split(StringUtil.QR_CODE_SPLIT);
-        List<String> hashList = new ArrayList<String>();
+
+        List<byte[]> hashList = new ArrayList<byte[]>();
         for (String str : stringArray) {
             if (!StringUtil.isEmpty(str)) {
-                hashList.add(str);
-                LogUtil.d("sign", str);
+                hashList.add(Utils.hexStringToByteArray(str));
             }
-
         }
-        for (int i = 0; i < tx.getInputs().size(); i++) {
-            TransactionInput input = tx.getInputs().get(i);
-            String str = hashList.get(i);
-            input.setScriptSig(new Script(StringUtil.hexStringToByteArray(str)));
-            input.getScriptSig().correctlySpends(tx, i,
-                    input.getOutpoint().getConnectedOutput().getScriptPubKey(),
-                    true);
-
-        }
+        tx.signWithSignatures(hashList);
+        return tx.verifySignatures();
     }
 
-    public static void configureMinFee(long satoshi) {
-        try {
-            Field field = Transaction.class
-                    .getField("REFERENCE_DEFAULT_MIN_TX_FEE");
-            field.setAccessible(true);
-            field.set(null, BigInteger.valueOf(satoshi));
-            SendRequest.DEFAULT_FEE_PER_KB = Transaction.REFERENCE_DEFAULT_MIN_TX_FEE;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static BitherSetting.AddressType checkAddress(List<String> addressList) throws Exception {
         for (String address : addressList) {
@@ -307,5 +279,41 @@ public class TransactionsUtil {
             }
         }
         return BitherSetting.AddressType.Normal;
+    }
+
+    public static void getMyTxFromBither() throws Exception {
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.HOT) {
+            return;
+        }
+        Block storedBlock = BlockChain.getInstance().getLastBlock();
+        int storeBlockHeight = storedBlock.getBlockNo();
+        for (Address address : AddressManager.getInstance().getAllAddresses()) {
+            List<Tx> transactions = new ArrayList<Tx>();
+            int apiBlockCount = 0;
+            BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
+                    address.getAddress());
+            bitherMytransactionsApi.handleHttpGet();
+            String txResult = bitherMytransactionsApi.getResult();
+            JSONObject jsonObject = new JSONObject(txResult);
+            if (!jsonObject.isNull(BLOCK_COUNT)) {
+                apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
+            }
+            List<Tx> temp = TransactionsUtil.getTransactionsFromBither(
+                    jsonObject, storeBlockHeight);
+            transactions.addAll(temp);
+
+            if (apiBlockCount < storeBlockHeight && storeBlockHeight - apiBlockCount < 100) {
+                BlockChain.getInstance().rollbackBlock(apiBlockCount);
+            }
+            Collections.sort(transactions, new ComparatorTx());
+            address.initTxs(transactions);
+            address.setSyncComplete(true);
+            address.savePubKey();
+            BroadcastUtil
+                    .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
+
+
+        }
+
     }
 }

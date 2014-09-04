@@ -36,25 +36,21 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.bitcoin.core.Address;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.Wallet.BalanceType;
-import com.google.bitcoin.core.Wallet.SendRequest;
-
 import net.bither.activity.hot.SelectAddressToSendActivity;
-import net.bither.model.BitherAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Tx;
 import net.bither.model.Ticker;
-import net.bither.runnable.CommitTransactionRunnable;
+import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
-import net.bither.ui.base.DialogProgress;
-import net.bither.ui.base.DialogSendConfirm;
-import net.bither.ui.base.DialogSendConfirm.SendConfirmListener;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSendConfirm;
+import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.BroadcastUtil;
@@ -64,14 +60,13 @@ import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
 
 public class SendActivity extends SwipeRightActivity implements PasswordEntryKeyboardView
-        .PasswordEntryKeyboardViewListener {
+        .PasswordEntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
-    private BitherAddressWithPrivateKey address;
+    private Address address;
     private TextView tvAddressLabel;
 
     private EditText etAddress;
@@ -96,11 +91,11 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
                 .ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
                     .ADDRESS_POSITION_PASS_VALUE_TAG);
-            if (addressPosition >= 0 && addressPosition < WalletUtils.getPrivateAddressList()
-                    .size()) {
-                BitherAddress a = WalletUtils.getPrivateAddressList().get(addressPosition);
-                if (a instanceof BitherAddressWithPrivateKey) {
-                    address = (BitherAddressWithPrivateKey) a;
+            if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
+                    .getPrivKeyAddresses().size()) {
+                Address a = AddressManager.getInstance().getPrivKeyAddresses().get(addressPosition);
+                if (a instanceof Address) {
+                    address = (Address) a;
                 }
             }
         }
@@ -124,7 +119,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
         kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        tvBalance.setText(GenericUtils.formatValue(address.getAddressInfo().getBalance()));
+        tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
@@ -160,18 +155,11 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
 
         @Override
-        public void onConfirm(SendRequest request) {
+        public void onConfirm(Tx tx) {
             etPassword.setText("");
             try {
-                CommitTransactionRunnable runnable = new CommitTransactionRunnable
-                        (addressPosition, request.tx);
-                runnable.setHandler(commitTransactionHandler);
-                Thread thread = new Thread(runnable);
-                dp.setThread(thread);
-                if (!dp.isShowing()) {
-                    dp.show();
-                }
-                thread.start();
+                new CommitTransactionThread(dp, addressPosition, tx, true,
+                        SendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -190,10 +178,10 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    if (msg.obj != null && msg.obj instanceof SendRequest) {
-                        SendRequest request = (SendRequest) msg.obj;
-                        DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this,
-                                request, sendConfirmListener);
+                    if (msg.obj != null && msg.obj instanceof Tx) {
+                        Tx tx = (Tx) msg.obj;
+                        DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this, tx,
+                                sendConfirmListener);
                         dialog.show();
                     } else {
                         DropdownMessage.showDropdownMessage(SendActivity.this,
@@ -222,53 +210,34 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         }
     };
 
-    private Handler commitTransactionHandler = new Handler() {
-
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case HandlerMessage.MSG_SUCCESS:
-                    if (dp.isShowing()) {
-                        dp.dismiss();
-                    }
-                    Transaction tx = null;
-                    if (msg.obj instanceof Transaction) {
-                        tx = (Transaction) msg.obj;
-                    }
-                    Intent intent = getIntent();
-                    if (tx != null) {
-                        intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
-                                tx.getHashAsString());
-                    }
-                    setResult(RESULT_OK, intent);
-                    finish();
-                    break;
-                case HandlerMessage.MSG_FAILURE:
-                    if (dp.isShowing()) {
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
-                    break;
-                default:
-                    break;
-            }
+    @Override
+    public void onCommitTransactionSuccess(Tx tx) {
+        Intent intent = getIntent();
+        if (tx != null) {
+            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
+                    tx.getHashAsString());
         }
-    };
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    @Override
+    public void onCommitTransactionFailed() {
+        DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
+    }
 
     private OnClickListener sendClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            final BigInteger btc = amountCalculatorLink.getAmount();
-            if (btc != null) {
+            final long btc = amountCalculatorLink.getAmount();
+            if (btc > 0) {
                 if (StringUtil.validBicoinAddress(etAddress.getText().toString())) {
                     try {
-                        SendRequest request = SendRequest.to(new Address(address
-                                .getNetworkParameters(), etAddress.getText().toString()
-                        ), btc);
-                        request.emptyWallet = btc.equals(address.getBalance(BalanceType.AVAILABLE));
                         CompleteTransactionRunnable completeRunnable = new
-                                CompleteTransactionRunnable(addressPosition, request,
-                             new SecureCharSequence(etPassword));
+                                CompleteTransactionRunnable(addressPosition,
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                new SecureCharSequence(etPassword));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -307,20 +276,14 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             new StringInputParser(input) {
                 @Override
-                protected void bitcoinRequest(final Address address, final String addressLabel,
-                                              final BigInteger amount, final String bluetoothMac) {
+                protected void bitcoinRequest(final String address, final String addressLabel,
+                                              final long amount, final String bluetoothMac) {
                     etAddress.setText(address.toString());
-                    if (amount != null && amount.compareTo(BigInteger.ZERO) > 0) {
+                    if (amount >= 0) {
                         amountCalculatorLink.setBtcAmount(amount);
                     }
                     amountCalculatorLink.requestFocus();
                     validateValues();
-                }
-
-                @Override
-                protected void directTransaction(final Transaction tx) {
-                    DropdownMessage.showDropdownMessage(SendActivity.this,
-                            R.string.scan_watch_only_address_error);
                 }
 
                 @Override
@@ -335,13 +298,13 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     }
 
     @Override
-    public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v) {
-        vKeyboardContainer.setVisibility(View.GONE);
+    public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v) {
-        vKeyboardContainer.setVisibility(View.VISIBLE);
+    public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.GONE);
     }
 
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
@@ -399,7 +362,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            if(password != null){
+            if (password != null) {
                 password.wipe();
             }
             password = new SecureCharSequence(etPassword);
@@ -407,7 +370,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
         @Override
         public void afterTextChanged(Editable s) {
-            SecureCharSequence p =  new SecureCharSequence(etPassword);
+            SecureCharSequence p = new SecureCharSequence(etPassword);
             if (p.length() > 0) {
                 if (!StringUtil.validPassword(p)) {
                     etPassword.setText(password);
@@ -422,7 +385,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     private void validateValues() {
         boolean isValidAmounts = false;
 
-        final BigInteger amount = amountCalculatorLink.getAmount();
+        final BigInteger amount = BigInteger.valueOf(amountCalculatorLink.getAmount());
 
         if (amount == null) {
         } else if (amount.signum() > 0) {
@@ -490,9 +453,9 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
                     isDonate = true;
                 }
                 etAddress.setText(address);
-                BigInteger btc = (BigInteger) intent.getExtras().getSerializable
-                        (SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT);
-                if (btc != null && btc.signum() > 0) {
+                long btc = intent.getExtras().getLong(SelectAddressToSendActivity
+                        .INTENT_EXTRA_AMOUNT, 0);
+                if (btc > 0) {
                     amountCalculatorLink.setBtcAmount(btc);
                 }
                 validateValues();
@@ -502,7 +465,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
     @Override
     public void onBackPressed() {
-        if(!kv.handleBack()){
+        if (!kv.handleBack()) {
             super.onBackPressed();
         }
     }

@@ -38,6 +38,8 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.ui.base.dialog.DialogTotalBtc;
+import net.bither.ui.base.dialog.DialogWithArrow;
 import net.bither.util.GenericUtils;
 import net.bither.util.UIUtil;
 
@@ -132,21 +134,21 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         addView(tvCount, lpCount);
         tvCount.setVisibility(View.GONE);
         tvText.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        ellipsized = false;
-                        Layout l = tvText.getLayout();
-                        if (l != null) {
-                            int lines = l.getLineCount();
-                            if (lines > 0) {
-                                if (l.getEllipsisCount(lines - 1) > 0) {
-                                    ellipsized = true;
-                                }
-                            }
-                        }
-                        updateArrow();
-                    }
-                }
+                                                                   @Override
+                                                                   public void onGlobalLayout() {
+                                                                       ellipsized = false;
+                                                                       Layout l = tvText.getLayout();
+                                                                       if (l != null) {
+                                                                           int lines = l.getLineCount();
+                                                                           if (lines > 0) {
+                                                                               if (l.getEllipsisCount(lines - 1) > 0) {
+                                                                                   ellipsized = true;
+                                                                               }
+                                                                           }
+                                                                       }
+                                                                       updateArrow();
+                                                                   }
+                                                               }
         );
     }
 
@@ -196,7 +198,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         if (btc == null) {
             tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
-            tvText.setText(GenericUtils.formatValue(btc));
+            tvText.setText(GenericUtils.formatValue(btc.longValue()));
         }
         ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
         tvText.requestLayout();
