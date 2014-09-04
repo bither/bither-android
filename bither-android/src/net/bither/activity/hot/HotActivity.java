@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -34,31 +36,28 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
+import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.NotificationUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.fragment.hot.MarketFragment;
-import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
-import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DialogConfirmTask;
-import net.bither.ui.base.DialogFirstRunWarning;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DialogPassword.DialogPasswordListener;
-import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
+import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
-import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
@@ -76,6 +75,11 @@ public class HotActivity extends FragmentActivity {
     private SyncProgressView pbSync;
     private DialogProgress dp;
 
+    private final TxAndBlockBroadcastReceiver txAndBlockBroadcastReceiver = new
+            TxAndBlockBroadcastReceiver();
+    private final ProgressBroadcastReceiver broadcastReceiver = new ProgressBroadcastReceiver();
+    private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
+
     protected void onCreate(Bundle savedInstanceState) {
         BroadcastUtil.removeProgressState();
         initAppState();
@@ -83,10 +87,7 @@ public class HotActivity extends FragmentActivity {
         BitherApplication.hotActivity = this;
         setContentView(R.layout.activity_hot);
         initView();
-        registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
-                .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
-        registerReceiver(totalBitcoinBroadcastReceiver, new IntentFilter(BroadcastUtil
-                .ACTION_TOTAL_BITCOIN_STATE));
+        registerReceiver();
         mPager.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -110,7 +111,6 @@ public class HotActivity extends FragmentActivity {
                 ServiceUtil.doMarkTimerTask(true);
             }
         }, 500);
-        addNewPrivateKey();
         mPager.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -122,10 +122,22 @@ public class HotActivity extends FragmentActivity {
         DialogFirstRunWarning.show(this);
     }
 
+    private void registerReceiver() {
+        registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
+                .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        intentFilter.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
+        registerReceiver(txAndBlockBroadcastReceiver, intentFilter);
+        registerReceiver(addressIsLoadedReceiver,
+                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+    }
+
     @Override
     protected void onDestroy() {
         unregisterReceiver(broadcastReceiver);
-        unregisterReceiver(totalBitcoinBroadcastReceiver);
+        unregisterReceiver(txAndBlockBroadcastReceiver);
+        unregisterReceiver(addressIsLoadedReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
         ServiceUtil.doMarkTimerTask(false);
@@ -143,73 +155,6 @@ public class HotActivity extends FragmentActivity {
         super.onResume();
     }
 
-    private void addNewPrivateKey() {
-        final AppSharedPreference preference = AppSharedPreference.getInstance();
-        if (!preference.hasPrivateKey()) {
-            dp = new DialogProgress(HotActivity.this, R.string.please_wait);
-            dp.setCancelable(false);
-            DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
-                    new DialogPasswordListener() {
-
-                @Override
-                public void onPasswordEntered(final String password) {
-                    ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
-
-                        @Override
-                        public void runWithService(BlockchainService service) {
-                            BitherAddressWithPrivateKey address = new BitherAddressWithPrivateKey();
-                            if (!WalletUtils.getBitherAddressList().contains(address)) {
-                                address.encrypt(password);
-                                List<BitherAddressWithPrivateKey> wallets=new ArrayList<BitherAddressWithPrivateKey>();
-                                wallets.add(address);
-
-                                WalletUtils.addAddressWithPrivateKey(service, wallets);
-                                preference.setHasPrivateKey(true);
-                            }
-                            HotActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
-                                    }
-                                    Fragment fragment = getFragmentAtIndex(1);
-                                    if (fragment instanceof Refreshable) {
-                                        ((Refreshable) fragment).doRefresh();
-                                    }
-
-                                    new DialogConfirmTask(HotActivity.this,
-                                            getString(R.string
-                                                    .first_add_private_key_check_suggest),
-                                            new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            ThreadUtil.runOnMainThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Intent intent = new Intent(HotActivity.this,
-                                                            CheckPrivateKeyActivity.class);
-                                                    intent.putExtra(BitherSetting.INTENT_REF
-                                                                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, true
-                                                    );
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                        }
-                                    }
-                                    ).show();
-                                }
-                            });
-                        }
-                    };
-                    thread.start();
-                }
-            }
-            );
-            dialogPassword.setCancelable(false);
-            dialogPassword.show();
-        }
-    }
 
     private void deleteNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context
@@ -251,6 +196,9 @@ public class HotActivity extends FragmentActivity {
 
         tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
         tbtnMain.setBigInteger(null, null);
+        if (BitherjApplication.addressIsReady) {
+            refreshTotalBalance();
+        }
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
         tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
 
@@ -268,22 +216,18 @@ public class HotActivity extends FragmentActivity {
 
             @Override
             public void onClick(View v) {
-                if (WalletUtils.getPrivateAddressList() != null && WalletUtils
-                        .getPrivateAddressList().size() > 0) {
-                    boolean isPrivateKeyLimit = WalletUtils.isPrivateLimit();
-                    boolean isWatchOnlyLimit = WalletUtils.isWatchOnlyLimit();
-                    if (isPrivateKeyLimit && isWatchOnlyLimit) {
-                        DropdownMessage.showDropdownMessage(HotActivity.this,
-                                R.string.private_key_count_limit);
-                        DropdownMessage.showDropdownMessage(HotActivity.this,
-                                R.string.watch_only_address_count_limit);
-                        return;
-                    }
-                    Intent intent = new Intent(HotActivity.this, AddHotAddressActivity.class);
-                    startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
-                } else {
-                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.wallet_loading);
+                boolean isPrivateKeyLimit = WalletUtils.isPrivateLimit();
+                boolean isWatchOnlyLimit = WalletUtils.isWatchOnlyLimit();
+                if (isPrivateKeyLimit && isWatchOnlyLimit) {
+                    DropdownMessage.showDropdownMessage(HotActivity.this,
+                            R.string.private_key_count_limit);
+                    DropdownMessage.showDropdownMessage(HotActivity.this,
+                            R.string.watch_only_address_count_limit);
+                    return;
                 }
+                Intent intent = new Intent(HotActivity.this, AddHotAddressActivity.class);
+                startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+
             }
         });
 
@@ -434,41 +378,31 @@ public class HotActivity extends FragmentActivity {
 
     }
 
-    private final BlockchainBroadcastReceiver broadcastReceiver = new BlockchainBroadcastReceiver();
 
-    private final class BlockchainBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
-                double progress = intent.getDoubleExtra(BroadcastUtil.ACTION_PROGRESS_INFO, 0);
-                LogUtil.d("progress", "BlockchainBroadcastReceiver" + progress);
-                pbSync.setProgress(progress);
-            }
-        }
-    }
+    private void refreshTotalBalance() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long toatlPrivate = 0;
+                long toatlWatchOnly = 0;
+                for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
+                    toatlPrivate += address.getBalance();
+                }
+                for (Address address : AddressManager.getInstance().getWatchOnlyAddresses()) {
+                    toatlWatchOnly += address.getBalance();
+                }
+                final long btcPrivate = toatlPrivate;
+                final long btcWatchOnly = toatlWatchOnly;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf(btcWatchOnly));
 
-    private final TotalBitcoinBroadcastReceiver totalBitcoinBroadcastReceiver = new
-            TotalBitcoinBroadcastReceiver();
+                    }
+                });
 
-    private final class TotalBitcoinBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            BigInteger btcPrivate = null, btcWatchOnly = null;
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PRIVATEKEY_TOTAL_BITCOIN)) {
-                btcPrivate = (BigInteger) intent.getSerializableExtra(BroadcastUtil
-                        .ACTION_PRIVATEKEY_TOTAL_BITCOIN);
             }
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_WATCHONLY_TOTAL_BITCOIN)) {
-                btcWatchOnly = (BigInteger) intent.getSerializableExtra(BroadcastUtil
-                        .ACTION_WATCHONLY_TOTAL_BITCOIN);
-            }
-            if (!WalletUtils.hasAnyAddresses()) {
-                tbtnMain.setBigInteger(null, null);
-            } else {
-                tbtnMain.setBigInteger(btcPrivate, btcWatchOnly);
-            }
-        }
+        }).start();
     }
 
     public void notifPriceAlert(BitherSetting.MarketType marketType) {
@@ -482,4 +416,119 @@ public class HotActivity extends FragmentActivity {
         }
     }
 
+    private final class ProgressBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
+                double progress = intent.getDoubleExtra(BroadcastUtil.ACTION_PROGRESS_INFO, 0);
+                LogUtil.d("progress", "BlockchainBroadcastReceiver" + progress);
+                pbSync.setProgress(progress);
+            }
+        }
+    }
+
+    private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent == null ||
+                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                return;
+            }
+            if (Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())) {
+                refreshTotalBalance();
+            }
+            Fragment fragment = getFragmentAtIndex(1);
+            if (fragment != null && fragment instanceof HotAddressFragment) {
+                ((HotAddressFragment) fragment).refresh();
+            }
+        }
+    }
+
+    private final class AddressIsLoadedReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+                return;
+            }
+            refreshTotalBalance();
+            Fragment fragment = getFragmentAtIndex(1);
+            if (fragment != null && fragment instanceof HotAddressFragment) {
+                ((HotAddressFragment) fragment).refresh();
+            }
+        }
+    }
+
+//    private void addNewPrivateKey() {
+//        final AppSharedPreference preference = AppSharedPreference.getInstance();
+//        if (!preference.hasPrivateKey()) {
+//            dp = new DialogProgress(HotActivity.this, R.string.please_wait);
+//            dp.setCancelable(false);
+//            DialogPassword dialogPassword = new DialogPassword(HotActivity.this,
+//                    new DialogPasswordListener() {
+//
+//                        @Override
+//                        public void onPasswordEntered(final SecureCharSequence password) {
+//                            ThreadNeedService thread = new ThreadNeedService(dp, HotActivity.this) {
+//
+//                                @Override
+//                                public void runWithService(BlockchainService service) {
+//
+//                                    ECKey ecKey = PrivateKeyUtil.encrypt(new ECKey(), password);
+//                                    Address address = new Address(ecKey);
+//                                    List<Address> addressList = new ArrayList<Address>();
+//                                    addressList.add(address);
+//                                    if (!AddressManager.getInstance().getAllAddresses().contains(address)) {
+//
+//                                        password.wipe();
+//                                        KeyUtil.addAddressList(service, addressList);
+//                                        preference.setHasPrivateKey(true);
+//                                    }
+//                                    password.wipe();
+//                                    HotActivity.this.runOnUiThread(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//
+//                                            if (dp.isShowing()) {
+//                                                dp.dismiss();
+//                                            }
+//                                            Fragment fragment = getFragmentAtIndex(1);
+//                                            if (fragment instanceof Refreshable) {
+//                                                ((Refreshable) fragment).doRefresh();
+//                                            }
+//
+//                                            new DialogConfirmTask(HotActivity.this,
+//                                                    getString(R.string
+//                                                            .first_add_private_key_check_suggest),
+//                                                    new Runnable() {
+//                                                        @Override
+//                                                        public void run() {
+//                                                            ThreadUtil.runOnMainThread(new Runnable() {
+//                                                                @Override
+//                                                                public void run() {
+//                                                                    Intent intent = new Intent(HotActivity.this,
+//                                                                            CheckPrivateKeyActivity.class);
+//                                                                    intent.putExtra(BitherSetting.INTENT_REF
+//                                                                                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, true
+//                                                                    );
+//                                                                    startActivity(intent);
+//                                                                }
+//                                                            });
+//                                                        }
+//                                                    }
+//                                            ).show();
+//                                        }
+//                                    });
+//                                }
+//                            };
+//                            thread.start();
+//                        }
+//                    }
+//            );
+//            dialogPassword.setCancelable(false);
+//            dialogPassword.show();
+//        }
+//    }
 }

@@ -16,67 +16,87 @@
 
 package net.bither.util;
 
-import com.google.bitcoin.core.Block;
-import com.google.bitcoin.core.Sha256Hash;
-import com.google.bitcoin.core.StoredBlock;
-import com.google.bitcoin.core.Transaction;
+import android.util.Log;
 
-import net.bither.BitherSetting;
+import net.bither.api.DownloadSpvApi;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.core.Block;
+import net.bither.bitherj.core.BlockChain;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.preference.AppSharedPreference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-
 public class BlockUtil {
 
-	private static final String VER = "ver";
-	private static final String PREV_BLOCK = "prev_block";
-	private static final String MRKL_ROOT = "mrkl_root";
-	private static final String TIME = "time";
-	private static final String BITS = "bits";
-	private static final String NONCE = "nonce";
-	private static final String BLOCK_NO = "block_no";
+    private static final String VER = "ver";
+    private static final String PREV_BLOCK = "prev_block";
+    private static final String MRKL_ROOT = "mrkl_root";
+    private static final String TIME = "time";
+    private static final String BITS = "bits";
+    private static final String NONCE = "nonce";
+    private static final String BLOCK_NO = "block_no";
 
-	public static StoredBlock formatStoredBlock(JSONObject jsonObject)
-			throws JSONException {
-		long ver = jsonObject.getLong(VER);
-		int height = jsonObject.getInt(BLOCK_NO);
-		String prevBlock = jsonObject.getString(PREV_BLOCK);
-		String mrklRoot = jsonObject.getString(MRKL_ROOT);
-		long time = jsonObject.getLong(TIME);
-		long difficultyTarget = jsonObject.getLong(BITS);
-		long nonce = jsonObject.getLong(NONCE);
-		LogUtil.d("http", jsonObject.toString());
-		return BlockUtil.getStoredBlock(ver, prevBlock, mrklRoot, time,
-				difficultyTarget, nonce, height);
-	}
+    public static Block formatStoredBlock(JSONObject jsonObject)
+            throws JSONException {
+        long ver = jsonObject.getLong(VER);
+        int height = jsonObject.getInt(BLOCK_NO);
+        String prevBlock = jsonObject.getString(PREV_BLOCK);
+        String mrklRoot = jsonObject.getString(MRKL_ROOT);
+        int time = jsonObject.getInt(TIME);
+        long difficultyTarget = jsonObject.getLong(BITS);
+        long nonce = jsonObject.getLong(NONCE);
+        LogUtil.d("http", jsonObject.toString());
+        return BlockUtil.getStoredBlock(ver, prevBlock, mrklRoot, time,
+                difficultyTarget, nonce, height);
+    }
 
-	public static StoredBlock formatStoredBlock(JSONObject jsonObject, int hegih)
-			throws JSONException {
+    public static Block formatStoredBlock(JSONObject jsonObject, int hegih)
+            throws JSONException {
 
-		long ver = jsonObject.getLong(VER);
-		String prevBlock = jsonObject.getString(PREV_BLOCK);
-		String mrklRoot = jsonObject.getString(MRKL_ROOT);
-		long time = jsonObject.getLong(TIME);
-		long difficultyTarget = jsonObject.getLong(BITS);
-		long nonce = jsonObject.getLong(NONCE);
-		LogUtil.d("http", jsonObject.toString());
-		return BlockUtil.getStoredBlock(ver, prevBlock, mrklRoot, time,
-				difficultyTarget, nonce, hegih);
+        long ver = jsonObject.getLong(VER);
+        String prevBlock = jsonObject.getString(PREV_BLOCK);
+        String mrklRoot = jsonObject.getString(MRKL_ROOT);
+        int time = jsonObject.getInt(TIME);
+        long difficultyTarget = jsonObject.getLong(BITS);
+        long nonce = jsonObject.getLong(NONCE);
+        LogUtil.d("http", jsonObject.toString());
+        return BlockUtil.getStoredBlock(ver, prevBlock, mrklRoot, time,
+                difficultyTarget, nonce, hegih);
 
-	}
+    }
 
-	public static StoredBlock getStoredBlock(long ver, String prevBlock,
-			String mrklRoot, long time, long difficultyTarget, long nonce,
-			int hegiht) {
-		Block b = new Block(BitherSetting.NETWORK_PARAMETERS, ver,
-				new Sha256Hash(prevBlock), new Sha256Hash(mrklRoot), time,
-				difficultyTarget, nonce, new ArrayList<Transaction>());
-		StoredBlock storedBlock = new StoredBlock(b, BigInteger.valueOf(nonce),
-				hegiht);
-		return storedBlock;
-	}
+    public static Block getStoredBlock(long ver, String prevBlock,
+                                       String mrklRoot, int time, long difficultyTarget, long nonce,
+                                       int hegiht) {
+        Block b = new Block(ver,
+                prevBlock, mrklRoot, time,
+                difficultyTarget, nonce, hegiht);
+        return b;
+    }
+
+    public static Block dowloadSpvBlock() throws Exception {
+        Block block = null;
+        try {
+            DownloadSpvApi downloadSpvApi = new DownloadSpvApi();
+            downloadSpvApi.handleHttpGet();
+            block = downloadSpvApi.getResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
+            throw e;
+        }
+        if (block.getBlockNo() % BitherjSettings.INTERVAL == 0) {
+            BlockChain.getInstance().addSPVBlock(block);
+            AppSharedPreference.getInstance().setDownloadSpvFinish(true);
+            BroadcastUtil.sendBroadcastGetSpvBlockComplete(true);
+        } else {
+            Log.e("spv", "service is not vaild");
+            BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
+            return null;
+        }
+        return block;
+    }
 
 }

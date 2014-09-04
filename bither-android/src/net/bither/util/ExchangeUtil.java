@@ -17,6 +17,7 @@
 package net.bither.util;
 
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -48,13 +49,13 @@ public class ExchangeUtil {
         mRate = rate;
         String rateString = Double.toString(rate);
         File file = FileUtil.getExchangeRateFile();
-        FileUtil.writeFile(rateString.getBytes(), file);
+        Utils.writeFile(rateString.getBytes(), file);
     }
 
     public static double getExchangeRate() {
         if (mRate == -1) {
             File file = FileUtil.getExchangeRateFile();
-            String rateString = FileUtil.readFile(file);
+            String rateString = Utils.readFile(file);
             if (StringUtil.isNubmer(rateString)) {
                 mRate = Float.valueOf(rateString);
             } else {

@@ -16,20 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.math.BigInteger;
-import java.util.Currency;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.bither.BitherApplication;
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -54,357 +40,364 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import com.google.bitcoin.core.Transaction;
+import net.bither.BitherApplication;
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.bitherj.core.Tx;
+import net.bither.util.CurrencySymbolUtil;
+import net.bither.util.GenericUtils;
+import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
+
+import java.math.BigInteger;
+import java.util.Currency;
+
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class CurrencyAmountView extends FrameLayout {
-	public static interface Listener {
-		void changed();
+    public static interface Listener {
+        void changed();
 
-		void done();
+        void done();
 
-		void focusChanged(final boolean hasFocus);
-	}
+        void focusChanged(final boolean hasFocus);
+    }
 
-	private int significantColor, lessSignificantColor, errorColor;
-	private Drawable deleteButtonDrawable, contextButtonDrawable;
-	private Drawable currencySymbolDrawable;
-	private int inputPrecision = 0;
-	private int hintPrecision = 0;
-	private int shift = 0;
-	private boolean amountSigned = false;
-	private boolean smallerInsignificant = true;
-	private boolean validateAmount = true;
+    private int significantColor, lessSignificantColor, errorColor;
+    private Drawable deleteButtonDrawable, contextButtonDrawable;
+    private Drawable currencySymbolDrawable;
+    private int inputPrecision = 0;
+    private int hintPrecision = 0;
+    private int shift = 0;
+    private boolean amountSigned = false;
+    private boolean smallerInsignificant = true;
+    private boolean validateAmount = true;
 
-	private TextView textView;
-	private View contextButton;
-	private Listener listener;
-	private OnClickListener contextButtonClickListener;
+    private TextView textView;
+    private View contextButton;
+    private Listener listener;
+    private OnClickListener contextButtonClickListener;
 
-	public CurrencyAmountView(final Context context) {
-		super(context);
-		init(context);
-	}
+    public CurrencyAmountView(final Context context) {
+        super(context);
+        init(context);
+    }
 
-	public CurrencyAmountView(final Context context, final AttributeSet attrs) {
-		super(context, attrs);
-		init(context);
-	}
+    public CurrencyAmountView(final Context context, final AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
 
-	private void init(final Context context) {
-		final Resources resources = context.getResources();
-		significantColor = Color.BLACK;
-		lessSignificantColor = Color.parseColor("#ff666666");
-		errorColor = Color.RED;
-		deleteButtonDrawable = resources
-				.getDrawable(R.drawable.ic_input_delete);
-	}
+    private void init(final Context context) {
+        final Resources resources = context.getResources();
+        significantColor = Color.BLACK;
+        lessSignificantColor = Color.parseColor("#ff666666");
+        errorColor = Color.RED;
+        deleteButtonDrawable = resources.getDrawable(R.drawable.ic_input_delete);
+    }
 
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
 
-		final Context context = getContext();
+        final Context context = getContext();
 
-		textView = (TextView) getChildAt(0);
-		textView.setInputType(InputType.TYPE_CLASS_NUMBER
-				| InputType.TYPE_NUMBER_FLAG_DECIMAL);
-		textView.setHintTextColor(lessSignificantColor);
-		textView.setHorizontalFadingEdgeEnabled(true);
-		textView.setSingleLine();
-		textView.setCompoundDrawablePadding(UIUtil.dip2pix(2));
-		setHint(null);
-		setValidateAmount(textView instanceof EditText);
-		textView.addTextChangedListener(textViewListener);
-		textView.setOnFocusChangeListener(textViewListener);
-		textView.setOnEditorActionListener(textViewListener);
+        textView = (TextView) getChildAt(0);
+        textView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        textView.setHintTextColor(lessSignificantColor);
+        textView.setHorizontalFadingEdgeEnabled(true);
+        textView.setSingleLine();
+        textView.setCompoundDrawablePadding(UIUtil.dip2pix(2));
+        setHint(0);
+        setValidateAmount(textView instanceof EditText);
+        textView.addTextChangedListener(textViewListener);
+        textView.setOnFocusChangeListener(textViewListener);
+        textView.setOnEditorActionListener(textViewListener);
 
-		contextButton = new View(context) {
-			@Override
-			protected void onMeasure(final int wMeasureSpec,
-					final int hMeasureSpec) {
-				setMeasuredDimension(textView.getCompoundPaddingRight(),
-						textView.getMeasuredHeight());
-			}
-		};
-		final LayoutParams chooseViewParams = new LayoutParams(
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT);
-		chooseViewParams.gravity = Gravity.RIGHT;
-		contextButton.setLayoutParams(chooseViewParams);
-		this.addView(contextButton);
+        contextButton = new View(context) {
+            @Override
+            protected void onMeasure(final int wMeasureSpec, final int hMeasureSpec) {
+                setMeasuredDimension(textView.getCompoundPaddingRight(),
+                        textView.getMeasuredHeight());
+            }
+        };
+        final LayoutParams chooseViewParams = new LayoutParams(ViewGroup.LayoutParams
+                .WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        chooseViewParams.gravity = Gravity.RIGHT;
+        contextButton.setLayoutParams(chooseViewParams);
+        this.addView(contextButton);
 
-		updateAppearance();
-	}
+        updateAppearance();
+    }
 
-	public void setCurrencySymbol(@Nullable final String currencyCode) {
-		if (BitherApplication.mContext.getString(R.string.bitcoin_symbol)
-				.equals(currencyCode)) {
-			Bitmap bmp = CurrencySymbolUtil.getBtcSymbol(lessSignificantColor,
-					textView.getTextSize());
-			currencySymbolDrawable = new BitmapDrawable(getResources(), bmp);
-			currencySymbolDrawable.setBounds(0, 0, bmp.getWidth(),
-					bmp.getHeight());
-		} else if (currencyCode != null) {
-			final String currencySymbol = currencySymbol(currencyCode);
-			final float textSize = textView.getTextSize();
-			final float smallerTextSize = textSize
-					* (smallerInsignificant ? (20f / 24f) : 1);
-			currencySymbolDrawable = new CurrencySymbolDrawable(currencySymbol,
-					smallerTextSize, lessSignificantColor, textSize * 0.37f);
-		} else {
-			currencySymbolDrawable = null;
-		}
+    public void setCurrencySymbol(@Nullable final String currencyCode) {
+        if (BitherApplication.mContext.getString(R.string.bitcoin_symbol).equals(currencyCode)) {
+            Bitmap bmp = CurrencySymbolUtil.getBtcSymbol(lessSignificantColor,
+                    textView.getTextSize());
+            currencySymbolDrawable = new BitmapDrawable(getResources(), bmp);
+            currencySymbolDrawable.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
+        } else if (currencyCode != null) {
+            final String currencySymbol = currencySymbol(currencyCode);
+            final float textSize = textView.getTextSize();
+            final float smallerTextSize = textSize * (smallerInsignificant ? (20f / 24f) : 1);
+            currencySymbolDrawable = new CurrencySymbolDrawable(currencySymbol, smallerTextSize,
+                    lessSignificantColor, textSize * 0.37f);
+        } else {
+            currencySymbolDrawable = null;
+        }
 
-		updateAppearance();
-	}
+        updateAppearance();
+    }
 
-	public void setInputPrecision(final int inputPrecision) {
-		this.inputPrecision = inputPrecision;
-	}
+    public void setInputPrecision(final int inputPrecision) {
+        this.inputPrecision = inputPrecision;
+    }
 
-	public void setHintPrecision(final int hintPrecision) {
-		this.hintPrecision = hintPrecision;
-	}
+    public void setHintPrecision(final int hintPrecision) {
+        this.hintPrecision = hintPrecision;
+    }
 
-	public void setShift(final int shift) {
-		this.shift = shift;
-	}
+    public void setShift(final int shift) {
+        this.shift = shift;
+    }
 
-	public void setAmountSigned(final boolean amountSigned) {
-		this.amountSigned = amountSigned;
-	}
+    public void setAmountSigned(final boolean amountSigned) {
+        this.amountSigned = amountSigned;
+    }
 
-	public void setSmallerInsignificant(final boolean smallerInsignificant) {
-		this.smallerInsignificant = smallerInsignificant;
-	}
+    public void setSmallerInsignificant(final boolean smallerInsignificant) {
+        this.smallerInsignificant = smallerInsignificant;
+    }
 
-	public void setValidateAmount(final boolean validateAmount) {
-		this.validateAmount = validateAmount;
-	}
+    public void setValidateAmount(final boolean validateAmount) {
+        this.validateAmount = validateAmount;
+    }
 
-	public void setContextButton(final int contextButtonResId,
-			@Nonnull final OnClickListener contextButtonClickListener) {
-		this.contextButtonDrawable = getContext().getResources().getDrawable(
-				contextButtonResId);
-		this.contextButtonClickListener = contextButtonClickListener;
+    public void setContextButton(final int contextButtonResId, @Nonnull final OnClickListener
+            contextButtonClickListener) {
+        this.contextButtonDrawable = getContext().getResources().getDrawable(contextButtonResId);
+        this.contextButtonClickListener = contextButtonClickListener;
 
-		updateAppearance();
-	}
+        updateAppearance();
+    }
 
-	public void setListener(@Nonnull final Listener listener) {
-		this.listener = listener;
-	}
+    public void setListener(@Nonnull final Listener listener) {
+        this.listener = listener;
+    }
 
-	@CheckForNull
-	public BigInteger getAmount() {
-		if (isValidAmount(false))
-			return GenericUtils.toNanoCoins(textView.getText().toString()
-					.trim(), shift);
-		else
-			return null;
-	}
+    @CheckForNull
+    public long getAmount() {
+        if (isValidAmount(false)) {
+            return GenericUtils.toNanoCoins(textView.getText().toString().trim(), shift).longValue();
+        } else {
+            return 0;
+        }
+    }
 
-	public void setAmount(@Nullable final BigInteger amount,
-			final boolean fireListener) {
-		if (!fireListener)
-			textViewListener.setFire(false);
+    public void setAmount(@Nullable final long amount, final boolean fireListener) {
+        if (!fireListener) {
+            textViewListener.setFire(false);
+        }
 
-		if (amount != null)
-			textView.setText(amountSigned ? GenericUtils.formatValue(amount,
-					BitherSetting.CURRENCY_PLUS_SIGN,
-					BitherSetting.CURRENCY_MINUS_SIGN, inputPrecision, shift)
-					: GenericUtils.formatValue(amount, inputPrecision, shift));
-		else
-			textView.setText(null);
+        if (amount != 0) {
+            textView.setText(amountSigned ? GenericUtils.formatValue(amount,
+                    BitherSetting.CURRENCY_PLUS_SIGN, BitherSetting.CURRENCY_MINUS_SIGN,
+                    inputPrecision, shift) : GenericUtils.formatValue(amount, inputPrecision,
+                    shift));
+        } else {
+            textView.setText(null);
+        }
 
-		if (!fireListener)
-			textViewListener.setFire(true);
-	}
+        if (!fireListener) {
+            textViewListener.setFire(true);
+        }
+    }
 
-	public void setHint(@Nullable final BigInteger amount) {
-		final SpannableStringBuilder hint;
-		if (amount != null)
-			hint = new SpannableStringBuilder(GenericUtils.formatValue(amount,
-					hintPrecision, shift));
-		else
-			hint = new SpannableStringBuilder("0.00");
+    public void setHint(@Nullable final long amount) {
+        final SpannableStringBuilder hint;
+        if (amount != 0) {
+            hint = new SpannableStringBuilder(GenericUtils.formatValue(amount, hintPrecision,
+                    shift));
+        } else {
+            hint = new SpannableStringBuilder("0.00");
+        }
 
-		WalletUtils.formatSignificant(hint,
-				smallerInsignificant ? WalletUtils.SMALLER_SPAN : null);
-		textView.setHint(hint);
-	}
+        WalletUtils.formatSignificant(hint, smallerInsignificant ? WalletUtils.SMALLER_SPAN : null);
+        textView.setHint(hint);
+    }
 
-	@Override
-	public void setEnabled(final boolean enabled) {
-		super.setEnabled(enabled);
+    @Override
+    public void setEnabled(final boolean enabled) {
+        super.setEnabled(enabled);
 
-		textView.setEnabled(enabled);
+        textView.setEnabled(enabled);
 
-		updateAppearance();
-	}
+        updateAppearance();
+    }
 
-	public void setTextColor(final int color) {
-		significantColor = color;
+    public void setTextColor(final int color) {
+        significantColor = color;
 
-		updateAppearance();
-	}
+        updateAppearance();
+    }
 
-	public void setStrikeThru(final boolean strikeThru) {
-		if (strikeThru)
-			textView.setPaintFlags(textView.getPaintFlags()
-					| Paint.STRIKE_THRU_TEXT_FLAG);
-		else
-			textView.setPaintFlags(textView.getPaintFlags()
-					& ~Paint.STRIKE_THRU_TEXT_FLAG);
-	}
+    public void setStrikeThru(final boolean strikeThru) {
+        if (strikeThru) {
+            textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        } else {
+            textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
 
-	private boolean isValidAmount(final boolean zeroIsValid) {
-		final String amount = textView.getText().toString().trim();
+    private boolean isValidAmount(final boolean zeroIsValid) {
+        final String amount = textView.getText().toString().trim();
 
-		try {
-			if (!amount.isEmpty()) {
-				final BigInteger nanoCoins = GenericUtils.toNanoCoins(amount,
-						shift);
+        try {
+            if (!amount.isEmpty()) {
+                final BigInteger nanoCoins = GenericUtils.toNanoCoins(amount, shift);
 
-				// exactly zero
-				if (zeroIsValid && nanoCoins.signum() == 0)
-					return true;
+                // exactly zero
+                if (zeroIsValid && nanoCoins.signum() == 0) {
+                    return true;
+                }
 
-				// too small
-				if (nanoCoins.compareTo(Transaction.MIN_NONDUST_OUTPUT) < 0)
-					return false;
+                // too small
+                if (nanoCoins.longValue() < Tx.MIN_NONDUST_OUTPUT) {
+                    return false;
+                }
 
-				return true;
-			}
-		} catch (final Exception x) {
-		}
+                return true;
+            }
+        } catch (final Exception x) {
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private final OnClickListener deleteClickListener = new OnClickListener() {
-		@Override
-		public void onClick(final View v) {
-			setAmount(null, true);
-			textView.requestFocus();
-		}
-	};
+    private final OnClickListener deleteClickListener = new OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            setAmount(0, true);
+            textView.requestFocus();
+        }
+    };
 
-	private void updateAppearance() {
-		final boolean enabled = textView.isEnabled();
+    private void updateAppearance() {
+        final boolean enabled = textView.isEnabled();
 
-		contextButton.setEnabled(enabled);
+        contextButton.setEnabled(enabled);
 
-		final String amount = textView.getText().toString().trim();
+        final String amount = textView.getText().toString().trim();
 
-		if (enabled && !amount.isEmpty()) {
-			textView.setCompoundDrawablesWithIntrinsicBounds(
-					currencySymbolDrawable, null, deleteButtonDrawable, null);
-			contextButton.setOnClickListener(deleteClickListener);
-		} else if (enabled && contextButtonDrawable != null) {
-			textView.setCompoundDrawablesWithIntrinsicBounds(
-					currencySymbolDrawable, null, contextButtonDrawable, null);
-			contextButton.setOnClickListener(contextButtonClickListener);
-		} else {
-			textView.setCompoundDrawablesWithIntrinsicBounds(
-					currencySymbolDrawable, null, null, null);
-			contextButton.setOnClickListener(null);
-		}
+        if (enabled && !amount.isEmpty()) {
+            textView.setCompoundDrawablesWithIntrinsicBounds(currencySymbolDrawable, null,
+                    deleteButtonDrawable, null);
+            contextButton.setOnClickListener(deleteClickListener);
+        } else if (enabled && contextButtonDrawable != null) {
+            textView.setCompoundDrawablesWithIntrinsicBounds(currencySymbolDrawable, null,
+                    contextButtonDrawable, null);
+            contextButton.setOnClickListener(contextButtonClickListener);
+        } else {
+            textView.setCompoundDrawablesWithIntrinsicBounds(currencySymbolDrawable, null, null,
+                    null);
+            contextButton.setOnClickListener(null);
+        }
 
-		contextButton.requestLayout();
+        contextButton.requestLayout();
 
-		textView.setTextColor(!validateAmount || isValidAmount(true) ? significantColor
-				: errorColor);
-	}
+        textView.setTextColor(!validateAmount || isValidAmount(true) ? significantColor :
+                errorColor);
+    }
 
-	@Override
-	protected Parcelable onSaveInstanceState() {
-		final Bundle state = new Bundle();
-		state.putParcelable("super_state", super.onSaveInstanceState());
-		state.putParcelable("child_textview", textView.onSaveInstanceState());
-		state.putSerializable("amount", getAmount());
-		return state;
-	}
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        final Bundle state = new Bundle();
+        state.putParcelable("super_state", super.onSaveInstanceState());
+        state.putParcelable("child_textview", textView.onSaveInstanceState());
+        state.putLong("amount", getAmount());
+        return state;
+    }
 
-	@Override
-	protected void onRestoreInstanceState(final Parcelable state) {
-		if (state instanceof Bundle) {
-			final Bundle bundle = (Bundle) state;
-			super.onRestoreInstanceState(bundle.getParcelable("super_state"));
-			textView.onRestoreInstanceState(bundle
-					.getParcelable("child_textview"));
-			setAmount((BigInteger) bundle.getSerializable("amount"), false);
-		} else {
-			super.onRestoreInstanceState(state);
-		}
-	}
+    @Override
+    protected void onRestoreInstanceState(final Parcelable state) {
+        if (state instanceof Bundle) {
+            final Bundle bundle = (Bundle) state;
+            super.onRestoreInstanceState(bundle.getParcelable("super_state"));
+            textView.onRestoreInstanceState(bundle.getParcelable("child_textview"));
+            setAmount(bundle.getLong("amount"), false);
+        } else {
+            super.onRestoreInstanceState(state);
+        }
+    }
 
-	private final TextViewListener textViewListener = new TextViewListener();
+    private final TextViewListener textViewListener = new TextViewListener();
 
-	private final class TextViewListener implements TextWatcher,
-			OnFocusChangeListener, OnEditorActionListener {
-		private boolean fire = true;
+    private final class TextViewListener implements TextWatcher, OnFocusChangeListener,
+            OnEditorActionListener {
+        private boolean fire = true;
 
-		public void setFire(final boolean fire) {
-			this.fire = fire;
-		}
+        public void setFire(final boolean fire) {
+            this.fire = fire;
+        }
 
-		@Override
-		public void afterTextChanged(final Editable s) {
-			// workaround for German keyboards
-			final String original = s.toString();
-			final String replaced = original.replace(',', '.');
-			if (!replaced.equals(original)) {
-				s.clear();
-				s.append(replaced);
-			}
+        @Override
+        public void afterTextChanged(final Editable s) {
+            // workaround for German keyboards
+            final String original = s.toString();
+            final String replaced = original.replace(',', '.');
+            if (!replaced.equals(original)) {
+                s.clear();
+                s.append(replaced);
+            }
 
-			WalletUtils.formatSignificant(s,
-					smallerInsignificant ? WalletUtils.SMALLER_SPAN : null);
-		}
+            WalletUtils.formatSignificant(s, smallerInsignificant ? WalletUtils.SMALLER_SPAN :
+                    null);
+        }
 
-		@Override
-		public void beforeTextChanged(final CharSequence s, final int start,
-				final int count, final int after) {
-		}
+        @Override
+        public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+        }
 
-		@Override
-		public void onTextChanged(final CharSequence s, final int start,
-				final int before, final int count) {
-			updateAppearance();
-			if (listener != null && fire)
-				listener.changed();
-		}
+        @Override
+        public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+            updateAppearance();
+            if (listener != null && fire) {
+                listener.changed();
+            }
+        }
 
-		@Override
-		public void onFocusChange(final View v, final boolean hasFocus) {
-			if (!hasFocus) {
-				final BigInteger amount = getAmount();
-				if (amount != null)
-					setAmount(amount, false);
-			}
+        @Override
+        public void onFocusChange(final View v, final boolean hasFocus) {
+            if (!hasFocus) {
+                final long amount = getAmount();
+                if (amount != 0) {
+                    setAmount(amount, false);
+                }
+            }
 
-			if (listener != null && fire)
-				listener.focusChanged(hasFocus);
-		}
+            if (listener != null && fire) {
+                listener.focusChanged(hasFocus);
+            }
+        }
 
-		@Override
-		public boolean onEditorAction(final TextView v, final int actionId,
-				final KeyEvent event) {
-			if (actionId == EditorInfo.IME_ACTION_DONE && listener != null
-					&& fire)
-				listener.done();
+        @Override
+        public boolean onEditorAction(final TextView v, final int actionId, final KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_DONE && listener != null && fire) {
+                listener.done();
+            }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 
-	private static String currencySymbol(@Nonnull final String currencyCode) {
-		try {
-			final Currency currency = Currency.getInstance(currencyCode);
-			return currency.getSymbol();
-		} catch (final IllegalArgumentException x) {
-			return currencyCode;
-		}
-	}
+    private static String currencySymbol(@Nonnull final String currencyCode) {
+        try {
+            final Currency currency = Currency.getInstance(currencyCode);
+            return currency.getSymbol();
+        } catch (final IllegalArgumentException x) {
+            return currencyCode;
+        }
+    }
 }

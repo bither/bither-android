@@ -27,24 +27,24 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
-import com.google.bitcoin.core.Transaction;
-
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.TransactionListAdapter;
-import net.bither.model.BitherAddress;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.NotificationUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.AddressDetailHeader;
-import net.bither.ui.base.DialogAddressWatchOnlyOption;
-import net.bither.ui.base.DialogAddressWithPrivateKeyOption;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.TransactionListItem;
+import net.bither.ui.base.dialog.DialogAddressWatchOnlyOption;
+import net.bither.ui.base.dialog.DialogAddressWithPrivateKeyOption;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +52,13 @@ import java.util.List;
 public class AddressDetailActivity extends SwipeRightFragmentActivity {
     private int addressPosition;
     private boolean hasPrivateKey;
-    private BitherAddress address;
+    private Address address;
     private OnClickListener optionClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
             Dialog dialog = null;
-            if (address.hasPrivateKey()) {
+            if (address.hasPrivKey()) {
                 dialog = new DialogAddressWithPrivateKeyOption(
                         AddressDetailActivity.this, address);
             } else {
@@ -74,7 +74,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
             dialog.show();
         }
     };
-    private ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+    private ArrayList<Tx> transactions = new ArrayList<Tx>();
     private ListView lv;
     private OnClickListener scrollToTopClick = new OnClickListener() {
 
@@ -88,6 +88,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
     private FrameLayout flTitleBar;
     private TransactionListAdapter mAdapter;
     private AddressDetailHeader header;
+    private TxAndBlockBroadcastReceiver txAndBlockBroadcastReceiver = new TxAndBlockBroadcastReceiver();
     private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -104,29 +105,40 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
         }
     };
-    private BroadcastReceiver addressBroadcastReceiver = new BroadcastReceiver() {
+
+
+    private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String addressStr = null;
-            if (intent.hasExtra(BroadcastUtil.ACTION_ADDRESS_STATE)) {
-                addressStr = intent.getExtras().getString(
-                        BroadcastUtil.ACTION_ADDRESS_STATE);
+            if (intent == null ||
+                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                return;
             }
-            if (StringUtil.compareString(addressStr, address.getAddress())) {
+            if (intent.hasExtra(NotificationUtil.ACTION_ADDRESS_BALANCE)) {
+                String receiveAddressStr = intent.getStringExtra(NotificationUtil.MESSAGE_ADDRESS);
+                if (Utils.compareString(receiveAddressStr, address.getAddress())) {
+                    loadData();
+                }
+
+            } else {
                 loadData();
             }
+
         }
-    };
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter addressFilter = new IntentFilter(
-                BroadcastUtil.ACTION_ADDRESS_STATE);
+        IntentFilter txAndBlockReceiver = new IntentFilter();
+        txAndBlockReceiver.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
+        txAndBlockReceiver.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
         IntentFilter marketFilter = new IntentFilter(
                 BroadcastUtil.ACTION_MARKET);
-        registerReceiver(addressBroadcastReceiver, addressFilter);
+        registerReceiver(txAndBlockBroadcastReceiver, txAndBlockReceiver);
         registerReceiver(marketBroadcastReceiver, marketFilter);
         for (int i = 0;
              i < lv.getChildCount();
@@ -164,18 +176,16 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
                             false);
             if (hasPrivateKey) {
                 if (addressPosition >= 0
-                        && WalletUtils.getPrivateAddressList() != null && addressPosition <
-                        WalletUtils
-                                .getPrivateAddressList().size()) {
-                    address = WalletUtils.getPrivateAddressList().get(
+                        && AddressManager.getInstance().getPrivKeyAddresses() != null && addressPosition <
+                        AddressManager.getInstance().getPrivKeyAddresses().size()) {
+                    address = AddressManager.getInstance().getPrivKeyAddresses().get(
                             addressPosition);
                 }
             } else {
                 if (addressPosition >= 0
-                        && WalletUtils.getWatchOnlyAddressList() != null && addressPosition <
-                        WalletUtils
-                        .getWatchOnlyAddressList().size()) {
-                    address = WalletUtils.getWatchOnlyAddressList().get(
+                        && AddressManager.getInstance().getWatchOnlyAddresses() != null && addressPosition <
+                        AddressManager.getInstance().getWatchOnlyAddresses().size()) {
+                    address = AddressManager.getInstance().getWatchOnlyAddresses().get(
                             addressPosition);
                 }
             }
@@ -202,7 +212,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onPause() {
-        unregisterReceiver(addressBroadcastReceiver);
+        unregisterReceiver(txAndBlockBroadcastReceiver);
         unregisterReceiver(marketBroadcastReceiver);
         for (int i = 0;
              i < lv.getChildCount();
@@ -218,12 +228,11 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     private void loadData() {
         header.showAddress(address, addressPosition);
-        if (address.getAddressInfo() != null && address.isReadyToShow()
-                && !address.isError()) {
-            new Thread() {
+        if (address != null && address.isSyncComplete()) {
+            new Thread(new Runnable() {
+                @Override
                 public void run() {
-                    final List<Transaction> txs = address
-                            .getTransactionsByTime();
+                    final List<Tx> txs = address.getTxs();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -233,7 +242,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
                         }
                     });
                 }
-            }.start();
+            }).start();
         }
     }
 }

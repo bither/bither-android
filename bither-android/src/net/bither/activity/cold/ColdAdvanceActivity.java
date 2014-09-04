@@ -26,35 +26,34 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.bitcoin.core.ECKey;
-
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.Refreshable;
-import net.bither.model.BitherAddressWithPrivateKey;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.DialogEditPassword;
-import net.bither.ui.base.DialogImportPrivateKeyText;
-import net.bither.ui.base.DialogPassword;
-import net.bither.ui.base.DialogProgress;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.BackClickListener;
-import net.bither.util.PrivateKeyUtil;
+import net.bither.util.KeyUtil;
+import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
-import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-7-23.
- */
+
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
@@ -87,66 +86,66 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            hasAnyAction = true;
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    hasAnyAction = true;
+                    return 2;
+                }
 
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
+                @Override
+                public String getOptionName(int index) {
+                    switch (index) {
+                        case 0:
+                            return getString(R.string.import_private_key_qr_code);
+                        case 1:
+                            return getString(R.string.import_private_key_text);
+                        default:
+                            return "";
+                    }
+                }
 
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
+                @Override
+                public String getOptionNote(int index) {
                     return null;
-            }
-        }
+                }
 
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    switch (index) {
+                        case 0:
+                            return getResources().getDrawable(R.drawable.scan_button_icon);
+                        case 1:
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                        default:
+                            return null;
+                    }
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
+                @Override
+                public String getSettingName() {
+                    return getString(R.string.setting_name_import_private_key);
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            hasAnyAction = true;
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode();
-                    return;
-                case 1:
-                    importPrivateKeyFromText();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
+                @Override
+                public int getCurrentOptionIndex() {
+                    return -1;
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    hasAnyAction = true;
+                    switch (index) {
+                        case 0:
+                            importPrivateKeyFromQrCode();
+                            return;
+                        case 1:
+                            importPrivateKeyFromText();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
 
     private void importPrivateKeyFromQrCode() {
         Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
@@ -187,7 +186,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
 
         @Override
-        public void onPasswordEntered(String password) {
+        public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 dp.show();
@@ -232,10 +231,10 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private class ImportPrivateKeyThread extends Thread {
         private String content;
-        private String password;
+        private SecureCharSequence password;
 
 
-        public ImportPrivateKeyThread(String content, String password) {
+        public ImportPrivateKeyThread(String content, SecureCharSequence password) {
             this.content = content;
             this.password = password;
         }
@@ -244,6 +243,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         public void run() {
             ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
             if (key == null) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -252,15 +252,16 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                             dp.dismiss();
                         }
                         DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                                R.string.import_private_key_qr_code_failed);
+                                R.string.password_wrong);
                     }
                 });
                 return;
             }
-            BitherAddressWithPrivateKey wallet = new BitherAddressWithPrivateKey(false);
-            wallet.setKeyCrypter(key.getKeyCrypter());
-            wallet.addKey(key);
-            if (WalletUtils.getWatchOnlyAddressList().contains(wallet)) {
+
+            Address address = new Address(key.toAddress(), key.getPubKey(), content);
+            AddressManager addressManager = AddressManager.getInstance();
+            if (addressManager.getWatchOnlyAddresses().contains(address)) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -273,7 +274,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 });
                 return;
-            } else if (WalletUtils.getPrivateAddressList().contains(wallet)) {
+            } else if (addressManager.getPrivKeyAddresses().contains(address)) {
+                password.wipe();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -289,6 +291,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             } else {
                 PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
                 if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
+                    password.wipe();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -302,10 +305,10 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     });
                     return;
                 }
-                List<BitherAddressWithPrivateKey> wallets = new
-                        ArrayList<BitherAddressWithPrivateKey>();
-                wallets.add(wallet);
-                WalletUtils.addAddressWithPrivateKey(null, wallets);
+                password.wipe();
+                List<Address> addressList = new ArrayList<Address>();
+                addressList.add(address);
+                KeyUtil.addAddressList(null, addressList);
             }
 
             runOnUiThread(new Runnable() {

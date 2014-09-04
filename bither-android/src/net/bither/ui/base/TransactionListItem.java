@@ -26,26 +26,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.bitcoin.core.ScriptException;
-import com.google.bitcoin.core.Transaction;
-import com.google.bitcoin.core.TransactionOutput;
-
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.model.BitherAddress;
-import net.bither.util.ConfidenceUtil;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.exception.ScriptException;
+import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogAddressFull;
+import net.bither.ui.base.dialog.DialogTransactionConfidence;
 import net.bither.util.DateTimeUtil;
-import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
 
-import java.math.BigInteger;
 import java.util.Date;
 
-/**
- * Created by songchenwen on 14-5-28.
- */
-public class TransactionListItem extends FrameLayout implements
-        MarketTickerChangedObserver {
+public class TransactionListItem extends FrameLayout implements MarketTickerChangedObserver {
 
     private Activity activity;
     private TransactionImmutureConfidenceIconView vConfidenceIcon;
@@ -54,87 +49,8 @@ public class TransactionListItem extends FrameLayout implements
     private BtcToMoneyButton btnBtc;
     private TextView tvTime;
 
-    private Transaction transaction;
-    private OnClickListener confidenceClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (transaction != null) {
-                DialogTransactionConfidence dialog = new DialogTransactionConfidence(
-                        getContext(),
-                        ConfidenceUtil.getDepthInChain(transaction
-                                .getConfidence())
-                );
-                dialog.show(v);
-            }
-        }
-    };
-    private BitherAddress address;
-    private OnClickListener addressFullClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            ArrayMap<String, BigInteger> addresses = new ArrayMap<String, BigInteger>();
-            boolean isIncoming = true;
-            try {
-                isIncoming = transaction.getValue(address).compareTo(
-                        BigInteger.ZERO) >= 0;
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            }
-            int subCount = isIncoming ? transaction.getInputs().size()
-                    : transaction.getOutputs().size();
-            String subAddress = null;
-            BigInteger value;
-            for (int i = 0;
-                 i < subCount;
-                 i++) {
-                subAddress = null;
-                if (isIncoming) {
-                    if (transaction.getInput(i).isCoinBase()) {
-                        subAddress = getContext().getResources().getString(
-                                R.string.input_coinbase);
-                    } else {
-                        try {
-                            subAddress = transaction.getInput(i)
-                                    .getFromAddress().toString();
-                        } catch (ScriptException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    TransactionOutput outConnected = transaction.getInput(i)
-                            .getConnectedOutput();
-                    if (outConnected != null) {
-                        value = outConnected.getValue();
-                    } else {
-                        value = null;
-                    }
-                } else {
-                    TransactionOutput out = transaction.getOutput(i);
-                    value = out.getValue();
-                    try {
-                        subAddress = GenericUtils.addressFromScriptPubKey(
-                                out.getScriptPubKey(),
-                                address.getNetworkParameters());
-                    } catch (ScriptException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (subAddress == null
-                        || StringUtil.checkAddressIsNull(subAddress)) {
-                    subAddress = getContext().getResources().getString(
-                            R.string.address_cannot_be_parsed);
-                }
-                if (StringUtil.compareString(subAddress, address.getAddress())) {
-                    subAddress = getContext().getString(R.string.address_mine);
-                }
-                addresses.put(subAddress, value);
-            }
-            DialogAddressFull dialog = new DialogAddressFull(activity,
-                    addresses);
-            dialog.show(v);
-        }
-    };
+    private Tx transaction;
+    private Address address;
 
     public TransactionListItem(Activity activity) {
         super(activity);
@@ -144,10 +60,9 @@ public class TransactionListItem extends FrameLayout implements
 
     private void initView() {
         removeAllViews();
-        addView(LayoutInflater.from(activity).inflate(
-                        R.layout.list_item_address_detail_transaction, null),
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
-        );
+        addView(LayoutInflater.from(activity).inflate(R.layout
+                        .list_item_address_detail_transaction, null), LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT);
         vConfidenceIcon = (TransactionImmutureConfidenceIconView) findViewById(R.id
                 .fl_confidence_icon);
         tvTransactionAddress = (TextView) findViewById(R.id.tv_transaction_address);
@@ -162,12 +77,11 @@ public class TransactionListItem extends FrameLayout implements
         super(context, attrs);
     }
 
-    private TransactionListItem(Context context, AttributeSet attrs,
-                                int defStyle) {
+    private TransactionListItem(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void setTransaction(Transaction transaction, BitherAddress address) {
+    public void setTransaction(Tx transaction, Address address) {
         this.transaction = transaction;
         this.address = address;
         showTransaction();
@@ -177,58 +91,43 @@ public class TransactionListItem extends FrameLayout implements
         if (this.transaction == null || address == null) {
             return;
         }
-        BigInteger value;
+        long value;
         try {
-            value = transaction.getValue(address);
+            value = transaction.deltaAmountFrom(address);
         } catch (Exception e) {
             return;
         }
-        vConfidenceIcon.setConfidence(transaction.getConfidence());
-        boolean isReceived = value.compareTo(BigInteger.ZERO) >= 0;
-        btnBtc.setBigInteger(value);
-        Date time = transaction.getUpdateTime();
+        vConfidenceIcon.setTx(transaction);
+        boolean isReceived = value >= 0;
+        btnBtc.setAmount(value);
+        Date time = transaction.getTxDate();
         if (time.equals(new Date(0))) {
             tvTime.setText("");
         } else {
-            tvTime.setText(DateTimeUtil.getDateTimeString(transaction
-                    .getUpdateTime()));
+            tvTime.setText(DateTimeUtil.getDateTimeString(time));
         }
         if (isReceived) {
-            if (transaction.getInput(0).isCoinBase()) {
+            if (transaction.isCoinBase()) {
                 tvTransactionAddress.setText(R.string.input_coinbase);
             } else {
                 try {
-                    String subAddress = transaction.getInput(0)
-                            .getFromAddress().toString();
-                    if (StringUtil.checkAddressIsNull(subAddress)) {
-                        tvTransactionAddress
-                                .setText(BitherSetting.UNKONW_ADDRESS_STRING);
+                    String subAddress = transaction.getFromAddress();
+                    if (StringUtil.isEmpty(subAddress)) {
+                        tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
                     } else {
-                        tvTransactionAddress.setText(StringUtil
-                                .shortenAddress(subAddress));
+                        tvTransactionAddress.setText(Utils.shortenAddress(subAddress));
                     }
                 } catch (ScriptException e) {
                     e.printStackTrace();
-                    tvTransactionAddress
-                            .setText(BitherSetting.UNKONW_ADDRESS_STRING);
+                    tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
                 }
             }
         } else {
-            TransactionOutput out = transaction.getOutput(0);
-            value = out.getValue();
-            String subAddress = null;
-            try {
-                subAddress = GenericUtils.addressFromScriptPubKey(
-                        out.getScriptPubKey(), address.getNetworkParameters());
-            } catch (ScriptException e) {
-                e.printStackTrace();
-            }
+            String subAddress = transaction.getFirstOutAddress();
             if (subAddress != null) {
-                tvTransactionAddress.setText(StringUtil
-                        .shortenAddress(subAddress));
+                tvTransactionAddress.setText(Utils.shortenAddress(subAddress));
             } else {
-                tvTransactionAddress
-                        .setText(BitherSetting.UNKONW_ADDRESS_STRING);
+                tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             }
         }
 
@@ -247,6 +146,69 @@ public class TransactionListItem extends FrameLayout implements
     @Override
     public void onMarketTickerChanged() {
         btnBtc.onMarketTickerChanged();
-
     }
+
+    private OnClickListener confidenceClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (transaction != null) {
+                DialogTransactionConfidence dialog = new DialogTransactionConfidence(getContext()
+                        , transaction.getConfirmationCount());
+                dialog.show(v);
+            }
+        }
+    };
+
+    private OnClickListener addressFullClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            ArrayMap<String, Long> addresses = new ArrayMap<String, Long>();
+            boolean isIncoming = true;
+            try {
+                isIncoming = transaction.deltaAmountFrom(address) >= 0;
+            } catch (ScriptException e) {
+                e.printStackTrace();
+            }
+            int subCount = isIncoming ? transaction.getIns().size() : transaction.getOuts().size();
+            String subAddress = null;
+            long value;
+            for (int i = 0;
+                 i < subCount;
+                 i++) {
+                subAddress = null;
+                if (isIncoming) {
+                    if (transaction.isCoinBase()) {
+                        subAddress = getContext().getResources().getString(R.string.input_coinbase);
+                    } else {
+                        try {
+                            subAddress = transaction.getIns().get(i).getFromAddress();
+                        } catch (ScriptException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    value = transaction.getIns().get(i).getValue();
+                } else {
+                    Out out = transaction.getOuts().get(i);
+                    value = out.getOutValue();
+                    try {
+                        subAddress = out.getOutAddress();
+                    } catch (ScriptException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (subAddress == null || StringUtil.checkAddressIsNull(subAddress)) {
+                    subAddress = getContext().getResources().getString(R.string
+                            .address_cannot_be_parsed);
+                }
+                if (StringUtil.compareString(subAddress, address.getAddress())) {
+                    subAddress = getContext().getString(R.string.address_mine);
+                }
+                addresses.put(subAddress, value);
+            }
+            DialogAddressFull dialog = new DialogAddressFull(activity, addresses);
+            dialog.show(v);
+        }
+    };
 }

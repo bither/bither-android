@@ -35,6 +35,14 @@ public class AnimationUtil {
 
     }
 
+    public static void fadeOut(final View view, AnimationListener animationListener, int duration) {
+        view.setVisibility(View.VISIBLE);
+        Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setAnimationListener(animationListener);
+        view.startAnimation(alphaAnimation);
+    }
+
     public static void fadeOut(final View view) {
         view.setVisibility(View.VISIBLE);
         Animation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
@@ -81,6 +89,13 @@ public class AnimationUtil {
 
             }
         });
+        view.startAnimation(alphaAnimation);
+    }
+
+    public static void fadeIn(final View view, AnimationListener animationListener, int duration) {
+        Animation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setAnimationListener(animationListener);
         view.startAnimation(alphaAnimation);
     }
 

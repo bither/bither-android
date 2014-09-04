@@ -16,9 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.ui.base.DialogPassword.DialogPasswordListener;
-import net.bither.util.WalletUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -35,207 +32,211 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.ArgbEvaluator;
 import com.nineoldandroids.animation.ObjectAnimator;
 
-public class CheckHeaderView extends FrameLayout implements
-		DialogPasswordListener {
-	public static interface CheckHeaderViewListener {
-		public void beginCheck(String password);
-	}
+import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
+import net.bither.util.SecureCharSequence;
 
-	private static final int TransitionDuration = 600;
-	private static final int ScaleUpAnimDuraion = 300;
-	private static final int ScaleDownAnimDuration = 600;
-	private static final int LightScanInterval = 1200;
+public class CheckHeaderView extends FrameLayout implements DialogPasswordListener {
+    public static interface CheckHeaderViewListener {
+        public void beginCheck(SecureCharSequence password);
+    }
 
-	private View ivLight;
-	private TextView tvStatus;
-	private Button btnCheck;
-	private LinearLayout llPoints;
-	private TextView tvPoints;
+    private static final int TransitionDuration = 600;
+    private static final int ScaleUpAnimDuraion = 300;
+    private static final int ScaleDownAnimDuration = 600;
+    private static final int LightScanInterval = 1200;
 
-	private int totalCheckCount;
-	private int passedCheckCount;
+    private View ivLight;
+    private TextView tvStatus;
+    private Button btnCheck;
+    private LinearLayout llPoints;
+    private TextView tvPoints;
 
-	private int bgBeginColor;
-	private int bgEndColor;
-	private int bgMiddleColor;
+    private int totalCheckCount;
+    private int passedCheckCount;
 
-	private float percent;
+    private int bgBeginColor;
+    private int bgEndColor;
+    private int bgMiddleColor;
 
-	private ArgbEvaluator bgEvaluator;
+    private float percent;
 
-	private CheckHeaderViewListener listener;
+    private ArgbEvaluator bgEvaluator;
 
-	private String password;
+    private CheckHeaderViewListener listener;
 
-	public CheckHeaderView(Context context) {
-		super(context);
-		initView();
-	}
+    private SecureCharSequence password;
 
-	public CheckHeaderView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		initView();
-	}
+    public CheckHeaderView(Context context) {
+        super(context);
+        initView();
+    }
 
-	public CheckHeaderView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		initView();
-	}
+    public CheckHeaderView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initView();
+    }
 
-	private void initView() {
-		removeAllViews();
-		addView(LayoutInflater.from(getContext()).inflate(
-				R.layout.layout_check_header, null), LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
-		ivLight = findViewById(R.id.iv_light);
-		tvStatus = (TextView) findViewById(R.id.tv_check_status);
-		btnCheck = (Button) findViewById(R.id.btn_check);
-		llPoints = (LinearLayout) findViewById(R.id.ll_points);
-		tvPoints = (TextView) findViewById(R.id.tv_points);
-		btnCheck.setOnClickListener(checkClick);
-		bgBeginColor = getResources().getColor(R.color.check_points_begin);
-		bgEndColor = getResources().getColor(R.color.check_points_end);
-		bgMiddleColor = getResources().getColor(R.color.check_points_middle);
-		bgEvaluator = new ArgbEvaluator();
-		setPassedCheckCount(0);
-	}
+    public CheckHeaderView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initView();
+    }
 
-	public void start() {
-		btnCheck.setVisibility(View.INVISIBLE);
-		Animation scaleAnim = AnimationUtils.loadAnimation(getContext(),
-				R.anim.check_points_scale_up);
-		scaleAnim.setDuration(ScaleUpAnimDuraion);
-		scaleAnim.setAnimationListener(scaleUpListener);
-		llPoints.startAnimation(scaleAnim);
-	}
+    private void initView() {
+        removeAllViews();
+        addView(LayoutInflater.from(getContext()).inflate(R.layout.layout_check_header, null),
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        ivLight = findViewById(R.id.iv_light);
+        tvStatus = (TextView) findViewById(R.id.tv_check_status);
+        btnCheck = (Button) findViewById(R.id.btn_check);
+        llPoints = (LinearLayout) findViewById(R.id.ll_points);
+        tvPoints = (TextView) findViewById(R.id.tv_points);
+        btnCheck.setOnClickListener(checkClick);
+        bgBeginColor = getResources().getColor(R.color.check_points_begin);
+        bgEndColor = getResources().getColor(R.color.check_points_end);
+        bgMiddleColor = getResources().getColor(R.color.check_points_middle);
+        bgEvaluator = new ArgbEvaluator();
+        setPassedCheckCount(0);
+    }
 
-	public void stop() {
-		tvStatus.setText(R.string.check_private_key_safe);
-		Animation anim = AnimationUtils.loadAnimation(getContext(),
-				R.anim.check_points_scale_down);
-		anim.setDuration(ScaleDownAnimDuration);
-		anim.setAnimationListener(scaleDownListener);
-		llPoints.startAnimation(anim);
-		ivLight.clearAnimation();
-		ivLight.setVisibility(View.GONE);
-	}
+    public void start() {
+        btnCheck.setVisibility(View.INVISIBLE);
+        Animation scaleAnim = AnimationUtils.loadAnimation(getContext(),
+                R.anim.check_points_scale_up);
+        scaleAnim.setDuration(ScaleUpAnimDuraion);
+        scaleAnim.setAnimationListener(scaleUpListener);
+        llPoints.startAnimation(scaleAnim);
+    }
 
-	private OnClickListener checkClick = new OnClickListener() {
+    public void stop() {
+        tvStatus.setText(R.string.check_private_key_safe);
+        Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.check_points_scale_down);
+        anim.setDuration(ScaleDownAnimDuration);
+        anim.setAnimationListener(scaleDownListener);
+        llPoints.startAnimation(anim);
+        ivLight.clearAnimation();
+        ivLight.setVisibility(View.GONE);
+    }
 
-		@Override
-		public void onClick(View v) {
+    private OnClickListener checkClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
             check();
-		}
-	};
+        }
+    };
 
-    public void check(){
-        if (WalletUtils.getPrivateAddressList() == null
-                || WalletUtils.getPrivateAddressList().size() == 0) {
+    public void check() {
+        if (AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses()
+                .size() == 0) {
             DropdownMessage.showDropdownMessage((Activity) getContext(),
                     R.string.private_key_is_empty);
             return;
         }
-        DialogPassword dialog = new DialogPassword(getContext(),
-                CheckHeaderView.this);
+        DialogPassword dialog = new DialogPassword(getContext(), CheckHeaderView.this);
         dialog.show();
     }
 
-	@Override
-	public void onPasswordEntered(String password) {
-		this.password = password;
-		start();
-	}
+    @Override
+    public void onPasswordEntered(SecureCharSequence password) {
+        if (this.password != null) {
+            this.password.wipe();
+        }
+        this.password = password;
+        start();
+    }
 
-	public int getTotalCheckCount() {
-		return totalCheckCount;
-	}
+    public int getTotalCheckCount() {
+        return totalCheckCount;
+    }
 
-	public void setTotalCheckCount(int totalCheckCount) {
-		this.totalCheckCount = totalCheckCount;
-	}
+    public void setTotalCheckCount(int totalCheckCount) {
+        this.totalCheckCount = totalCheckCount;
+    }
 
-	public int addPassedCheckCount() {
-		int count = getPassedCheckCount() + 1;
-		setPassedCheckCount(count);
-		return count;
-	}
+    public int addPassedCheckCount() {
+        int count = getPassedCheckCount() + 1;
+        setPassedCheckCount(count);
+        return count;
+    }
 
-	public int getPassedCheckCount() {
-		return passedCheckCount;
-	}
+    public int getPassedCheckCount() {
+        return passedCheckCount;
+    }
 
-	public void setPassedCheckCount(int passedCheckCount) {
-		this.passedCheckCount = passedCheckCount;
-		if (totalCheckCount <= 0 || passedCheckCount < 0) {
-			setPercent(1);
-		} else {
-			ObjectAnimator animator = ObjectAnimator.ofFloat(this, "percent",
-					(float) passedCheckCount / (float) totalCheckCount)
-					.setDuration(TransitionDuration);
-			animator.start();
-		}
-	}
+    public void setPassedCheckCount(int passedCheckCount) {
+        this.passedCheckCount = passedCheckCount;
+        if (totalCheckCount <= 0 || passedCheckCount < 0) {
+            setPercent(1);
+        } else {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(this, "percent",
+                    (float) passedCheckCount / (float) totalCheckCount).setDuration
+                    (TransitionDuration);
+            animator.start();
+        }
+    }
 
-	public void setPercent(float percent) {
-		this.percent = percent;
-		int points = (int) (percent * 100);
-		tvPoints.setText(String.valueOf(points));
-		if (percent <= 0.5f) {
-			setBackgroundColor((Integer) bgEvaluator.evaluate(percent / 0.5f,
-					bgBeginColor, bgMiddleColor));
-		} else {
-			setBackgroundColor((Integer) bgEvaluator.evaluate(
-					(percent - 0.5f) / 0.5f, bgMiddleColor, bgEndColor));
-		}
-	}
+    public void setPercent(float percent) {
+        this.percent = percent;
+        int points = (int) (percent * 100);
+        tvPoints.setText(String.valueOf(points));
+        if (percent <= 0.5f) {
+            setBackgroundColor((Integer) bgEvaluator.evaluate(percent / 0.5f, bgBeginColor,
+                    bgMiddleColor));
+        } else {
+            setBackgroundColor((Integer) bgEvaluator.evaluate((percent - 0.5f) / 0.5f,
+                    bgMiddleColor, bgEndColor));
+        }
+    }
 
-	public float getPercent() {
-		return percent;
-	}
+    public float getPercent() {
+        return percent;
+    }
 
-	public void setListener(CheckHeaderViewListener listener) {
-		this.listener = listener;
-	}
+    public void setListener(CheckHeaderViewListener listener) {
+        this.listener = listener;
+    }
 
-	private AnimationListener scaleUpListener = new AnimationListener() {
+    private AnimationListener scaleUpListener = new AnimationListener() {
 
-		@Override
-		public void onAnimationStart(Animation animation) {
-		}
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
 
-		@Override
-		public void onAnimationRepeat(Animation animation) {
-		}
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
 
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			if (listener != null) {
-				listener.beginCheck(password);
-			}
-			tvStatus.setText(R.string.checking_private_key);
-			Animation scanAnim = AnimationUtils.loadAnimation(getContext(),
-					R.anim.check_light_scan);
-			scanAnim.setDuration(LightScanInterval);
-			ivLight.setVisibility(View.VISIBLE);
-			ivLight.startAnimation(scanAnim);
-		}
-	};
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            if (listener != null) {
+                listener.beginCheck(password);
+            }
+            tvStatus.setText(R.string.checking_private_key);
+            Animation scanAnim = AnimationUtils.loadAnimation(getContext(), R.anim.check_light_scan);
+            scanAnim.setDuration(LightScanInterval);
+            ivLight.setVisibility(View.VISIBLE);
+            ivLight.startAnimation(scanAnim);
+        }
+    };
 
-	private AnimationListener scaleDownListener = new AnimationListener() {
+    private AnimationListener scaleDownListener = new AnimationListener() {
 
-		@Override
-		public void onAnimationStart(Animation animation) {
+        @Override
+        public void onAnimationStart(Animation animation) {
 
-		}
+        }
 
-		@Override
-		public void onAnimationRepeat(Animation animation) {
+        @Override
+        public void onAnimationRepeat(Animation animation) {
 
-		}
+        }
 
-		@Override
-		public void onAnimationEnd(Animation animation) {
-			btnCheck.setVisibility(View.VISIBLE);
-		}
-	};
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            btnCheck.setVisibility(View.VISIBLE);
+        }
+    };
 }

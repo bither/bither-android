@@ -16,57 +16,57 @@
 
 package net.bither.adapter.cold;
 
-import java.util.List;
-
-import net.bither.model.BitherAddress;
-import net.bither.model.BitherAddressWithPrivateKey;
-import net.bither.ui.base.ColdAddressFragmentListItemView;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import net.bither.bitherj.core.Address;
+import net.bither.ui.base.ColdAddressFragmentListItemView;
+
+import java.util.List;
+
 public class AddressOfColdFragmentListAdapter extends BaseAdapter {
-	private FragmentActivity activity;
+    private FragmentActivity activity;
 
-	private List<BitherAddressWithPrivateKey> privates;
+    private List<Address> privates;
 
-	public AddressOfColdFragmentListAdapter(FragmentActivity activity,
-			List<BitherAddressWithPrivateKey> privates) {
-		this.activity = activity;
-		this.privates = privates;
-	}
+    public AddressOfColdFragmentListAdapter(FragmentActivity activity,
+                                            List<Address> privates) {
+        this.activity = activity;
+        this.privates = privates;
+    }
 
-	@Override
-	public int getCount() {
+    @Override
+    public int getCount() {
 
-		return this.privates.size();
-	}
+        return this.privates.size();
+    }
 
-	@Override
-	public Object getItem(int position) {
+    @Override
+    public Object getItem(int position) {
 
-		return this.privates.get(position);
-	}
+        return this.privates.get(position);
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ColdAddressFragmentListItemView view;
-		if (convertView == null
-				|| !(convertView instanceof ColdAddressFragmentListItemView)) {
-			convertView = new ColdAddressFragmentListItemView(activity);
-		}
-		view = (ColdAddressFragmentListItemView) convertView;
-		BitherAddress a;
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ColdAddressFragmentListItemView view;
+        if (convertView == null
+                || !(convertView instanceof ColdAddressFragmentListItemView)) {
+            convertView = new ColdAddressFragmentListItemView(activity);
+        }
+        view = (ColdAddressFragmentListItemView) convertView;
+        Address a;
 
-		a = privates.get(position);
+        a = privates.get(position);
 
-		view.showAddress(a);
-		return convertView;
-	}
+        view.showAddress(a);
+        return convertView;
+    }
 }

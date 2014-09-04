@@ -16,13 +16,23 @@
 
 package net.bither.util;
 
-import com.google.bitcoin.core.ECKey;
 
-import net.bither.BitherSetting.AppMode;
+import android.os.Handler;
+import android.os.Looper;
+
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
+import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.BackupPrivateKeyRunnable;
+import net.bither.runnable.BaseRunnable;
+import net.bither.runnable.HandlerMessage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -44,10 +54,9 @@ public class BackupUtil {
 
     }
 
-    ;
 
-    public static ECKey getEckeyFromBackup(String address, String password) {
-        if (AppSharedPreference.getInstance().getAppMode() == AppMode.COLD) {
+    public static ECKey getEckeyFromBackup(String address, CharSequence password) {
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             return getEckeyFormBackupCold(address, password);
         } else {
             return getEckeyFormBackupHot(address, password);
@@ -55,9 +64,9 @@ public class BackupUtil {
 
     }
 
-    private static ECKey getEckeyFormBackupHot(String address, String password) {
+    private static ECKey getEckeyFormBackupHot(String address, CharSequence password) {
         File file = FileUtil.getBackupKeyOfHot();
-        String str = FileUtil.readFile(file);
+        String str = Utils.readFile(file);
         if (str.contains(address)) {
             String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
             for (String backupStr : backupStrArray) {
@@ -76,7 +85,7 @@ public class BackupUtil {
         return null;
     }
 
-    private static ECKey getEckeyFormBackupCold(String address, String password) {
+    private static ECKey getEckeyFormBackupCold(String address, CharSequence password) {
         if (!FileUtil.existSdCardMounted()) {
             return null;
         }
@@ -90,7 +99,7 @@ public class BackupUtil {
                  i >= 0;
                  i++) {
                 File file = files[i];
-                String str = FileUtil.readFile(file);
+                String str = Utils.readFile(file);
                 if (str.contains(address)) {
                     String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
                     for (String backupStr : backupStrArray) {
@@ -121,8 +130,14 @@ public class BackupUtil {
 
     public static void backupColdKey(boolean checkTime,
                                      BackupListener backupListener) {
-        if (appSharedPreference.getAppMode() == AppMode.COLD
-                && FileUtil.existSdCardMounted()) {
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD
+                ) {
+            if (backupListener != null) {
+                backupListener.backupError();
+            }
+            return;
+        }
+        if (FileUtil.existSdCardMounted()) {
             boolean isBackup = false;
             if (checkTime) {
                 Date lastBackupTime = appSharedPreference
@@ -142,11 +157,15 @@ public class BackupUtil {
                         backupListener);
                 new Thread(backupColdPrivateKeyRunnable).start();
             }
+        } else {
+            if (backupListener != null) {
+                backupListener.backupError();
+            }
         }
     }
 
     public static void backupHotKey() {
-        if (AppSharedPreference.getInstance().getAppMode() == AppMode.HOT) {
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
             BackupPrivateKeyRunnable backupColdPrivateKeyRunnable = new BackupPrivateKeyRunnable(
                     null);
             new Thread(backupColdPrivateKeyRunnable).start();
@@ -154,12 +173,76 @@ public class BackupUtil {
     }
 
     public static String[] getBackupKeyStrList(File file) {
-        String keyStrs = FileUtil.readFile(file);
+        String keyStrs = Utils.readFile(file);
         String[] result = null;
         if (!StringUtil.isEmpty(keyStrs)) {
             result = keyStrs.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
         }
         return result;
+    }
+
+
+    private static class BackupPrivateKeyRunnable extends BaseRunnable {
+
+        private BackupListener mBackupListener;
+
+        public BackupPrivateKeyRunnable(BackupListener backupListener) {
+            this.mBackupListener = backupListener;
+
+        }
+
+        @Override
+        public void run() {
+            obtainMessage(HandlerMessage.MSG_PREPARE);
+            backupPrivateKey();
+            if (this.mBackupListener != null) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        mBackupListener.backupSuccess();
+
+                    }
+                });
+            }
+            obtainMessage(HandlerMessage.MSG_SUCCESS);
+
+        }
+
+        private void backupPrivateKey() {
+            File file;
+            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                file = FileUtil.getBackupKeyOfHot();
+            } else {
+                file = FileUtil.getBackupFileOfCold();
+            }
+            String backupString = "";
+
+            if (AddressManager.getInstance().getPrivKeyAddresses() == null) {
+                return;
+            }
+            for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
+                if (address != null) {
+                    PasswordSeed passwordSeed = new PasswordSeed(address);
+                    backupString = backupString
+                            + passwordSeed.toString()
+                            + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
+
+                }
+            }
+            if (!StringUtil.isEmpty(backupString)) {
+
+                try {
+                    Utils.writeFile(backupString.getBytes(), file);
+                    AppSharedPreference.getInstance().setLastBackupKeyTime(
+                            new Date(System.currentTimeMillis()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
     }
 
 }

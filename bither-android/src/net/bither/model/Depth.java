@@ -16,12 +16,6 @@
 
 package net.bither.model;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import net.bither.BitherSetting.MarketType;
 import net.bither.charts.entity.DateValueEntity;
 import net.bither.util.ExchangeUtil;
@@ -30,6 +24,12 @@ import net.bither.util.StringUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Depth implements Serializable {
 

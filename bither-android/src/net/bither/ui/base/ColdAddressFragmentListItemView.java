@@ -27,14 +27,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.model.BitherAddress;
+import net.bither.bitherj.core.Address;
+import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 public class ColdAddressFragmentListItemView extends FrameLayout {
     private Activity activity;
-    private BitherAddress address;
+    private Address address;
     private FrameLayout flAddress;
     private TextView tvAddress;
     private QrCodeImageView ivQr;
@@ -60,7 +61,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
 
     }
 
-    public void showAddress(final BitherAddress address) {
+    public void showAddress(final Address address) {
         this.address = address;
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         ivQr.setContent(address.getAddress());

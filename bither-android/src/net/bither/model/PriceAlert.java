@@ -1,10 +1,10 @@
 package net.bither.model;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
-import net.bither.util.LogUtil;
 
 import java.io.File;
 import java.io.Serializable;
@@ -86,6 +86,9 @@ public class PriceAlert implements Serializable {
     }
 
     public static void removePriceAlert(PriceAlert priceAlert) {
+        if (priceAlert==null){
+            return;
+        }
         synchronized (paLock) {
             boolean removed = false;
             if (priceAlert.getHigher() <= 0 && priceAlert.getLower() <= 0) {

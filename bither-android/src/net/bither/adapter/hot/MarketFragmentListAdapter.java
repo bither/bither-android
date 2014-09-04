@@ -16,14 +16,15 @@
 
 package net.bither.adapter.hot;
 
-import java.util.List;
-
-import net.bither.model.Market;
-import net.bither.ui.base.MarketFragmentListItemView;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import net.bither.model.Market;
+import net.bither.ui.base.MarketFragmentListItemView;
+
+import java.util.List;
 
 public class MarketFragmentListAdapter extends BaseAdapter {
 	private FragmentActivity activity;

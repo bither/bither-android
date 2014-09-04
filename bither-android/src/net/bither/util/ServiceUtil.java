@@ -17,11 +17,10 @@
 package net.bither.util;
 
 import android.content.Intent;
-import android.util.Log;
-
-import com.google.bitcoin.core.Utils;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.service.BlockchainService;
 
 import java.util.ArrayList;

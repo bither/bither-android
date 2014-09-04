@@ -16,11 +16,6 @@
 
 package net.bither;
 
-import java.util.ArrayList;
-
-import net.bither.model.QRCodeTransportPage;
-import net.bither.util.PlaySound;
-import net.bither.util.StringUtil;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -30,6 +25,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.google.zxing.Result;
+
+import net.bither.model.QRCodeTransportPage;
+import net.bither.util.PlaySound;
+import net.bither.util.StringUtil;
+
+import java.util.ArrayList;
 
 public class ScanQRCodeTransportActivity extends ScanActivity {
 	private TextView tv;

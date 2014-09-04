@@ -16,12 +16,12 @@
 
 package net.bither.model;
 
-import java.io.Serializable;
-import java.util.List;
-
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
 import net.bither.charts.entity.IStickEntity;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class KLine implements Serializable {
 

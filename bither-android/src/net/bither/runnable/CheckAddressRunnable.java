@@ -21,9 +21,6 @@ import net.bither.util.TransactionsUtil;
 
 import java.util.List;
 
-/**
- * Created by nn on 14-7-27.
- */
 public class CheckAddressRunnable extends BaseRunnable {
 
     private List<String> addressList;

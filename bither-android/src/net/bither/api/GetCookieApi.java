@@ -16,9 +16,6 @@
 
 package net.bither.api;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpPostResponse;
 import net.bither.http.HttpSetting.HttpType;
@@ -28,6 +25,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetCookieApi extends HttpPostResponse<String> {
 

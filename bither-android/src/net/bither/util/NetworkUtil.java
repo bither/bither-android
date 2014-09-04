@@ -22,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.utils.LogUtil;
 
 public class NetworkUtil {
     private NetworkUtil() {
@@ -72,7 +73,7 @@ public class NetworkUtil {
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
             for (NetworkInfo networkInfo : mConnectivity.getAllNetworkInfo()) {
                 //LogUtil.d("network",networkInfo.getTypeName()+":"+networkInfo.getType()+",
-                // "+networkInfo.isAvailable());
+                // "+networkInfo.isConnected());
                 if (networkInfo.isConnectedOrConnecting()) {
                     return getNetworkType(networkInfo);
                 }

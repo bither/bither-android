@@ -34,12 +34,10 @@ import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 
-import java.math.BigInteger;
-
 public class BtcToMoneyButton extends Button implements OnClickListener,
         MarketTickerChangedObserver {
     private double price = 0;
-    private BigInteger btc;
+    private long btc;
     private boolean showMoney = false;
 
     public BtcToMoneyButton(Context context) {
@@ -62,10 +60,10 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
         initView();
     }
 
-    public void setBigInteger(BigInteger btc) {
+    public void setAmount(long btc) {
         this.btc = btc;
         this.showMoney = false;
-        if (btc.compareTo(BigInteger.ZERO) >= 0) {
+        if (btc >= 0) {
             setBackgroundResource(R.drawable.btn_small_green_selector);
         } else {
             setBackgroundResource(R.drawable.btn_small_red_selector);
@@ -92,15 +90,13 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
             showMoney = false;
         } else {
             getPrice();
-            if (btc != null) {
-                if (price != 0) {
-                    double money = btc.doubleValue() / 100000000.0 * price;
-                    setText(AppSharedPreference.getInstance()
-                            .getDefaultExchangeType().getSymbol()
-                            + StringUtil.formatDoubleToMoneyString(money));
-                    showMoney = true;
-                }
+            if (price != 0) {
+                double money = (double) btc / 100000000.0 * price;
+                setText(AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol() +
+                        StringUtil.formatDoubleToMoneyString(money));
+                showMoney = true;
             }
+
         }
         setCompoundDrawables(getSymbolDrawable(), null, null, null);
     }
@@ -119,7 +115,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
     }
 
     public void onResume() {
-        if (btc != null) {
+        if (btc != 0) {
             getPrice();
             showBtcInfo();
         }
@@ -130,14 +126,12 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
             setText(GenericUtils.formatValue(btc));
         } else {
             getPrice();
-            if (btc != null) {
-                if (price != 0) {
-                    double money = btc.doubleValue() / 100000000.0 * price;
-                    setText(AppSharedPreference.getInstance()
-                            .getDefaultExchangeType().getSymbol()
-                            + StringUtil.formatDoubleToMoneyString(money));
-                }
+            if (price != 0) {
+                double money = (double) btc / 100000000.0 * price;
+                setText(AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol() +
+                        StringUtil.formatDoubleToMoneyString(money));
             }
+
         }
         setCompoundDrawables(getSymbolDrawable(), null, null, null);
     }

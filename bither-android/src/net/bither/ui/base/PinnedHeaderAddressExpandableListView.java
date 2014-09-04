@@ -16,12 +16,13 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
+
+import net.bither.R;
 
 public class PinnedHeaderAddressExpandableListView extends
 		PinnedHeaderExpandableListView {

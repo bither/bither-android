@@ -16,11 +16,6 @@
 
 package net.bither.ui.base;
 
-import net.bither.BitherApplication;
-import net.bither.R;
-import net.bither.util.ImageManageUtil;
-import net.bither.util.Qr;
-import net.bither.util.UIUtil;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
@@ -32,6 +27,12 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import net.bither.BitherApplication;
+import net.bither.R;
+import net.bither.util.ImageManageUtil;
+import net.bither.util.Qr;
+import net.bither.util.UIUtil;
 
 public class ShowFullScreenQrView extends FrameLayout {
 	private static final int AnimationDuration = 250;

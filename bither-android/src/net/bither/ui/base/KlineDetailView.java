@@ -16,18 +16,15 @@
 
 package net.bither.ui.base;
 
-import net.bither.R;
-import net.bither.util.AnimationUtil;
-import net.bither.util.LogUtil;
-
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import net.bither.R;
+import net.bither.util.AnimationUtil;
 
 public class KlineDetailView extends LinearLayout {
     private TextView tvTime;

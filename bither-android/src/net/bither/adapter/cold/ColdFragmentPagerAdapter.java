@@ -16,12 +16,13 @@
 
 package net.bither.adapter.cold;
 
-import net.bither.fragment.cold.CheckFragment;
-import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.fragment.cold.OptionColdFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import net.bither.fragment.cold.CheckFragment;
+import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.fragment.cold.OptionColdFragment;
 
 public class ColdFragmentPagerAdapter extends FragmentPagerAdapter {
 

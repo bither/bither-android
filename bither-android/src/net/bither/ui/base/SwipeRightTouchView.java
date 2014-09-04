@@ -16,13 +16,6 @@
 
 package net.bither.ui.base;
 
-import java.util.ArrayList;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.util.GenericUtils;
-import net.bither.util.LogUtil;
-import net.bither.util.UIUtil;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -30,6 +23,14 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.util.GenericUtils;
+import net.bither.util.UIUtil;
+
+import java.util.ArrayList;
 
 public class SwipeRightTouchView extends RelativeLayout {
 	private static final boolean showLog = false;
@@ -186,13 +187,13 @@ public class SwipeRightTouchView extends RelativeLayout {
 						rlFinanceDetail.requestLayout();
 						if (showLog) {
 							LogUtil.i(
-									"Drag",
-									"Move true xMove : "
-											+ Float.toString(xMove)
-											+ " ; yMove : "
-											+ Float.toString(yMove)
-											+ " ; leftMargin : "
-											+ Integer.toString(leftMargin));
+                                    "Drag",
+                                    "Move true xMove : "
+                                            + Float.toString(xMove)
+                                            + " ; yMove : "
+                                            + Float.toString(yMove)
+                                            + " ; leftMargin : "
+                                            + Integer.toString(leftMargin));
 						}
 					}
 				} else {

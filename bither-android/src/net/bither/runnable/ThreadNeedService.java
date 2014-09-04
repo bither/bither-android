@@ -16,80 +16,83 @@
 
 package net.bither.runnable;
 
-import net.bither.BitherSetting.AppMode;
-import net.bither.preference.AppSharedPreference;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DialogProgress;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.preference.AppSharedPreference;
+import net.bither.service.BlockchainService;
+import net.bither.service.LocalBinder;
+import net.bither.ui.base.dialog.DialogProgress;
+
 public abstract class ThreadNeedService extends Thread {
-	protected DialogProgress dp;
-	private BlockchainService service;
-	private Context context;
-	private boolean connected = false;
-	private boolean needService = AppSharedPreference.getInstance()
-			.getAppMode() == AppMode.HOT;
+    protected DialogProgress dp;
+    private BlockchainService service;
+    private Context context;
+    private boolean connected = false;
+    private boolean needService = AppSharedPreference.getInstance()
+            .getAppMode() == BitherjSettings.AppMode.HOT;
 
-	public ThreadNeedService(DialogProgress dp, Context context) {
-		this.dp = dp;
-		this.context = context;
-	}
+    public ThreadNeedService(DialogProgress dp, Context context) {
+        this.dp = dp;
+        this.context = context;
+    }
 
-	abstract public void runWithService(BlockchainService service);
+    abstract public void runWithService(BlockchainService service);
 
-	@Override
-	public void run() {
-		if (needService) {
-			if (service != null) {
-				runWithService(service);
-			}
-		} else {
-			runWithService(null);
-		}
-		if (connected) {
-			context.unbindService(connection);
-		}
-		if (dp != null) {
-			dp.setThread(null);
-		}
-	}
+    @Override
+    public void run() {
+        if (needService) {
+            if (service != null) {
+                runWithService(service);
+            }
+        } else {
+            runWithService(null);
+        }
+        if (connected) {
+            context.unbindService(connection);
+        }
+        if (dp != null) {
+            dp.setThread(null);
+        }
+    }
 
-	@Override
-	public synchronized void start() {
-		if (dp != null && !dp.isShowing()) {
-			dp.show();
-			dp.setCancelable(false);
-		}
-		if (needService) {
-			connected = context.bindService(new Intent(context,
-					BlockchainService.class), connection,
-					Context.BIND_AUTO_CREATE);
-		} else {
-			if (dp != null) {
-				dp.setThread(this);
-			}
-			super.start();
-		}
-	}
+    @Override
+    public synchronized void start() {
+        if (dp != null && !dp.isShowing()) {
+            dp.show();
+            dp.setCancelable(false);
+        }
+        if (needService) {
+            connected = context.bindService(new Intent(context,
+                            BlockchainService.class), connection,
+                    Context.BIND_AUTO_CREATE);
+        } else {
+            if (dp != null) {
+                dp.setThread(this);
+            }
+            super.start();
+        }
+    }
 
-	private ServiceConnection connection = new ServiceConnection() {
+    private ServiceConnection connection = new ServiceConnection() {
 
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-		}
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
 
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder binder) {
-			ThreadNeedService.this.service = ((BlockchainService.LocalBinder) binder)
-					.getService();
-			if (dp != null) {
-				dp.setThread(ThreadNeedService.this);
-			}
-			ThreadNeedService.super.start();
-		}
-	};
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            ThreadNeedService.this.service = ((LocalBinder) binder)
+                    .getService();
+            if (dp != null) {
+                dp.setThread(ThreadNeedService.this);
+            }
+            ThreadNeedService.super.start();
+        }
+    };
 }

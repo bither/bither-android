@@ -29,6 +29,7 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +44,6 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 
-/**
- * Created by songchenwen on 14-5-20.
- */
 public class Qr {
     public static enum QrCodeTheme {
         YELLOW("#ff835229", "#ffe7e1c7", R.string.fancy_qr_code_theme_name_yellow),
