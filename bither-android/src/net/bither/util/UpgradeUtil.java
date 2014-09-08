@@ -78,11 +78,12 @@ public class UpgradeUtil {
                     if (nowTime - beginTime < 2000) {
                         Thread.sleep(2000 - (nowTime - beginTime));
                     }
+                    obtainMessage(HandlerMessage.MSG_SUCCESS);
                 } catch (Exception e) {
                     e.printStackTrace();
                     obtainMessage(HandlerMessage.MSG_FAILURE);
                 }
-                obtainMessage(HandlerMessage.MSG_SUCCESS);
+
             }
         };
         baseRunnable.setHandler(handler);
@@ -147,9 +148,10 @@ public class UpgradeUtil {
         }
         for (File walletFile : fs) {
             String name = walletFile.getName();
-            ECKey ecKey = loadECKey(walletFile);
-            result.add(ecKey);
-
+            if (sequence.contains(name)) {
+                ECKey ecKey = loadECKey(walletFile);
+                result.add(ecKey);
+            }
         }
         return result;
     }
@@ -163,9 +165,11 @@ public class UpgradeUtil {
             fs = sortAddressFile(fs, sequence);
         }
         for (File walletFile : fs) {
-            ECKey ecKey = loadECKey(walletFile);
-            result.add(ecKey);
-
+            String name = walletFile.getName();
+            if (sequence.contains(name)) {
+                ECKey ecKey = loadECKey(walletFile);
+                result.add(ecKey);
+            }
         }
         return result;
     }

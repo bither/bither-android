@@ -133,6 +133,9 @@ public class ChooseModeActivity extends Activity {
                     }
                     setVersionCode();
                     initActivity();
+                    if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                        ServiceUtil.dowloadSpvBlock();
+                    }
                     break;
                 case HandlerMessage.MSG_FAILURE:
                     if (progressDialog != null) {
