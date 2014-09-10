@@ -203,7 +203,7 @@
     <!-- mode -->
     <string name="choose_mode_cold_desctription">冷钱包 : 离线, 安全!</string>
     <string name="choose_mode_warm_desctription">热钱包 : 联机, 易用!</string>
-    <string name="choose_mode_warm_waiting">正在创建钱包…</string>
+    <string name="choose_mode_warm_waiting">加载中…</string>
     <string name="choose_mode_warm_retry">重试</string>
     <string name="choose_mode_cold_confirm">模式设置后不能切换.\n冷钱包应该运行在离线的备用手机上.\n确认以冷钱包模式运行?</string>
     <string name="choose_mode_warm_confirm">模式设置后不能切换.\n热钱包可以方便的在线发送交易.\n确认以热钱包模式运行?</string>
