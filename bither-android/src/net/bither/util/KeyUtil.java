@@ -22,6 +22,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.XRandom;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
@@ -43,7 +44,8 @@ public class KeyUtil {
         }
         List<Address> addressList = new ArrayList<Address>();
         for (int i = 0; i < count; i++) {
-            ECKey ecKey = new ECKey();
+            XRandom xRandom = new XRandom(new byte[32]);
+            ECKey ecKey = new ECKey(xRandom);
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             Address address = new Address(ecKey.toAddress(),
                     ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey));
