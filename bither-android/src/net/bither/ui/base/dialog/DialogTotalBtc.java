@@ -86,6 +86,7 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         llPrivate = (LinearLayout) findViewById(R.id.ll_private);
         llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
         flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
+        findViewById(R.id.ll_below_chart).setOnClickListener(dismissClick);
         ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
         ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
         flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
@@ -157,6 +158,14 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
             }
         }, 100);
     }
+
+    private View.OnClickListener dismissClick = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            dismiss();
+        }
+    };
 
     @Override
     public void onRotationChanged(float rotation) {
