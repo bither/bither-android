@@ -31,6 +31,7 @@ public class UEntropyCollector {
         public void onError(Exception e, UEntropySource source);
     }
 
+    private boolean shouldCollectData;
     private UEntropyCollectorListener listener;
 
     public UEntropyCollector(UEntropyCollectorListener listener) {
@@ -38,6 +39,9 @@ public class UEntropyCollector {
     }
 
     public void onNewData(byte[] data, UEntropySource source) {
+        if(!shouldCollectData()){
+            return;
+        }
         LogUtil.d(UEntropyCollector.class.getSimpleName(), "source: " + source.name() + "\ndata: " +
                 "" + Utils.bytesToHexString(source.processData(data)));
     }
@@ -46,6 +50,18 @@ public class UEntropyCollector {
         if (listener != null) {
             listener.onError(e, source);
         }
+    }
+
+    public void start(){
+        shouldCollectData = true;
+    }
+
+    public void stop(){
+        shouldCollectData = false;
+    }
+
+    public boolean shouldCollectData(){
+        return shouldCollectData;
     }
 
     public enum UEntropySource {

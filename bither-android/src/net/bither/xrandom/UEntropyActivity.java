@@ -58,6 +58,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
         scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
         entropyCollector = new UEntropyCollector(this);
+        entropyCollector.start();
     }
 
     @Override
