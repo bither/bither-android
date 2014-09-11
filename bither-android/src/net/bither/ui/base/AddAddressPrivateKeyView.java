@@ -28,6 +28,8 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.IUEntropy;
+import net.bither.bitherj.exception.URandomNotFoundException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -101,8 +103,11 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
             @Override
             public void runWithService(BlockchainService service) {
                 int count = wvCount.getCurrentItem() + 1;
-                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, password, count);
-
+                try {
+                    addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null, password, count);
+                } catch (URandomNotFoundException e) {
+                    e.printStackTrace();
+                }
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override
