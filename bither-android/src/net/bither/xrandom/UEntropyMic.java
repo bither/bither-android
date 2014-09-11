@@ -23,6 +23,8 @@ import android.media.AudioRecord;
 import android.os.Handler;
 import android.os.HandlerThread;
 
+import net.bither.bitherj.utils.LogUtil;
+
 import java.util.Arrays;
 
 /**
@@ -97,6 +99,7 @@ public class UEntropyMic {
                 audioRecord.stop();
                 audioRecord.release();
                 audioRecord = null;
+                LogUtil.i(UEntropyMic.class.getSimpleName(), "Mic released");
             }
             micHandler.removeCallbacksAndMessages(null);
             micThread.quit();
