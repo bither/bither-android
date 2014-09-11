@@ -20,7 +20,6 @@ package net.bither.xrandom;
 
 import net.bither.bitherj.utils.LogUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
 
 /**
  * Created by songchenwen on 14-9-11.
@@ -28,12 +27,41 @@ import net.bither.image.glcrop.Util;
 public class UEntropyCollector {
     public static final int ENTROPY_CACHE_LENGTH = 32 * 100;
 
+    public static interface UEntropyCollectorListener {
+        public void onError(Exception e, UEntropySource source);
+    }
+
+    private UEntropyCollectorListener listener;
+
+    public UEntropyCollector(UEntropyCollectorListener listener) {
+        this.listener = listener;
+    }
+
+    public void onNewData(byte[] data, UEntropySource source) {
+        LogUtil.d(UEntropyCollector.class.getSimpleName(), "source: " + source.name() + "\ndata: " +
+                "" + Utils.bytesToHexString(source.processData(data)));
+    }
+
+    public void onError(Exception e, UEntropySource source) {
+        if (listener != null) {
+            listener.onError(e, source);
+        }
+    }
+
     public enum UEntropySource {
-        CAMERA
-    }
+        Unknown, Camera, Mic, Motion;
 
-    protected void onNewData(byte[] data, UEntropySource source) {
-        LogUtil.d(UEntropyCollector.class.getSimpleName(), "source: " + source.name() + "\ndata: " + Utils.bytesToHexString(data));
+        public byte[] processData(byte[] data) {
+            switch (this) {
+                case Camera:
+                    return data;
+                case Mic:
+                    return data;
+                case Motion:
+                    return data;
+                default:
+                    return data;
+            }
+        }
     }
-
 }
