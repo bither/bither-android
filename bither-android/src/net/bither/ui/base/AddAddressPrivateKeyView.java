@@ -17,6 +17,7 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
+import net.bither.xrandom.UEntropyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +89,14 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
 
         @Override
         public void onClick(View v) {
-            DialogPassword dialog = new DialogPassword(getContext(),
-                    AddAddressPrivateKeyView.this);
-            dialog.show();
+            if(true){
+                Intent intent = new Intent(getContext(), UEntropyActivity.class);
+                getContext().startActivity(intent);
+            }else{
+                DialogPassword dialog = new DialogPassword(getContext(),
+                        AddAddressPrivateKeyView.this);
+                dialog.show();
+            }
         }
     };
 
