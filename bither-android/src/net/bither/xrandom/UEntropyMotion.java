@@ -88,8 +88,6 @@ public class UEntropyMotion implements SensorEventListener {
                     }
                 }
             }
-            LogUtil.i(UEntropyMotion.class.getSimpleName(), "Got " + data.length + "bytes from "
-                    + event.sensor.getName());
             collector.onNewData(data, UEntropyCollector.UEntropySource.Motion);
         }
     }

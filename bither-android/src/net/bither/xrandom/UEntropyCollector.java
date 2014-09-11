@@ -18,7 +18,11 @@
 
 package net.bither.xrandom;
 
+import com.google.common.primitives.Ints;
+
 import net.bither.bitherj.crypto.IUEntropy;
+import net.bither.bitherj.crypto.URandom;
+import net.bither.bitherj.exception.URandomNotFoundException;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -59,13 +63,14 @@ public class UEntropyCollector implements IUEntropy {
                 if (!shouldCollectData()) {
                     return;
                 }
+                byte[] processedData = source.processData(data);
                 try {
                     int available = in.available();
-                    int extraBytes = available + data.length - POOL_SIZE;
+                    int extraBytes = available + processedData.length - POOL_SIZE;
                     if (extraBytes <= 0) {
-                        out.write(data);
-                    } else if (extraBytes < data.length) {
-                        out.write(Arrays.copyOf(data, data.length - extraBytes));
+                        out.write(processedData);
+                    } else if (extraBytes < processedData.length) {
+                        out.write(Arrays.copyOf(processedData, processedData.length - extraBytes));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -118,19 +123,40 @@ public class UEntropyCollector implements IUEntropy {
     }
 
     public enum UEntropySource {
-        Unknown, Camera, Mic, Motion;
+        Unknown, Camera(8), Mic(16), Motion;
+
+        private int bytesInOneBatch;
+
+        UEntropySource(int bytesInOneBatch) {
+            this.bytesInOneBatch = bytesInOneBatch;
+        }
+
+        UEntropySource() {
+            this(1);
+        }
 
         public byte[] processData(byte[] data) {
-            switch (this) {
-                case Camera:
-                    return data;
-                case Mic:
-                    return data;
-                case Motion:
-                    return data;
-                default:
-                    return data;
+            if (data.length <= bytesInOneBatch) {
+                return data;
             }
+            byte[] result = new byte[bytesInOneBatch];
+            byte[] locatorBytes = new byte[Ints.BYTES];
+            URandom random = new URandom();
+            for (int i = 0;
+                 i < bytesInOneBatch;
+                 i++) {
+                int position = (int) (Math.random() * data.length);
+                try {
+                    random.nextBytes(locatorBytes);
+                    int value = Math.abs(Ints.fromByteArray(locatorBytes));
+                    position = (int) (((float) value / (float) Integer.MAX_VALUE) * data.length);
+                } catch (URandomNotFoundException e) {
+                    e.printStackTrace();
+                }
+                position = Math.min(Math.max(position, 0), data.length - 1);
+                result[i] = data[position];
+            }
+            return result;
         }
     }
 }

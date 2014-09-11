@@ -74,7 +74,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     return;
                 }
                 for (int i = 0;
-                     i < 2000;
+                     i < 100;
                      i++) {
                     byte[] data = new byte[32];
                     entropyCollector.nextBytes(data);
