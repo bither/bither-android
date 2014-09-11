@@ -27,10 +27,14 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
 import net.bither.R;
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.ScannerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Created by songchenwen on 14-9-11.
@@ -60,7 +64,26 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
         scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
         entropyCollector = new UEntropyCollector(this);
-        entropyCollector.start();
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    entropyCollector.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                for (int i = 0;
+                     i < 2000;
+                     i++) {
+                    byte[] data = new byte[32];
+                    entropyCollector.nextBytes(data);
+                    LogUtil.i(UEntropyActivity.class.getSimpleName(),
+                            "got data " + Utils.bytesToHexString(data));
+                }
+                entropyCollector.stop();
+            }
+        }.start();
     }
 
     @Override

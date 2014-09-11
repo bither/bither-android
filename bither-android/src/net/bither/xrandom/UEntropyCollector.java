@@ -18,14 +18,20 @@
 
 package net.bither.xrandom;
 
-import net.bither.bitherj.utils.LogUtil;
-import net.bither.bitherj.utils.Utils;
+import net.bither.bitherj.crypto.IUEntropy;
+
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyCollector {
-    public static final int ENTROPY_CACHE_LENGTH = 32 * 100;
+public class UEntropyCollector implements IUEntropy {
+    public static final int POOL_SIZE = 32 * 200;
 
     public static interface UEntropyCollectorListener {
         public void onError(Exception e, UEntropySource source);
@@ -34,16 +40,38 @@ public class UEntropyCollector {
     private boolean shouldCollectData;
     private UEntropyCollectorListener listener;
 
+    private PipedInputStream in;
+    private PipedOutputStream out;
+    private ExecutorService executor;
+
     public UEntropyCollector(UEntropyCollectorListener listener) {
         this.listener = listener;
+        executor = Executors.newSingleThreadExecutor();
     }
 
-    public void onNewData(byte[] data, UEntropySource source) {
-        if(!shouldCollectData()){
+    public void onNewData(final byte[] data, final UEntropySource source) {
+        if (!shouldCollectData()) {
             return;
         }
-        LogUtil.d(UEntropyCollector.class.getSimpleName(), "source: " + source.name() + "\ndata: " +
-                "" + Utils.bytesToHexString(source.processData(data)));
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (!shouldCollectData()) {
+                    return;
+                }
+                try {
+                    int available = in.available();
+                    int extraBytes = available + data.length - POOL_SIZE;
+                    if (extraBytes <= 0) {
+                        out.write(data);
+                    } else if (extraBytes < data.length) {
+                        out.write(Arrays.copyOf(data, data.length - extraBytes));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public void onError(Exception e, UEntropySource source) {
@@ -52,16 +80,41 @@ public class UEntropyCollector {
         }
     }
 
-    public void start(){
+    public void start() throws IOException {
         shouldCollectData = true;
+        in = new PipedInputStream(POOL_SIZE);
+        out = new PipedOutputStream(in);
     }
 
-    public void stop(){
+    public void stop() {
         shouldCollectData = false;
+        try {
+            out.close();
+            in.close();
+            out = null;
+            in = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public boolean shouldCollectData(){
+    public boolean shouldCollectData() {
         return shouldCollectData;
+    }
+
+    @Override
+    public void nextBytes(byte[] bytes) {
+        if (!shouldCollectData()) {
+            throw new IllegalStateException("UEntropyCollector is not running");
+        }
+        try {
+            while (in.available() < bytes.length) {
+
+            }
+            in.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public enum UEntropySource {
