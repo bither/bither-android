@@ -45,6 +45,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
     private UEntropyCollector entropyCollector;
     private UEntropyCamera camera;
+    private UEntropyMic mic;
 
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
@@ -66,11 +67,15 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         super.onResume();
         camera = new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview),
                 entropyCollector);
+        mic = new UEntropyMic(entropyCollector);
     }
 
     @Override
     protected void onPause() {
-        camera.onPause();
+        camera.release();
+        camera = null;
+        mic.release();
+        mic = null;
         super.onPause();
     }
 

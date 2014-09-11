@@ -52,7 +52,7 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
     private UEntropyCollector collector;
 
     public UEntropyCamera(SurfaceView surfaceView, UEntropyCollector collector) {
-        cameraThread = new HandlerThread("cameraThread",
+        cameraThread = new HandlerThread("UEntropyCameraThread",
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
         cameraThread.start();
         cameraHandler = new Handler(cameraThread.getLooper());
@@ -63,7 +63,7 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
-    public void onPause() {
+    public void release() {
         cameraHandler.post(closeRunnable);
         surfaceHolder.removeCallback(this);
     }
