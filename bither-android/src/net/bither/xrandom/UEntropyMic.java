@@ -32,9 +32,11 @@ import java.util.Arrays;
  */
 public class UEntropyMic {
 
-    private static final int channelConfiguration = AudioFormat.CHANNEL_CONFIGURATION_MONO;
-    private static final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
-    public static final int SAMPPERSEC = 8000;
+    private static final int ChannelConfiguration = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AudioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int SamplePerSec = 8000;
+    private static final int MaxBufferSize = 6400;
+
     private int buffersizebytes;
 
     private HandlerThread micThread;
@@ -62,10 +64,15 @@ public class UEntropyMic {
     private final Runnable openRunnable = new Runnable() {
         @Override
         public void run() {
-            buffersizebytes = AudioRecord.getMinBufferSize(SAMPPERSEC, channelConfiguration,
-                    audioEncoding);
+            int minBufferSize = AudioRecord.getMinBufferSize(SamplePerSec, ChannelConfiguration,
+                    AudioEncoding);
+            if (minBufferSize > MaxBufferSize) {
+                buffersizebytes = minBufferSize;
+            } else {
+                buffersizebytes = (MaxBufferSize / minBufferSize) * minBufferSize;
+            }
             audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC,
-                    SAMPPERSEC, channelConfiguration, audioEncoding, buffersizebytes);
+                    SamplePerSec, ChannelConfiguration, AudioEncoding, buffersizebytes);
             if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED) {
                 audioRecord.startRecording();
                 micHandler.post(readRunnable);
