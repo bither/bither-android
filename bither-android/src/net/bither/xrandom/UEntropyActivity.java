@@ -46,6 +46,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private UEntropyCollector entropyCollector;
     private UEntropyCamera camera;
     private UEntropyMic mic;
+    private UEntropyMotion motion;
 
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
@@ -68,6 +69,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         camera = new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview),
                 entropyCollector);
         mic = new UEntropyMic(entropyCollector);
+        motion = new UEntropyMotion(this, entropyCollector);
     }
 
     @Override
@@ -76,6 +78,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         camera = null;
         mic.release();
         mic = null;
+        motion.release();
+        motion = null;
         super.onPause();
     }
 
