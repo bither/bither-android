@@ -32,7 +32,7 @@ import java.io.IOException;
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyCamera implements SurfaceHolder.Callback {
+public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
     private static final long AUTO_FOCUS_INTERVAL_MS = 2500L;
 
     private static boolean DISABLE_CONTINUOUS_AUTOFOCUS = Build.MODEL.equals("GT-I9100") //
@@ -52,25 +52,17 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
     private UEntropyCollector collector;
 
     public UEntropyCamera(SurfaceView surfaceView, UEntropyCollector collector) {
-        cameraThread = new HandlerThread("UEntropyCameraThread",
-                android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        cameraThread.start();
-        cameraHandler = new Handler(cameraThread.getLooper());
-
         this.collector = collector;
-        surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(this);
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-    }
-
-    public void release() {
-        cameraHandler.post(closeRunnable);
-        surfaceHolder.removeCallback(this);
+        surfaceView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        surfaceView.getHolder().addCallback(this);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        cameraHandler.post(openRunnable);
+        if (surfaceHolder == null) {
+            surfaceHolder = holder;
+            cameraHandler.post(openRunnable);
+        }
     }
 
 
@@ -92,9 +84,9 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
                 cameraHandler.post(fetchCameraDataRunnable);
 
             } catch (final IOException x) {
-                collector.onError(x, UEntropyCollector.UEntropySource.Camera);
+                collector.onError(x, UEntropyCamera.this);
             } catch (final RuntimeException x) {
-                collector.onError(x, UEntropyCollector.UEntropySource.Camera);
+                collector.onError(x, UEntropyCamera.this);
             }
         }
     };
@@ -109,6 +101,33 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
             cameraThread.quit();
         }
     };
+
+    @Override
+    public void onResume() {
+        if (cameraThread != null && cameraThread.isAlive()) {
+            return;
+        }
+        cameraThread = new HandlerThread("UEntropyCameraThread",
+                android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        cameraThread.start();
+        cameraHandler = new Handler(cameraThread.getLooper());
+        if (surfaceHolder != null) {
+            cameraHandler.post(openRunnable);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (cameraThread != null && cameraThread.isAlive()) {
+            cameraHandler.post(closeRunnable);
+            surfaceHolder.removeCallback(this);
+        }
+    }
+
+    @Override
+    public UEntropyCollector.UEntropySource type() {
+        return UEntropyCollector.UEntropySource.Camera;
+    }
 
     private final class AutoFocusRunnable implements Runnable {
         private final Camera camera;
@@ -146,7 +165,6 @@ public class UEntropyCamera implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override

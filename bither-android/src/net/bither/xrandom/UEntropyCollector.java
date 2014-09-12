@@ -23,22 +23,24 @@ import com.google.common.primitives.Ints;
 import net.bither.bitherj.crypto.IUEntropy;
 import net.bither.bitherj.crypto.URandom;
 import net.bither.bitherj.exception.URandomNotFoundException;
+import net.bither.bitherj.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyCollector implements IUEntropy {
+public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public static final int POOL_SIZE = 32 * 200;
 
     public static interface UEntropyCollectorListener {
-        public void onError(Exception e, UEntropySource source);
+        public void onError(Exception e, IUEntropySource source);
     }
 
     private boolean shouldCollectData;
@@ -46,10 +48,16 @@ public class UEntropyCollector implements IUEntropy {
 
     private PipedInputStream in;
     private PipedOutputStream out;
+
+    private HashSet<IUEntropySource> sources;
+    private boolean paused;
+
     private ExecutorService executor;
 
     public UEntropyCollector(UEntropyCollectorListener listener) {
         this.listener = listener;
+        paused = true;
+        sources = new HashSet<IUEntropySource>();
         executor = Executors.newSingleThreadExecutor();
     }
 
@@ -63,6 +71,8 @@ public class UEntropyCollector implements IUEntropy {
                 if (!shouldCollectData()) {
                     return;
                 }
+                LogUtil.i(UEntropyCollector.class.getSimpleName(), "got data from " + source.name
+                        ());
                 byte[] processedData = source.processData(data);
                 try {
                     int available = in.available();
@@ -79,7 +89,11 @@ public class UEntropyCollector implements IUEntropy {
         });
     }
 
-    public void onError(Exception e, UEntropySource source) {
+    public void onError(Exception e, IUEntropySource source) {
+        if (sources.contains(source)) {
+            source.onPause();
+            sources.remove(source);
+        }
         if (listener != null) {
             listener.onError(e, source);
         }
@@ -158,5 +172,39 @@ public class UEntropyCollector implements IUEntropy {
             }
             return result;
         }
+    }
+
+    public void addSource(IUEntropySource source) {
+        sources.add(source);
+        if (!paused) {
+            source.onResume();
+        }
+    }
+
+    public void addSources(IUEntropySource... sources) {
+        for (IUEntropySource source : sources) {
+            addSource(source);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        paused = false;
+        for (IUEntropySource source : sources) {
+            source.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        paused = true;
+        for (IUEntropySource source : sources) {
+            source.onPause();
+        }
+    }
+
+    @Override
+    public UEntropySource type() {
+        return UEntropySource.Unknown;
     }
 }

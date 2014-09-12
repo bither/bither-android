@@ -48,9 +48,6 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private Vibrator vibrator;
 
     private UEntropyCollector entropyCollector;
-    private UEntropyCamera camera;
-    private UEntropyMic mic;
-    private UEntropyMotion motion;
 
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
@@ -64,6 +61,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
         scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
         entropyCollector = new UEntropyCollector(this);
+        entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id
+                .scan_activity_preview), entropyCollector), new UEntropyMic(entropyCollector),
+                new UEntropyMotion(this, entropyCollector));
         new Thread() {
             @Override
             public void run() {
@@ -89,20 +89,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     protected void onResume() {
         super.onResume();
-        camera = new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview),
-                entropyCollector);
-        mic = new UEntropyMic(entropyCollector);
-        motion = new UEntropyMotion(this, entropyCollector);
+        entropyCollector.onResume();
     }
 
     @Override
     protected void onPause() {
-        camera.release();
-        camera = null;
-        mic.release();
-        mic = null;
-        motion.release();
-        motion = null;
+        entropyCollector.onPause();
         super.onPause();
     }
 
@@ -136,7 +128,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     @Override
-    public void onError(Exception e, UEntropyCollector.UEntropySource source) {
-        log.warn("UEntropyCollectorError source: {}, {}", source.name(), e.getMessage());
+    public void onError(Exception e, IUEntropySource source) {
+        log.warn("UEntropyCollectorError source: {}, {}", source.type().name(), e.getMessage());
     }
 }

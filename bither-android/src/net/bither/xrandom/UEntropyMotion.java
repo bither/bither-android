@@ -35,22 +35,25 @@ import java.util.List;
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyMotion implements SensorEventListener {
+public class UEntropyMotion implements SensorEventListener, IUEntropySource {
 
     private UEntropyCollector collector;
     private SensorManager sensorManager;
     private List<Sensor> sensors;
 
+    private boolean paused = true;
+
     public UEntropyMotion(Context context, UEntropyCollector collector) {
         this.collector = collector;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensors = new ArrayList<Sensor>();
-        registerAllSensors();
     }
 
     private void registerAllSensors() {
-        sensors.clear();
-        sensors.addAll(sensorManager.getSensorList(Sensor.TYPE_ALL));
+        if (sensors.size() == 0) {
+            sensors.clear();
+            sensors.addAll(sensorManager.getSensorList(Sensor.TYPE_ALL));
+        }
         ArrayList<Sensor> unregisteredSensors = new ArrayList<Sensor>();
         for (Sensor sensor : sensors) {
             boolean registered = sensorManager.registerListener(this, sensor,
@@ -62,10 +65,6 @@ public class UEntropyMotion implements SensorEventListener {
                     "register sensor " + sensor.getName());
         }
         sensors.removeAll(unregisteredSensors);
-    }
-
-    public void release() {
-        sensorManager.unregisterListener(this);
     }
 
     @Override
@@ -95,5 +94,24 @@ public class UEntropyMotion implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    public void onResume() {
+        if (paused) {
+            registerAllSensors();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        if (!paused) {
+            sensorManager.unregisterListener(this);
+        }
+    }
+
+    @Override
+    public UEntropyCollector.UEntropySource type() {
+        return UEntropyCollector.UEntropySource.Motion;
     }
 }

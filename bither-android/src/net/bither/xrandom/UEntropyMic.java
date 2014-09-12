@@ -30,14 +30,14 @@ import java.util.Arrays;
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyMic {
+public class UEntropyMic implements IUEntropySource {
 
     private static final int ChannelConfiguration = AudioFormat.CHANNEL_IN_MONO;
     private static final int AudioEncoding = AudioFormat.ENCODING_PCM_16BIT;
     private static final int SamplePerSec = 8000;
     private static final int MaxBufferSize = 6400;
 
-    private int buffersizebytes;
+    private int bufferSizeBytes;
 
     private HandlerThread micThread;
     private Handler micHandler;
@@ -46,19 +46,7 @@ public class UEntropyMic {
     private UEntropyCollector collector;
 
     public UEntropyMic(UEntropyCollector collector) {
-        micThread = new HandlerThread("UEntropyMicThread",
-                android.os.Process.THREAD_PRIORITY_BACKGROUND);
-        micThread.start();
-        micHandler = new Handler(micThread.getLooper());
-
         this.collector = collector;
-
-        micHandler.post(openRunnable);
-    }
-
-    public void release() {
-        micHandler.removeCallbacksAndMessages(null);
-        micHandler.post(closeRunnable);
     }
 
     private final Runnable openRunnable = new Runnable() {
@@ -67,19 +55,19 @@ public class UEntropyMic {
             int minBufferSize = AudioRecord.getMinBufferSize(SamplePerSec, ChannelConfiguration,
                     AudioEncoding);
             if (minBufferSize > MaxBufferSize) {
-                buffersizebytes = minBufferSize;
+                bufferSizeBytes = minBufferSize;
             } else {
-                buffersizebytes = (MaxBufferSize / minBufferSize) * minBufferSize;
+                bufferSizeBytes = (MaxBufferSize / minBufferSize) * minBufferSize;
             }
             audioRecord = new AudioRecord(android.media.MediaRecorder.AudioSource.MIC,
-                    SamplePerSec, ChannelConfiguration, AudioEncoding, buffersizebytes);
+                    SamplePerSec, ChannelConfiguration, AudioEncoding, bufferSizeBytes);
             if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED) {
                 audioRecord.startRecording();
                 micHandler.post(readRunnable);
             } else {
-                release();
+                onPause();
                 collector.onError(new IllegalStateException("startRecording() called on an " +
-                        "uninitialized AudioRecord."), UEntropyCollector.UEntropySource.Mic);
+                        "uninitialized AudioRecord."), UEntropyMic.this);
             }
         }
     };
@@ -89,8 +77,8 @@ public class UEntropyMic {
         public void run() {
             if (audioRecord != null && audioRecord.getRecordingState() == AudioRecord
                     .RECORDSTATE_RECORDING) {
-                byte[] data = new byte[buffersizebytes];
-                int outLength = audioRecord.read(data, 0, buffersizebytes);
+                byte[] data = new byte[bufferSizeBytes];
+                int outLength = audioRecord.read(data, 0, bufferSizeBytes);
                 collector.onNewData(Arrays.copyOf(data, outLength),
                         UEntropyCollector.UEntropySource.Mic);
             }
@@ -113,4 +101,28 @@ public class UEntropyMic {
         }
     };
 
+    @Override
+    public void onResume() {
+        if (micThread != null && micThread.isAlive()) {
+            return;
+        }
+        micThread = new HandlerThread("UEntropyMicThread",
+                android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        micThread.start();
+        micHandler = new Handler(micThread.getLooper());
+        micHandler.post(openRunnable);
+    }
+
+    @Override
+    public void onPause() {
+        if (micThread != null && micThread.isAlive()) {
+            micHandler.removeCallbacksAndMessages(null);
+            micHandler.post(closeRunnable);
+        }
+    }
+
+    @Override
+    public UEntropyCollector.UEntropySource type() {
+        return UEntropyCollector.UEntropySource.Mic;
+    }
 }
