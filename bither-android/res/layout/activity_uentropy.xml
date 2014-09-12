@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/scan_activity_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"/>
+
+    <FrameLayout
+        android:id="@+id/fl_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66000000"></FrameLayout>
+</merge>

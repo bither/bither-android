@@ -71,8 +71,6 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                 if (!shouldCollectData()) {
                     return;
                 }
-                LogUtil.i(UEntropyCollector.class.getSimpleName(), "got data from " + source.name
-                        ());
                 byte[] processedData = source.processData(data);
                 try {
                     int available = in.available();

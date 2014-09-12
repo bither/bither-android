@@ -27,27 +27,27 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
-import net.bither.bitherj.utils.Utils;
-import net.bither.ui.base.ScannerView;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.util.KeyUtil;
+import net.bither.util.SecureCharSequence;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * Created by songchenwen on 14-9-11.
  */
 public class UEntropyActivity extends Activity implements UEntropyCollector
-        .UEntropyCollectorListener {
+        .UEntropyCollectorListener, DialogPassword.DialogPasswordListener {
     private static final long VIBRATE_DURATION = 50L;
 
-    protected ScannerView scannerView;
-    protected FrameLayout flOverlayContainer;
     private Vibrator vibrator;
 
     private UEntropyCollector entropyCollector;
+
+    private FrameLayout flOverlay;
 
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
@@ -56,34 +56,23 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, R.anim.scanner_in_exit);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        setContentView(R.layout.activity_uentropy);
+        flOverlay = (FrameLayout) findViewById(R.id.fl_overlay);
 
-        setContentView(R.layout.scan_activity);
-        flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
-        scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
         entropyCollector = new UEntropyCollector(this);
         entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id
                 .scan_activity_preview), entropyCollector), new UEntropyMic(entropyCollector),
                 new UEntropyMotion(this, entropyCollector));
-        new Thread() {
+
+        flOverlay.postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    entropyCollector.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                for (int i = 0;
-                     i < 100;
-                     i++) {
-                    byte[] data = new byte[32];
-                    entropyCollector.nextBytes(data);
-                    LogUtil.i(UEntropyActivity.class.getSimpleName(),
-                            "got data " + Utils.bytesToHexString(data));
-                }
-                entropyCollector.stop();
+                DialogPassword dialogPassword = new DialogPassword(UEntropyActivity.this,
+                        UEntropyActivity.this);
+                dialogPassword.setNeedCancelEvent(true);
+                dialogPassword.show();
             }
-        }.start();
+        }, 600);
     }
 
     @Override
@@ -130,5 +119,35 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     public void onError(Exception e, IUEntropySource source) {
         log.warn("UEntropyCollectorError source: {}, {}", source.type().name(), e.getMessage());
+    }
+
+    @Override
+    public void onPasswordEntered(final SecureCharSequence password) {
+        if (password == null) {
+            setResult(RESULT_CANCELED);
+            finish();
+        } else {
+            new ThreadNeedService(null, UEntropyActivity.this) {
+                @Override
+                public void runWithService(BlockchainService service) {
+                    try {
+                        entropyCollector.start();
+                        KeyUtil.addPrivateKeyByRandomWithPassphras(service, entropyCollector,
+                                password, 5);
+                        entropyCollector.stop();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    password.wipe();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    });
+                }
+            }.start();
+        }
     }
 }

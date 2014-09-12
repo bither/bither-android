@@ -25,6 +25,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.IUEntropy;
 import net.bither.bitherj.crypto.XRandom;
 import net.bither.bitherj.exception.URandomNotFoundException;
+import net.bither.bitherj.utils.LogUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
@@ -57,7 +58,6 @@ public class KeyUtil {
                 PasswordSeed passwordSeed = new PasswordSeed(address);
                 AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
             }
-
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
