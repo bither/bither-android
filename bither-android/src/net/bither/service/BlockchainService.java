@@ -315,7 +315,10 @@ public class BlockchainService extends android.app.Service {
         if (AddressManager.getInstance().addressIsSyncComplete()
                 && AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()
                 && AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-            if (!PeerManager.instance().isConnected()) {
+            NetworkType networkType = NetworkUtil.isConnectedType();
+            boolean networkIsAvailadble = (!AppSharedPreference.getInstance().getSyncBlockOnlyWifi())
+                    || (networkType == NetworkType.Wifi);
+            if (networkIsAvailadble && !PeerManager.instance().isConnected()) {
                 PeerManager.instance().start();
             }
         }
