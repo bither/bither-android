@@ -40,6 +40,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.Utils;
+import net.bither.factory.ImportBip38Key;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
@@ -482,7 +483,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
                 if (isFromBip38) {
-
+                    ImportBip38Key importBip38Key = new ImportBip38Key(HotAdvanceActivity.this, dp,
+                            password, content);
+                    importBip38Key.importBip38();
                 } else {
                     dp.setMessage(R.string.import_private_key_qr_code_importing);
                     ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
@@ -491,79 +494,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 }
             }
         }
-    }
-
-    private class ImportBip38KeyThread extends Thread {
-        private String content;
-        private SecureCharSequence password;
-        private DialogProgress dp;
-        private Activity activity;
-
-        public ImportBip38KeyThread(Activity activity, DialogProgress dp, SecureCharSequence password, String content) {
-            this.activity = activity;
-            this.dp = dp;
-            this.password = password;
-            this.content = content;
-
-        }
-
-        @Override
-        public void run() {
-            try {
-                String decoded =
-                        Bip38.decrypt(content, password.toString());
-                ECKey key = new DumpedPrivateKey(decoded).getKey();
-
-                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                    List<String> addressList = new ArrayList<String>();
-                    addressList.add(key.toAddress());
-                    CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
-                    // checkAddressRunnable.setHandler(checkAddressHandler);
-                    new Thread(checkAddressRunnable).start();
-                } else {
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-//    Handler checkAddressHandler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            switch (msg.what) {
-//                case HandlerMessage.MSG_PREPARE:
-//
-//                    break;
-//                case HandlerMessage.MSG_SUCCESS:
-//
-//                    BitherSetting.AddressType addressType = (BitherSetting.AddressType) msg.obj;
-//                    handlerResult(addressType);
-//                    break;
-//                case HandlerMessage.MSG_FAILURE:
-//                    if (pd != null) {
-//                        pd.dismiss();
-//                    }
-//                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
-//                    break;
-//            }
-//        }
-//    };
-
-    private void handlerResult(BitherSetting.AddressType addressType) {
-        switch (addressType) {
-            case Normal:
-
-                break;
-            case SpecialAddress:
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_special_address);
-                break;
-            case TxTooMuch:
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_tx_too_mush);
-                break;
-        }
-
     }
 
     private boolean hasAnyAction = false;
