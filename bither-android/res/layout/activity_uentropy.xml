@@ -13,6 +13,12 @@
     <FrameLayout
         android:id="@+id/fl_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#66000000"></FrameLayout>
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/v_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"/>
+    </FrameLayout>
 </merge>

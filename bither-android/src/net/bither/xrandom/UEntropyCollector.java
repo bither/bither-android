@@ -23,7 +23,6 @@ import com.google.common.primitives.Ints;
 import net.bither.bitherj.crypto.IUEntropy;
 import net.bither.bitherj.crypto.URandom;
 import net.bither.bitherj.exception.URandomNotFoundException;
-import net.bither.bitherj.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -40,7 +39,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public static final int POOL_SIZE = 32 * 200;
 
     public static interface UEntropyCollectorListener {
-        public void onError(Exception e, IUEntropySource source);
+        public void onUEntropySourceError(Exception e, IUEntropySource source);
     }
 
     private boolean shouldCollectData;
@@ -93,7 +92,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
             sources.remove(source);
         }
         if (listener != null) {
-            listener.onError(e, source);
+            listener.onUEntropySourceError(e, source);
         }
     }
 
