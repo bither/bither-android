@@ -22,6 +22,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
@@ -33,12 +35,18 @@ import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.DumpedPrivateKey;
+import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.CheckAddressRunnable;
+import net.bither.runnable.HandlerMessage;
 import net.bither.runnable.ImportPrivateKeyWithHotThread;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -50,6 +58,7 @@ import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
@@ -58,14 +67,19 @@ import net.bither.util.TransactionsUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
+    private SettingSelectorView ssvImprotBip38Key;
     private Button btnExportLog;
     private Button btnResetTx;
     private DialogProgress dp;
+    private boolean isFromBip38 = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +93,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
+        ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
+        ssvImprotBip38Key.setSelector(importBip38KeySelector);
+
         btnEditPassword.setOnClickListener(editPasswordClick);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
@@ -351,6 +368,70 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 @Override
                 public void onOptionIndexSelected(int index) {
                     hasAnyAction = true;
+                    isFromBip38 = false;
+                    switch (index) {
+                        case 0:
+                            importPrivateKeyFromQrCode();
+                            return;
+                        case 1:
+                            importPrivateKeyFromText();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
+
+    private SettingSelectorView.SettingSelector importBip38KeySelector = new
+            SettingSelectorView.SettingSelector() {
+                @Override
+                public int getOptionCount() {
+
+                    return 2;
+                }
+
+                @Override
+                public String getOptionName(int index) {
+                    switch (index) {
+                        case 0:
+                            return getString(R.string.import_private_key_qr_code);
+                        case 1:
+                            return getString(R.string.import_private_key_text);
+                        default:
+                            return "";
+                    }
+                }
+
+                @Override
+                public String getOptionNote(int index) {
+                    return null;
+                }
+
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    switch (index) {
+                        case 0:
+                            return getResources().getDrawable(R.drawable.scan_button_icon);
+                        case 1:
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                        default:
+                            return null;
+                    }
+                }
+
+                @Override
+                public String getSettingName() {
+                    return getString(R.string.setting_name_import_private_key);
+                }
+
+                @Override
+                public int getCurrentOptionIndex() {
+                    return -1;
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    isFromBip38 = true;
                     switch (index) {
                         case 0:
                             importPrivateKeyFromQrCode();
@@ -404,18 +485,95 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
-                dp.setMessage(R.string.import_private_key_qr_code_importing);
-                Runnable impoprtSuccessRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        showImportSuccess();
-                    }
-                };
-                ImportPrivateKeyWithHotThread importPrivateKeyThread = new ImportPrivateKeyWithHotThread(HotAdvanceActivity.this, dp,
-                        content, password, impoprtSuccessRunnable);
-                importPrivateKeyThread.start();
+                if (isFromBip38) {
+
+                } else {
+                    dp.setMessage(R.string.import_private_key_qr_code_importing);
+                    Runnable impoprtSuccessRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            showImportSuccess();
+                        }
+                    };
+                    ImportPrivateKeyWithHotThread importPrivateKeyThread = new ImportPrivateKeyWithHotThread(HotAdvanceActivity.this, dp,
+                            content, password, impoprtSuccessRunnable);
+                    importPrivateKeyThread.start();
+                }
             }
         }
+    }
+
+    private class ImportBip38KeyThread extends Thread {
+        private String content;
+        private SecureCharSequence password;
+        private DialogProgress dp;
+        private Activity activity;
+
+        public ImportBip38KeyThread(Activity activity, DialogProgress dp, SecureCharSequence password, String content) {
+            this.activity = activity;
+            this.dp = dp;
+            this.password = password;
+            this.content = content;
+
+        }
+
+        @Override
+        public void run() {
+            try {
+                String decoded =
+                        Bip38.decrypt(content, password.toString());
+                ECKey key = new DumpedPrivateKey(decoded).getKey();
+
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                    List<String> addressList = new ArrayList<String>();
+                    addressList.add(key.toAddress());
+                    CheckAddressRunnable checkAddressRunnable = new CheckAddressRunnable(addressList);
+                    // checkAddressRunnable.setHandler(checkAddressHandler);
+                    new Thread(checkAddressRunnable).start();
+                } else {
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+//    Handler checkAddressHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case HandlerMessage.MSG_PREPARE:
+//
+//                    break;
+//                case HandlerMessage.MSG_SUCCESS:
+//
+//                    BitherSetting.AddressType addressType = (BitherSetting.AddressType) msg.obj;
+//                    handlerResult(addressType);
+//                    break;
+//                case HandlerMessage.MSG_FAILURE:
+//                    if (pd != null) {
+//                        pd.dismiss();
+//                    }
+//                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
+//                    break;
+//            }
+//        }
+//    };
+
+    private void handlerResult(BitherSetting.AddressType addressType) {
+        switch (addressType) {
+            case Normal:
+
+                break;
+            case SpecialAddress:
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_special_address);
+                break;
+            case TxTooMuch:
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.import_private_key_failed_tx_too_mush);
+                break;
+        }
+
     }
 
     private boolean hasAnyAction = false;
