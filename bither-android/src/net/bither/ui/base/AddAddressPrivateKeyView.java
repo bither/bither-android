@@ -17,10 +17,12 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
@@ -28,7 +30,6 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.crypto.IUEntropy;
 import net.bither.bitherj.exception.URandomNotFoundException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
@@ -38,6 +39,7 @@ import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
+import net.bither.xrandom.UEntropyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +47,10 @@ import java.util.List;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 
-public class AddAddressPrivateKeyView extends FrameLayout implements
-        DialogPasswordListener {
+public class AddAddressPrivateKeyView extends FrameLayout implements DialogPasswordListener {
     private WheelView wvCount;
     private Button btnAdd;
+    private CheckBox cbxXRandom;
     private AddPrivateKeyActivity activity;
     private List<Address> addresses = new ArrayList<Address>();
 
@@ -65,18 +67,18 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
         initView();
     }
 
-    public AddAddressPrivateKeyView(Context context, AttributeSet attrs,
-                                    int defStyle) {
+    public AddAddressPrivateKeyView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initView();
     }
 
     private void initView() {
         removeAllViews();
-        addView(LayoutInflater.from(getContext()).inflate(
-                        R.layout.fragment_add_address_private_key, null),
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        addView(LayoutInflater.from(getContext()).inflate(R.layout
+                .fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT);
         wvCount = (WheelView) findViewById(R.id.wv_count);
+        cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);
         btnAdd = (Button) findViewById(R.id.btn_add);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
@@ -89,9 +91,17 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
 
         @Override
         public void onClick(View v) {
-            DialogPassword dialog = new DialogPassword(getContext(),
-                    AddAddressPrivateKeyView.this);
-            dialog.show();
+            if (cbxXRandom.isChecked()) {
+                Intent intent = new Intent(getContext(), UEntropyActivity.class);
+                intent.putExtra(UEntropyActivity.PrivateKeyCountKey, wvCount.getCurrentItem() + 1);
+                intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                getContext().startActivity(intent);
+                activity.finish();
+            } else {
+                DialogPassword dialog = new DialogPassword(getContext(),
+                        AddAddressPrivateKeyView.this);
+                dialog.show();
+            }
         }
     };
 
@@ -104,7 +114,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
             public void runWithService(BlockchainService service) {
                 int count = wvCount.getCurrentItem() + 1;
                 try {
-                    addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null, password, count);
+                    addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null,
+                            password, count);
                 } catch (URandomNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -128,8 +139,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
         return addresses;
     }
 
-    private AbstractWheelTextAdapter countAdapter = new AbstractWheelTextAdapter(
-            getContext()) {
+    private AbstractWheelTextAdapter countAdapter = new AbstractWheelTextAdapter(getContext()) {
         private int max = getMaxCount();
 
         @Override
@@ -145,11 +155,11 @@ public class AddAddressPrivateKeyView extends FrameLayout implements
         private int getMaxCount() {
             int max = 0;
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-                max = BitherSetting.WATCH_ONLY_ADDRESS_COUNT_LIMIT
-                        - AddressManager.getInstance().getAllAddresses().size();
+                max = BitherSetting.WATCH_ONLY_ADDRESS_COUNT_LIMIT - AddressManager.getInstance()
+                        .getAllAddresses().size();
             } else {
-                max = BitherSetting.PRIVATE_KEY_OF_HOT_COUNT_LIMIT
-                        - AddressManager.getInstance().getPrivKeyAddresses().size();
+                max = BitherSetting.PRIVATE_KEY_OF_HOT_COUNT_LIMIT - AddressManager.getInstance()
+                        .getPrivKeyAddresses().size();
             }
             return max;
         }

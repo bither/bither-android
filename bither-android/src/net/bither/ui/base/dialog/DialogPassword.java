@@ -67,6 +67,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private boolean passwordEntered = false;
     private boolean checkPre = true;
     private boolean cancelable = true;
+    private boolean needCancelEvent = false;
     private ExecutorService executor;
 
     public DialogPassword(Context context, DialogPasswordListener listener) {
@@ -120,10 +121,14 @@ public class DialogPassword extends Dialog implements OnDismissListener,
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (passwordEntered && listener != null) {
-            listener.onPasswordEntered(new SecureCharSequence(etPassword));
-            etPassword.setText("");
-            etPasswordConfirm.setText("");
+        if (listener != null) {
+            if (passwordEntered) {
+                listener.onPasswordEntered(new SecureCharSequence(etPassword));
+                etPassword.setText("");
+                etPasswordConfirm.setText("");
+            } else if (needCancelEvent) {
+                listener.onPasswordEntered(null);
+            }
         }
     }
 
@@ -335,5 +340,9 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             return true;
         }
         return false;
+    }
+
+    public void setNeedCancelEvent(boolean needCancelEvent) {
+        this.needCancelEvent = needCancelEvent;
     }
 }
