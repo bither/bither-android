@@ -31,13 +31,8 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.Refreshable;
-import net.bither.model.PasswordSeed;
-import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.ImportPrivateKeyWithColdThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
@@ -46,12 +41,8 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.BackClickListener;
-import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
@@ -190,8 +181,15 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 dp.show();
-                ImportPrivateKeyThread importPrivateKeyThread = new ImportPrivateKeyThread
-                        (content, password);
+                Runnable importSuccessRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        showImportSuccess();
+
+                    }
+                };
+                ImportPrivateKeyWithColdThread importPrivateKeyThread = new ImportPrivateKeyWithColdThread
+                        (ColdAdvanceActivity.this, dp, content, password, importSuccessRunnable);
                 importPrivateKeyThread.start();
             }
         }
@@ -229,98 +227,5 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         );
     }
 
-    private class ImportPrivateKeyThread extends Thread {
-        private String content;
-        private SecureCharSequence password;
 
-
-        public ImportPrivateKeyThread(String content, SecureCharSequence password) {
-            this.content = content;
-            this.password = password;
-        }
-
-        @Override
-        public void run() {
-            ECKey key = PrivateKeyUtil.getECKeyFromSingleString(content, password);
-            if (key == null) {
-                password.wipe();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                                R.string.password_wrong);
-                    }
-                });
-                return;
-            }
-
-            Address address = new Address(key.toAddress(), key.getPubKey(), content);
-            AddressManager addressManager = AddressManager.getInstance();
-            if (addressManager.getWatchOnlyAddresses().contains(address)) {
-                password.wipe();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                                R.string.import_private_key_qr_code_failed_monitored);
-                    }
-                });
-                return;
-            } else if (addressManager.getPrivKeyAddresses().contains(address)) {
-                password.wipe();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                                R.string.import_private_key_qr_code_failed_duplicate);
-                    }
-                });
-                return;
-            } else {
-                PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
-                if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
-                    password.wipe();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp != null && dp.isShowing()) {
-                                dp.setThread(null);
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                                    R.string.import_private_key_qr_code_failed_different_password);
-                        }
-                    });
-                    return;
-                }
-                password.wipe();
-                List<Address> addressList = new ArrayList<Address>();
-                addressList.add(address);
-                KeyUtil.addAddressList(null, addressList);
-            }
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    showImportSuccess();
-                }
-            });
-        }
-    }
 }
