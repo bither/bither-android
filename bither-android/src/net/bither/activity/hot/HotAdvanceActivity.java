@@ -22,8 +22,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
@@ -42,12 +40,11 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.Utils;
+import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.CheckAddressRunnable;
-import net.bither.runnable.HandlerMessage;
-import net.bither.runnable.ImportPrivateKeyWithHotThread;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -58,7 +55,6 @@ import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
@@ -489,15 +485,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
                 } else {
                     dp.setMessage(R.string.import_private_key_qr_code_importing);
-                    Runnable impoprtSuccessRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            showImportSuccess();
-                        }
-                    };
-                    ImportPrivateKeyWithHotThread importPrivateKeyThread = new ImportPrivateKeyWithHotThread(HotAdvanceActivity.this, dp,
-                            content, password, impoprtSuccessRunnable);
-                    importPrivateKeyThread.start();
+                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
+                            ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp, content, password);
+                    importPrivateKey.importPrivateKey();
                 }
             }
         }

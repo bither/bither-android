@@ -31,8 +31,8 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
-import net.bither.runnable.ImportPrivateKeyWithColdThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
@@ -181,16 +181,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 dp.show();
-                Runnable importSuccessRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        showImportSuccess();
-
-                    }
-                };
-                ImportPrivateKeyWithColdThread importPrivateKeyThread = new ImportPrivateKeyWithColdThread
-                        (ColdAdvanceActivity.this, dp, content, password, importSuccessRunnable);
-                importPrivateKeyThread.start();
+                ImportPrivateKey importPrivateKey = new ImportPrivateKey(ColdAdvanceActivity.this,
+                        ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp, content, password);
+                importPrivateKey.importPrivateKey();
             }
         }
     }
