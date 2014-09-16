@@ -34,6 +34,7 @@ import net.bither.R;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
@@ -118,6 +119,18 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     private void showBip38Password() {
         DialogPassword d = new DialogPassword(getContext(), bip38DialogPasswordListener);
         d.setCheckPre(false);
+        d.setCheckPasswordListener(new DialogPassword.ICheckPasswordListener() {
+            @Override
+            public boolean checkPassword(SecureCharSequence password) {
+                try {
+                    decode = Bip38.decrypt(bip38KeyString, password.toString());
+                    return decode != null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        });
         d.show();
     }
 
@@ -153,28 +166,13 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     private DialogPassword.DialogPasswordListener bip38DialogPasswordListener = new DialogPassword.DialogPasswordListener() {
         @Override
         public void onPasswordEntered(final SecureCharSequence password) {
-            pd = new DialogProgress(activity, R.string.please_wait);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        decode = Bip38.decrypt(bip38KeyString, password.toString());
-                        if (decode != null) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DialogPassword dialogPassword = new DialogPassword(getContext(), DialogImportBip38KeyText.this);
-                                    dialogPassword.show();
-                                }
-                            });
-                        } else {
-                            showBip38Password();
-                        }
-                    } catch (Exception e) {
-                        showBip38Password();
-                    }
-                }
-            }).start();
+            if (decode != null) {
+                DialogPassword dialogPassword = new DialogPassword(getContext(), DialogImportBip38KeyText.this);
+                dialogPassword.show();
+            } else {
+                DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
+                showBip38Password();
+            }
         }
     };
 

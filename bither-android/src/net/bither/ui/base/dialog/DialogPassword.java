@@ -52,6 +52,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         public void onPasswordEntered(SecureCharSequence password);
     }
 
+    public static interface ICheckPasswordListener {
+        public boolean checkPassword(SecureCharSequence password);
+    }
+
     private View container;
     private LinearLayout llInput;
     private LinearLayout llChecking;
@@ -64,6 +68,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
     private DialogPasswordListener listener;
+    private ICheckPasswordListener checkPasswordListener;
     private boolean passwordEntered = false;
     private boolean checkPre = true;
     private boolean cancelable = true;
@@ -156,6 +161,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         configureCheckPre();
     }
 
+    public void setCheckPasswordListener(ICheckPasswordListener checkPasswordListener) {
+        this.checkPasswordListener = checkPasswordListener;
+    }
+
     public void show() {
         if (checkPre) {
             if (etPasswordConfirm.getVisibility() != View.VISIBLE) {
@@ -192,7 +201,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             }
             password.wipe();
             passwordConfirm.wipe();
-            if (passwordSeed != null && checkPre) {
+            if ((passwordSeed != null && checkPre) || checkPasswordListener != null) {
                 ArrayList<Check> checks = new ArrayList<Check>();
                 checks.add(passwordCheck);
                 executor = CheckUtil.runChecks(checks, 1);
@@ -300,8 +309,12 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private Check passwordCheck = new Check("", new ICheckAction() {
         @Override
         public boolean check() {
-            if (passwordSeed != null) {
-                SecureCharSequence password = new SecureCharSequence(etPassword);
+            SecureCharSequence password = new SecureCharSequence(etPassword);
+            if (checkPasswordListener != null) {
+                boolean result = checkPasswordListener.checkPassword(password);
+                password.wipe();
+                return result;
+            } else if (passwordSeed != null) {
                 boolean result = passwordSeed.checkPassword(password);
                 password.wipe();
                 return result;
