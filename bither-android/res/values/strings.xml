@@ -175,13 +175,15 @@
     <string name="reload_tx">Reload Transactions data</string>
     <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
+    <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
+    <string name="import_bip38_key_text">From BIP38-private key Text</string>
+    <string name="enter_bip38_key_password">Enter password of BIP38-private key</string>
     <string name="private_key_text">Private Key Text</string>
-
-    <string name="import_bip38_key_text_hint">Enter your private key of bip38 text</string>
-    <string name="import_bip38_key_text_format_erro">Not match private key of bip38 format</string>
-
+    <string name="import_bip38_key_text_hint">Enter your BIP38-private key </string>
+    <string name="import_bip38_key_text_format_erro">Not match BIP38-private key format</string>
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>

@@ -170,9 +170,15 @@
     <string name="reload_tx">重載交易數據</string>
     <string name="export_success">日志已導出到 :</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
+    <string name="setting_name_import_bip38_key">導入Bip38私鑰</string>
     <string name="import_private_key_qr_code">來自私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="import_bip38_key_qr_code">來自Bip38私鑰二維碼</string>
+    <string name="import_bip38_key_text">來自Bip38私鑰明文</string>
     <string name="private_key_text">私鑰明文</string>
+    <string name="import_bip38_key_text_hint">輸入Bip38私鑰明文</string>
+    <string name="enter_bip38_key_password">請輸入Bip38私鑰的密碼</string>
+    <string name="import_bip38_key_text_format_erro">不符合Bip38私鑰格式</string>
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>

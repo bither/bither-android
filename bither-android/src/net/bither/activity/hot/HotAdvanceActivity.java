@@ -385,9 +385,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 public String getOptionName(int index) {
                     switch (index) {
                         case 0:
-                            return getString(R.string.import_private_key_qr_code);
+                            return getString(R.string.import_bip38_key_qr_code);
                         case 1:
-                            return getString(R.string.import_private_key_text);
+                            return getString(R.string.import_bip38_key_text);
                         default:
                             return "";
                     }
@@ -412,7 +412,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
                 @Override
                 public String getSettingName() {
-                    return getString(R.string.setting_name_import_private_key);
+                    return getString(R.string.setting_name_import_bip38_key);
                 }
 
                 @Override

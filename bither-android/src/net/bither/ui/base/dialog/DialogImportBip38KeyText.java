@@ -119,6 +119,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     private void showBip38Password() {
         DialogPassword d = new DialogPassword(getContext(), bip38DialogPasswordListener);
         d.setCheckPre(false);
+        d.setTitle(R.string.enter_bip38_key_password);
         d.setCheckPasswordListener(new DialogPassword.ICheckPasswordListener() {
             @Override
             public boolean checkPassword(SecureCharSequence password) {
