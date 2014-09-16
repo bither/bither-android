@@ -20,10 +20,10 @@ package net.bither.xrandom;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.os.Handler;
-import android.os.HandlerThread;
+import android.os.*;
 
 import net.bither.bitherj.utils.LogUtil;
+import net.bither.xrandom.audio.AudioVisualizerView;
 
 import java.util.Arrays;
 
@@ -44,9 +44,11 @@ public class UEntropyMic implements IUEntropySource {
     private AudioRecord audioRecord;
 
     private UEntropyCollector collector;
+    private AudioVisualizerView visualizer;
 
-    public UEntropyMic(UEntropyCollector collector) {
+    public UEntropyMic(UEntropyCollector collector, AudioVisualizerView visualizer) {
         this.collector = collector;
+        this.visualizer = visualizer;
     }
 
     private final Runnable openRunnable = new Runnable() {
@@ -79,8 +81,9 @@ public class UEntropyMic implements IUEntropySource {
                     .RECORDSTATE_RECORDING) {
                 byte[] data = new byte[bufferSizeBytes];
                 int outLength = audioRecord.read(data, 0, bufferSizeBytes);
-                collector.onNewData(Arrays.copyOf(data, outLength),
-                        UEntropyCollector.UEntropySource.Mic);
+                data = Arrays.copyOf(data, outLength);
+                collector.onNewData(data, UEntropyCollector.UEntropySource.Mic);
+                visualizer.onNewData(data);
             }
             micHandler.post(readRunnable);
         }

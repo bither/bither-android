@@ -39,6 +39,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
+import net.bither.xrandom.audio.AudioVisualizerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +81,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         vOverlay = findViewById(R.id.v_overlay);
 
         entropyCollector = new UEntropyCollector(this);
-        entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id
-                .scan_activity_preview), entropyCollector), new UEntropyMic(entropyCollector),
-                new UEntropyMotion(this, entropyCollector));
+
+        entropyCollector.addSources(
+                new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview), entropyCollector),
+                new UEntropyMic(entropyCollector, (AudioVisualizerView) findViewById(R.id.v_mic)),
+                new UEntropyMotion(this, entropyCollector)
+        );
 
         vOverlay.postDelayed(new Runnable() {
             @Override
@@ -142,14 +146,14 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void startAnimation() {
-        AlphaAnimation anim = new AlphaAnimation(1, 0.6f);
+        AlphaAnimation anim = new AlphaAnimation(1, 0);
         anim.setFillAfter(true);
         anim.setDuration(500);
         vOverlay.startAnimation(anim);
     }
 
     private void stopAnimation(final Runnable finishRun) {
-        AlphaAnimation anim = new AlphaAnimation(0.6f, 1);
+        AlphaAnimation anim = new AlphaAnimation(0, 1);
         anim.setFillAfter(true);
         anim.setDuration(500);
         vOverlay.startAnimation(anim);
