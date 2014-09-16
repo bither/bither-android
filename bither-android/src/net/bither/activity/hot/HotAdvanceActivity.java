@@ -35,8 +35,10 @@ import net.bither.ScanQRCodeWithOtherActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
@@ -463,11 +465,18 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
-                String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPassword dialogPassword = new DialogPassword(this,
                         new ImportPrivateKeyPasswordListener(content, false));
                 dialogPassword.setCheckPre(false);
                 dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
+                    @Override
+                    public boolean checkPassword(SecureCharSequence password) {
+                        ECKey ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
+                        return ecKey != null;
+                    }
+                });
                 dialogPassword.show();
                 break;
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
