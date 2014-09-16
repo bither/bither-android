@@ -10,6 +10,11 @@
         android:layout_height="match_parent"
         android:keepScreenOn="true"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"/>
+
     <FrameLayout
         android:id="@+id/fl_overlay"
         android:layout_width="match_parent"

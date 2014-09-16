@@ -146,14 +146,14 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void startAnimation() {
-        AlphaAnimation anim = new AlphaAnimation(1, 0.6f);
+        AlphaAnimation anim = new AlphaAnimation(1, 0);
         anim.setFillAfter(true);
         anim.setDuration(500);
         vOverlay.startAnimation(anim);
     }
 
     private void stopAnimation(final Runnable finishRun) {
-        AlphaAnimation anim = new AlphaAnimation(0.6f, 1);
+        AlphaAnimation anim = new AlphaAnimation(0, 1);
         anim.setFillAfter(true);
         anim.setDuration(500);
         vOverlay.startAnimation(anim);
