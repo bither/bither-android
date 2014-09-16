@@ -43,7 +43,7 @@ import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.TransactionListItem;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyOption;
 import net.bither.ui.base.dialog.DialogAddressWithPrivateKeyOption;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
@@ -198,7 +198,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(
-                new BackClickListener(0, R.anim.slide_out_right));
+                new IBackClickListener(0, R.anim.slide_out_right));
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         lv = (ListView) findViewById(R.id.lv);
         flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);

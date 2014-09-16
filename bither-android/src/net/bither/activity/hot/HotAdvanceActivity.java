@@ -51,13 +51,13 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
-import net.bither.ui.base.dialog.DialogImportBip38KeyText;
-import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
+import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
+import net.bither.ui.base.dialog.IDialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.BackClickListener;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
@@ -84,7 +84,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
@@ -235,7 +235,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             @Override
             public void run() {
 
-                DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new DialogPasswordListener() {
+                DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
                         resetTx();
@@ -368,7 +368,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode(false);
                             return;
                         case 1:
-                            new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
+                            new IDialogImportPrivateKeyText(HotAdvanceActivity.this).show();
                             return;
                         default:
                             return;
@@ -430,7 +430,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode(true);
                             return;
                         case 1:
-                            new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
+                            new IDialogImportBip38KeyText(HotAdvanceActivity.this).show();
                             return;
                         default:
                             return;
@@ -467,7 +467,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPassword dialogPassword = new DialogPassword(this,
-                        new ImportPrivateKeyPasswordListener(content, false));
+                        new ImportPrivateKeyPasswordListenerI(content, false));
                 dialogPassword.setCheckPre(false);
                 dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
                 dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
@@ -482,7 +482,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
                 final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPasswordWithOther dialogPasswordWithOther = new DialogPasswordWithOther(this,
-                        new ImportPrivateKeyPasswordListener(null, true));
+                        new ImportPrivateKeyPasswordListenerI(null, true));
                 dialogPasswordWithOther.setCheckPre(false);
                 dialogPasswordWithOther.setCheckPasswordListener(new ICheckPasswordListener() {
                     @Override
@@ -502,11 +502,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     }
 
-    private class ImportPrivateKeyPasswordListener implements DialogPasswordListener {
+    private class ImportPrivateKeyPasswordListenerI implements IDialogPasswordListener {
         private String content;
         private boolean isFromBip38;
 
-        public ImportPrivateKeyPasswordListener(String content, boolean isFromBip38) {
+        public ImportPrivateKeyPasswordListenerI(String content, boolean isFromBip38) {
             this.content = content;
             this.isFromBip38 = isFromBip38;
         }
@@ -516,7 +516,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 if (isFromBip38) {
-                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, walletDialogPasswordListener);
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, walletIDialogPasswordListener);
                     dialogPassword.show();
 
                 } else {
@@ -530,7 +530,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     }
 
-    private DialogPasswordListener walletDialogPasswordListener = new DialogPasswordListener() {
+    private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
             ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,

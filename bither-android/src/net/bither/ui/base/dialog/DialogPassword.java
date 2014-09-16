@@ -38,7 +38,7 @@ import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
@@ -62,7 +62,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private Button btnCancel;
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
-    private DialogPasswordListener listener;
+    private IDialogPasswordListener listener;
     private ICheckPasswordListener checkPasswordListener;
     private boolean passwordEntered = false;
     private boolean checkPre = true;
@@ -70,7 +70,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private boolean needCancelEvent = false;
     private ExecutorService executor;
 
-    public DialogPassword(Context context, DialogPasswordListener listener) {
+    public DialogPassword(Context context, IDialogPasswordListener listener) {
         super(context, R.style.password_dialog);
         setContentView(R.layout.dialog_password);
         this.listener = listener;

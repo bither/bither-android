@@ -54,7 +54,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.AnimationUtil;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;
@@ -100,7 +100,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            new DialogPassword(getActivity(), new DialogPasswordListener() {
+            new DialogPassword(getActivity(), new IDialogPasswordListener() {
                 @Override
                 public void onPasswordEntered(SecureCharSequence password) {
                     password.wipe();
@@ -212,7 +212,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 case BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE:
                     content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                     dialogPassword = new DialogPassword(getActivity(),
-                            new CloneFromPasswordListener(content));
+                            new CloneFromPasswordListenerI(content));
                     dialogPassword.setCheckPre(false);
                     dialogPassword.setTitle(R.string.clone_from_password);
                     dialogPassword.show();
@@ -386,10 +386,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
         });
     }
 
-    private class CloneFromPasswordListener implements DialogPasswordListener {
+    private class CloneFromPasswordListenerI implements IDialogPasswordListener {
         private String content;
 
-        public CloneFromPasswordListener(String content) {
+        public CloneFromPasswordListenerI(String content) {
             this.content = content;
         }
 

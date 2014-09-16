@@ -27,11 +27,11 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 
-public class DialogAddressWithShowPrivateKey extends CenterDialog implements View
-        .OnClickListener, DialogInterface.OnDismissListener, DialogPasswordListener {
+public class IDialogAddressWithShowPrivateKey extends CenterDialog implements View
+        .OnClickListener, DialogInterface.OnDismissListener, IDialogPasswordListener {
     private DialogFancyQrCode dialogQr;
     private DialogPrivateKeyQrCode dialogPrivateKey;
     private Address address;
@@ -39,8 +39,8 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
     private Activity activity;
     private int clickedView;
 
-    public DialogAddressWithShowPrivateKey(Activity context,
-                                           Address address) {
+    public IDialogAddressWithShowPrivateKey(Activity context,
+                                            Address address) {
         super(context);
         this.activity = context;
         this.address = address;

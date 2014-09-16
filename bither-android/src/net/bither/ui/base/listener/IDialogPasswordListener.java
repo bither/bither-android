@@ -16,11 +16,8 @@
 
 package net.bither.ui.base.listener;
 
-import android.graphics.Bitmap;
+import net.bither.util.SecureCharSequence;
 
-public interface GetAvatarListener {
-
-    public void success(Bitmap bit);
-
-    public void fileNoExist();
+public interface IDialogPasswordListener {
+    public void onPasswordEntered(SecureCharSequence password);
 }

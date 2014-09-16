@@ -53,7 +53,7 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -119,7 +119,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_cancel).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         tvAddressLabel = (TextView) findViewById(R.id.tv_address_label);
         etAddress = (EditText) findViewById(R.id.et_address);
         ibtnScan = (ImageButton) findViewById(R.id.ibtn_scan);

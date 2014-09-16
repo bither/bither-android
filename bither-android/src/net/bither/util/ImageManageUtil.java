@@ -32,7 +32,7 @@ import android.view.Window;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.listener.GetAvatarListener;
+import net.bither.ui.base.listener.IGetAvatarListener;
 
 import java.io.File;
 
@@ -88,7 +88,7 @@ public class ImageManageUtil {
         }
     }
 
-    public static void getAvatarForFancyQrCode(GetAvatarListener getAvatarListener) {
+    public static void getAvatarForFancyQrCode(IGetAvatarListener getAvatarListener) {
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         Resources res = BitherApplication.mContext.getResources();

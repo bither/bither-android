@@ -46,6 +46,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
@@ -56,11 +57,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-9-11.
- */
+
 public class UEntropyActivity extends Activity implements UEntropyCollector
-        .UEntropyCollectorListener, DialogPassword.DialogPasswordListener {
+        .UEntropyCollectorListener, IDialogPasswordListener {
     public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 

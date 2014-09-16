@@ -37,18 +37,17 @@ import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
-import net.bither.model.PasswordSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogEditPassword;
-import net.bither.ui.base.dialog.DialogImportBip38KeyText;
-import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
+import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
+import net.bither.ui.base.dialog.IDialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.BackClickListener;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
@@ -68,7 +67,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
@@ -204,7 +203,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode(true);
                             return;
                         case 1:
-                            new DialogImportBip38KeyText(ColdAdvanceActivity.this).show();
+                            new IDialogImportBip38KeyText(ColdAdvanceActivity.this).show();
                             return;
                         default:
                             return;
@@ -235,7 +234,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private void importPrivateKeyFromText() {
-        new DialogImportPrivateKeyText(this).show();
+        new IDialogImportPrivateKeyText(this).show();
     }
 
     @Override
@@ -248,7 +247,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPassword dialogPassword = new DialogPassword(this,
-                        new ImportPrivateKeyPasswordListener(content, false));
+                        new ImportPrivateKeyPasswordListenerI(content, false));
                 dialogPassword.setCheckPre(false);
                 dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
                     @Override
@@ -263,7 +262,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
                 final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPasswordWithOther dialogPasswordWithOther = new DialogPasswordWithOther(this,
-                        new ImportPrivateKeyPasswordListener(null, true));
+                        new ImportPrivateKeyPasswordListenerI(null, true));
                 dialogPasswordWithOther.setCheckPre(false);
                 dialogPasswordWithOther.setCheckPasswordListener(new ICheckPasswordListener() {
                     @Override
@@ -285,11 +284,11 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private String bip38DecodeString;
 
-    private class ImportPrivateKeyPasswordListener implements DialogPasswordListener {
+    private class ImportPrivateKeyPasswordListenerI implements IDialogPasswordListener {
         private String content;
         private boolean isFromBip38;
 
-        public ImportPrivateKeyPasswordListener(String content, boolean isFromBip38) {
+        public ImportPrivateKeyPasswordListenerI(String content, boolean isFromBip38) {
             this.content = content;
             this.isFromBip38 = isFromBip38;
         }
@@ -299,7 +298,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 if (isFromBip38) {
-                    DialogPassword dialogPassword = new DialogPassword(ColdAdvanceActivity.this, walletDialogPasswordListener);
+                    DialogPassword dialogPassword = new DialogPassword(ColdAdvanceActivity.this, walletIDialogPasswordListener);
                     dialogPassword.show();
 
                 } else {
@@ -313,7 +312,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
     }
 
-    private DialogPasswordListener walletDialogPasswordListener = new DialogPasswordListener() {
+    private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
             ImportPrivateKey importPrivateKey = new ImportPrivateKey(ColdAdvanceActivity.this,

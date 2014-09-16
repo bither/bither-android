@@ -26,7 +26,7 @@ import android.widget.TextView;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
 import net.bither.ui.base.SwipeRightFragmentActivity;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.StringUtil;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_cancel).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         pager = (ViewPager) findViewById(R.id.pager);
         tvTitle = (TextView) findViewById(R.id.tv_title);
         mTouchView.addIgnoreView(pager);

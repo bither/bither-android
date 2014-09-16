@@ -37,7 +37,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogPassword;
 
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.UEntropyActivity;
@@ -48,7 +48,7 @@ import java.util.List;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 
-public class AddAddressPrivateKeyView extends FrameLayout implements DialogPasswordListener {
+public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPasswordListener {
     private WheelView wvCount;
     private Button btnAdd;
     private CheckBox cbxXRandom;
@@ -76,7 +76,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements DialogPassw
     private void initView() {
         removeAllViews();
         addView(LayoutInflater.from(getContext()).inflate(R.layout
-                .fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT,
+                        .fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT);
         wvCount = (WheelView) findViewById(R.id.wv_count);
         cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);

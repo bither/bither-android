@@ -36,7 +36,7 @@ import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
-import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.IDialogAddressWithShowPrivateKey;
 
 import java.util.List;
 
@@ -215,7 +215,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         @Override
         public boolean onLongClick(View v) {
             if (isPrivate) {
-                DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
+                IDialogAddressWithShowPrivateKey dialog = new IDialogAddressWithShowPrivateKey
                         (activity, privates.get(position));
                 dialog.show();
             } else {

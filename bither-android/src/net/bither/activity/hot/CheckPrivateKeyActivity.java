@@ -22,14 +22,14 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.ui.base.SwipeRightFragmentActivity;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 
 public class CheckPrivateKeyActivity extends SwipeRightFragmentActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_check);
-        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         Bundle extra = getIntent().getExtras();
         if (extra != null && extra.getBoolean(BitherSetting.INTENT_REF
                 .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {

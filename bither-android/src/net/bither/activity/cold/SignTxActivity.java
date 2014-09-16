@@ -34,8 +34,8 @@ import net.bither.model.QRCodeTxTransport;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.BackClickListener;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.GenericUtils;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
@@ -44,7 +44,7 @@ import net.bither.util.WalletUtils;
 import java.util.List;
 
 public class SignTxActivity extends SwipeRightActivity implements
-        DialogPasswordListener {
+        IDialogPasswordListener {
 
     private TextView tvFrom;
     private TextView tvTo;
@@ -67,7 +67,7 @@ public class SignTxActivity extends SwipeRightActivity implements
 
     private void initView() {
         findViewById(R.id.ibtn_cancel).setOnClickListener(
-                new BackClickListener(0, R.anim.slide_out_right));
+                new IBackClickListener(0, R.anim.slide_out_right));
         tvFrom = (TextView) findViewById(R.id.tv_address_from);
         tvTo = (TextView) findViewById(R.id.tv_address_to);
         tvAmount = (TextView) findViewById(R.id.tv_amount);

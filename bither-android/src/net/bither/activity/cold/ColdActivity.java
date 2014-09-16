@@ -45,7 +45,6 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.model.PasswordSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
@@ -54,7 +53,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.ProgressDialog;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
@@ -345,7 +344,7 @@ public class ColdActivity extends FragmentActivity {
 
     private void showDialogPassword() {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
-                new DialogPasswordListener() {
+                new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
                         importWalletFromBackup(password);

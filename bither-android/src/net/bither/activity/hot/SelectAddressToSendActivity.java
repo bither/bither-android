@@ -39,7 +39,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BitcoinURI;
 import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
@@ -82,7 +82,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         if (!isAppInternal) {
             mTouchView.addIgnoreView(mTouchView);
         }
-        findViewById(R.id.ibtn_cancel).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         tvAddress = (TextView) findViewById(R.id.tv_address);
         tvAmount = (TextView) findViewById(R.id.tv_btc);
         tvNoAddress = (TextView) findViewById(R.id.tv_no_address);

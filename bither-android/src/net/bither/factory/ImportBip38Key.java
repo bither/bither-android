@@ -19,23 +19,15 @@ package net.bither.factory;
 import android.app.Activity;
 
 import net.bither.R;
-import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.crypto.DumpedPrivateKey;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.CheckAddressRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ImportBip38Key implements DialogPasswordListener {
+public class ImportBip38Key implements IDialogPasswordListener {
 
     private String content;
     private SecureCharSequence password;

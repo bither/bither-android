@@ -21,16 +21,16 @@ import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class BackClickListener implements OnClickListener {
+public class IBackClickListener implements OnClickListener {
 	private int enterAnim;
 	private int exitAnim;
 
-	public BackClickListener(int enterAnim, int exitAnim) {
+	public IBackClickListener(int enterAnim, int exitAnim) {
 		this.enterAnim = enterAnim;
 		this.exitAnim = exitAnim;
 	}
 
-	public BackClickListener() {
+	public IBackClickListener() {
 		this.enterAnim = 0;
 		this.exitAnim = 0;
 	}

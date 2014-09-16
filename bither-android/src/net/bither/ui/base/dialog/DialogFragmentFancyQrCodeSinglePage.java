@@ -31,7 +31,7 @@ import net.bither.R;
 import net.bither.bitherj.utils.LogUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
-import net.bither.ui.base.listener.GetAvatarListener;
+import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
@@ -175,7 +175,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
     private class GetAvatarThread extends Thread {
         @Override
         public void run() {
-            ImageManageUtil.getAvatarForFancyQrCode(new GetAvatarListener() {
+            ImageManageUtil.getAvatarForFancyQrCode(new IGetAvatarListener() {
                 @Override
                 public void success(Bitmap bitmap) {
                     avatar = bitmap;
