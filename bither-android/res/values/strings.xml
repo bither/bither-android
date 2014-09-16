@@ -344,4 +344,10 @@
     <!-- upgrade -->
     <string name="begin_upgrade">Ready to upgrade?\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
     <string name="upgrading">Upgrading...</string>
+
+    <!-- xrandom -->
+    <string name="xrandom_stopping">Stopping…</string>
+    <string name="xrandom_cancel_confirm">Stop generating?</string>
+    <string name="xrandom_no_source">No entropy source available.</string>
+    <string name="xrandom_generating_failed">Generating failed</string>
 </resources>

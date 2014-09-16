@@ -97,12 +97,18 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     }
 
     public void start() throws IOException {
+        if (shouldCollectData) {
+            return;
+        }
         shouldCollectData = true;
         in = new PipedInputStream(POOL_SIZE);
         out = new PipedOutputStream(in);
     }
 
     public void stop() {
+        if (!shouldCollectData) {
+            return;
+        }
         shouldCollectData = false;
         try {
             out.close();
@@ -125,7 +131,9 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
         }
         try {
             while (in.available() < bytes.length) {
-
+                if (!shouldCollectData()) {
+                    throw new IllegalStateException("UEntropyCollector is not running");
+                }
             }
             in.read(bytes);
         } catch (IOException e) {
@@ -203,5 +211,9 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     @Override
     public UEntropySource type() {
         return UEntropySource.Unknown;
+    }
+
+    public HashSet<IUEntropySource> sources() {
+        return sources;
     }
 }

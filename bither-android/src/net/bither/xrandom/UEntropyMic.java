@@ -20,9 +20,12 @@ package net.bither.xrandom;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.os.*;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.view.View;
 
 import net.bither.bitherj.utils.LogUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.xrandom.audio.AudioVisualizerView;
 
 import java.util.Arrays;
@@ -30,7 +33,7 @@ import java.util.Arrays;
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyMic implements IUEntropySource {
+public class UEntropyMic implements IUEntropySource, Thread.UncaughtExceptionHandler {
 
     private static final int ChannelConfiguration = AudioFormat.CHANNEL_IN_MONO;
     private static final int AudioEncoding = AudioFormat.ENCODING_PCM_16BIT;
@@ -66,10 +69,10 @@ public class UEntropyMic implements IUEntropySource {
             if (audioRecord.getState() == AudioRecord.STATE_INITIALIZED) {
                 audioRecord.startRecording();
                 micHandler.post(readRunnable);
+                visualizer.setVisibility(View.VISIBLE);
             } else {
-                onPause();
-                collector.onError(new IllegalStateException("startRecording() called on an " +
-                        "uninitialized AudioRecord."), UEntropyMic.this);
+                uncaughtException(Thread.currentThread(), new IllegalStateException
+                        ("startRecording() called on an " + "uninitialized AudioRecord."));
             }
         }
     };
@@ -111,6 +114,7 @@ public class UEntropyMic implements IUEntropySource {
         }
         micThread = new HandlerThread("UEntropyMicThread",
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        micThread.setUncaughtExceptionHandler(this);
         micThread.start();
         micHandler = new Handler(micThread.getLooper());
         micHandler.post(openRunnable);
@@ -127,5 +131,17 @@ public class UEntropyMic implements IUEntropySource {
     @Override
     public UEntropyCollector.UEntropySource type() {
         return UEntropyCollector.UEntropySource.Mic;
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        onPause();
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                visualizer.setVisibility(View.GONE);
+            }
+        });
+        collector.onError(new Exception(ex), UEntropyMic.this);
     }
 }

@@ -20,11 +20,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:indeterminateOnly="false"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/uentropy_progress"
+            android:layout_gravity="top"
+            android:max="100"/>
+
         <net.bither.xrandom.audio.AudioVisualizerView
             android:id="@+id/v_mic"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="bottom"/>
+
+        <ImageButton
+            android:id="@+id/ibtn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/camera_cancel"
+            android:background="@drawable/transparent"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"/>
 
         <View
             android:id="@+id/v_overlay"

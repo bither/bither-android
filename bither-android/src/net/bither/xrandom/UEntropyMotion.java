@@ -65,6 +65,9 @@ public class UEntropyMotion implements SensorEventListener, IUEntropySource {
                     "register sensor " + sensor.getName());
         }
         sensors.removeAll(unregisteredSensors);
+        if (sensors.size() == 0) {
+            collector.onError(new Exception("no sensor registered"), UEntropyMotion.this);
+        }
     }
 
     @Override
