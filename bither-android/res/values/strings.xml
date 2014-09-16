@@ -348,4 +348,6 @@
     <!-- xrandom -->
     <string name="xrandom_stopping">Stopping…</string>
     <string name="xrandom_cancel_confirm">Stop generating?</string>
+    <string name="xrandom_no_source">No entropy source available.</string>
+    <string name="xrandom_generating_failed">Generating failed</string>
 </resources>

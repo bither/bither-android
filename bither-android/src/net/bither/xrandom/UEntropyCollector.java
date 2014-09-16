@@ -131,7 +131,9 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
         }
         try {
             while (in.available() < bytes.length) {
-
+                if (!shouldCollectData()) {
+                    throw new IllegalStateException("UEntropyCollector is not running");
+                }
             }
             in.read(bytes);
         } catch (IOException e) {
@@ -209,5 +211,9 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     @Override
     public UEntropySource type() {
         return UEntropySource.Unknown;
+    }
+
+    public HashSet<IUEntropySource> sources() {
+        return sources;
     }
 }

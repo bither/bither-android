@@ -27,12 +27,11 @@ import android.view.SurfaceView;
 
 import net.bither.camera.CameraManager;
 
-import java.io.IOException;
-
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
+public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource,
+        Thread.UncaughtExceptionHandler {
     private static final long AUTO_FOCUS_INTERVAL_MS = 2500L;
 
     private static boolean DISABLE_CONTINUOUS_AUTOFOCUS = Build.MODEL.equals("GT-I9100") //
@@ -83,10 +82,8 @@ public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
 
                 cameraHandler.post(fetchCameraDataRunnable);
 
-            } catch (final IOException x) {
-                collector.onError(x, UEntropyCamera.this);
-            } catch (final RuntimeException x) {
-                collector.onError(x, UEntropyCamera.this);
+            } catch (final Exception x) {
+                uncaughtException(Thread.currentThread(), x);
             }
         }
     };
@@ -109,6 +106,7 @@ public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
         }
         cameraThread = new HandlerThread("UEntropyCameraThread",
                 android.os.Process.THREAD_PRIORITY_BACKGROUND);
+        cameraThread.setUncaughtExceptionHandler(this);
         cameraThread.start();
         cameraHandler = new Handler(cameraThread.getLooper());
         if (surfaceHolder != null) {
@@ -128,7 +126,6 @@ public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
     public UEntropyCollector.UEntropySource type() {
         return UEntropyCollector.UEntropySource.Camera;
     }
-
     private final class AutoFocusRunnable implements Runnable {
         private final Camera camera;
 
@@ -171,4 +168,10 @@ public class UEntropyCamera implements SurfaceHolder.Callback, IUEntropySource {
     public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        collector.onError(new Exception(ex), UEntropyCamera.this);
+    }
+
 }

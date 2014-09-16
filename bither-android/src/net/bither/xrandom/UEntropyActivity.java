@@ -32,7 +32,10 @@ import android.widget.ProgressBar;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.cold.AddColdAddressActivity;
+import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.XRandom;
 import net.bither.bitherj.utils.LogUtil;
@@ -189,9 +192,13 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     public void onUEntropySourceError(Exception e, IUEntropySource source) {
         log.warn("UEntropyCollectorError source: {}, {}", source.type().name(), e.getMessage());
+        if (entropyCollector.sources().size() == 0) {
+            entropyCollector.stop();
+        }
     }
 
     private void startAnimation() {
+        //TODO start animation
         AlphaAnimation anim = new AlphaAnimation(1, 0);
         anim.setFillAfter(true);
         anim.setDuration(500);
@@ -199,6 +206,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void stopAnimation(final Runnable finishRun) {
+        //TODO stop animation
         AlphaAnimation anim = new AlphaAnimation(0, 1);
         anim.setFillAfter(true);
         anim.setDuration(500);
@@ -260,12 +268,49 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        setResult(RESULT_CANCELED);
-                        finish();
+                        String message;
+                        if (entropyCollector.sources().size() == 0) {
+                            message = getString(R.string.xrandom_no_source);
+                        } else {
+                            message = getString(R.string.xrandom_generating_failed);
+                        }
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        backToFromActivity();
+                                    }
+                                });
+                            }
+                        };
+                        DialogConfirmTask dialog = new DialogConfirmTask(UEntropyActivity
+                                .this, message, runnable, runnable);
+                        dialog.setCancelable(false);
+                        dialog.show();
                     }
                 });
             }
         });
+    }
+
+    private void backToFromActivity() {
+        Class target;
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+            target = AddColdAddressActivity.class;
+        } else {
+            target = AddHotAddressActivity.class;
+        }
+        Intent intent = new Intent(UEntropyActivity.this, target);
+        intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+        startActivity(intent);
+        vOverlay.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 300);
     }
 
     private Runnable cancelRunnable = new Runnable() {
@@ -281,8 +326,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     public void onPasswordEntered(final SecureCharSequence password) {
         if (password == null) {
-            setResult(RESULT_CANCELED);
-            finish();
+            backToFromActivity();
         } else {
             startAnimation();
             generateThread.setPassword(password);
