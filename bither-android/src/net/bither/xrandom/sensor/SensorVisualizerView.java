@@ -22,7 +22,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.os.Build;
-import android.transition.Fade;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +41,7 @@ import java.util.List;
  * Created by songchenwen on 14-9-16.
  */
 public class SensorVisualizerView extends LinearLayout {
-    private static final float FadeAlpha = 0.5f;
+    private static final float FadeAlpha = 0.3f;
     private static final float FlashAlpha = 1.0f;
     private static final int FlashDuration = 300;
 
@@ -56,6 +55,8 @@ public class SensorVisualizerView extends LinearLayout {
     }
 
     private HashSet<Integer> animatingSensors;
+
+    private boolean holdingBackNextFlash;
 
 
     public SensorVisualizerView(Context context) {
@@ -72,6 +73,7 @@ public class SensorVisualizerView extends LinearLayout {
     public SensorVisualizerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         firstConfigure();
+        holdingBackNextFlash = false;
     }
 
     private void firstConfigure() {
@@ -109,9 +111,18 @@ public class SensorVisualizerView extends LinearLayout {
     }
 
     public void onSensorData(final Sensor sensor) {
-        if (animatingSensors.contains(sensor.getType())) {
+        if (animatingSensors.contains(sensor.getType()) || holdingBackNextFlash) {
             return;
         }
+        holdingBackNextFlash = true;
+        
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                holdingBackNextFlash = false;
+            }
+        }, FlashDuration / 2);
+
         post(new Runnable() {
             @Override
             public void run() {
