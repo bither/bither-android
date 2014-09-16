@@ -40,6 +40,7 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
@@ -57,8 +58,7 @@ import java.util.List;
  */
 public class UEntropyActivity extends Activity implements UEntropyCollector
         .UEntropyCollectorListener, DialogPassword.DialogPasswordListener {
-    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + "" +
-            ".private_key_count_key";
+    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
     private static final long VIBRATE_DURATION = 50L;
@@ -71,9 +71,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private View vOverlay;
     private ProgressBar pb;
     private DialogProgress dpCancel;
+    private DialogConfirmTask dialogCancelConfirm;
 
     private int targetCount;
-
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -91,6 +91,19 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         findViewById(R.id.ibtn_cancel).setOnClickListener(cancelClick);
         dpCancel = new DialogProgress(this, R.string.xrandom_stopping);
         dpCancel.setCancelable(false);
+        dialogCancelConfirm = new DialogConfirmTask(this,
+                getString(R.string.xrandom_cancel_confirm), new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dpCancel.show();
+                        generateThread.cancel(cancelRunnable);
+                    }
+                });
+            }
+        });
 
         entropyCollector = new UEntropyCollector(this);
 
@@ -141,8 +154,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     };
 
     private void cancelGenerate() {
-        dpCancel.show();
-        generateThread.cancel(cancelRunnable);
+        dialogCancelConfirm.show();
     }
 
     @Override
@@ -164,6 +176,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     public void finish() {
+        if (dialogCancelConfirm != null && dialogCancelConfirm.isShowing()) {
+            dialogCancelConfirm.dismiss();
+        }
         if (dpCancel != null && dpCancel.isShowing()) {
             dpCancel.dismiss();
         }

@@ -332,4 +332,5 @@
 
     <!-- xrandom -->
     <string name="xrandom_stopping">正在停止…</string>
+    <string name="xrandom_cancel_confirm">停止生成?</string>
 </resources>
