@@ -321,6 +321,10 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         }
 
         private void finishGenerate(BlockchainService service) {
+            if (password != null) {
+                password.wipe();
+                password = null;
+            }
             if (service != null) {
                 service.startAndRegister();
             }
@@ -373,6 +377,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     onProgress(progress);
                 }
                 entropyCollector.stop();
+                password.wipe();
+                password = null;
 
                 if (cancelRunnable != null) {
                     finishGenerate(service);
@@ -381,14 +387,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 }
 
                 KeyUtil.addAddressList(null, addressList);
-
-                finishGenerate(service);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            password.wipe();
-            password = null;
+
+            finishGenerate(service);
             if (success) {
                 onProgress(1);
                 onSuccess(addressStrs);
