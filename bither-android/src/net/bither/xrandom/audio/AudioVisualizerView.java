@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
@@ -79,6 +80,9 @@ public class AudioVisualizerView extends View {
 
     @Override
     public void draw(Canvas canvas) {
+        if (!isVisible()) {
+            return;
+        }
         if (yCalculator == null) {
             yCalculator = new YCalculator();
         } else {
@@ -240,7 +244,7 @@ public class AudioVisualizerView extends View {
     private Runnable analyzeData = new Runnable() {
         @Override
         public void run() {
-            if (rawData != null && rawData.length > 0) {
+            if (rawData != null && rawData.length > 0 && isVisible()) {
                 amplitudeData = new AmplitudeData(rawData);
                 rawData = null;
                 postInvalidate();
@@ -282,4 +286,7 @@ public class AudioVisualizerView extends View {
         super.onDetachedFromWindow();
     }
 
+    private boolean isVisible() {
+        return getGlobalVisibleRect(new Rect());
+    }
 }
