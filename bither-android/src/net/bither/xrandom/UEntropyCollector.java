@@ -142,7 +142,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     }
 
     public enum UEntropySource {
-        Unknown, Camera(8), Mic(16), Motion;
+        Unknown, Camera(8), Mic(16), Sensor;
 
         private int bytesInOneBatch;
 
