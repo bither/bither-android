@@ -81,10 +81,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         vOverlay = findViewById(R.id.v_overlay);
 
         entropyCollector = new UEntropyCollector(this);
-        entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id
-                .scan_activity_preview), entropyCollector), new UEntropyMic(entropyCollector,
-                (AudioVisualizerView) findViewById(R.id.v_mic)), new UEntropyMotion(this,
-                entropyCollector));
+
+        entropyCollector.addSources(
+                new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview), entropyCollector),
+                new UEntropyMic(entropyCollector, (AudioVisualizerView) findViewById(R.id.v_mic)),
+                new UEntropyMotion(this, entropyCollector)
+        );
 
         vOverlay.postDelayed(new Runnable() {
             @Override
@@ -92,8 +94,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 DialogPassword dialogPassword = new DialogPassword(UEntropyActivity.this,
                         UEntropyActivity.this);
                 dialogPassword.setNeedCancelEvent(true);
-                //dialogPassword.show();
-                startAnimation();
+                dialogPassword.show();
             }
         }, 600);
     }
