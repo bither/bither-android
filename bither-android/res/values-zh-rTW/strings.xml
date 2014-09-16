@@ -330,4 +330,7 @@
     <!-- upgrade -->
     <string name="begin_upgrade">即將開始升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
     <string name="upgrading">升級中...</string>
+
+    <!-- xrandom -->
+    <string name="xrandom_stopping">正在停止…</string>
 </resources>
