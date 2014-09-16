@@ -20,6 +20,9 @@ package net.bither.xrandom.audio.ftt;
 
 import com.google.common.primitives.Shorts;
 
+import net.bither.bitherj.utils.LogUtil;
+import net.bither.xrandom.AudioVisualizerView;
+
 /**
  * Created by songchenwen on 14-9-15.
  */
