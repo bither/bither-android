@@ -78,14 +78,24 @@ public class ImportPrivateKey {
                     } else {
                         addECKey(service, ecKey);
                     }
-                } catch (AddressFormatException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (URandomNotFoundException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    if (e instanceof URandomNotFoundException) {
+                        //todo
+                    } else {
+                        password.wipe();
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp != null && dp.isShowing()) {
+                                    dp.setThread(null);
+                                    dp.dismiss();
+                                }
+                                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
+                            }
+                        });
+                    }
+
                 }
             }
         };

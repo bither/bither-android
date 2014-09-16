@@ -31,12 +31,13 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
+import net.bither.ScanQRCodeWithOtherActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.Utils;
-import net.bither.factory.ImportBip38Key;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
@@ -51,9 +52,11 @@ import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.BackClickListener;
 import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
@@ -70,8 +73,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnExportLog;
     private Button btnResetTx;
     private DialogProgress dp;
-    private boolean isFromBip38 = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -360,10 +361,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 @Override
                 public void onOptionIndexSelected(int index) {
                     hasAnyAction = true;
-                    isFromBip38 = false;
                     switch (index) {
                         case 0:
-                            importPrivateKeyFromQrCode();
+                            importPrivateKeyFromQrCode(false);
                             return;
                         case 1:
                             new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
@@ -423,10 +423,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
                 @Override
                 public void onOptionIndexSelected(int index) {
-                    isFromBip38 = true;
                     switch (index) {
                         case 0:
-                            importPrivateKeyFromQrCode();
+                            importPrivateKeyFromQrCode(true);
                             return;
                         case 1:
                             new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
@@ -437,12 +436,22 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 }
             };
 
-    private void importPrivateKeyFromQrCode() {
-        Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
-                getString(R.string.import_private_key_qr_code_scan_title));
-        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
+    private void importPrivateKeyFromQrCode(boolean isFromBip38) {
+        if (isFromBip38) {
+            Intent intent = new Intent(this, ScanQRCodeWithOtherActivity.class);
+            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                    getString(R.string.import_bip38private_key_qr_code_scan_title));
+            intent.putExtra(BitherSetting.INTENT_REF.QRCODE_TYPE, BitherSetting.QRCodeType.Bip38);
+            startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE);
+        } else {
+            Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
+            intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                    getString(R.string.import_private_key_qr_code_scan_title));
+            startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
+        }
     }
+
+    private String bip38DecodeString;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -450,41 +459,77 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
+
+
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 DialogPassword dialogPassword = new DialogPassword(this,
-                        new ImportPrivateKeyPasswordListener(content));
+                        new ImportPrivateKeyPasswordListener(content, false));
                 dialogPassword.setCheckPre(false);
                 dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
                 dialogPassword.show();
+                break;
+            case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
+                final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                DialogPasswordWithOther dialogPasswordWithOther = new DialogPasswordWithOther(this,
+                        new ImportPrivateKeyPasswordListener(null, true));
+                dialogPasswordWithOther.setCheckPre(false);
+                dialogPasswordWithOther.setCheckPasswordListener(new ICheckPasswordListener() {
+                    @Override
+                    public boolean checkPassword(SecureCharSequence password) {
+                        try {
+                            bip38DecodeString = Bip38.decrypt(bip38Content, password.toString());
+                            return bip38DecodeString != null;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                });
+                dialogPasswordWithOther.setTitle(R.string.enter_bip38_key_password);
+                dialogPasswordWithOther.show();
                 break;
         }
     }
 
     private class ImportPrivateKeyPasswordListener implements DialogPasswordListener {
         private String content;
+        private boolean isFromBip38;
 
-        public ImportPrivateKeyPasswordListener(String content) {
+        public ImportPrivateKeyPasswordListener(String content, boolean isFromBip38) {
             this.content = content;
+            this.isFromBip38 = isFromBip38;
         }
 
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
             if (dp != null && !dp.isShowing()) {
+                dp.setMessage(R.string.import_private_key_qr_code_importing);
                 if (isFromBip38) {
-                    ImportBip38Key importBip38Key = new ImportBip38Key(HotAdvanceActivity.this, dp,
-                            password, content);
-                    importBip38Key.importBip38();
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, walletDialogPasswordListener);
+                    dialogPassword.show();
+
                 } else {
-                    dp.setMessage(R.string.import_private_key_qr_code_importing);
                     ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
                             ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp, content, password);
                     importPrivateKey.importPrivateKey();
+
                 }
+
             }
         }
     }
+
+    private DialogPasswordListener walletDialogPasswordListener = new DialogPasswordListener() {
+        @Override
+        public void onPasswordEntered(SecureCharSequence password) {
+            ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
+                    ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
+            importPrivateKey.importPrivateKey();
+        }
+    };
+
 
     private boolean hasAnyAction = false;
 

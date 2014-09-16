@@ -160,7 +160,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     @Override
     public void onPasswordEntered(final SecureCharSequence password) {
         ImportPrivateKey importPrivateKey = new ImportPrivateKey(activity,
-                ImportPrivateKey.ImportPrivateKeyType.Text, pd, decode, password);
+                ImportPrivateKey.ImportPrivateKeyType.Bip38, pd, decode, password);
         importPrivateKey.importPrivateKey();
     }
 

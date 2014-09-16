@@ -44,6 +44,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.LogUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
@@ -220,6 +221,7 @@ public class ChooseModeActivity extends Activity {
                     new Runnable() {
                         @Override
                         public void run() {
+                            PeerManager.instance().stop();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

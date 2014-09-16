@@ -187,6 +187,7 @@
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_bip38private_key_qr_code_scan_title">Scan BIP38-private key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
     <string name="import_private_key_qr_code_failed">Import failed.</string>
