@@ -28,6 +28,7 @@ import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 
 import net.bither.bitherj.utils.LogUtil;
+import net.bither.xrandom.sensor.SensorVisualizerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +41,14 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
     private UEntropyCollector collector;
     private SensorManager sensorManager;
     private List<Sensor> sensors;
+    private SensorVisualizerView visualizer;
 
     private boolean paused = true;
 
-    public UEntropySensor(Context context, UEntropyCollector collector) {
+    public UEntropySensor(Context context, UEntropyCollector collector,
+                          SensorVisualizerView visualizer) {
         this.collector = collector;
+        this.visualizer = visualizer;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensors = new ArrayList<Sensor>();
     }
@@ -68,6 +72,7 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
         if (sensors.size() == 0) {
             collector.onError(new Exception("no sensor registered"), UEntropySensor.this);
         }
+        visualizer.setSensors(sensors);
     }
 
     @Override
@@ -91,6 +96,7 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
                 }
             }
             collector.onNewData(data, UEntropyCollector.UEntropySource.Sensor);
+            visualizer.onSensorData(event.sensor);
         }
     }
 

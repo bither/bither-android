@@ -5,7 +5,7 @@
        android:layout_height="match_parent">
 
     <SurfaceView
-        android:id="@+id/scan_activity_preview"
+        android:id="@+id/v_camera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"/>
@@ -30,11 +30,25 @@
             android:layout_gravity="top"
             android:max="100"/>
 
-        <net.bither.xrandom.audio.AudioVisualizerView
-            android:id="@+id/v_mic"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_gravity="bottom"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom">
+
+            <net.bither.xrandom.sensor.SensorVisualizerView
+                android:id="@+id/v_sensor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+            <net.bither.xrandom.audio.AudioVisualizerView
+                android:id="@+id/v_mic"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_gravity="bottom"/>
+        </LinearLayout>
+
 
         <ImageButton
             android:id="@+id/ibtn_cancel"
