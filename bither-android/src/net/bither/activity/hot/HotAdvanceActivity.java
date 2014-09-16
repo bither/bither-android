@@ -33,11 +33,7 @@ import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.DumpedPrivateKey;
-import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportBip38Key;
@@ -45,7 +41,6 @@ import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.CheckAddressRunnable;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -53,6 +48,7 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -64,8 +60,6 @@ import net.bither.util.TransactionsUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
@@ -371,7 +365,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode();
                             return;
                         case 1:
-                            importPrivateKeyFromText();
+                            new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
                             return;
                         default:
                             return;
@@ -434,7 +428,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode();
                             return;
                         case 1:
-                            importPrivateKeyFromText();
+                            new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
                             return;
                         default:
                             return;
@@ -447,10 +441,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                 getString(R.string.import_private_key_qr_code_scan_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
-    }
-
-    private void importPrivateKeyFromText() {
-        new DialogImportPrivateKeyText(this).show();
     }
 
     @Override

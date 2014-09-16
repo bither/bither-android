@@ -178,6 +178,10 @@
     <string name="import_private_key_qr_code">From Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
     <string name="private_key_text">Private Key Text</string>
+
+    <string name="import_bip38_key_text_hint">Enter your private key of bip38 text</string>
+    <string name="import_bip38_key_text_format_erro">Not match private key of bip38 format</string>
+
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>

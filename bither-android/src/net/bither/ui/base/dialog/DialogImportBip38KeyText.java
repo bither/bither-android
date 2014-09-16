@@ -19,6 +19,8 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -29,14 +31,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.bitherj.crypto.DumpedPrivateKey;
-import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
-public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
+public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         DialogPassword.DialogPasswordListener {
     private Activity activity;
@@ -44,13 +45,15 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     private TextView tvError;
     private InputMethodManager imm;
 
-    private String privateKeyString;
+    private String bip38KeyString;
+
+    private String decode;
     private DialogProgress pd;
 
-    public DialogImportPrivateKeyText(Activity context) {
+    public DialogImportBip38KeyText(Activity context) {
         super(context);
         this.activity = context;
-        setContentView(R.layout.dialog_import_private_key_text);
+        setContentView(R.layout.dialog_import_bip38_key_text);
         et = (EditText) findViewById(R.id.et);
         tvError = (TextView) findViewById(R.id.tv_error);
         et.addTextChangedListener(textWatcher);
@@ -58,12 +61,13 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         findViewById(R.id.btn_cancel).setOnClickListener(this);
         setOnShowListener(this);
         setOnDismissListener(this);
+        pd = new DialogProgress(activity, R.string.please_wait);
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @Override
     public void show() {
-        privateKeyString = null;
+        bip38KeyString = null;
         et.setText("");
         tvError.setVisibility(View.GONE);
         super.show();
@@ -73,26 +77,18 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
-            tvError.setText(R.string.import_private_key_text_format_erro);
             if (StringUtil.isEmpty(s)) {
-                tvError.setVisibility(View.VISIBLE);
-                shake();
-                return;
-            } else if (!StringUtil.validBitcoinPrivateKey(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
             }
             try {
-                ECKey key = new DumpedPrivateKey(s).getKey();
-                if (!key.isCompressed()) {
-                    tvError.setText(R.string.only_supports_the_compressed_private_key);
+                if (!Bip38.isBip38PrivateKey(s)) {
                     tvError.setVisibility(View.VISIBLE);
                     shake();
                     return;
-
                 }
-                privateKeyString = et.getText().toString();
+                bip38KeyString = et.getText().toString();
                 dismiss();
 
             } catch (AddressFormatException e) {
@@ -112,12 +108,17 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (!StringUtil.isEmpty(privateKeyString)) {
-            DialogPassword d = new DialogPassword(getContext(), this);
-            d.show();
+        if (!StringUtil.isEmpty(bip38KeyString)) {
+            showBip38Password();
         }
         et.setText("");
 
+    }
+
+    private void showBip38Password() {
+        DialogPassword d = new DialogPassword(getContext(), bip38DialogPasswordListener);
+        d.setCheckPre(false);
+        d.show();
     }
 
     private TextWatcher textWatcher = new TextWatcher() {
@@ -143,12 +144,38 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     }
 
     @Override
-    public void onPasswordEntered(SecureCharSequence password) {
-        pd = new DialogProgress(activity, R.string.please_wait);
+    public void onPasswordEntered(final SecureCharSequence password) {
         ImportPrivateKey importPrivateKey = new ImportPrivateKey(activity,
-                ImportPrivateKey.ImportPrivateKeyType.Text, pd, privateKeyString, password);
+                ImportPrivateKey.ImportPrivateKeyType.Text, pd, decode, password);
         importPrivateKey.importPrivateKey();
     }
 
+    private DialogPassword.DialogPasswordListener bip38DialogPasswordListener = new DialogPassword.DialogPasswordListener() {
+        @Override
+        public void onPasswordEntered(final SecureCharSequence password) {
+            pd = new DialogProgress(activity, R.string.please_wait);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        decode = Bip38.decrypt(bip38KeyString, password.toString());
+                        if (decode != null) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DialogPassword dialogPassword = new DialogPassword(getContext(), DialogImportBip38KeyText.this);
+                                    dialogPassword.show();
+                                }
+                            });
+                        } else {
+                            showBip38Password();
+                        }
+                    } catch (Exception e) {
+                        showBip38Password();
+                    }
+                }
+            }).start();
+        }
+    };
 
 }
