@@ -70,6 +70,24 @@ public class ImportPrivateKey {
             public void runWithService(BlockchainService service) {
                 try {
                     ECKey ecKey = getEckey();
+                    if (ecKey == null) {
+                        password.wipe();
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp != null && dp.isShowing()) {
+                                    dp.setThread(null);
+                                    dp.dismiss();
+                                }
+                                if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
+                                    DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
+                                } else {
+                                    DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
+                                }
+                            }
+                        });
+                        return;
+                    }
                     List<String> addressList = new ArrayList<String>();
                     addressList.add(ecKey.toAddress());
                     if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
@@ -103,28 +121,14 @@ public class ImportPrivateKey {
     }
 
     private void addECKey(BlockchainService blockchainService, ECKey ecKey) throws URandomNotFoundException {
-        ECKey key = PrivateKeyUtil.encrypt(ecKey, password);
-        if (key == null) {
-            password.wipe();
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
-                }
-            });
-            return;
-        }
         String encryptedPrivateString;
         if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
             encryptedPrivateString = content;
         } else {
-            encryptedPrivateString = PrivateKeyUtil.getPrivateKeyString(key);
+            ecKey = PrivateKeyUtil.encrypt(ecKey, password);
+            encryptedPrivateString = PrivateKeyUtil.getPrivateKeyString(ecKey);
         }
-        Address address = new Address(key.toAddress(), key.getPubKey(), encryptedPrivateString);
+        Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedPrivateString);
         if (AddressManager.getInstance().getWatchOnlyAddresses().contains(address)) {
             password.wipe();
             ThreadUtil.runOnMainThread(new Runnable() {
@@ -215,18 +219,22 @@ public class ImportPrivateKey {
     }
 
 
-    private ECKey getEckey() throws AddressFormatException, InterruptedException {
+    private ECKey getEckey() {
         ECKey ecKey = null;
-        switch (this.importPrivateKeyType) {
-            case Text:
-                ecKey = new DumpedPrivateKey(this.content).getKey();
-                break;
-            case BitherQrcode:
-                ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
-                break;
-            case Bip38:
-                ecKey = new DumpedPrivateKey(content).getKey();
-                break;
+        try {
+            switch (this.importPrivateKeyType) {
+                case Text:
+                    ecKey = new DumpedPrivateKey(this.content).getKey();
+                    break;
+                case BitherQrcode:
+                    ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
+                    break;
+                case Bip38:
+                    ecKey = new DumpedPrivateKey(content).getKey();
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return ecKey;
     }
