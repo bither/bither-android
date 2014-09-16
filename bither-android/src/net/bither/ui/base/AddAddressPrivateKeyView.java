@@ -35,8 +35,9 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
+
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.UEntropyActivity;

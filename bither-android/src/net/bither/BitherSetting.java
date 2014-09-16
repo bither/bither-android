@@ -16,6 +16,9 @@
 
 package net.bither;
 
+import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.exception.AddressFormatException;
+
 import java.nio.charset.Charset;
 
 
@@ -60,6 +63,7 @@ public class BitherSetting {
         public static final int SIGN_TX_REQUEST_CODE = 253;
         public static final int CLONE_FROM_REQUEST_CODE = 1117;
         public static final int IMPORT_PRIVATE_KEY_REQUEST_CODE = 1356;
+        public static final int IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE = 1357;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
@@ -72,6 +76,7 @@ public class BitherSetting {
         public static final int SEND_REQUEST_CODE = 437;
         public static final String QR_CODE_STRING = "qr_code_string";
         public static final String TITLE_STRING = "title_string";
+        public static final String QRCODE_TYPE = "qrcode_type";
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
         public static final String INTENT_FROM_NOTIF = "from_notif";
@@ -141,5 +146,29 @@ public class BitherSetting {
                 break;
         }
         return name;
+    }
+
+    public enum QRCodeType {
+        Bither, Bip38;
+
+        public boolean checkFormat(String content) {
+            switch (this) {
+                case Bither:
+                    //todo checkBitherQrCode
+                    return true;
+
+                case Bip38:
+                    boolean check = false;
+                    try {
+                        check = net.bither.bitherj.crypto.bip38.Bip38.isBip38PrivateKey(content);
+                    } catch (AddressFormatException e) {
+                        e.printStackTrace();
+                    }
+                    return check;
+
+            }
+            return false;
+        }
+
     }
 }

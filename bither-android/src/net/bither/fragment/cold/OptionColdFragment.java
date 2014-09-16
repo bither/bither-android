@@ -52,8 +52,9 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
+
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.AnimationUtil;
 import net.bither.util.BackupUtil;
 import net.bither.util.BackupUtil.BackupListener;

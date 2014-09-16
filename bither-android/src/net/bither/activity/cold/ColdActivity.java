@@ -54,6 +54,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.ProgressDialog;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
@@ -344,7 +345,7 @@ public class ColdActivity extends FragmentActivity {
 
     private void showDialogPassword() {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
-                new DialogPassword.DialogPasswordListener() {
+                new DialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
                         importWalletFromBackup(password);
