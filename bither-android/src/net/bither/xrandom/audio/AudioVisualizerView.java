@@ -49,7 +49,7 @@ public class AudioVisualizerView extends View {
     private static final long WaveDuration = 500;
 
     private static final int MinAmplitude = 15000;
-    private static final int MaxAmplitude = 20000;
+    private static final int MaxAmplitude = 26000;
 
     private Paint paint;
     private Paint subLinePaint;

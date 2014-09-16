@@ -97,12 +97,18 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     }
 
     public void start() throws IOException {
+        if (shouldCollectData) {
+            return;
+        }
         shouldCollectData = true;
         in = new PipedInputStream(POOL_SIZE);
         out = new PipedOutputStream(in);
     }
 
     public void stop() {
+        if (!shouldCollectData) {
+            return;
+        }
         shouldCollectData = false;
         try {
             out.close();
