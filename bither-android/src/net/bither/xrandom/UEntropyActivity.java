@@ -50,6 +50,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
+import net.bither.xrandom.sensor.SensorVisualizerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,9 +111,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         entropyCollector = new UEntropyCollector(this);
 
         entropyCollector.addSources(
-                new UEntropyCamera((SurfaceView) findViewById(R.id.scan_activity_preview), entropyCollector),
+                new UEntropyCamera((SurfaceView) findViewById(R.id.v_camera), entropyCollector),
                 new UEntropyMic(entropyCollector, (AudioVisualizerView) findViewById(R.id.v_mic)),
-                new UEntropyMotion(this, entropyCollector)
+                new UEntropySensor(this, entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor))
         );
         generateThread = new GenerateThread();
 

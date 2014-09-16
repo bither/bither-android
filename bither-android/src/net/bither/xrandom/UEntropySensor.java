@@ -28,6 +28,7 @@ import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 
 import net.bither.bitherj.utils.LogUtil;
+import net.bither.xrandom.sensor.SensorVisualizerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +36,19 @@ import java.util.List;
 /**
  * Created by songchenwen on 14-9-11.
  */
-public class UEntropyMotion implements SensorEventListener, IUEntropySource {
+public class UEntropySensor implements SensorEventListener, IUEntropySource {
 
     private UEntropyCollector collector;
     private SensorManager sensorManager;
     private List<Sensor> sensors;
+    private SensorVisualizerView visualizer;
 
     private boolean paused = true;
 
-    public UEntropyMotion(Context context, UEntropyCollector collector) {
+    public UEntropySensor(Context context, UEntropyCollector collector,
+                          SensorVisualizerView visualizer) {
         this.collector = collector;
+        this.visualizer = visualizer;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensors = new ArrayList<Sensor>();
     }
@@ -61,13 +65,14 @@ public class UEntropyMotion implements SensorEventListener, IUEntropySource {
             if (!registered) {
                 unregisteredSensors.add(sensor);
             }
-            LogUtil.i(UEntropyMotion.class.getSimpleName(), (registered ? "" : "fail to ") +
+            LogUtil.i(UEntropySensor.class.getSimpleName(), (registered ? "" : "fail to ") +
                     "register sensor " + sensor.getName());
         }
         sensors.removeAll(unregisteredSensors);
         if (sensors.size() == 0) {
-            collector.onError(new Exception("no sensor registered"), UEntropyMotion.this);
+            collector.onError(new Exception("no sensor registered"), UEntropySensor.this);
         }
+        visualizer.setSensors(sensors);
     }
 
     @Override
@@ -90,7 +95,8 @@ public class UEntropyMotion implements SensorEventListener, IUEntropySource {
                     }
                 }
             }
-            collector.onNewData(data, UEntropyCollector.UEntropySource.Motion);
+            collector.onNewData(data, UEntropyCollector.UEntropySource.Sensor);
+            visualizer.onSensorData(event.sensor);
         }
     }
 
@@ -115,6 +121,6 @@ public class UEntropyMotion implements SensorEventListener, IUEntropySource {
 
     @Override
     public UEntropyCollector.UEntropySource type() {
-        return UEntropyCollector.UEntropySource.Motion;
+        return UEntropyCollector.UEntropySource.Sensor;
     }
 }
