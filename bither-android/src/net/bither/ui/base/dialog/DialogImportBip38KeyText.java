@@ -19,8 +19,6 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -35,12 +33,14 @@ import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.listener.DialogPasswordListener;
+import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
 public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
-        DialogPassword.DialogPasswordListener {
+        DialogPasswordListener {
     private Activity activity;
     private EditText et;
     private TextView tvError;
@@ -117,10 +117,10 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     }
 
     private void showBip38Password() {
-        DialogPassword d = new DialogPassword(getContext(), bip38DialogPasswordListener);
+        DialogPasswordWithOther d = new DialogPasswordWithOther(getContext(), bip38DialogPasswordListener);
         d.setCheckPre(false);
         d.setTitle(R.string.enter_bip38_key_password);
-        d.setCheckPasswordListener(new DialogPassword.ICheckPasswordListener() {
+        d.setCheckPasswordListener(new ICheckPasswordListener() {
             @Override
             public boolean checkPassword(SecureCharSequence password) {
                 try {
@@ -164,7 +164,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
         importPrivateKey.importPrivateKey();
     }
 
-    private DialogPassword.DialogPasswordListener bip38DialogPasswordListener = new DialogPassword.DialogPasswordListener() {
+    private DialogPasswordListener bip38DialogPasswordListener = new DialogPasswordListener() {
         @Override
         public void onPasswordEntered(final SecureCharSequence password) {
             if (decode != null) {

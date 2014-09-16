@@ -48,8 +48,9 @@ import net.bither.util.StringUtil;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-public class DialogPassword extends Dialog implements OnDismissListener,
+public class DialogPasswordWithOther extends Dialog implements OnDismissListener,
         TextView.OnEditorActionListener {
+
 
     private View container;
     private LinearLayout llInput;
@@ -69,9 +70,9 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private boolean cancelable = true;
     private ExecutorService executor;
 
-    public DialogPassword(Context context, DialogPasswordListener listener) {
+    public DialogPasswordWithOther(Context context, DialogPasswordListener listener) {
         super(context, R.style.password_dialog);
-        setContentView(R.layout.dialog_password);
+        setContentView(R.layout.dialog_password_with_other);
         this.listener = listener;
         setOnDismissListener(this);
         passwordSeed = getPasswordSeed();
@@ -128,22 +129,8 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     }
 
     private void checkValid() {
-        btnOk.setEnabled(false);
-        int passwordLength = etPassword.length();
-        if (passwordLength >= 6 && passwordLength <= getContext().getResources().getInteger(R
-                .integer.password_length_max)) {
-            if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-                int passwordConfirmLength = etPasswordConfirm.length();
-                if (passwordConfirmLength >= 6 && passwordConfirmLength <= getContext()
-                        .getResources().getInteger(R.integer.password_length_max)) {
-                    btnOk.setEnabled(true);
-                } else {
-                    btnOk.setEnabled(false);
-                }
-            } else {
-                btnOk.setEnabled(true);
-            }
-        }
+        btnOk.setEnabled(true);
+
     }
 
     private void shake() {

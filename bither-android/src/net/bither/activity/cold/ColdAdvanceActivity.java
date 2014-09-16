@@ -41,6 +41,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
@@ -168,8 +169,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
 
-    private class ImportPrivateKeyPasswordListener implements DialogPassword
-            .DialogPasswordListener {
+    private class ImportPrivateKeyPasswordListener implements DialogPasswordListener {
         private String content;
 
         public ImportPrivateKeyPasswordListener(String content) {

@@ -28,13 +28,14 @@ import net.bither.runnable.CheckAddressRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportBip38Key implements DialogPassword.DialogPasswordListener {
+public class ImportBip38Key implements DialogPasswordListener {
 
     private String content;
     private SecureCharSequence password;

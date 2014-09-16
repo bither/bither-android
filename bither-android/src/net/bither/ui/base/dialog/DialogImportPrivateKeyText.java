@@ -33,12 +33,13 @@ import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.ui.base.listener.DialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
 public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
-        DialogPassword.DialogPasswordListener {
+        DialogPasswordListener {
     private Activity activity;
     private EditText et;
     private TextView tvError;
