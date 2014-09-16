@@ -16,7 +16,7 @@
  *
  */
 
-package net.bither.xrandom;
+package net.bither.xrandom.audio;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -28,9 +28,7 @@ import android.os.HandlerThread;
 import android.util.AttributeSet;
 import android.view.View;
 
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.util.UIUtil;
-import net.bither.xrandom.audio.ftt.AmplitudeData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +89,7 @@ public class AudioVisualizerView extends View {
 
         canvas.drawPath(drawer.main(), paint);
 
-        for(Path p : drawer.subs()){
+        for (Path p : drawer.subs()) {
             canvas.drawPath(p, subLinePaint);
         }
 
@@ -244,8 +242,6 @@ public class AudioVisualizerView extends View {
         public void run() {
             if (rawData != null && rawData.length > 0) {
                 amplitudeData = new AmplitudeData(rawData);
-                LogUtil.i(AudioVisualizerView.class.getSimpleName(), "amplitude " + amplitudeData
-                        .amplitude());
                 rawData = null;
                 postInvalidate();
             }
@@ -279,8 +275,6 @@ public class AudioVisualizerView extends View {
 
     @Override
     protected void onDetachedFromWindow() {
-        LogUtil.i(AudioVisualizerView.class.getSimpleName(), "audio visualizer detached from " +
-                "window");
         dataHandler.removeCallbacksAndMessages(null);
         dataThread.quit();
         dataHandler = null;

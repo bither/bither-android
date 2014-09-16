@@ -23,6 +23,7 @@ import android.media.AudioRecord;
 import android.os.*;
 
 import net.bither.bitherj.utils.LogUtil;
+import net.bither.xrandom.audio.AudioVisualizerView;
 
 import java.util.Arrays;
 

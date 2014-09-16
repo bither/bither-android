@@ -39,6 +39,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
+import net.bither.xrandom.audio.AudioVisualizerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
