@@ -81,9 +81,9 @@
     <string name="add_address_already_watched">這個地址已經被監控了</string>
     <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
-    <string name="add_address_generate_address_password_label">請輸入密碼</string>
+    <string name="add_address_generate_address_password_label">請輸入錢包密碼</string>
     <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;43</string>
-    <string name="add_address_generate_address_password_set_label">請設置密碼</string>
+    <string name="add_address_generate_address_password_set_label">請設置錢包密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
     <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
