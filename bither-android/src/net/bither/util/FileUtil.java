@@ -26,8 +26,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.pi.common.util.NativeUtil;
-
 import net.bither.BitherApplication;
 import net.bither.bitherj.utils.Utils;
 

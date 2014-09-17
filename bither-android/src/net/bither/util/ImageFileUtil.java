@@ -23,8 +23,6 @@ import android.media.ExifInterface;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.pi.common.util.NativeUtil;
-
 import net.bither.BitherApplication;
 
 import java.io.File;

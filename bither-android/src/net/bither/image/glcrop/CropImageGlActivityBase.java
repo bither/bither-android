@@ -37,9 +37,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
-
-import com.pi.common.util.NativeUtil;
-
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.animation.FlipAndZoomAnimation;
@@ -48,6 +45,7 @@ import net.bither.runnable.HandlerMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
+import net.bither.util.NativeUtil;
 import net.bither.util.StringUtil;
 
 import java.io.File;
