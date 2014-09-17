@@ -37,7 +37,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
-public class IDialogImportPrivateKeyText extends CenterDialog implements DialogInterface
+public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         IDialogPasswordListener {
     private Activity activity;
@@ -48,7 +48,7 @@ public class IDialogImportPrivateKeyText extends CenterDialog implements DialogI
     private String privateKeyString;
     private DialogProgress pd;
 
-    public IDialogImportPrivateKeyText(Activity context) {
+    public DialogImportPrivateKeyText(Activity context) {
         super(context);
         this.activity = context;
         setContentView(R.layout.dialog_import_private_key_text);
@@ -84,22 +84,10 @@ public class IDialogImportPrivateKeyText extends CenterDialog implements DialogI
                 shake();
                 return;
             }
-            try {
-                ECKey key = new DumpedPrivateKey(s).getKey();
-                if (!key.isCompressed()) {
-                    tvError.setText(R.string.only_supports_the_compressed_private_key);
-                    tvError.setVisibility(View.VISIBLE);
-                    shake();
-                    return;
 
-                }
-                privateKeyString = et.getText().toString();
-                dismiss();
+            privateKeyString = et.getText().toString();
+            dismiss();
 
-            } catch (AddressFormatException e) {
-                tvError.setVisibility(View.VISIBLE);
-                e.printStackTrace();
-            }
         } else {
             dismiss();
         }

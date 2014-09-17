@@ -27,6 +27,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 
@@ -95,6 +96,7 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
         final DialogProgress dialogProgress;
         switch (clickedView) {
             case R.id.tv_private_key_qr_code_encrypted:
+                password.wipe();
                 dialogPrivateKey.show();
                 break;
             case R.id.tv_view_show_private_key:
@@ -103,9 +105,8 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        ECKey ecKey = PrivateKeyUtil.getECKeyFromSingleString(address.getEncryptPrivKey(), password);
                         final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
-
+                        password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -113,9 +114,18 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
                                 if (str != null) {
                                     DialogPrivateKeyText dialogPrivateKeyText = new DialogPrivateKeyText(activity, str);
                                     dialogPrivateKeyText.show();
+                                } else {
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialogProgress.dismiss();
+                                            DropdownMessage.showDropdownMessage(activity, R.string.decrypt_failed);
+                                        }
+                                    });
                                 }
                             }
                         });
+
                     }
 
                 }).start();
@@ -128,7 +138,7 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
                     @Override
                     public void run() {
                         final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
-
+                        password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -136,10 +146,17 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
                                 if (str != null) {
                                     DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str);
                                     dialogPrivateKeyTextQrCode.show();
+                                } else {
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dialogProgress.dismiss();
+                                            DropdownMessage.showDropdownMessage(activity, R.string.decrypt_failed);
+                                        }
+                                    });
                                 }
                             }
                         });
-
                     }
                 }).start();
 
