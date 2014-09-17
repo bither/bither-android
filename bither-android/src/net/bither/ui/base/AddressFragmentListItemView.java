@@ -18,7 +18,6 @@ package net.bither.ui.base;
 
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +35,7 @@ import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AddressFragmentListItemView extends FrameLayout implements
@@ -162,7 +162,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private OnClickListener addressFullClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ArrayMap<String, Long> map = new ArrayMap<String, Long>();
+            LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
             map.put(address.getAddress(), 0L);
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);

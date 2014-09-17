@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -46,6 +45,7 @@ import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SelectAddressToSendActivity extends SwipeRightActivity {
@@ -224,7 +224,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
 
         @Override
         public void onClick(View v) {
-            ArrayMap<String, Long> map = new ArrayMap<String, Long>();
+            LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
             map.put(address.getAddress(), 0L);
             DialogAddressFull dialog = new DialogAddressFull(SelectAddressToSendActivity.this, map);
             dialog.show(v);

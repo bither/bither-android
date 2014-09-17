@@ -33,14 +33,15 @@ import net.bither.BitherSetting.MarketType;
 import net.bither.model.TrendingGraphicData;
 import net.bither.util.TrendingGraphicUtil;
 import net.bither.util.TrendingGraphicUtil.TrendingGraphicListener;
+import net.bither.util.UIUtil;
 
 import java.util.Arrays;
 
 public class TrendingGraphicView extends View {
     private static final int TransformDuration = 250;
-    private static final float LineWidth = 3;
-    private static final float HorizontalPadding = 2;
-    private static final float VerticalPadding = 2;
+    private static final float LineWidth = UIUtil.dip2pix(2);
+    private static final float HorizontalPadding = UIUtil.dip2pix(2);
+    private static final float VerticalPadding = UIUtil.dip2pix(2);
     private static final int LineColor = Color.WHITE;
     private static final int PressedLineColor = Color.argb(190, 180, 180, 180);
     private static final Paint paint = new Paint();
