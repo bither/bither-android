@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
@@ -36,6 +37,7 @@ import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.db.TxProvider;
@@ -75,6 +77,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnExportLog;
     private Button btnResetTx;
     private DialogProgress dp;
+    private TextView tvVserion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +88,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
+        tvVserion = (TextView) findViewById(R.id.tv_version);
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
@@ -99,6 +103,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
+        tvVserion.setText(Version.name + " " + Version.version);
     }
 
     private SettingSelectorView.SettingSelector wifiSelector = new SettingSelectorView

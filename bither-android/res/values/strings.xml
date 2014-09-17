@@ -202,6 +202,7 @@
     <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions data success </string>
     <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
+    <string name="base_on_text">Base On </string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>
