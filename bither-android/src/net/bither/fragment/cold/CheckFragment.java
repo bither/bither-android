@@ -18,7 +18,6 @@ package net.bither.fragment.cold;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.ArrayMap;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TypefaceSpan;
@@ -52,6 +51,7 @@ import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CheckFragment extends Fragment implements CheckHeaderViewListener {
@@ -297,10 +297,9 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
 
             @Override
             public void onClick(View v) {
-                ArrayMap<String, Long> map = new ArrayMap<String, Long>();
+                LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
                 map.put(address, 0L);
-                DialogAddressFull dialog = new DialogAddressFull(getActivity(),
-                        map);
+                DialogAddressFull dialog = new DialogAddressFull(getActivity(), map);
                 dialog.show(v);
             }
         }

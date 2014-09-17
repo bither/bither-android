@@ -18,7 +18,6 @@ package net.bither.ui.base.dialog;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v4.util.ArrayMap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,11 +29,13 @@ import net.bither.R;
 import net.bither.ui.base.SubtransactionListItem;
 import net.bither.util.UIUtil;
 
+import java.util.LinkedHashMap;
+
 public class DialogAddressFull extends DialogWithArrow {
     private static final int MaxHeight = UIUtil.getScreenHeight()
             - UIUtil.dip2pix(100);
     private Activity activity;
-    private ArrayMap<String, Long> addresses;
+    private LinkedHashMap<String, Long> addresses;
     private ListView lv;
     private BaseAdapter adapter = new BaseAdapter() {
 
@@ -45,7 +46,7 @@ public class DialogAddressFull extends DialogWithArrow {
 
         @Override
         public Object getItem(int position) {
-            return addresses.keyAt(position);
+            return addresses.keySet().toArray()[position];
         }
 
         @Override
@@ -62,14 +63,13 @@ public class DialogAddressFull extends DialogWithArrow {
             }
             view = (SubtransactionListItem) convertView;
             view.setTextColor(Color.WHITE);
-            view.setContent(addresses.keyAt(position),
-                    addresses.valueAt(position));
+            view.setContent((String) getItem(position), (Long) addresses.values().toArray()
+                    [position]);
             return convertView;
         }
     };
 
-    public DialogAddressFull(Activity context,
-                             ArrayMap<String, Long> addresses) {
+    public DialogAddressFull(Activity context, LinkedHashMap<String, Long> addresses) {
         super(context);
         activity = context;
         this.addresses = addresses;
@@ -79,7 +79,7 @@ public class DialogAddressFull extends DialogWithArrow {
         for (int i = 0;
              i < addresses.size();
              i++) {
-            if (addresses.valueAt(i) != null) {
+            if (addresses.values().toArray()[i] != null) {
                 width = Math.min(UIUtil.getScreenWidth() - UIUtil.dip2pix(100),
                         UIUtil.dip2pix(220));
                 break;
