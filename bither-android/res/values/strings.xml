@@ -95,6 +95,7 @@
     <string name="add_address_generate_address_password_not_same">Passwords not same</string>
     <string name="password_checking">Checking password</string>
     <string name="password_wrong">Wrong Password</string>
+    <string name="decrypt_failed">Decryption Failed</string>
     <string name="wallet_loading">Loading wallets, Please try again later.</string>
 
     <!-- send -->

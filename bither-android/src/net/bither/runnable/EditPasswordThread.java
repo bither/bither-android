@@ -74,6 +74,9 @@ public class EditPasswordThread extends Thread {
             for (Address a : addresses) {
                 String encryptedStr = a.getEncryptPrivKey();
                 String newEncryptedStr = PrivateKeyUtil.changePassword(encryptedStr, oldPassword, newPassword);
+                if (newEncryptedStr == null) {
+                    return false;
+                }
                 a.setEncryptPrivKey(newEncryptedStr);
             }
             AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(addresses.get

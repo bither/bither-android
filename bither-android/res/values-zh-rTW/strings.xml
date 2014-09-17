@@ -89,6 +89,7 @@
     <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
     <string name="password_checking">正在檢查密碼</string>
     <string name="password_wrong">密碼錯誤</string>
+    <string name="decrypt_failed">解密失敗</string>
     <string name="wallet_loading">錢包初始化中, 請稍後再試.</string>
 
 
