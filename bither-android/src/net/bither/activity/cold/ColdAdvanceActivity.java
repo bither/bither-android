@@ -41,8 +41,8 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
-import net.bither.ui.base.dialog.IDialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -234,7 +234,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private void importPrivateKeyFromText() {
-        new IDialogImportPrivateKeyText(this).show();
+        new DialogImportPrivateKeyText(this).show();
     }
 
     @Override
