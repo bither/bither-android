@@ -16,6 +16,7 @@
 
 package net.bither.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.ui.base.QrCodeImageView;
+import net.bither.util.UIUtil;
 
 public class QrCodeFragment extends Fragment {
 	public static interface QrCodeFragmentDelegate {
@@ -66,10 +68,11 @@ public class QrCodeFragment extends Fragment {
 
 	private void configureView() {
 		if (delegate != null && ivQrCode != null) {
-			ivQrCode.setContent(delegate.getContent());
-			btn.setText(delegate.getButtonTitle());
-			if (delegate.pageIndex() == 0 && delegate.pageCount() == 1) {
-				tv.setVisibility(View.GONE);
+            ivQrCode.setContent(delegate.getContent(), Color.BLACK, Color.TRANSPARENT,
+                    UIUtil.dip2pix(12));
+            btn.setText(delegate.getButtonTitle());
+            if (delegate.pageIndex() == 0 && delegate.pageCount() == 1) {
+                tv.setVisibility(View.GONE);
 			} else {
 				tv.setVisibility(View.VISIBLE);
 				tv.setText(String.format(getString(R.string.qr_code_page),
