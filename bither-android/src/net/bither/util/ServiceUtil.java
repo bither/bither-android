@@ -19,7 +19,6 @@ package net.bither.util;
 import android.content.Intent;
 
 import net.bither.BitherApplication;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.service.BlockchainService;
 

@@ -36,11 +36,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;

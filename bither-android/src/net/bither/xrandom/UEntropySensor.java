@@ -27,15 +27,12 @@ import android.hardware.SensorManager;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.util.LogUtil;
 import net.bither.xrandom.sensor.SensorVisualizerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 14-9-11.
- */
 public class UEntropySensor implements SensorEventListener, IUEntropySource {
 
     private UEntropyCollector collector;

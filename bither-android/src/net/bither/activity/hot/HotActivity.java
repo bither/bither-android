@@ -39,7 +39,7 @@ import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.LogUtil;
+
 import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
@@ -56,6 +56,7 @@ import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;

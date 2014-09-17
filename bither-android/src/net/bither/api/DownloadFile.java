@@ -18,10 +18,11 @@ package net.bither.api;
 
 import android.os.Build;
 
-import net.bither.bitherj.utils.LogUtil;
+
 import net.bither.http.HttpRequestException;
 import net.bither.http.HttpSetting;
 import net.bither.preference.PersistentCookieStore;
+import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 import org.apache.http.cookie.Cookie;

@@ -22,7 +22,7 @@ import net.bither.api.DownloadSpvApi;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
-import net.bither.bitherj.utils.LogUtil;
+
 import net.bither.preference.AppSharedPreference;
 
 import org.json.JSONException;

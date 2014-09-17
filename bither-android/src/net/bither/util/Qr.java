@@ -29,7 +29,6 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

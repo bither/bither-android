@@ -24,7 +24,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.View;
 
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.xrandom.audio.AudioVisualizerView;
 

@@ -32,6 +32,7 @@ import net.bither.R;
 import net.bither.ScanActivity;
 import net.bither.ScanQRCodeTransportActivity;
 import net.bither.ScanQRCodeWithOtherActivity;
+import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -51,14 +52,14 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
-import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
-import net.bither.ui.base.dialog.IDialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
+import net.bither.ui.base.dialog.IDialogImportPrivateKeyText;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
@@ -172,8 +173,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
                         try {
-                            File logDir = Utils.getLogDir();
-
+                            File logDir = BitherjApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
                         } catch (Exception e) {
                             e.printStackTrace();

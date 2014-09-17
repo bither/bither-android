@@ -35,7 +35,6 @@ import net.bither.adapter.hot.HotAddressFragmentListAdapter;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.runnable.HandlerMessage;
@@ -46,6 +45,7 @@ import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 

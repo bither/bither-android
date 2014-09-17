@@ -26,8 +26,8 @@ import android.widget.RelativeLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.util.GenericUtils;
+import net.bither.util.LogUtil;
 import net.bither.util.UIUtil;
 
 import java.util.ArrayList;

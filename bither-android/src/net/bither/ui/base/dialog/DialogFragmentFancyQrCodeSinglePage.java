@@ -28,11 +28,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
