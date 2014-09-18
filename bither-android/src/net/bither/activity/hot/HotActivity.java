@@ -108,7 +108,7 @@ public class HotActivity extends FragmentActivity {
                     }
                 }, 500);
                 onNewIntent(getIntent());
-                ServiceUtil.doMarkTimerTask(true);
+                BitherApplication.startBlockchainService();
             }
         }, 500);
         mPager.postDelayed(new Runnable() {
@@ -140,18 +140,16 @@ public class HotActivity extends FragmentActivity {
         unregisterReceiver(addressIsLoadedReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
-        ServiceUtil.doMarkTimerTask(false);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ServiceUtil.doMarkTimerTask(false);
     }
 
     @Override
     protected void onResume() {
-        ServiceUtil.doMarkTimerTask(true);
         super.onResume();
     }
 

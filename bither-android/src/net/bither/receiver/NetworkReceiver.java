@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.ChooseModeActivity;
 import net.bither.R;
@@ -55,7 +56,7 @@ public class NetworkReceiver extends BroadcastReceiver {
             }
         } else {
             if (NetworkUtil.isConnected()) {
-                ServiceUtil.doMarkTimerTask(true);
+                BitherApplication.startBlockchainService();
             }
         }
 

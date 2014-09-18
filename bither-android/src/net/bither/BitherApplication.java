@@ -75,8 +75,8 @@ public class BitherApplication extends BitherjApplication {
         return mBitherApplication;
     }
 
-    public void startBlockchainService() {
-        startService(new Intent(mContext, BlockchainService.class));
+    public static void startBlockchainService() {
+        mContext.startService(new Intent(mContext, BlockchainService.class));
 
     }
 
@@ -148,8 +148,6 @@ public class BitherApplication extends BitherjApplication {
             return reloadTxTime + 60 * 60 * 1000 < System.currentTimeMillis();
         }
     }
-
-
 
 
 }

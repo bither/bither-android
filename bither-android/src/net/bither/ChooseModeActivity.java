@@ -48,6 +48,7 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
@@ -160,7 +161,7 @@ public class ChooseModeActivity extends Activity {
                     setVersionCode();
                     initActivity();
                     if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                        ServiceUtil.dowloadSpvBlock();
+                        dowloadSpvBlock();
                     }
                     break;
                 case HandlerMessage.MSG_FAILURE:
@@ -540,7 +541,7 @@ public class ChooseModeActivity extends Activity {
         public void onClick(View v) {
             llWarmExtraError.setVisibility(View.GONE);
             llWarmExtraWaiting.setVisibility(View.VISIBLE);
-            ServiceUtil.dowloadSpvBlock();
+            dowloadSpvBlock();
         }
     };
 
@@ -613,5 +614,12 @@ public class ChooseModeActivity extends Activity {
         spn.setSpan(new RelativeLineHeightSpan(0.4f), firstLineEnd + 1, str.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spn;
+    }
+
+    private void dowloadSpvBlock() {
+        Intent intent = new Intent(
+                BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
+                BitherApplication.mContext, BlockchainService.class);
+        BitherApplication.mContext.startService(intent);
     }
 }

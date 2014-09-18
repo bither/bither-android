@@ -82,22 +82,6 @@ public class ServiceUtil {
         return average;
     }
 
-
-    public static void doMarkTimerTask(boolean isRunning) {
-        Intent intent = new Intent(BlockchainService.ACTION__TIMER_TASK_STAT,
-                null, BitherApplication.mContext, BlockchainService.class);
-        intent.putExtra(BlockchainService.ACTION_TIMER_TASK_ISRUNNING,
-                isRunning);
-        BitherApplication.mContext.startService(intent);
-    }
-
-    public static void dowloadSpvBlock() {
-        Intent intent = new Intent(
-                BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
-                BitherApplication.mContext, BlockchainService.class);
-        BitherApplication.mContext.startService(intent);
-    }
-
     private static boolean getIsNoSoundWithoutWeekend(int hour) {
         return hour == 23 || hour < 8;
     }

@@ -53,9 +53,6 @@ public class BlockchainService extends android.app.Service {
 
     public static final String ACTION_BEGIN_DOWLOAD_SPV_BLOCK = R.class
             .getPackage().getName() + ".dowload_block_api_begin";
-    public static final String ACTION__TIMER_TASK_STAT = R.class.getPackage()
-            .getName() + ".timer_task_stat";
-    public static final String ACTION_TIMER_TASK_ISRUNNING = "timer_task_stat";
     private static final Logger log = LoggerFactory
             .getLogger(BlockchainService.class);
     private WakeLock wakeLock;
@@ -93,6 +90,7 @@ public class BlockchainService extends android.app.Service {
             registerReceiver(txReceiver, new IntentFilter(NotificationUtil.ACTION_ADDRESS_BALANCE));
 
         }
+        startMarkTimerTask();
     }
 
     private void receiverConnectivity() {
@@ -113,7 +111,7 @@ public class BlockchainService extends android.app.Service {
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             BitherApplication.scheduleStartBlockchainService(this);
             PeerManager.instance().stop();
-            pauseMarkTimerTask();
+            mBitherTimer.stopTimer();
             mBitherTimer = null;
             if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
@@ -147,15 +145,7 @@ public class BlockchainService extends android.app.Service {
         if (action != null) {
             LogUtil.i("onStartCommand", "onStartCommand Service:" + action);
         }
-        if (ACTION__TIMER_TASK_STAT.equals(action)) {
-            boolean isRunning = intent.getBooleanExtra(
-                    ACTION_TIMER_TASK_ISRUNNING, false);
-            if (isRunning) {
-                startMarkTimerTask();
-            } else {
-                pauseMarkTimerTask();
-            }
-        } else if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
+        if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
             new Thread(new DownloadSpvRunnable(BlockchainService.this)).start();
         }
         return START_NOT_STICKY;
@@ -322,14 +312,6 @@ public class BlockchainService extends android.app.Service {
                 PeerManager.instance().start();
             }
         }
-
-    }
-
-    private void pauseMarkTimerTask() {
-        if (mBitherTimer != null) {
-            mBitherTimer.pauseTimer();
-        }
-
 
     }
 
