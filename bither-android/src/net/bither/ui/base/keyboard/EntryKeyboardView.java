@@ -129,17 +129,21 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
     }
 
     private void createKeyboardsWithDefaultWidth() {
-        mNumericKeyboard = new EntryKeyboard(getContext(), getNumericKeyboard());
-        mQwertyKeyboard = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
-        mQwertyKeyboard.enableShiftLock();
+        if (getNumericKeyboard() != 0) {
+            mNumericKeyboard = new EntryKeyboard(getContext(), getNumericKeyboard());
+        }
+        if (getAlphaKeyboard() != 0) {
+            mQwertyKeyboard = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
+            mQwertyKeyboard.enableShiftLock();
 
-        mQwertyKeyboardShifted = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
-        mQwertyKeyboardShifted.enableShiftLock();
-        mQwertyKeyboardShifted.setShifted(true); // always shifted.
+            mQwertyKeyboardShifted = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
+            mQwertyKeyboardShifted.enableShiftLock();
+            mQwertyKeyboardShifted.setShifted(true); // always shifted.
 
-        mNumericKeyboard.setDrawKeyListener(this);
-        mQwertyKeyboard.setDrawKeyListener(this);
-        mQwertyKeyboardShifted.setDrawKeyListener(this);
+            mNumericKeyboard.setDrawKeyListener(this);
+            mQwertyKeyboard.setDrawKeyListener(this);
+            mQwertyKeyboardShifted.setDrawKeyListener(this);
+        }
     }
 
     protected abstract int getAlphaKeyboard();
@@ -291,10 +295,14 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         Keyboard next = null;
         if (current == mQwertyKeyboard || current == mQwertyKeyboardShifted) {
             next = mNumericKeyboard;
-            mKeyboardMode = KEYBOARD_MODE_NUMERIC;
+            if (next != null) {
+                mKeyboardMode = KEYBOARD_MODE_NUMERIC;
+            }
         } else if (current == mNumericKeyboard) {
             next = mQwertyKeyboard;
-            mKeyboardMode = KEYBOARD_MODE_ALPHA;
+            if (next != null) {
+                mKeyboardMode = KEYBOARD_MODE_ALPHA;
+            }
         }
         if (next != null) {
             setKeyboard(next);
@@ -303,6 +311,9 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
     }
 
     private void handleShift() {
+        if (mQwertyKeyboard == null || mQwertyKeyboardShifted == null) {
+            return;
+        }
         Keyboard current = getKeyboard();
         EntryKeyboard next = null;
         final boolean isAlphaMode = current == mQwertyKeyboard || current == mQwertyKeyboardShifted;
@@ -502,28 +513,16 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             EditText currentFocusEt = (EditText) currentFocusView;
             if (!StringUtil.isEmpty(currentFocusEt.getImeActionLabel() == null ? null :
                     currentFocusEt.getImeActionLabel().toString())) {
-                mNumericKeyboard.setEnterKeyText(currentFocusEt.getImeActionLabel());
-                mQwertyKeyboard.setEnterKeyText(currentFocusEt.getImeActionLabel());
-                mQwertyKeyboardShifted.setEnterKeyText(currentFocusEt.getImeActionLabel());
+                setEnterKeyText(currentFocusEt.getImeActionLabel());
             } else if (currentFocusEt.getImeActionId() > 0) {
                 switch (currentFocusEt.getImeActionId()) {
                     case EditorInfo.IME_ACTION_DONE:
                     case EditorInfo.IME_ACTION_GO:
                     case EditorInfo.IME_ACTION_SEND:
-                        mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                                R.string.password_keyboard_done);
-                        mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                                R.string.password_keyboard_done);
-                        mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(),
-                                0, 0, R.string.password_keyboard_done);
+                        setEnterKeyText(getResources().getString(R.string.password_keyboard_done));
                         break;
                     case EditorInfo.IME_ACTION_NEXT:
-                        mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                                R.string.password_keyboard_next);
-                        mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                                R.string.password_keyboard_next);
-                        mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(),
-                                0, 0, R.string.password_keyboard_next);
+                        setEnterKeyText(getResources().getString(R.string.password_keyboard_next));
                         break;
                     default:
                         break;
@@ -531,23 +530,25 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             } else {
                 View nextFocusView = currentFocusEt.focusSearch(View.FOCUS_DOWN);
                 if (nextFocusView != null) {
-                    mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                            R.string.password_keyboard_next);
-                    mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                            R.string.password_keyboard_next);
-                    mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0,
-                            0, R.string.password_keyboard_next);
+                    setEnterKeyText(getResources().getString(R.string.password_keyboard_next));
                 } else {
-                    mNumericKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                            R.string.password_keyboard_done);
-                    mQwertyKeyboard.setEnterKeyResources(getContext().getResources(), 0, 0,
-                            R.string.password_keyboard_done);
-                    mQwertyKeyboardShifted.setEnterKeyResources(getContext().getResources(), 0,
-                            0, R.string.password_keyboard_done);
+                    setEnterKeyText(getResources().getString(R.string.password_keyboard_done));
                 }
             }
             EntryKeyboard keyboard = (EntryKeyboard) getKeyboard();
             invalidateKey(keyboard.getEnterKeyIndex());
+        }
+    }
+
+    private void setEnterKeyText(CharSequence text) {
+        if (mNumericKeyboard != null) {
+            mNumericKeyboard.setEnterKeyText(text);
+        }
+        if (mQwertyKeyboard != null) {
+            mQwertyKeyboard.setEnterKeyText(text);
+        }
+        if (mQwertyKeyboardShifted != null) {
+            mQwertyKeyboardShifted.setEnterKeyText(text);
         }
     }
 
