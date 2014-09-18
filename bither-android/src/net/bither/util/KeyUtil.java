@@ -22,13 +22,12 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.IUEntropy;
-import net.bither.bitherj.crypto.XRandom;
-import net.bither.bitherj.exception.URandomNotFoundException;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.xrandom.IUEntropy;
+import net.bither.xrandom.XRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class KeyUtil {
 
     }
 
-    public static List<Address> addPrivateKeyByRandomWithPassphras(BlockchainService service, IUEntropy iuEntropy, CharSequence password, int count) throws URandomNotFoundException {
+    public static List<Address> addPrivateKeyByRandomWithPassphras(BlockchainService service, IUEntropy iuEntropy, CharSequence password, int count) {
         if (service != null) {
             service.stopAndUnregister();
         }

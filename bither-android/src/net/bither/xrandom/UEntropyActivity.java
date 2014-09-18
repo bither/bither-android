@@ -37,7 +37,6 @@ import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.XRandom;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;

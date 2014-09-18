@@ -27,8 +27,6 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.exception.URandomNotFoundException;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
@@ -98,29 +96,24 @@ public class ImportPrivateKey {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    if (e instanceof URandomNotFoundException) {
-                        //todo
-                    } else {
-                        password.wipe();
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dp != null && dp.isShowing()) {
-                                    dp.setThread(null);
-                                    dp.dismiss();
-                                }
-                                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
+                    password.wipe();
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
                             }
-                        });
-                    }
-
+                            DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
+                        }
+                    });
                 }
             }
         };
         threadNeedService.start();
     }
 
-    private void addECKey(BlockchainService blockchainService, ECKey ecKey) throws URandomNotFoundException {
+    private void addECKey(BlockchainService blockchainService, ECKey ecKey) {
         String encryptedPrivateString;
         if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
             encryptedPrivateString = content;
@@ -204,7 +197,7 @@ public class ImportPrivateKey {
 
 
     private void handlerResult(BlockchainService blockchainService, ECKey ecKey
-            , BitherSetting.AddressType addressType) throws URandomNotFoundException {
+            , BitherSetting.AddressType addressType) {
         switch (addressType) {
             case Normal:
                 addECKey(blockchainService, ecKey);

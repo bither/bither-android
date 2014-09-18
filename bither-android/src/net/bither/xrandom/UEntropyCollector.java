@@ -20,9 +20,7 @@ package net.bither.xrandom;
 
 import com.google.common.primitives.Ints;
 
-import net.bither.bitherj.crypto.IUEntropy;
-import net.bither.bitherj.crypto.URandom;
-import net.bither.bitherj.exception.URandomNotFoundException;
+import net.bither.bitherj.BitherjApplication;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -32,9 +30,6 @@ import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Created by songchenwen on 14-9-11.
- */
 public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public static final int POOL_SIZE = 32 * 200;
 
@@ -125,7 +120,8 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     }
 
     @Override
-    public void nextBytes(byte[] bytes) {
+    public byte[] nextBytes(int length) {
+        byte[] bytes = new byte[length];
         if (!shouldCollectData()) {
             throw new IllegalStateException("UEntropyCollector is not running");
         }
@@ -139,6 +135,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return bytes;
     }
 
     public enum UEntropySource {
@@ -159,14 +156,13 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                 return data;
             }
             byte[] result = new byte[bytesInOneBatch];
-            byte[] locatorBytes = new byte[Ints.BYTES];
-            URandom random = new URandom();
+            byte[] locatorBytes;
             for (int i = 0;
                  i < bytesInOneBatch;
                  i++) {
                 int position = (int) (Math.random() * data.length);
                 try {
-                    random.nextBytes(locatorBytes);
+                    locatorBytes = BitherjApplication.random.nextBytes(Ints.BYTES);
                     int value = Math.abs(Ints.fromByteArray(locatorBytes));
                     position = (int) (((float) value / (float) Integer.MAX_VALUE) * data.length);
                 } catch (Exception e) {
