@@ -30,7 +30,6 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.exception.URandomNotFoundException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -114,12 +113,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
             @Override
             public void runWithService(BlockchainService service) {
                 int count = wvCount.getCurrentItem() + 1;
-                try {
-                    addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null,
-                            password, count);
-                } catch (URandomNotFoundException e) {
-                    e.printStackTrace();
-                }
+                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null,
+                        password, count);
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override

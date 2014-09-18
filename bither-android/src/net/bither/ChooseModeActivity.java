@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -59,6 +60,7 @@ import net.bither.util.ServiceUtil;
 import net.bither.util.SystemUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
+import net.bither.xrandom.URandom;
 
 public class ChooseModeActivity extends Activity {
     private static final int AnimHideDuration = 600;
@@ -85,11 +87,34 @@ public class ChooseModeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (UpgradeUtil.needUpgrade()) {
-            upgrade();
+        if (URandom.urandomFile.exists()) {
+            if (UpgradeUtil.needUpgrade()) {
+                upgrade();
+            } else {
+                setVersionCode();
+                initActivity();
+            }
         } else {
-            setVersionCode();
-            initActivity();
+            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this, getString(R.string.urandom_not_exists), new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            });
+            dialogConfirmTask.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    finish();
+                }
+            });
+            dialogConfirmTask.setCancelable(false);
+            dialogConfirmTask.show();
         }
     }
 

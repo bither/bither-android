@@ -29,12 +29,14 @@ import android.os.StrictMode;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.IBitherjApp;
+import net.bither.bitherj.ISetting;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.IRandom;
 import net.bither.bitherj.utils.Threading;
 import net.bither.exception.UEHandler;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +84,8 @@ public class BitherApplication extends BitherjApplication {
     }
 
     @Override
-    public void init() {
-        mIinitialize = new IBitherjApp() {
+    public ISetting initSetting() {
+        ISetting bitherjApp = new ISetting() {
             @Override
             public BitherjSettings.AppMode getAppMode() {
                 return AppSharedPreference.getInstance().getAppMode();
@@ -104,6 +106,12 @@ public class BitherApplication extends BitherjApplication {
                 return AppSharedPreference.getInstance().getTransactionFeeMode();
             }
         };
+        return bitherjApp;
+    }
+
+    @Override
+    public IRandom initRandom() {
+        return new URandom();
     }
 
     public int maxConnectedPeers() {
