@@ -152,21 +152,7 @@ public class BitherApplication extends BitherjApplication {
         }
     }
 
-    public static boolean isApplicationRunInForeground() {
-        if (mContext == null) {
-            return false;
-        }
-        ActivityManager am = (ActivityManager) mContext
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-        if (tasks != null && !tasks.isEmpty()) {
-            ComponentName topActivity = tasks.get(0).topActivity;
-            if (!topActivity.getPackageName().equals(mContext.getPackageName())) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
 
 }
