@@ -170,4 +170,19 @@ public class BitherSetting {
         }
 
     }
+
+    public enum SyncInterval {
+        FifteenMinute(R.string.synchronous_interval_fifteen_minute), OneHour(R.string.synchronous_interval_one_hour), OnlyOpenApp(R.string.synchronous_interval_only_open_app);
+
+        private SyncInterval(int stringId) {
+            this.stringId = stringId;
+        }
+
+        private int stringId;
+
+        public int getStringId() {
+            return stringId;
+        }
+
+    }
 }

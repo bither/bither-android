@@ -25,10 +25,8 @@ import net.bither.model.Ticker;
 import java.util.List;
 
 public class BroadcastUtil {
-    public static final String ACTION_START_DOWLOAD_BLOCK_STATE = R.class
+    public static final String ACTION_START_PEER_MANAGER = R.class
             .getPackage().getName() + ".start_dowload_block_state";
-
-
     public static final String ACTION_ADDRESS_ERROR = "address_error";
 
     public static final String ACTION_MARKET = R.class.getPackage().getName()
@@ -42,6 +40,11 @@ public class BroadcastUtil {
     public static final String ACTION_DOWLOAD_SPV_BLOCK = R.class.getPackage()
             .getName() + ".dowload_block_api_complete";
     public static final String ACTION_DOWLOAD_SPV_BLOCK_STATE = "complete";
+
+    public static void sendBroadcastStartPeer() {
+        final Intent broadcast = new Intent(ACTION_START_PEER_MANAGER);
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
 
 
     public static void sendBroadcastMarketState(List<Ticker> tickers) {
