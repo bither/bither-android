@@ -36,7 +36,7 @@ import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.EditPasswordThread;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
