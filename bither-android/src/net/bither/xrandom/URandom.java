@@ -25,14 +25,15 @@ import java.io.IOException;
 
 public class URandom implements IRandom {
 
+    public static File urandomFile = new File("/dev/urandom");
+
     public synchronized byte[] nextBytes(int length) {
         byte[] bytes = new byte[length];
-        File file = new File("/dev/urandom");
-        if (!file.exists()) {
+        if (!urandomFile.exists()) {
             throw new RuntimeException("Unable to generate URandom bytes on this Android device");
         }
         try {
-            FileInputStream stream = new FileInputStream(file);
+            FileInputStream stream = new FileInputStream(urandomFile);
             DataInputStream dis = new DataInputStream(stream);
             dis.readFully(bytes);
             dis.close();

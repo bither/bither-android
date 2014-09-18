@@ -359,4 +359,5 @@
     <string name="xrandom_cancel_confirm">Stop generating?</string>
     <string name="xrandom_no_source">No entropy source available.</string>
     <string name="xrandom_generating_failed">Generating failed</string>
+    <string name="urandom_not_exists">Your device can\'t provide enough secured randomness.</string>
 </resources>
