@@ -131,6 +131,7 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
     private void createKeyboardsWithDefaultWidth() {
         if (getNumericKeyboard() != 0) {
             mNumericKeyboard = new EntryKeyboard(getContext(), getNumericKeyboard());
+            mNumericKeyboard.setDrawKeyListener(this);
         }
         if (getAlphaKeyboard() != 0) {
             mQwertyKeyboard = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
@@ -140,7 +141,6 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             mQwertyKeyboardShifted.enableShiftLock();
             mQwertyKeyboardShifted.setShifted(true); // always shifted.
 
-            mNumericKeyboard.setDrawKeyListener(this);
             mQwertyKeyboard.setDrawKeyListener(this);
             mQwertyKeyboardShifted.setDrawKeyListener(this);
         }
