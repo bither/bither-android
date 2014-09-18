@@ -39,8 +39,7 @@
                 android:layout_marginTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:textColor="@color/text_field_text_color"
-                android:text="XRandom"/>
+                android:button="@drawable/xrandom_checkbox_selector"/>
 
             <Button
                 android:id="@+id/btn_add"
