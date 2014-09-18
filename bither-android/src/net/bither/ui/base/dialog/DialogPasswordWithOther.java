@@ -40,7 +40,7 @@ import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;

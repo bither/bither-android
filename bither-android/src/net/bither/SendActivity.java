@@ -51,8 +51,10 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.keyboard.EntryKeyboardView;
+import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -63,8 +65,7 @@ import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
 
-public class SendActivity extends SwipeRightActivity implements PasswordEntryKeyboardView
-        .PasswordEntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+public class SendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -77,7 +78,8 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     private DialogProgress dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
-    private PasswordEntryKeyboardView kv;
+    private PasswordEntryKeyboardView kvPassword;
+    private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
 
     private boolean isDonate = false;
@@ -117,7 +119,8 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         etPassword = (EditText) findViewById(R.id.et_password);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
-        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
+        kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
+        kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
@@ -140,7 +143,9 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
         dp = new DialogProgress(this, R.string.please_wait);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
-        kv.registerEditText(etPassword).setListener(this);
+        kvPassword.registerEditText(etPassword).setListener(this);
+        kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
+                (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
     }
 
     private OnClickListener scanClick = new OnClickListener() {
@@ -298,12 +303,12 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     }
 
     @Override
-    public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v) {
+    public void onEntryKeyboardShow(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v) {
+    public void onEntryKeyboardHide(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.GONE);
     }
 
@@ -465,7 +470,7 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
 
     @Override
     public void onBackPressed() {
-        if (!kv.handleBack()) {
+        if (!kvPassword.handleBack()) {
             super.onBackPressed();
         }
     }
