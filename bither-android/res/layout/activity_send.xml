@@ -173,7 +173,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/global_shadow_up"/>
 
-                <net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView
+                <net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView
                     android:id="@+id/kv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

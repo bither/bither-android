@@ -51,8 +51,9 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.keyboard.EntryKeyboardView;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -63,8 +64,7 @@ import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
 
-public class SendActivity extends SwipeRightActivity implements PasswordEntryKeyboardView
-        .PasswordEntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+public class SendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -298,12 +298,12 @@ public class SendActivity extends SwipeRightActivity implements PasswordEntryKey
     }
 
     @Override
-    public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v) {
+    public void onEntryKeyboardShow(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v) {
+    public void onEntryKeyboardHide(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.GONE);
     }
 

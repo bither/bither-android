@@ -1,20 +1,22 @@
 /*
- * Copyright 2014 http://Bither.net
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  * Copyright 2014 http://Bither.net
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
-package net.bither.ui.base.passwordkeyboard;
+package net.bither.ui.base.keyboard;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -46,16 +48,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardView
+public abstract class EntryKeyboardView extends KeyboardView implements KeyboardView
         .OnKeyboardActionListener, View.OnFocusChangeListener, View.OnClickListener,
-        View.OnTouchListener, PasswordEntryKeyboard.DrawKeyListener {
-    public static interface PasswordEntryKeyboardViewListener {
-        public void onPasswordEntryKeyboardHide(PasswordEntryKeyboardView v);
+        View.OnTouchListener, EntryKeyboard.DrawKeyListener {
+    public static interface EntryKeyboardViewListener {
+        public void onEntryKeyboardHide(EntryKeyboardView v);
 
-        public void onPasswordEntryKeyboardShow(PasswordEntryKeyboardView v);
+        public void onEntryKeyboardShow(EntryKeyboardView v);
     }
 
-    private static final String TAG = "PasswordEntryKeyboardHelper";
+    private static final String TAG = "EntryKeyboardHelper";
 
     public static final int KEYBOARD_MODE_ALPHA = 0;
     public static final int KEYBOARD_MODE_NUMERIC = 1;
@@ -64,8 +66,8 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private static final int KEYBOARD_STATE_CAPSLOCK = 2;
 
     public static final int[] ActionKeyCodes = new int[]{Keyboard.KEYCODE_DELETE,
-            Keyboard.KEYCODE_CANCEL, Keyboard.KEYCODE_MODE_CHANGE,
-            PasswordEntryKeyboard.KEYCODE_SHIFT, PasswordEntryKeyboard.KEYCODE_ENTER};
+            Keyboard.KEYCODE_CANCEL, Keyboard.KEYCODE_MODE_CHANGE, EntryKeyboard.KEYCODE_SHIFT,
+            EntryKeyboard.KEYCODE_ENTER};
 
     static {
         Arrays.sort(ActionKeyCodes);
@@ -89,33 +91,33 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     private int mKeyboardMode = KEYBOARD_MODE_ALPHA;
     private int mKeyboardState = KEYBOARD_STATE_NORMAL;
 
-    private PasswordEntryKeyboard mQwertyKeyboard;
-    private PasswordEntryKeyboard mQwertyKeyboardShifted;
-    private PasswordEntryKeyboard mNumericKeyboard;
+    private EntryKeyboard mQwertyKeyboard;
+    private EntryKeyboard mQwertyKeyboardShifted;
+    private EntryKeyboard mNumericKeyboard;
 
     private InputMethodManager imm;
 
     private Object viewRootImpl;
 
-    private PasswordEntryKeyboardViewListener listener;
+    private EntryKeyboardViewListener listener;
 
     private boolean canGetViewRootImpl;
 
-    public PasswordEntryKeyboardView(Context context, AttributeSet attrs) {
+    public EntryKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PasswordEntryKeyboardView(Context context, AttributeSet attrs, int defStyle) {
+    public EntryKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     private void init() {
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        setOnKeyboardActionListener(PasswordEntryKeyboardView.this);
+        setOnKeyboardActionListener(EntryKeyboardView.this);
         createKeyboards();
-        setKeyboardMode(KEYBOARD_MODE_NUMERIC);
+        setKeyboardMode(getDefaultKeyboardMode());
     }
 
     public void createKeyboards() {
@@ -127,13 +129,11 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
     }
 
     private void createKeyboardsWithDefaultWidth() {
-        mNumericKeyboard = new PasswordEntryKeyboard(getContext(), R.xml.password_keyboard_number);
-        mQwertyKeyboard = new PasswordEntryKeyboard(getContext(), R.xml.password_keyboard_letter,
-                0);
+        mNumericKeyboard = new EntryKeyboard(getContext(), getNumericKeyboard());
+        mQwertyKeyboard = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
         mQwertyKeyboard.enableShiftLock();
 
-        mQwertyKeyboardShifted = new PasswordEntryKeyboard(getContext(),
-                R.xml.password_keyboard_letter, 0);
+        mQwertyKeyboardShifted = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
         mQwertyKeyboardShifted.enableShiftLock();
         mQwertyKeyboardShifted.setShifted(true); // always shifted.
 
@@ -141,6 +141,12 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         mQwertyKeyboard.setDrawKeyListener(this);
         mQwertyKeyboardShifted.setDrawKeyListener(this);
     }
+
+    protected abstract int getAlphaKeyboard();
+
+    protected abstract int getNumericKeyboard();
+
+    protected abstract int getDefaultKeyboardMode();
 
     public void setKeyboardMode(int mode) {
         switch (mode) {
@@ -214,7 +220,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
             return;
         } else if (primaryCode == Keyboard.KEYCODE_MODE_CHANGE) {
             handleModeChange();
-        } else if (primaryCode == PasswordEntryKeyboard.KEYCODE_ENTER) {
+        } else if (primaryCode == EntryKeyboard.KEYCODE_ENTER) {
             handleEnter();
         } else {
             handleCharacter(primaryCode, keyCodes);
@@ -298,7 +304,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
 
     private void handleShift() {
         Keyboard current = getKeyboard();
-        PasswordEntryKeyboard next = null;
+        EntryKeyboard next = null;
         final boolean isAlphaMode = current == mQwertyKeyboard || current == mQwertyKeyboardShifted;
         if (mKeyboardState == KEYBOARD_STATE_NORMAL) {
             mKeyboardState = isAlphaMode ? KEYBOARD_STATE_SHIFTED : KEYBOARD_STATE_CAPSLOCK;
@@ -408,8 +414,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                                 }
                                 super.onReceiveResult(resultCode, resultData);
                             }
-                        }
-                );
+                        });
                 if (!result) {
                     showKeyboardRunnable.run();
                 }
@@ -451,7 +456,7 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         return false;
     }
 
-    public PasswordEntryKeyboardView registerEditText(EditText... ets) {
+    public EntryKeyboardView registerEditText(EditText... ets) {
         for (EditText et : ets) {
             et.setOnFocusChangeListener(this);
             et.setOnClickListener(this);
@@ -541,16 +546,16 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
                             0, R.string.password_keyboard_done);
                 }
             }
-            PasswordEntryKeyboard keyboard = (PasswordEntryKeyboard) getKeyboard();
+            EntryKeyboard keyboard = (EntryKeyboard) getKeyboard();
             invalidateKey(keyboard.getEnterKeyIndex());
         }
     }
 
-    public PasswordEntryKeyboardViewListener getListener() {
+    public EntryKeyboardViewListener getListener() {
         return listener;
     }
 
-    public PasswordEntryKeyboardView setListener(PasswordEntryKeyboardViewListener listener) {
+    public EntryKeyboardView setListener(EntryKeyboardViewListener listener) {
         this.listener = listener;
         return this;
     }
@@ -560,9 +565,9 @@ public class PasswordEntryKeyboardView extends KeyboardView implements KeyboardV
         super.setVisibility(visibility);
         if (listener != null) {
             if (visibility == View.VISIBLE) {
-                listener.onPasswordEntryKeyboardShow(this);
+                listener.onEntryKeyboardShow(this);
             } else {
-                listener.onPasswordEntryKeyboardHide(this);
+                listener.onEntryKeyboardHide(this);
             }
         }
     }
