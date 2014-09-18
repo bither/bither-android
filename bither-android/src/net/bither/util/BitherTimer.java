@@ -34,7 +34,7 @@ import java.util.List;
 public class BitherTimer {
     private Thread thread = null;
     private Context context;
-    private boolean isPause = false;
+    private boolean isStop = false;
 
     public BitherTimer(Context context) {
         this.context = context;
@@ -45,7 +45,7 @@ public class BitherTimer {
             thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (!isPause) {
+                    while (!isStop) {
                         getExchangeTicker();
                         try {
                             Thread.sleep(1 * 60 * 1000);
@@ -58,11 +58,10 @@ public class BitherTimer {
             });
             thread.start();
         }
-
     }
 
-    public void pauseTimer() {
-        isPause = true;
+    public void stopTimer() {
+        isStop = true;
     }
 
     private void getExchangeTicker() {

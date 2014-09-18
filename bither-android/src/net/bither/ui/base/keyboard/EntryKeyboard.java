@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.ui.base.passwordkeyboard;
+package net.bither.ui.base.keyboard;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -24,7 +24,7 @@ import android.inputmethodservice.Keyboard;
 
 import net.bither.R;
 
-public class PasswordEntryKeyboard extends Keyboard {
+public class EntryKeyboard extends Keyboard {
     public static interface DrawKeyListener {
         public int[] beforeDrawKeyWithStates(Key key, int[] states);
     }
@@ -45,11 +45,11 @@ public class PasswordEntryKeyboard extends Keyboard {
     private Keyboard.Key mEnterKey;
     private int mShiftState = SHIFT_OFF;
 
-    public PasswordEntryKeyboard(Context context, int xmlLayoutResId) {
+    public EntryKeyboard(Context context, int xmlLayoutResId) {
         this(context, xmlLayoutResId, 0);
     }
 
-    public PasswordEntryKeyboard(Context context, int xmlLayoutResId, int mode) {
+    public EntryKeyboard(Context context, int xmlLayoutResId, int mode) {
         super(context, xmlLayoutResId, mode);
         init(context);
     }
@@ -60,8 +60,8 @@ public class PasswordEntryKeyboard extends Keyboard {
         mShiftLockIcon = res.getDrawable(R.drawable.sym_keyboard_shift_locked_holo_dark);
     }
 
-    public PasswordEntryKeyboard(Context context, int layoutTemplateResId,
-                                 CharSequence characters, int columns, int horizontalPadding) {
+    public EntryKeyboard(Context context, int layoutTemplateResId, CharSequence characters,
+                         int columns, int horizontalPadding) {
         super(context, layoutTemplateResId, characters, columns, horizontalPadding);
     }
 
@@ -125,7 +125,7 @@ public class PasswordEntryKeyboard extends Keyboard {
     /**
      * Allows shiftlock to be turned on.  See {@link #setShiftLocked(boolean)}
      */
-    void enableShiftLock() {
+    public void enableShiftLock() {
         int index = getShiftKeyIndex();
         mShiftKey = getKeys().get(index);
         if (mShiftKey instanceof LatinKey) {
@@ -142,7 +142,7 @@ public class PasswordEntryKeyboard extends Keyboard {
      *
      * @param shiftLocked
      */
-    void setShiftLocked(boolean shiftLocked) {
+    public void setShiftLocked(boolean shiftLocked) {
         if (mShiftKey != null) {
             mShiftKey.on = shiftLocked;
             mShiftKey.icon = mShiftLockIcon;
