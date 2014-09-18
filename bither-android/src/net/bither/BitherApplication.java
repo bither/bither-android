@@ -120,26 +120,7 @@ public class BitherApplication extends BitherjApplication {
         }
     }
 
-    public static void scheduleStartBlockchainService(@Nonnull final Context context) {
-        log.info("Schedule service restart after 15 minutes");
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
-                .ALARM_SERVICE);
-        final PendingIntent alarmIntent = PendingIntent.getService(context, 0,
-                new Intent(context, BlockchainService.class), 0);
-        alarmManager.cancel(alarmIntent);
-        final long now = System.currentTimeMillis();
-        final long alarmInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        // as of KitKat, set() is inexact
-        {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval, alarmIntent);
-        } else
-        // workaround for no inexact set() before KitKat
-        {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
-                    AlarmManager.INTERVAL_HOUR, alarmIntent);
-        }
-    }
+
 
     public static boolean canReloadTx() {
         if (reloadTxTime == -1) {

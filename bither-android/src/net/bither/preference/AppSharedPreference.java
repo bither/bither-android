@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.model.PasswordSeed;
@@ -54,6 +55,7 @@ public class AppSharedPreference {
     private static final String APP_MODE = "app_mode";
     private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
     private static final String BITHERJ_DONE_SYNC_FROM_SPV = "bitheri_done_sync_from_spv";
+    private static final String SYNC_INTERVAL = "sync_interval";
 
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
@@ -273,5 +275,16 @@ public class AppSharedPreference {
 
     public void setFirstRunDialogShown(boolean shown) {
         mPreferences.edit().putBoolean(FIRST_RUN_DIALOG_SHOWN, shown).commit();
+    }
+
+    public BitherSetting.SyncInterval getSyncInterval() {
+        int index = this.mPreferences.getInt(SYNC_INTERVAL,
+                BitherSetting.SyncInterval.FifteenMinute.ordinal());
+        return BitherSetting.SyncInterval.values()[index];
+    }
+
+    public void setSyncInterval(BitherSetting.SyncInterval syncInterval) {
+        this.mPreferences.edit().putInt(SYNC_INTERVAL, syncInterval.ordinal()).commit();
+
     }
 }

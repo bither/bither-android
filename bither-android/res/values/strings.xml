@@ -203,6 +203,10 @@
     <string name="reload_tx_success">Reload transactions data success </string>
     <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
     <string name="base_on_text">Base On </string>
+    <string name="synchronous_interval">Synchronous Interval</string>
+    <string name="synchronous_interval_fifteen_minute">Fifteen Minute</string>
+    <string name="synchronous_interval_one_hour">One Hour</string>
+    <string name="synchronous_interval_only_open_app">Only open the application</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>

@@ -44,6 +44,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_sync_interval"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
 
                             <Button
                                 android:id="@+id/btn_edit_password"

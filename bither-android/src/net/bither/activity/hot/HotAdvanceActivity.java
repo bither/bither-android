@@ -61,6 +61,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
@@ -74,6 +75,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
+    private SettingSelectorView ssvSyncInterval;
     private Button btnExportLog;
     private Button btnResetTx;
     private DialogProgress dp;
@@ -93,10 +95,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
+        ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
-
+        ssvSyncInterval.setSelector(syncIntervalSelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
@@ -106,57 +109,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvVserion.setText(Version.name + " " + Version.version);
     }
 
-    private SettingSelectorView.SettingSelector wifiSelector = new SettingSelectorView
-            .SettingSelector() {
-
-        @Override
-        public void onOptionIndexSelected(int index) {
-            hasAnyAction = true;
-            final boolean isOnlyWifi = index == 1;
-            AppSharedPreference.getInstance().setSyncBlockOnlyWifi(isOnlyWifi);
-        }
-
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_wifi);
-        }
-
-        @Override
-        public String getOptionName(int index) {
-            if (index == 1) {
-                return getString(R.string.setting_name_wifi_yes);
-            } else {
-                return getString(R.string.setting_name_wifi_no);
-            }
-        }
-
-        @Override
-        public int getOptionCount() {
-            hasAnyAction = true;
-            return 2;
-        }
-
-        @Override
-        public int getCurrentOptionIndex() {
-            boolean onlyUseWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
-            if (onlyUseWifi) {
-                return 1;
-            } else {
-                return 0;
-            }
-
-        }
-
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            return null;
-        }
-    };
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
@@ -441,6 +393,126 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }
             };
+
+    private SettingSelectorView.SettingSelector wifiSelector = new SettingSelectorView
+            .SettingSelector() {
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            boolean orginSyncBlockOnluWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
+            hasAnyAction = true;
+            final boolean isOnlyWifi = index == 1;
+            AppSharedPreference.getInstance().setSyncBlockOnlyWifi(isOnlyWifi);
+            if (orginSyncBlockOnluWifi != isOnlyWifi) {
+                BroadcastUtil.sendBroadcastStartPeer();
+            }
+
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_wifi);
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            if (index == 1) {
+                return getString(R.string.setting_name_wifi_yes);
+            } else {
+                return getString(R.string.setting_name_wifi_no);
+            }
+        }
+
+        @Override
+        public int getOptionCount() {
+            hasAnyAction = true;
+            return 2;
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            boolean onlyUseWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
+            if (onlyUseWifi) {
+                return 1;
+            } else {
+                return 0;
+            }
+
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+    };
+
+    private SettingSelectorView.SettingSelector syncIntervalSelector = new SettingSelectorView.SettingSelector() {
+        @Override
+        public int getOptionCount() {
+            return 3;
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            switch (index) {
+                case 1:
+                    return getString(BitherSetting.SyncInterval.OneHour.getStringId());
+                case 2:
+                    return getString(BitherSetting.SyncInterval.OnlyOpenApp.getStringId());
+            }
+            return getString(BitherSetting.SyncInterval.FifteenMinute.getStringId());
+
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.synchronous_interval);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
+            switch (syncInterval) {
+                case OneHour:
+                    return 1;
+                case OnlyOpenApp:
+                    return 2;
+
+            }
+            return 0;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            switch (index) {
+                case 0:
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.FifteenMinute);
+                    break;
+                case 1:
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OneHour);
+                    break;
+                case 2:
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OnlyOpenApp);
+                    break;
+            }
+
+        }
+    };
 
     private void importPrivateKeyFromQrCode(boolean isFromBip38) {
         if (isFromBip38) {
