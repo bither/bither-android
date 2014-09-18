@@ -25,7 +25,10 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.GenericUtils;
+import net.bither.util.StringUtil;
+import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
 
@@ -53,7 +56,7 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
         TextView tvLowPriorityWarn = (TextView) findViewById(R.id.tv_low_priority_warn);
-        tvAddress.setText(tx.getFirstOutAddress());
+        tvAddress.setText(WalletUtils.formatHash(tx.getFirstOutAddress(), 4, 24));
         tvBtc.setText(GenericUtils.formatValueWithBold(tx.amountSentToAddress(tx.getFirstOutAddress())));
         tvFee.setText(GenericUtils.formatValueWithBold(tx.getFee()));
         // This warning is no longer needed. As more and more mining pool upgrade their

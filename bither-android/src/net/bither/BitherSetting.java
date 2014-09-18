@@ -16,7 +16,6 @@
 
 package net.bither;
 
-import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 
 import java.nio.charset.Charset;

@@ -25,13 +25,12 @@ import android.widget.LinearLayout;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 
-public class IDialogAddressWithShowPrivateKey extends CenterDialog implements View
+public class DialogAddressWithShowPrivateKey extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener, IDialogPasswordListener {
     private DialogFancyQrCode dialogQr;
     private DialogPrivateKeyQrCode dialogPrivateKey;
@@ -40,8 +39,8 @@ public class IDialogAddressWithShowPrivateKey extends CenterDialog implements Vi
     private Activity activity;
     private int clickedView;
 
-    public IDialogAddressWithShowPrivateKey(Activity context,
-                                            Address address) {
+    public DialogAddressWithShowPrivateKey(Activity context,
+                                           Address address) {
         super(context);
         this.activity = context;
         this.address = address;

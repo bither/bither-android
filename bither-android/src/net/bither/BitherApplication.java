@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -39,8 +38,6 @@ import net.bither.service.BlockchainService;
 import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import javax.annotation.Nonnull;
 

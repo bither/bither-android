@@ -29,9 +29,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.bitherj.crypto.DumpedPrivateKey;
-import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;

@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.ui.base.dialog.IDialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -70,7 +70,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     private OnLongClickListener typeClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            IDialogAddressWithShowPrivateKey dialog = new IDialogAddressWithShowPrivateKey
+            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
                     (activity, address);
             dialog.show();
             return true;

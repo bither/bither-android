@@ -20,7 +20,6 @@ import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.crypto.IRandom;
 import net.bither.bitherj.crypto.ec.Parameters;
 
-
 import java.math.BigInteger;
 
 public class XRandom implements IRandom {

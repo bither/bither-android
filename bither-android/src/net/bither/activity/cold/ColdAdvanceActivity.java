@@ -43,14 +43,14 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
-import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
@@ -208,7 +208,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode(true);
                             return;
                         case 1:
-                            new IDialogImportBip38KeyText(ColdAdvanceActivity.this).show();
+                            new DialogImportBip38KeyText(ColdAdvanceActivity.this).show();
                             return;
                         default:
                             return;

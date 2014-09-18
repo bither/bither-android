@@ -39,7 +39,6 @@ import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-
 import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;

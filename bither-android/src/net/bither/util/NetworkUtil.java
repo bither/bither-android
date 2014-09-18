@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import net.bither.BitherApplication;
 
 public class NetworkUtil {

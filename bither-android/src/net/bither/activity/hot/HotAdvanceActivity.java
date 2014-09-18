@@ -53,11 +53,11 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.IDialogImportBip38KeyText;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -434,7 +434,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             importPrivateKeyFromQrCode(true);
                             return;
                         case 1:
-                            new IDialogImportBip38KeyText(HotAdvanceActivity.this).show();
+                            new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
                             return;
                         default:
                             return;

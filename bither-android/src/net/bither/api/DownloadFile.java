@@ -18,7 +18,6 @@ package net.bither.api;
 
 import android.os.Build;
 
-
 import net.bither.http.HttpRequestException;
 import net.bither.http.HttpSetting;
 import net.bither.preference.PersistentCookieStore;

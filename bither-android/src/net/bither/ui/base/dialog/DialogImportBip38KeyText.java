@@ -33,12 +33,12 @@ import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
-public class IDialogImportBip38KeyText extends CenterDialog implements DialogInterface
+public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         IDialogPasswordListener {
     private Activity activity;
@@ -51,7 +51,7 @@ public class IDialogImportBip38KeyText extends CenterDialog implements DialogInt
     private String decode;
     private DialogProgress pd;
 
-    public IDialogImportBip38KeyText(Activity context) {
+    public DialogImportBip38KeyText(Activity context) {
         super(context);
         this.activity = context;
         setContentView(R.layout.dialog_import_bip38_key_text);
@@ -168,7 +168,7 @@ public class IDialogImportBip38KeyText extends CenterDialog implements DialogInt
         @Override
         public void onPasswordEntered(final SecureCharSequence password) {
             if (decode != null) {
-                DialogPassword dialogPassword = new DialogPassword(getContext(), IDialogImportBip38KeyText.this);
+                DialogPassword dialogPassword = new DialogPassword(getContext(), DialogImportBip38KeyText.this);
                 dialogPassword.show();
             } else {
                 DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
