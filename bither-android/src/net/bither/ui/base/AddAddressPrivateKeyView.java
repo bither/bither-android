@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
@@ -33,10 +34,12 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.UEntropyActivity;
 
@@ -78,6 +81,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                 LayoutParams.MATCH_PARENT);
         wvCount = (WheelView) findViewById(R.id.wv_count);
         cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);
+        cbxXRandom.setOnCheckedChangeListener(xRandomCheck);
         btnAdd = (Button) findViewById(R.id.btn_add);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
@@ -160,4 +164,32 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         }
     };
 
+    private CompoundButton.OnCheckedChangeListener xRandomCheck = new CompoundButton
+            .OnCheckedChangeListener() {
+        private boolean ignoreListener = false;
+        private DialogConfirmTask dialog = new DialogConfirmTask(getContext(),
+                getResources().getString(R.string.xrandom_uncheck_warn), new Runnable() {
+            @Override
+            public void run() {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ignoreListener = true;
+                        cbxXRandom.setChecked(false);
+                        ignoreListener = false;
+                        LogUtil.i(AddAddressPrivateKeyView.class.getSimpleName(),
+                                "set checked false");
+                    }
+                });
+            }
+        });
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (!isChecked && !ignoreListener) {
+                cbxXRandom.setChecked(true);
+                dialog.show();
+            }
+        }
+    };
 }

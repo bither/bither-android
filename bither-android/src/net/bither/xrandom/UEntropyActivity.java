@@ -80,7 +80,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(0, R.anim.scanner_in_exit);
+        overridePendingTransition(0, R.anim.uentropy_activity_start_exit);
         targetCount = getIntent().getExtras().getInt(PrivateKeyCountKey, 0);
         if (targetCount <= 0) {
             finish();

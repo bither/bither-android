@@ -349,4 +349,5 @@
     <string name="xrandom_generating_failed">生成失败</string>
     <string name="xrandom_no_source">无可用随机源</string>
     <string name="urandom_not_exists">你的设备无法提供足够安全的随机数</string>
+    <string name="xrandom_uncheck_warn">极随机(XRandom)能提高随机性.\n确认不使用吗?</string>
 </resources>
