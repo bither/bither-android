@@ -439,7 +439,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
                     XRandom xRandom = new XRandom(entropyCollector);
                     ECKey ecKey = ECKey.generateECKey(xRandom);
-
+                    ecKey.setFromXRandom(true);
                     progress += itemProgress * progressKeyRate;
                     onProgress(progress);
                     if (cancelRunnable != null) {
