@@ -141,8 +141,12 @@ public class BitherSetting {
                         .getString(R.string.market_name_btcchina);
                 break;
             case BITFINEX:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitfinex);
                 break;
             case MARKET796:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_796);
                 break;
             default:
                 name = BitherApplication.mContext

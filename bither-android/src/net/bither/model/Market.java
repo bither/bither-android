@@ -85,6 +85,12 @@ public class Market {
             case BTCCHINA:
                 resource = R.color.market_color_btcchina;
                 break;
+            case MARKET796:
+                resource = R.color.market_color_796;
+                break;
+            case BITFINEX:
+                resource = R.color.market_color_bitfinex;
+                break;
             default:
                 resource = R.color.text_field_text_color;
                 break;
@@ -127,6 +133,11 @@ public class Market {
                 return "chbtc.com";
             case BTCCHINA:
                 return "btcchina.com";
+            case BITFINEX:
+                return "bitfinex.com";
+            case MARKET796:
+                return "796.com";
+
             default:
                 return null;
         }

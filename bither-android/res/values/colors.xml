@@ -38,6 +38,8 @@
     <color name="market_color_chbtc">#ff5b469d</color>
     <color name="market_color_huobi">#ffff9329</color>
     <color name="market_color_btce">#ff25bebc</color>
+    <color name="market_color_796">#ffe31f21</color>
+    <color name="market_color_bitfinex">#ffa3bd0b</color>
 
     <!-- scanner -->
     <color name="scan_mask">#60000000</color>

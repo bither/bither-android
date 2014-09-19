@@ -91,12 +91,15 @@ public class ExchangeUtil {
             case OKCOIN:
             case BTCCHINA:
             case CHBTC:
+
                 if (exchangeType == ExchangeType.USD) {
                     rate = rate / preRate;
                 }
                 break;
+            case MARKET796:
             case BTCE:
             case BITSTAMP:
+            case BITFINEX:
                 if (exchangeType == ExchangeType.CNY) {
                     rate = rate * preRate;
                 }
@@ -118,8 +121,10 @@ public class ExchangeUtil {
             case BTCCHINA:
             case CHBTC:
                 return ExchangeType.CNY;
+            case MARKET796:
             case BTCE:
             case BITSTAMP:
+            case BITFINEX:
                 return ExchangeType.USD;
             default:
                 break;
