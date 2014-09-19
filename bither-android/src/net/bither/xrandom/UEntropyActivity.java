@@ -20,6 +20,7 @@ package net.bither.xrandom;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -41,12 +43,12 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
@@ -60,7 +62,8 @@ import java.util.List;
 
 public class UEntropyActivity extends Activity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
-    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
+    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + "" +
+            ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
     private static final long VIBRATE_DURATION = 50L;
@@ -109,11 +112,10 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
         entropyCollector = new UEntropyCollector(this);
 
-        entropyCollector.addSources(
-                new UEntropyCamera((SurfaceView) findViewById(R.id.v_camera), entropyCollector),
-                new UEntropyMic(entropyCollector, (AudioVisualizerView) findViewById(R.id.v_mic)),
-                new UEntropySensor(this, entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor))
-        );
+        entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id.v_camera),
+                entropyCollector), new UEntropyMic(entropyCollector,
+                (AudioVisualizerView) findViewById(R.id.v_mic)), new UEntropySensor(this,
+                entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor)));
         generateThread = new GenerateThread();
 
         vOverlay.postDelayed(new Runnable() {
@@ -232,7 +234,6 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             @Override
             public void run() {
                 int p = (int) (pb.getMax() * progress);
-                LogUtil.i(UEntropyActivity.class.getSimpleName(), "progress " + p);
                 pb.setProgress(p);
             }
         });
@@ -245,15 +246,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.putExtra(BitherSetting.INTENT_REF
-                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                                AppSharedPreference.getInstance().getPasswordSeed() == null);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                                addresses);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                        new FinalConfirmDialog().show(addresses);
                     }
                 });
             }
@@ -336,6 +329,42 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             startAnimation();
             generateThread.setPassword(password);
             generateThread.start();
+        }
+    }
+
+    private class FinalConfirmDialog extends CenterDialog implements DialogInterface
+            .OnDismissListener, View.OnClickListener {
+        private TextView tv;
+        private ArrayList<String> addresses;
+
+        public FinalConfirmDialog() {
+            super(UEntropyActivity.this);
+            setContentView(R.layout.dialog_xrandom_final_confirm);
+            tv = (TextView) findViewById(R.id.tv);
+            tv.setText(String.format(getString(R.string.xrandom_final_confirm), targetCount));
+            findViewById(R.id.btn_ok).setOnClickListener(this);
+            setOnDismissListener(this);
+        }
+
+        public void show(final ArrayList<String> addresses) {
+            this.addresses = addresses;
+            super.show();
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            Intent intent = new Intent();
+            intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
+                    AppSharedPreference.getInstance().getPasswordSeed() == null);
+            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
+            setResult(RESULT_OK, intent);
+            finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
+        }
+
+        @Override
+        public void onClick(View v) {
+            dismiss();
         }
     }
 

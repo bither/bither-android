@@ -350,4 +350,5 @@
     <string name="xrandom_no_source">無可用隨機源</string>
     <string name="urandom_not_exists">你的設備無法提供足夠安全的隨機數</string>
     <string name="xrandom_uncheck_warn">極隨機(XRandom)能提高隨機性.\n確認不使用嗎?</string>
+    <string name="xrandom_final_confirm">您已成功生成%d個私鑰</string>
 </resources>
