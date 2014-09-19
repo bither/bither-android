@@ -24,21 +24,22 @@ import java.util.regex.Pattern;
 
 public class QRCodeUtil {
     public static final String QR_CODE_SPLIT = "/";
+    public static final String OLD_QR_CODE_SPLIT = ":";
 
     public static String[] splitString(String str) {
-        if (OldQRCodeUtil.verifyOldQrcodeTransport(str)) {
-            return OldQRCodeUtil.splitOldString(str);
+        if (oldVerifyQrcodeTransport(str)) {
+            return oldSplitString(str);
         } else {
-            return str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+            return str.split(OLD_QR_CODE_SPLIT);
         }
     }
 
     public static int indexOfOfSplitChar(String str) {
         int indexOfSplit = 0;
-        if (OldQRCodeUtil.verifyOldQrcodeTransport(str)) {
-            indexOfSplit = str.indexOf(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        if (oldVerifyQrcodeTransport(str)) {
+            indexOfSplit = str.indexOf(OLD_QR_CODE_SPLIT);
         } else {
-            indexOfSplit = str.indexOf(QRCodeUtil.QR_CODE_SPLIT);
+            indexOfSplit = str.indexOf(QR_CODE_SPLIT);
         }
         return indexOfSplit;
     }
@@ -57,8 +58,8 @@ public class QRCodeUtil {
     }
 
     public static String decodeQrCodeString(String formatString) {
-        if (OldQRCodeUtil.verifyOldQrcodeTransport(formatString)) {
-            return OldQRCodeUtil.decodeOldQrCodeString(formatString);
+        if (oldVerifyQrcodeTransport(formatString)) {
+            return oldDecodeQrCodeString(formatString);
         }
         return formatString;
 
@@ -68,6 +69,9 @@ public class QRCodeUtil {
         Pattern pattern = Pattern.compile("[^0-9A-Z/]");
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
+            return false;
+        }
+        if (!oldVerifyQrcodeTransport(text)) {
             return false;
         }
         return true;
@@ -99,6 +103,36 @@ public class QRCodeUtil {
             stringList.add(pageString + splitStr);
         }
         return stringList;
+    }
+
+
+    private static String[] oldSplitString(String str) {
+        String[] stringArray = str.split(OLD_QR_CODE_SPLIT);
+        return stringArray;
+    }
+
+
+    private static String oldDecodeQrCodeString(String formatString) {
+        formatString = formatString.toLowerCase(Locale.US);
+        Pattern pattern = Pattern.compile("\\*([a-z])");
+        Matcher matcher = pattern.matcher(formatString);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String letter = matcher.group(1);
+            matcher.appendReplacement(sb, letter.toUpperCase(Locale.US));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+
+    }
+
+    private static boolean oldVerifyQrcodeTransport(String text) {
+        Pattern pattern = Pattern.compile("[^0-9A-Z\\*:]");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            return false;
+        }
+        return true;
     }
 
 }

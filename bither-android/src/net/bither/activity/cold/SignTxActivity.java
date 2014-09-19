@@ -37,10 +37,8 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.GenericUtils;
-import net.bither.util.OldQRCodeUtil;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.List;

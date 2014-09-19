@@ -16,7 +16,6 @@
 
 package net.bither.model;
 
-import net.bither.util.OldQRCodeUtil;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
@@ -69,7 +68,7 @@ public class QRCodeTransportPage {
     }
 
     public static QRCodeTransportPage formatQrCodeString(String text) {
-        if (!OldQRCodeUtil.verifyOldQrcodeTransport(text)) {
+        if (!QRCodeUtil.verifyQrcodeTransport(text)) {
             return null;
         }
         QRCodeTransportPage qrCodetTransportPage = new QRCodeTransportPage();

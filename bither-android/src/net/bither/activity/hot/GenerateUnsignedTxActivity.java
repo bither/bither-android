@@ -62,7 +62,6 @@ import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
-import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 

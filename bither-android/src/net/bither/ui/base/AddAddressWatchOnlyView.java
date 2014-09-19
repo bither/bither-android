@@ -37,7 +37,6 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.OldQRCodeUtil;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
