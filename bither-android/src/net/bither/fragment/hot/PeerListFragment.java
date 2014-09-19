@@ -36,9 +36,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.core.PeerManager;
-import net.bither.bitherj.utils.NotificationUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,7 +221,7 @@ public final class PeerListFragment extends ListFragment {
             super.onStartLoading();
 
             context.registerReceiver(broadcastReceiver, new IntentFilter(
-                    NotificationUtil.ACTION_PEER_STATE));
+                    NotificationAndroidImpl.ACTION_PEER_STATE));
         }
 
         @Override

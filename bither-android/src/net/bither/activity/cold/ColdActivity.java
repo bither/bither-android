@@ -33,10 +33,10 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
@@ -106,7 +106,7 @@ public class ColdActivity extends FragmentActivity {
         }, 500);
         DialogFirstRunWarning.show(this);
         registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
@@ -437,7 +437,7 @@ public class ColdActivity extends FragmentActivity {
     private final class AddressIsLoadedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
             Fragment fragment = getFragmentAtIndex(1);

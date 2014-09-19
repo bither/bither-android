@@ -37,9 +37,9 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -126,11 +126,11 @@ public class HotActivity extends FragmentActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
                 .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
-        intentFilter.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
+        intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        intentFilter.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
         registerReceiver(txAndBlockBroadcastReceiver, intentFilter);
         registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
@@ -431,11 +431,11 @@ public class HotActivity extends FragmentActivity {
         public void onReceive(Context context, Intent intent) {
 
             if (intent == null ||
-                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
-                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                    (!Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
                 return;
             }
-            if (Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())) {
+            if (Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())) {
                 refreshTotalBalance();
             }
             Fragment fragment = getFragmentAtIndex(1);
@@ -448,7 +448,7 @@ public class HotActivity extends FragmentActivity {
     private final class AddressIsLoadedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
             refreshTotalBalance();

@@ -29,15 +29,15 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.exception.BlockStoreException;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
@@ -87,7 +87,7 @@ public class BlockchainService extends android.app.Service {
             receiverConnectivity();
             registerReceiver(tickReceiver, new IntentFilter(
                     Intent.ACTION_TIME_TICK));
-            registerReceiver(txReceiver, new IntentFilter(NotificationUtil.ACTION_ADDRESS_BALANCE));
+            registerReceiver(txReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE));
             BroadcastUtil.sendBroadcastStartPeer();
         }
         startMarkTimerTask();
@@ -315,7 +315,7 @@ public class BlockchainService extends android.app.Service {
                         PeerManager.instance().start();
                         if (!spvFinishedReceivered) {
                             final IntentFilter intentFilter = new IntentFilter();
-                            intentFilter.addAction(NotificationUtil.ACTION_SYNC_FROM_SPV_FINISHED);
+                            intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_FROM_SPV_FINISHED);
                             spvFinishedReceiver = new SPVFinishedReceiver();
                             registerReceiver(spvFinishedReceiver, intentFilter);
                             spvFinishedReceivered = true;
@@ -371,7 +371,7 @@ public class BlockchainService extends android.app.Service {
                             TransactionsUtil.getMyTxFromBither();
                         }
                         startPeerManager();
-                        NotificationUtil.removeBroadcastSyncSPVFinished();
+                        BitherjApplication.NOTIFICATION_SERVICE.removeBroadcastSyncSPVFinished();
                         if (spvFinishedReceiver != null && spvFinishedReceivered) {
                             unregisterReceiver(spvFinishedReceiver);
                             spvFinishedReceivered = false;

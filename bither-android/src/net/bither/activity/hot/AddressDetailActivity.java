@@ -30,10 +30,10 @@ import android.widget.ListView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.TransactionListAdapter;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.AddressDetailHeader;
 import net.bither.ui.base.DropdownMessage;
@@ -112,12 +112,12 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null ||
-                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
-                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                    (!Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
                 return;
             }
-            if (intent.hasExtra(NotificationUtil.ACTION_ADDRESS_BALANCE)) {
-                String receiveAddressStr = intent.getStringExtra(NotificationUtil.MESSAGE_ADDRESS);
+            if (intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
+                String receiveAddressStr = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
                 if (Utils.compareString(receiveAddressStr, address.getAddress())) {
                     loadData();
                 }
@@ -134,8 +134,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter txAndBlockReceiver = new IntentFilter();
-        txAndBlockReceiver.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
-        txAndBlockReceiver.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
         IntentFilter marketFilter = new IntentFilter(
                 BroadcastUtil.ACTION_MARKET);
         registerReceiver(txAndBlockBroadcastReceiver, txAndBlockReceiver);

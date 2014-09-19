@@ -8,8 +8,8 @@ import android.content.Intent;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.GenericUtils;
 import net.bither.util.SystemUtil;
@@ -29,15 +29,15 @@ public class TxReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_BALANCE)) {
+        if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
             return;
         }
         if (tickReceiver != null) {
             tickReceiver.setTransactionsReceived();
         }
-        String address = intent.getStringExtra(NotificationUtil.MESSAGE_ADDRESS);
-        long amount = intent.getLongExtra(NotificationUtil.MESSAGE_DELTA_BALANCE, 0);
-        int txNotificationType = intent.getIntExtra(NotificationUtil.MESSAGE_TX_NOTIFICATION_TYPE, 0);
+        String address = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
+        long amount = intent.getLongExtra(NotificationAndroidImpl.MESSAGE_DELTA_BALANCE, 0);
+        int txNotificationType = intent.getIntExtra(NotificationAndroidImpl.MESSAGE_TX_NOTIFICATION_TYPE, 0);
         if (txNotificationType == Tx.TxNotificationType.txReceive.getValue()) {
             boolean isReceived = amount > 0;
             amount = Math.abs(amount);
