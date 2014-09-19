@@ -149,12 +149,21 @@
                     android:layout_weight="1" />
 
                 <ImageView
+                    android:id="@+id/iv_xrandom_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:visibility="gone"
+                    android:src="@drawable/xrandom_address_label"/>
+
+                <ImageView
                     android:id="@+id/iv_type_watchonly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/address_type_watchonly" />
+                    android:src="@drawable/address_type_watchonly"/>
 
                 <ImageView
                     android:id="@+id/iv_type_private"

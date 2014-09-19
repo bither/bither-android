@@ -48,6 +48,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private BtcToMoneyTextView tvBalanceMoney;
     public ImageView ivWatchOnlyType;
     public ImageView ivPrivateType;
+    private ImageView ivXRandomLabel;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
     private TextView tvTransactionCount;
@@ -73,6 +74,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
         ivWatchOnlyType = (ImageView) findViewById(R.id.iv_type_watchonly);
         ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
+        ivXRandomLabel = (ImageView) findViewById(R.id.iv_xrandom_label);
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id

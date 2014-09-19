@@ -40,6 +40,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     private TextView tvAddress;
     private QrCodeImageView ivQr;
     private ImageView ivType;
+    private ImageView ivXRandomLabel;
 
     public ColdAddressFragmentListItemView(Activity context) {
         super(context);
@@ -55,6 +56,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         ivType = (ImageView) findViewById(R.id.iv_type);
+        ivXRandomLabel = (ImageView) findViewById(R.id.iv_xrandom_label);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
         ivType.setOnLongClickListener(typeClick);

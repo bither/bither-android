@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/bg"
-    android:paddingLeft="@dimen/card_list_padding"
-    android:paddingRight="@dimen/card_list_padding">
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/bg"
+             android:paddingLeft="@dimen/card_list_padding"
+             android:paddingRight="@dimen/card_list_padding">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,25 +37,26 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center_vertical"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
             </FrameLayout>
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
 
             <net.bither.ui.base.QrCodeImageView
                 android:id="@+id/iv_qrcode"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:background="@drawable/qrcode_frame" />
+                android:background="@drawable/qrcode_frame"/>
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/card_separator_color" />
+            android:background="@color/card_separator_color"/>
 
         <LinearLayout
             android:id="@+id/ll_extra"
@@ -72,7 +73,16 @@
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/iv_xrandom_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:visibility="gone"
+                android:src="@drawable/xrandom_address_label"/>
 
             <ImageView
                 android:id="@+id/iv_type"
@@ -80,11 +90,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
-                android:background="@drawable/address_type_private_selector" />
+                android:background="@drawable/address_type_private_selector"/>
         </LinearLayout>
     </LinearLayout>
 
 
-    <include layout="@layout/layout_card_foreground_single" />
+    <include layout="@layout/layout_card_foreground_single"/>
 
 </FrameLayout>
