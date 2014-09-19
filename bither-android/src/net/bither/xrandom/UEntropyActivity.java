@@ -62,8 +62,7 @@ import java.util.List;
 
 public class UEntropyActivity extends Activity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
-    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + "" +
-            ".private_key_count_key";
+    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 
     private static final long VIBRATE_DURATION = 50L;
@@ -243,6 +242,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (dpCancel != null && dpCancel.isShowing()) {
+                    dpCancel.dismiss();
+                }
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {

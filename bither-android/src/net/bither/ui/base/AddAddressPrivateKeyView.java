@@ -37,6 +37,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
@@ -80,6 +81,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);
         cbxXRandom.setOnCheckedChangeListener(xRandomCheck);
         btnAdd = (Button) findViewById(R.id.btn_add);
+        findViewById(R.id.ibtn_xrandom_info).setOnClickListener(xRandomInfoDetailClick);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
         wvCount.setViewAdapter(countAdapter);
@@ -185,6 +187,14 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                 cbxXRandom.setChecked(true);
                 dialog.show();
             }
+        }
+    };
+
+    private OnClickListener xRandomInfoDetailClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogXRandomInfo dialog = new DialogXRandomInfo(activity);
+            dialog.show();
         }
     };
 }

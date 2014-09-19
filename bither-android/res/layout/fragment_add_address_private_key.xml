@@ -30,17 +30,34 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"/>
 
-            <CheckBox
-                android:id="@+id/cbx_xrandom"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="10dp"
-                android:checked="true"
-                android:button="@drawable/xrandom_checkbox_selector"/>
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/cbx_xrandom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:checked="true"
+                    android:button="@drawable/xrandom_checkbox_selector"/>
+
+                <ImageButton
+                    android:id="@+id/ibtn_xrandom_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/xrandom_info_icon_selector"/>
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_add"
