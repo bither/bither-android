@@ -33,7 +33,6 @@ import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.OldQRCodeUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -53,7 +52,7 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
         setCanceledOnTouchOutside(true);
-        this.content = OldQRCodeUtil.encodeQrCodeString(keyString);
+        this.content = OldQRCodeUtil.encodeOldQrCodeString(keyString);
         setContentView(R.layout.dialog_private_key_qr_code);
         setOnDismissListener(this);
         initView();

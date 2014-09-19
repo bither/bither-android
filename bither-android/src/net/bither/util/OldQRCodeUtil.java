@@ -16,6 +16,8 @@
 
 package net.bither.util;
 
+import net.bither.model.QRCodeTxTransport;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -27,14 +29,13 @@ public class OldQRCodeUtil {
 
     private static final String OLD_QR_CODE_LETTER = "*";
 
-    private static final int MAX_QRCODE_SIZE = 328;
 
     public static String[] splitOldString(String str) {
         String[] stringArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
         return stringArray;
     }
 
-    public static String encodeQrCodeString(String text) {
+    public static String encodeOldQrCodeString(String text) {
         Pattern pattern = Pattern.compile("[A-Z]");
         Matcher matcher = pattern.matcher(text);
         StringBuffer sb = new StringBuffer();
@@ -47,7 +48,7 @@ public class OldQRCodeUtil {
         return sb.toString().toUpperCase(Locale.US);
     }
 
-    public static String decodeQrCodeString(String formatString) {
+    public static String decodeOldQrCodeString(String formatString) {
         formatString = formatString.toLowerCase(Locale.US);
         Pattern pattern = Pattern.compile("\\*([a-z])");
         Matcher matcher = pattern.matcher(formatString);
@@ -61,7 +62,7 @@ public class OldQRCodeUtil {
 
     }
 
-    public static boolean verifyQrcodeTransport(String text) {
+    public static boolean verifyOldQrcodeTransport(String text) {
         Pattern pattern = Pattern.compile("[^0-9A-Z\\*:]");
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
@@ -70,9 +71,9 @@ public class OldQRCodeUtil {
         return true;
     }
 
-    public static List<String> getQrCodeStringList(String str) {
+    public static List<String> getOldQrCodeStringList(String str) {
         List<String> stringList = new ArrayList<String>();
-        int num = getNumOfQrCodeString(str.length());
+        int num = StringUtil.getNumOfQrCodeString(str.length());
         int sumLength = str.length() + num * 6;
         int pageSize = sumLength / num;
         for (int i = 0;
@@ -98,18 +99,6 @@ public class OldQRCodeUtil {
         return stringList;
     }
 
-    private static int getNumOfQrCodeString(int length) {
-        if (length < MAX_QRCODE_SIZE) {
-            return 1;
-        } else if (length <= (MAX_QRCODE_SIZE - 4) * 10) {
-            return length / (MAX_QRCODE_SIZE - 4) + 1;
-        } else if (length <= (MAX_QRCODE_SIZE - 5) * 100) {
-            return length / (MAX_QRCODE_SIZE - 5) + 1;
-        } else if (length <= (MAX_QRCODE_SIZE - 6) * 1000) {
-            return length / (MAX_QRCODE_SIZE - 6) + 1;
-        } else {
-            return 1000;
-        }
 
-    }
+
 }

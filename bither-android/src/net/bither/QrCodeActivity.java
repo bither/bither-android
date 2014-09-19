@@ -51,7 +51,7 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
             super.finish();
             overridePendingTransition(0, 0);
         } else {
-            contents = OldQRCodeUtil.getQrCodeStringList(OldQRCodeUtil.encodeQrCodeString(codeString));
+            contents = OldQRCodeUtil.getOldQrCodeStringList(OldQRCodeUtil.encodeOldQrCodeString(codeString));
             initView();
             String title = getTitleString();
             if (!StringUtil.isEmpty(title)) {

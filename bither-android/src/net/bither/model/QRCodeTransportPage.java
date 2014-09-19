@@ -20,6 +20,7 @@ import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;
+import java.util.Locale;
 
 public class QRCodeTransportPage {
     private int mCurrentPage;
@@ -63,11 +64,11 @@ public class QRCodeTransportPage {
                         + qCodetTransportPage.getContent();
             }
         }
-        return OldQRCodeUtil.decodeQrCodeString(transportString);
+        return OldQRCodeUtil.decodeOldQrCodeString(transportString);
     }
 
     public static QRCodeTransportPage formatQrCodeString(String text) {
-        if (!OldQRCodeUtil.verifyQrcodeTransport(text)) {
+        if (!OldQRCodeUtil.verifyOldQrcodeTransport(text)) {
             return null;
         }
         QRCodeTransportPage qrCodetTransportPage = new QRCodeTransportPage();
@@ -81,5 +82,27 @@ public class QRCodeTransportPage {
             qrCodetTransportPage.setContent(text);
         }
         return qrCodetTransportPage;
+    }
+
+    public static String getPreSignString(QRCodeTxTransport qrCodeTransport) {
+        String preSignString = qrCodeTransport.getMyAddress()
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
+                + Long.toHexString(qrCodeTransport.getFee())
+                .toLowerCase(Locale.US)
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
+                + qrCodeTransport.getToAddress()
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
+                + Long.toHexString(qrCodeTransport.getTo())
+                .toLowerCase(Locale.US) + OldQRCodeUtil.OLD_QR_CODE_SPLIT;
+        for (int i = 0; i < qrCodeTransport.getHashList().size(); i++) {
+            String hash = qrCodeTransport.getHashList().get(i);
+            if (i < qrCodeTransport.getHashList().size() - 1) {
+                preSignString = preSignString + hash + OldQRCodeUtil.OLD_QR_CODE_SPLIT;
+            } else {
+                preSignString = preSignString + hash;
+            }
+        }
+
+        return preSignString;
     }
 }

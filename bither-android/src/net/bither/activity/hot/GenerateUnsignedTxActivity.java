@@ -40,6 +40,7 @@ import net.bither.ScanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.model.QRCodeTransportPage;
 import net.bither.model.QRCodeTxTransport;
 import net.bither.model.Ticker;
 import net.bither.model.UnSignTransaction;
@@ -61,6 +62,7 @@ import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
@@ -68,7 +70,6 @@ import net.bither.util.TransactionsUtil;
 public class GenerateUnsignedTxActivity extends SwipeRightActivity implements EntryKeyboardView
         .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private static final String ADDRESS_POSITION_SAVE_KEY = "address_position";
-
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -173,7 +174,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeTxTransport.getPreSignString(QRCodeTxTransport
+                    QRCodeTransportPage.getPreSignString(QRCodeTxTransport
                             .fromSendRequestWithUnsignedTransaction(tx)));
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
@@ -324,11 +325,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         success = false;
                         e.printStackTrace();
                     }
-                    if(success){
+                    if (success) {
                         try {
                             new CommitTransactionThread(dp, addressPosition, tx, false, GenerateUnsignedTxActivity.this).start();
                             return;
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
