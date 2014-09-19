@@ -96,7 +96,8 @@ public class BitherSetting {
     }
 
     public enum MarketType {
-        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6);
+        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6), BITFINEX(7),
+        MARKET796(8);
         private int mVal;
 
         private MarketType(int val) {
@@ -138,6 +139,10 @@ public class BitherSetting {
             case BTCCHINA:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_btcchina);
+                break;
+            case BITFINEX:
+                break;
+            case MARKET796:
                 break;
             default:
                 name = BitherApplication.mContext
