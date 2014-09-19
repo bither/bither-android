@@ -225,6 +225,7 @@ public class HotActivity extends FragmentActivity {
                 }
                 Intent intent = new Intent(HotActivity.this, AddHotAddressActivity.class);
                 startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
 
             }
         });

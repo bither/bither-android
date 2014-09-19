@@ -39,7 +39,6 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.UEntropyActivity;
 
@@ -76,9 +75,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
 
     private void initView() {
         removeAllViews();
-        addView(LayoutInflater.from(getContext()).inflate(R.layout
-                        .fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT);
+        addView(LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         wvCount = (WheelView) findViewById(R.id.wv_count);
         cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);
         cbxXRandom.setOnCheckedChangeListener(xRandomCheck);
@@ -101,8 +98,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                 getContext().startActivity(intent);
                 activity.finish();
             } else {
-                DialogPassword dialog = new DialogPassword(getContext(),
-                        AddAddressPrivateKeyView.this);
+                DialogPassword dialog = new DialogPassword(getContext(), AddAddressPrivateKeyView
+                        .this);
                 dialog.show();
             }
         }
@@ -116,8 +113,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
             @Override
             public void runWithService(BlockchainService service) {
                 int count = wvCount.getCurrentItem() + 1;
-                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null,
-                        password, count);
+                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null, password,
+                        count);
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -177,8 +174,6 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                         ignoreListener = true;
                         cbxXRandom.setChecked(false);
                         ignoreListener = false;
-                        LogUtil.i(AddAddressPrivateKeyView.class.getSimpleName(),
-                                "set checked false");
                     }
                 });
             }

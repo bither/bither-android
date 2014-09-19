@@ -144,7 +144,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         if (generateThread.isAlive()) {
             cancelGenerate();
         } else {
-            finish();
+            cancelRunnable.run();
         }
     }
 
@@ -185,7 +185,6 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             dpCancel.dismiss();
         }
         super.finish();
-        overridePendingTransition(R.anim.scanner_out_enter, 0);
     }
 
     @Override
@@ -254,6 +253,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                                 addresses);
                         setResult(RESULT_OK, intent);
                         finish();
+                        overridePendingTransition(0, R.anim.slide_out_bottom);
                     }
                 });
             }
@@ -304,6 +304,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         Intent intent = new Intent(UEntropyActivity.this, target);
         intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
         startActivity(intent);
+        overridePendingTransition(R.anim.uentropy_activity_back_enter, 0);
         vOverlay.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -318,7 +319,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             if (dpCancel.isShowing()) {
                 dpCancel.dismiss();
             }
-            finish();
+            stopAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    backToFromActivity();
+                }
+            });
         }
     };
 
