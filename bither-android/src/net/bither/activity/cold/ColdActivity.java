@@ -384,7 +384,9 @@ public class ColdActivity extends FragmentActivity {
                             passwordSeed.checkPassword(password);
                             ECKey key = passwordSeed.getECKey();
                             if (key != null) {
-                                addressList.add(new Address(key.toAddress(), key.getPubKey(), PrivateKeyUtil.getPrivateKeyString(key)));
+                                Address address = new Address(key.toAddress(), key.getPubKey(),
+                                        PrivateKeyUtil.getPrivateKeyString(key), key.isFromXRandom());
+                                addressList.add(address);
 
                             }
                         }

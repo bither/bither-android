@@ -452,7 +452,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     // start encrypt
                     ecKey = PrivateKeyUtil.encrypt(ecKey, password);
                     Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(),
-                            PrivateKeyUtil.getPrivateKeyString(ecKey));
+                            PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
                     addressList.add(address);
                     addressStrs.add(0, address.getAddress());
 

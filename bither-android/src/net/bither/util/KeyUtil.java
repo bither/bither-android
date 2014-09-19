@@ -49,7 +49,7 @@ public class KeyUtil {
             ECKey ecKey = ECKey.generateECKey(xRandom);
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             Address address = new Address(ecKey.toAddress(),
-                    ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey));
+                    ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
             if (AppSharedPreference.getInstance().getPasswordSeed() == null) {

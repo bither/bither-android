@@ -156,7 +156,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             for (String str : strs) {
                 byte[] pub = StringUtil.hexStringToByteArray(str);
                 String addString = Utils.toAddress(Utils.sha256hash160(pub));
-                Address address = new Address(addString, pub, null);
+                Address address = new Address(addString, pub, null, false);
                 wallets.add(address);
             }
             for (Address address : wallets) {

@@ -46,10 +46,7 @@ public class BitherApplication extends BitherjApplication {
     private ActivityManager activityManager;
 
     private static org.slf4j.Logger log = LoggerFactory.getLogger(BitherApplication.class);
-
     private static BitherApplication mBitherApplication;
-
-
     public static HotActivity hotActivity;
     public static ColdActivity coldActivity;
     public static UEHandler ueHandler;

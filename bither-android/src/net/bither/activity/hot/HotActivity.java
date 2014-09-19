@@ -108,7 +108,7 @@ public class HotActivity extends FragmentActivity {
                     }
                 }, 500);
                 onNewIntent(getIntent());
-                BitherApplication.startBlockchainService();
+
             }
         }, 500);
         mPager.postDelayed(new Runnable() {
@@ -151,6 +151,7 @@ public class HotActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        BitherApplication.startBlockchainService();
     }
 
 

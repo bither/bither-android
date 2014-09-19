@@ -121,7 +121,8 @@ public class ImportPrivateKey {
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             encryptedPrivateString = PrivateKeyUtil.getPrivateKeyString(ecKey);
         }
-        Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedPrivateString);
+        Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedPrivateString
+                , ecKey.isFromXRandom());
         if (AddressManager.getInstance().getWatchOnlyAddresses().contains(address)) {
             password.wipe();
             ThreadUtil.runOnMainThread(new Runnable() {

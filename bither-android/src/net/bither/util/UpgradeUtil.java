@@ -99,7 +99,7 @@ public class UpgradeUtil {
         List<Address> watchOnlyAddressList = new ArrayList<Address>();
         for (int i = ecKeyPrivates.size() - 1; i >= 0; i--) {
             ECKey ecKey = ecKeyPrivates.get(i);
-            Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey));
+            Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey), false);
             privateAddressList.add(address);
         }
         if (privateAddressList.size() > 0) {
@@ -107,7 +107,7 @@ public class UpgradeUtil {
         }
         for (int i = ecKeysWatchOnly.size() - 1; i >= 0; i--) {
             ECKey ecKey = ecKeysWatchOnly.get(i);
-            Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), null);
+            Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), null, false);
             watchOnlyAddressList.add(address);
         }
         if (watchOnlyAddressList.size() > 0) {
