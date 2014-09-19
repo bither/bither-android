@@ -71,8 +71,7 @@ public class BackupUtil {
             String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
             for (String backupStr : backupStrArray) {
                 if (backupStr.contains(address)) {
-                    String[] strArray = backupStr
-                            .split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+                    String[] strArray = OldQRCodeUtil.splitOldString(backupStr);
                     if (strArray.length > 3) {
                         String keyString = backupStr.substring(strArray[0]
                                 .length() + 1);
@@ -104,8 +103,7 @@ public class BackupUtil {
                     String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
                     for (String backupStr : backupStrArray) {
                         if (backupStr.contains(address)) {
-                            String[] strArray = backupStr
-                                    .split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+                            String[] strArray = OldQRCodeUtil.splitOldString(backupStr);
                             if (strArray.length > 3) {
                                 String keyString = backupStr
                                         .substring(strArray[0].length() + 1);

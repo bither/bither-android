@@ -29,6 +29,10 @@ public class OldQRCodeUtil {
 
     private static final int MAX_QRCODE_SIZE = 328;
 
+    public static String[] splitOldString(String str) {
+        String[] stringArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        return stringArray;
+    }
 
     public static String encodeQrCodeString(String text) {
         Pattern pattern = Pattern.compile("[A-Z]");

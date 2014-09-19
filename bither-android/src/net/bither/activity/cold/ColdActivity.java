@@ -377,7 +377,7 @@ public class ColdActivity extends FragmentActivity {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
-                            String[] strs = keyString.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+                            String[] strs = OldQRCodeUtil.splitOldString(keyString);
                             if (strs.length != 4) {
                                 continue;
                             }

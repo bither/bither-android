@@ -97,7 +97,7 @@ public class QRCodeTxTransport implements Serializable {
 
     public static QRCodeTxTransport formatQRCodeTransport(String str) {
         try {
-            String[] strArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+            String[] strArray = OldQRCodeUtil.splitOldString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
             String address = strArray[0];
             if (!StringUtil.validBicoinAddress(address)) {

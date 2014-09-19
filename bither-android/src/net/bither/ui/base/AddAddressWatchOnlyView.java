@@ -140,7 +140,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private boolean checkQrCodeContent(String content) {
-        String[] strs = content.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        String[] strs = OldQRCodeUtil.splitOldString(content);
         for (String str : strs) {
             if (str.length() != 66) {
                 return false;
@@ -150,7 +150,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private void processQrCodeContent(String content, BlockchainService service) {
-        String[] strs = content.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        String[] strs = OldQRCodeUtil.splitOldString(content);
         ArrayList<Address> wallets = new ArrayList<Address>();
         addresses.clear();
         try {
