@@ -37,6 +37,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
@@ -139,7 +140,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private boolean checkQrCodeContent(String content) {
-        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
+        String[] strs = content.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
         for (String str : strs) {
             if (str.length() != 66) {
                 return false;
@@ -149,7 +150,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private void processQrCodeContent(String content, BlockchainService service) {
-        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
+        String[] strs = content.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
         ArrayList<Address> wallets = new ArrayList<Address>();
         addresses.clear();
         try {

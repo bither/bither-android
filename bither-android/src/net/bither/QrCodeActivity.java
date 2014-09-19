@@ -27,6 +27,7 @@ import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
             super.finish();
             overridePendingTransition(0, 0);
         } else {
-            contents = StringUtil.getQrCodeStringList(StringUtil.encodeQrCodeString(codeString));
+            contents = OldQRCodeUtil.getQrCodeStringList(OldQRCodeUtil.encodeQrCodeString(codeString));
             initView();
             String title = getTitleString();
             if (!StringUtil.isEmpty(title)) {

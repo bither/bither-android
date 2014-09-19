@@ -20,6 +20,7 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.io.Serializable;
@@ -80,14 +81,14 @@ public class QRCodeTxTransport implements Serializable {
         QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
         qrCodeTransport.setMyAddress(tx.getFromAddress());
         String toAddress = tx.getFirstOutAddress();
-        if(StringUtil.isEmpty(toAddress)) {
+        if (StringUtil.isEmpty(toAddress)) {
             toAddress = BitherApplication.mContext.getString(R.string.address_cannot_be_parsed);
         }
         qrCodeTransport.setToAddress(toAddress);
         qrCodeTransport.setTo(tx.amountSentToAddress(toAddress));
         qrCodeTransport.setFee(tx.getFee());
         List<String> hashList = new ArrayList<String>();
-        for(byte[] h : tx.getUnsignedInHashes()){
+        for (byte[] h : tx.getUnsignedInHashes()) {
             hashList.add(Utils.bytesToHexString(h));
         }
         qrCodeTransport.setHashList(hashList);
@@ -96,7 +97,7 @@ public class QRCodeTxTransport implements Serializable {
 
     public static QRCodeTxTransport formatQRCodeTransport(String str) {
         try {
-            String[] strArray = str.split(StringUtil.QR_CODE_SPLIT);
+            String[] strArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
             String address = strArray[0];
             if (!StringUtil.validBicoinAddress(address)) {
@@ -127,18 +128,18 @@ public class QRCodeTxTransport implements Serializable {
 
     public static String getPreSignString(QRCodeTxTransport qrCodeTransport) {
         String preSignString = qrCodeTransport.getMyAddress()
-                + StringUtil.QR_CODE_SPLIT
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
                 + Long.toHexString(qrCodeTransport.getFee())
                 .toLowerCase(Locale.US)
-                + StringUtil.QR_CODE_SPLIT
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
                 + qrCodeTransport.getToAddress()
-                + StringUtil.QR_CODE_SPLIT
+                + OldQRCodeUtil.OLD_QR_CODE_SPLIT
                 + Long.toHexString(qrCodeTransport.getTo())
-                .toLowerCase(Locale.US) + StringUtil.QR_CODE_SPLIT;
+                .toLowerCase(Locale.US) + OldQRCodeUtil.OLD_QR_CODE_SPLIT;
         for (int i = 0; i < qrCodeTransport.getHashList().size(); i++) {
             String hash = qrCodeTransport.getHashList().get(i);
             if (i < qrCodeTransport.getHashList().size() - 1) {
-                preSignString = preSignString + hash + StringUtil.QR_CODE_SPLIT;
+                preSignString = preSignString + hash + OldQRCodeUtil.OLD_QR_CODE_SPLIT;
             } else {
                 preSignString = preSignString + hash;
             }

@@ -57,6 +57,7 @@ import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -376,7 +377,7 @@ public class ColdActivity extends FragmentActivity {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
-                            String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
+                            String[] strs = keyString.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
                             if (strs.length != 4) {
                                 continue;
                             }

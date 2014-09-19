@@ -60,6 +60,7 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
+import net.bither.util.OldQRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
@@ -137,7 +138,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 String pubStr = Utils.bytesToHexString(addresses.get(i).getPubKey());
                 content += pubStr;
                 if (i < addresses.size() - 1) {
-                    content += StringUtil.QR_CODE_SPLIT;
+                    content += OldQRCodeUtil.OLD_QR_CODE_SPLIT;
                 }
             }
             Intent intent = new Intent(getActivity(), QrCodeActivity.class);
