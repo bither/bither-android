@@ -249,7 +249,7 @@ public class TransactionsUtil {
 
     public static boolean signTransaction(Tx tx, String qrCodeContent)
             throws ScriptException {
-        String[] stringArray = OldQRCodeUtil.splitOldString(qrCodeContent);
+        String[] stringArray = QRCodeUtil.splitString(qrCodeContent);
         List<byte[]> hashList = new ArrayList<byte[]>();
         for (String str : stringArray) {
             if (!StringUtil.isEmpty(str)) {

@@ -31,12 +31,7 @@ public class PasswordSeed {
     private ECKey ecKey;
 
     public PasswordSeed(String str) {
-        int indexOfSplit = 0;
-        if (OldQRCodeUtil.verifyOldQrcodeTransport(str)) {
-            indexOfSplit = str.indexOf(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
-        } else {
-            indexOfSplit = str.indexOf(QRCodeUtil.QR_CODE_SPLIT);
-        }
+        int indexOfSplit = QRCodeUtil.indexOfOfSplitChar(str);
         this.address = str.substring(0, indexOfSplit);
         this.keyStr = str.substring(indexOfSplit + 1);
     }

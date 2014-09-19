@@ -71,7 +71,7 @@ public class BackupUtil {
             String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
             for (String backupStr : backupStrArray) {
                 if (backupStr.contains(address)) {
-                    String[] strArray = OldQRCodeUtil.splitOldString(backupStr);
+                    String[] strArray = QRCodeUtil.splitString(backupStr);
                     if (strArray.length > 3) {
                         String keyString = backupStr.substring(strArray[0]
                                 .length() + 1);
@@ -103,7 +103,7 @@ public class BackupUtil {
                     String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
                     for (String backupStr : backupStrArray) {
                         if (backupStr.contains(address)) {
-                            String[] strArray = OldQRCodeUtil.splitOldString(backupStr);
+                            String[] strArray = QRCodeUtil.splitString(backupStr);
                             if (strArray.length > 3) {
                                 String keyString = backupStr
                                         .substring(strArray[0].length() + 1);

@@ -21,6 +21,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.OldQRCodeUtil;
+import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.io.Serializable;
@@ -97,7 +98,7 @@ public class QRCodeTxTransport implements Serializable {
 
     public static QRCodeTxTransport formatQRCodeTransport(String str) {
         try {
-            String[] strArray = OldQRCodeUtil.splitOldString(str);
+            String[] strArray = QRCodeUtil.splitString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
             String address = strArray[0];
             if (!StringUtil.validBicoinAddress(address)) {

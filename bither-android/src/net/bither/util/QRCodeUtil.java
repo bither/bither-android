@@ -26,8 +26,21 @@ public class QRCodeUtil {
     public static final String QR_CODE_SPLIT = "/";
 
     public static String[] splitString(String str) {
-        String[] stringArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
-        return stringArray;
+        if (OldQRCodeUtil.verifyOldQrcodeTransport(str)) {
+            return OldQRCodeUtil.splitOldString(str);
+        } else {
+            return str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        }
+    }
+
+    public static int indexOfOfSplitChar(String str) {
+        int indexOfSplit = 0;
+        if (OldQRCodeUtil.verifyOldQrcodeTransport(str)) {
+            indexOfSplit = str.indexOf(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
+        } else {
+            indexOfSplit = str.indexOf(QRCodeUtil.QR_CODE_SPLIT);
+        }
+        return indexOfSplit;
     }
 
     public static String encodeQrCodeString(String text) {
