@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class QRCodeUtil {
     public static final String QR_CODE_SPLIT = "/";
 
-    public static String[] splitOldString(String str) {
+    public static String[] splitString(String str) {
         String[] stringArray = str.split(OldQRCodeUtil.OLD_QR_CODE_SPLIT);
         return stringArray;
     }
@@ -44,12 +44,15 @@ public class QRCodeUtil {
     }
 
     public static String decodeQrCodeString(String formatString) {
-        return formatString.toString();
+        if (OldQRCodeUtil.verifyOldQrcodeTransport(formatString)) {
+            return OldQRCodeUtil.decodeOldQrCodeString(formatString);
+        }
+        return formatString;
 
     }
 
     public static boolean verifyQrcodeTransport(String text) {
-        Pattern pattern = Pattern.compile("[^0-9A-Z\\*:]");
+        Pattern pattern = Pattern.compile("[^0-9A-Z/]");
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             return false;

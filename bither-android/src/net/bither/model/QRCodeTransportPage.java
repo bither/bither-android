@@ -65,7 +65,7 @@ public class QRCodeTransportPage {
                         + qCodetTransportPage.getContent();
             }
         }
-        return OldQRCodeUtil.decodeOldQrCodeString(transportString);
+        return QRCodeUtil.decodeQrCodeString(transportString);
     }
 
     public static QRCodeTransportPage formatQrCodeString(String text) {
