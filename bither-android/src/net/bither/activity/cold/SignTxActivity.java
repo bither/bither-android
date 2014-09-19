@@ -99,8 +99,8 @@ public class SignTxActivity extends SwipeRightActivity implements
     }
 
     private void showTransaction() {
-        tvFrom.setText(qrCodeTransport.getMyAddress());
-        tvTo.setText(qrCodeTransport.getToAddress());
+        tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
+        tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
         tvAmount.setText(GenericUtils.formatValueWithBold(qrCodeTransport
                 .getTo()));
         tvFee.setText(GenericUtils.formatValueWithBold(qrCodeTransport.getFee()));

@@ -86,7 +86,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         overridePendingTransition(0, R.anim.uentropy_activity_start_exit);
         targetCount = getIntent().getExtras().getInt(PrivateKeyCountKey, 0);
         if (targetCount <= 0) {
-            finish();
+            super.finish();
             return;
         }
         setContentView(R.layout.activity_uentropy);
@@ -203,15 +203,16 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         //TODO start animation
         AlphaAnimation anim = new AlphaAnimation(1, 0);
         anim.setFillAfter(true);
-        anim.setDuration(500);
+        anim.setDuration(600);
         vOverlay.startAnimation(anim);
     }
 
     private void stopAnimation(final Runnable finishRun) {
         //TODO stop animation
         AlphaAnimation anim = new AlphaAnimation(0, 1);
+        anim.setFillBefore(true);
         anim.setFillAfter(true);
-        anim.setDuration(500);
+        anim.setDuration(600);
         vOverlay.startAnimation(anim);
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
