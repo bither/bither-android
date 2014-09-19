@@ -16,8 +16,6 @@
 
 package net.bither.util;
 
-import net.bither.model.QRCodeTxTransport;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -98,7 +96,6 @@ public class OldQRCodeUtil {
         }
         return stringList;
     }
-
 
 
 }

@@ -38,6 +38,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.GenericUtils;
 import net.bither.util.OldQRCodeUtil;
+import net.bither.util.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
@@ -138,7 +139,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                      i < strings.size();
                      i++) {
                     if (i < strings.size() - 1) {
-                        result = result + strings.get(i) + OldQRCodeUtil.OLD_QR_CODE_SPLIT;
+                        result = result + strings.get(i) + QRCodeUtil.QR_CODE_SPLIT;
                     } else {
                         result = result + strings.get(i);
                     }
