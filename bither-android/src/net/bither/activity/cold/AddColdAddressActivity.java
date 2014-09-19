@@ -50,8 +50,6 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        overridePendingTransition(R.anim.activity_in_drop,
-                R.anim.activity_out_back);
         setContentView(R.layout.activity_add_cold_address);
         initView();
         if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
@@ -124,7 +122,5 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
         super.finish();
         overridePendingTransition(0, R.anim.slide_out_bottom);
     }
-
-    ;
 
 }

@@ -54,7 +54,6 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
         setContentView(R.layout.activity_add_hot_address);
         if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
             shouldSuggestCheck = true;

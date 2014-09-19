@@ -20,15 +20,18 @@ package net.bither.xrandom;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -41,12 +44,12 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
@@ -80,7 +83,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(0, R.anim.scanner_in_exit);
+        overridePendingTransition(0, R.anim.uentropy_activity_start_exit);
         targetCount = getIntent().getExtras().getInt(PrivateKeyCountKey, 0);
         if (targetCount <= 0) {
             finish();
@@ -109,11 +112,10 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
         entropyCollector = new UEntropyCollector(this);
 
-        entropyCollector.addSources(
-                new UEntropyCamera((SurfaceView) findViewById(R.id.v_camera), entropyCollector),
-                new UEntropyMic(entropyCollector, (AudioVisualizerView) findViewById(R.id.v_mic)),
-                new UEntropySensor(this, entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor))
-        );
+        entropyCollector.addSources(new UEntropyCamera((SurfaceView) findViewById(R.id.v_camera),
+                entropyCollector), new UEntropyMic(entropyCollector,
+                (AudioVisualizerView) findViewById(R.id.v_mic)), new UEntropySensor(this,
+                entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor)));
         generateThread = new GenerateThread();
 
         vOverlay.postDelayed(new Runnable() {
@@ -121,6 +123,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             public void run() {
                 DialogPassword dialogPassword = new DialogPassword(UEntropyActivity.this,
                         UEntropyActivity.this);
+                dialogPassword.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 dialogPassword.setNeedCancelEvent(true);
                 dialogPassword.show();
             }
@@ -144,7 +148,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         if (generateThread.isAlive()) {
             cancelGenerate();
         } else {
-            finish();
+            cancelRunnable.run();
         }
     }
 
@@ -185,7 +189,6 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             dpCancel.dismiss();
         }
         super.finish();
-        overridePendingTransition(R.anim.scanner_out_enter, 0);
     }
 
     @Override
@@ -233,7 +236,6 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             @Override
             public void run() {
                 int p = (int) (pb.getMax() * progress);
-                LogUtil.i(UEntropyActivity.class.getSimpleName(), "progress " + p);
                 pb.setProgress(p);
             }
         });
@@ -243,17 +245,13 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (dpCancel != null && dpCancel.isShowing()) {
+                    dpCancel.dismiss();
+                }
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.putExtra(BitherSetting.INTENT_REF
-                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                                AppSharedPreference.getInstance().getPasswordSeed() == null);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                                addresses);
-                        setResult(RESULT_OK, intent);
-                        finish();
+                        new FinalConfirmDialog().show(addresses);
                     }
                 });
             }
@@ -304,6 +302,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         Intent intent = new Intent(UEntropyActivity.this, target);
         intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
         startActivity(intent);
+        overridePendingTransition(R.anim.uentropy_activity_back_enter, 0);
         vOverlay.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -318,7 +317,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             if (dpCancel.isShowing()) {
                 dpCancel.dismiss();
             }
-            finish();
+            stopAnimation(new Runnable() {
+                @Override
+                public void run() {
+                    backToFromActivity();
+                }
+            });
         }
     };
 
@@ -330,6 +334,42 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             startAnimation();
             generateThread.setPassword(password);
             generateThread.start();
+        }
+    }
+
+    private class FinalConfirmDialog extends CenterDialog implements DialogInterface
+            .OnDismissListener, View.OnClickListener {
+        private TextView tv;
+        private ArrayList<String> addresses;
+
+        public FinalConfirmDialog() {
+            super(UEntropyActivity.this);
+            setContentView(R.layout.dialog_xrandom_final_confirm);
+            tv = (TextView) findViewById(R.id.tv);
+            tv.setText(String.format(getString(R.string.xrandom_final_confirm), targetCount));
+            findViewById(R.id.btn_ok).setOnClickListener(this);
+            setOnDismissListener(this);
+        }
+
+        public void show(final ArrayList<String> addresses) {
+            this.addresses = addresses;
+            super.show();
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            Intent intent = new Intent();
+            intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
+                    AppSharedPreference.getInstance().getPasswordSeed() == null);
+            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
+            setResult(RESULT_OK, intent);
+            finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
+        }
+
+        @Override
+        public void onClick(View v) {
+            dismiss();
         }
     }
 

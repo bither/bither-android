@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
@@ -33,8 +34,10 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.SecureCharSequence;
@@ -73,12 +76,12 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
 
     private void initView() {
         removeAllViews();
-        addView(LayoutInflater.from(getContext()).inflate(R.layout
-                        .fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT);
+        addView(LayoutInflater.from(getContext()).inflate(R.layout.fragment_add_address_private_key, null), LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         wvCount = (WheelView) findViewById(R.id.wv_count);
         cbxXRandom = (CheckBox) findViewById(R.id.cbx_xrandom);
+        cbxXRandom.setOnCheckedChangeListener(xRandomCheck);
         btnAdd = (Button) findViewById(R.id.btn_add);
+        findViewById(R.id.ibtn_xrandom_info).setOnClickListener(xRandomInfoDetailClick);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
         wvCount.setViewAdapter(countAdapter);
@@ -97,8 +100,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                 getContext().startActivity(intent);
                 activity.finish();
             } else {
-                DialogPassword dialog = new DialogPassword(getContext(),
-                        AddAddressPrivateKeyView.this);
+                DialogPassword dialog = new DialogPassword(getContext(), AddAddressPrivateKeyView
+                        .this);
                 dialog.show();
             }
         }
@@ -112,8 +115,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
             @Override
             public void runWithService(BlockchainService service) {
                 int count = wvCount.getCurrentItem() + 1;
-                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null,
-                        password, count);
+                addresses = KeyUtil.addPrivateKeyByRandomWithPassphras(service, null, password,
+                        count);
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -160,4 +163,38 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         }
     };
 
+    private CompoundButton.OnCheckedChangeListener xRandomCheck = new CompoundButton
+            .OnCheckedChangeListener() {
+        private boolean ignoreListener = false;
+        private DialogConfirmTask dialog = new DialogConfirmTask(getContext(),
+                getResources().getString(R.string.xrandom_uncheck_warn), new Runnable() {
+            @Override
+            public void run() {
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ignoreListener = true;
+                        cbxXRandom.setChecked(false);
+                        ignoreListener = false;
+                    }
+                });
+            }
+        });
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (!isChecked && !ignoreListener) {
+                cbxXRandom.setChecked(true);
+                dialog.show();
+            }
+        }
+    };
+
+    private OnClickListener xRandomInfoDetailClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogXRandomInfo dialog = new DialogXRandomInfo(activity);
+            dialog.show();
+        }
+    };
 }

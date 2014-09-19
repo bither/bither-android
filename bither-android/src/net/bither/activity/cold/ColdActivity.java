@@ -168,6 +168,7 @@ public class ColdActivity extends FragmentActivity {
                 }
                 Intent intent = new Intent(ColdActivity.this, AddColdAddressActivity.class);
                 startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
             }
         });
 

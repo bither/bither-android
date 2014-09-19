@@ -366,4 +366,7 @@
     <string name="xrandom_no_source">No entropy source available.</string>
     <string name="xrandom_generating_failed">Generating failed</string>
     <string name="urandom_not_exists">Your device can\'t provide enough secured randomness.</string>
+    <string name="xrandom_uncheck_warn">XRandom can increase randomness.\nSure to disable?</string>
+    <string name="xrandom_final_confirm">You have generated %d private keys.</string>
+    <string name="xrandom_info_detail">XRandom gathers data from sources to improve randomness.\n\nThe sources are sensors on your device like camera, microphone, magnetic sensor, gravity sensor, etc.\n\nShacking or rotating your device while gathering can improve randomness.</string>
 </resources>
