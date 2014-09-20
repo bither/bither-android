@@ -19,6 +19,7 @@ package net.bither.model;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
@@ -98,7 +99,7 @@ public class QRCodeTxTransport implements Serializable {
         try {
             String[] strArray = QRCodeUtil.splitString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
-            String address = strArray[0];
+            String address = Base58.bas58ToHex(strArray[0]);
             if (!StringUtil.validBicoinAddress(address)) {
                 return null;
             }
@@ -106,7 +107,7 @@ public class QRCodeTxTransport implements Serializable {
 
             qrCodeTransport.setFee(Long.parseLong(
                     strArray[1], 16));
-            qrCodeTransport.setToAddress(strArray[2]);
+            qrCodeTransport.setToAddress(Base58.bas58ToHex(strArray[2]));
             qrCodeTransport.setTo(Long.parseLong(
                     strArray[3], 16));
             List<String> hashList = new ArrayList<String>();

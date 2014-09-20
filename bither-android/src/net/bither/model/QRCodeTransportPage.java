@@ -16,6 +16,8 @@
 
 package net.bither.model;
 
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
@@ -84,13 +86,13 @@ public class QRCodeTransportPage {
         return qrCodetTransportPage;
     }
 
-    public static String getPreSignString(QRCodeTxTransport qrCodeTransport) {
-        String preSignString = qrCodeTransport.getMyAddress()
+    public static String getPreSignString(QRCodeTxTransport qrCodeTransport) throws AddressFormatException {
+        String preSignString = Base58.bas58ToHex(qrCodeTransport.getMyAddress())
                 + QRCodeUtil.QR_CODE_SPLIT
                 + Long.toHexString(qrCodeTransport.getFee())
                 .toLowerCase(Locale.US)
                 + QRCodeUtil.QR_CODE_SPLIT
-                + qrCodeTransport.getToAddress()
+                + Base58.bas58ToHex(qrCodeTransport.getToAddress())
                 + QRCodeUtil.QR_CODE_SPLIT
                 + Long.toHexString(qrCodeTransport.getTo())
                 .toLowerCase(Locale.US) + QRCodeUtil.QR_CODE_SPLIT;

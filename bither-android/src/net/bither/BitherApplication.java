@@ -31,10 +31,15 @@ import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.IRandom;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Threading;
+import net.bither.bitherj.utils.Utils;
 import net.bither.exception.UEHandler;
+import net.bither.image.glcrop.Util;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.util.LogUtil;
 import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
@@ -116,7 +121,6 @@ public class BitherApplication extends BitherjApplication {
             return 6;
         }
     }
-
 
 
     public static boolean canReloadTx() {

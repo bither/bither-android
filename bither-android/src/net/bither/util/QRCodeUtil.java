@@ -66,7 +66,7 @@ public class QRCodeUtil {
     }
 
     public static boolean verifyQrcodeTransport(String text) {
-        Pattern pattern = Pattern.compile("[^0-9A-Z/]");
+        Pattern pattern = Pattern.compile("[^0-9A-Z/+]");
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             return false;
