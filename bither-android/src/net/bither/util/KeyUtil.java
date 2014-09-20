@@ -47,9 +47,12 @@ public class KeyUtil {
         for (int i = 0; i < count; i++) {
             XRandom xRandom = new XRandom(iuEntropy);
             ECKey ecKey = ECKey.generateECKey(xRandom);
+            String address1=ecKey.toAddress();
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
+            String address2=ecKey.toAddress();
             Address address = new Address(ecKey.toAddress(),
                     ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
+            String address3=address.getAddress();
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
             if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
