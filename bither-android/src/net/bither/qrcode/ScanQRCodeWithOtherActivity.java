@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither;
+package net.bither.qrcode;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +25,9 @@ import android.widget.TextView;
 
 import com.google.zxing.Result;
 
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.PlaySound;
 import net.bither.util.StringUtil;
 
@@ -77,7 +80,7 @@ public class ScanQRCodeWithOtherActivity extends ScanActivity {
     public boolean resultValid(String result) {
         boolean isValid = qrCodeType.checkFormat(result);
         if (!isValid) {
-            if (!StringUtil.compareString(lastResult, result)) {
+            if (!Utils.compareString(lastResult, result)) {
                 shake();
                 lastResult = result;
             }

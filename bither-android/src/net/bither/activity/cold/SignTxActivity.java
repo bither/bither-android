@@ -25,12 +25,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
-import net.bither.QrCodeActivity;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.qrcode.QRCodeActivity;
 import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.bitherj.core.Address;
-import net.bither.model.QRCodeTxTransport;
+import net.bither.qrcode.QRCodeTxTransport;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -38,7 +40,6 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.GenericUtils;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.List;
@@ -85,7 +86,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(
                     ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
+            qrCodeTransport = QRCodeEnodeUtil.formatQRCodeTransport(str);
             if (qrCodeTransport != null) {
                 showTransaction();
             } else {
@@ -137,7 +138,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                      i < strings.size();
                      i++) {
                     if (i < strings.size() - 1) {
-                        result = result + strings.get(i) + StringUtil.QR_CODE_SPLIT;
+                        result = result + strings.get(i) + QRCodeUtil.QR_CODE_SPLIT;
                     } else {
                         result = result + strings.get(i);
                     }
@@ -148,7 +149,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                     @Override
                     public void run() {
                         dp.dismiss();
-                        Intent intent = new Intent(SignTxActivity.this, QrCodeActivity.class);
+                        Intent intent = new Intent(SignTxActivity.this, QRCodeActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, r);
                         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.signed_transaction_qr_code_title));
                         startActivity(intent);

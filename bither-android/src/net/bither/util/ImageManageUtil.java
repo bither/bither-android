@@ -31,6 +31,7 @@ import android.view.Window;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.IGetAvatarListener;
 
@@ -121,7 +122,7 @@ public class ImageManageUtil {
     private static Bitmap getAvatarBit() {
         String avatar = AppSharedPreference.getInstance().getUserAvatar();
         Bitmap avatarBit = null;
-        if (!StringUtil.isEmpty(avatar)) {
+        if (!Utils.isEmpty(avatar)) {
             File file = ImageFileUtil.getSmallAvatarFile(avatar);
             avatarBit = ImageManageUtil.getBitmapNearestSize(file,
                     ImageManageUtil.IMAGE_SMALL_SIZE);

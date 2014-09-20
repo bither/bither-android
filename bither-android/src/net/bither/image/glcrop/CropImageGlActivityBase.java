@@ -41,6 +41,7 @@ import android.widget.ImageButton;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.animation.FlipAndZoomAnimation;
+import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.util.FileUtil;
@@ -97,7 +98,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         setContentView(R.layout.activity_gl_crop_image);
         Intent intent = getIntent();
-        if (StringUtil.compareString(intent.getAction(), Intent.ACTION_SEND)) {
+        if (Utils.compareString(intent.getAction(), Intent.ACTION_SEND)) {
             if (intent.getExtras().containsKey("android.intent.extra.STREAM")) {
                 if (BitherApplication.initialActivity != null) {
                     BitherApplication.initialActivity.finish();
@@ -112,7 +113,7 @@ public abstract class CropImageGlActivityBase extends Activity {
 
             }
         }
-        if (StringUtil.isEmpty(fromFileName)) {
+        if (Utils.isEmpty(fromFileName)) {
             Uri formUri = intent.getData();
             if (formUri != null) {
                 File fromFile = FileUtil.convertUriToFile(
@@ -122,7 +123,7 @@ public abstract class CropImageGlActivityBase extends Activity {
                 }
             }
         }
-        if (StringUtil.isEmpty(fromFileName)) {
+        if (Utils.isEmpty(fromFileName)) {
             finish();
             return;
         }
@@ -434,7 +435,7 @@ public abstract class CropImageGlActivityBase extends Activity {
     private Bitmap getOrBitmap() {
         try {
             if (orBitmap == null || orBitmap.isRecycled()) {
-                if (!StringUtil.isEmpty(fromFileName)) {
+                if (!Utils.isEmpty(fromFileName)) {
                     orBitmap = ImageManageUtil
                             .getBitmapNearestSize(new File(fromFileName),
                                     ImageManageUtil.IMAGE_SIZE);

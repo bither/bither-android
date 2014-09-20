@@ -112,7 +112,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
             } else {
                 try {
                     String subAddress = transaction.getFromAddress();
-                    if (StringUtil.isEmpty(subAddress)) {
+                    if (Utils.isEmpty(subAddress)) {
                         tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
                     } else {
                         tvTransactionAddress.setText(Utils.shortenAddress(subAddress));
@@ -202,7 +202,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
                     subAddress = getContext().getResources().getString(R.string
                             .address_cannot_be_parsed);
                 }
-                if (StringUtil.compareString(subAddress, address.getAddress())) {
+                if (Utils.compareString(subAddress, address.getAddress())) {
                     subAddress = getContext().getString(R.string.address_mine);
                 }
                 addresses.put(subAddress, value);

@@ -18,6 +18,7 @@
 package net.bither.runnable;
 
 import net.bither.api.DownloadFile;
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageFileUtil;
@@ -29,7 +30,7 @@ public class DownloadAvatarRunnable extends BaseRunnable {
     @Override
     public void run() {
         String avatar = AppSharedPreference.getInstance().getUserAvatar();
-        if (!StringUtil.isEmpty(avatar)) {
+        if (!Utils.isEmpty(avatar)) {
             try {
                 File file = ImageFileUtil.getSmallAvatarFile(avatar);
                 if (!file.exists()) {

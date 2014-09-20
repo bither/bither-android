@@ -17,6 +17,7 @@
 package net.bither.model;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
@@ -179,7 +180,7 @@ public class Check {
 	public boolean equals(Object o) {
 		if (o instanceof Check) {
 			Check check = (Check) o;
-			return StringUtil.compareString(getTitle(), check.getTitle());
+			return Utils.compareString(getTitle(), check.getTitle());
 		}
 		return false;
 	}

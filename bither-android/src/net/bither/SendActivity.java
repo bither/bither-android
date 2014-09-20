@@ -40,7 +40,9 @@ import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
+import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;
@@ -454,7 +456,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (StringUtil.validBicoinAddress(address)) {
-                if (StringUtil.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

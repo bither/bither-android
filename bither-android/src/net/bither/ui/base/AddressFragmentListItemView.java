@@ -29,6 +29,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -161,7 +162,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
 
     @Override
     public void onAddressInfoChanged(String address) {
-        if (StringUtil.compareString(address, this.address.getAddress())) {
+        if (Utils.compareString(address, this.address.getAddress())) {
             showAddressInfo();
         }
     }

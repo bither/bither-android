@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 
 public class SettingSelectorView extends FrameLayout implements OnClickListener {
@@ -142,7 +143,7 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
                 ImageView iv = (ImageView) v.findViewById(R.id.iv_check);
                 tv.setText(selector.getOptionName(i));
                 String note = selector.getOptionNote(i);
-                if (StringUtil.isEmpty(note)) {
+                if (Utils.isEmpty(note)) {
                     tvNote.setText("");
                 } else {
                     tvNote.setText(note);

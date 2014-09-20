@@ -35,10 +35,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
-import net.bither.QrCodeActivity;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.qrcode.QRCodeActivity;
 import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
@@ -65,6 +67,7 @@ import net.bither.util.StringUtil;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class OptionColdFragment extends Fragment implements Selectable {
     private int ONE_HOUR = 1 * 60 * 60 * 1000;
@@ -104,7 +107,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 public void onPasswordEntered(SecureCharSequence password) {
                     password.wipe();
                     String content = PrivateKeyUtil.getPrivateKeyStringFromAllPrivateAddresses();
-                    Intent intent = new Intent(getActivity(), QrCodeActivity.class);
+                    Intent intent = new Intent(getActivity(), QRCodeActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                             getString(R.string.clone_to_title));
                     intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
@@ -129,18 +132,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            String content = "";
-            List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
-            for (int i = 0;
-                 i < addresses.size();
-                 i++) {
-                String pubStr = Utils.bytesToHexString(addresses.get(i).getPubKey());
-                content += pubStr;
-                if (i < addresses.size() - 1) {
-                    content += StringUtil.QR_CODE_SPLIT;
-                }
-            }
-            Intent intent = new Intent(getActivity(), QrCodeActivity.class);
+            String content = QRCodeEnodeUtil.getPublicKeyStrOfPrivateKey();
+            Intent intent = new Intent(getActivity(), QRCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.qr_code_for_all_addresses_title));

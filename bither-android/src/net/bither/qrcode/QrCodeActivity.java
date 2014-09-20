@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither;
+package net.bither.qrcode;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
 import net.bither.ui.base.SwipeRightFragmentActivity;
@@ -31,7 +35,7 @@ import net.bither.util.StringUtil;
 
 import java.util.List;
 
-public class QrCodeActivity extends SwipeRightFragmentActivity {
+public class QRCodeActivity extends SwipeRightFragmentActivity {
     private List<String> contents;
 
     private ViewPager pager;
@@ -46,14 +50,14 @@ public class QrCodeActivity extends SwipeRightFragmentActivity {
         if (intent != null && intent.getExtras() != null) {
             codeString = intent.getExtras().getString(BitherSetting.INTENT_REF.QR_CODE_STRING);
         }
-        if (StringUtil.isEmpty(codeString)) {
+        if (Utils.isEmpty(codeString)) {
             super.finish();
             overridePendingTransition(0, 0);
         } else {
-            contents = StringUtil.getQrCodeStringList(StringUtil.encodeQrCodeString(codeString));
+            contents = QRCodeUtil.getQrCodeStringList(QRCodeUtil.encodeQrCodeString(codeString));
             initView();
             String title = getTitleString();
-            if (!StringUtil.isEmpty(title)) {
+            if (!Utils.isEmpty(title)) {
                 tvTitle.setText(title);
             }
         }

@@ -17,6 +17,7 @@
 package net.bither.model;
 
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 
 import java.io.Serializable;
@@ -57,7 +58,7 @@ public class UnSignTransaction implements Serializable {
     public boolean equals(Object o) {
         if (o instanceof UnSignTransaction) {
             UnSignTransaction unSignTransaction = (UnSignTransaction) o;
-            return StringUtil.compareString(getAddress(),
+            return Utils.compareString(getAddress(),
                     unSignTransaction.getAddress());
         }
         return super.equals(o);

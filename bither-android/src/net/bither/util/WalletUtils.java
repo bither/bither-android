@@ -32,6 +32,7 @@ import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.script.Script;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
 import java.util.List;
@@ -131,7 +132,7 @@ public class WalletUtils {
     public static Address findPrivateKey(String address) {
         for (Address bitherAddressWithPrivateKey : AddressManager.getInstance().getPrivKeyAddresses()) {
 
-            if (StringUtil.compareString(address,
+            if (Utils.compareString(address,
                     bitherAddressWithPrivateKey.getAddress())) {
                 return bitherAddressWithPrivateKey;
             }

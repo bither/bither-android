@@ -36,6 +36,7 @@ import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.listener.IBackClickListener;
@@ -267,7 +268,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
 
     private boolean processIntent() {
         Intent intent = getIntent();
-        if (StringUtil.compareString(intent.getScheme(), "bitcoin") && intent.getData() != null
+        if (Utils.compareString(intent.getScheme(), "bitcoin") && intent.getData() != null
                 && intent.getAction().equals(Intent.ACTION_VIEW)) {
             isAppInternal = false;
             try {

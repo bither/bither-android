@@ -31,6 +31,7 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.ICheckPasswordListener;
@@ -78,7 +79,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     public void onClick(View v) {
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
-            if (StringUtil.isEmpty(s)) {
+            if (Utils.isEmpty(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
@@ -109,7 +110,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (!StringUtil.isEmpty(bip38KeyString)) {
+        if (!Utils.isEmpty(bip38KeyString)) {
             showBip38Password();
         }
         et.setText("");

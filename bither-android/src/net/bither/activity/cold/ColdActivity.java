@@ -38,6 +38,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -376,7 +377,7 @@ public class ColdActivity extends FragmentActivity {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
-                            String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
+                            String[] strs = QRCodeUtil.splitString(keyString);
                             if (strs.length != 4) {
                                 continue;
                             }

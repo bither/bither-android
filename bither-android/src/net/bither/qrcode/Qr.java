@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.util;
+package net.bither.qrcode;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -29,6 +29,8 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.util.Base43;
+import net.bither.util.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

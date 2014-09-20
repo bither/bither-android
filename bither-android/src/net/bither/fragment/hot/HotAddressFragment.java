@@ -35,6 +35,7 @@ import net.bither.adapter.hot.HotAddressFragmentListAdapter;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.runnable.HandlerMessage;
@@ -250,7 +251,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 for (int i = 0;
                      i < watchOnlys.size();
                      i++) {
-                    if (StringUtil.compareString(watchOnlys.get(i).getAddress(),
+                    if (Utils.compareString(watchOnlys.get(i).getAddress(),
                             addressesToShowAdded.get(0))) {
                         isWatchOnly = true;
                         position = i;
@@ -300,7 +301,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 for (int i = 0;
                      i < privates.size();
                      i++) {
-                    if (StringUtil.compareString(privates.get(i).getAddress(),
+                    if (Utils.compareString(privates.get(i).getAddress(),
                             addressesToShowAdded.get(0))) {
                         position = i;
                         isPrivate = true;

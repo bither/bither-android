@@ -33,7 +33,7 @@ import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
