@@ -41,6 +41,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.model.Ticker;
+import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;

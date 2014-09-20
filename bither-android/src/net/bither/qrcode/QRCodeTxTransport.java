@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.model;
+package net.bither.qrcode;
 
 import net.bither.BitherApplication;
 import net.bither.R;
@@ -22,7 +22,6 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.io.Serializable;

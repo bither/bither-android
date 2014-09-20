@@ -35,10 +35,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
-import net.bither.QrCodeActivity;
+import net.bither.qrcode.QrCodeActivity;
 import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
@@ -60,7 +60,7 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
-import net.bither.util.QRCodeUtil;
+import net.bither.qrcode.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 

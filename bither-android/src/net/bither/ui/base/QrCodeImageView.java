@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.StringUtil;
 
 import java.util.concurrent.Future;

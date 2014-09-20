@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither;
+package net.bither.qrcode;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,11 +23,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
+import net.bither.R;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;

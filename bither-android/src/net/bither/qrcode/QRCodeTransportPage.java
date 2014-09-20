@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package net.bither.model;
+package net.bither.qrcode;
 
-import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;

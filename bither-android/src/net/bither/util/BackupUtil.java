@@ -28,6 +28,7 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.QRCodeUtil;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
 

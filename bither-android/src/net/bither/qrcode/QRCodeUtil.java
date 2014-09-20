@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.util;
+package net.bither.qrcode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 public class QRCodeUtil {
     public static final String QR_CODE_SPLIT = "/";
     public static final String OLD_QR_CODE_SPLIT = ":";
+    private static final int MAX_QRCODE_SIZE = 328;
+
 
     public static String[] splitString(String str) {
         if (oldVerifyQrcodeTransport(str)) {
@@ -79,7 +81,7 @@ public class QRCodeUtil {
 
     public static List<String> getQrCodeStringList(String str) {
         List<String> stringList = new ArrayList<String>();
-        int num = StringUtil.getNumOfQrCodeString(str.length());
+        int num = getNumOfQrCodeString(str.length());
         int sumLength = str.length() + num * 6;
         int pageSize = sumLength / num;
         for (int i = 0;
@@ -87,7 +89,6 @@ public class QRCodeUtil {
              i++) {
             int start = i * pageSize;
             int end = (i + 1) * pageSize;
-            LogUtil.d("qr", "s:" + start + " e:" + end);
             if (start > str.length() - 1) {
                 continue;
             }
@@ -103,6 +104,21 @@ public class QRCodeUtil {
             stringList.add(pageString + splitStr);
         }
         return stringList;
+    }
+
+    public static int getNumOfQrCodeString(int length) {
+        if (length < MAX_QRCODE_SIZE) {
+            return 1;
+        } else if (length <= (MAX_QRCODE_SIZE - 4) * 10) {
+            return length / (MAX_QRCODE_SIZE - 4) + 1;
+        } else if (length <= (MAX_QRCODE_SIZE - 5) * 100) {
+            return length / (MAX_QRCODE_SIZE - 5) + 1;
+        } else if (length <= (MAX_QRCODE_SIZE - 6) * 1000) {
+            return length / (MAX_QRCODE_SIZE - 6) + 1;
+        } else {
+            return 1000;
+        }
+
     }
 
 

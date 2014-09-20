@@ -57,7 +57,7 @@ import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
-import net.bither.util.QRCodeUtil;
+import net.bither.qrcode.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;

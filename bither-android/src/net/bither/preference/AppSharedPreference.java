@@ -25,7 +25,7 @@ import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.StringUtil;
 
 import java.util.Date;

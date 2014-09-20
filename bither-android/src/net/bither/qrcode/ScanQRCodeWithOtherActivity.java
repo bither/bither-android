@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither;
+package net.bither.qrcode;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import com.google.zxing.Result;
 
+import net.bither.BitherSetting;
+import net.bither.R;
 import net.bither.util.PlaySound;
 import net.bither.util.StringUtil;
 

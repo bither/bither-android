@@ -36,11 +36,11 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ScanActivity;
+import net.bither.qrcode.ScanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.model.QRCodeTxTransport;
+import net.bither.qrcode.QRCodeTxTransport;
 import net.bither.model.Ticker;
 import net.bither.model.UnSignTransaction;
 import net.bither.runnable.CommitTransactionThread;

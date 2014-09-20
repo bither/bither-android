@@ -19,9 +19,9 @@ package net.bither.activity.hot;
 import android.content.Intent;
 
 import net.bither.BitherSetting;
-import net.bither.QrCodeActivity;
+import net.bither.qrcode.QrCodeActivity;
 import net.bither.R;
-import net.bither.ScanQRCodeTransportActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.util.ThreadUtil;
 

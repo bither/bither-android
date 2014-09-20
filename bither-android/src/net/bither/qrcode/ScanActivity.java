@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither;
+package net.bither.qrcode;
 
 import android.app.Activity;
 import android.content.Context;
@@ -52,6 +52,7 @@ import com.google.zxing.ResultPointCallback;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import net.bither.R;
 import net.bither.camera.CameraManager;
 import net.bither.ui.base.ScannerView;
 
