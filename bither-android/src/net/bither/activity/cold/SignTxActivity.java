@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.qrcode.QrCodeActivity;
 import net.bither.R;
 import net.bither.qrcode.ScanActivity;
@@ -37,7 +38,6 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.GenericUtils;
-import net.bither.qrcode.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.WalletUtils;
 

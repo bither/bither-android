@@ -16,6 +16,7 @@
 
 package net.bither.qrcode;
 
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;

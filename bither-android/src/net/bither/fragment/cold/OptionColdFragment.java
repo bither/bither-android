@@ -35,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.qrcode.QrCodeActivity;
 import net.bither.R;
 import net.bither.qrcode.ScanActivity;
@@ -60,7 +61,6 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
-import net.bither.qrcode.QRCodeUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 

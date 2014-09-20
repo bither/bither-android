@@ -21,6 +21,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 

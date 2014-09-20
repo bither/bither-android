@@ -29,10 +29,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
-import net.bither.qrcode.QRCodeUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 

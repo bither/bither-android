@@ -20,7 +20,7 @@ package net.bither.model;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 

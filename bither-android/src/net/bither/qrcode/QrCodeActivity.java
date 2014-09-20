@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
 import net.bither.ui.base.SwipeRightFragmentActivity;
