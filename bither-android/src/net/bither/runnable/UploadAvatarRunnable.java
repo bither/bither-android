@@ -17,6 +17,7 @@
 package net.bither.runnable;
 
 import net.bither.api.UploadAvatarApi;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.StringUtil;
@@ -30,7 +31,7 @@ public class UploadAvatarRunnable extends BaseRunnable {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
             String avatar = AppSharedPreference.getInstance().getUserAvatar();
-            if (!StringUtil.isEmpty(avatar)) {
+            if (!Utils.isEmpty(avatar)) {
                 File file = ImageFileUtil.getUploadAvatarFile(avatar);
                 if (file.exists()) {
                     UploadAvatarApi uploadAvatarApi = new UploadAvatarApi(file);

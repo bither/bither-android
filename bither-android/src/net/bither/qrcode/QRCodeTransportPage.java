@@ -17,6 +17,7 @@
 package net.bither.qrcode;
 
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 
 import java.util.List;
@@ -50,11 +51,11 @@ public class QRCodeTransportPage {
         this.mContent = mContent;
     }
 
-    public static String toQRCodeTransport(
+    public static String qrCodeTransportToString(
             List<QRCodeTransportPage> qrCodeTransportPages) {
         String transportString = "";
         for (QRCodeTransportPage qCodetTransportPage : qrCodeTransportPages) {
-            if (!StringUtil.isEmpty(qCodetTransportPage.getContent())) {
+            if (!Utils.isEmpty(qCodetTransportPage.getContent())) {
                 transportString = transportString
                         + qCodetTransportPage.getContent();
             }
@@ -62,7 +63,7 @@ public class QRCodeTransportPage {
         return QRCodeUtil.decodeQrCodeString(transportString);
     }
 
-    public static QRCodeTransportPage formatQrCodeString(String text) {
+    public static QRCodeTransportPage formatQrCodeTransport(String text) {
         if (!QRCodeUtil.verifyQrcodeTransport(text)) {
             return null;
         }

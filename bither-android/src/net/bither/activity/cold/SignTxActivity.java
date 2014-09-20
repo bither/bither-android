@@ -26,8 +26,9 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.bitherj.utils.QRCodeUtil;
-import net.bither.qrcode.QrCodeActivity;
+import net.bither.qrcode.QRCodeActivity;
 import net.bither.R;
+import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.bitherj.core.Address;
@@ -85,7 +86,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(
                     ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
+            qrCodeTransport = QRCodeEnodeUtil.formatQRCodeTransport(str);
             if (qrCodeTransport != null) {
                 showTransaction();
             } else {
@@ -148,7 +149,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                     @Override
                     public void run() {
                         dp.dismiss();
-                        Intent intent = new Intent(SignTxActivity.this, QrCodeActivity.class);
+                        Intent intent = new Intent(SignTxActivity.this, QRCodeActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, r);
                         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.signed_transaction_qr_code_title));
                         startActivity(intent);

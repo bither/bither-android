@@ -23,6 +23,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
 import net.bither.qrcode.Qr;
@@ -145,7 +146,7 @@ public class AppSharedPreference {
 
     private void setDefault() {
         String defaultCountry = Locale.getDefault().getCountry();
-        if (StringUtil.compareString(defaultCountry, "CN") || StringUtil.compareString
+        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
             setExchangeType(ExchangeType.CNY);
             setMarketType(MarketType.HUOBI);
@@ -233,7 +234,7 @@ public class AppSharedPreference {
 
     public PasswordSeed getPasswordSeed() {
         String str = this.mPreferences.getString(PASSWORD_SEED, "");
-        if (StringUtil.isEmpty(str)) {
+        if (Utils.isEmpty(str)) {
             return null;
         }
         return new PasswordSeed(str);
@@ -246,7 +247,7 @@ public class AppSharedPreference {
 
 
     public boolean hasUserAvatar() {
-        return !StringUtil.isEmpty(getUserAvatar());
+        return !Utils.isEmpty(getUserAvatar());
     }
 
     public String getUserAvatar() {

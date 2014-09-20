@@ -18,6 +18,7 @@ package net.bither.api;
 
 import android.os.Build;
 
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.HttpRequestException;
 import net.bither.http.HttpSetting;
 import net.bither.preference.PersistentCookieStore;
@@ -169,7 +170,7 @@ public class DownloadFile {
             cookieStr = cookie.getName() + "=" + cookie.getValue() + ";";
         }
         //LogUtil.d("cookie",cookieStr);
-        if (!StringUtil.isEmpty(cookieStr)){
+        if (!Utils.isEmpty(cookieStr)){
             cookieStr=cookieStr.substring(0,cookieStr.length()-1);
         }
         //LogUtil.d("cookie","substring:"+cookieStr);

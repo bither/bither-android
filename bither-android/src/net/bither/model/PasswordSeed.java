@@ -21,6 +21,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 
 
@@ -30,7 +31,7 @@ public class PasswordSeed {
     private ECKey ecKey;
 
     public PasswordSeed(String str) {
-        int indexOfSplit = QRCodeUtil.indexOfOfSplitChar(str);
+        int indexOfSplit = QRCodeUtil.indexOfOfPasswordSeed(str);
         this.address = str.substring(0, indexOfSplit);
         this.keyStr = str.substring(indexOfSplit + 1);
     }
@@ -45,7 +46,7 @@ public class PasswordSeed {
         if (this.ecKey == null) {
             return false;
         }
-        return StringUtil.compareString(address,
+        return Utils.compareString(address,
                 this.ecKey.toAddress());
 
     }

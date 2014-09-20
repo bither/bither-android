@@ -219,7 +219,7 @@ public class TransactionsUtil {
     public static UnSignTransaction getUnsignTxFromCache(String address) {
         synchronized (unsignTxs) {
             for (UnSignTransaction unSignTransaction : unsignTxs) {
-                if (StringUtil.compareString(address,
+                if (Utils.compareString(address,
                         unSignTransaction.getAddress())) {
                     return unSignTransaction;
                 }
@@ -251,7 +251,7 @@ public class TransactionsUtil {
         String[] stringArray = QRCodeUtil.splitString(qrCodeContent);
         List<byte[]> hashList = new ArrayList<byte[]>();
         for (String str : stringArray) {
-            if (!StringUtil.isEmpty(str)) {
+            if (!Utils.isEmpty(str)) {
                 hashList.add(Utils.hexStringToByteArray(str));
             }
         }

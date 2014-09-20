@@ -16,6 +16,7 @@
 
 package net.bither.api;
 
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpPostResponse;
 import net.bither.util.StringUtil;
@@ -42,7 +43,7 @@ public class BitherErrorApi extends HttpPostResponse<String> {
 	@Override
 	public HttpEntity getHttpEntity() throws Exception {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		if (!StringUtil.isEmpty(this.mErrorMsg)) {
+		if (!Utils.isEmpty(this.mErrorMsg)) {
 			params.add(new BasicNameValuePair(ERROR_MSG, this.mErrorMsg.trim()));
 		}
 		return new UrlEncodedFormEntity(params, HTTP.UTF_8);

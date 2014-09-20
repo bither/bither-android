@@ -174,7 +174,7 @@ public class BackupUtil {
     public static String[] getBackupKeyStrList(File file) {
         String keyStrs = Utils.readFile(file);
         String[] result = null;
-        if (!StringUtil.isEmpty(keyStrs)) {
+        if (!Utils.isEmpty(keyStrs)) {
             result = keyStrs.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
         }
         return result;
@@ -229,7 +229,7 @@ public class BackupUtil {
 
                 }
             }
-            if (!StringUtil.isEmpty(backupString)) {
+            if (!Utils.isEmpty(backupString)) {
 
                 try {
                     Utils.writeFile(backupString.getBytes(), file);

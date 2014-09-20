@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -511,7 +512,7 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         }
         if (currentFocusView instanceof EditText) {
             EditText currentFocusEt = (EditText) currentFocusView;
-            if (!StringUtil.isEmpty(currentFocusEt.getImeActionLabel() == null ? null :
+            if (!Utils.isEmpty(currentFocusEt.getImeActionLabel() == null ? null :
                     currentFocusEt.getImeActionLabel().toString())) {
                 setEnterKeyText(currentFocusEt.getImeActionLabel());
             } else if (currentFocusEt.getImeActionId() > 0) {

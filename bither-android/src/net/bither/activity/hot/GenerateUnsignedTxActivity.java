@@ -36,11 +36,12 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
+import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.qrcode.QRCodeTxTransport;
 import net.bither.model.Ticker;
 import net.bither.model.UnSignTransaction;
 import net.bither.runnable.CommitTransactionThread;
@@ -172,8 +173,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeTxTransport.getPresignString(QRCodeTxTransport
-                            .fromSendRequestWithUnsignedTransaction(tx)));
+                    QRCodeEnodeUtil.getPresignTxString(tx));
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
             startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -457,7 +457,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (StringUtil.validBicoinAddress(address)) {
-                if (StringUtil.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

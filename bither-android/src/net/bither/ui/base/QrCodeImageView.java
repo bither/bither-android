@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
 import net.bither.util.StringUtil;
 
@@ -99,7 +100,7 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
     }
 
     public void setContent(String content, int fgColor, int bgColor, int qrCodeMargin) {
-        if (!StringUtil.compareString(this.content, content) || bgColor != this.bgColor ||
+        if (!Utils.compareString(this.content, content) || bgColor != this.bgColor ||
                 fgColor != this.fgColor || this.qrCodeMargin != qrCodeMargin) {
             this.bgColor = bgColor;
             this.fgColor = fgColor;
@@ -110,7 +111,7 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
             }
             mainHandler.removeCallbacks(showRunnable);
             bmp = null;
-            if (!StringUtil.compareString(this.content, content)) {
+            if (!Utils.compareString(this.content, content)) {
                 iv.setImageBitmap(null);
             }
             this.content = content;
@@ -150,7 +151,7 @@ public class QrCodeImageView extends FrameLayout implements OnClickListener {
             if (Thread.interrupted()) {
                 return;
             }
-            if (StringUtil.isEmpty(content)) {
+            if (Utils.isEmpty(content)) {
                 return;
             }
             bmp = Qr.bitmap(QrCodeImageView.this.content, size, fgColor, bgColor, qrCodeMargin);

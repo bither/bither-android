@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 
 public class DialogConfirmTask extends CenterDialog {
@@ -53,10 +54,10 @@ public class DialogConfirmTask extends CenterDialog {
 		this.setContentView(R.layout.dialog_task_confirm);
 		initView();
 		tvMessage.setText(message);
-		if (!StringUtil.isEmpty(okText)) {
+		if (!Utils.isEmpty(okText)) {
 			tvOk.setText(okText);
 		}
-		if (!StringUtil.isEmpty(cancelText)) {
+		if (!Utils.isEmpty(cancelText)) {
 			tvCancel.setText(cancelText);
 		}
 	}

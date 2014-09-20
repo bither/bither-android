@@ -78,78 +78,8 @@ public class QRCodeTxTransport implements Serializable {
         this.mFee = mFee;
     }
 
-    public static QRCodeTxTransport fromSendRequestWithUnsignedTransaction(Tx tx) {
-        QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
-        qrCodeTransport.setMyAddress(tx.getFromAddress());
-        String toAddress = tx.getFirstOutAddress();
-        if (StringUtil.isEmpty(toAddress)) {
-            toAddress = BitherApplication.mContext.getString(R.string.address_cannot_be_parsed);
-        }
-        qrCodeTransport.setToAddress(toAddress);
-        qrCodeTransport.setTo(tx.amountSentToAddress(toAddress));
-        qrCodeTransport.setFee(tx.getFee());
-        List<String> hashList = new ArrayList<String>();
-        for (byte[] h : tx.getUnsignedInHashes()) {
-            hashList.add(Utils.bytesToHexString(h));
-        }
-        qrCodeTransport.setHashList(hashList);
-        return qrCodeTransport;
-    }
 
-    public static QRCodeTxTransport formatQRCodeTransport(String str) {
-        try {
-            String[] strArray = QRCodeUtil.splitString(str);
-            QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
-            String address = strArray[0];
-            if (!StringUtil.validBicoinAddress(address)) {
-                return null;
-            }
-            qrCodeTransport.setMyAddress(Base58.bas58ToHex(address));
-            qrCodeTransport.setFee(Long.parseLong(
-                    strArray[1], 16));
-            qrCodeTransport.setToAddress(Base58.bas58ToHex(strArray[2]));
-            qrCodeTransport.setTo(Long.parseLong(
-                    strArray[3], 16));
-            List<String> hashList = new ArrayList<String>();
-            for (int i = 4; i < strArray.length; i++) {
-                String text = strArray[i];
-                if (!StringUtil.isEmpty(text)) {
-                    hashList.add(text);
-                }
-            }
-            qrCodeTransport.setHashList(hashList);
-            return qrCodeTransport;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
-    public static String getPresignString(QRCodeTxTransport qrCodeTransport) {
-        String preSignString = "";
-        try {
-            preSignString = Base58.bas58ToHex(qrCodeTransport.getMyAddress())
-                    + QRCodeUtil.QR_CODE_SPLIT
-                    + Long.toHexString(qrCodeTransport.getFee())
-                    .toLowerCase(Locale.US)
-                    + QRCodeUtil.QR_CODE_SPLIT
-                    + Base58.bas58ToHex(qrCodeTransport.getToAddress())
-                    + QRCodeUtil.QR_CODE_SPLIT
-                    + Long.toHexString(qrCodeTransport.getTo())
-                    .toLowerCase(Locale.US) + QRCodeUtil.QR_CODE_SPLIT;
-            for (int i = 0; i < qrCodeTransport.getHashList().size(); i++) {
-                String hash = qrCodeTransport.getHashList().get(i);
-                if (i < qrCodeTransport.getHashList().size() - 1) {
-                    preSignString = preSignString + hash + QRCodeUtil.QR_CODE_SPLIT;
-                } else {
-                    preSignString = preSignString + hash;
-                }
-            }
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        }
 
-        return preSignString;
-    }
 
 }

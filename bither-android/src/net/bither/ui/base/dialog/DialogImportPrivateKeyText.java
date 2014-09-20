@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
@@ -72,7 +73,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
             tvError.setText(R.string.import_private_key_text_format_erro);
-            if (StringUtil.isEmpty(s)) {
+            if (Utils.isEmpty(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
@@ -98,7 +99,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (!StringUtil.isEmpty(privateKeyString)) {
+        if (!Utils.isEmpty(privateKeyString)) {
             DialogPassword d = new DialogPassword(getContext(), this);
             d.show();
         }

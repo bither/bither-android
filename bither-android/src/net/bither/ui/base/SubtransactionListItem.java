@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.GenericUtils;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
@@ -92,9 +93,9 @@ public class SubtransactionListItem extends FrameLayout implements View.OnClickL
     }
 
     public static boolean isMessage(String address) {
-        return StringUtil.compareString(address, BitherApplication.mContext.getString(R.string
-                .address_cannot_be_parsed)) || StringUtil.compareString(address,
-                BitherApplication.mContext.getString(R.string.input_coinbase)) || StringUtil
+        return Utils.compareString(address, BitherApplication.mContext.getString(R.string
+                .address_cannot_be_parsed)) || Utils.compareString(address,
+                BitherApplication.mContext.getString(R.string.input_coinbase)) || Utils
                 .compareString(address, BitherApplication.mContext.getString(R.string
                         .address_mine));
     }

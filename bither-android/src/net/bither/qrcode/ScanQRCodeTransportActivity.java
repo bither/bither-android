@@ -28,6 +28,7 @@ import com.google.zxing.Result;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.PlaySound;
 import net.bither.util.StringUtil;
 
@@ -59,7 +60,7 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 		String result = scanResult.getText();
 		PlaySound.play(R.raw.qr_code_scanned, null);
 		QRCodeTransportPage page = QRCodeTransportPage
-				.formatQrCodeString(result);
+				.formatQrCodeTransport(result);
 		pages.add(page);
 		totalPage = page.getSumPage();
 		if (page.getCurrentPage() < totalPage - 1) {
@@ -75,7 +76,7 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 
 	private void complete() {
 		try {
-			String string = QRCodeTransportPage.toQRCodeTransport(pages);
+			String string = QRCodeTransportPage.qrCodeTransportToString(pages);
 			Intent intent = getIntent();
 			intent.putExtra(INTENT_EXTRA_RESULT, string);
 			setResult(RESULT_OK, getIntent());
@@ -88,12 +89,12 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 
 	@Override
 	public boolean resultValid(String result) {
-		if (!StringUtil.compareString(result, lastResult)) {
+		if (!Utils.compareString(result, lastResult)) {
 			shake();
 		}
 		lastResult = result;
 		QRCodeTransportPage page = QRCodeTransportPage
-				.formatQrCodeString(result);
+				.formatQrCodeTransport(result);
 		if (page == null) {
 			return false;
 		}
