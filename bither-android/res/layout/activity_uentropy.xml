@@ -60,11 +60,60 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"/>
 
-        <View
+        <FrameLayout
             android:id="@+id/v_overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#999"/>
+            android:layout_height="match_parent">
 
+
+            <LinearLayout
+                android:id="@+id/v_overlay_top"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/xrandom_overlay"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/v_overlay_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/xrandom_overlay"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/iv_overlay_logo"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/xrandom_overlay_logo"/>
+            </FrameLayout>
+        </FrameLayout>
     </FrameLayout>
+
 </merge>
