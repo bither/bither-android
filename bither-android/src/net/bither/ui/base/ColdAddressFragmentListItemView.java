@@ -67,6 +67,11 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         this.address = address;
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         ivQr.setContent(address.getAddress());
+        if (address.isFromXRandom()) {
+            ivXRandomLabel.setVisibility(View.VISIBLE);
+        } else {
+            ivXRandomLabel.setVisibility(View.GONE);
+        }
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {

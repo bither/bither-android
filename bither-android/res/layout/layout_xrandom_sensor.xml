@@ -6,29 +6,29 @@
 
     <ImageView
         android:id="@+id/iv_magnetic"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        android:background="#666"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/xrandom_sensor_magnetic"/>
 
     <ImageView
         android:id="@+id/iv_accelerometer"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        android:background="#f00"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/xrandom_sensor_accelerometer"/>
 
     <ImageView
         android:id="@+id/iv_light"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        android:background="#ccc"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/xrandom_sensor_light"/>
 
     <ImageView
         android:id="@+id/iv_gravity"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        android:background="#00f"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/xrandom_sensor_gravity"/>
 </merge>

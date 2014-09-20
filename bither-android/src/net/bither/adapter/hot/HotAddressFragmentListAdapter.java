@@ -198,7 +198,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition,
                     isPrivate(groupPosition)));
         }
-        view.setAddress(a, childPosition, isPrivate(groupPosition));
+        view.setAddress(a);
         view.setOnClickListener(new AddressDetailClick(childPosition, isPrivate(groupPosition)));
         return convertView;
     }

@@ -90,7 +90,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         super(context, attrs, defStyle);
     }
 
-    public void setAddress(Address address, int loaderPosition, boolean isPrivate) {
+    public void setAddress(Address address) {
         this.address = address;
 
         if (address != null) {
@@ -145,6 +145,11 @@ public class AddressFragmentListItemView extends FrameLayout implements
 //                llExtra.setVisibility(View.GONE);
 //                llMonitorFailed.setVisibility(View.VISIBLE);
 //            }
+        }
+        if (address.isFromXRandom()) {
+            ivXRandomLabel.setVisibility(View.VISIBLE);
+        } else {
+            ivXRandomLabel.setVisibility(View.GONE);
         }
     }
 
