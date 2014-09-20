@@ -219,11 +219,11 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 TranslateAnimation topAnim = new TranslateAnimation(0, 0, 0,
                         -vOverlayTop.getHeight() / 2);
                 topAnim.setFillAfter(true);
-                topAnim.setDuration(400);
+                topAnim.setDuration(500);
                 TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, 0,
                         vOverlayBottom.getHeight() / 2 + ivOverlayLogo.getHeight() / 2);
                 bottomAnim.setFillAfter(true);
-                bottomAnim.setDuration(400);
+                bottomAnim.setDuration(500);
                 vOverlayTop.startAnimation(topAnim);
                 vOverlayBottom.startAnimation(bottomAnim);
             }
@@ -234,12 +234,12 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         TranslateAnimation topAnim = new TranslateAnimation(0, 0, -vOverlayTop.getHeight() / 2, 0);
         topAnim.setFillBefore(true);
         topAnim.setFillAfter(true);
-        topAnim.setDuration(600);
+        topAnim.setDuration(500);
         TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, vOverlayBottom.getHeight() /
                 2 + ivOverlayLogo.getHeight() / 2, 0);
         bottomAnim.setFillBefore(true);
         bottomAnim.setFillAfter(true);
-        bottomAnim.setDuration(600);
+        bottomAnim.setDuration(500);
         bottomAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {

@@ -148,14 +148,15 @@
                     android:layout_height="1dp"
                     android:layout_weight="1" />
 
-                <ImageView
-                    android:id="@+id/iv_xrandom_label"
+                <ImageButton
+                    android:id="@+id/ibtn_xrandom_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:visibility="gone"
-                    android:src="@drawable/xrandom_address_label"/>
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/xrandom_address_label_selector"/>
 
                 <ImageView
                     android:id="@+id/iv_type_watchonly"
