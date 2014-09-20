@@ -78,6 +78,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private DialogProgress dpCancel;
     private DialogConfirmTask dialogCancelConfirm;
 
+    private boolean isFinishing = false;
+
     private int targetCount;
 
     @Override
@@ -103,6 +105,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isFinishing = true;
                         dpCancel.show();
                         generateThread.cancel(cancelRunnable);
                     }
@@ -145,6 +148,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
     @Override
     public void onBackPressed() {
+        if(isFinishing){
+            return;
+        }
         if (generateThread.isAlive()) {
             cancelGenerate();
         } else {
@@ -246,6 +252,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                isFinishing = true;
                 if (dpCancel != null && dpCancel.isShowing()) {
                     dpCancel.dismiss();
                 }
@@ -266,6 +273,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
+                        isFinishing = true;
                         String message;
                         if (entropyCollector.sources().size() == 0) {
                             message = getString(R.string.xrandom_no_source);
@@ -294,6 +302,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void backToFromActivity() {
+        isFinishing = true;
         Class target;
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             target = AddColdAddressActivity.class;
@@ -315,6 +324,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private Runnable cancelRunnable = new Runnable() {
         @Override
         public void run() {
+            isFinishing = true;
             if (dpCancel.isShowing()) {
                 dpCancel.dismiss();
             }
