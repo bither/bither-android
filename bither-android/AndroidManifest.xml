@@ -3,7 +3,7 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="net.bither"
           android:installLocation="internalOnly"
-          android:versionCode="10"
+          android:versionCode="110"
           android:versionName="1.1.0">
 
     <uses-sdk
