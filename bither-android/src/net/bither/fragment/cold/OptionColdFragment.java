@@ -35,22 +35,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
-import net.bither.bitherj.utils.QRCodeUtil;
-import net.bither.qrcode.QRCodeActivity;
 import net.bither.R;
-import net.bither.qrcode.QRCodeEnodeUtil;
-import net.bither.qrcode.ScanActivity;
-import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.QRCodeActivity;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -67,7 +65,6 @@ import net.bither.util.StringUtil;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class OptionColdFragment extends Fragment implements Selectable {
     private int ONE_HOUR = 1 * 60 * 60 * 1000;
