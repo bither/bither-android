@@ -36,10 +36,13 @@ public class QRCodeEnodeUtil {
     public static String getPublicKeyStrOfPrivateKey() {
         String content = "";
         List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
-        for (int i = 0;
-             i < addresses.size();
-             i++) {
-            String pubStr = QRCodeUtil.XRANDOM_FLAG + Utils.bytesToHexString(addresses.get(i).getPubKey());
+        for (int i = 0; i < addresses.size(); i++) {
+            Address address = addresses.get(i);
+            String pubStr = "";
+            if (address.isFromXRandom()) {
+                pubStr = QRCodeUtil.XRANDOM_FLAG;
+            }
+            pubStr = pubStr + Utils.bytesToHexString(address.getPubKey());
             content += pubStr;
             if (i < addresses.size() - 1) {
                 content += QRCodeUtil.QR_CODE_SPLIT;

@@ -143,7 +143,11 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     private boolean checkQrCodeContent(String content) {
         String[] strs = QRCodeUtil.splitString(content);
         for (String str : strs) {
-            if (str.length() != 66) {
+            boolean checkCompressed = str.length() == 66 || ((str.length() == 67)
+                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
+            boolean checkUnCompressed = str.length() == 130 || ((str.length() == 131)
+                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
+            if (!checkCompressed && !checkUnCompressed) {
                 return false;
             }
         }
