@@ -26,8 +26,6 @@ import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
 
-import java.util.Locale;
-
 
 public class PasswordSeed {
     private String address;
@@ -36,7 +34,7 @@ public class PasswordSeed {
 
     public PasswordSeed(String str) {
         int indexOfSplit = QRCodeUtil.indexOfOfPasswordSeed(str);
-        this.address = str.substring(0, indexOfSplit);//QRCodeUtil.getAddressFromPasswordSeed(str);
+        this.address = QRCodeUtil.getAddressFromPasswordSeed(str);
         this.keyStr = str.substring(indexOfSplit + 1);
     }
 
@@ -65,8 +63,14 @@ public class PasswordSeed {
     }
 
     public String toPasswordSeedString() {
-        String passwordSeedString = this.address + QRCodeUtil.QR_CODE_SPLIT + this.keyStr;
-        return passwordSeedString;
+        try {
+            String passwordSeedString = Base58.bas58ToHex(this.address) + QRCodeUtil.QR_CODE_SPLIT
+                    + this.keyStr;
+            return passwordSeedString;
+        } catch (AddressFormatException e) {
+            throw new RuntimeException("passwordSeed  address is format error ," + this.address);
+
+        }
 
     }
 
