@@ -19,10 +19,13 @@ package net.bither.model;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
+
+import java.util.Locale;
 
 
 public class PasswordSeed {
@@ -32,7 +35,7 @@ public class PasswordSeed {
 
     public PasswordSeed(String str) {
         int indexOfSplit = QRCodeUtil.indexOfOfPasswordSeed(str);
-        this.address = str.substring(0, indexOfSplit);
+        this.address = QRCodeUtil.getAddressFromPasswordSeed(str);
         this.keyStr = str.substring(indexOfSplit + 1);
     }
 
@@ -59,9 +62,14 @@ public class PasswordSeed {
         return this.address;
     }
 
-    @Override
-    public String toString() {
-        return this.address + QRCodeUtil.QR_CODE_SPLIT + this.keyStr;
+    public String toPasswordSeedString() {
+        try {
+            String passwordSeedString = Base58.bas58ToHex(this.address) + QRCodeUtil.QR_CODE_SPLIT + this.keyStr;
+            return passwordSeedString.toUpperCase(Locale.US);
+        } catch (AddressFormatException e) {
+            throw new RuntimeException("Address not format of password ");
+        }
     }
+
 
 }

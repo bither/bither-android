@@ -27,7 +27,6 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
 import net.bither.qrcode.Qr;
-import net.bither.util.StringUtil;
 
 import java.util.Date;
 import java.util.Locale;
@@ -241,7 +240,7 @@ public class AppSharedPreference {
     }
 
     public void setPasswordSeed(PasswordSeed passwordSeed) {
-        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toString()).commit();
+        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toPasswordSeedString()).commit();
 
     }
 

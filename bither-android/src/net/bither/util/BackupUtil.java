@@ -224,7 +224,7 @@ public class BackupUtil {
                 if (address != null) {
                     PasswordSeed passwordSeed = new PasswordSeed(address);
                     backupString = backupString
-                            + passwordSeed.toString()
+                            + passwordSeed.toPasswordSeedString()
                             + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
 
                 }
