@@ -28,8 +28,9 @@ import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -74,6 +75,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private GenerateThread generateThread;
 
     private View vOverlay;
+    private View vOverlayTop;
+    private View vOverlayBottom;
+    private ImageView ivOverlayLogo;
     private ProgressBar pb;
     private DialogProgress dpCancel;
     private DialogConfirmTask dialogCancelConfirm;
@@ -94,6 +98,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         setContentView(R.layout.activity_uentropy);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vOverlay = findViewById(R.id.v_overlay);
+        vOverlayTop = findViewById(R.id.v_overlay_top);
+        vOverlayBottom = findViewById(R.id.v_overlay_bottom);
+        ivOverlayLogo = (ImageView) findViewById(R.id.iv_overlay_logo);
         pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ibtn_cancel).setOnClickListener(cancelClick);
         dpCancel = new DialogProgress(this, R.string.xrandom_stopping);
@@ -131,7 +138,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 dialogPassword.setNeedCancelEvent(true);
                 dialogPassword.show();
             }
-        }, 600);
+        }, 1400);
     }
 
     @Override
@@ -206,21 +213,34 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void startAnimation() {
-        //TODO start animation
-        AlphaAnimation anim = new AlphaAnimation(1, 0);
-        anim.setFillAfter(true);
-        anim.setDuration(600);
-        vOverlay.startAnimation(anim);
+        vOverlay.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TranslateAnimation topAnim = new TranslateAnimation(0, 0, 0,
+                        -vOverlayTop.getHeight() / 2);
+                topAnim.setFillAfter(true);
+                topAnim.setDuration(400);
+                TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, 0,
+                        vOverlayBottom.getHeight() / 2 + ivOverlayLogo.getHeight() / 2);
+                bottomAnim.setFillAfter(true);
+                bottomAnim.setDuration(400);
+                vOverlayTop.startAnimation(topAnim);
+                vOverlayBottom.startAnimation(bottomAnim);
+            }
+        }, 1200);
     }
 
     private void stopAnimation(final Runnable finishRun) {
-        //TODO stop animation
-        AlphaAnimation anim = new AlphaAnimation(0, 1);
-        anim.setFillBefore(true);
-        anim.setFillAfter(true);
-        anim.setDuration(600);
-        vOverlay.startAnimation(anim);
-        anim.setAnimationListener(new Animation.AnimationListener() {
+        TranslateAnimation topAnim = new TranslateAnimation(0, 0, -vOverlayTop.getHeight() / 2, 0);
+        topAnim.setFillBefore(true);
+        topAnim.setFillAfter(true);
+        topAnim.setDuration(600);
+        TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, vOverlayBottom.getHeight() /
+                2 + ivOverlayLogo.getHeight() / 2, 0);
+        bottomAnim.setFillBefore(true);
+        bottomAnim.setFillAfter(true);
+        bottomAnim.setDuration(600);
+        bottomAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -228,7 +248,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                finishRun.run();
+                vOverlay.postDelayed(finishRun, 600);
             }
 
             @Override
@@ -236,6 +256,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
             }
         });
+        vOverlayTop.startAnimation(topAnim);
+        vOverlayBottom.startAnimation(bottomAnim);
+
     }
 
     private void onProgress(final double progress) {
