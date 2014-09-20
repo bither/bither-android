@@ -30,15 +30,41 @@ import net.bither.util.UIUtil;
  */
 public class DialogXRandomInfo extends CenterDialog implements View.OnClickListener {
     public DialogXRandomInfo(Context context) {
+        this(context, false);
+    }
+
+    public DialogXRandomInfo(Context context, boolean guide) {
         super(context);
         setContentView(R.layout.dialog_xrandom_info);
         findViewById(R.id.btn_ok).setOnClickListener(this);
-        ((TextView) findViewById(R.id.tv)).setMaxWidth(UIUtil.getScreenWidth() - UIUtil.dip2pix
-                (80));
+        TextView tv = (TextView) findViewById(R.id.tv);
+        if (guide) {
+            tv.setText(context.getString(R.string.xrandom_info_detail) + context.getString(R
+                    .string.xrandom_info_guide));
+        } else {
+            tv.setText(context.getString(R.string.xrandom_info_detail));
+        }
+        tv.setMaxWidth(UIUtil.getScreenWidth() - UIUtil.dip2pix(80));
     }
 
     @Override
     public void onClick(View v) {
         dismiss();
     }
+
+    public static final View.OnClickListener InfoClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogXRandomInfo(v.getContext()).show();
+        }
+    };
+
+    public static final View.OnClickListener GuideClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogXRandomInfo(v.getContext(), true).show();
+        }
+    };
 }
