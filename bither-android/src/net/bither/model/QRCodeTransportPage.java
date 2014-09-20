@@ -16,13 +16,10 @@
 
 package net.bither.model;
 
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.utils.Base58;
 import net.bither.util.QRCodeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.List;
-import java.util.Locale;
 
 public class QRCodeTransportPage {
     private int mCurrentPage;
@@ -45,10 +42,6 @@ public class QRCodeTransportPage {
         this.mSumPage = mSumPage;
     }
 
-    public boolean hasNextPage() {
-        return this.mCurrentPage + 1 < this.mSumPage;
-    }
-
     public String getContent() {
         return mContent;
     }
@@ -57,7 +50,7 @@ public class QRCodeTransportPage {
         this.mContent = mContent;
     }
 
-    public static String formatQRCodeTran(
+    public static String toQRCodeTransport(
             List<QRCodeTransportPage> qrCodeTransportPages) {
         String transportString = "";
         for (QRCodeTransportPage qCodetTransportPage : qrCodeTransportPages) {
@@ -86,25 +79,5 @@ public class QRCodeTransportPage {
         return qrCodetTransportPage;
     }
 
-    public static String getPreSignString(QRCodeTxTransport qrCodeTransport) throws AddressFormatException {
-        String preSignString = Base58.bas58ToHex(qrCodeTransport.getMyAddress())
-                + QRCodeUtil.QR_CODE_SPLIT
-                + Long.toHexString(qrCodeTransport.getFee())
-                .toLowerCase(Locale.US)
-                + QRCodeUtil.QR_CODE_SPLIT
-                + Base58.bas58ToHex(qrCodeTransport.getToAddress())
-                + QRCodeUtil.QR_CODE_SPLIT
-                + Long.toHexString(qrCodeTransport.getTo())
-                .toLowerCase(Locale.US) + QRCodeUtil.QR_CODE_SPLIT;
-        for (int i = 0; i < qrCodeTransport.getHashList().size(); i++) {
-            String hash = qrCodeTransport.getHashList().get(i);
-            if (i < qrCodeTransport.getHashList().size() - 1) {
-                preSignString = preSignString + hash + QRCodeUtil.QR_CODE_SPLIT;
-            } else {
-                preSignString = preSignString + hash;
-            }
-        }
 
-        return preSignString;
-    }
 }
