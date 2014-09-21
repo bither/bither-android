@@ -65,7 +65,7 @@ public class PasswordSeed {
     public String toPasswordSeedString() {
         try {
             String passwordSeedString = Base58.bas58ToHex(this.address) + QRCodeUtil.QR_CODE_SPLIT
-                    + this.keyStr;
+                    + QRCodeUtil.getNewVersionEncryptPrivKey(this.keyStr);
             return passwordSeedString;
         } catch (AddressFormatException e) {
             throw new RuntimeException("passwordSeed  address is format error ," + this.address);
