@@ -305,7 +305,7 @@ public class TransactionsUtil {
             Collections.sort(transactions, new ComparatorTx());
             address.initTxs(transactions);
             address.setSyncComplete(true);
-            address.savePubKey();
+            address.updatePubkey();
             BroadcastUtil
                     .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
 

@@ -221,7 +221,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     service.stopAndUnregister();
                     for (Address address : AddressManager.getInstance().getAllAddresses()) {
                         address.setSyncComplete(false);
-                        address.savePubKey();
+                        address.updatePubkey();
 
                     }
                     TxProvider.getInstance().clearAllTx();
