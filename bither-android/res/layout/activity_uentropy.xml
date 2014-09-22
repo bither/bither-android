@@ -15,6 +15,10 @@
         android:layout_height="match_parent"
         android:background="#55000000"/>
 
+    <net.bither.xrandom.camera.RandomPointView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <FrameLayout
         android:id="@+id/fl_overlay"
         android:layout_width="match_parent"
