@@ -66,8 +66,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
     public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
+    private static final int MinGeneratingTime = 5000;
 
-    private static final long VIBRATE_DURATION = 50L;
+    private static final int VIBRATE_DURATION = 50;
 
     private Vibrator vibrator;
 
@@ -413,6 +414,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         private double progressKeyRate = 0.5;
         private double progressEntryptRate = 0.5;
 
+        private long startGeneratingTime;
+
         private SecureCharSequence password;
         private Runnable cancelRunnable;
 
@@ -429,6 +432,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
             if (password == null) {
                 throw new IllegalStateException("GenerateThread does not have password");
             }
+            startGeneratingTime = System.currentTimeMillis();
             super.start();
             onProgress(startProgress);
         }
@@ -511,6 +515,9 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
             finishGenerate(service);
             if (success) {
+                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) {
+
+                }
                 onProgress(1);
                 onSuccess(addressStrs);
             } else {
