@@ -60,60 +60,59 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"/>
 
-        <FrameLayout
+
+        <LinearLayout
             android:id="@+id/v_overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-
-            <LinearLayout
+            <FrameLayout
                 android:id="@+id/v_overlay_top"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/xrandom_overlay">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/xrandom_overlay"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:src="@drawable/xrandom_overlay_logo_top"/>
 
-                <View
+                <ImageView
+                    android:id="@+id/iv_overlay_top"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:src="@drawable/xrandom_overlay_line_down"/>
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/v_overlay_bottom"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/xrandom_overlay"/>
-                </LinearLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/xrandom_overlay">
 
                 <ImageView
-                    android:id="@+id/iv_overlay_logo"
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/xrandom_overlay_logo"/>
+                    android:layout_gravity="top|center_horizontal"
+                    android:src="@drawable/xrandom_overlay_logo_bottom"/>
+
+                <ImageView
+                    android:id="@+id/iv_overlay_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:src="@drawable/xrandom_overlay_line_up"/>
             </FrameLayout>
-        </FrameLayout>
+        </LinearLayout>
     </FrameLayout>
 
 </merge>
