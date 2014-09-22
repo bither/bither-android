@@ -56,7 +56,9 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
         TextView tvLowPriorityWarn = (TextView) findViewById(R.id.tv_low_priority_warn);
-        tvAddress.setText(WalletUtils.formatHash(tx.getFirstOutAddress(), 4, 24));
+        if (tx.getFirstOutAddress() != null) {
+            tvAddress.setText(WalletUtils.formatHash(tx.getFirstOutAddress(), 4, 24));
+        }
         tvBtc.setText(GenericUtils.formatValueWithBold(tx.amountSentToAddress(tx.getFirstOutAddress())));
         tvFee.setText(GenericUtils.formatValueWithBold(tx.getFee()));
         // This warning is no longer needed. As more and more mining pool upgrade their

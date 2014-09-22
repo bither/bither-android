@@ -97,12 +97,12 @@ public class QRCodeEnodeUtil {
         QRCodeTxTransport qrCodeTransport = fromSendRequestWithUnsignedTransaction(tx);
         String preSignString = "";
         try {
-            preSignString = Base58.bas58ToHex(qrCodeTransport.getMyAddress())
+            preSignString = Base58.bas58ToHexWithAddress(qrCodeTransport.getMyAddress())
                     + QRCodeUtil.QR_CODE_SPLIT
                     + Long.toHexString(qrCodeTransport.getFee())
                     .toLowerCase(Locale.US)
                     + QRCodeUtil.QR_CODE_SPLIT
-                    + Base58.bas58ToHex(qrCodeTransport.getToAddress())
+                    + Base58.bas58ToHexWithAddress(qrCodeTransport.getToAddress())
                     + QRCodeUtil.QR_CODE_SPLIT
                     + Long.toHexString(qrCodeTransport.getTo())
                     .toLowerCase(Locale.US) + QRCodeUtil.QR_CODE_SPLIT;
@@ -130,10 +130,10 @@ public class QRCodeEnodeUtil {
             if (!StringUtil.validBicoinAddress(address)) {
                 return null;
             }
-            qrCodeTransport.setMyAddress(Base58.bas58ToHex(address));
+            qrCodeTransport.setMyAddress(Base58.bas58ToHexWithAddress(address));
             qrCodeTransport.setFee(Long.parseLong(
                     strArray[1], 16));
-            qrCodeTransport.setToAddress(Base58.bas58ToHex(strArray[2]));
+            qrCodeTransport.setToAddress(Base58.bas58ToHexWithAddress(strArray[2]));
             qrCodeTransport.setTo(Long.parseLong(
                     strArray[3], 16));
             List<String> hashList = new ArrayList<String>();
