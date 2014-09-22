@@ -247,7 +247,7 @@ public class ChooseModeActivity extends Activity {
                     new Runnable() {
                         @Override
                         public void run() {
-                            PeerManager.instance().stop();
+                            stopService(new Intent(ChooseModeActivity.this, BlockchainService.class));
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
