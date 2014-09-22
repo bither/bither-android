@@ -16,11 +16,17 @@
 
 package net.bither.qrcode;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
@@ -29,17 +35,25 @@ import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogQRCodeOption;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class QRCodeActivity extends SwipeRightFragmentActivity {
+public class QRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
     private List<String> contents;
 
     private ViewPager pager;
     private TextView tvTitle;
+    private ImageView ivSeparator;
+    private ImageButton btnSwitch;
+    private boolean isNewVerion;
+    private boolean hasOldQRCode;
+    private List<String> oldContents;
+    private QRFragmentPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +61,21 @@ public class QRCodeActivity extends SwipeRightFragmentActivity {
         setContentView(R.layout.activity_qr_code);
         Intent intent = getIntent();
         String codeString = null;
+        String oldString = null;
         if (intent != null && intent.getExtras() != null) {
             codeString = intent.getExtras().getString(BitherSetting.INTENT_REF.QR_CODE_STRING);
+            oldString = intent.getExtras().getString(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING);
+        }
+        hasOldQRCode = !Utils.isEmpty(oldString);
+        if (hasOldQRCode) {
+            this.oldContents = QRCodeUtil.getQrCodeStringList(QRCodeEnodeUtil.oldEncodeQrCodeString(oldString));
         }
         if (Utils.isEmpty(codeString)) {
             super.finish();
             overridePendingTransition(0, 0);
         } else {
-            contents = QRCodeUtil.getQrCodeStringList(QRCodeUtil.encodeQrCodeString(codeString));
+            isNewVerion = true;
+            this.contents = QRCodeUtil.getQrCodeStringList(QRCodeUtil.encodeQrCodeString(codeString));
             initView();
             String title = getTitleString();
             if (!Utils.isEmpty(title)) {
@@ -65,12 +86,55 @@ public class QRCodeActivity extends SwipeRightFragmentActivity {
 
     private void initView() {
         findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
+        ivSeparator = (ImageView) findViewById(R.id.iv_separator);
+        btnSwitch = (ImageButton) findViewById(R.id.ibtn_switch);
+        btnSwitch.setOnClickListener(switchClickListener);
         pager = (ViewPager) findViewById(R.id.pager);
         tvTitle = (TextView) findViewById(R.id.tv_title);
         mTouchView.addIgnoreView(pager);
+        if (hasOldQRCode) {
+            ivSeparator.setVisibility(View.VISIBLE);
+            btnSwitch.setVisibility(View.VISIBLE);
+        } else {
+            ivSeparator.setVisibility(View.INVISIBLE);
+            btnSwitch.setVisibility(View.INVISIBLE);
+        }
+        adapter = new QRFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(1);
+        refresh();
+
     }
+
+    private void refresh() {
+        boolean firestIn = pageContentList.size() == 0;
+        if (isNewVerion) {
+            pageContentList.clear();
+            pageContentList.addAll(this.contents);
+            if (!firestIn) {
+                DropdownMessage.showDropdownMessage(QRCodeActivity.this, R.string.use_new_version_qrcode);
+            }
+        } else {
+            pageContentList.clear();
+            pageContentList.addAll(this.oldContents);
+
+            if (!firestIn) {
+                DropdownMessage.showDropdownMessage(QRCodeActivity.this, R.string.use_old_version_qrcode);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+
+
+    }
+
+    private View.OnClickListener switchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            new DialogQRCodeOption(QRCodeActivity.this, QRCodeActivity.this).show();
+        }
+    };
 
     protected void complete() {
         super.finish();
@@ -91,14 +155,16 @@ public class QRCodeActivity extends SwipeRightFragmentActivity {
 
     private class FragmentDelegate implements QrCodeFragmentDelegate {
         private int index;
+        private List<String> mContents;
 
-        public FragmentDelegate(int index) {
+        public FragmentDelegate(List<String> paramContents, int index) {
+            this.mContents = paramContents;
             this.index = index;
         }
 
         @Override
         public String getContent() {
-            return contents.get(index);
+            return this.mContents.get(index);
         }
 
         @Override
@@ -126,22 +192,41 @@ public class QRCodeActivity extends SwipeRightFragmentActivity {
 
         @Override
         public int pageCount() {
-            return contents.size();
+            return this.mContents.size();
         }
     }
 
-    private FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+    private List<String> pageContentList = new ArrayList<String>();
+
+    private class QRFragmentPagerAdapter extends FragmentPagerAdapter {
+
+        public QRFragmentPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
 
         @Override
         public int getCount() {
-            return contents.size();
+            return pageContentList.size();
         }
 
         @Override
         public Fragment getItem(int index) {
             QrCodeFragment f = new QrCodeFragment();
-            f.setDelegate(new FragmentDelegate(index));
+            f.setDelegate(new FragmentDelegate(pageContentList, index));
             return f;
         }
-    };
+
+    }
+
+    @Override
+    public void switchQRCode() {
+        isNewVerion = !isNewVerion;
+        refresh();
+
+    }
 }

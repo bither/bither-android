@@ -357,9 +357,11 @@ public class BlockchainService extends android.app.Service {
     }
 
     public void startMarkTimerTask() {
-        if (mBitherTimer == null) {
-            mBitherTimer = new BitherTimer(BlockchainService.this);
-            mBitherTimer.startTimer();
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
+            if (mBitherTimer == null) {
+                mBitherTimer = new BitherTimer(BlockchainService.this);
+                mBitherTimer.startTimer();
+            }
         }
     }
 

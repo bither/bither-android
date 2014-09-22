@@ -174,6 +174,9 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
                     QRCodeEnodeUtil.getPresignTxString(tx));
+            intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
+                    QRCodeEnodeUtil.oldGetPreSignString(tx));
+
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
             startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);

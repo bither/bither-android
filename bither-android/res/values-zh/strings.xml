@@ -354,4 +354,9 @@
     <string name="xrandom_info_detail">极随机通过采集数据源以增加随机性.\n\n数据源包括摄像头、麦克风、磁场感应器、重力感应器等设备内置传感器.</string>
     <string name="xrandom_info_guide">\n\n采集过程中您可通过晃动设备等方式增加所采集数据的随机性.</string>
     <string name="generating_private_key_final_confirm">您已成功生成%d个私钥</string>
+
+    <!-- qrcode-->
+    <string name="switch_qrcode">切换二维码</string>
+    <string name="use_old_version_qrcode">已切换到旧版二维码，可用 &lt;1.1.0的冷钱包签名</string>
+    <string name="use_new_version_qrcode">已切换到新版二维码，可用 ≧1.1.0的冷钱包签名</string>
 </resources>
