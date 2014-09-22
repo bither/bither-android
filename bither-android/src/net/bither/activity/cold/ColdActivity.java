@@ -51,6 +51,7 @@ import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -112,45 +113,53 @@ public class ColdActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LogUtil.d("request", "code:" + requestCode);
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             configureTabArrow();
-            Fragment f = getFragmentAtIndex(1);
-            if (f != null && f instanceof ColdAddressFragment) {
-                ArrayList<String> addresses = (ArrayList<String>) data.getExtras()
-                        .getSerializable(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
-                ColdAddressFragment af = (ColdAddressFragment) f;
-                af.showAddressesAdded(addresses);
+            ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
+                    (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+            if (addresses != null && addresses.size() > 0) {
+                Address a = WalletUtils.findPrivateKey(addresses.get(0));
+                if (a.hasPrivKey()) {
+                    new DialogGenerateAddressFinalConfirm(this, addresses.size(),
+                            a.isFromXRandom()).show();
+                }
 
-            }
-            if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
-                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
-                new DialogConfirmTask(this, getString(R.string
-                        .first_add_private_key_check_suggest), new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPager.setCurrentItem(0, true);
-                                mPager.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Fragment f = getFragmentAtIndex(0);
-                                        if (f != null && f instanceof CheckFragment) {
-                                            CheckFragment c = (CheckFragment) f;
-                                            c.check();
+                Fragment f = getFragmentAtIndex(1);
+                if (f != null && f instanceof ColdAddressFragment) {
+                    ColdAddressFragment af = (ColdAddressFragment) f;
+                    af.showAddressesAdded(addresses);
+
+                }
+                if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
+                        .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
+                    new DialogConfirmTask(this,
+                            getString(R.string.first_add_private_key_check_suggest),
+                            new Runnable() {
+                        @Override
+                        public void run() {
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mPager.setCurrentItem(0, true);
+                                    mPager.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Fragment f = getFragmentAtIndex(0);
+                                            if (f != null && f instanceof CheckFragment) {
+                                                CheckFragment c = (CheckFragment) f;
+                                                c.check();
+                                            }
                                         }
-                                    }
-                                }, 300);
-                            }
-                        });
-                    }
-                }).show();
-            }
-            if (f != null && f instanceof Refreshable) {
-                Refreshable r = (Refreshable) f;
-                r.doRefresh();
+                                    }, 300);
+                                }
+                            });
+                        }
+                    }).show();
+                }
+                if (f != null && f instanceof Refreshable) {
+                    Refreshable r = (Refreshable) f;
+                    r.doRefresh();
+                }
             }
             return;
         }

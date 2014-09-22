@@ -241,8 +241,11 @@ public class HotActivity extends FragmentActivity {
             ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
                     (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
             if (addresses != null && addresses.size() > 0) {
-                new DialogGenerateAddressFinalConfirm(this, addresses.size(),
-                        WalletUtils.findPrivateKey(addresses.get(0)).isFromXRandom()).show();
+                Address a = WalletUtils.findPrivateKey(addresses.get(0));
+                if (a.hasPrivKey()) {
+                    new DialogGenerateAddressFinalConfirm(this, addresses.size(),
+                            a.isFromXRandom()).show();
+                }
 
                 Fragment f = getFragmentAtIndex(1);
                 if (f != null && f instanceof HotAddressFragment) {
