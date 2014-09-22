@@ -179,10 +179,10 @@
     <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
-    <string name="import_private_key_qr_code">From Private Key QR Code</string>
+    <string name="import_private_key_qr_code">From Bither Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
     <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
-    <string name="import_bip38_key_text">From BIP38-private key Text</string>
+    <string name="import_bip38_key_text">From BIP38-private key text</string>
     <string name="enter_bip38_key_password">Enter password of BIP38-private key</string>
     <string name="private_key_text">Private Key Text</string>
     <string name="import_bip38_key_text_hint">Enter your BIP38-private key </string>
@@ -204,7 +204,7 @@
     <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions data success </string>
     <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
-    <string name="base_on_text">Base On </string>
+    <string name="base_on_text">Based on </string>
     <string name="synchronous_interval">Synchronous Interval</string>
     <string name="synchronous_interval_fifteen_minute">Fifteen Minute</string>
     <string name="synchronous_interval_one_hour">One Hour</string>

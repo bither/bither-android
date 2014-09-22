@@ -172,10 +172,10 @@
     <string name="export_success">日志已导出到 :</string>
     <string name="setting_name_import_private_key">导入私钥</string>
     <string name="setting_name_import_bip38_key">导入BIP38私钥</string>
-    <string name="import_private_key_qr_code">来自私钥二维码</string>
+    <string name="import_private_key_qr_code">来自比太私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
     <string name="import_bip38_key_qr_code">来自BIP38私钥二维码</string>
-    <string name="import_bip38_key_text">来自BIP38私钥明文</string>
+    <string name="import_bip38_key_text">来自BIP38私钥文本</string>
     <string name="enter_bip38_key_password">请输入BIP38私钥的密码</string>
     <string name="private_key_text">私钥明文</string>
     <string name="import_bip38_key_text_hint">输入BIP38私钥明文</string>
