@@ -30,6 +30,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -39,11 +40,15 @@ import net.bither.R;
 import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.core.PeerManager;
+import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -56,6 +61,8 @@ public final class PeerListFragment extends ListFragment {
     private LoaderManager loaderManager;
 
     private ArrayAdapter<Peer> adapter;
+
+    private List<Peer> peerCacheList;
 
     private final Handler handler = new Handler();
 
@@ -159,13 +166,13 @@ public final class PeerListFragment extends ListFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                adapter.notifyDataSetChanged();
+                adapter.clear();
+                refreshPeer();
 
                 final Loader<String> loader = loaderManager
                         .getLoader(ID_REVERSE_DNS_LOADER);
                 final boolean loaderRunning = loader != null
                         && loader.isStarted();
-
                 if (!loaderRunning) {
                     for (int i = 0; i < adapter.getCount(); i++) {
                         final Peer peer = adapter.getItem(i);
@@ -233,7 +240,8 @@ public final class PeerListFragment extends ListFragment {
 
         @Override
         public List<Peer> loadInBackground() {
-            return PeerManager.instance().getConnectedPeers();
+            List<Peer> peerList = PeerManager.instance().getConnectedPeers();
+            return peerList;
         }
 
         private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -259,10 +267,8 @@ public final class PeerListFragment extends ListFragment {
         public void onLoadFinished(final Loader<List<Peer>> loader,
                                    final List<Peer> peers) {
             adapter.clear();
-
-            if (peers != null)
-                for (final Peer peer : peers)
-                    adapter.add(peer);
+            peerCacheList = peers;
+            refreshPeer();
         }
 
         @Override
@@ -270,6 +276,29 @@ public final class PeerListFragment extends ListFragment {
             adapter.clear();
         }
     };
+
+    private void refreshPeer() {
+        Collections.sort(peerCacheList, new Comparator<Peer>() {
+            @Override
+            public int compare(Peer lhs, Peer rhs) {
+                if (lhs.getClientVersion() == 0 && rhs.getClientVersion() > 0) {
+                    return 1;
+                }
+                if (rhs.getClientVersion() == 0 && lhs.getClientVersion() > 0) {
+                    return -1;
+                }
+                return -1 * Long.valueOf(Utils.parseLongFromAddress(
+                        lhs.getPeerAddress())).compareTo(
+                        Long.valueOf(Utils.parseLongFromAddress(rhs.getPeerAddress())));
+
+            }
+        });
+        if (peerCacheList != null) {
+            for (final Peer peer : peerCacheList) {
+                adapter.add(peer);
+            }
+        }
+    }
 
     private static class ReverseDnsLoader extends AsyncTaskLoader<String> {
         public final InetAddress address;
