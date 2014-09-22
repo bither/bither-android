@@ -350,7 +350,8 @@
     <string name="xrandom_no_source">无可用随机源</string>
     <string name="urandom_not_exists">你的设备无法提供足够安全的随机数</string>
     <string name="xrandom_uncheck_warn">极随机(XRandom)能提高随机性.\n确认不使用吗?</string>
-    <string name="xrandom_final_confirm">您已成功生成%d个私钥</string>
+    <string name="xrandom_final_confirm">您已成功生成%d个极随机私钥</string>
     <string name="xrandom_info_detail">极随机通过采集数据源以增加随机性.\n\n数据源包括摄像头、麦克风、磁场感应器、重力感应器等设备内置传感器.</string>
     <string name="xrandom_info_guide">\n\n采集过程中您可通过晃动设备等方式增加所采集数据的随机性.</string>
+    <string name="generating_private_key_final_confirm">您已成功生成%d个私钥</string>
 </resources>

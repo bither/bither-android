@@ -53,6 +53,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
@@ -237,17 +238,21 @@ public class HotActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
-            Fragment f = getFragmentAtIndex(1);
-            if (f != null && f instanceof HotAddressFragment) {
-                @SuppressWarnings("unchecked") ArrayList<String> addresses = (ArrayList<String>)
-                        data.getExtras().getSerializable(BitherSetting.INTENT_REF
-                                .ADDRESS_POSITION_PASS_VALUE_TAG);
-                HotAddressFragment af = (HotAddressFragment) f;
-                af.showAddressesAdded(addresses);
-            }
-            if (f != null && f instanceof Refreshable) {
-                Refreshable r = (Refreshable) f;
-                r.doRefresh();
+            ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
+                    (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+            if (addresses != null && addresses.size() > 0) {
+                new DialogGenerateAddressFinalConfirm(this, addresses.size(),
+                        WalletUtils.findPrivateKey(addresses.get(0)).isFromXRandom()).show();
+
+                Fragment f = getFragmentAtIndex(1);
+                if (f != null && f instanceof HotAddressFragment) {
+                    HotAddressFragment af = (HotAddressFragment) f;
+                    af.showAddressesAdded(addresses);
+                }
+                if (f != null && f instanceof Refreshable) {
+                    Refreshable r = (Refreshable) f;
+                    r.doRefresh();
+                }
             }
             return;
         }
