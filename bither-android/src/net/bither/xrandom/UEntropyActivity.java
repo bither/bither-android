@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import net.bither.BitherSetting;
@@ -48,6 +47,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
+import net.bither.util.PlaySound;
 import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
@@ -75,7 +75,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     private View vOverlay;
     private View vOverlayTop;
     private View vOverlayBottom;
-    private ImageView ivOverlayLogo;
+    private View ivOverlayTop;
+    private View ivOverlayBottom;
     private ProgressBar pb;
     private DialogProgress dpCancel;
     private DialogConfirmTask dialogCancelConfirm;
@@ -98,7 +99,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         vOverlay = findViewById(R.id.v_overlay);
         vOverlayTop = findViewById(R.id.v_overlay_top);
         vOverlayBottom = findViewById(R.id.v_overlay_bottom);
-        ivOverlayLogo = (ImageView) findViewById(R.id.iv_overlay_logo);
+        ivOverlayTop = findViewById(R.id.iv_overlay_top);
+        ivOverlayBottom = findViewById(R.id.iv_overlay_bottom);
         pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ibtn_cancel).setOnClickListener(cancelClick);
         dpCancel = new DialogProgress(this, R.string.xrandom_stopping);
@@ -214,14 +216,17 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
         vOverlay.postDelayed(new Runnable() {
             @Override
             public void run() {
-                TranslateAnimation topAnim = new TranslateAnimation(0, 0, 0,
-                        -vOverlayTop.getHeight() / 2);
+                PlaySound.play(R.raw.xrandom_open_sound, null);
+                TranslateAnimation topAnim = new TranslateAnimation(0, 0, 0, -vOverlayTop
+                        .getHeight());
                 topAnim.setFillAfter(true);
-                topAnim.setDuration(500);
-                TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, 0,
-                        vOverlayBottom.getHeight() / 2 + ivOverlayLogo.getHeight() / 2);
+                topAnim.setDuration(400);
+                TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, 0, vOverlayBottom
+                        .getHeight());
                 bottomAnim.setFillAfter(true);
-                bottomAnim.setDuration(500);
+                bottomAnim.setDuration(400);
+                ivOverlayTop.setVisibility(View.VISIBLE);
+                ivOverlayBottom.setVisibility(View.VISIBLE);
                 vOverlayTop.startAnimation(topAnim);
                 vOverlayBottom.startAnimation(bottomAnim);
             }
@@ -229,15 +234,17 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
     }
 
     private void stopAnimation(final Runnable finishRun) {
-        TranslateAnimation topAnim = new TranslateAnimation(0, 0, -vOverlayTop.getHeight() / 2, 0);
+        PlaySound.play(R.raw.xrandom_close_sound, null);
+        TranslateAnimation topAnim = new TranslateAnimation(0, 0, -vOverlayTop.getHeight(), 0);
         topAnim.setFillBefore(true);
         topAnim.setFillAfter(true);
-        topAnim.setDuration(500);
-        TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, vOverlayBottom.getHeight() /
-                2 + ivOverlayLogo.getHeight() / 2, 0);
+        topAnim.setDuration(300);
+        TranslateAnimation bottomAnim = new TranslateAnimation(0, 0, vOverlayBottom.getHeight(), 0);
         bottomAnim.setFillBefore(true);
         bottomAnim.setFillAfter(true);
-        bottomAnim.setDuration(500);
+        bottomAnim.setDuration(300);
+        ivOverlayTop.setVisibility(View.VISIBLE);
+        ivOverlayBottom.setVisibility(View.VISIBLE);
         bottomAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -246,6 +253,8 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                ivOverlayTop.setVisibility(View.GONE);
+                ivOverlayBottom.setVisibility(View.GONE);
                 vOverlay.postDelayed(finishRun, 600);
             }
 
