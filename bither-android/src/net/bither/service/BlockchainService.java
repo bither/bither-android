@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import net.bither.BitherSetting;
 import net.bither.R;
@@ -282,7 +283,13 @@ public class BlockchainService extends android.app.Service {
 
     public void startAndRegister() {
         receiverConnectivity();
-        startPeer();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startPeer();
+            }
+        }).start();
+
     }
 
     private void callWekelock() {
