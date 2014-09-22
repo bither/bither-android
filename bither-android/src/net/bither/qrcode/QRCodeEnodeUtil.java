@@ -25,6 +25,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
@@ -126,14 +127,18 @@ public class QRCodeEnodeUtil {
         try {
             String[] strArray = QRCodeUtil.splitString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
-            String address = strArray[0];
+            LogUtil.d("qrcode","str,"+str);
+            LogUtil.d("qrcode","0,"+strArray[0]);
+
+            String address = Base58.hexToBase58WithAddress(strArray[0]);
+            LogUtil.d("qrcode","address,"+address);
             if (!StringUtil.validBicoinAddress(address)) {
                 return null;
             }
-            qrCodeTransport.setMyAddress(Base58.bas58ToHexWithAddress(address));
+            qrCodeTransport.setMyAddress(address);
             qrCodeTransport.setFee(Long.parseLong(
                     strArray[1], 16));
-            qrCodeTransport.setToAddress(Base58.bas58ToHexWithAddress(strArray[2]));
+            qrCodeTransport.setToAddress(Base58.hexToBase58WithAddress(strArray[2]));
             qrCodeTransport.setTo(Long.parseLong(
                     strArray[3], 16));
             List<String> hashList = new ArrayList<String>();
