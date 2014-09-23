@@ -67,6 +67,7 @@ import net.bither.util.WalletUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -135,26 +136,26 @@ public class ColdActivity extends FragmentActivity {
                     new DialogConfirmTask(this,
                             getString(R.string.first_add_private_key_check_suggest),
                             new Runnable() {
-                        @Override
-                        public void run() {
-                            ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mPager.setCurrentItem(0, true);
-                                    mPager.postDelayed(new Runnable() {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Fragment f = getFragmentAtIndex(0);
-                                            if (f != null && f instanceof CheckFragment) {
-                                                CheckFragment c = (CheckFragment) f;
-                                                c.check();
-                                            }
+                                            mPager.setCurrentItem(0, true);
+                                            mPager.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Fragment f = getFragmentAtIndex(0);
+                                                    if (f != null && f instanceof CheckFragment) {
+                                                        CheckFragment c = (CheckFragment) f;
+                                                        c.check();
+                                                    }
+                                                }
+                                            }, 300);
                                         }
-                                    }, 300);
+                                    });
                                 }
-                            });
-                        }
-                    }).show();
+                            }).show();
                 }
                 if (f != null && f instanceof Refreshable) {
                     Refreshable r = (Refreshable) f;
@@ -401,6 +402,7 @@ public class ColdActivity extends FragmentActivity {
                             }
                         }
                         password.wipe();
+                        Collections.sort(addressList, Collections.reverseOrder());
                         KeyUtil.addAddressList(null, addressList);
                         recoverBackupSuccess();
                     }
