@@ -146,8 +146,10 @@ public class BlockchainService extends android.app.Service {
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             scheduleStartBlockchainService(this);
             PeerManager.instance().stop();
-            mBitherTimer.stopTimer();
-            mBitherTimer = null;
+            if (mBitherTimer != null) {
+                mBitherTimer.stopTimer();
+                mBitherTimer = null;
+            }
             if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
                 wakeLock = null;
@@ -156,8 +158,12 @@ public class BlockchainService extends android.app.Service {
                 unregisterReceiver(connectivityReceiver);
                 connectivityReceivered = false;
             }
-            unregisterReceiver(tickReceiver);
-            unregisterReceiver(txReceiver);
+            if (tickReceiver != null) {
+                unregisterReceiver(tickReceiver);
+            }
+            if (txReceiver != null) {
+                unregisterReceiver(txReceiver);
+            }
             BroadcastUtil.removeMarketState();
         }
         super.onDestroy();
@@ -176,6 +182,9 @@ public class BlockchainService extends android.app.Service {
     @Override
     public int onStartCommand(final Intent intent, final int flags,
                               final int startId) {
+        if (intent == null) {
+            return START_NOT_STICKY;
+        }
         final String action = intent.getAction();
         if (action != null) {
             LogUtil.i("onStartCommand", "onStartCommand Service:" + action);
