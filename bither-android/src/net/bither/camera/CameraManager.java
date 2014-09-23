@@ -243,11 +243,17 @@ public final class CameraManager {
     }
 
     public void setTorch(final boolean enabled) {
+        if(camera == null){
+            return;
+        }
         if (enabled != getTorchEnabled(camera))
             setTorchEnabled(camera, enabled);
     }
 
     public boolean torchEnabled() {
+        if(camera == null){
+            return false;
+        }
         return getTorchEnabled(camera);
     }
 
