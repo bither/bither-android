@@ -29,6 +29,7 @@ import net.bither.R;
 import net.bither.ui.base.SubtransactionListItem;
 import net.bither.util.UIUtil;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 public class DialogAddressFull extends DialogWithArrow {
@@ -76,10 +77,10 @@ public class DialogAddressFull extends DialogWithArrow {
         setContentView(R.layout.dialog_address_full);
         lv = (ListView) findViewById(R.id.lv);
         int width = UIUtil.dip2pix(140);
-        for (int i = 0;
-             i < addresses.size();
-             i++) {
-            if (addresses.values().toArray()[i] != null) {
+        Iterator<Long> iterator = addresses.values().iterator();
+        while (iterator.hasNext()) {
+            Long value = iterator.next();
+            if (value != null && value != 0) {
                 width = Math.min(UIUtil.getScreenWidth() - UIUtil.dip2pix(100),
                         UIUtil.dip2pix(220));
                 break;
