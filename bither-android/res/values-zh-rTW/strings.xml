@@ -199,9 +199,9 @@
     <string name="tx_cannot_reloding">壹個小時內只能重載交易數據壹次.</string>
     <string name="base_on_text">基于 </string>
     <string name="synchronous_interval">同步間隔</string>
-    <string name="synchronous_interval_fifteen_minute">15分鍾</string>
-    <string name="synchronous_interval_one_hour">1小時</string>
-    <string name="synchronous_interval_only_open_app">打開應用時</string>
+    <string name="synchronous_interval_fifteen_minute">15 分鍾</string>
+    <string name="synchronous_interval_one_hour">1 小時</string>
+    <string name="synchronous_interval_only_open_app">僅在打開應用時</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">比特幣 URI 無效:\n%s</string>
