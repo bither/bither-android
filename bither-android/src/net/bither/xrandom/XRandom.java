@@ -26,7 +26,7 @@ public class XRandom implements IRandom {
 
     @Override
     public byte[] nextBytes(int length) {
-        return getRandomBytes();
+        return getRandomBytes(length);
     }
 
     private IUEntropy uEntropy;
@@ -35,9 +35,7 @@ public class XRandom implements IRandom {
         this.uEntropy = uEntropy;
     }
 
-    private byte[] getRandomBytes() {
-        int nBitLength = Parameters.n.bitLength();
-        int byteLength = nBitLength / 8;
+    private byte[] getRandomBytes(int byteLength) {
         byte[] uRandomBytes = getURandomBytes(byteLength);
         if (this.uEntropy == null) {
             return uRandomBytes;
