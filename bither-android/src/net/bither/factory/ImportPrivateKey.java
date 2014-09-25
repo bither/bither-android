@@ -27,6 +27,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.model.PasswordSeed;
@@ -90,8 +91,7 @@ public class ImportPrivateKey {
                     List<String> addressList = new ArrayList<String>();
                     addressList.add(ecKey.toAddress());
                     if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                        BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
-                        handlerResult(service, ecKey, addressType);
+                        checkAddress(service, ecKey, addressList);
                     } else {
                         addECKey(service, ecKey);
                     }
@@ -112,6 +112,25 @@ public class ImportPrivateKey {
             }
         };
         threadNeedService.start();
+    }
+
+    private void checkAddress(BlockchainService service, ECKey ecKey, List<String> addressList) {
+        try {
+            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            handlerResult(service, ecKey, addressType);
+        } catch (Exception e) {
+            ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (dp != null && dp.isShowing()) {
+                        dp.setThread(null);
+                        dp.dismiss();
+                    }
+                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
+                }
+            });
+        }
+
     }
 
     private void addECKey(BlockchainService blockchainService, ECKey ecKey) {
@@ -205,10 +224,31 @@ public class ImportPrivateKey {
                 addECKey(blockchainService, ecKey);
                 break;
             case SpecialAddress:
-                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_special_address);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(activity,
+                                R.string.import_private_key_failed_special_address);
+                    }
+                });
+
                 break;
             case TxTooMuch:
-                DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_failed_tx_too_mush);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.setThread(null);
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(activity,
+                                R.string.import_private_key_failed_tx_too_mush);
+                    }
+                });
                 break;
         }
     }
