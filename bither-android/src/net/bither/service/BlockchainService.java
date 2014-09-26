@@ -146,6 +146,7 @@ public class BlockchainService extends android.app.Service {
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             scheduleStartBlockchainService(this);
             PeerManager.instance().stop();
+            PeerManager.instance().onDestroy();
             if (mBitherTimer != null) {
                 mBitherTimer.stopTimer();
                 mBitherTimer = null;
