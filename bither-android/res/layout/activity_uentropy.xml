@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/v_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:keepScreenOn="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#55000000"/>
+
+    <net.bither.xrandom.camera.RandomPointView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:id="@+id/fl_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:indeterminateOnly="false"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/uentropy_progress"
+            android:layout_gravity="top"
+            android:max="100"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom">
+
+            <net.bither.xrandom.sensor.SensorVisualizerView
+                android:id="@+id/v_sensor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
+
+            <net.bither.xrandom.audio.AudioVisualizerView
+                android:id="@+id/v_mic"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_gravity="bottom"/>
+        </LinearLayout>
+
+
+        <ImageButton
+            android:id="@+id/ibtn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/camera_cancel"
+            android:background="@drawable/transparent"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"/>
+
+
+        <LinearLayout
+            android:id="@+id/v_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/v_overlay_top"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/xrandom_overlay">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:src="@drawable/xrandom_overlay_logo_top"/>
+
+                <ImageView
+                    android:id="@+id/iv_overlay_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:src="@drawable/xrandom_overlay_line_down"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/v_overlay_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/xrandom_overlay">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:src="@drawable/xrandom_overlay_logo_bottom"/>
+
+                <ImageView
+                    android:id="@+id/iv_overlay_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center_horizontal"
+                    android:scaleType="fitXY"
+                    android:visibility="gone"
+                    android:src="@drawable/xrandom_overlay_line_up"/>
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+</merge>

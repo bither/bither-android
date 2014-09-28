@@ -32,7 +32,7 @@ import android.widget.ImageButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ScanActivity;
+import net.bither.qrcode.ScanActivity;
 import net.bither.util.StringUtil;
 
 public class AddAddressListItem extends FrameLayout {

@@ -55,7 +55,7 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogMarketDetailOption;
 import net.bither.ui.base.dialog.DialogMarketDetailOption.MarketDetailDialogDelegate;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.ChartsUtil;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.ExchangeUtil;
@@ -131,7 +131,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements OnChecke
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_back).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         tvMarketName = (TextView) findViewById(R.id.tv_market_name);
         pbKline = (ProgressBar) findViewById(R.id.pb_kline);

@@ -136,6 +136,40 @@
                 </LinearLayout>
             </ScrollView>
 
+            <LinearLayout
+                android:id="@+id/v_keyboard_container"
+                android:layout_gravity="bottom"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/global_shadow_up"/>
+
+                <net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView
+                    android:id="@+id/kv_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/entry_keyboard_background_above_light"
+                    android:visibility="gone"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="3dp"
+                    android:keyPreviewLayout="@layout/entry_keyboard_preview_layout"
+                    android:keyPreviewOffset="@dimen/entry_keyboard_key_preview_offset"
+                    android:keyBackground="@drawable/entry_keyboard_key_btn_bg"
+                    android:textColor="@color/entry_keyboard_normal_key_text"
+                    android:shadowColor="@color/entry_keyboard_normal_key_shadow"
+                    android:shadowRadius="3"
+                    android:labelTextSize="@dimen/entry_keyboard_label_text_size"
+                    android:keyTextSize="@dimen/entry_keyboard_key_text_size"/>
+
+            </LinearLayout>
+
             <include layout="@layout/layout_dropdown_message"/>
         </FrameLayout>
 

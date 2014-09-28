@@ -29,6 +29,7 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
@@ -41,7 +42,7 @@ public class DropdownMessage {
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
-                if (activity == null || StringUtil.isEmpty(msg) || duration <= 0) {
+                if (activity == null || Utils.isEmpty(msg) || duration <= 0) {
                     return;
                 }
 

@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -44,9 +45,10 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
@@ -54,10 +56,12 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.SystemUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
+import net.bither.xrandom.URandom;
 
 public class ChooseModeActivity extends Activity {
     private static final int AnimHideDuration = 600;
@@ -84,11 +88,34 @@ public class ChooseModeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (UpgradeUtil.needUpgrade()) {
-            upgrade();
+        if (URandom.urandomFile.exists()) {
+            if (UpgradeUtil.needUpgrade()) {
+                upgrade();
+            } else {
+                setVersionCode();
+                initActivity();
+            }
         } else {
-            setVersionCode();
-            initActivity();
+            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this, getString(R.string.urandom_not_exists), new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            });
+            dialogConfirmTask.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    finish();
+                }
+            });
+            dialogConfirmTask.setCancelable(false);
+            dialogConfirmTask.show();
         }
     }
 
@@ -133,6 +160,9 @@ public class ChooseModeActivity extends Activity {
                     }
                     setVersionCode();
                     initActivity();
+                    if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                        dowloadSpvBlock();
+                    }
                     break;
                 case HandlerMessage.MSG_FAILURE:
                     if (progressDialog != null) {
@@ -217,6 +247,7 @@ public class ChooseModeActivity extends Activity {
                     new Runnable() {
                         @Override
                         public void run() {
+                            stopService(new Intent(ChooseModeActivity.this, BlockchainService.class));
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -510,7 +541,7 @@ public class ChooseModeActivity extends Activity {
         public void onClick(View v) {
             llWarmExtraError.setVisibility(View.GONE);
             llWarmExtraWaiting.setVisibility(View.VISIBLE);
-            ServiceUtil.dowloadSpvBlock();
+            dowloadSpvBlock();
         }
     };
 
@@ -583,5 +614,12 @@ public class ChooseModeActivity extends Activity {
         spn.setSpan(new RelativeLineHeightSpan(0.4f), firstLineEnd + 1, str.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spn;
+    }
+
+    private void dowloadSpvBlock() {
+        Intent intent = new Intent(
+                BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
+                BitherApplication.mContext, BlockchainService.class);
+        BitherApplication.mContext.startService(intent);
     }
 }

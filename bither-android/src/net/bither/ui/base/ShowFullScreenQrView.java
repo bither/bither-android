@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.util.ImageManageUtil;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.UIUtil;
 
 public class ShowFullScreenQrView extends FrameLayout {

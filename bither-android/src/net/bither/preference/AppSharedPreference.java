@@ -20,12 +20,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.util.ExchangeUtil.ExchangeType;
-import net.bither.util.Qr;
-import net.bither.util.StringUtil;
+import net.bither.qrcode.Qr;
 
 import java.util.Date;
 import java.util.Locale;
@@ -54,6 +55,7 @@ public class AppSharedPreference {
     private static final String APP_MODE = "app_mode";
     private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
     private static final String BITHERJ_DONE_SYNC_FROM_SPV = "bitheri_done_sync_from_spv";
+    private static final String SYNC_INTERVAL = "sync_interval";
 
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
@@ -143,7 +145,7 @@ public class AppSharedPreference {
 
     private void setDefault() {
         String defaultCountry = Locale.getDefault().getCountry();
-        if (StringUtil.compareString(defaultCountry, "CN") || StringUtil.compareString
+        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
             setExchangeType(ExchangeType.CNY);
             setMarketType(MarketType.HUOBI);
@@ -231,20 +233,20 @@ public class AppSharedPreference {
 
     public PasswordSeed getPasswordSeed() {
         String str = this.mPreferences.getString(PASSWORD_SEED, "");
-        if (StringUtil.isEmpty(str)) {
+        if (Utils.isEmpty(str)) {
             return null;
         }
         return new PasswordSeed(str);
     }
 
     public void setPasswordSeed(PasswordSeed passwordSeed) {
-        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toString()).commit();
+        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toPasswordSeedString()).commit();
 
     }
 
 
     public boolean hasUserAvatar() {
-        return !StringUtil.isEmpty(getUserAvatar());
+        return !Utils.isEmpty(getUserAvatar());
     }
 
     public String getUserAvatar() {
@@ -273,5 +275,16 @@ public class AppSharedPreference {
 
     public void setFirstRunDialogShown(boolean shown) {
         mPreferences.edit().putBoolean(FIRST_RUN_DIALOG_SHOWN, shown).commit();
+    }
+
+    public BitherSetting.SyncInterval getSyncInterval() {
+        int index = this.mPreferences.getInt(SYNC_INTERVAL,
+                BitherSetting.SyncInterval.FifteenMinute.ordinal());
+        return BitherSetting.SyncInterval.values()[index];
+    }
+
+    public void setSyncInterval(BitherSetting.SyncInterval syncInterval) {
+        this.mPreferences.edit().putInt(SYNC_INTERVAL, syncInterval.ordinal()).commit();
+
     }
 }

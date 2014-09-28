@@ -29,7 +29,7 @@ import net.bither.R;
 import net.bither.fragment.hot.BlockListFragment;
 import net.bither.fragment.hot.PeerListFragment;
 import net.bither.ui.base.ViewPagerTabs;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 
 public final class NetworkMonitorActivity extends FragmentActivity {
 	private PeerListFragment peerListFragment;
@@ -72,7 +72,7 @@ public final class NetworkMonitorActivity extends FragmentActivity {
 		}
 		// flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);
 		ibtnBack = (ImageButton) findViewById(R.id.ibtn_back);
-		ibtnBack.setOnClickListener(new BackClickListener());
+		ibtnBack.setOnClickListener(new IBackClickListener());
 	}
 
 	@Override

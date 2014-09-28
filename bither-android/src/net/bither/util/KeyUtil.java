@@ -26,6 +26,8 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.xrandom.IUEntropy;
+import net.bither.xrandom.XRandom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +39,23 @@ public class KeyUtil {
 
     }
 
-    public static List<Address> addPrivateKeyByRandomWithPassphras(BlockchainService service, CharSequence password, int count) {
+    public static List<Address> addPrivateKeyByRandomWithPassphras(BlockchainService service, IUEntropy iuEntropy, CharSequence password, int count) {
         if (service != null) {
             service.stopAndUnregister();
         }
         List<Address> addressList = new ArrayList<Address>();
         for (int i = 0; i < count; i++) {
-            ECKey ecKey = new ECKey();
+            XRandom xRandom = new XRandom(iuEntropy);
+            ECKey ecKey = ECKey.generateECKey(xRandom);
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             Address address = new Address(ecKey.toAddress(),
-                    ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey));
+                    ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
             if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
                 PasswordSeed passwordSeed = new PasswordSeed(address);
                 AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
             }
-
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
@@ -94,6 +96,7 @@ public class KeyUtil {
             }
         }
         if (service != null) {
+
             service.startAndRegister();
         }
 

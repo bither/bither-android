@@ -30,17 +30,15 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.exception.VerificationException;
 import net.bither.bitherj.script.Script;
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
 import net.bither.http.HttpSetting;
 import net.bither.model.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,7 +219,7 @@ public class TransactionsUtil {
     public static UnSignTransaction getUnsignTxFromCache(String address) {
         synchronized (unsignTxs) {
             for (UnSignTransaction unSignTransaction : unsignTxs) {
-                if (StringUtil.compareString(address,
+                if (Utils.compareString(address,
                         unSignTransaction.getAddress())) {
                     return unSignTransaction;
                 }
@@ -250,11 +248,10 @@ public class TransactionsUtil {
 
     public static boolean signTransaction(Tx tx, String qrCodeContent)
             throws ScriptException {
-        String[] stringArray = qrCodeContent.split(StringUtil.QR_CODE_SPLIT);
-
+        String[] stringArray = QRCodeUtil.splitString(qrCodeContent);
         List<byte[]> hashList = new ArrayList<byte[]>();
         for (String str : stringArray) {
-            if (!StringUtil.isEmpty(str)) {
+            if (!Utils.isEmpty(str)) {
                 hashList.add(Utils.hexStringToByteArray(str));
             }
         }
@@ -308,7 +305,7 @@ public class TransactionsUtil {
             Collections.sort(transactions, new ComparatorTx());
             address.initTxs(transactions);
             address.setSyncComplete(true);
-            address.savePubKey();
+            address.updatePubkey();
             BroadcastUtil
                     .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
 

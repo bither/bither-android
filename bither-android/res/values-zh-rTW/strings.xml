@@ -81,14 +81,15 @@
     <string name="add_address_already_watched">這個地址已經被監控了</string>
     <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
-    <string name="add_address_generate_address_password_label">請輸入密碼</string>
+    <string name="add_address_generate_address_password_label">請輸入錢包密碼</string>
     <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;43</string>
-    <string name="add_address_generate_address_password_set_label">請設置密碼</string>
+    <string name="add_address_generate_address_password_set_label">請設置錢包密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
     <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
     <string name="password_checking">正在檢查密碼</string>
     <string name="password_wrong">密碼錯誤</string>
+    <string name="decrypt_failed">解密失敗</string>
     <string name="wallet_loading">錢包初始化中, 請稍後再試.</string>
 
 
@@ -170,12 +171,19 @@
     <string name="reload_tx">重載交易數據</string>
     <string name="export_success">日志已導出到 :</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
-    <string name="import_private_key_qr_code">來自私鑰二維碼</string>
+    <string name="setting_name_import_bip38_key">導入BIP38私鑰</string>
+    <string name="import_private_key_qr_code">來自比太私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="import_bip38_key_qr_code">來自BIP38私鑰二維碼</string>
+    <string name="import_bip38_key_text">來自BIP38私鑰文本</string>
     <string name="private_key_text">私鑰明文</string>
+    <string name="import_bip38_key_text_hint">輸入BIP38私鑰明文</string>
+    <string name="enter_bip38_key_password">請輸入BIP38私鑰的密碼</string>
+    <string name="import_bip38_key_text_format_erro">不符合BIP38私鑰格式</string>
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
+    <string name="import_bip38private_key_qr_code_scan_title">掃描BIP38私鑰二維碼</string>
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
     <string name="import_private_key_qr_code_success">導入成功</string>
     <string name="import_private_key_qr_code_failed">導入失敗</string>
@@ -189,7 +197,11 @@
     <string name="reload_tx_failed">重載交易數據失敗 , 請重試 . </string>
     <string name="reload_tx_success">重載交易數據成功 </string>
     <string name="tx_cannot_reloding">壹個小時內只能重載交易數據壹次.</string>
-
+    <string name="base_on_text">基于 </string>
+    <string name="synchronous_interval">同步間隔</string>
+    <string name="synchronous_interval_fifteen_minute">15 分鍾</string>
+    <string name="synchronous_interval_one_hour">1 小時</string>
+    <string name="synchronous_interval_only_open_app">僅在打開應用時</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">無法分類輸入:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">比特幣 URI 無效:\n%s</string>
@@ -204,7 +216,7 @@
     <!-- mode -->
     <string name="choose_mode_cold_desctription">冷錢包 : 離線, 安全!</string>
     <string name="choose_mode_warm_desctription">熱錢包 : 聯機, 易用!</string>
-    <string name="choose_mode_warm_waiting">正在創建錢包…</string>
+    <string name="choose_mode_warm_waiting">加載中…</string>
     <string name="choose_mode_warm_retry">重試</string>
     <string name="choose_mode_cold_confirm">模式設置後不能切換.\n冷錢包應該運行在離線的備用手機上.\n確認以冷錢包模式運行?</string>
     <string name="choose_mode_warm_confirm">模式設置後不能切換.\n熱錢包可以方便的在線發送交易.\n確認以熱錢包模式運行?</string>
@@ -330,4 +342,20 @@
     <!-- upgrade -->
     <string name="begin_upgrade">即將開始升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
     <string name="upgrading">升級中...</string>
+
+    <!-- xrandom -->
+    <string name="xrandom_stopping">正在停止…</string>
+    <string name="xrandom_cancel_confirm">停止生成?</string>
+    <string name="xrandom_generating_failed">生成失敗</string>
+    <string name="xrandom_no_source">無可用隨機源</string>
+    <string name="urandom_not_exists">你的設備無法提供足夠安全的隨機數</string>
+    <string name="xrandom_uncheck_warn">極隨機(XRandom)能提高隨機性.\n確認不使用嗎?</string>
+    <string name="xrandom_final_confirm">您已成功生成%d個極隨機私鑰</string>
+    <string name="xrandom_info_detail">極隨機通過採集數據源以增加隨機性.\n\n數據源包括攝像頭、麥克風、磁場感應器、重力感應器等設備內置傳感器.</string>
+    <string name="xrandom_info_guide">\n\n採集過程中您可通過晃動設備等方式增加所採集數據的隨機性.</string>
+    <string name="generating_private_key_final_confirm">您已成功生成%d個私鑰</string>
+    <!-- qrcode-->
+    <string name="switch_qrcode">切換二維碼</string>
+    <string name="use_old_version_qrcode">已切換到舊版二維碼，可用 &lt;1.1.0的冷錢包簽名</string>
+    <string name="use_new_version_qrcode">已切換到新版二維碼，可用 ≧1.1.0的冷錢包簽名</string>
 </resources>

@@ -148,13 +148,23 @@
                     android:layout_height="1dp"
                     android:layout_weight="1" />
 
+                <ImageButton
+                    android:id="@+id/ibtn_xrandom_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:visibility="gone"
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/xrandom_address_label_selector"/>
+
                 <ImageView
                     android:id="@+id/iv_type_watchonly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/address_type_watchonly" />
+                    android:src="@drawable/address_type_watchonly"/>
 
                 <ImageView
                     android:id="@+id/iv_type_private"

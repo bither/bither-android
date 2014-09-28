@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
@@ -18,9 +18,9 @@
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
-            <include layout="@layout/layout_dropdown_message"/>
+            <include layout="@layout/layout_dropdown_message" />
         </FrameLayout>
 
         <LinearLayout
@@ -37,11 +37,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|center"
                 android:background="@drawable/action_bar_black_left_button"
-                android:src="@drawable/action_bar_glyph_cancel"/>
+                android:src="@drawable/action_bar_glyph_cancel" />
 
             <TextView
                 android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
                 android:gravity="center"
@@ -51,7 +52,20 @@
                 android:shadowRadius="0.5"
                 android:text="@string/activity_name_qr_code"
                 android:textColor="@color/white"
-                android:textSize="13sp"/>
+                android:textSize="13sp" />
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:id="@+id/iv_separator"
+                android:background="@drawable/title_bar_seperator" />
+
+            <ImageButton
+                android:id="@+id/ibtn_switch"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:src="@drawable/title_bar_option_icon" />
         </LinearLayout>
     </net.bither.ui.base.SwipeRightTouchView>
 

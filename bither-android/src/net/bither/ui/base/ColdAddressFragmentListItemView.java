@@ -23,12 +23,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -40,6 +42,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     private TextView tvAddress;
     private QrCodeImageView ivQr;
     private ImageView ivType;
+    private ImageButton ibtnXRandomLabel;
 
     public ColdAddressFragmentListItemView(Activity context) {
         super(context);
@@ -55,16 +58,22 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         ivType = (ImageView) findViewById(R.id.iv_type);
+        ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
+        ibtnXRandomLabel.setOnClickListener(DialogXRandomInfo.InfoClick);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
         ivType.setOnLongClickListener(typeClick);
-
     }
 
     public void showAddress(final Address address) {
         this.address = address;
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         ivQr.setContent(address.getAddress());
+        if (address.isFromXRandom()) {
+            ibtnXRandomLabel.setVisibility(View.VISIBLE);
+        } else {
+            ibtnXRandomLabel.setVisibility(View.GONE);
+        }
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {

@@ -16,6 +16,8 @@
 
 package net.bither;
 
+import net.bither.bitherj.exception.AddressFormatException;
+
 import java.nio.charset.Charset;
 
 
@@ -60,6 +62,7 @@ public class BitherSetting {
         public static final int SIGN_TX_REQUEST_CODE = 253;
         public static final int CLONE_FROM_REQUEST_CODE = 1117;
         public static final int IMPORT_PRIVATE_KEY_REQUEST_CODE = 1356;
+        public static final int IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE = 1357;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
@@ -71,7 +74,9 @@ public class BitherSetting {
         public static final String SCAN_ADDRESS_POSITION_TAG = "scan_address_position";
         public static final int SEND_REQUEST_CODE = 437;
         public static final String QR_CODE_STRING = "qr_code_string";
+        public static final String OLD_QR_CODE_STRING = "old_qr_code_string";
         public static final String TITLE_STRING = "title_string";
+        public static final String QRCODE_TYPE = "qrcode_type";
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
         public static final String INTENT_FROM_NOTIF = "from_notif";
@@ -92,7 +97,8 @@ public class BitherSetting {
     }
 
     public enum MarketType {
-        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6);
+        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6), BITFINEX(7),
+        MARKET796(8);
         private int mVal;
 
         private MarketType(int val) {
@@ -135,11 +141,58 @@ public class BitherSetting {
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_btcchina);
                 break;
+            case BITFINEX:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_bitfinex);
+                break;
+            case MARKET796:
+                name = BitherApplication.mContext
+                        .getString(R.string.market_name_796);
+                break;
             default:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitstamp);
                 break;
         }
         return name;
+    }
+
+    public enum QRCodeType {
+        Bither, Bip38;
+
+        public boolean checkFormat(String content) {
+            switch (this) {
+                case Bither:
+                    //todo checkBitherQrCode
+                    return true;
+
+                case Bip38:
+                    boolean check = false;
+                    try {
+                        check = net.bither.bitherj.crypto.bip38.Bip38.isBip38PrivateKey(content);
+                    } catch (AddressFormatException e) {
+                        e.printStackTrace();
+                    }
+                    return check;
+
+            }
+            return false;
+        }
+
+    }
+
+    public enum SyncInterval {
+        FifteenMinute(R.string.synchronous_interval_fifteen_minute), OneHour(R.string.synchronous_interval_one_hour), OnlyOpenApp(R.string.synchronous_interval_only_open_app);
+
+        private SyncInterval(int stringId) {
+            this.stringId = stringId;
+        }
+
+        private int stringId;
+
+        public int getStringId() {
+            return stringId;
+        }
+
     }
 }

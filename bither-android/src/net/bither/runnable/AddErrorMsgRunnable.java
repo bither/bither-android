@@ -16,7 +16,6 @@
 
 package net.bither.runnable;
 
-import net.bither.BitherApplication;
 import net.bither.api.BitherErrorApi;
 import net.bither.bitherj.utils.Utils;
 import net.bither.exception.UEHandler;
@@ -33,7 +32,7 @@ public class AddErrorMsgRunnable extends BaseRunnable {
             File errorFile = new File(UEHandler.getErrorLogFile(),"error.log");
             if (errorFile.exists()) {
                 String errorMsg = Utils.readFile(errorFile);
-                if (!StringUtil.isEmpty(errorMsg)) {
+                if (!Utils.isEmpty(errorMsg)) {
                     BitherErrorApi addFeedbackApi = new BitherErrorApi(errorMsg);
                     addFeedbackApi.handleHttpPost();
                 }

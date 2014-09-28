@@ -19,8 +19,12 @@ package net.bither.model;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.util.StringUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 
 
 public class PasswordSeed {
@@ -29,8 +33,8 @@ public class PasswordSeed {
     private ECKey ecKey;
 
     public PasswordSeed(String str) {
-        int indexOfSplit = str.indexOf(StringUtil.QR_CODE_SPLIT);
-        this.address = str.substring(0, indexOfSplit);
+        int indexOfSplit = QRCodeUtil.indexOfOfPasswordSeed(str);
+        this.address = QRCodeUtil.getAddressFromPasswordSeed(str);
         this.keyStr = str.substring(indexOfSplit + 1);
     }
 
@@ -44,7 +48,8 @@ public class PasswordSeed {
         if (this.ecKey == null) {
             return false;
         }
-        return StringUtil.compareString(address,
+        LogUtil.d("address", this.ecKey.toAddress());
+        return Utils.compareString(this.address,
                 this.ecKey.toAddress());
 
     }
@@ -57,9 +62,17 @@ public class PasswordSeed {
         return this.address;
     }
 
-    @Override
-    public String toString() {
-        return this.address + StringUtil.QR_CODE_SPLIT + this.keyStr;
+    public String toPasswordSeedString() {
+        try {
+            String passwordSeedString = Base58.bas58ToHexWithAddress(this.address) + QRCodeUtil.QR_CODE_SPLIT
+                    + QRCodeUtil.getNewVersionEncryptPrivKey(this.keyStr);
+            return passwordSeedString;
+        } catch (AddressFormatException e) {
+            throw new RuntimeException("passwordSeed  address is format error ," + this.address);
+
+        }
+
     }
+
 
 }

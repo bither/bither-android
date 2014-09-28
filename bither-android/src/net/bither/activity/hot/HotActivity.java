@@ -37,10 +37,9 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.LogUtil;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -54,8 +53,10 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
@@ -108,7 +109,7 @@ public class HotActivity extends FragmentActivity {
                     }
                 }, 500);
                 onNewIntent(getIntent());
-                ServiceUtil.doMarkTimerTask(true);
+
             }
         }, 500);
         mPager.postDelayed(new Runnable() {
@@ -126,11 +127,11 @@ public class HotActivity extends FragmentActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
                 .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
-        intentFilter.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
+        intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        intentFilter.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
         registerReceiver(txAndBlockBroadcastReceiver, intentFilter);
         registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
@@ -140,19 +141,18 @@ public class HotActivity extends FragmentActivity {
         unregisterReceiver(addressIsLoadedReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
-        ServiceUtil.doMarkTimerTask(false);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ServiceUtil.doMarkTimerTask(false);
     }
 
     @Override
     protected void onResume() {
-        ServiceUtil.doMarkTimerTask(true);
         super.onResume();
+        BitherApplication.startBlockchainService();
     }
 
 
@@ -227,6 +227,7 @@ public class HotActivity extends FragmentActivity {
                 }
                 Intent intent = new Intent(HotActivity.this, AddHotAddressActivity.class);
                 startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
 
             }
         });
@@ -237,17 +238,24 @@ public class HotActivity extends FragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
-            Fragment f = getFragmentAtIndex(1);
-            if (f != null && f instanceof HotAddressFragment) {
-                @SuppressWarnings("unchecked") ArrayList<String> addresses = (ArrayList<String>)
-                        data.getExtras().getSerializable(BitherSetting.INTENT_REF
-                                .ADDRESS_POSITION_PASS_VALUE_TAG);
-                HotAddressFragment af = (HotAddressFragment) f;
-                af.showAddressesAdded(addresses);
-            }
-            if (f != null && f instanceof Refreshable) {
-                Refreshable r = (Refreshable) f;
-                r.doRefresh();
+            ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
+                    (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+            if (addresses != null && addresses.size() > 0) {
+                Address a = WalletUtils.findPrivateKey(addresses.get(0));
+                if (a != null && a.hasPrivKey()) {
+                    new DialogGenerateAddressFinalConfirm(this, addresses.size(),
+                            a.isFromXRandom()).show();
+                }
+
+                Fragment f = getFragmentAtIndex(1);
+                if (f != null && f instanceof HotAddressFragment) {
+                    HotAddressFragment af = (HotAddressFragment) f;
+                    af.showAddressesAdded(addresses);
+                }
+                if (f != null && f instanceof Refreshable) {
+                    Refreshable r = (Refreshable) f;
+                    r.doRefresh();
+                }
             }
             return;
         }
@@ -433,11 +441,11 @@ public class HotActivity extends FragmentActivity {
         public void onReceive(Context context, Intent intent) {
 
             if (intent == null ||
-                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
-                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                    (!Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
                 return;
             }
-            if (Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())) {
+            if (Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())) {
                 refreshTotalBalance();
             }
             Fragment fragment = getFragmentAtIndex(1);
@@ -450,7 +458,7 @@ public class HotActivity extends FragmentActivity {
     private final class AddressIsLoadedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
             refreshTotalBalance();

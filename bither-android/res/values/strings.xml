@@ -15,6 +15,8 @@
     <string name="market_name_okcoin">OKCoin.CN</string>
     <string name="market_name_chbtc">CHBTC</string>
     <string name="market_name_btcchina">BTCChina</string>
+    <string name="market_name_796">796</string>
+    <string name="market_name_bitfinex">Bitfinex</string>
     <string name="activity_name_address_detail">Detail</string>
     <string name="activity_name_address_sign_tx">Sign Transaction</string>
     <string name="activity_name_qr_code">QR Code</string>
@@ -87,14 +89,15 @@
     <string name="add_address_already_watched">This address is already monitored</string>
     <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
-    <string name="add_address_generate_address_password_label">Enter password</string>
+    <string name="add_address_generate_address_password_label">Enter password of wallet</string>
     <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;43</string>
-    <string name="add_address_generate_address_password_set_label">Set password</string>
+    <string name="add_address_generate_address_password_set_label">Set password of wallet</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
     <string name="add_address_generate_address_password_not_same">Passwords not same</string>
     <string name="password_checking">Checking password</string>
     <string name="password_wrong">Wrong Password</string>
+    <string name="decrypt_failed">Decryption Failed</string>
     <string name="wallet_loading">Loading wallets, Please try again later.</string>
 
     <!-- send -->
@@ -175,12 +178,19 @@
     <string name="reload_tx">Reload Transactions data</string>
     <string name="export_success">The log exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
-    <string name="import_private_key_qr_code">From Private Key QR Code</string>
+    <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
+    <string name="import_private_key_qr_code">From Bither Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
+    <string name="import_bip38_key_text">From BIP38-private key text</string>
+    <string name="enter_bip38_key_password">Enter password of BIP38-private key</string>
     <string name="private_key_text">Private Key Text</string>
+    <string name="import_bip38_key_text_hint">Enter your BIP38-private key </string>
+    <string name="import_bip38_key_text_format_erro">Not match BIP38-private key format</string>
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_bip38private_key_qr_code_scan_title">Scan BIP38-private key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
     <string name="import_private_key_qr_code_failed">Import failed.</string>
@@ -194,6 +204,11 @@
     <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions data success </string>
     <string name="tx_cannot_reloding">You can only reload transactions data in a hour..</string>
+    <string name="base_on_text">Based on </string>
+    <string name="synchronous_interval">Sync Interval</string>
+    <string name="synchronous_interval_fifteen_minute">15 Minutes</string>
+    <string name="synchronous_interval_one_hour">1 Hour</string>
+    <string name="synchronous_interval_only_open_app">Only when openning</string>
     <!-- Input parser -->
     <string name="input_parser_cannot_classify">Cannot classify input:\n%s</string>
     <string name="input_parser_invalid_bitcoin_uri">Invalid Bitcoin URI:\n%s</string>
@@ -209,7 +224,7 @@
     <!-- mode -->
     <string name="choose_mode_cold_desctription">Bither Cold : Offline &amp; Secure.</string>
     <string name="choose_mode_warm_desctription">Bither Hot : Online &amp; Simple.</string>
-    <string name="choose_mode_warm_waiting">Building Wallet…</string>
+    <string name="choose_mode_warm_waiting">Loading…</string>
     <string name="choose_mode_warm_retry">Retry</string>
     <string name="choose_mode_cold_confirm">Once mode is set, it can\'t be changed.\nBither Cold need to be run on a offline phone.\nSet this phone as Bither Cold?</string>
     <string name="choose_mode_warm_confirm">Once mode is set, it can\'t be changed.\nBither Hot is an online bitcoin wallet.\nSet this phone as Bither Hot?</string>
@@ -344,4 +359,20 @@
     <!-- upgrade -->
     <string name="begin_upgrade">Ready to upgrade?\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
     <string name="upgrading">Upgrading...</string>
+
+    <!-- xrandom -->
+    <string name="xrandom_stopping">Stopping…</string>
+    <string name="xrandom_cancel_confirm">Stop generating?</string>
+    <string name="xrandom_no_source">No entropy source available.</string>
+    <string name="xrandom_generating_failed">Generating failed</string>
+    <string name="urandom_not_exists">Your device can\'t provide enough secured randomness.</string>
+    <string name="xrandom_uncheck_warn">XRandom increases randomness.\nSure to disable?</string>
+    <string name="xrandom_final_confirm">You have generated %d private keys from XRandom.</string>
+    <string name="generating_private_key_final_confirm">You have generated %d private keys.</string>
+    <string name="xrandom_info_detail">XRandom gathers data from sources to improve randomness.\n\nThe sources are sensors on your device like camera, microphone, magnetic sensor, gravity sensor, etc.</string>
+    <string name="xrandom_info_guide">\n\nShacking or rotating your device while gathering can improve randomness.</string>
+    <!-- qrcode-->
+    <string name="switch_qrcode">Switch QRCode</string>
+    <string name="use_old_version_qrcode">Switched to old version QR Codes, sign with Bither Cold &lt;1.1.0</string>
+    <string name="use_new_version_qrcode">Switched to new version QR Codes, sign with Bither Cold ≧1.1.0</string>
 </resources>

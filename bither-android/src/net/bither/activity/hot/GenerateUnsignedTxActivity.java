@@ -36,11 +36,12 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ScanActivity;
+import net.bither.bitherj.utils.Utils;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.model.QRCodeTxTransport;
 import net.bither.model.Ticker;
 import net.bither.model.UnSignTransaction;
 import net.bither.runnable.CommitTransactionThread;
@@ -53,7 +54,9 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.keyboard.EntryKeyboardView;
+import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
@@ -63,9 +66,9 @@ import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
 
-public class GenerateUnsignedTxActivity extends SwipeRightActivity implements CommitTransactionThread.CommitTransactionListener{
+public class GenerateUnsignedTxActivity extends SwipeRightActivity implements EntryKeyboardView
+        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private static final String ADDRESS_POSITION_SAVE_KEY = "address_position";
-
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -76,6 +79,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
     private DialogProgress dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
+    private AmountEntryKeyboardView kvAmount;
+    private View vKeyboardContainer;
 
     private Tx tx;
 
@@ -119,7 +124,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
     }
 
     private void initView() {
-        findViewById(R.id.ibtn_cancel).setOnClickListener(new BackClickListener());
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         tvAddressLabel = (TextView) findViewById(R.id.tv_address_label);
         etAddress = (EditText) findViewById(R.id.et_address);
         ibtnScan = (ImageButton) findViewById(R.id.ibtn_scan);
@@ -128,6 +133,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
         tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
+        kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
+        vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
         btcAmountView.setInputPrecision(8);
@@ -145,6 +152,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
         dp = new DialogProgress(this, R.string.please_wait);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
+        kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
+                (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
     }
 
     private OnClickListener scanClick = new OnClickListener() {
@@ -164,8 +173,10 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeTxTransport.getPreSignString(QRCodeTxTransport
-                            .fromSendRequestWithUnsignedTransaction(tx)));
+                    QRCodeEnodeUtil.getPresignTxString(tx));
+            intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
+                    QRCodeEnodeUtil.oldGetPreSignString(tx));
+
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
             startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -315,11 +326,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
                         success = false;
                         e.printStackTrace();
                     }
-                    if(success){
+                    if (success) {
                         try {
                             new CommitTransactionThread(dp, addressPosition, tx, false, GenerateUnsignedTxActivity.this).start();
                             return;
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -332,6 +343,16 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
                 }
             }, 500);
         }
+    }
+
+    @Override
+    public void onEntryKeyboardShow(EntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onEntryKeyboardHide(EntryKeyboardView v) {
+        vKeyboardContainer.setVisibility(View.GONE);
     }
 
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
@@ -439,7 +460,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements Co
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (StringUtil.validBicoinAddress(address)) {
-                if (StringUtil.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

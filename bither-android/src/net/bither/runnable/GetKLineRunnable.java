@@ -27,36 +27,36 @@ import java.util.List;
 
 public class GetKLineRunnable extends BaseRunnable {
 
-	private MarketType marketType;
-	private KlineTimeType mKlineTimeType;
+    private MarketType marketType;
+    private KlineTimeType mKlineTimeType;
 
-	public GetKLineRunnable(MarketType marketType, KlineTimeType klineTimeType) {
-		this.marketType = marketType;
-		this.mKlineTimeType = klineTimeType;
-	}
+    public GetKLineRunnable(MarketType marketType, KlineTimeType klineTimeType) {
+        this.marketType = marketType;
+        this.mKlineTimeType = klineTimeType;
+    }
 
-	@Override
-	public void run() {
-		boolean hasCache = false;
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		try {
-			KLine kLine = KLineUtil.getKLine(this.marketType,
-					this.mKlineTimeType);
-			hasCache = kLine != null;
-			obtainMessage(HandlerMessage.MSG_SUCCESS_FROM_CACHE, kLine);
-			GetKlineApi getKlineApi = new GetKlineApi(this.marketType,
-					this.mKlineTimeType);
-			getKlineApi.handleHttpGet();
-			List<IStickEntity> entityList = getKlineApi.getResult();
-			kLine = new KLine(this.marketType, this.mKlineTimeType, entityList);
-			obtainMessage(HandlerMessage.MSG_SUCCESS, kLine);
-			KLineUtil.addKline(kLine);
-		} catch (Exception e) {
-			if (!hasCache) {
-				obtainMessage(HandlerMessage.MSG_FAILURE);
-			}
-			e.printStackTrace();
-		}
+    @Override
+    public void run() {
+        boolean hasCache = false;
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        try {
+            KLine kLine = KLineUtil.getKLine(this.marketType,
+                    this.mKlineTimeType);
+            hasCache = kLine != null;
+            obtainMessage(HandlerMessage.MSG_SUCCESS_FROM_CACHE, kLine);
+            GetKlineApi getKlineApi = new GetKlineApi(this.marketType,
+                    this.mKlineTimeType);
+            getKlineApi.handleHttpGet();
+            List<IStickEntity> entityList = getKlineApi.getResult();
+            kLine = new KLine(this.marketType, this.mKlineTimeType, entityList);
+            obtainMessage(HandlerMessage.MSG_SUCCESS, kLine);
+            KLineUtil.addKline(kLine);
+        } catch (Exception e) {
+            if (!hasCache) {
+                obtainMessage(HandlerMessage.MSG_FAILURE);
+            }
+            e.printStackTrace();
+        }
 
-	}
+    }
 }

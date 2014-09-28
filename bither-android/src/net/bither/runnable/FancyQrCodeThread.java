@@ -23,9 +23,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.listener.GetAvatarListener;
+import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -63,7 +63,7 @@ public class FancyQrCodeThread extends Thread {
         final Bitmap qrCode = Qr.bitmap(content, size, fgColor, bgColor, MarginSize);
         final int qrCodeSize = Math.min(qrCode.getWidth(), qrCode.getHeight());
         if (addAvatar && AppSharedPreference.getInstance().hasUserAvatar()) {
-            ImageManageUtil.getAvatarForFancyQrCode(new GetAvatarListener() {
+            ImageManageUtil.getAvatarForFancyQrCode(new IGetAvatarListener() {
                 @Override
                 public void success(Bitmap bit) {
                     if (bit != null) {

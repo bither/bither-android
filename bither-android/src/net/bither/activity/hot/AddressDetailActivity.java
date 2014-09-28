@@ -30,10 +30,10 @@ import android.widget.ListView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.TransactionListAdapter;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.AddressDetailHeader;
 import net.bither.ui.base.DropdownMessage;
@@ -43,7 +43,7 @@ import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.TransactionListItem;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyOption;
 import net.bither.ui.base.dialog.DialogAddressWithPrivateKeyOption;
-import net.bither.ui.base.listener.BackClickListener;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
@@ -112,12 +112,12 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null ||
-                    (!Utils.compareString(NotificationUtil.ACTION_ADDRESS_BALANCE, intent.getAction())
-                            && !Utils.compareString(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                    (!Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())
+                            && !Utils.compareString(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
                 return;
             }
-            if (intent.hasExtra(NotificationUtil.ACTION_ADDRESS_BALANCE)) {
-                String receiveAddressStr = intent.getStringExtra(NotificationUtil.MESSAGE_ADDRESS);
+            if (intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
+                String receiveAddressStr = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
                 if (Utils.compareString(receiveAddressStr, address.getAddress())) {
                     loadData();
                 }
@@ -134,8 +134,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter txAndBlockReceiver = new IntentFilter();
-        txAndBlockReceiver.addAction(NotificationUtil.ACTION_ADDRESS_BALANCE);
-        txAndBlockReceiver.addAction(NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
         IntentFilter marketFilter = new IntentFilter(
                 BroadcastUtil.ACTION_MARKET);
         registerReceiver(txAndBlockBroadcastReceiver, txAndBlockReceiver);
@@ -198,7 +198,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(
-                new BackClickListener(0, R.anim.slide_out_right));
+                new IBackClickListener(0, R.anim.slide_out_right));
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         lv = (ListView) findViewById(R.id.lv);
         flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);

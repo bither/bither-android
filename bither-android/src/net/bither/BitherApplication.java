@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -29,16 +28,21 @@ import android.os.StrictMode;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.IBitherjApp;
+import net.bither.bitherj.ISetting;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.IRandom;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Threading;
+import net.bither.bitherj.utils.Utils;
 import net.bither.exception.UEHandler;
+import net.bither.image.glcrop.Util;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
+import net.bither.util.LogUtil;
+import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -47,10 +51,7 @@ public class BitherApplication extends BitherjApplication {
     private ActivityManager activityManager;
 
     private static org.slf4j.Logger log = LoggerFactory.getLogger(BitherApplication.class);
-
     private static BitherApplication mBitherApplication;
-
-
     public static HotActivity hotActivity;
     public static ColdActivity coldActivity;
     public static UEHandler ueHandler;
@@ -76,14 +77,14 @@ public class BitherApplication extends BitherjApplication {
         return mBitherApplication;
     }
 
-    public void startBlockchainService() {
-        startService(new Intent(mContext, BlockchainService.class));
+    public static void startBlockchainService() {
+        mContext.startService(new Intent(mContext, BlockchainService.class));
 
     }
 
     @Override
-    public void init() {
-        mIinitialize = new IBitherjApp() {
+    public ISetting initSetting() {
+        ISetting bitherjApp = new ISetting() {
             @Override
             public BitherjSettings.AppMode getAppMode() {
                 return AppSharedPreference.getInstance().getAppMode();
@@ -104,6 +105,12 @@ public class BitherApplication extends BitherjApplication {
                 return AppSharedPreference.getInstance().getTransactionFeeMode();
             }
         };
+        return bitherjApp;
+    }
+
+    @Override
+    public IRandom initRandom() {
+        return new URandom();
     }
 
     public int maxConnectedPeers() {
@@ -115,26 +122,6 @@ public class BitherApplication extends BitherjApplication {
         }
     }
 
-    public static void scheduleStartBlockchainService(@Nonnull final Context context) {
-        log.info("Schedule service restart after 15 minutes");
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
-                .ALARM_SERVICE);
-        final PendingIntent alarmIntent = PendingIntent.getService(context, 0,
-                new Intent(context, BlockchainService.class), 0);
-        alarmManager.cancel(alarmIntent);
-        final long now = System.currentTimeMillis();
-        final long alarmInterval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        // as of KitKat, set() is inexact
-        {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval, alarmIntent);
-        } else
-        // workaround for no inexact set() before KitKat
-        {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
-                    AlarmManager.INTERVAL_HOUR, alarmIntent);
-        }
-    }
 
     public static boolean canReloadTx() {
         if (reloadTxTime == -1) {
@@ -142,22 +129,6 @@ public class BitherApplication extends BitherjApplication {
         } else {
             return reloadTxTime + 60 * 60 * 1000 < System.currentTimeMillis();
         }
-    }
-
-    public static boolean isApplicationRunInForeground() {
-        if (mContext == null) {
-            return false;
-        }
-        ActivityManager am = (ActivityManager) mContext
-                .getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-        if (tasks != null && !tasks.isEmpty()) {
-            ComponentName topActivity = tasks.get(0).topActivity;
-            if (!topActivity.getPackageName().equals(mContext.getPackageName())) {
-                return false;
-            }
-        }
-        return true;
     }
 
 

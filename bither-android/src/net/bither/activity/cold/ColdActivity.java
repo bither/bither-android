@@ -33,30 +33,32 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.utils.LogUtil;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.model.PasswordSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.ProgressDialog;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -65,6 +67,7 @@ import net.bither.util.WalletUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -106,50 +109,58 @@ public class ColdActivity extends FragmentActivity {
         }, 500);
         DialogFirstRunWarning.show(this);
         registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LogUtil.d("request", "code:" + requestCode);
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             configureTabArrow();
-            Fragment f = getFragmentAtIndex(1);
-            if (f != null && f instanceof ColdAddressFragment) {
-                ArrayList<String> addresses = (ArrayList<String>) data.getExtras()
-                        .getSerializable(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
-                ColdAddressFragment af = (ColdAddressFragment) f;
-                af.showAddressesAdded(addresses);
+            ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
+                    (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
+            if (addresses != null && addresses.size() > 0) {
+                Address a = WalletUtils.findPrivateKey(addresses.get(0));
+                if (a != null && a.hasPrivKey()) {
+                    new DialogGenerateAddressFinalConfirm(this, addresses.size(),
+                            a.isFromXRandom()).show();
+                }
 
-            }
-            if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
-                    .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
-                new DialogConfirmTask(this, getString(R.string
-                        .first_add_private_key_check_suggest), new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mPager.setCurrentItem(0, true);
-                                mPager.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Fragment f = getFragmentAtIndex(0);
-                                        if (f != null && f instanceof CheckFragment) {
-                                            CheckFragment c = (CheckFragment) f;
-                                            c.check();
+                Fragment f = getFragmentAtIndex(1);
+                if (f != null && f instanceof ColdAddressFragment) {
+                    ColdAddressFragment af = (ColdAddressFragment) f;
+                    af.showAddressesAdded(addresses);
+
+                }
+                if (data.getExtras().getBoolean(BitherSetting.INTENT_REF
+                        .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG, false)) {
+                    new DialogConfirmTask(this,
+                            getString(R.string.first_add_private_key_check_suggest),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mPager.setCurrentItem(0, true);
+                                            mPager.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Fragment f = getFragmentAtIndex(0);
+                                                    if (f != null && f instanceof CheckFragment) {
+                                                        CheckFragment c = (CheckFragment) f;
+                                                        c.check();
+                                                    }
+                                                }
+                                            }, 300);
                                         }
-                                    }
-                                }, 300);
-                            }
-                        });
-                    }
-                }).show();
-            }
-            if (f != null && f instanceof Refreshable) {
-                Refreshable r = (Refreshable) f;
-                r.doRefresh();
+                                    });
+                                }
+                            }).show();
+                }
+                if (f != null && f instanceof Refreshable) {
+                    Refreshable r = (Refreshable) f;
+                    r.doRefresh();
+                }
             }
             return;
         }
@@ -168,6 +179,7 @@ public class ColdActivity extends FragmentActivity {
                 }
                 Intent intent = new Intent(ColdActivity.this, AddColdAddressActivity.class);
                 startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+                overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
             }
         });
 
@@ -344,7 +356,7 @@ public class ColdActivity extends FragmentActivity {
 
     private void showDialogPassword() {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
-                new DialogPassword.DialogPasswordListener() {
+                new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
                         importWalletFromBackup(password);
@@ -375,7 +387,7 @@ public class ColdActivity extends FragmentActivity {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
-                            String[] strs = keyString.split(StringUtil.QR_CODE_SPLIT);
+                            String[] strs = QRCodeUtil.splitString(keyString);
                             if (strs.length != 4) {
                                 continue;
                             }
@@ -383,11 +395,14 @@ public class ColdActivity extends FragmentActivity {
                             passwordSeed.checkPassword(password);
                             ECKey key = passwordSeed.getECKey();
                             if (key != null) {
-                                addressList.add(new Address(key.toAddress(), key.getPubKey(), PrivateKeyUtil.getPrivateKeyString(key)));
+                                Address address = new Address(key.toAddress(), key.getPubKey(),
+                                        PrivateKeyUtil.getPrivateKeyString(key), key.isFromXRandom());
+                                addressList.add(address);
 
                             }
                         }
                         password.wipe();
+                        Collections.sort(addressList, Collections.reverseOrder());
                         KeyUtil.addAddressList(null, addressList);
                         recoverBackupSuccess();
                     }
@@ -437,7 +452,7 @@ public class ColdActivity extends FragmentActivity {
     private final class AddressIsLoadedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent == null || !Utils.compareString(intent.getAction(), NotificationUtil.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE)) {
                 return;
             }
             Fragment fragment = getFragmentAtIndex(1);

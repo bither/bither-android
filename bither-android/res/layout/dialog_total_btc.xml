@@ -64,6 +64,7 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/ll_below_chart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

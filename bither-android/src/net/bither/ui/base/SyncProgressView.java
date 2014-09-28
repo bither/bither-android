@@ -23,7 +23,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import net.bither.R;
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.util.LogUtil;
+
 
 public class SyncProgressView extends FrameLayout {
 

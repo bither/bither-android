@@ -17,29 +17,34 @@
 package net.bither.service;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
-import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.exception.BlockStoreException;
-import net.bither.bitherj.utils.LogUtil;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
 import net.bither.util.BlockUtil;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
 import net.bither.util.NetworkUtil.NetworkType;
 import net.bither.util.TransactionsUtil;
@@ -48,14 +53,13 @@ import net.bither.util.UpgradeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+
 
 public class BlockchainService extends android.app.Service {
 
     public static final String ACTION_BEGIN_DOWLOAD_SPV_BLOCK = R.class
             .getPackage().getName() + ".dowload_block_api_begin";
-    public static final String ACTION__TIMER_TASK_STAT = R.class.getPackage()
-            .getName() + ".timer_task_stat";
-    public static final String ACTION_TIMER_TASK_ISRUNNING = "timer_task_stat";
     private static final Logger log = LoggerFactory
             .getLogger(BlockchainService.class);
     private WakeLock wakeLock;
@@ -79,20 +83,15 @@ public class BlockchainService extends android.app.Service {
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, lockName);
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    startPeer();
-                }
-            }).start();
             tickReceiver = new TickReceiver(BlockchainService.this);
             txReceiver = new TxReceiver(BlockchainService.this, tickReceiver);
             receiverConnectivity();
             registerReceiver(tickReceiver, new IntentFilter(
                     Intent.ACTION_TIME_TICK));
-            registerReceiver(txReceiver, new IntentFilter(NotificationUtil.ACTION_ADDRESS_BALANCE));
-
+            registerReceiver(txReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE));
+            BroadcastUtil.sendBroadcastStartPeer();
         }
+        startMarkTimerTask();
     }
 
     private void receiverConnectivity() {
@@ -101,20 +100,57 @@ public class BlockchainService extends android.app.Service {
         intentFilter.addAction(Intent.ACTION_DEVICE_STORAGE_LOW);
         intentFilter.addAction(Intent.ACTION_DEVICE_STORAGE_OK);
         intentFilter
-                .addAction(BroadcastUtil.ACTION_START_DOWLOAD_BLOCK_STATE);
+                .addAction(BroadcastUtil.ACTION_START_PEER_MANAGER);
         registerReceiver(connectivityReceiver, intentFilter);
         connectivityReceivered = true;
 
+    }
+
+    private void scheduleStartBlockchainService(@Nonnull final Context context) {
+        long interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+        BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
+        switch (syncInterval) {
+            case OnlyOpenApp:
+                log.info("start only open the application");
+                return;
+            case FifteenMinute:
+                interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+                log.info("Schedule service restart after 15 minutes");
+                break;
+            case OneHour:
+                interval = AlarmManager.INTERVAL_HOUR;
+                break;
+        }
+        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
+                .ALARM_SERVICE);
+        final PendingIntent alarmIntent = PendingIntent.getService(context, 0,
+                new Intent(context, BlockchainService.class), 0);
+        alarmManager.cancel(alarmIntent);
+        final long now = System.currentTimeMillis();
+        final long alarmInterval = interval;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        // as of KitKat, set() is inexact
+        {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval, alarmIntent);
+        } else
+        // workaround for no inexact set() before KitKat
+        {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
+                    AlarmManager.INTERVAL_HOUR, alarmIntent);
+        }
     }
 
     @Override
     public void onDestroy() {
         log.info(".onDestroy()");
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
-            BitherApplication.scheduleStartBlockchainService(this);
+            scheduleStartBlockchainService(this);
             PeerManager.instance().stop();
-            pauseMarkTimerTask();
-            mBitherTimer = null;
+            PeerManager.instance().onDestroy();
+            if (mBitherTimer != null) {
+                mBitherTimer.stopTimer();
+                mBitherTimer = null;
+            }
             if (wakeLock != null && wakeLock.isHeld()) {
                 wakeLock.release();
                 wakeLock = null;
@@ -123,8 +159,12 @@ public class BlockchainService extends android.app.Service {
                 unregisterReceiver(connectivityReceiver);
                 connectivityReceivered = false;
             }
-            unregisterReceiver(tickReceiver);
-            unregisterReceiver(txReceiver);
+            if (tickReceiver != null) {
+                unregisterReceiver(tickReceiver);
+            }
+            if (txReceiver != null) {
+                unregisterReceiver(txReceiver);
+            }
             BroadcastUtil.removeMarketState();
         }
         super.onDestroy();
@@ -143,19 +183,14 @@ public class BlockchainService extends android.app.Service {
     @Override
     public int onStartCommand(final Intent intent, final int flags,
                               final int startId) {
+        if (intent == null) {
+            return START_NOT_STICKY;
+        }
         final String action = intent.getAction();
         if (action != null) {
             LogUtil.i("onStartCommand", "onStartCommand Service:" + action);
         }
-        if (ACTION__TIMER_TASK_STAT.equals(action)) {
-            boolean isRunning = intent.getBooleanExtra(
-                    ACTION_TIMER_TASK_ISRUNNING, false);
-            if (isRunning) {
-                startMarkTimerTask();
-            } else {
-                pauseMarkTimerTask();
-            }
-        } else if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
+        if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
             new Thread(new DownloadSpvRunnable(BlockchainService.this)).start();
         }
         return START_NOT_STICKY;
@@ -212,7 +247,7 @@ public class BlockchainService extends android.app.Service {
                 log.info("device storage ok");
 
                 check();
-            } else if (BroadcastUtil.ACTION_START_DOWLOAD_BLOCK_STATE
+            } else if (BroadcastUtil.ACTION_START_PEER_MANAGER
                     .equals(action)) {
                 hasStorage = true;
                 check();
@@ -258,7 +293,13 @@ public class BlockchainService extends android.app.Service {
 
     public void startAndRegister() {
         receiverConnectivity();
-        startPeer();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startPeer();
+            }
+        }).start();
+
     }
 
     private void callWekelock() {
@@ -291,7 +332,7 @@ public class BlockchainService extends android.app.Service {
                         PeerManager.instance().start();
                         if (!spvFinishedReceivered) {
                             final IntentFilter intentFilter = new IntentFilter();
-                            intentFilter.addAction(NotificationUtil.ACTION_SYNC_FROM_SPV_FINISHED);
+                            intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_FROM_SPV_FINISHED);
                             spvFinishedReceiver = new SPVFinishedReceiver();
                             registerReceiver(spvFinishedReceiver, intentFilter);
                             spvFinishedReceivered = true;
@@ -315,23 +356,18 @@ public class BlockchainService extends android.app.Service {
         if (AddressManager.getInstance().addressIsSyncComplete()
                 && AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()
                 && AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-            if (!PeerManager.instance().isConnected()) {
+            NetworkType networkType = NetworkUtil.isConnectedType();
+            boolean networkIsAvailadble = (!AppSharedPreference.getInstance().getSyncBlockOnlyWifi())
+                    || (networkType == NetworkType.Wifi);
+            if (networkIsAvailadble && !PeerManager.instance().isConnected()) {
                 PeerManager.instance().start();
             }
         }
 
     }
 
-    private void pauseMarkTimerTask() {
-        if (mBitherTimer != null) {
-            mBitherTimer.pauseTimer();
-        }
-
-
-    }
-
     public void startMarkTimerTask() {
-        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             if (mBitherTimer == null) {
                 mBitherTimer = new BitherTimer(BlockchainService.this);
                 mBitherTimer.startTimer();
@@ -352,7 +388,7 @@ public class BlockchainService extends android.app.Service {
                             TransactionsUtil.getMyTxFromBither();
                         }
                         startPeerManager();
-                        NotificationUtil.removeBroadcastSyncSPVFinished();
+                        BitherjApplication.NOTIFICATION_SERVICE.removeBroadcastSyncSPVFinished();
                         if (spvFinishedReceiver != null && spvFinishedReceivered) {
                             unregisterReceiver(spvFinishedReceiver);
                             spvFinishedReceivered = false;

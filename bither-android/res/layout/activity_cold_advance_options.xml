@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
@@ -18,48 +18,102 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/bg"
-                    android:paddingLeft="@dimen/card_list_padding"
-                    android:paddingRight="@dimen/card_list_padding">
+                    android:orientation="vertical">
 
-
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:orientation="vertical"
-                        android:paddingBottom="6dp"
-                        android:paddingTop="10dp">
+                        android:background="@color/bg"
+                        android:paddingLeft="@dimen/card_list_padding"
+                        android:paddingRight="@dimen/card_list_padding">
 
-                        <Button
-                            android:id="@+id/btn_edit_password"
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:background="@drawable/ui_touchable_bg"
-                            android:drawableRight="@drawable/edit_password_button_icon"
-                            android:gravity="left"
-                            android:padding="10dp"
-                            android:text="@string/edit_password_button"
-                            android:textColor="@color/text_field_text_color"
-                            android:textSize="18sp"/>
+                            android:background="@color/white"
+                            android:orientation="vertical"
+                            android:paddingBottom="6dp"
+                            android:paddingTop="10dp">
 
-                        <include layout="@layout/layout_vertical_seperator"/>
+                            <Button
+                                android:id="@+id/btn_edit_password"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ui_touchable_bg"
+                                android:drawableRight="@drawable/edit_password_button_icon"
+                                android:gravity="left"
+                                android:padding="10dp"
+                                android:text="@string/edit_password_button"
+                                android:textColor="@color/text_field_text_color"
+                                android:textSize="18sp" />
 
-                        <net.bither.ui.base.SettingSelectorView
-                            android:id="@+id/ssv_import_private_key"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"/>
+                            <include layout="@layout/layout_vertical_seperator" />
+
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_import_private_key"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_import_bip38_key"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+                        <include layout="@layout/layout_card_foreground_single" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/setting_footer_logo" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/base_on_text"
+                                android:textColor="#ffc2c2c2"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_version"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:textColor="#ffc2c2c2"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+
                     </LinearLayout>
-
-                    <include layout="@layout/layout_card_foreground_single"/>
-                </FrameLayout>
+                </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
-            <include layout="@layout/layout_dropdown_message"/>
+            <include layout="@layout/layout_dropdown_message" />
         </FrameLayout>
 
         <FrameLayout
@@ -82,12 +136,12 @@
                     android:layout_width="@dimen/title_bar_height"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back"/>
+                    android:src="@drawable/title_bar_back" />
 
                 <ImageView
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator"/>
+                    android:background="@drawable/title_bar_seperator" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,7 +155,7 @@
                     android:text="@string/activity_name_advance"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>

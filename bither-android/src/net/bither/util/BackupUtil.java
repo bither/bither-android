@@ -25,6 +25,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
@@ -71,8 +72,7 @@ public class BackupUtil {
             String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
             for (String backupStr : backupStrArray) {
                 if (backupStr.contains(address)) {
-                    String[] strArray = backupStr
-                            .split(StringUtil.QR_CODE_SPLIT);
+                    String[] strArray = QRCodeUtil.splitString(backupStr);
                     if (strArray.length > 3) {
                         String keyString = backupStr.substring(strArray[0]
                                 .length() + 1);
@@ -104,8 +104,7 @@ public class BackupUtil {
                     String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
                     for (String backupStr : backupStrArray) {
                         if (backupStr.contains(address)) {
-                            String[] strArray = backupStr
-                                    .split(StringUtil.QR_CODE_SPLIT);
+                            String[] strArray = QRCodeUtil.splitString(backupStr);
                             if (strArray.length > 3) {
                                 String keyString = backupStr
                                         .substring(strArray[0].length() + 1);
@@ -175,7 +174,7 @@ public class BackupUtil {
     public static String[] getBackupKeyStrList(File file) {
         String keyStrs = Utils.readFile(file);
         String[] result = null;
-        if (!StringUtil.isEmpty(keyStrs)) {
+        if (!Utils.isEmpty(keyStrs)) {
             result = keyStrs.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
         }
         return result;
@@ -225,12 +224,12 @@ public class BackupUtil {
                 if (address != null) {
                     PasswordSeed passwordSeed = new PasswordSeed(address);
                     backupString = backupString
-                            + passwordSeed.toString()
+                            + passwordSeed.toPasswordSeedString()
                             + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
 
                 }
             }
-            if (!StringUtil.isEmpty(backupString)) {
+            if (!Utils.isEmpty(backupString)) {
 
                 try {
                     Utils.writeFile(backupString.getBytes(), file);

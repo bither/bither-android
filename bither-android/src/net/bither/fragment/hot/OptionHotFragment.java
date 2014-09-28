@@ -45,7 +45,7 @@ import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.utils.LogUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
@@ -61,6 +61,7 @@ import net.bither.util.ExchangeUtil.ExchangeType;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -357,7 +358,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                 .PIC_PASS_VALUE_TAG);
                     }
                     LogUtil.d("fragment", "photoName:" + photoName);
-                    if (!StringUtil.isEmpty(photoName)) {
+                    if (!Utils.isEmpty(photoName)) {
                         AppSharedPreference.getInstance().setUserAvatar(photoName);
                         setAvatar(photoName);
                     }
@@ -421,7 +422,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
     private void setAvatar(String photoName) {
         Bitmap avatar = null;
-        if (!StringUtil.isEmpty(photoName)) {
+        if (!Utils.isEmpty(photoName)) {
             new UpdateAvatarThread(photoName).start();
         } else {
             btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null,
@@ -443,7 +444,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void run() {
             Bitmap avatar = null;
-            if (!StringUtil.isEmpty(photoName)) {
+            if (!Utils.isEmpty(photoName)) {
                 File file = ImageFileUtil.getSmallAvatarFile(photoName);
                 avatar = ImageManageUtil.getBitmapNearestSize(file, 150);
             }

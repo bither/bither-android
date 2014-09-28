@@ -35,10 +35,10 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.ui.base.dialog.DialogPassword.DialogPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
 
-public class CheckHeaderView extends FrameLayout implements DialogPasswordListener {
+public class CheckHeaderView extends FrameLayout implements IDialogPasswordListener {
     public static interface CheckHeaderViewListener {
         public void beginCheck(SecureCharSequence password);
     }

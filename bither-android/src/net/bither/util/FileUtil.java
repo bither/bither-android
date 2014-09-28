@@ -26,8 +26,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import com.pi.common.util.NativeUtil;
-
 import net.bither.BitherApplication;
 import net.bither.bitherj.utils.Utils;
 
@@ -88,10 +86,10 @@ public class FileUtil {
      */
     public static boolean existSdCardMounted() {
         String storageState = android.os.Environment.getExternalStorageState();
-        if (StringUtil.isEmpty(storageState)) {
+        if (Utils.isEmpty(storageState)) {
             return false;
         }
-        return StringUtil.compareString(storageState,
+        return Utils.compareString(storageState,
                 android.os.Environment.MEDIA_MOUNTED);
     }
 
@@ -201,8 +199,6 @@ public class FileUtil {
         }
         return true;
     }
-
-
 
 
     private static File getMarketCache() {
@@ -444,7 +440,7 @@ public class FileUtil {
                 actualimagecursor.moveToFirst();
                 String img_path = actualimagecursor
                         .getString(actual_image_column_index);
-                if (!StringUtil.isEmpty(img_path)) {
+                if (!Utils.isEmpty(img_path)) {
                     file = new File(img_path);
                 }
             } else {

@@ -22,6 +22,7 @@ import net.bither.charts.entity.IStickEntity;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.util.ChartsUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 import org.json.JSONArray;
@@ -30,25 +31,25 @@ import java.util.List;
 
 public class GetKlineApi extends HttpGetResponse<List<IStickEntity>> {
 
-	private KlineTimeType klineTimeType;
-	private MarketType marketType;
+    private KlineTimeType klineTimeType;
+    private MarketType marketType;
 
-	public GetKlineApi(MarketType marketType, KlineTimeType klineTimeType) {
+    public GetKlineApi(MarketType marketType, KlineTimeType klineTimeType) {
 
-		this.klineTimeType = klineTimeType;
-		this.marketType = marketType;
-		String url = StringUtil.format(BitherUrl.BITHER_KLINE_URL,
-				marketType.getValue(), klineTimeType.getValue());
-		setUrl(url);
+        this.klineTimeType = klineTimeType;
+        this.marketType = marketType;
+        String url = StringUtil.format(BitherUrl.BITHER_KLINE_URL,
+                marketType.getValue(), klineTimeType.getValue());
+        setUrl(url);
 
-	}
+    }
 
-	@Override
-	public void setResult(String response) throws Exception {
-		JSONArray jsonArray = new JSONArray(response);
-		this.result = ChartsUtil.formatJsonArray(this.marketType,
-				this.klineTimeType, jsonArray);
+    @Override
+    public void setResult(String response) throws Exception {
+        JSONArray jsonArray = new JSONArray(response);
+        this.result = ChartsUtil.formatJsonArray(this.marketType,
+                this.klineTimeType, jsonArray);
 
-	}
+    }
 
 }

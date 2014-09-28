@@ -24,8 +24,8 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.exception.TxBuilderException;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 import net.bither.util.SecureCharSequence;
 
 

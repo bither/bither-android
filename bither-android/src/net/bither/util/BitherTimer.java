@@ -24,7 +24,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
-import net.bither.bitherj.utils.LogUtil;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
@@ -35,7 +34,7 @@ import java.util.List;
 public class BitherTimer {
     private Thread thread = null;
     private Context context;
-    private boolean isPause = false;
+    private boolean isStop = false;
 
     public BitherTimer(Context context) {
         this.context = context;
@@ -46,7 +45,7 @@ public class BitherTimer {
             thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (!isPause) {
+                    while (!isStop) {
                         getExchangeTicker();
                         try {
                             Thread.sleep(1 * 60 * 1000);
@@ -59,11 +58,10 @@ public class BitherTimer {
             });
             thread.start();
         }
-
     }
 
-    public void pauseTimer() {
-        isPause = true;
+    public void stopTimer() {
+        isStop = true;
     }
 
     private void getExchangeTicker() {

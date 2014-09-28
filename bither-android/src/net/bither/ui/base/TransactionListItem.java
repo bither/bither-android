@@ -18,7 +18,6 @@ package net.bither.ui.base;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +38,7 @@ import net.bither.util.DateTimeUtil;
 import net.bither.util.StringUtil;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class TransactionListItem extends FrameLayout implements MarketTickerChangedObserver {
 
@@ -112,7 +112,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
             } else {
                 try {
                     String subAddress = transaction.getFromAddress();
-                    if (StringUtil.isEmpty(subAddress)) {
+                    if (Utils.isEmpty(subAddress)) {
                         tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
                     } else {
                         tvTransactionAddress.setText(Utils.shortenAddress(subAddress));
@@ -164,7 +164,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
 
         @Override
         public void onClick(View v) {
-            ArrayMap<String, Long> addresses = new ArrayMap<String, Long>();
+            LinkedHashMap<String, Long> addresses = new LinkedHashMap<String, Long>();
             boolean isIncoming = true;
             try {
                 isIncoming = transaction.deltaAmountFrom(address) >= 0;
@@ -202,7 +202,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
                     subAddress = getContext().getResources().getString(R.string
                             .address_cannot_be_parsed);
                 }
-                if (StringUtil.compareString(subAddress, address.getAddress())) {
+                if (Utils.compareString(subAddress, address.getAddress())) {
                     subAddress = getContext().getString(R.string.address_mine);
                 }
                 addresses.put(subAddress, value);

@@ -18,11 +18,11 @@ package net.bither.ui.base;
 
 import android.content.Context;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,12 +30,14 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressFull;
+import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
-import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class AddressFragmentListItemView extends FrameLayout implements
@@ -48,6 +50,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private BtcToMoneyTextView tvBalanceMoney;
     public ImageView ivWatchOnlyType;
     public ImageView ivPrivateType;
+    private ImageButton ibtnXRandomLabel;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
     private TextView tvTransactionCount;
@@ -73,6 +76,8 @@ public class AddressFragmentListItemView extends FrameLayout implements
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
         ivWatchOnlyType = (ImageView) findViewById(R.id.iv_type_watchonly);
         ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
+        ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
+        ibtnXRandomLabel.setOnClickListener(DialogXRandomInfo.InfoClick);
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
@@ -88,7 +93,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         super(context, attrs, defStyle);
     }
 
-    public void setAddress(Address address, int loaderPosition, boolean isPrivate) {
+    public void setAddress(Address address) {
         this.address = address;
 
         if (address != null) {
@@ -144,6 +149,11 @@ public class AddressFragmentListItemView extends FrameLayout implements
 //                llMonitorFailed.setVisibility(View.VISIBLE);
 //            }
         }
+        if (address.isFromXRandom()) {
+            ibtnXRandomLabel.setVisibility(View.VISIBLE);
+        } else {
+            ibtnXRandomLabel.setVisibility(View.GONE);
+        }
     }
 
 
@@ -154,7 +164,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
 
     @Override
     public void onAddressInfoChanged(String address) {
-        if (StringUtil.compareString(address, this.address.getAddress())) {
+        if (Utils.compareString(address, this.address.getAddress())) {
             showAddressInfo();
         }
     }
@@ -162,7 +172,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private OnClickListener addressFullClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ArrayMap<String, Long> map = new ArrayMap<String, Long>();
+            LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
             map.put(address.getAddress(), 0L);
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);

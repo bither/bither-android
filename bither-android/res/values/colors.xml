@@ -38,6 +38,8 @@
     <color name="market_color_chbtc">#ff5b469d</color>
     <color name="market_color_huobi">#ffff9329</color>
     <color name="market_color_btce">#ff25bebc</color>
+    <color name="market_color_796">#ffe31f21</color>
+    <color name="market_color_bitfinex">#ffa3bd0b</color>
 
     <!-- scanner -->
     <color name="scan_mask">#60000000</color>
@@ -67,10 +69,10 @@
     <color name="thrity_kline">#ff8495a7</color>
 
     <!-- password keyboard -->
-    <color name="password_keyboard_action_key_shadow">#000</color>
-    <color name="password_keyboard_normal_key_shadow">#fff</color>
-    <color name="password_keyboard_action_key_text">#fff</color>
-    <color name="password_keyboard_normal_key_text">#000</color>
-    <color name="password_keyboard_background_above_dark">#77000000</color>
-    <color name="password_keyboard_background_above_light">#cc000000</color>
+    <color name="entry_keyboard_action_key_shadow">#000</color>
+    <color name="entry_keyboard_normal_key_shadow">#fff</color>
+    <color name="entry_keyboard_action_key_text">#fff</color>
+    <color name="entry_keyboard_normal_key_text">#000</color>
+    <color name="entry_keyboard_background_above_dark">#77000000</color>
+    <color name="entry_keyboard_background_above_light">#cc000000</color>
 </resources>

@@ -28,8 +28,10 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.ScanActivity;
-import net.bither.ScanQRCodeTransportActivity;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
@@ -117,7 +119,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
                 final String content = data
                         .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (StringUtil.isEmpty(content) || !checkQrCodeContent(content)) {
+                if (Utils.isEmpty(content) || !checkQrCodeContent(content)) {
                     DropdownMessage
                             .showDropdownMessage(
                                     activity,
@@ -139,9 +141,13 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private boolean checkQrCodeContent(String content) {
-        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
+        String[] strs = QRCodeUtil.splitString(content);
         for (String str : strs) {
-            if (str.length() != 66) {
+            boolean checkCompressed = str.length() == 66 || ((str.length() == 67)
+                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
+            boolean checkUnCompressed = str.length() == 130 || ((str.length() == 131)
+                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
+            if (!checkCompressed && !checkUnCompressed) {
                 return false;
             }
         }
@@ -149,16 +155,9 @@ public class AddAddressWatchOnlyView extends FrameLayout {
     }
 
     private void processQrCodeContent(String content, BlockchainService service) {
-        String[] strs = content.split(StringUtil.QR_CODE_SPLIT);
-        ArrayList<Address> wallets = new ArrayList<Address>();
-        addresses.clear();
         try {
-            for (String str : strs) {
-                byte[] pub = StringUtil.hexStringToByteArray(str);
-                String addString = Utils.toAddress(Utils.sha256hash160(pub));
-                Address address = new Address(addString, pub, null);
-                wallets.add(address);
-            }
+            addresses.clear();
+            List<Address> wallets = QRCodeEnodeUtil.formatPublicString(content);
             for (Address address : wallets) {
                 if (!AddressManager.getInstance().getAllAddresses().contains(address)) {
                     addresses.add(address.getAddress());

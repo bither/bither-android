@@ -37,12 +37,12 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.adapter.hot.TransactionsOfBlockListAdapter;
+import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.utils.NotificationUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.WalletUtils;
 
@@ -322,7 +322,7 @@ public final class BlockListFragment extends ListFragment {
             super.onStartLoading();
 
             context.registerReceiver(broadcastReceiver, new IntentFilter(
-                    NotificationUtil.ACTION_SYNC_LAST_BLOCK_CHANGE));
+                    NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE));
             forceLoad();
         }
 

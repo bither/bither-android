@@ -38,7 +38,9 @@ import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.passwordkeyboard.PasswordEntryKeyboardView;
+import net.bither.ui.base.listener.ICheckPasswordListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
@@ -48,9 +50,6 @@ import java.util.concurrent.ExecutorService;
 
 public class DialogPassword extends Dialog implements OnDismissListener,
         TextView.OnEditorActionListener {
-    public static interface DialogPasswordListener {
-        public void onPasswordEntered(SecureCharSequence password);
-    }
 
     private View container;
     private LinearLayout llInput;
@@ -63,13 +62,15 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private Button btnCancel;
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
-    private DialogPasswordListener listener;
+    private IDialogPasswordListener listener;
+    private ICheckPasswordListener checkPasswordListener;
     private boolean passwordEntered = false;
     private boolean checkPre = true;
     private boolean cancelable = true;
+    private boolean needCancelEvent = false;
     private ExecutorService executor;
 
-    public DialogPassword(Context context, DialogPasswordListener listener) {
+    public DialogPassword(Context context, IDialogPasswordListener listener) {
         super(context, R.style.password_dialog);
         setContentView(R.layout.dialog_password);
         this.listener = listener;
@@ -120,10 +121,14 @@ public class DialogPassword extends Dialog implements OnDismissListener,
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (passwordEntered && listener != null) {
-            listener.onPasswordEntered(new SecureCharSequence(etPassword));
-            etPassword.setText("");
-            etPasswordConfirm.setText("");
+        if (listener != null) {
+            if (passwordEntered) {
+                listener.onPasswordEntered(new SecureCharSequence(etPassword));
+                etPassword.setText("");
+                etPasswordConfirm.setText("");
+            } else if (needCancelEvent) {
+                listener.onPasswordEntered(null);
+            }
         }
     }
 
@@ -154,6 +159,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     public void setCheckPre(boolean check) {
         checkPre = check;
         configureCheckPre();
+    }
+
+    public void setCheckPasswordListener(ICheckPasswordListener checkPasswordListener) {
+        this.checkPasswordListener = checkPasswordListener;
     }
 
     public void show() {
@@ -192,7 +201,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             }
             password.wipe();
             passwordConfirm.wipe();
-            if (passwordSeed != null && checkPre) {
+            if ((passwordSeed != null && checkPre) || checkPasswordListener != null) {
                 ArrayList<Check> checks = new ArrayList<Check>();
                 checks.add(passwordCheck);
                 executor = CheckUtil.runChecks(checks, 1);
@@ -300,8 +309,12 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private Check passwordCheck = new Check("", new ICheckAction() {
         @Override
         public boolean check() {
-            if (passwordSeed != null) {
-                SecureCharSequence password = new SecureCharSequence(etPassword);
+            SecureCharSequence password = new SecureCharSequence(etPassword);
+            if (checkPasswordListener != null) {
+                boolean result = checkPasswordListener.checkPassword(password);
+                password.wipe();
+                return result;
+            } else if (passwordSeed != null) {
                 boolean result = passwordSeed.checkPassword(password);
                 password.wipe();
                 return result;
@@ -335,5 +348,9 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             return true;
         }
         return false;
+    }
+
+    public void setNeedCancelEvent(boolean needCancelEvent) {
+        this.needCancelEvent = needCancelEvent;
     }
 }

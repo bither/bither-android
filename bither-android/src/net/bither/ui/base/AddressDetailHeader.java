@@ -44,7 +44,7 @@ import net.bither.ui.base.dialog.DialogBalanceDetail;
 import net.bither.ui.base.dialog.DialogFragmentFancyQrCodePager;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.Qr;
+import net.bither.qrcode.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;

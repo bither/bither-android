@@ -29,6 +29,7 @@ import android.view.View;
 import com.google.zxing.ResultPoint;
 
 import net.bither.R;
+import net.bither.util.ImageManageUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ import javax.annotation.Nonnull;
 public class ScannerView extends View {
 	private static final long LASER_ANIMATION_DELAY_MS = 100l;
 	private static final int DOT_OPACITY = 0xa0;
-	private static final int DOT_SIZE = 8;
+	private static final int DOT_SIZE = ImageManageUtil.dip2pix(3);
 	private static final int DOT_TTL_MS = 500;
 
 	private final Paint maskPaint;
