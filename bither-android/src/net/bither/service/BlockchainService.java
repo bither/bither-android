@@ -269,7 +269,7 @@ public class BlockchainService extends android.app.Service {
                 if (hasEverything && BlockChain.getInstance() != null) {
                     log.debug("acquiring wakelock");
                     callWekelock();
-                    if (!PeerManager.instance().isConnected()) {
+                    if (!PeerManager.instance().isRunning()) {
                         startPeer();
                     }
                 } else if (!hasEverything) {
