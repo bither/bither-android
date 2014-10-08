@@ -102,7 +102,7 @@ public class TickReceiver extends BroadcastReceiver {
                 }
 
                 // if idling, shutdown service
-                if (isIdle && !Utils.BITHERJ_APP_ENV.isApplicationRunInForeground()) {
+                if (isIdle && !BitherjApplication.BITHERJ_APP_ENV.isApplicationRunInForeground()) {
                     log.info("idling detected, stopping service");
                     this.blockchainService.stopSelf();
                 }
