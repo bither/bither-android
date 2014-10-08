@@ -16,6 +16,7 @@
 
 package net.bither.xrandom;
 
+import net.bither.bitherj.App;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.crypto.IRandom;
 import net.bither.bitherj.crypto.ec.Parameters;
@@ -53,7 +54,7 @@ public class XRandom implements IRandom {
         BigInteger d;
         byte[] uRandomBytes;
         do {
-            uRandomBytes = BitherjApplication.random.nextBytes(length);
+            uRandomBytes = App.random.nextBytes(length);
             uRandomBytes[0] = (byte) (uRandomBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uRandomBytes);
 

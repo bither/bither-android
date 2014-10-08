@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -43,6 +44,9 @@ import net.bither.util.LogUtil;
 import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -103,6 +107,32 @@ public class BitherApplication extends BitherjApplication {
             @Override
             public BitherjSettings.TransactionFeeMode getTransactionFeeMode() {
                 return AppSharedPreference.getInstance().getTransactionFeeMode();
+            }
+
+            @Override
+            public File getPrivateDir(String dirName) {
+                File file = mContext.getDir(dirName, Context.MODE_PRIVATE);
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                return file;
+            }
+
+            @Override
+            public boolean isApplicationRunInForeground() {
+                if (mContext == null) {
+                    return false;
+                }
+                ActivityManager am = (ActivityManager) mContext
+                        .getSystemService(Context.ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+                if (tasks != null && !tasks.isEmpty()) {
+                    ComponentName topActivity = tasks.get(0).topActivity;
+                    if (!topActivity.getPackageName().equals(mContext.getPackageName())) {
+                        return false;
+                    }
+                }
+                return true;
             }
         };
         return bitherjApp;
