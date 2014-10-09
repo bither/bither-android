@@ -37,7 +37,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
+import net.bither.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;

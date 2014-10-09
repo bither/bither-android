@@ -22,7 +22,6 @@ import android.content.Context;
 
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.ISetting;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.IRandom;
