@@ -20,8 +20,8 @@ package net.bither.xrandom;
 
 import com.google.common.primitives.Ints;
 
-import net.bither.bitherj.App;
-import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.AbstractApp;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -163,7 +163,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                  i++) {
                 int position = (int) (Math.random() * data.length);
                 try {
-                    locatorBytes = App.random.nextBytes(Ints.BYTES);
+                    locatorBytes = AbstractApp.random.nextBytes(Ints.BYTES);
                     int value = Math.abs(Ints.fromByteArray(locatorBytes));
                     position = (int) (((float) value / (float) Integer.MAX_VALUE) * data.length);
                 } catch (Exception e) {

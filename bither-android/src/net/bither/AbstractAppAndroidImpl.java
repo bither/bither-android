@@ -20,19 +20,19 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 
-import net.bither.bitherj.App;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.core.NotificationService;
-import net.bither.bitherj.crypto.IRandom;
+import net.bither.bitherj.NotificationService;
+import net.bither.bitherj.IRandom;
 import net.bither.preference.AppSharedPreference;
 import net.bither.xrandom.URandom;
 
 import java.io.File;
 import java.util.List;
 
-public class AppAndroidImpl extends App {
+public class AbstractAppAndroidImpl extends AbstractApp {
 
     @Override
     public IRandom initRandom() {

@@ -18,39 +18,23 @@ package net.bither;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.StrictMode;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
-import net.bither.bitherj.App;
+import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.ISetting;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.crypto.IRandom;
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Threading;
-import net.bither.bitherj.utils.Utils;
 import net.bither.exception.UEHandler;
-import net.bither.image.glcrop.Util;
-import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
-import net.bither.util.LogUtil;
-import net.bither.xrandom.URandom;
 
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.List;
-
-import javax.annotation.Nonnull;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -77,10 +61,10 @@ public class BitherApplication extends BitherjApplication {
 
     @Override
     public void onCreate() {
-        AppAndroidImpl appAndroid = new AppAndroidImpl();
+        AbstractAppAndroidImpl appAndroid = new AbstractAppAndroidImpl();
         appAndroid.construct();
         super.onCreate();
-        App.notificationService.removeAddressLoadCompleteState();
+        AbstractApp.notificationService.removeAddressLoadCompleteState();
         initApp();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .permitDiskReads().permitDiskWrites().penaltyLog().build());
