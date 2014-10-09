@@ -32,7 +32,6 @@ import android.widget.ProgressBar;
 import net.bither.R;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
-import net.bither.util.StringUtil;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;

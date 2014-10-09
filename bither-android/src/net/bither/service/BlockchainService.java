@@ -30,9 +30,9 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.bitherj.AbstractApp;
-import net.bither.NotificationAndroidImpl;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;

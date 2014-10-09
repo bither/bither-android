@@ -26,7 +26,6 @@ import android.view.View;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.fragment.Refreshable;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;

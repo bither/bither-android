@@ -21,10 +21,10 @@ import android.content.ComponentName;
 import android.content.Context;
 
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.ISetting;
-import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.IRandom;
+import net.bither.bitherj.ISetting;
+import net.bither.bitherj.NotificationService;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.xrandom.URandom;
 

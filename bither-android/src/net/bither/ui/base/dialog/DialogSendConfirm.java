@@ -25,9 +25,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.utils.Utils;
 import net.bither.util.GenericUtils;
-import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;

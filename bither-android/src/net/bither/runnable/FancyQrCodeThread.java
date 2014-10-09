@@ -23,9 +23,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.Qr;
 import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
-import net.bither.qrcode.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 

@@ -20,7 +20,6 @@ import android.os.Build;
 import android.util.Log;
 
 import net.bither.BitherApplication;
-import net.bither.bitherj.BitherjApplication;
 import net.bither.util.SystemUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -43,7 +42,7 @@ public class UEHandler implements UncaughtExceptionHandler {
         if (BitherApplication.mContext.getExternalCacheDir() != null) {
             logDir = BitherApplication.mContext.getExternalCacheDir().getAbsolutePath();
         } else {
-            logDir = BitherjApplication.mContext.getCacheDir().getAbsolutePath();
+            logDir = BitherApplication.mContext.getCacheDir().getAbsolutePath();
         }
         logDir = logDir + File.separator + "bither";
         appInfo = "ver:" + Integer.toString(SystemUtil.getAppVersionCode())

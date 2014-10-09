@@ -35,8 +35,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import net.bither.R;
 import net.bither.NotificationAndroidImpl;
+import net.bither.R;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.Utils;

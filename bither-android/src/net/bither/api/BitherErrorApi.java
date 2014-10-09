@@ -19,7 +19,6 @@ package net.bither.api;
 import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpPostResponse;
-import net.bither.util.StringUtil;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;

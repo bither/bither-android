@@ -28,18 +28,17 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
 import java.util.ArrayList;

@@ -24,9 +24,9 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 
-import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.adapter.cold.AddressOfColdFragmentListAdapter;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.fragment.Refreshable;
@@ -60,7 +60,7 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
         privates = new ArrayList<Address>();
         mAdapter = new AddressOfColdFragmentListAdapter(getActivity(), privates);
         lvPrivate.setAdapter(mAdapter);
-        if (BitherApplication.addressIsReady) {
+        if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
             if (ps != null) {
                 privates.addAll(ps);
@@ -77,7 +77,7 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
 
 
     public void refresh() {
-        if (BitherApplication.addressIsReady) {
+        if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
             if (ps != null) {
                 privates.clear();

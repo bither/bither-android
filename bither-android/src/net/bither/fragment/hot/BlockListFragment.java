@@ -34,9 +34,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.TransactionsOfBlockListAdapter;
-import net.bither.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;

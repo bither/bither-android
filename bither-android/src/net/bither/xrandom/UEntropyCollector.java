@@ -21,7 +21,6 @@ package net.bither.xrandom;
 import com.google.common.primitives.Ints;
 
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.AbstractApp;
 
 import java.io.IOException;
 import java.io.PipedInputStream;

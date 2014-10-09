@@ -37,7 +37,6 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 
 public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,

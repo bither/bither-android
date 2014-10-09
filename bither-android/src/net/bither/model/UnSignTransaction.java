@@ -18,7 +18,6 @@ package net.bither.model;
 
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
 
 import java.io.Serializable;
 

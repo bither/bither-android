@@ -18,17 +18,19 @@ package net.bither;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.StrictMode;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.db.BitherjDatabaseHelper;
 import net.bither.bitherj.utils.Threading;
+import net.bither.db.AndroidDbImpl;
 import net.bither.exception.UEHandler;
 import net.bither.service.BlockchainService;
 
@@ -45,7 +47,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 
-public class BitherApplication extends BitherjApplication {
+public class BitherApplication extends Application {
 
     private ActivityManager activityManager;
 
@@ -57,11 +59,17 @@ public class BitherApplication extends BitherjApplication {
     public static Activity initialActivity;
     public static boolean isFirstIn = false;
     public static long reloadTxTime = -1;
+    public static Context mContext;
+    public static SQLiteOpenHelper mDbHelper;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = getApplicationContext();
+        mDbHelper = new BitherjDatabaseHelper(mContext);
+        AndroidDbImpl androidDb = new AndroidDbImpl();
+        androidDb.construct();
         AbstractAppAndroidImpl appAndroid = new AbstractAppAndroidImpl();
         appAndroid.construct();
         AbstractApp.notificationService.removeAddressLoadCompleteState();
@@ -75,6 +83,12 @@ public class BitherApplication extends BitherjApplication {
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     }
 
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        mDbHelper.close();
+    }
 
     public static BitherApplication getBitherApplication() {
         return mBitherApplication;
@@ -95,7 +109,7 @@ public class BitherApplication extends BitherjApplication {
     }
 
     public static File getLogDir() {
-        final File logDir = BitherjApplication.mContext.getDir("log", Context.MODE_WORLD_READABLE);
+        final File logDir = mContext.getDir("log", Context.MODE_WORLD_READABLE);
         return logDir;
     }
 

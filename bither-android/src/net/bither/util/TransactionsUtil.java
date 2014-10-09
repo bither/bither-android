@@ -36,9 +36,11 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.http.HttpSetting;
 import net.bither.model.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
