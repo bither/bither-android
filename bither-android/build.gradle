@@ -14,6 +14,10 @@ dependencies {
 
     compile 'org.apache.httpcomponents:httpmime:4.1@jar'
     compile 'org.apache.james:apache-mime4j-core:0.7.1@jar'
+    compile ('com.github.tony19:logback-android-classic:1.0.10-2@jar'){
+        // Work around for gradle 0.9 and 0.10
+        transitive = true
+    }
     compile project(':bitherj')
     compile project(':wheel')
     compile project(':android-charts')
