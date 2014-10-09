@@ -19,7 +19,7 @@ project(':android-charts') {
     apply plugin: 'android-library'
 }
 project(':bitherj') {
-    apply plugin: 'android-library'
+    apply plugin: 'java'
 }
 subprojects {
 
