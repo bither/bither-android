@@ -61,9 +61,9 @@ public class BitherApplication extends BitherjApplication {
 
     @Override
     public void onCreate() {
+        super.onCreate();
         AbstractAppAndroidImpl appAndroid = new AbstractAppAndroidImpl();
         appAndroid.construct();
-        super.onCreate();
         AbstractApp.notificationService.removeAddressLoadCompleteState();
         initApp();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
