@@ -30,22 +30,21 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.qrcode.ScanActivity;
-import net.bither.qrcode.ScanQRCodeTransportActivity;
-import net.bither.qrcode.ScanQRCodeWithOtherActivity;
-import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
+import net.bither.qrcode.ScanQRCodeWithOtherActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -129,7 +128,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
                         try {
-                            File logDir = BitherjApplication.getLogDir();
+                            File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
                         } catch (Exception e) {
                             e.printStackTrace();

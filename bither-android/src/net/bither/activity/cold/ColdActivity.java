@@ -31,9 +31,9 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;

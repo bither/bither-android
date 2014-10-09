@@ -32,7 +32,7 @@ import android.widget.ExpandableListView;
 
 import net.bither.R;
 import net.bither.adapter.hot.HotAddressFragmentListAdapter;
-import net.bither.bitherj.BitherjApplication;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
@@ -47,7 +47,6 @@ import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     }
 
     public void refresh() {
-        if (BitherjApplication.addressIsReady) {
+        if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
             List<Address> ws = AddressManager.getInstance().getWatchOnlyAddresses();
             watchOnlys.clear();

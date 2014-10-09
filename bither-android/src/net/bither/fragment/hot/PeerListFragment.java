@@ -30,18 +30,16 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.LogUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -34,10 +34,10 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
-import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
@@ -196,7 +196,7 @@ public class HotActivity extends FragmentActivity {
 
         tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
         tbtnMain.setBigInteger(null, null);
-        if (BitherjApplication.addressIsReady) {
+        if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);

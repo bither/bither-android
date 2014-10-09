@@ -28,12 +28,11 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
-import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;
@@ -388,7 +387,7 @@ public class BlockchainService extends android.app.Service {
                             TransactionsUtil.getMyTxFromBither();
                         }
                         startPeerManager();
-                        BitherjApplication.NOTIFICATION_SERVICE.removeBroadcastSyncSPVFinished();
+                        AbstractApp.notificationService.removeBroadcastSyncSPVFinished();
                         if (spvFinishedReceiver != null && spvFinishedReceivered) {
                             unregisterReceiver(spvFinishedReceiver);
                             spvFinishedReceivered = false;

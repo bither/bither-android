@@ -22,7 +22,6 @@ import net.bither.charts.entity.IStickEntity;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.util.ChartsUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 import org.json.JSONArray;
