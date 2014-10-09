@@ -25,7 +25,6 @@ import net.bither.BitherApplication;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.db.BitherjDatabaseHelper;
 import net.bither.bitherj.db.ITxProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;

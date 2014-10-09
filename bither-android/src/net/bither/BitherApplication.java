@@ -28,9 +28,9 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.db.BitherjDatabaseHelper;
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AndroidDbImpl;
+import net.bither.db.BitherjDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.service.BlockchainService;
 

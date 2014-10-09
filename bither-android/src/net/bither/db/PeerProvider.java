@@ -23,7 +23,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.Peer;
-import net.bither.bitherj.db.BitherjDatabaseHelper;
 import net.bither.bitherj.db.IPeerProvider;
 import net.bither.bitherj.utils.Utils;
 

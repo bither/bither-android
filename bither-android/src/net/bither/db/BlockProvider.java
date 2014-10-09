@@ -24,7 +24,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Block;
-import net.bither.bitherj.db.BitherjDatabaseHelper;
 import net.bither.bitherj.db.IBlockProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
