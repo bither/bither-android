@@ -28,8 +28,10 @@ import android.os.StrictMode;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
+import net.bither.bitherj.App;
 import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.ISetting;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.IRandom;
 import net.bither.bitherj.exception.AddressFormatException;
@@ -50,6 +52,15 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.android.LogcatAppender;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+
 public class BitherApplication extends BitherjApplication {
 
     private ActivityManager activityManager;
@@ -66,7 +77,11 @@ public class BitherApplication extends BitherjApplication {
 
     @Override
     public void onCreate() {
+        AppAndroidImpl appAndroid = new AppAndroidImpl();
+        appAndroid.construct();
         super.onCreate();
+        App.notificationService.removeAddressLoadCompleteState();
+        initApp();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .permitDiskReads().permitDiskWrites().penaltyLog().build());
         Threading.throwOnLockCycles();
@@ -86,72 +101,6 @@ public class BitherApplication extends BitherjApplication {
 
     }
 
-    @Override
-    public ISetting initSetting() {
-        ISetting bitherjApp = new ISetting() {
-            @Override
-            public BitherjSettings.AppMode getAppMode() {
-                return AppSharedPreference.getInstance().getAppMode();
-            }
-
-            @Override
-            public boolean getBitherjDoneSyncFromSpv() {
-                return AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv();
-            }
-
-            @Override
-            public void setBitherjDoneSyncFromSpv(boolean isDone) {
-                AppSharedPreference.getInstance().setBitherjDoneSyncFromSpv(isDone);
-            }
-
-            @Override
-            public BitherjSettings.TransactionFeeMode getTransactionFeeMode() {
-                return AppSharedPreference.getInstance().getTransactionFeeMode();
-            }
-
-            @Override
-            public File getPrivateDir(String dirName) {
-                File file = mContext.getDir(dirName, Context.MODE_PRIVATE);
-                if (!file.exists()) {
-                    file.mkdirs();
-                }
-                return file;
-            }
-
-            @Override
-            public boolean isApplicationRunInForeground() {
-                if (mContext == null) {
-                    return false;
-                }
-                ActivityManager am = (ActivityManager) mContext
-                        .getSystemService(Context.ACTIVITY_SERVICE);
-                List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-                if (tasks != null && !tasks.isEmpty()) {
-                    ComponentName topActivity = tasks.get(0).topActivity;
-                    if (!topActivity.getPackageName().equals(mContext.getPackageName())) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        };
-        return bitherjApp;
-    }
-
-    @Override
-    public IRandom initRandom() {
-        return new URandom();
-    }
-
-    public int maxConnectedPeers() {
-        final int memoryClass = activityManager.getMemoryClass();
-        if (memoryClass <= BitherSetting.MEMORY_CLASS_LOWEND) {
-            return 4;
-        } else {
-            return 6;
-        }
-    }
-
 
     public static boolean canReloadTx() {
         if (reloadTxTime == -1) {
@@ -159,6 +108,69 @@ public class BitherApplication extends BitherjApplication {
         } else {
             return reloadTxTime + 60 * 60 * 1000 < System.currentTimeMillis();
         }
+    }
+
+    public static File getLogDir() {
+        final File logDir = BitherjApplication.mContext.getDir("log", Context.MODE_WORLD_READABLE);
+        return logDir;
+    }
+
+    private void initLogging() {
+        final File logDir = getLogDir();
+        final File logFile = new File(logDir, "bitherj.log");
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        final PatternLayoutEncoder filePattern = new PatternLayoutEncoder();
+        filePattern.setContext(context);
+        filePattern.setPattern("%d{HH:mm:ss.SSS} [%thread] %logger{0} - %msg%n");
+        filePattern.start();
+
+        final RollingFileAppender<ILoggingEvent> fileAppender = new
+                RollingFileAppender<ILoggingEvent>();
+        fileAppender.setContext(context);
+        fileAppender.setFile(logFile.getAbsolutePath());
+
+        final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new
+                TimeBasedRollingPolicy<ILoggingEvent>();
+        rollingPolicy.setContext(context);
+        rollingPolicy.setParent(fileAppender);
+        rollingPolicy.setFileNamePattern(logDir.getAbsolutePath() + "/bitherj.%d.log.gz");
+        rollingPolicy.setMaxHistory(7);
+        rollingPolicy.start();
+
+        fileAppender.setEncoder(filePattern);
+        fileAppender.setRollingPolicy(rollingPolicy);
+        fileAppender.start();
+
+        final PatternLayoutEncoder logcatTagPattern = new PatternLayoutEncoder();
+        logcatTagPattern.setContext(context);
+        logcatTagPattern.setPattern("%logger{0}");
+        logcatTagPattern.start();
+
+        final PatternLayoutEncoder logcatPattern = new PatternLayoutEncoder();
+        logcatPattern.setContext(context);
+        logcatPattern.setPattern("[%thread] %msg%n");
+        logcatPattern.start();
+
+        final LogcatAppender logcatAppender = new LogcatAppender();
+        logcatAppender.setContext(context);
+        logcatAppender.setTagEncoder(logcatTagPattern);
+        logcatAppender.setEncoder(logcatPattern);
+        logcatAppender.start();
+
+        final ch.qos.logback.classic.Logger log = context.getLogger(Logger.ROOT_LOGGER_NAME);
+        log.addAppender(fileAppender);
+        log.addAppender(logcatAppender);
+        log.setLevel(Level.INFO);
+    }
+
+    private void initApp() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AddressManager.getInstance();
+                initLogging();
+            }
+        }).start();
     }
 
 

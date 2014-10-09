@@ -129,7 +129,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
                         try {
-                            File logDir = BitherjApplication.getLogDir();
+                            File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
                         } catch (Exception e) {
                             e.printStackTrace();

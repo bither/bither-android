@@ -35,11 +35,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.TransactionsOfBlockListAdapter;
 import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.Tx;
@@ -196,8 +198,7 @@ public final class BlockListFragment extends ListFragment {
         private static final int ROW_BASE_CHILD_COUNT = 2;
         private static final int ROW_INSERT_INDEX = 1;
         private final TransactionsOfBlockListAdapter transactionsAdapter = new TransactionsOfBlockListAdapter(
-                activity, address, BitherApplication.getBitherApplication()
-                .maxConnectedPeers(), false);
+                activity, address, BitherjSettings.MaxPeerConnections, false);
 
         private final List<Block> blocks = new ArrayList<Block>(
                 MAX_BLOCKS);
