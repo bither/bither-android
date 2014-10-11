@@ -22,12 +22,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.bitherj.db.AbstractDb;
 
-public class BitherjDatabaseHelper extends SQLiteOpenHelper {
+public class BitherDatabaseHelper extends SQLiteOpenHelper {
 
     public static final int DB_VERSION = 1;
     private static final String DB_NAME = "bitherj.db";
 
-    public BitherjDatabaseHelper(Context context) {
+    public BitherDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 

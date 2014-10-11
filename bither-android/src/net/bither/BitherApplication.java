@@ -30,7 +30,7 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AndroidDbImpl;
-import net.bither.db.BitherjDatabaseHelper;
+import net.bither.db.BitherDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.service.BlockchainService;
 
@@ -67,7 +67,7 @@ public class BitherApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = getApplicationContext();
-        mDbHelper = new BitherjDatabaseHelper(mContext);
+        mDbHelper = new BitherDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
         AbstractAppAndroidImpl appAndroid = new AbstractAppAndroidImpl();
