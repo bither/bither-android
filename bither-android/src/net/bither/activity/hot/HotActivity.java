@@ -491,7 +491,7 @@ public class HotActivity extends FragmentActivity {
 //                                    if (!AddressManager.getInstance().getAllAddresses().contains(address)) {
 //
 //                                        password.wipe();
-//                                        KeyUtil.addAddressList(service, addressList);
+//                                        KeyUtil.addAddressListByDesc(service, addressList);
 //                                        preference.setHasPrivateKey(true);
 //                                    }
 //                                    password.wipe();

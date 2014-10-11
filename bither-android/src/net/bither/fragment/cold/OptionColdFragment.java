@@ -420,7 +420,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
-            KeyUtil.addAddressList(null, addressList);
+            KeyUtil.addAddressListByDesc(null, addressList);
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

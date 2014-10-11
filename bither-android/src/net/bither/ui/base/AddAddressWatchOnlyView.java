@@ -42,7 +42,6 @@ import net.bither.util.KeyUtil;
 import net.bither.util.TransactionsUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AddAddressWatchOnlyView extends FrameLayout {
@@ -162,7 +161,6 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                     addresses.add(address.getAddress());
                 }
             }
-            Collections.reverse(wallets);
             checkAddress(service, wallets);
             activity.runOnUiThread(new Runnable() {
 
@@ -195,7 +193,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
             switch (addressType) {
                 case Normal:
-                    KeyUtil.addAddressList(service, wallets);
+                    KeyUtil.addAddressListByDesc(service, wallets);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

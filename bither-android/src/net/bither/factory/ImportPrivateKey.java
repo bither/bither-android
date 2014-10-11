@@ -194,7 +194,7 @@ public class ImportPrivateKey {
             }
             List<Address> addressList = new ArrayList<Address>();
             addressList.add(address);
-            KeyUtil.addAddressList(blockchainService, addressList);
+            KeyUtil.addAddressListByDesc(blockchainService, addressList);
         }
 
         ThreadUtil.runOnMainThread(new Runnable() {

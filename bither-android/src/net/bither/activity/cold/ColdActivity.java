@@ -67,7 +67,6 @@ import net.bither.util.WalletUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -402,8 +401,7 @@ public class ColdActivity extends FragmentActivity {
                             }
                         }
                         password.wipe();
-                        Collections.sort(addressList, Collections.reverseOrder());
-                        KeyUtil.addAddressList(null, addressList);
+                        KeyUtil.addAddressListByDesc(null, addressList);
                         recoverBackupSuccess();
                     }
 
