@@ -57,7 +57,7 @@ public class XRandom implements IRandom {
             uRandomBytes[0] = (byte) (uRandomBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uRandomBytes);
 
-        } while (d.equals(BigInteger.ZERO) || (d.compareTo(Parameters.n) >= 0));
+        } while (d.equals(BigInteger.ZERO));
         return uRandomBytes;
     }
 
@@ -68,7 +68,7 @@ public class XRandom implements IRandom {
             uEntropyBytes = this.uEntropy.nextBytes(length);
             uEntropyBytes[0] = (byte) (uEntropyBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uEntropyBytes);
-        } while (d.equals(BigInteger.ZERO) || (d.compareTo(Parameters.n) >= 0));
+        } while (d.equals(BigInteger.ZERO));
         return uEntropyBytes;
     }
 }
