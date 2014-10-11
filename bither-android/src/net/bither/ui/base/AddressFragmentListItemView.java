@@ -77,7 +77,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         ivWatchOnlyType = (ImageView) findViewById(R.id.iv_type_watchonly);
         ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
-        ibtnXRandomLabel.setOnClickListener(DialogXRandomInfo.InfoClick);
+        ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id

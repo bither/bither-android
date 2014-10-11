@@ -59,7 +59,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         tvAddress = (TextView) findViewById(R.id.tv_address);
         ivType = (ImageView) findViewById(R.id.iv_type);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
-        ibtnXRandomLabel.setOnClickListener(DialogXRandomInfo.InfoClick);
+        ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
         ivType.setOnLongClickListener(typeClick);

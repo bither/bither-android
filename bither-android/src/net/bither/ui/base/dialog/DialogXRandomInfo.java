@@ -60,6 +60,15 @@ public class DialogXRandomInfo extends CenterDialog implements View.OnClickListe
         }
     };
 
+    public static final View.OnLongClickListener InfoLongClick = new View.OnLongClickListener(){
+
+        @Override
+        public boolean onLongClick(View v) {
+            new DialogXRandomInfo(v.getContext()).show();
+            return true;
+        }
+    };
+
     public static final View.OnClickListener GuideClick = new View.OnClickListener() {
 
         @Override
