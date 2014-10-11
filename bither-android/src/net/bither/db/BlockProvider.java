@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Block;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IBlockProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
@@ -229,7 +230,7 @@ public class BlockProvider implements IBlockProvider {
         for (Block item : addBlockList) {
             ContentValues cv = new ContentValues();
             applyContentValues(item, cv);
-            db.insert(BitherjDatabaseHelper.Tables.BLOCKS, null, cv);
+            db.insert(AbstractDb.Tables.BLOCKS, null, cv);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -242,7 +243,7 @@ public class BlockProvider implements IBlockProvider {
             SQLiteDatabase db = this.mDb.getWritableDatabase();
             ContentValues cv = new ContentValues();
             applyContentValues(item, cv);
-            db.insert(BitherjDatabaseHelper.Tables.BLOCKS, null, cv);
+            db.insert(AbstractDb.Tables.BLOCKS, null, cv);
         }
 
     }
@@ -263,13 +264,13 @@ public class BlockProvider implements IBlockProvider {
     public void updateBlock(byte[] blockHash, boolean isMain) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(BitherjDatabaseHelper.BlocksColumns.IS_MAIN, isMain ? 1 : 0);
-        db.update(BitherjDatabaseHelper.Tables.BLOCKS, cv, "block_hash=?", new String[]{Base58.encode(blockHash)});
+        cv.put(AbstractDb.BlocksColumns.IS_MAIN, isMain ? 1 : 0);
+        db.update(AbstractDb.Tables.BLOCKS, cv, "block_hash=?", new String[]{Base58.encode(blockHash)});
     }
 
     public void removeBlock(byte[] blockHash) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.delete(BitherjDatabaseHelper.Tables.BLOCKS, "block_hash=?", new String[]{Base58.encode(blockHash)});
+        db.delete(AbstractDb.Tables.BLOCKS, "block_hash=?", new String[]{Base58.encode(blockHash)});
     }
 
     public void cleanOldBlock() {
@@ -298,21 +299,21 @@ public class BlockProvider implements IBlockProvider {
             c.close();
             int blockNo = (maxBlockNo - BitherjSettings.BLOCK_DIFFICULTY_INTERVAL) - maxBlockNo % BitherjSettings.BLOCK_DIFFICULTY_INTERVAL;
             db = this.mDb.getWritableDatabase();
-            db.delete(BitherjDatabaseHelper.Tables.BLOCKS, "block_no<?", new String[]{Integer.toString(blockNo)});
+            db.delete(AbstractDb.Tables.BLOCKS, "block_no<?", new String[]{Integer.toString(blockNo)});
         }
 
     }
 
     private void applyContentValues(Block item, ContentValues cv) {
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_BITS, item.getBlockBits());
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_HASH, Base58.encode(item.getBlockHash()));
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_NO, item.getBlockNo());
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_NONCE, item.getBlockNonce());
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_PREV, Base58.encode(item.getBlockPrev()));
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_ROOT, Base58.encode(item.getBlockRoot()));
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_TIME, item.getBlockTime());
-        cv.put(BitherjDatabaseHelper.BlocksColumns.BLOCK_VER, item.getBlockVer());
-        cv.put(BitherjDatabaseHelper.BlocksColumns.IS_MAIN, item.isMain() ? 1 : 0);
+        cv.put(AbstractDb.BlocksColumns.BLOCK_BITS, item.getBlockBits());
+        cv.put(AbstractDb.BlocksColumns.BLOCK_HASH, Base58.encode(item.getBlockHash()));
+        cv.put(AbstractDb.BlocksColumns.BLOCK_NO, item.getBlockNo());
+        cv.put(AbstractDb.BlocksColumns.BLOCK_NONCE, item.getBlockNonce());
+        cv.put(AbstractDb.BlocksColumns.BLOCK_PREV, Base58.encode(item.getBlockPrev()));
+        cv.put(AbstractDb.BlocksColumns.BLOCK_ROOT, Base58.encode(item.getBlockRoot()));
+        cv.put(AbstractDb.BlocksColumns.BLOCK_TIME, item.getBlockTime());
+        cv.put(AbstractDb.BlocksColumns.BLOCK_VER, item.getBlockVer());
+        cv.put(AbstractDb.BlocksColumns.IS_MAIN, item.isMain() ? 1 : 0);
 
     }
 
@@ -326,39 +327,39 @@ public class BlockProvider implements IBlockProvider {
         long nonce = 0;
         int blockNo = 0;
         boolean isMain = false;
-        int idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_BITS);
+        int idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_BITS);
         if (idColumn != -1) {
             target = c.getLong(idColumn);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_HASH);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_HASH);
         if (idColumn != -1) {
             blockHash = Base58.decode(c.getString(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_NO);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_NO);
         if (idColumn != -1) {
             blockNo = c.getInt(idColumn);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_NONCE);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_NONCE);
         if (idColumn != -1) {
             nonce = c.getLong(idColumn);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_PREV);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_PREV);
         if (idColumn != -1) {
             prevBlock = Base58.decode(c.getString(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_ROOT);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_ROOT);
         if (idColumn != -1) {
             merkleRoot = Base58.decode(c.getString(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_TIME);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_TIME);
         if (idColumn != -1) {
             timestamp = c.getInt(idColumn);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.BLOCK_VER);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.BLOCK_VER);
         if (idColumn != -1) {
             version = c.getLong(idColumn);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.BlocksColumns.IS_MAIN);
+        idColumn = c.getColumnIndex(AbstractDb.BlocksColumns.IS_MAIN);
         if (idColumn != -1) {
             isMain = c.getInt(idColumn) == 1;
         }

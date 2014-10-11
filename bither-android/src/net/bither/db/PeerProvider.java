@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.Peer;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IPeerProvider;
 import net.bither.bitherj.utils.Utils;
 
@@ -64,7 +65,7 @@ public class PeerProvider implements IPeerProvider {
         SQLiteDatabase db = mDb.getReadableDatabase();
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
-            int idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_ADDRESS);
+            int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_ADDRESS);
             if (idColumn != -1) {
                 long peerAddress = c.getLong(idColumn);
                 boolean in = false;
@@ -84,7 +85,7 @@ public class PeerProvider implements IPeerProvider {
         db = mDb.getWritableDatabase();
         db.beginTransaction();
         for (long i : needDeletePeers) {
-            db.delete(BitherjDatabaseHelper.Tables.PEERS, BitherjDatabaseHelper.PeersColumns
+            db.delete(AbstractDb.Tables.PEERS, AbstractDb.PeersColumns
                     .PEER_ADDRESS + "=?", new String[]{Long.toString(i)});
         }
         db.setTransactionSuccessful();
@@ -119,7 +120,7 @@ public class PeerProvider implements IPeerProvider {
 
                 ContentValues cv = new ContentValues();
                 applyContentValues(item, cv);
-                db.insert(BitherjDatabaseHelper.Tables.PEERS, null, cv);
+                db.insert(AbstractDb.Tables.PEERS, null, cv);
             }
 
             db.setTransactionSuccessful();
@@ -133,8 +134,8 @@ public class PeerProvider implements IPeerProvider {
         db.beginTransaction();
         for (InetAddress peerAddress : peerAddresses) {
             ContentValues cv = new ContentValues();
-            cv.put(BitherjDatabaseHelper.PeersColumns.PEER_TIMESTAMP, timestamp);
-            db.update(BitherjDatabaseHelper.Tables.PEERS, cv, BitherjDatabaseHelper.PeersColumns
+            cv.put(AbstractDb.PeersColumns.PEER_TIMESTAMP, timestamp);
+            db.update(AbstractDb.Tables.PEERS, cv, AbstractDb.PeersColumns
                     .PEER_ADDRESS + "=?", new String[]{Long.toString(Utils.parseLongFromAddress
                     (peerAddress))});
         }
@@ -145,7 +146,7 @@ public class PeerProvider implements IPeerProvider {
 
     public void removePeer(InetAddress address) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.delete(BitherjDatabaseHelper.Tables.PEERS, BitherjDatabaseHelper.PeersColumns
+        db.delete(AbstractDb.Tables.PEERS, AbstractDb.PeersColumns
                 .PEER_ADDRESS + "=?", new String[]{Long.toString(Utils.parseLongFromAddress
                 (address))});
     }
@@ -182,9 +183,9 @@ public class PeerProvider implements IPeerProvider {
         long addressLong = Utils.parseLongFromAddress(address);
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_CONNECTED_CNT, 1);
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_TIMESTAMP, new Date().getTime());
-        db.update(BitherjDatabaseHelper.Tables.PEERS, cv, "peer_address=?",
+        cv.put(AbstractDb.PeersColumns.PEER_CONNECTED_CNT, 1);
+        cv.put(AbstractDb.PeersColumns.PEER_TIMESTAMP, new Date().getTime());
+        db.update(AbstractDb.Tables.PEERS, cv, "peer_address=?",
                 new String[]{Long.toString(addressLong)});
     }
 
@@ -241,7 +242,7 @@ public class PeerProvider implements IPeerProvider {
             c = db.rawQuery(sql, null);
             long timestamp = 0;
             if (c.moveToNext()) {
-                int idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_TIMESTAMP);
+                int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_TIMESTAMP);
                 if (idColumn != -1) {
                     timestamp = c.getLong(idColumn);
                 }
@@ -249,25 +250,25 @@ public class PeerProvider implements IPeerProvider {
             c.close();
             if (timestamp > 0) {
                 db = this.mDb.getWritableDatabase();
-                db.delete(BitherjDatabaseHelper.Tables.PEERS, "peer_connected_cnt<>1 and " +
+                db.delete(AbstractDb.Tables.PEERS, "peer_connected_cnt<>1 and " +
                         "peer_timestamp<=?", new String[]{Long.toString(timestamp)});
             }
         }
     }
 
     private void applyContentValues(Peer item, ContentValues cv) {
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_ADDRESS, Utils.parseLongFromAddress(item
+        cv.put(AbstractDb.PeersColumns.PEER_ADDRESS, Utils.parseLongFromAddress(item
                 .getPeerAddress()));
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_CONNECTED_CNT, item.getPeerConnectedCnt());
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_PORT, item.getPeerPort());
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_SERVICES, item.getPeerServices());
-        cv.put(BitherjDatabaseHelper.PeersColumns.PEER_TIMESTAMP, item.getPeerTimestamp());
+        cv.put(AbstractDb.PeersColumns.PEER_CONNECTED_CNT, item.getPeerConnectedCnt());
+        cv.put(AbstractDb.PeersColumns.PEER_PORT, item.getPeerPort());
+        cv.put(AbstractDb.PeersColumns.PEER_SERVICES, item.getPeerServices());
+        cv.put(AbstractDb.PeersColumns.PEER_TIMESTAMP, item.getPeerTimestamp());
 
     }
 
     private Peer applyCursor(Cursor c) {
         InetAddress address = null;
-        int idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_ADDRESS);
+        int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_ADDRESS);
         if (idColumn != -1) {
             try {
                 address = Utils.parseAddressFromLong(c.getLong(idColumn));
@@ -276,19 +277,19 @@ public class PeerProvider implements IPeerProvider {
             }
         }
         Peer peerItem = new Peer(address);
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_CONNECTED_CNT);
+        idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_CONNECTED_CNT);
         if (idColumn != -1) {
             peerItem.setPeerConnectedCnt(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_PORT);
+        idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_PORT);
         if (idColumn != -1) {
             peerItem.setPeerPort(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_SERVICES);
+        idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_SERVICES);
         if (idColumn != -1) {
             peerItem.setPeerServices(c.getLong(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.PeersColumns.PEER_TIMESTAMP);
+        idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_TIMESTAMP);
         if (idColumn != -1) {
             peerItem.setPeerTimestamp(c.getInt(idColumn));
         }

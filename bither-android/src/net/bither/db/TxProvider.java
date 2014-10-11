@@ -25,6 +25,7 @@ import net.bither.BitherApplication;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.ITxProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
@@ -256,7 +257,7 @@ public class TxProvider implements ITxProvider {
     private void addTxToDb(SQLiteDatabase db, Tx txItem) {
         ContentValues cv = new ContentValues();
         applyContentValues(txItem, cv);
-        db.insert(BitherjDatabaseHelper.Tables.TXS, null, cv);
+        db.insert(AbstractDb.Tables.TXS, null, cv);
         Cursor c;
         String sql;
         List<Object[]> addressesTxsRels = new ArrayList<Object[]>();
@@ -275,7 +276,7 @@ public class TxProvider implements ITxProvider {
                 c.close();
                 cv = new ContentValues();
                 applyContentValues(inItem, cv);
-                db.insert(BitherjDatabaseHelper.Tables.INS, null, cv);
+                db.insert(AbstractDb.Tables.INS, null, cv);
 
                 sql = "update outs set out_status=" + Out.OutStatus.spent.getValue() +
                         " where tx_hash='" + Base58.encode(inItem.getPrevTxHash()) + "' and out_sn=" + inItem.getPrevOutSn();
@@ -285,7 +286,7 @@ public class TxProvider implements ITxProvider {
 
                 cv = new ContentValues();
                 applyContentValues(outItem, cv);
-                db.insert(BitherjDatabaseHelper.Tables.OUTS, null, cv);
+                db.insert(AbstractDb.Tables.OUTS, null, cv);
                 if (!Utils.isEmpty(outItem.getOutAddress())) {
                     addressesTxsRels.add(new Object[]{outItem.getOutAddress(), txItem.getTxHash()});
                 }
@@ -352,13 +353,13 @@ public class TxProvider implements ITxProvider {
         Cursor c = db.rawQuery(inSql, new String[]{tx});
         List<Object[]> needUpdateOuts = new ArrayList<Object[]>();
         while (c.moveToNext()) {
-            int idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.PREV_TX_HASH);
+            int idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_TX_HASH);
             String prevTxHash = null;
             int prevOutSn = 0;
             if (idColumn != -1) {
                 prevTxHash = c.getString(idColumn);
             }
-            idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.PREV_OUT_SN);
+            idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_OUT_SN);
             if (idColumn != -1) {
                 prevOutSn = c.getInt(idColumn);
             }
@@ -724,60 +725,60 @@ public class TxProvider implements ITxProvider {
     public void clearAllTx() {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
-        db.delete(BitherjDatabaseHelper.Tables.TXS, "", new String[0]);
-        db.delete(BitherjDatabaseHelper.Tables.OUTS, "", new String[0]);
-        db.delete(BitherjDatabaseHelper.Tables.INS, "", new String[0]);
-        db.delete(BitherjDatabaseHelper.Tables.ADDRESSES_TXS, "", new String[0]);
+        db.delete(AbstractDb.Tables.TXS, "", new String[0]);
+        db.delete(AbstractDb.Tables.OUTS, "", new String[0]);
+        db.delete(AbstractDb.Tables.INS, "", new String[0]);
+        db.delete(AbstractDb.Tables.ADDRESSES_TXS, "", new String[0]);
         db.setTransactionSuccessful();
         db.endTransaction();
     }
 
     private void applyContentValues(Tx txItem, ContentValues cv) {
         if (txItem.getBlockNo() != Tx.TX_UNCONFIRMED) {
-            cv.put(BitherjDatabaseHelper.TxsColumns.BLOCK_NO, txItem.getBlockNo());
+            cv.put(AbstractDb.TxsColumns.BLOCK_NO, txItem.getBlockNo());
         }
-        cv.put(BitherjDatabaseHelper.TxsColumns.TX_HASH, Base58.encode(txItem.getTxHash()));
-        cv.put(BitherjDatabaseHelper.TxsColumns.SOURCE, txItem.getSource());
-        cv.put(BitherjDatabaseHelper.TxsColumns.TX_TIME, txItem.getTxTime());
-        cv.put(BitherjDatabaseHelper.TxsColumns.TX_VER, txItem.getTxVer());
-        cv.put(BitherjDatabaseHelper.TxsColumns.TX_LOCKTIME, txItem.getTxLockTime());
+        cv.put(AbstractDb.TxsColumns.TX_HASH, Base58.encode(txItem.getTxHash()));
+        cv.put(AbstractDb.TxsColumns.SOURCE, txItem.getSource());
+        cv.put(AbstractDb.TxsColumns.TX_TIME, txItem.getTxTime());
+        cv.put(AbstractDb.TxsColumns.TX_VER, txItem.getTxVer());
+        cv.put(AbstractDb.TxsColumns.TX_LOCKTIME, txItem.getTxLockTime());
     }
 
     private void applyContentValues(In inItem, ContentValues cv) {
-        cv.put(BitherjDatabaseHelper.InsColumns.TX_HASH, Base58.encode(inItem.getTxHash()));
-        cv.put(BitherjDatabaseHelper.InsColumns.IN_SN, inItem.getInSn());
-        cv.put(BitherjDatabaseHelper.InsColumns.PREV_TX_HASH, Base58.encode(inItem.getPrevTxHash()));
-        cv.put(BitherjDatabaseHelper.InsColumns.PREV_OUT_SN, inItem.getPrevOutSn());
+        cv.put(AbstractDb.InsColumns.TX_HASH, Base58.encode(inItem.getTxHash()));
+        cv.put(AbstractDb.InsColumns.IN_SN, inItem.getInSn());
+        cv.put(AbstractDb.InsColumns.PREV_TX_HASH, Base58.encode(inItem.getPrevTxHash()));
+        cv.put(AbstractDb.InsColumns.PREV_OUT_SN, inItem.getPrevOutSn());
         if (inItem.getInSignature() != null) {
-            cv.put(BitherjDatabaseHelper.InsColumns.IN_SIGNATURE, Base58.encode(inItem.getInSignature()));
+            cv.put(AbstractDb.InsColumns.IN_SIGNATURE, Base58.encode(inItem.getInSignature()));
         }
-        cv.put(BitherjDatabaseHelper.InsColumns.IN_SEQUENCE, inItem.getInSequence());
+        cv.put(AbstractDb.InsColumns.IN_SEQUENCE, inItem.getInSequence());
     }
 
     private void applyContentValues(Out outItem, ContentValues cv) {
-        cv.put(BitherjDatabaseHelper.OutsColumns.TX_HASH, Base58.encode(outItem.getTxHash()));
-        cv.put(BitherjDatabaseHelper.OutsColumns.OUT_SN, outItem.getOutSn());
-        cv.put(BitherjDatabaseHelper.OutsColumns.OUT_SCRIPT, Base58.encode(outItem.getOutScript()));
-        cv.put(BitherjDatabaseHelper.OutsColumns.OUT_VALUE, outItem.getOutValue());
-        cv.put(BitherjDatabaseHelper.OutsColumns.OUT_STATUS, outItem.getOutStatus().getValue());
+        cv.put(AbstractDb.OutsColumns.TX_HASH, Base58.encode(outItem.getTxHash()));
+        cv.put(AbstractDb.OutsColumns.OUT_SN, outItem.getOutSn());
+        cv.put(AbstractDb.OutsColumns.OUT_SCRIPT, Base58.encode(outItem.getOutScript()));
+        cv.put(AbstractDb.OutsColumns.OUT_VALUE, outItem.getOutValue());
+        cv.put(AbstractDb.OutsColumns.OUT_STATUS, outItem.getOutStatus().getValue());
         if (!Utils.isEmpty(outItem.getOutAddress())) {
-            cv.put(BitherjDatabaseHelper.OutsColumns.OUT_ADDRESS, outItem.getOutAddress());
+            cv.put(AbstractDb.OutsColumns.OUT_ADDRESS, outItem.getOutAddress());
         }
     }
 
     private Tx applyCursor(Cursor c) throws AddressFormatException {
         Tx txItem = new Tx();
-        int idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.BLOCK_NO);
+        int idColumn = c.getColumnIndex(AbstractDb.TxsColumns.BLOCK_NO);
         if (!c.isNull(idColumn)) {
             txItem.setBlockNo(c.getInt(idColumn));
         } else {
             txItem.setBlockNo(Tx.TX_UNCONFIRMED);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.TX_HASH);
+        idColumn = c.getColumnIndex(AbstractDb.TxsColumns.TX_HASH);
         if (idColumn != -1) {
             txItem.setTxHash(Base58.decode(c.getString(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.SOURCE);
+        idColumn = c.getColumnIndex(AbstractDb.TxsColumns.SOURCE);
         if (idColumn != -1) {
             txItem.setSource(c.getInt(idColumn));
         }
@@ -788,15 +789,15 @@ public class TxProvider implements ITxProvider {
             txItem.setSawByPeerCnt(0);
             txItem.setSource(0);
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.TX_TIME);
+        idColumn = c.getColumnIndex(AbstractDb.TxsColumns.TX_TIME);
         if (idColumn != -1) {
             txItem.setTxTime(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.TX_VER);
+        idColumn = c.getColumnIndex(AbstractDb.TxsColumns.TX_VER);
         if (idColumn != -1) {
             txItem.setTxVer(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.TxsColumns.TX_LOCKTIME);
+        idColumn = c.getColumnIndex(AbstractDb.TxsColumns.TX_LOCKTIME);
         if (idColumn != -1) {
             txItem.setTxLockTime(c.getInt(idColumn));
         }
@@ -806,30 +807,30 @@ public class TxProvider implements ITxProvider {
 
     private In applyCursorIn(Cursor c) throws AddressFormatException {
         In inItem = new In();
-        int idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.TX_HASH);
+        int idColumn = c.getColumnIndex(AbstractDb.InsColumns.TX_HASH);
         if (idColumn != -1) {
             inItem.setTxHash(Base58.decode(c.getString(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.IN_SN);
+        idColumn = c.getColumnIndex(AbstractDb.InsColumns.IN_SN);
         if (idColumn != -1) {
             inItem.setInSn(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.PREV_TX_HASH);
+        idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_TX_HASH);
         if (idColumn != -1) {
             inItem.setPrevTxHash(Base58.decode(c.getString(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.PREV_OUT_SN);
+        idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_OUT_SN);
         if (idColumn != -1) {
             inItem.setPrevOutSn(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.IN_SIGNATURE);
+        idColumn = c.getColumnIndex(AbstractDb.InsColumns.IN_SIGNATURE);
         if (idColumn != -1) {
             String inSignature = c.getString(idColumn);
             if (!Utils.isEmpty(inSignature)) {
                 inItem.setInSignature(Base58.decode(c.getString(idColumn)));
             }
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.InsColumns.IN_SEQUENCE);
+        idColumn = c.getColumnIndex(AbstractDb.InsColumns.IN_SEQUENCE);
         if (idColumn != -1) {
             inItem.setInSequence(c.getInt(idColumn));
         }
@@ -838,27 +839,27 @@ public class TxProvider implements ITxProvider {
 
     private Out applyCursorOut(Cursor c) throws AddressFormatException {
         Out outItem = new Out();
-        int idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.TX_HASH);
+        int idColumn = c.getColumnIndex(AbstractDb.OutsColumns.TX_HASH);
         if (idColumn != -1) {
             outItem.setTxHash(Base58.decode(c.getString(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.OUT_SN);
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.OUT_SN);
         if (idColumn != -1) {
             outItem.setOutSn(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.OUT_SCRIPT);
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.OUT_SCRIPT);
         if (idColumn != -1) {
             outItem.setOutScript(Base58.decode(c.getString(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.OUT_VALUE);
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.OUT_VALUE);
         if (idColumn != -1) {
             outItem.setOutValue(c.getLong(idColumn));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.OUT_STATUS);
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.OUT_STATUS);
         if (idColumn != -1) {
             outItem.setOutStatus(Out.getOutStatus(c.getInt(idColumn)));
         }
-        idColumn = c.getColumnIndex(BitherjDatabaseHelper.OutsColumns.OUT_ADDRESS);
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.OUT_ADDRESS);
         if (idColumn != -1) {
             outItem.setOutAddress(c.getString(idColumn));
         }
