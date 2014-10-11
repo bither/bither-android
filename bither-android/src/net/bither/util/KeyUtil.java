@@ -77,7 +77,7 @@ public class KeyUtil {
         boolean hasPrivateKey = false;
         AddressManager addressManager = AddressManager.getInstance();
         //need reverse addressList
-        Collections.sort(addressList, Collections.reverseOrder());
+        Collections.reverse(addressList);
         for (Address address : addressList) {
             if (address.hasPrivKey() && !hasPrivateKey) {
                 hasPrivateKey = true;
