@@ -266,7 +266,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
                                 null);
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);

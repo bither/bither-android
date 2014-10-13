@@ -243,7 +243,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
                                 new SecureCharSequence(etPassword));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
