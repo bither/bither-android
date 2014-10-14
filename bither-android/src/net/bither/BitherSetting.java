@@ -16,6 +16,8 @@
 
 package net.bither;
 
+import android.text.format.DateUtils;
+
 import net.bither.bitherj.exception.AddressFormatException;
 
 import java.nio.charset.Charset;
@@ -49,6 +51,9 @@ public class BitherSetting {
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;
     public static final int REQUEST_CODE_CROP_IMAGE = 1009;
+
+    public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
+    public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;
 
     public class SwipeRightGesture {
         public static final int SCROLL_DELAY_HORIZONTAL = 75;
@@ -182,7 +187,7 @@ public class BitherSetting {
     }
 
     public enum SyncInterval {
-        FifteenMinute(R.string.synchronous_interval_fifteen_minute), OneHour(R.string.synchronous_interval_one_hour), OnlyOpenApp(R.string.synchronous_interval_only_open_app);
+        Normal(R.string.synchronous_interval_normal), OnlyOpenApp(R.string.synchronous_interval_only_open_app);
 
         private SyncInterval(int stringId) {
             this.stringId = stringId;

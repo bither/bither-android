@@ -46,6 +46,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.fragment.hot.MarketFragment;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.UploadAvatarRunnable;
@@ -371,6 +372,7 @@ public class HotActivity extends FragmentActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                AppSharedPreference.getInstance().touchLastUsed();
                 AddErrorMsgRunnable addErrorMsgRunnable = new AddErrorMsgRunnable();
                 addErrorMsgRunnable.run();
                 UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();

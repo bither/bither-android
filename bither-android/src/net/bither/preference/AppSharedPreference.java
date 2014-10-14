@@ -57,6 +57,7 @@ public class AppSharedPreference {
     private static final String BITHERJ_DONE_SYNC_FROM_SPV = "bitheri_done_sync_from_spv";
     private static final String SYNC_INTERVAL = "sync_interval";
 
+    private static final String PREFS_KEY_LAST_USED = "last_used";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -279,12 +280,22 @@ public class AppSharedPreference {
 
     public BitherSetting.SyncInterval getSyncInterval() {
         int index = this.mPreferences.getInt(SYNC_INTERVAL,
-                BitherSetting.SyncInterval.FifteenMinute.ordinal());
+                BitherSetting.SyncInterval.Normal.ordinal());
         return BitherSetting.SyncInterval.values()[index];
     }
 
     public void setSyncInterval(BitherSetting.SyncInterval syncInterval) {
         this.mPreferences.edit().putInt(SYNC_INTERVAL, syncInterval.ordinal()).commit();
 
+    }
+
+    public long getLastUsedAgo() {
+        final long now = System.currentTimeMillis();
+        return now - this.mPreferences.getLong(PREFS_KEY_LAST_USED, 0);
+    }
+
+    public void touchLastUsed() {
+        final long now = System.currentTimeMillis();
+        this.mPreferences.edit().putLong(PREFS_KEY_LAST_USED, now).commit();
     }
 }

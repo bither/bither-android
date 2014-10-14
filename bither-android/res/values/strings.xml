@@ -207,6 +207,7 @@
     <string name="base_on_text">Based on </string>
     <string name="synchronous_interval">Sync Interval</string>
     <string name="synchronous_interval_fifteen_minute">15 Minutes</string>
+    <string name="synchronous_interval_normal">Normal</string>
     <string name="synchronous_interval_one_hour">1 Hour</string>
     <string name="synchronous_interval_only_open_app">Only when openning</string>
     <!-- Input parser -->

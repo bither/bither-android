@@ -455,18 +455,16 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView.SettingSelector syncIntervalSelector = new SettingSelectorView.SettingSelector() {
         @Override
         public int getOptionCount() {
-            return 3;
+            return 2;
         }
 
         @Override
         public String getOptionName(int index) {
-            switch (index) {
-                case 1:
-                    return getString(BitherSetting.SyncInterval.OneHour.getStringId());
-                case 2:
-                    return getString(BitherSetting.SyncInterval.OnlyOpenApp.getStringId());
+            if (index == 0) {
+                return getString(BitherSetting.SyncInterval.Normal.getStringId());
+            } else {
+                return getString(BitherSetting.SyncInterval.OnlyOpenApp.getStringId());
             }
-            return getString(BitherSetting.SyncInterval.FifteenMinute.getStringId());
 
         }
 
@@ -488,26 +486,20 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public int getCurrentOptionIndex() {
             BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
-            switch (syncInterval) {
-                case OneHour:
-                    return 1;
-                case OnlyOpenApp:
-                    return 2;
-
+            if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp) {
+                return 1;
+            } else {
+                return 0;
             }
-            return 0;
         }
 
         @Override
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.FifteenMinute);
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.Normal);
                     break;
                 case 1:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OneHour);
-                    break;
-                case 2:
                     AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OnlyOpenApp);
                     break;
             }
