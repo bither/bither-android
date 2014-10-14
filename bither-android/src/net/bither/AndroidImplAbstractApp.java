@@ -31,7 +31,7 @@ import net.bither.xrandom.URandom;
 import java.io.File;
 import java.util.List;
 
-public class AbstractAppAndroidImpl extends AbstractApp {
+public class AndroidImplAbstractApp extends AbstractApp {
 
     @Override
     public IRandom initRandom() {

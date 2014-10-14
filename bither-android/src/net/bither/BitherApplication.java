@@ -70,7 +70,7 @@ public class BitherApplication extends Application {
         mDbHelper = new BitherDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
-        AbstractAppAndroidImpl appAndroid = new AbstractAppAndroidImpl();
+        AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();
         appAndroid.construct();
         AbstractApp.notificationService.removeAddressLoadCompleteState();
         initApp();
