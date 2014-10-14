@@ -19,6 +19,7 @@ package net.bither.util;
 
 import net.bither.R;
 import net.bither.bitherj.utils.Base58;
+import net.bither.bitherj.utils.Utils;
 
 import java.util.regex.Pattern;
 
@@ -49,7 +50,7 @@ public abstract class InputParser {
                     error(R.string.input_parser_invalid_bitcoin_uri, input);
                 }
             } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
-                if (StringUtil.validBicoinAddress(input)) {
+                if (Utils.validBicoinAddress(input)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
                     error(R.string.input_parser_invalid_address);

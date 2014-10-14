@@ -33,7 +33,6 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 
 public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
@@ -77,7 +76,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;
-            } else if (!StringUtil.validBitcoinPrivateKey(s)) {
+            } else if (!Utils.validBitcoinPrivateKey(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();
                 return;

@@ -56,7 +56,7 @@ public class ExchangeUtil {
         if (mRate == -1) {
             File file = FileUtil.getExchangeRateFile();
             String rateString = Utils.readFile(file);
-            if (StringUtil.isNubmer(rateString)) {
+            if (Utils.isNubmer(rateString)) {
                 mRate = Float.valueOf(rateString);
             } else {
                 mRate = 1;
