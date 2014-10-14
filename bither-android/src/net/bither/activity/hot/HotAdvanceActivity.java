@@ -189,16 +189,18 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(SecureCharSequence password) {
+                            resetTx();
 
-                DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
-                    @Override
-                    public void onPasswordEntered(SecureCharSequence password) {
-                        resetTx();
-
-                    }
-                });
-                dialogPassword.show();
-
+                        }
+                    });
+                    dialogPassword.show();
+                } else {
+                    resetTx();
+                }
             }
         });
     }
