@@ -106,26 +106,24 @@ public class BlockchainService extends android.app.Service {
     }
 
     private void scheduleStartBlockchainService(@Nonnull final Context context) {
-        long interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
         BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
-        switch (syncInterval) {
-            case OnlyOpenApp:
-                log.info("start only open the application");
-                return;
-            case Normal:
-                final long lastUsedAgo = AppSharedPreference.getInstance().getLastUsedAgo();
-                if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_JUST_MS) {
-                    interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-                    log.info("start INTERVAL_FIFTEEN_MINUTES");
-                } else if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_RECENTLY_MS) {
-                    interval = AlarmManager.INTERVAL_HALF_DAY;
-                    log.info("start INTERVAL_HALF_DAY");
-                } else {
-                    interval = AlarmManager.INTERVAL_DAY;
-                    log.info("start INTERVAL_DAY");
-                }
-                break;
-
+        if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp ||
+                AddressManager.getInstance().getAllAddresses().size() == 0) {
+            return;
+        }
+        long interval = AlarmManager.INTERVAL_HOUR;
+        if (syncInterval == BitherSetting.SyncInterval.Normal) {
+            final long lastUsedAgo = AppSharedPreference.getInstance().getLastUsedAgo();
+            if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_JUST_MS) {
+                interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+                log.info("start INTERVAL_FIFTEEN_MINUTES");
+            } else if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_RECENTLY_MS) {
+                interval = AlarmManager.INTERVAL_HALF_DAY;
+                log.info("start INTERVAL_HALF_DAY");
+            } else {
+                interval = AlarmManager.INTERVAL_DAY;
+                log.info("start INTERVAL_DAY");
+            }
         }
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
                 .ALARM_SERVICE);
