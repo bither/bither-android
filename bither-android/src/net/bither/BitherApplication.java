@@ -28,13 +28,11 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
-
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.service.BlockchainService;
-import net.bither.xrandom.LinuxSecureRandom;
 
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +65,6 @@ public class BitherApplication extends Application {
 
     @Override
     public void onCreate() {
-        new LinuxSecureRandom();
         super.onCreate();
         mContext = getApplicationContext();
         mDbHelper = new BitherDatabaseHelper(mContext);
