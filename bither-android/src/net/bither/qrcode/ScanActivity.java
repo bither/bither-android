@@ -358,8 +358,7 @@ public class ScanActivity extends Activity implements SurfaceHolder.Callback, Co
 								thumbnailScaleFactor);
 					}
 				});
-			} catch (final ReaderException x) {
-				// retry
+			} catch (final Exception x) {
 				cameraHandler.post(fetchAndDecodeRunnable);
 			} finally {
 				reader.reset();

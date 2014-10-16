@@ -253,7 +253,11 @@ public class BitcoinURI {
      * 10,000,000 units is 1 BTC. May be null if no amount is specified
      */
     public long getAmount() {
-        return (Long) parameterMap.get(FIELD_AMOUNT);
+        Object ob =  parameterMap.get(FIELD_AMOUNT);
+        if(ob == null){
+            return 0;
+        }
+        return (Long)ob;
     }
 
     /**

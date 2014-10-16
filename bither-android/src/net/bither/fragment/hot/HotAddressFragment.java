@@ -331,7 +331,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                                 if (position >= lv.getFirstVisiblePosition() && position <= lv
                                         .getLastVisiblePosition()) {
                                     View v = lv.getChildAt(position - lv.getFirstVisiblePosition());
-                                    v.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                                    v.startAnimation(AnimationUtils.loadAnimation(lv.getContext(),
                                             R.anim.address_notification));
                                 }
                             }
