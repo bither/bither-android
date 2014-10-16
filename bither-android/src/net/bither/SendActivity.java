@@ -288,8 +288,10 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     etAddress.setText(address.toString());
                     if (amount >= 0) {
                         amountCalculatorLink.setBtcAmount(amount);
+                        etPassword.requestFocus();
+                    } else {
+                        amountCalculatorLink.requestFocus();
                     }
-                    amountCalculatorLink.requestFocus();
                     validateValues();
                 }
 
