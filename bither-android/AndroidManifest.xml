@@ -134,7 +134,7 @@
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".qrcode.QRCodeActivity"
+            android:name=".qrcode.BitherQRCodeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
