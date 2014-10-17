@@ -453,13 +453,13 @@ public class TxProvider implements ITxProvider {
             if (c.moveToNext()) {
                 if (c.getInt(0) > 0) {
                     c.close();
-                    return false;
+                    return true;
                 }
             }
             c.close();
 
         }
-        return true;
+        return false;
     }
 
     public List<String> getInAddresses(Tx tx) {
