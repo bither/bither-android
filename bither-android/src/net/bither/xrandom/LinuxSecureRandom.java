@@ -31,6 +31,8 @@
 
 package net.bither.xrandom;
 
+import net.bither.util.LogUtil;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,6 +96,7 @@ public class LinuxSecureRandom extends SecureRandomSpi {
 	@Override
 	protected void engineNextBytes(byte[] bytes) {
 		try {
+            LogUtil.i(LinuxSecureRandom.class.getSimpleName(), "LinuxSecureRandom get " + bytes.length +" bytes");
 			dis.readFully(bytes); // This will block until all the bytes can be
 									// read.
 		} catch (IOException e) {
