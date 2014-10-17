@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
 
 public class SettingSelectorView extends FrameLayout implements OnClickListener {
     public static interface SettingSelector {

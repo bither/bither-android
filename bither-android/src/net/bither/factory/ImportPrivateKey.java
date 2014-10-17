@@ -27,7 +27,6 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.model.PasswordSeed;
@@ -195,7 +194,7 @@ public class ImportPrivateKey {
             }
             List<Address> addressList = new ArrayList<Address>();
             addressList.add(address);
-            KeyUtil.addAddressList(blockchainService, addressList);
+            KeyUtil.addAddressListByDesc(blockchainService, addressList);
         }
 
         ThreadUtil.runOnMainThread(new Runnable() {

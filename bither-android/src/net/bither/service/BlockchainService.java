@@ -28,12 +28,11 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
-import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.BlockChain;
@@ -107,19 +106,24 @@ public class BlockchainService extends android.app.Service {
     }
 
     private void scheduleStartBlockchainService(@Nonnull final Context context) {
-        long interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
         BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
-        switch (syncInterval) {
-            case OnlyOpenApp:
-                log.info("start only open the application");
-                return;
-            case FifteenMinute:
+        if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp ||
+                AddressManager.getInstance().getAllAddresses().size() == 0) {
+            return;
+        }
+        long interval = AlarmManager.INTERVAL_HOUR;
+        if (syncInterval == BitherSetting.SyncInterval.Normal) {
+            final long lastUsedAgo = AppSharedPreference.getInstance().getLastUsedAgo();
+            if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_JUST_MS) {
                 interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-                log.info("Schedule service restart after 15 minutes");
-                break;
-            case OneHour:
-                interval = AlarmManager.INTERVAL_HOUR;
-                break;
+                log.info("start INTERVAL_FIFTEEN_MINUTES");
+            } else if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_RECENTLY_MS) {
+                interval = AlarmManager.INTERVAL_HALF_DAY;
+                log.info("start INTERVAL_HALF_DAY");
+            } else {
+                interval = AlarmManager.INTERVAL_DAY;
+                log.info("start INTERVAL_DAY");
+            }
         }
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
                 .ALARM_SERVICE);
@@ -127,15 +131,14 @@ public class BlockchainService extends android.app.Service {
                 new Intent(context, BlockchainService.class), 0);
         alarmManager.cancel(alarmIntent);
         final long now = System.currentTimeMillis();
-        final long alarmInterval = interval;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
         // as of KitKat, set() is inexact
         {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, now + alarmInterval, alarmIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, now + interval, alarmIntent);
         } else
         // workaround for no inexact set() before KitKat
         {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + alarmInterval,
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + interval,
                     AlarmManager.INTERVAL_HOUR, alarmIntent);
         }
     }
@@ -269,7 +272,7 @@ public class BlockchainService extends android.app.Service {
                 if (hasEverything && BlockChain.getInstance() != null) {
                     log.debug("acquiring wakelock");
                     callWekelock();
-                    if (!PeerManager.instance().isConnected()) {
+                    if (!PeerManager.instance().isRunning()) {
                         startPeer();
                     }
                 } else if (!hasEverything) {
@@ -388,7 +391,7 @@ public class BlockchainService extends android.app.Service {
                             TransactionsUtil.getMyTxFromBither();
                         }
                         startPeerManager();
-                        BitherjApplication.NOTIFICATION_SERVICE.removeBroadcastSyncSPVFinished();
+                        AbstractApp.notificationService.removeBroadcastSyncSPVFinished();
                         if (spvFinishedReceiver != null && spvFinishedReceivered) {
                             unregisterReceiver(spvFinishedReceiver);
                             spvFinishedReceivered = false;

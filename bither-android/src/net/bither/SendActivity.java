@@ -239,11 +239,11 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         public void onClick(View v) {
             final long btc = amountCalculatorLink.getAmount();
             if (btc > 0) {
-                if (StringUtil.validBicoinAddress(etAddress.getText().toString())) {
+                if (Utils.validBicoinAddress(etAddress.getText().toString())) {
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
                                 new SecureCharSequence(etPassword));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
@@ -286,10 +286,12 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
                     etAddress.setText(address.toString());
-                    if (amount >= 0) {
+                    if (amount > 0) {
                         amountCalculatorLink.setBtcAmount(amount);
+                        etPassword.requestFocus();
+                    } else {
+                        amountCalculatorLink.requestFocus();
                     }
-                    amountCalculatorLink.requestFocus();
                     validateValues();
                 }
 
@@ -379,7 +381,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         public void afterTextChanged(Editable s) {
             SecureCharSequence p = new SecureCharSequence(etPassword);
             if (p.length() > 0) {
-                if (!StringUtil.validPassword(p)) {
+                if (!Utils.validPassword(p)) {
                     etPassword.setText(password);
                 }
             }
@@ -399,9 +401,9 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             isValidAmounts = true;
         } else {
         }
-        boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
+        boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
         SecureCharSequence password = new SecureCharSequence(etPassword);
-        boolean isValidPassword = StringUtil.validPassword(password) && password.length() >= 6 &&
+        boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
         password.wipe();
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
@@ -455,7 +457,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         if (intent.hasExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS)) {
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
-            if (StringUtil.validBicoinAddress(address)) {
+            if (Utils.validBicoinAddress(address)) {
                 if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
                     isDonate = true;
                 }

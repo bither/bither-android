@@ -28,22 +28,20 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class AddAddressWatchOnlyView extends FrameLayout {
@@ -163,7 +161,6 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                     addresses.add(address.getAddress());
                 }
             }
-            Collections.reverse(wallets);
             checkAddress(service, wallets);
             activity.runOnUiThread(new Runnable() {
 
@@ -196,7 +193,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
             switch (addressType) {
                 case Normal:
-                    KeyUtil.addAddressList(service, wallets);
+                    KeyUtil.addAddressListByDesc(service, wallets);
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

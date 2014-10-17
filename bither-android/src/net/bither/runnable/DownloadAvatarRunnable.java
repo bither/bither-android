@@ -22,7 +22,6 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageFileUtil;
-import net.bither.util.StringUtil;
 
 import java.io.File;
 

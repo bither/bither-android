@@ -200,6 +200,7 @@
     <string name="base_on_text">基于 </string>
     <string name="synchronous_interval">同步間隔</string>
     <string name="synchronous_interval_fifteen_minute">15 分鍾</string>
+    <string name="synchronous_interval_normal">正常</string>
     <string name="synchronous_interval_one_hour">1 小時</string>
     <string name="synchronous_interval_only_open_app">僅在打開應用時</string>
     <!-- Input parser -->

@@ -29,7 +29,6 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
-import net.bither.util.ServiceUtil;
 import net.bither.util.SystemUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {

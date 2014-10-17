@@ -485,7 +485,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     return;
                 }
 
-                KeyUtil.addAddressList(null, addressList);
+                KeyUtil.addAddressListByDesc(null, addressList);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();

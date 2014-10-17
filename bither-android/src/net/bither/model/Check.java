@@ -18,7 +18,6 @@ package net.bither.model;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
 public class Check {

@@ -37,11 +37,11 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.Qr;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.LogUtil;
-import net.bither.qrcode.Qr;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;

@@ -33,14 +33,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
@@ -267,7 +268,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             tvError.setVisibility(View.GONE);
             SecureCharSequence p = new SecureCharSequence(etPassword);
             if (p.length() > 0) {
-                if (!StringUtil.validPassword(p)) {
+                if (!Utils.validPassword(p)) {
                     etPassword.setText(password);
                 }
             }
@@ -275,7 +276,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
                 SecureCharSequence pc = new SecureCharSequence(etPasswordConfirm);
                 if (pc.length() > 0) {
-                    if (!StringUtil.validPassword(pc)) {
+                    if (!Utils.validPassword(pc)) {
                         etPasswordConfirm.setText(passwordConfirm);
                     }
                 }

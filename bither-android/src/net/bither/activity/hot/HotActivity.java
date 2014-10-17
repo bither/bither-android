@@ -34,10 +34,10 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
-import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
@@ -46,6 +46,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.fragment.hot.MarketFragment;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.UploadAvatarRunnable;
@@ -196,7 +197,7 @@ public class HotActivity extends FragmentActivity {
 
         tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
         tbtnMain.setBigInteger(null, null);
-        if (BitherjApplication.addressIsReady) {
+        if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
@@ -371,6 +372,7 @@ public class HotActivity extends FragmentActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                AppSharedPreference.getInstance().touchLastUsed();
                 AddErrorMsgRunnable addErrorMsgRunnable = new AddErrorMsgRunnable();
                 addErrorMsgRunnable.run();
                 UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
@@ -491,7 +493,7 @@ public class HotActivity extends FragmentActivity {
 //                                    if (!AddressManager.getInstance().getAllAddresses().contains(address)) {
 //
 //                                        password.wipe();
-//                                        KeyUtil.addAddressList(service, addressList);
+//                                        KeyUtil.addAddressListByDesc(service, addressList);
 //                                        preference.setHasPrivateKey(true);
 //                                    }
 //                                    password.wipe();

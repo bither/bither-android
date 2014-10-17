@@ -45,7 +45,7 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.preference.AppSharedPreference;
-import net.bither.qrcode.QRCodeActivity;
+import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -104,7 +104,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 public void onPasswordEntered(SecureCharSequence password) {
                     password.wipe();
                     String content = PrivateKeyUtil.getPrivateKeyStringFromAllPrivateAddresses();
-                    Intent intent = new Intent(getActivity(), QRCodeActivity.class);
+                    Intent intent = new Intent(getActivity(), BitherQRCodeActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                             getString(R.string.clone_to_title));
                     intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
@@ -130,7 +130,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         @Override
         public void onClick(View v) {
             String content = QRCodeEnodeUtil.getPublicKeyStrOfPrivateKey();
-            Intent intent = new Intent(getActivity(), QRCodeActivity.class);
+            Intent intent = new Intent(getActivity(), BitherQRCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, content);
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.qr_code_for_all_addresses_title));
@@ -420,7 +420,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
-            KeyUtil.addAddressList(null, addressList);
+            KeyUtil.addAddressListByDesc(null, addressList);
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

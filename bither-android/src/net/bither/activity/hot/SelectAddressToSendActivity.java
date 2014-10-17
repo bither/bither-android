@@ -42,7 +42,6 @@ import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BitcoinURI;
 import net.bither.util.GenericUtils;
-import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -290,7 +289,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             isAppInternal = true;
             if (intent.getExtras().containsKey(INTENT_EXTRA_ADDRESS)) {
                 String address = intent.getExtras().getString(INTENT_EXTRA_ADDRESS);
-                if (address != null && StringUtil.validBicoinAddress(address)) {
+                if (address != null && Utils.validBicoinAddress(address)) {
                     receivingAddress = address;
                     btc = intent.getExtras().getLong(INTENT_EXTRA_AMOUNT, 0);
                     return true;

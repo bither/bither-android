@@ -30,11 +30,11 @@ import android.widget.ProgressBar;
 
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.Qr;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
-import net.bither.qrcode.Qr;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 

@@ -207,6 +207,7 @@
     <string name="base_on_text">Based on </string>
     <string name="synchronous_interval">Sync Interval</string>
     <string name="synchronous_interval_fifteen_minute">15 Minutes</string>
+    <string name="synchronous_interval_normal">Normal</string>
     <string name="synchronous_interval_one_hour">1 Hour</string>
     <string name="synchronous_interval_only_open_app">Only when openning</string>
     <!-- Input parser -->
@@ -370,7 +371,7 @@
     <string name="xrandom_final_confirm">You have generated %d private keys from XRandom.</string>
     <string name="generating_private_key_final_confirm">You have generated %d private keys.</string>
     <string name="xrandom_info_detail">XRandom gathers data from sources to improve randomness.\n\nThe sources are sensors on your device like camera, microphone, magnetic sensor, gravity sensor, etc.</string>
-    <string name="xrandom_info_guide">\n\nShacking or rotating your device while gathering can improve randomness.</string>
+    <string name="xrandom_info_guide">\n\nShaking or rotating your device while gathering can improve randomness.</string>
     <!-- qrcode-->
     <string name="switch_qrcode">Switch QRCode</string>
     <string name="use_old_version_qrcode">Switched to old version QR Codes, sign with Bither Cold &lt;1.1.0</string>

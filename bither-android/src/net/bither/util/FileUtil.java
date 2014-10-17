@@ -463,7 +463,7 @@ public class FileUtil {
             ExifInterface exif = new ExifInterface(fileName);
             String orientationString = exif
                     .getAttribute(ExifInterface.TAG_ORIENTATION);
-            if (StringUtil.isNubmer(orientationString)) {
+            if (Utils.isNubmer(orientationString)) {
                 int orc = Integer.valueOf(orientationString);
                 switch (orc) {
                     case ExifInterface.ORIENTATION_ROTATE_90:

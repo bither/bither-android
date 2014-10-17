@@ -48,7 +48,6 @@ import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.NativeUtil;
-import net.bither.util.StringUtil;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;

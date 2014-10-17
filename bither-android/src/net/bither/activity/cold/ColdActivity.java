@@ -31,9 +31,9 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
-import net.bither.bitherj.android.util.NotificationAndroidImpl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
@@ -67,7 +67,6 @@ import net.bither.util.WalletUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -402,8 +401,7 @@ public class ColdActivity extends FragmentActivity {
                             }
                         }
                         password.wipe();
-                        Collections.sort(addressList, Collections.reverseOrder());
-                        KeyUtil.addAddressList(null, addressList);
+                        KeyUtil.addAddressListByDesc(null, addressList);
                         recoverBackupSuccess();
                     }
 

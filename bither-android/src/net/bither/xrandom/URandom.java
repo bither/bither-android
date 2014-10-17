@@ -16,7 +16,7 @@
 
 package net.bither.xrandom;
 
-import net.bither.bitherj.crypto.IRandom;
+import net.bither.bitherj.IRandom;
 
 import java.io.DataInputStream;
 import java.io.File;

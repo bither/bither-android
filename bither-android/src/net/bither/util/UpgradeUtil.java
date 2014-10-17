@@ -97,21 +97,21 @@ public class UpgradeUtil {
         List<ECKey> ecKeysWatchOnly = initWatchOnlyWallet(readWatchOnlyAddressSequence());
         List<Address> privateAddressList = new ArrayList<Address>();
         List<Address> watchOnlyAddressList = new ArrayList<Address>();
-        for (int i = ecKeyPrivates.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < ecKeyPrivates.size(); i++) {
             ECKey ecKey = ecKeyPrivates.get(i);
             Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), PrivateKeyUtil.getPrivateKeyString(ecKey), false);
             privateAddressList.add(address);
         }
         if (privateAddressList.size() > 0) {
-            KeyUtil.addAddressList(null, privateAddressList);
+            KeyUtil.addAddressListByDesc(null, privateAddressList);
         }
-        for (int i = ecKeysWatchOnly.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < ecKeysWatchOnly.size(); i++) {
             ECKey ecKey = ecKeysWatchOnly.get(i);
             Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), null, false);
             watchOnlyAddressList.add(address);
         }
         if (watchOnlyAddressList.size() > 0) {
-            KeyUtil.addAddressList(null, watchOnlyAddressList);
+            KeyUtil.addAddressListByDesc(null, watchOnlyAddressList);
         }
     }
 

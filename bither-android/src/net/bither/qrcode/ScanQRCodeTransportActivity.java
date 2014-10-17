@@ -30,7 +30,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.PlaySound;
-import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 

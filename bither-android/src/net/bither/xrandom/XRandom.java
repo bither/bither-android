@@ -16,8 +16,8 @@
 
 package net.bither.xrandom;
 
-import net.bither.bitherj.BitherjApplication;
-import net.bither.bitherj.crypto.IRandom;
+import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.IRandom;
 import net.bither.bitherj.crypto.ec.Parameters;
 
 import java.math.BigInteger;
@@ -53,11 +53,11 @@ public class XRandom implements IRandom {
         BigInteger d;
         byte[] uRandomBytes;
         do {
-            uRandomBytes = BitherjApplication.random.nextBytes(length);
+            uRandomBytes = AbstractApp.random.nextBytes(length);
             uRandomBytes[0] = (byte) (uRandomBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uRandomBytes);
 
-        } while (d.equals(BigInteger.ZERO) || (d.compareTo(Parameters.n) >= 0));
+        } while (d.equals(BigInteger.ZERO));
         return uRandomBytes;
     }
 
@@ -68,7 +68,7 @@ public class XRandom implements IRandom {
             uEntropyBytes = this.uEntropy.nextBytes(length);
             uEntropyBytes[0] = (byte) (uEntropyBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uEntropyBytes);
-        } while (d.equals(BigInteger.ZERO) || (d.compareTo(Parameters.n) >= 0));
+        } while (d.equals(BigInteger.ZERO));
         return uEntropyBytes;
     }
 }

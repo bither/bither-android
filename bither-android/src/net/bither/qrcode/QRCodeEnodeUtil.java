@@ -127,12 +127,12 @@ public class QRCodeEnodeUtil {
         try {
             String[] strArray = QRCodeUtil.splitString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
-            LogUtil.d("qrcode","str,"+str);
-            LogUtil.d("qrcode","0,"+strArray[0]);
+            LogUtil.d("qrcode", "str," + str);
+            LogUtil.d("qrcode", "0," + strArray[0]);
 
             String address = Base58.hexToBase58WithAddress(strArray[0]);
-            LogUtil.d("qrcode","address,"+address);
-            if (!StringUtil.validBicoinAddress(address)) {
+            LogUtil.d("qrcode", "address," + address);
+            if (!Utils.validBicoinAddress(address)) {
                 return null;
             }
             qrCodeTransport.setMyAddress(address);

@@ -18,7 +18,6 @@ package net.bither.qrcode;
 
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
 
 import java.util.List;
 
@@ -69,7 +68,7 @@ public class QRCodeTransportPage {
         }
         QRCodeTransportPage qrCodetTransportPage = new QRCodeTransportPage();
         String[] strArray = QRCodeUtil.splitString(text);
-        if (StringUtil.isInteger(strArray[0])) {
+        if (Utils.isInteger(strArray[0])) {
             int length = strArray[0].length() + strArray[1].length() + 2;
             qrCodetTransportPage.setSumPage(Integer.valueOf(strArray[0]) + 1);
             qrCodetTransportPage.setCurrentPage(Integer.valueOf(strArray[1]));

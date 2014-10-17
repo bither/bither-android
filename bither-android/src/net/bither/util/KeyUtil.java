@@ -30,6 +30,7 @@ import net.bither.xrandom.IUEntropy;
 import net.bither.xrandom.XRandom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -69,12 +70,14 @@ public class KeyUtil {
 
     }
 
-    public static void addAddressList(BlockchainService service, List<Address> addressList) {
+    public static void addAddressListByDesc(BlockchainService service, List<Address> addressList) {
         if (service != null) {
             service.stopAndUnregister();
         }
         boolean hasPrivateKey = false;
         AddressManager addressManager = AddressManager.getInstance();
+        //need reverse addressList
+        Collections.reverse(addressList);
         for (Address address : addressList) {
             if (address.hasPrivKey() && !hasPrivateKey) {
                 hasPrivateKey = true;
@@ -96,7 +99,6 @@ public class KeyUtil {
             }
         }
         if (service != null) {
-
             service.startAndRegister();
         }
 

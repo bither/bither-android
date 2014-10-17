@@ -36,14 +36,14 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.utils.Utils;
-import net.bither.qrcode.QRCodeEnodeUtil;
-import net.bither.qrcode.ScanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.model.UnSignTransaction;
+import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;
@@ -62,7 +62,6 @@ import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.TransactionsUtil;
 
 
@@ -262,11 +261,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         public void onClick(View v) {
             final long btc = amountCalculatorLink.getAmount();
             if (btc > 0) {
-                if (StringUtil.validBicoinAddress(etAddress.getText().toString())) {
+                if (Utils.validBicoinAddress(etAddress.getText().toString())) {
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString(),
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
                                 null);
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
@@ -407,7 +406,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         if (amount > 0) {
             isValidAmounts = true;
         }
-        boolean isValidAddress = StringUtil.validBicoinAddress(etAddress.getText().toString());
+        boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
         btnSend.setEnabled(isValidAddress && isValidAmounts);
     }
 
@@ -459,7 +458,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         if (intent.hasExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS)) {
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
-            if (StringUtil.validBicoinAddress(address)) {
+            if (Utils.validBicoinAddress(address)) {
                 if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
                     isDonate = true;
                 }

@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,7 +42,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
+public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
     private List<String> contents;
 
     private ViewPager pager;
@@ -112,14 +111,14 @@ public class QRCodeActivity extends SwipeRightFragmentActivity implements Dialog
             pageContentList.clear();
             pageContentList.addAll(this.contents);
             if (!firestIn) {
-                DropdownMessage.showDropdownMessage(QRCodeActivity.this, R.string.use_new_version_qrcode);
+                DropdownMessage.showDropdownMessage(BitherQRCodeActivity.this, R.string.use_new_version_qrcode);
             }
         } else {
             pageContentList.clear();
             pageContentList.addAll(this.oldContents);
 
             if (!firestIn) {
-                DropdownMessage.showDropdownMessage(QRCodeActivity.this, R.string.use_old_version_qrcode);
+                DropdownMessage.showDropdownMessage(BitherQRCodeActivity.this, R.string.use_old_version_qrcode);
             }
         }
 
@@ -132,7 +131,7 @@ public class QRCodeActivity extends SwipeRightFragmentActivity implements Dialog
         @Override
         public void onClick(View v) {
 
-            new DialogQRCodeOption(QRCodeActivity.this, QRCodeActivity.this).show();
+            new DialogQRCodeOption(BitherQRCodeActivity.this, BitherQRCodeActivity.this).show();
         }
     };
 

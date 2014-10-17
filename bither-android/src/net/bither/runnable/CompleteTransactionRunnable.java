@@ -18,7 +18,6 @@ package net.bither.runnable;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -52,7 +51,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                     format = R.string.send_failed_pendding;
                     break;
             }
-            type.registerFormatString(BitherjApplication.mContext.getString(format));
+            type.registerFormatString(BitherApplication.mContext.getString(format));
         }
     }
 

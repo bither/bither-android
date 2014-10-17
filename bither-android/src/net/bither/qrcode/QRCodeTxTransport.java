@@ -16,19 +16,8 @@
 
 package net.bither.qrcode;
 
-import net.bither.BitherApplication;
-import net.bither.R;
-import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.utils.Base58;
-import net.bither.bitherj.utils.QRCodeUtil;
-import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class QRCodeTxTransport implements Serializable {
     private static final long serialVersionUID = 5979319690741716813L;

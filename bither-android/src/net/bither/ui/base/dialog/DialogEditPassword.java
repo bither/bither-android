@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
@@ -39,7 +40,6 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -276,21 +276,21 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
             tvError.setVisibility(View.GONE);
             SecureCharSequence p = new SecureCharSequence(etNewPassword);
             if (p.length() > 0) {
-                if (!StringUtil.validPassword(p)) {
+                if (!Utils.validPassword(p)) {
                     etNewPassword.setText(passwordNew);
                 }
             }
             p.wipe();
             SecureCharSequence pc = new SecureCharSequence(etNewPasswordConfirm);
             if (pc.length() > 0) {
-                if (!StringUtil.validPassword(pc)) {
+                if (!Utils.validPassword(pc)) {
                     etNewPasswordConfirm.setText(passwordNewConfirm);
                 }
             }
             pc.wipe();
             SecureCharSequence po = new SecureCharSequence(etOldPassword);
             if (po.length() > 0) {
-                if (!StringUtil.validPassword(po)) {
+                if (!Utils.validPassword(po)) {
                     etOldPassword.setText(passwordOld);
                 }
             }

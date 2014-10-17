@@ -25,14 +25,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
-import net.bither.bitherj.utils.QRCodeUtil;
-import net.bither.qrcode.QRCodeActivity;
 import net.bither.R;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.qrcode.QRCodeTxTransport;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
-import net.bither.bitherj.core.Address;
-import net.bither.qrcode.QRCodeTxTransport;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -149,7 +149,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                     @Override
                     public void run() {
                         dp.dismiss();
-                        Intent intent = new Intent(SignTxActivity.this, QRCodeActivity.class);
+                        Intent intent = new Intent(SignTxActivity.this, BitherQRCodeActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, r);
                         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.signed_transaction_qr_code_title));
                         startActivity(intent);

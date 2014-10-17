@@ -30,22 +30,21 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.qrcode.ScanActivity;
-import net.bither.qrcode.ScanQRCodeTransportActivity;
-import net.bither.qrcode.ScanQRCodeWithOtherActivity;
-import net.bither.bitherj.BitherjApplication;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.bitherj.db.TxProvider;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.model.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.ScanActivity;
+import net.bither.qrcode.ScanQRCodeTransportActivity;
+import net.bither.qrcode.ScanQRCodeWithOtherActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -129,7 +128,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
                         try {
-                            File logDir = BitherjApplication.getLogDir();
+                            File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -190,16 +189,18 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(SecureCharSequence password) {
+                            resetTx();
 
-                DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
-                    @Override
-                    public void onPasswordEntered(SecureCharSequence password) {
-                        resetTx();
-
-                    }
-                });
-                dialogPassword.show();
-
+                        }
+                    });
+                    dialogPassword.show();
+                } else {
+                    resetTx();
+                }
             }
         });
     }
@@ -454,18 +455,16 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView.SettingSelector syncIntervalSelector = new SettingSelectorView.SettingSelector() {
         @Override
         public int getOptionCount() {
-            return 3;
+            return 2;
         }
 
         @Override
         public String getOptionName(int index) {
-            switch (index) {
-                case 1:
-                    return getString(BitherSetting.SyncInterval.OneHour.getStringId());
-                case 2:
-                    return getString(BitherSetting.SyncInterval.OnlyOpenApp.getStringId());
+            if (index == 0) {
+                return getString(BitherSetting.SyncInterval.Normal.getStringId());
+            } else {
+                return getString(BitherSetting.SyncInterval.OnlyOpenApp.getStringId());
             }
-            return getString(BitherSetting.SyncInterval.FifteenMinute.getStringId());
 
         }
 
@@ -487,26 +486,20 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public int getCurrentOptionIndex() {
             BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
-            switch (syncInterval) {
-                case OneHour:
-                    return 1;
-                case OnlyOpenApp:
-                    return 2;
-
+            if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp) {
+                return 1;
+            } else {
+                return 0;
             }
-            return 0;
         }
 
         @Override
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.FifteenMinute);
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.Normal);
                     break;
                 case 1:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OneHour);
-                    break;
-                case 2:
                     AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OnlyOpenApp);
                     break;
             }
