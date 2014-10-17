@@ -398,7 +398,7 @@ public class TxProvider implements ITxProvider {
         return relayTxHashes;
     }
 
-    public boolean isAddress(String address, Tx txItem) {
+    public boolean isAddressContainsTx(String address, Tx txItem) {
         boolean result = false;
         String sql = "select count(0) from ins a, txs b where a.tx_hash=b.tx_hash and" +
                 " b.block_no is not null and a.prev_tx_hash=? and a.prev_out_sn=?";
@@ -439,6 +439,43 @@ public class TxProvider implements ITxProvider {
             if (count > 0) {
                 return true;
             }
+        }
+        return result;
+    }
+
+    public boolean isTxDoubleSpendWithConfirmedTx(Tx tx) {
+        String sql = "select count(0) from ins a, txs b where a.tx_hash=b.tx_hash and" +
+                " b.block_no is not null and a.prev_tx_hash=? and a.prev_out_sn=?";
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c;
+        for (In inItem : tx.getIns()) {
+            c = db.rawQuery(sql, new String[]{Base58.encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
+            if (c.moveToNext()) {
+                if (c.getInt(0) > 0) {
+                    c.close();
+                    return false;
+                }
+            }
+            c.close();
+
+        }
+        return true;
+    }
+
+    public List<String> getInAddresses(Tx tx) {
+        List<String> result = new ArrayList<String>();
+        String sql = "select out_address from outs where tx_hash=? and out_sn=?";
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c;
+        for (In inItem : tx.getIns()) {
+            c = db.rawQuery(sql, new String[]{Base58.encode(inItem.getPrevTxHash())
+                    , Integer.toString(inItem.getPrevOutSn())});
+            if (c.moveToNext()) {
+                if (!c.isNull(0)) {
+                    result.add(c.getString(0));
+                }
+            }
+            c.close();
         }
         return result;
     }
