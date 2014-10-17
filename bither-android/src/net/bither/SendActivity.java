@@ -286,7 +286,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
                     etAddress.setText(address.toString());
-                    if (amount >= 0) {
+                    if (amount > 0) {
                         amountCalculatorLink.setBtcAmount(amount);
                         etPassword.requestFocus();
                     } else {
