@@ -649,6 +649,24 @@ public class TxProvider implements ITxProvider {
         return outItemList;
     }
 
+    public List<Out> getUnSpentOuts() {
+        List<Out> outItemList = new ArrayList<Out>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select * from outs where out_status=?";
+        Cursor c = db.rawQuery(sql, new String[]{"0"});
+        try {
+            while (c.moveToNext()) {
+                outItemList.add(applyCursorOut(c));
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+
+        return outItemList;
+    }
+
     public List<Tx> getRecentlyTxsByAddress(String address, int greateThanBlockNo, int limit) {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
