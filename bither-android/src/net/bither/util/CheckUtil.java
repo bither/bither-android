@@ -161,4 +161,24 @@ public class CheckUtil {
         });
         return check;
     }
+
+    public static Check initCheckForRValue(final Address address) {
+        String title = String.format(BitherApplication.mContext.getString(R.string
+                .rcheck_address_title), address.getShortAddress());
+        Check check = new Check(title, new ICheckAction() {
+
+            @Override
+            public boolean check() {
+                try {
+                    //TODO check r value for address
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                return true;
+            }
+        });
+        return check;
+    }
 }
