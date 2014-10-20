@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/transparent"/>
+
+
+        <FrameLayout
+            android:id="@+id/fl_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/title_bar_below_margin"
+            android:paddingLeft="@dimen/card_list_padding"
+            android:paddingRight="@dimen/card_list_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <net.bither.ui.base.RCheckHeaderView
+                    android:id="@+id/v_check_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="210dp"
+                    android:paddingTop="10dp"/>
+
+                <FrameLayout
+                    android:id="@+id/fl"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp">
+
+                    <net.bither.ui.base.OverScrollableListView
+                        android:id="@+id/lv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:divider="@color/list_cell_divider"
+                        android:dividerHeight="1px"
+                        android:drawSelectorOnTop="false"
+                        android:fadingEdgeLength="0dp"
+                        android:fastScrollEnabled="false"
+                        android:scrollbars="none"/>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:background="@drawable/global_shadow_down"/>
+                </FrameLayout>
+            </LinearLayout>
+
+            <include layout="@layout/layout_card_foreground_single"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/setting_name_rcheck"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>
