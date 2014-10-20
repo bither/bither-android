@@ -14,52 +14,58 @@
             android:layout_height="match_parent"
             android:background="@drawable/transparent"/>
 
-
         <FrameLayout
-            android:id="@+id/fl_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/title_bar_below_margin"
-            android:paddingLeft="@dimen/card_list_padding"
-            android:paddingRight="@dimen/card_list_padding">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
 
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/fl_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
+                android:paddingLeft="@dimen/card_list_padding"
+                android:paddingRight="@dimen/card_list_padding">
 
-                <net.bither.ui.base.RCheckHeaderView
-                    android:id="@+id/v_check_header"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="210dp"
-                    android:paddingTop="10dp"/>
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-                <FrameLayout
-                    android:id="@+id/fl"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp">
-
-                    <net.bither.ui.base.OverScrollableListView
-                        android:id="@+id/lv"
+                    <net.bither.ui.base.RCheckHeaderView
+                        android:id="@+id/v_check_header"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="@color/list_cell_divider"
-                        android:dividerHeight="1px"
-                        android:drawSelectorOnTop="false"
-                        android:fadingEdgeLength="0dp"
-                        android:fastScrollEnabled="false"
-                        android:scrollbars="none"/>
+                        android:layout_height="210dp"
+                        android:paddingTop="10dp"/>
 
-                    <ImageView
+                    <FrameLayout
+                        android:id="@+id/fl"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:background="@drawable/global_shadow_down"/>
-                </FrameLayout>
-            </LinearLayout>
+                        android:layout_height="0dp">
 
-            <include layout="@layout/layout_card_foreground_single"/>
+                        <net.bither.ui.base.OverScrollableListView
+                            android:id="@+id/lv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:divider="@color/list_cell_divider"
+                            android:dividerHeight="1px"
+                            android:drawSelectorOnTop="false"
+                            android:fadingEdgeLength="0dp"
+                            android:fastScrollEnabled="false"
+                            android:scrollbars="none"/>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top"
+                            android:background="@drawable/global_shadow_down"/>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <include layout="@layout/layout_card_foreground_single"/>
+            </FrameLayout>
+
+            <include layout="@layout/layout_dropdown_message"/>
         </FrameLayout>
 
         <FrameLayout

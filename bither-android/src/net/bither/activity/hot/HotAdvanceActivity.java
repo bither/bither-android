@@ -72,6 +72,7 @@ import java.io.IOException;
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
+    private Button btnRCheck;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvSyncInterval;
@@ -92,6 +93,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvVserion = (TextView) findViewById(R.id.tv_version);
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
+        btnRCheck = (Button) findViewById(R.id.btn_r_check);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -100,6 +102,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         ssvSyncInterval.setSelector(syncIntervalSelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        btnRCheck.setOnClickListener(rCheckClick);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
@@ -108,6 +111,20 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvVserion.setText(Version.name + " " + Version.version);
     }
 
+    private View.OnClickListener rCheckClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (AddressManager.getInstance().getAllAddresses() == null || AddressManager
+                    .getInstance().getAllAddresses().size() == 0) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                        R.string.private_key_is_empty);
+                return;
+            }
+            Intent intent = new Intent(HotAdvanceActivity.this, RCheckActivity.class);
+            startActivity(intent);
+        }
+    };
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
