@@ -89,7 +89,7 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
 
     @Override
     public void beginCheck() {
-        final List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
+        final List<Address> addresses = AddressManager.getInstance().getAllAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
         for (int i = 0;

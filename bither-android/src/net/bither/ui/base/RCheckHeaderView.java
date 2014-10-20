@@ -111,7 +111,11 @@ public class RCheckHeaderView extends FrameLayout {
     }
 
     public void stop() {
-        tvStatus.setText(R.string.check_private_key_safe);
+        if (passedCheckCount < totalCheckCount) {
+            tvStatus.setText(R.string.rcheck_danger);
+        } else {
+            tvStatus.setText(R.string.rcheck_safe);
+        }
         Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.check_points_scale_down);
         anim.setDuration(ScaleDownAnimDuration);
         anim.setAnimationListener(scaleDownListener);
@@ -131,8 +135,8 @@ public class RCheckHeaderView extends FrameLayout {
     public void check() {
         if (AddressManager.getInstance().getAllAddresses() == null || AddressManager.getInstance
                 ().getAllAddresses().size() == 0) {
-            DropdownMessage.showDropdownMessage((Activity) getContext(),
-                    R.string.private_key_is_empty);
+            DropdownMessage.showDropdownMessage((Activity) getContext(), R.string
+                    .rcheck_no_address);
             return;
         }
         start();
@@ -204,7 +208,7 @@ public class RCheckHeaderView extends FrameLayout {
             if (listener != null) {
                 listener.beginCheck();
             }
-            tvStatus.setText(R.string.checking_private_key);
+            tvStatus.setText(R.string.rchecking);
             Animation scanAnim = AnimationUtils.loadAnimation(getContext(),
                     R.anim.check_light_scan);
             scanAnim.setDuration(LightScanInterval);

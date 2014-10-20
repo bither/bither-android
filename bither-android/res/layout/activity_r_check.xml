@@ -15,12 +15,12 @@
             android:background="@drawable/transparent"/>
 
         <FrameLayout
+            android:id="@+id/fl_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/title_bar_below_margin">
 
             <FrameLayout
-                android:id="@+id/fl_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/card_list_padding"

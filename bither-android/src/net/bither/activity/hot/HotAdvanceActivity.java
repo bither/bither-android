@@ -118,7 +118,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             if (AddressManager.getInstance().getAllAddresses() == null || AddressManager
                     .getInstance().getAllAddresses().size() == 0) {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                        R.string.private_key_is_empty);
+                        R.string.rcheck_no_address);
                 return;
             }
             Intent intent = new Intent(HotAdvanceActivity.this, RCheckActivity.class);
