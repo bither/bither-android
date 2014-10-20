@@ -33,6 +33,7 @@ import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -176,7 +177,7 @@ public class CheckUtil {
                     e.printStackTrace();
                     return false;
                 }
-                return true;
+                return new Random().nextInt() % 3 != 0;
             }
         });
         return check;

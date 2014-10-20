@@ -18,6 +18,7 @@
 
 package net.bither.activity.hot;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -207,6 +208,7 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
+        private ColorStateList titleNormalColor;
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -219,6 +221,11 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
                 h = (ViewHolder) convertView.getTag();
             }
             CheckPoint point = getItem(position);
+            if(titleNormalColor == null){
+                titleNormalColor = h.tv.getTextColors();
+            }
+
+            h.tv.setTextColor(titleNormalColor);
             h.tv.setText(getSpannableStringFromAddress(point.getAddress(), true));
             h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
             if (point.isWaiting()) {
@@ -237,6 +244,7 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
                         h.iv.setImageBitmap(null);
                         h.iv.setVisibility(View.GONE);
                         h.tv.setText(getSpannableStringFromAddress(point.getAddress(), false));
+                        h.tv.setTextColor(getResources().getColor(R.color.red));
                     }
                 }
             }
