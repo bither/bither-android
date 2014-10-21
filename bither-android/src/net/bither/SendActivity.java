@@ -65,6 +65,7 @@ import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.SecureCharSequence;
+import net.bither.util.TransactionsUtil;
 
 import java.math.BigInteger;
 
@@ -111,6 +112,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         initView();
         processIntent();
         configureDonate();
+        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     private void initView() {

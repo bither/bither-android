@@ -124,6 +124,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         initView();
         processIntent();
         configureDonate();
+        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     private void initView() {

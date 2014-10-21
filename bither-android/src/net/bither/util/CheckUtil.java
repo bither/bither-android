@@ -170,14 +170,8 @@ public class CheckUtil {
 
             @Override
             public boolean check() {
-                try {
-                    //TODO check r value for address
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-                return new Random().nextInt() % 3 != 0;
+                TransactionsUtil.completeInputsForAddress(address);
+                return TransactionsUtil.checkRValueForAddress(address);
             }
         });
         return check;

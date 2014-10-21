@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class TransactionsUtil {
 
@@ -313,6 +314,31 @@ public class TransactionsUtil {
 
 
         }
+    }
 
+    public static Thread completeInputsForAddressInBackground(final Address address){
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                completeInputsForAddress(address);
+            }
+        };
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+        return thread;
+    }
+
+    public static void completeInputsForAddress(Address address){
+        //TODO completeInputsForAddress
+    }
+
+    public static boolean checkRValueForTx(Address address, Tx tx){
+        //TODO checkRValueForTx
+        return new Random().nextInt() % 2 == 0;
+    }
+
+    public static boolean checkRValueForAddress(Address address){
+        //TODO checkRValueForAddress
+        return new Random().nextInt() % 2 == 0;
     }
 }

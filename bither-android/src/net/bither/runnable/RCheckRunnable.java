@@ -20,8 +20,7 @@ package net.bither.runnable;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
-
-import java.util.Random;
+import net.bither.util.TransactionsUtil;
 
 /**
  * Created by songchenwen on 14-10-20.
@@ -38,13 +37,7 @@ public class RCheckRunnable extends BaseRunnable {
     @Override
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            obtainMessage(HandlerMessage.MSG_FAILURE);
-        }
-        if (new Random().nextInt() % 2 == 0) {
+        if (TransactionsUtil.checkRValueForTx(address, tx)) {
             obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
         } else {
             obtainMessage(HandlerMessage.MSG_FAILURE);
