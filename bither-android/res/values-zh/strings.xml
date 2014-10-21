@@ -360,4 +360,15 @@
     <string name="switch_qrcode">切换二维码</string>
     <string name="use_old_version_qrcode">已切换到旧版二维码，可用 &lt;1.1.0的冷钱包签名</string>
     <string name="use_new_version_qrcode">已切换到新版二维码，可用 ≧1.1.0的冷钱包签名</string>
+
+    <!-- rcheck -->
+    <string name="rcheck_address_title">%s 的 R 值</string>
+    <string name="rcheck_address_danger_title">%s 有重复的 R 值</string>
+    <string name="rcheck_no_address">未添加地址, 无需检查 R 值.</string>
+    <string name="rcheck_safe">未发现重复的 R 值.</string>
+    <string name="rcheck_danger">发现重复的 R 值.</string>
+    <string name="rchecking">正在检查 R 值</string>
+    <string name="rcheck_button">检查 R 值</string>
+    <string name="rcheck_recalculate">正在重算 R 值</string>
+    <string name="setting_name_rcheck">R 值检查</string>
 </resources>

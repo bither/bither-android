@@ -26,10 +26,12 @@ import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.exception.VerificationException;
 import net.bither.bitherj.script.Script;
+import net.bither.bitherj.script.ScriptChunk;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
@@ -48,6 +50,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class TransactionsUtil {
 
@@ -323,6 +326,21 @@ public class TransactionsUtil {
 
 
         }
+    }
 
+    public static Thread completeInputsForAddressInBackground(final Address address){
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                completeInputsForAddress(address);
+            }
+        };
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+        return thread;
+    }
+
+    public static void completeInputsForAddress(Address address){
+        //TODO completeInputsForAddress
     }
 }

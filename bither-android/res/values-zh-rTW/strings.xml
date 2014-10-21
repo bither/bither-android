@@ -359,4 +359,15 @@
     <string name="switch_qrcode">切換二維碼</string>
     <string name="use_old_version_qrcode">已切換到舊版二維碼，可用 &lt;1.1.0的冷錢包簽名</string>
     <string name="use_new_version_qrcode">已切換到新版二維碼，可用 ≧1.1.0的冷錢包簽名</string>
+
+    <!-- rcheck -->
+    <string name="rcheck_address_title">%s 的 R 值</string>
+    <string name="rcheck_address_danger_title">%s 有重複的R 值</string>
+    <string name="rcheck_no_address">未添加地址, 無需檢查R 值.</string>
+    <string name="rcheck_safe">未發現重複的 R 值.</string>
+    <string name="rcheck_danger">發現重複的 R 值.</string>
+    <string name="rchecking">正在檢查 R 值</string>
+    <string name="rcheck_button">檢查 R 值</string>
+    <string name="rcheck_recalculate">正在重算 R 值</string>
+    <string name="setting_name_rcheck">R 值檢查</string>
 </resources>
