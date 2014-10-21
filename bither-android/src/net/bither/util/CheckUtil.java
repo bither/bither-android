@@ -171,7 +171,7 @@ public class CheckUtil {
             @Override
             public boolean check() {
                 TransactionsUtil.completeInputsForAddress(address);
-                return TransactionsUtil.checkRValueForAddress(address);
+                return address.checkRValues();
             }
         });
         return check;

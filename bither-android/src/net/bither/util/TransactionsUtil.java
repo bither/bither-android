@@ -26,10 +26,12 @@ import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.exception.VerificationException;
 import net.bither.bitherj.script.Script;
+import net.bither.bitherj.script.ScriptChunk;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
@@ -330,15 +332,5 @@ public class TransactionsUtil {
 
     public static void completeInputsForAddress(Address address){
         //TODO completeInputsForAddress
-    }
-
-    public static boolean checkRValueForTx(Address address, Tx tx){
-        //TODO checkRValueForTx
-        return new Random().nextInt() % 2 == 0;
-    }
-
-    public static boolean checkRValueForAddress(Address address){
-        //TODO checkRValueForAddress
-        return new Random().nextInt() % 2 == 0;
     }
 }
