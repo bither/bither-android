@@ -209,19 +209,21 @@ public class TransactionsUtil {
 
     public static List<In> getInSignatureFromBither(String str){
         List<In> result = new ArrayList<In>();
-        String[] txs = str.split(";");
-        for (String tx : txs) {
-            String[] ins = tx.split(":");
-            byte[] txHash = Base64.decode(ins[0], Base64.URL_SAFE);
-            for (int i = 1; i < ins.length; i++) {
-                String[] array = ins[i].split(",");
-                int inSn = Integer.decode(array[0]);
-                byte[] inSignature = Base64.decode(array[1], Base64.URL_SAFE);
-                In in = new In();
-                in.setTxHash(txHash);
-                in.setInSn(inSn);
-                in.setInSignature(inSignature);
-                result.add(in);
+        if (str.length() > 0) {
+            String[] txs = str.split(";");
+            for (String tx : txs) {
+                String[] ins = tx.split(":");
+                byte[] txHash = Base64.decode(ins[0], Base64.URL_SAFE);
+                for (int i = 1; i < ins.length; i++) {
+                    String[] array = ins[i].split(",");
+                    int inSn = Integer.decode(array[0]);
+                    byte[] inSignature = Base64.decode(array[1], Base64.URL_SAFE);
+                    In in = new In();
+                    in.setTxHash(txHash);
+                    in.setInSn(inSn);
+                    in.setInSignature(inSignature);
+                    result.add(in);
+                }
             }
         }
         return result;
