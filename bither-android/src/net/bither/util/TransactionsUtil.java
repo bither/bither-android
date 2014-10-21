@@ -20,6 +20,7 @@ import android.util.Base64;
 
 import net.bither.BitherSetting;
 import net.bither.api.BitherMytransactionsApi;
+import net.bither.api.GetInSignaturesApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
@@ -28,15 +29,14 @@ import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.exception.VerificationException;
 import net.bither.bitherj.script.Script;
-import net.bither.bitherj.script.ScriptChunk;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.db.TxProvider;
 import net.bither.http.HttpSetting;
 import net.bither.model.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
@@ -52,7 +52,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class TransactionsUtil {
 
@@ -353,6 +352,16 @@ public class TransactionsUtil {
     }
 
     public static void completeInputsForAddress(Address address){
-        //TODO completeInputsForAddress
+        try {
+            int fromBlock = TxProvider.getInstance().needCompleteInSignature(address.getAddress());
+            while (fromBlock > 0) {
+                GetInSignaturesApi api = new GetInSignaturesApi(address.getAddress(), fromBlock);
+                api.handleHttpGet();
+                getInSignatureFromBither(api.getResult());
+                fromBlock = TxProvider.getInstance().needCompleteInSignature(address.getAddress());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
