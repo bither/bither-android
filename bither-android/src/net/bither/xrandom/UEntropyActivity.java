@@ -470,7 +470,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(),
                             PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
                     addressList.add(address);
-                    addressStrs.add(0, address.getAddress());
+                    addressStrs.add(address.getAddress());
 
                     progress += itemProgress * progressEntryptRate;
                     onProgress(progress);
