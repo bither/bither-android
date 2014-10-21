@@ -803,7 +803,7 @@ public class TxProvider implements ITxProvider {
     public int needCompleteInSignature(String address) {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select max(block_no) from txs,ins where txs.tx_hash=ins.tx_hash and ins.address=? and ins.in_signature is null";
+        String sql = "select max(block_no) from txs,ins where txs.tx_hash=ins.tx_hash and ins.in_address=? and ins.in_signature is null";
         Cursor c = db.rawQuery(sql, new String[] {address});
         if (c.moveToNext()) {
             result = c.getInt(0);
