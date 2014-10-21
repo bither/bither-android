@@ -788,6 +788,30 @@ public class TxProvider implements ITxProvider {
         db.endTransaction();
     }
 
+    public void completeInSignature(List<byte[]> txHashes, List<Integer> inSns, List<byte[]> inSignatures) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        String sql = "update ins set in_signature=? where tx_hash=? and in_sn=? and in_signature is null";
+        for (int i = 0; i < txHashes.size(); i++) {
+            db.execSQL(sql, new String[]{Base58.encode(inSignatures.get(i))
+                    , Base58.encode(txHashes.get(i)), Integer.toString(inSns.get(i))});
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    public int needCompleteInSignature(String address) {
+        int result = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select max(block_no) from txs,ins where txs.tx_id=ins.tx_id and ins.address=? and ins.in_signature is null";
+        Cursor c = db.rawQuery(sql, new String[] {address});
+        if (c.moveToNext()) {
+            result = c.getInt(0);
+        }
+        c.close();
+        return result;
+    }
+
     private void applyContentValues(Tx txItem, ContentValues cv) {
         if (txItem.getBlockNo() != Tx.TX_UNCONFIRMED) {
             cv.put(AbstractDb.TxsColumns.BLOCK_NO, txItem.getBlockNo());
