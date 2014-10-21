@@ -52,6 +52,7 @@ public class BitherUrl {
             + "api/v1/block/spv";
     public static final String BITHER_GET_ONE_SPVBLOCK_API = BITHER_DNS.BITHER_BITCOIN +
             "api/v1/block/spv/one";
+    public static final String BITHER_IN_SIGNATURES_API = BITHER_DNS.BITHER_BITCOIN + "api/v1/address/%s/insignature/%d";
 
     //bither stats
     public static final String BITHER_EXCHANGE_TICKER = BITHER_DNS.BITHER_STATS
