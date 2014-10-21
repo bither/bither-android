@@ -704,6 +704,24 @@ public class TxProvider implements ITxProvider {
         return outItemList;
     }
 
+    public List<In> getRelatedIn(String address){
+        List<In> list = new ArrayList<In>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select ins.* from ins,addresses_txs " +
+                "where ins.tx_hash=addresses_txs.tx_hash, addresses_txs.address=? ";
+        Cursor c = db.rawQuery(sql, new String[] {address});
+        try {
+            while (c.moveToNext()) {
+                list.add(applyCursorIn(c));
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+        return list;
+    }
+
     public List<Tx> getRecentlyTxsByAddress(String address, int greateThanBlockNo, int limit) {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
