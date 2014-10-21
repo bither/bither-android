@@ -203,6 +203,16 @@ public class TransactionsUtil {
 
     }
 
+    public static List<In> getInSignatureFromBither(String str){
+        In in = new In();
+        in.setTxHash(new byte[0]);
+        in.setInSignature(new byte[0]);
+        in.setInSn(0);
+        List<In> result = new ArrayList<In>();
+        String[] strings = str.split(";");
+        return null;
+    }
+
     public static class ComparatorTx implements Comparator<Tx> {
 
         @Override

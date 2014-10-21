@@ -788,13 +788,13 @@ public class TxProvider implements ITxProvider {
         db.endTransaction();
     }
 
-    public void completeInSignature(List<byte[]> txHashes, List<Integer> inSns, List<byte[]> inSignatures) {
+    public void completeInSignature(List<In> ins) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         String sql = "update ins set in_signature=? where tx_hash=? and in_sn=? and in_signature is null";
-        for (int i = 0; i < txHashes.size(); i++) {
-            db.execSQL(sql, new String[]{Base58.encode(inSignatures.get(i))
-                    , Base58.encode(txHashes.get(i)), Integer.toString(inSns.get(i))});
+        for (In in : ins) {
+            db.execSQL(sql, new String[]{Base58.encode(in.getInSignature())
+                    , Base58.encode(in.getTxHash()), Integer.toString(in.getInSn())});
         }
         db.setTransactionSuccessful();
         db.endTransaction();
