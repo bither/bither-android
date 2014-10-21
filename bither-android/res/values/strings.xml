@@ -385,5 +385,6 @@
     <string name="rcheck_danger">Duplicated R values found.</string>
     <string name="rchecking">Checking R values</string>
     <string name="rcheck_button">Check R Values</string>
+    <string name="rcheck_recalculate">Recalculating R value</string>
     <string name="setting_name_rcheck">R Value Check</string>
 </resources>

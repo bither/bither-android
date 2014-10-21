@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -46,11 +47,12 @@ import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;
+import net.bither.runnable.RCheckRunnable;
 import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
-import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
 import net.bither.ui.base.keyboard.EntryKeyboardView;
@@ -63,7 +65,6 @@ import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
 
@@ -77,7 +78,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     private ImageButton ibtnScan;
     private CurrencyCalculatorLink amountCalculatorLink;
     private Button btnSend;
-    private DialogProgress dp;
+    private DialogRCheck dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private PasswordEntryKeyboardView kvPassword;
@@ -142,7 +143,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         ReceivingAddressListener addressListener = new ReceivingAddressListener();
         etAddress.setOnFocusChangeListener(addressListener);
         etAddress.addTextChangedListener(addressListener);
-        dp = new DialogProgress(this, R.string.please_wait);
+        dp = new DialogRCheck(this);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
         kvPassword.registerEditText(etPassword).setListener(this);
@@ -165,6 +166,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         public void onConfirm(Tx tx) {
             etPassword.setText("");
             try {
+                dp.setWait();
                 new CommitTransactionThread(dp, addressPosition, tx, true,
                         SendActivity.this).start();
             } catch (Exception e) {
@@ -182,14 +184,15 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
-                    if (dp.isShowing()) {
-                        dp.dismiss();
+                    if (!dp.isShowing()) {
+                        dp.show();
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
-                        DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this, tx,
-                                sendConfirmListener);
-                        dialog.show();
+                        dp.setRChecking();
+                        RCheckRunnable run = new RCheckRunnable(address, tx);
+                        run.setHandler(rcheckHandler);
+                        new Thread(run).start();
                     } else {
                         DropdownMessage.showDropdownMessage(SendActivity.this,
                                 R.string.password_wrong);
@@ -210,6 +213,41 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         msgError = (String) msg.obj;
                     }
                     DropdownMessage.showDropdownMessage(SendActivity.this, msgError);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    private Handler rcheckHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case HandlerMessage.MSG_SUCCESS:
+                    if (msg.obj != null && msg.obj instanceof Tx) {
+                        final Tx tx = (Tx) msg.obj;
+                        dp.setRCheckSuccess();
+                        if(!dp.isShowing()){
+                            dp.show();
+                        }
+                        tvAddressLabel.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this, tx,
+                                        sendConfirmListener);
+                                dialog.show();
+                                dp.setWait();
+                            }
+                        }, 800);
+                        break;
+                    }
+                case HandlerMessage.MSG_FAILURE:
+                    dp.setRecalculatingR();
+                    if(!dp.isShowing()){
+                        dp.show();
+                    }
+                    sendClick.onClick(btnSend);
                     break;
                 default:
                     break;

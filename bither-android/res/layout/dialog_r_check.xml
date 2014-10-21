@@ -8,15 +8,18 @@
 
     <ProgressBar
         android:id="@+id/riv"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center"
+        android:indeterminateDrawable="@drawable/check_progress_bar"
+        android:indeterminateDuration="600"
+        android:indeterminateOnly="true"
         android:layout_marginRight="5dp"/>
 
     <ImageView
         android:id="@+id/iv_success"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center"
         android:src="@drawable/checkmark"
         android:layout_marginRight="5dp"/>

@@ -29,15 +29,16 @@ import net.bither.R;
 /**
  * Created by songchenwen on 14-10-20.
  */
-public class DialogRCheck extends ProgressDialog {
+public class DialogRCheck extends DialogProgress {
     private ProgressBar pb;
     private ImageView ivSuccess;
     private TextView tv;
 
     public DialogRCheck(Context context) {
         super(context, context.getString(R.string.please_wait), null);
+        container.removeAllViews();
         setContentView(R.layout.dialog_r_check);
-        pb = (ProgressBar) findViewById(R.id.pb);
+        pb = (ProgressBar) findViewById(R.id.riv);
         ivSuccess = (ImageView) findViewById(R.id.iv_success);
         tv = (TextView) findViewById(R.id.tv_message);
         setWait();
@@ -47,6 +48,12 @@ public class DialogRCheck extends ProgressDialog {
         pb.setVisibility(View.VISIBLE);
         ivSuccess.setVisibility(View.GONE);
         tv.setText(R.string.please_wait);
+    }
+
+    public void setRecalculatingR(){
+        pb.setVisibility(View.VISIBLE);
+        ivSuccess.setVisibility(View.GONE);
+        tv.setText(R.string.rcheck_recalculate);
     }
 
     public void setRChecking() {

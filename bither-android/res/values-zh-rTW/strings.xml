@@ -368,5 +368,6 @@
     <string name="rcheck_danger">發現重複的 R 值.</string>
     <string name="rchecking">正在檢查 R 值</string>
     <string name="rcheck_button">檢查 R 值</string>
+    <string name="rcheck_recalculate">正在重算 R 值</string>
     <string name="setting_name_rcheck">R 值檢查</string>
 </resources>
