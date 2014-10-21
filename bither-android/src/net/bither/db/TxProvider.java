@@ -822,7 +822,7 @@ public class TxProvider implements ITxProvider {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select max(txs.block_no) from outs,ins,txs where out_address=? " +
-                "and ins.prev_tx_hash=outs.tx_hash and ins.prev_out_sn=out.out_sn " +
+                "and ins.prev_tx_hash=outs.tx_hash and ins.prev_out_sn=outs.out_sn " +
                 "and ins.in_signature is null and txs.tx_hash=ins.tx_hash";
 //        String sql = "select max(txs.block_no) from addresses_txs,ins,txs " +
 //                "where addresses_txs.tx_hash=ins.tx_hash and addresses_txs.address=? " +
