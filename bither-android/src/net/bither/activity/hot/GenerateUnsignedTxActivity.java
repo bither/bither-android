@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -47,11 +48,12 @@ import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.runnable.HandlerMessage;
+import net.bither.runnable.RCheckRunnable;
 import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
-import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
 import net.bither.ui.base.keyboard.EntryKeyboardView;
@@ -75,13 +77,15 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     private ImageButton ibtnScan;
     private CurrencyCalculatorLink amountCalculatorLink;
     private Button btnSend;
-    private DialogProgress dp;
+    private DialogRCheck dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
 
     private Tx tx;
+
+    private boolean needConfirm = true;
 
     private boolean isDonate = false;
 
@@ -148,7 +152,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         ReceivingAddressListener addressListener = new ReceivingAddressListener();
         etAddress.setOnFocusChangeListener(addressListener);
         etAddress.addTextChangedListener(addressListener);
-        dp = new DialogProgress(this, R.string.please_wait);
+        dp = new DialogRCheck(this);
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
@@ -203,9 +207,13 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
-                        DialogSendConfirm dialog = new DialogSendConfirm
-                                (GenerateUnsignedTxActivity.this, tx, sendConfirmListener);
-                        dialog.show();
+                        if(needConfirm){
+                            DialogSendConfirm dialog = new DialogSendConfirm
+                                    (GenerateUnsignedTxActivity.this, tx, sendConfirmListener);
+                            dialog.show();
+                        }else{
+                            sendConfirmListener.onConfirm(tx);
+                        }
                     } else {
                         DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
                                 R.string.password_wrong);
@@ -236,6 +244,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
 
     @Override
     public void onCommitTransactionSuccess(Tx tx) {
+        needConfirm = true;
         if (dp.isShowing()) {
             dp.dismiss();
         }
@@ -250,6 +259,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
 
     @Override
     public void onCommitTransactionFailed() {
+        needConfirm = true;
         btnSend.setEnabled(true);
         DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
                 R.string.send_failed);
@@ -326,12 +336,14 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         e.printStackTrace();
                     }
                     if (success) {
-                        try {
-                            new CommitTransactionThread(dp, addressPosition, tx, false, GenerateUnsignedTxActivity.this).start();
-                            return;
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        RCheckRunnable runnable = new RCheckRunnable(address, tx);
+                        runnable.setHandler(rcheckHandler);
+                        new Thread(runnable).start();
+                        dp.setRChecking();
+                        if(!dp.isShowing()){
+                            dp.show();
                         }
+                        return;
                     }
                     if (dp.isShowing()) {
                         dp.dismiss();
@@ -343,6 +355,49 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             }, 500);
         }
     }
+
+    private Handler rcheckHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case HandlerMessage.MSG_SUCCESS:
+                    if (msg.obj != null && msg.obj instanceof Tx) {
+                        final Tx tx = (Tx) msg.obj;
+                        dp.setRCheckSuccess();
+                        if (!dp.isShowing()) {
+                            dp.show();
+                        }
+                        tvAddressLabel.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.setWait();
+                                try {
+                                    new CommitTransactionThread(dp, addressPosition, tx, false,
+                                            GenerateUnsignedTxActivity.this).start();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, 800);
+                        break;
+                    }
+                case HandlerMessage.MSG_FAILURE:
+                    needConfirm = false;
+                    dp.setRecalculatingR();
+                    if (!dp.isShowing()) {
+                        dp.show();
+                    }
+                    btnSend.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendClick.onClick(btnSend);
+                        }
+                    }, 800);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onEntryKeyboardShow(EntryKeyboardView v) {
