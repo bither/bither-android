@@ -353,12 +353,12 @@ public class TransactionsUtil {
 
     public static void completeInputsForAddress(Address address){
         try {
-            int fromBlock = TxProvider.getInstance().needCompleteInSignature(address.getAddress());
+            int fromBlock = address.needCompleteInSignature();
             while (fromBlock > 0) {
                 GetInSignaturesApi api = new GetInSignaturesApi(address.getAddress(), fromBlock);
                 api.handleHttpGet();
-                getInSignatureFromBither(api.getResult());
-                fromBlock = TxProvider.getInstance().needCompleteInSignature(address.getAddress());
+                address.completeInSignature(getInSignatureFromBither(api.getResult()));
+                fromBlock = address.needCompleteInSignature();
             }
         } catch (Exception e) {
             e.printStackTrace();
