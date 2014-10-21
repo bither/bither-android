@@ -30,7 +30,6 @@ public class GetInSignaturesApi extends HttpGetResponse<String> {
 
     public GetInSignaturesApi(String address, int fromBlock){
         String url = StringUtil.format(BitherUrl.BITHER_IN_SIGNATURES_API, address, fromBlock);
-        LogUtil.d("InSignatures", "url : " + url);
         setUrl(url);
     }
 
