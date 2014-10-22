@@ -362,12 +362,12 @@
 
     <!-- rcheck -->
     <string name="rcheck_address_title">%s 的 R 值</string>
-    <string name="rcheck_address_danger_title">%s 有重複的R 值</string>
+    <string name="rcheck_address_danger_title">%s 的 R 值異常</string>
     <string name="rcheck_no_address">未添加地址, 無需檢查R 值.</string>
-    <string name="rcheck_safe">未發現重複的 R 值.</string>
-    <string name="rcheck_danger">發現重複的 R 值.</string>
+    <string name="rcheck_safe">R 值正常.</string>
+    <string name="rcheck_danger">R 值異常.</string>
     <string name="rchecking">正在檢查 R 值</string>
     <string name="rcheck_button">RCheck</string>
-    <string name="rcheck_recalculate">正在重算 R 值</string>
+    <string name="rcheck_recalculate">R 值檢查失敗, 重新簽名交易.</string>
     <string name="setting_name_rcheck">R 值檢查</string>
 </resources>

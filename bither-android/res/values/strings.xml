@@ -379,12 +379,12 @@
 
     <!-- rcheck -->
     <string name="rcheck_address_title">R-Values of %s</string>
-    <string name="rcheck_address_danger_title">%s has duplicated R-Values</string>
+    <string name="rcheck_address_danger_title">%s\'s R-Value in danger</string>
     <string name="rcheck_no_address">You have no address to check R-Value.</string>
-    <string name="rcheck_safe">No duplicated R-Values.</string>
-    <string name="rcheck_danger">Duplicated R-Values found.</string>
+    <string name="rcheck_safe">R-Value safe.</string>
+    <string name="rcheck_danger">R-Value in danger.</string>
     <string name="rchecking">Checking R-Values</string>
     <string name="rcheck_button">RCheck</string>
-    <string name="rcheck_recalculate">Recalculating R-Value</string>
+    <string name="rcheck_recalculate">RCheck failed. Resign Tx.</string>
     <string name="setting_name_rcheck">R-Value Check</string>
 </resources>
