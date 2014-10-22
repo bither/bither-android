@@ -213,7 +213,7 @@ public class TransactionsUtil {
             String[] txs = str.split(";");
             for (String tx : txs) {
                 String[] ins = tx.split(":");
-                byte[] txHash = Base64.decode(ins[0], Base64.URL_SAFE);
+                byte[] txHash = Utils.reverseBytes(Base64.decode(ins[0], Base64.URL_SAFE));
                 for (int i = 1; i < ins.length; i++) {
                     String[] array = ins[i].split(",");
                     int inSn = Integer.decode(array[0]);
