@@ -809,7 +809,7 @@ public class TxProvider implements ITxProvider {
     public void completeInSignature(List<In> ins) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
-        String sql = "update ins set in_signature=? where tx_hash=? and in_sn=? and in_signature is null";
+        String sql = "update ins set in_signature=? where tx_hash=? and in_sn=? and ifnull(in_signature,'')=''";
         for (In in : ins) {
             db.execSQL(sql, new String[]{Base58.encode(in.getInSignature())
                     , Base58.encode(in.getTxHash()), Integer.toString(in.getInSn())});
