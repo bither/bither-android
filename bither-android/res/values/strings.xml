@@ -378,13 +378,13 @@
     <string name="use_new_version_qrcode">Switched to new version QR Codes, sign with Bither Cold ≧1.1.0</string>
 
     <!-- rcheck -->
-    <string name="rcheck_address_title">R values of %s</string>
-    <string name="rcheck_address_danger_title">%s has duplicated R values</string>
-    <string name="rcheck_no_address">You have no address to check R value.</string>
-    <string name="rcheck_safe">No duplicated R values.</string>
-    <string name="rcheck_danger">Duplicated R values found.</string>
-    <string name="rchecking">Checking R values</string>
-    <string name="rcheck_button">Check R Values</string>
-    <string name="rcheck_recalculate">Recalculating R value</string>
-    <string name="setting_name_rcheck">R Value Check</string>
+    <string name="rcheck_address_title">R-Values of %s</string>
+    <string name="rcheck_address_danger_title">%s has duplicated R-Values</string>
+    <string name="rcheck_no_address">You have no address to check R-Value.</string>
+    <string name="rcheck_safe">No duplicated R-Values.</string>
+    <string name="rcheck_danger">Duplicated R-Values found.</string>
+    <string name="rchecking">Checking R-Values</string>
+    <string name="rcheck_button">RCheck</string>
+    <string name="rcheck_recalculate">Recalculating R-Value</string>
+    <string name="setting_name_rcheck">R-Value Check</string>
 </resources>
