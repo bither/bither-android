@@ -25,18 +25,16 @@
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="20dp"
+        android:src="@drawable/rcheck_check_button"
         android:background="@drawable/button_check_bg_selector"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:text="@string/rcheck_button"
-        android:textColor="@color/white"
-        android:textSize="16sp"/>
+        android:paddingRight="20dp" />
 
     <LinearLayout
         android:id="@+id/ll_points"

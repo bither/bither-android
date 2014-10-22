@@ -25,8 +25,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,7 +51,7 @@ public class RCheckHeaderView extends FrameLayout {
 
     private View ivLight;
     private TextView tvStatus;
-    private Button btnCheck;
+    private ImageButton btnCheck;
     private LinearLayout llPoints;
     private TextView tvPoints;
 
@@ -90,7 +90,7 @@ public class RCheckHeaderView extends FrameLayout {
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         ivLight = findViewById(R.id.iv_light);
         tvStatus = (TextView) findViewById(R.id.tv_check_status);
-        btnCheck = (Button) findViewById(R.id.btn_check);
+        btnCheck = (ImageButton) findViewById(R.id.btn_check);
         llPoints = (LinearLayout) findViewById(R.id.ll_points);
         tvPoints = (TextView) findViewById(R.id.tv_points);
         btnCheck.setOnClickListener(checkClick);
