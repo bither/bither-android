@@ -95,7 +95,7 @@ public class RCheckHeaderView extends FrameLayout {
         tvPoints = (TextView) findViewById(R.id.tv_points);
         btnCheck.setOnClickListener(checkClick);
         bgBeginColor = getResources().getColor(R.color.check_points_begin);
-        bgEndColor = getResources().getColor(R.color.check_points_end);
+        bgEndColor = getResources().getColor(R.color.rcheck_end);
         bgMiddleColor = getResources().getColor(R.color.check_points_middle);
         bgEvaluator = new ArgbEvaluator();
         setPassedCheckCount(0);
