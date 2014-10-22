@@ -203,8 +203,10 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
-                    if (dp.isShowing()) {
-                        dp.dismiss();
+                    if(needConfirm) {
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
