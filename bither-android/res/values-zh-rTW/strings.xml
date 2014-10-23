@@ -369,5 +369,8 @@
     <string name="rchecking">正在檢查 R 值</string>
     <string name="rcheck_button">RCheck</string>
     <string name="rcheck_recalculate">R 值檢查失敗, 重新簽名交易.</string>
+    <string name="rchecking_new_tx">R 值檢查</string>
+    <string name="rcheck_new_tx_success">R 值檢查</string>
+    <string name="rcheck_fail_recalculate_confirm">R 值檢查失敗, 重新簽名交易?</string>
     <string name="setting_name_rcheck">R 值檢查</string>
 </resources>

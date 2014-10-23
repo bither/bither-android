@@ -59,12 +59,12 @@ public class DialogRCheck extends DialogProgress {
     public void setRChecking() {
         pb.setVisibility(View.VISIBLE);
         ivSuccess.setVisibility(View.GONE);
-        tv.setText(R.string.rchecking);
+        tv.setText(R.string.rchecking_new_tx);
     }
 
     public void setRCheckSuccess() {
         pb.setVisibility(View.GONE);
         ivSuccess.setVisibility(View.VISIBLE);
-        tv.setText(R.string.rcheck_safe);
+        tv.setText(R.string.rcheck_new_tx_success);
     }
 }

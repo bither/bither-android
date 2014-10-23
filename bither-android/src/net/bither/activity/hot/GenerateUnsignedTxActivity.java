@@ -53,6 +53,7 @@ import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
@@ -64,6 +65,7 @@ import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 
 
@@ -184,6 +186,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
             startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
+            btnSend.setEnabled(true);
         }
 
         @Override
@@ -203,10 +206,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
-                    if(needConfirm) {
-                        if (dp.isShowing()) {
-                            dp.dismiss();
-                        }
+                    if (dp.isShowing()) {
+                        dp.dismiss();
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
@@ -384,17 +385,33 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         break;
                     }
                 case HandlerMessage.MSG_FAILURE:
-                    needConfirm = false;
-                    dp.setRecalculatingR();
-                    if (!dp.isShowing()) {
-                        dp.show();
+                    if(dp.isShowing()) {
+                        dp.dismiss();
                     }
-                    btnSend.postDelayed(new Runnable() {
+                    new DialogConfirmTask(GenerateUnsignedTxActivity.this, getString(R.string.rcheck_fail_recalculate_confirm), new Runnable() {
                         @Override
                         public void run() {
-                            sendClick.onClick(btnSend);
+                            needConfirm = false;
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.setRecalculatingR();
+                                    sendClick.onClick(btnSend);
+                                }
+                            });
                         }
-                    }, 800);
+                    }, new Runnable() {
+                        @Override
+                        public void run() {
+                            needConfirm = true;
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    btnSend.setEnabled(true);
+                                }
+                            });
+                        }
+                    }).show();
                     break;
                 default:
                     break;

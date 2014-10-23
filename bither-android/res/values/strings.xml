@@ -386,5 +386,8 @@
     <string name="rchecking">Checking R-Values</string>
     <string name="rcheck_button">RCheck</string>
     <string name="rcheck_recalculate">RCheck failed. Resign Tx.</string>
+    <string name="rchecking_new_tx">RCheck</string>
+    <string name="rcheck_new_tx_success">RCheck</string>
+    <string name="rcheck_fail_recalculate_confirm">RCheck failed. Resign Tx?</string>
     <string name="setting_name_rcheck">R-Value Check</string>
 </resources>
