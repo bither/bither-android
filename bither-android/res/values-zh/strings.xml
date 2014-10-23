@@ -362,16 +362,16 @@
     <string name="use_new_version_qrcode">已切换到新版二维码，可用 ≧1.1.0的冷钱包签名</string>
 
     <!-- rcheck -->
-    <string name="rcheck_address_title">%s 的 R 值</string>
-    <string name="rcheck_address_danger_title">%s 的 R 值异常</string>
-    <string name="rcheck_no_address">未添加地址, 无需检查 R 值.</string>
-    <string name="rcheck_safe">R 值正常.</string>
-    <string name="rcheck_danger">R 值异常.</string>
-    <string name="rchecking">正在检查 R 值</string>
+    <string name="rcheck_address_title">%s 的 r 值</string>
+    <string name="rcheck_address_danger_title">%s 的 r 值异常</string>
+    <string name="rcheck_no_address">未添加地址, 无需检查 r 值.</string>
+    <string name="rcheck_safe">r 值正常.</string>
+    <string name="rcheck_danger">r 值异常.</string>
+    <string name="rchecking">正在检查 r 值</string>
     <string name="rcheck_button">RCheck</string>
-    <string name="rcheck_recalculate">R 值检查失败, 重新签名交易.</string>
-    <string name="rchecking_new_tx">R 值检查</string>
-    <string name="rcheck_new_tx_success">R 值检查</string>
-    <string name="rcheck_fail_recalculate_confirm">R 值检查失败, 重新签名交易?</string>
-    <string name="setting_name_rcheck">R 值检查</string>
+    <string name="rcheck_recalculate">r 值检查失败, 重新签名交易.</string>
+    <string name="rchecking_new_tx">r 值检查</string>
+    <string name="rcheck_new_tx_success">r 值检查</string>
+    <string name="rcheck_fail_recalculate_confirm">r 值检查失败, 重新签名交易?</string>
+    <string name="setting_name_rcheck">r 值检查</string>
 </resources>
