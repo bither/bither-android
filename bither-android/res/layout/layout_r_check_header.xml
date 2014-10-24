@@ -25,16 +25,32 @@
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
-    <ImageButton
-        android:id="@+id/btn_check"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/fl_bottom"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:src="@drawable/rcheck_check_button"
-        android:background="@drawable/button_check_bg_selector"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp" />
+        android:layout_marginBottom="20dp">
+
+        <ImageButton
+            android:id="@+id/ibtn_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/rcheck_check_button"
+            android:background="@drawable/button_check_bg_selector"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"/>
+
+        <ImageButton
+            android:id="@+id/ibtn_rcheck_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/transparent"
+            android:src="@drawable/xrandom_info_icon_selector"/>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/ll_points"

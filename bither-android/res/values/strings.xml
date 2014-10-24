@@ -389,5 +389,6 @@
     <string name="rchecking_new_tx">RCheck</string>
     <string name="rcheck_new_tx_success">RCheck</string>
     <string name="rcheck_fail_recalculate_confirm">RCheck failed. Resign Tx?</string>
+    <string name="rcheck_info">Duplicated r values in an address\' transaction history might result in exposing the private key.\n\nRCheck will check all the r values in history to make sure no duplicated found.</string>
     <string name="setting_name_rcheck">Check r-value</string>
 </resources>

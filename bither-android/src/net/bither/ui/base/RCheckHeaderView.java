@@ -35,6 +35,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.ui.base.dialog.DialogRCheckInfo;
 
 /**
  * Created by songchenwen on 14-10-20.
@@ -51,9 +52,10 @@ public class RCheckHeaderView extends FrameLayout {
 
     private View ivLight;
     private TextView tvStatus;
-    private ImageButton btnCheck;
+    private ImageButton ibtnCheck;
     private LinearLayout llPoints;
     private TextView tvPoints;
+    private FrameLayout flBottom;
 
     private int totalCheckCount;
     private int passedCheckCount;
@@ -90,10 +92,12 @@ public class RCheckHeaderView extends FrameLayout {
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         ivLight = findViewById(R.id.iv_light);
         tvStatus = (TextView) findViewById(R.id.tv_check_status);
-        btnCheck = (ImageButton) findViewById(R.id.btn_check);
+        ibtnCheck = (ImageButton) findViewById(R.id.ibtn_check);
         llPoints = (LinearLayout) findViewById(R.id.ll_points);
         tvPoints = (TextView) findViewById(R.id.tv_points);
-        btnCheck.setOnClickListener(checkClick);
+        flBottom = (FrameLayout) findViewById(R.id.fl_bottom);
+        findViewById(R.id.ibtn_rcheck_info).setOnClickListener(infoClick);
+        ibtnCheck.setOnClickListener(checkClick);
         bgBeginColor = getResources().getColor(R.color.check_points_begin);
         bgEndColor = getResources().getColor(R.color.rcheck_end);
         bgMiddleColor = getResources().getColor(R.color.check_points_middle);
@@ -102,7 +106,7 @@ public class RCheckHeaderView extends FrameLayout {
     }
 
     public void start() {
-        btnCheck.setVisibility(View.INVISIBLE);
+        flBottom.setVisibility(View.INVISIBLE);
         Animation scaleAnim = AnimationUtils.loadAnimation(getContext(),
                 R.anim.check_points_scale_up);
         scaleAnim.setDuration(ScaleUpAnimDuraion);
@@ -231,7 +235,14 @@ public class RCheckHeaderView extends FrameLayout {
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            btnCheck.setVisibility(View.VISIBLE);
+            flBottom.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private OnClickListener infoClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogRCheckInfo(getContext()).show();
         }
     };
 }
