@@ -22,7 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.util.GenericUtils;
+import net.bither.util.StringUtil;
 
 import java.math.BigInteger;
 
@@ -37,8 +37,8 @@ public class DialogSendResult extends CenterDialog {
         TextView tvFee = (TextView) findViewById(R.id.tv_fee);
         Button btnClose = (Button) findViewById(R.id.btn_close);
         tvAddress.setText(address);
-        tvBtc.setText(GenericUtils.formatValueWithBold(btc.longValue()));
-        tvFee.setText(GenericUtils.formatValueWithBold(fee.longValue()));
+        tvBtc.setText(StringUtil.formatValueWithBold(btc.longValue()));
+        tvFee.setText(StringUtil.formatValueWithBold(fee.longValue()));
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

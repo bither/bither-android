@@ -10,8 +10,8 @@ import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.GenericUtils;
 import net.bither.util.SystemUtil;
 
 

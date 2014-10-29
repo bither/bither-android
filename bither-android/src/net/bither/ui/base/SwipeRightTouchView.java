@@ -26,8 +26,8 @@ import android.widget.RelativeLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.util.GenericUtils;
 import net.bither.util.LogUtil;
+import net.bither.util.SdkUtils;
 import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class SwipeRightTouchView extends RelativeLayout {
 	}
 
 	private void init() {
-		toAddShadow = GenericUtils.hasHoneycomb();
+		toAddShadow = SdkUtils.hasHoneycomb();
 		ignoreViews = new ArrayList<View>();
 		ivShadow = new ImageView(getContext());
 		if (toAddShadow) {

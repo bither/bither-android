@@ -18,6 +18,8 @@
 
 package net.bither.util;
 
+import net.bither.bitherj.utils.GenericUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
