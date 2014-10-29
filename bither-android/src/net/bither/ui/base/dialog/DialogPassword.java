@@ -44,7 +44,6 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.CheckUtil;
 import net.bither.util.SecureCharSequence;
-import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;

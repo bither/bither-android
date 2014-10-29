@@ -26,10 +26,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import net.bither.R;
+import net.bither.bitherj.utils.GenericUtils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;

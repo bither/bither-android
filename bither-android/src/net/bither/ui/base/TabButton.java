@@ -38,9 +38,9 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.utils.GenericUtils;
 import net.bither.ui.base.dialog.DialogTotalBtc;
 import net.bither.ui.base.dialog.DialogWithArrow;
-import net.bither.util.GenericUtils;
 import net.bither.util.UIUtil;
 
 import java.math.BigInteger;

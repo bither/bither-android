@@ -18,7 +18,6 @@ package net.bither.xrandom;
 
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.IRandom;
-import net.bither.bitherj.crypto.ec.Parameters;
 
 import java.math.BigInteger;
 
