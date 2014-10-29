@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
@@ -43,7 +44,6 @@ import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.CheckUtil;
-import net.bither.util.SecureCharSequence;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -123,7 +123,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     public void onDismiss(DialogInterface dialog) {
         if (listener != null) {
             if (passwordEntered) {
-                listener.onPasswordEntered(new SecureCharSequence(etPassword));
+                listener.onPasswordEntered(new SecureCharSequence(etPassword.getText()));
                 etPassword.setText("");
                 etPasswordConfirm.setText("");
             } else if (needCancelEvent) {
@@ -189,8 +189,8 @@ public class DialogPassword extends Dialog implements OnDismissListener,
 
         @Override
         public void onClick(View v) {
-            SecureCharSequence password = new SecureCharSequence(etPassword);
-            SecureCharSequence passwordConfirm = new SecureCharSequence(etPasswordConfirm);
+            SecureCharSequence password = new SecureCharSequence(etPassword.getText());
+            SecureCharSequence passwordConfirm = new SecureCharSequence(etPasswordConfirm.getText());
             if (passwordSeed == null && !password.equals(passwordConfirm) && checkPre) {
                 password.wipe();
                 passwordConfirm.wipe();
@@ -253,8 +253,8 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             if (passwordConfirm != null) {
                 passwordConfirm.wipe();
             }
-            password = new SecureCharSequence(etPassword);
-            passwordConfirm = new SecureCharSequence(etPasswordConfirm);
+            password = new SecureCharSequence(etPassword.getText());
+            passwordConfirm = new SecureCharSequence(etPasswordConfirm.getText());
         }
 
         @Override
@@ -265,7 +265,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         @Override
         public void afterTextChanged(Editable s) {
             tvError.setVisibility(View.GONE);
-            SecureCharSequence p = new SecureCharSequence(etPassword);
+            SecureCharSequence p = new SecureCharSequence(etPassword.getText());
             if (p.length() > 0) {
                 if (!Utils.validPassword(p)) {
                     etPassword.setText(password);
@@ -273,7 +273,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             }
             p.wipe();
             if (etPasswordConfirm.getVisibility() == View.VISIBLE) {
-                SecureCharSequence pc = new SecureCharSequence(etPasswordConfirm);
+                SecureCharSequence pc = new SecureCharSequence(etPasswordConfirm.getText());
                 if (pc.length() > 0) {
                     if (!Utils.validPassword(pc)) {
                         etPasswordConfirm.setText(passwordConfirm);
@@ -309,7 +309,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private Check passwordCheck = new Check("", new ICheckAction() {
         @Override
         public boolean check() {
-            SecureCharSequence password = new SecureCharSequence(etPassword);
+            SecureCharSequence password = new SecureCharSequence(etPassword.getText());
             if (checkPasswordListener != null) {
                 boolean result = checkPasswordListener.checkPassword(password);
                 password.wipe();

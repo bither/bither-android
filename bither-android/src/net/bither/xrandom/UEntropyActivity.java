@@ -38,6 +38,7 @@ import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
@@ -48,7 +49,6 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.PlaySound;
-import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
 

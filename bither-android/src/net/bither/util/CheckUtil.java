@@ -23,6 +23,7 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;

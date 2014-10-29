@@ -21,11 +21,12 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
-import net.bither.util.SecureCharSequence;
+
 
 
 public class CompleteTransactionRunnable extends BaseRunnable {

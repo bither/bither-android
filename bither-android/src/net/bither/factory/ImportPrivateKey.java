@@ -27,6 +27,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.model.PasswordSeed;
@@ -36,7 +37,6 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 

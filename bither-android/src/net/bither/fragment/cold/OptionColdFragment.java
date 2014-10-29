@@ -41,6 +41,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -60,7 +61,6 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 
 import java.util.Date;
