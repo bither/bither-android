@@ -75,6 +75,11 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
         super.onDestroyView();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
 
     public void refresh() {
         if (AbstractApp.addressIsReady) {

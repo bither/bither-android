@@ -373,6 +373,6 @@
     <string name="rchecking_new_tx">r 值检查</string>
     <string name="rcheck_new_tx_success">r 值检查</string>
     <string name="rcheck_fail_recalculate_confirm">r 值检查失败, 重新签名交易?</string>
-    <string name="rcheck_info">同一个地址的交易历史中出现重复的 r 值, 有可能导致私钥暴露.\n\nr值检查会检查交易历史, 并确保不存在重复 r 值.</string>
+    <string name="rcheck_info">同一个地址的交易历史中出现重复的 r 值, 有可能导致私钥暴露.\n\nr 值检查会检查交易历史, 并确保不存在重复 r 值.</string>
     <string name="setting_name_rcheck">r 值检查</string>
 </resources>
