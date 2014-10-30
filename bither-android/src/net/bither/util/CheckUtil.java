@@ -29,7 +29,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 

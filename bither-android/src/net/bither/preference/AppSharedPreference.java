@@ -24,7 +24,7 @@ import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil.ExchangeType;
 
