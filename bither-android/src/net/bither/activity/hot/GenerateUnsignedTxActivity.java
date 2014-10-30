@@ -43,7 +43,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
-import net.bither.model.UnSignTransaction;
+import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
