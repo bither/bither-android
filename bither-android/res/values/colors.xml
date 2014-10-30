@@ -75,4 +75,7 @@
     <color name="entry_keyboard_normal_key_text">#000</color>
     <color name="entry_keyboard_background_above_dark">#77000000</color>
     <color name="entry_keyboard_background_above_light">#cc000000</color>
+
+    <!-- rcheck -->
+    <color name="rcheck_end">#ff25bebc</color>
 </resources>

@@ -94,22 +94,23 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
         lv.setVisibility(View.INVISIBLE);
         tvNoAddress.setVisibility(View.GONE);
         addresses.clear();
+        adapter.notifyDataSetChanged();
         new Thread() {
             public void run() {
                 List<Address> as = AddressManager.getInstance().getAllAddresses();
-                ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
+                final ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
                 for (Address a : as) {
                     long balance = a.getBalance();
                     if (balance > 0) {
                         availableAddresses.add(new AddressBalance(a, balance));
                     }
                 }
-                addresses.addAll(availableAddresses);
                 lv.post(new Runnable() {
                     @Override
                     public void run() {
-                        fl.getLayoutParams().height = getFlHeight();
+                        addresses.addAll(availableAddresses);
                         adapter.notifyDataSetChanged();
+                        fl.getLayoutParams().height = getFlHeight();
                         if (addresses.size() > 0) {
                             lv.setVisibility(View.VISIBLE);
                             tvNoAddress.setVisibility(View.GONE);

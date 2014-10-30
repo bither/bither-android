@@ -33,6 +33,7 @@ import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -157,6 +158,20 @@ public class CheckUtil {
 
                 }
                 return result;
+            }
+        });
+        return check;
+    }
+
+    public static Check initCheckForRValue(final Address address) {
+        String title = String.format(BitherApplication.mContext.getString(R.string
+                .rcheck_address_title), address.getShortAddress());
+        Check check = new Check(title, new ICheckAction() {
+
+            @Override
+            public boolean check() {
+                TransactionsUtil.completeInputsForAddress(address);
+                return address.checkRValues();
             }
         });
         return check;

@@ -376,4 +376,19 @@
     <string name="switch_qrcode">Switch QRCode</string>
     <string name="use_old_version_qrcode">Switched to old version QR Codes, sign with Bither Cold &lt;1.1.0</string>
     <string name="use_new_version_qrcode">Switched to new version QR Codes, sign with Bither Cold ≧1.1.0</string>
+
+    <!-- rcheck -->
+    <string name="rcheck_address_title">r-values of %s</string>
+    <string name="rcheck_address_danger_title">%s\'s r-value in danger</string>
+    <string name="rcheck_no_address">You have no address to check r-value.</string>
+    <string name="rcheck_safe">r-value safe.</string>
+    <string name="rcheck_danger">r-value in danger.</string>
+    <string name="rchecking">Checking r-values</string>
+    <string name="rcheck_button">RCheck</string>
+    <string name="rcheck_recalculate">RCheck failed. Resign Tx.</string>
+    <string name="rchecking_new_tx">RCheck</string>
+    <string name="rcheck_new_tx_success">RCheck</string>
+    <string name="rcheck_fail_recalculate_confirm">RCheck failed. Resign Tx?</string>
+    <string name="rcheck_info">Duplicated r values in an address\' transaction history might result in exposing the private key.\n\nRCheck will check all the r values in history to make sure no duplicated found.</string>
+    <string name="setting_name_rcheck">Check r-value</string>
 </resources>

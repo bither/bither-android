@@ -16,8 +16,11 @@
 
 package net.bither.util;
 
+import android.util.Base64;
+
 import net.bither.BitherSetting;
 import net.bither.api.BitherMytransactionsApi;
+import net.bither.api.GetInSignaturesApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
@@ -33,6 +36,7 @@ import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.db.TxProvider;
 import net.bither.http.HttpSetting;
 import net.bither.model.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
@@ -203,6 +207,28 @@ public class TransactionsUtil {
 
     }
 
+    public static List<In> getInSignatureFromBither(String str){
+        List<In> result = new ArrayList<In>();
+        if (str.length() > 0) {
+            String[] txs = str.split(";");
+            for (String tx : txs) {
+                String[] ins = tx.split(":");
+                byte[] txHash = Utils.reverseBytes(Base64.decode(ins[0], Base64.URL_SAFE));
+                for (int i = 1; i < ins.length; i++) {
+                    String[] array = ins[i].split(",");
+                    int inSn = Integer.decode(array[0]);
+                    byte[] inSignature = Base64.decode(array[1], Base64.URL_SAFE);
+                    In in = new In();
+                    in.setTxHash(txHash);
+                    in.setInSn(inSn);
+                    in.setInSignature(inSignature);
+                    result.add(in);
+                }
+            }
+        }
+        return result;
+    }
+
     public static class ComparatorTx implements Comparator<Tx> {
 
         @Override
@@ -313,6 +339,31 @@ public class TransactionsUtil {
 
 
         }
+    }
 
+    public static Thread completeInputsForAddressInBackground(final Address address){
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                completeInputsForAddress(address);
+            }
+        };
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
+        return thread;
+    }
+
+    public static void completeInputsForAddress(Address address){
+        try {
+            int fromBlock = address.needCompleteInSignature();
+            while (fromBlock > 0) {
+                GetInSignaturesApi api = new GetInSignaturesApi(address.getAddress(), fromBlock);
+                api.handleHttpGet();
+                address.completeInSignature(getInSignatureFromBither(api.getResult()));
+                fromBlock = address.needCompleteInSignature();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

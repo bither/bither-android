@@ -40,6 +40,7 @@ import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -154,6 +155,7 @@ public class HotActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         BitherApplication.startBlockchainService();
+        PeerManager.instance().notifyMaxConnectedPeerCountChange();
     }
 
 

@@ -704,6 +704,24 @@ public class TxProvider implements ITxProvider {
         return outItemList;
     }
 
+    public List<In> getRelatedIn(String address){
+        List<In> list = new ArrayList<In>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select ins.* from ins,addresses_txs " +
+                "where ins.tx_hash=addresses_txs.tx_hash and addresses_txs.address=? ";
+        Cursor c = db.rawQuery(sql, new String[] {address});
+        try {
+            while (c.moveToNext()) {
+                list.add(applyCursorIn(c));
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+        return list;
+    }
+
     public List<Tx> getRecentlyTxsByAddress(String address, int greateThanBlockNo, int limit) {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
@@ -786,6 +804,32 @@ public class TxProvider implements ITxProvider {
         db.delete(AbstractDb.Tables.ADDRESSES_TXS, "", new String[0]);
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    public void completeInSignature(List<In> ins) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        String sql = "update ins set in_signature=? where tx_hash=? and in_sn=? and ifnull(in_signature,'')=''";
+        for (In in : ins) {
+            db.execSQL(sql, new String[]{Base58.encode(in.getInSignature())
+                    , Base58.encode(in.getTxHash()), Integer.toString(in.getInSn())});
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    public int needCompleteInSignature(String address) {
+        int result = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select max(txs.block_no) from outs,ins,txs where outs.out_address=? " +
+                "and ins.prev_tx_hash=outs.tx_hash and ins.prev_out_sn=outs.out_sn " +
+                "and ifnull(ins.in_signature,'')='' and txs.tx_hash=ins.tx_hash";
+        Cursor c = db.rawQuery(sql, new String[] {address});
+        if (c.moveToNext()) {
+            result = c.getInt(0);
+        }
+        c.close();
+        return result;
     }
 
     private void applyContentValues(Tx txItem, ContentValues cv) {

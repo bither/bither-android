@@ -191,6 +191,7 @@ public class TrendingGraphicView extends View {
         if (pointCount > (width - HorizontalPadding * 2)) {
             step = (int) (pointCount / (width - HorizontalPadding * 2));
         }
+        step = Math.max(1, step);
         return step;
     }
 
