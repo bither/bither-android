@@ -34,7 +34,7 @@ import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.EditPasswordThread;
 import net.bither.ui.base.DropdownMessage;

@@ -46,7 +46,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
