@@ -147,7 +147,7 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
         tvName.setText(mMarket.getName());
         String symbol = "";
         if (mMarket.getTicker() != null) {
-            if (ExchangeUtil.getExchangeRate() > 0) {
+            if (ExchangeUtil.getCurrenciesRate() != null) {
                 symbol = AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol();
             } else {
                 symbol = ExchangeUtil.getExchangeType(mMarket.getMarketType()).getSymbol();

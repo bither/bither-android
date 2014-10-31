@@ -75,8 +75,7 @@ public class BitherTimer {
             }
             GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
             getExchangeTickerApi.handleHttpGet();
-            double exchangeRate = getExchangeTickerApi.getCurrencyRate();
-            ExchangeUtil.setExchangeRate(exchangeRate);
+            ExchangeUtil.setCurrenciesRate(getExchangeTickerApi.getCurrenciesRate());
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
                 comparePriceAlert(tickers);
