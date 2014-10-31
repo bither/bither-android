@@ -78,7 +78,7 @@ public class MarketFragmentListItemView extends FrameLayout implements
             return;
         }
         Ticker ticker = market.getTicker();
-        if (ExchangeUtil.getExchangeRate() > 0) {
+        if (ExchangeUtil.getCurrenciesRate() != null) {
             tvPrice.setText(AppSharedPreference.getInstance()
                     .getDefaultExchangeType().getSymbol()
                     + StringUtil.formatDoubleToMoneyString(ticker

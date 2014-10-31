@@ -28,6 +28,7 @@ import net.bither.model.PasswordSeed;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil;
 
+import java.util.Currency;
 import java.util.Date;
 import java.util.Locale;
 
@@ -148,13 +149,28 @@ public class AppSharedPreference {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
-            setExchangeType(ExchangeUtil.Currency.CNY);
             setMarketType(MarketType.HUOBI);
         } else {
-            setExchangeType(ExchangeUtil.Currency.USD);
             setMarketType(MarketType.BITSTAMP);
         }
-
+        String currencyCode = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
+        if (Utils.compareString(currencyCode, "CNY")) {
+            setExchangeType(ExchangeUtil.Currency.CNY);
+        } else if(Utils.compareString(currencyCode, "EUR")) {
+            setExchangeType(ExchangeUtil.Currency.EUR);
+        }else if(Utils.compareString(currencyCode, "GBP")) {
+            setExchangeType(ExchangeUtil.Currency.GBP);
+        }else if(Utils.compareString(currencyCode, "JPY")){
+            setExchangeType(ExchangeUtil.Currency.JPY);
+        }else if(Utils.compareString(currencyCode, "KRW")){
+            setExchangeType(ExchangeUtil.Currency.KRW);
+        }else if(Utils.compareString(currencyCode, "CAD")){
+            setExchangeType(ExchangeUtil.Currency.CAD);
+        }else if(Utils.compareString(currencyCode, "AUD")){
+            setExchangeType(ExchangeUtil.Currency.AUD);
+        }else {
+            setExchangeType(ExchangeUtil.Currency.USD);
+        }
     }
 
     public ExchangeUtil.Currency getDefaultExchangeType() {

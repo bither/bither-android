@@ -174,7 +174,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements OnChecke
         if (ticker != null) {
             llTicker.setVisibility(View.VISIBLE);
             String symbol;
-            if (ExchangeUtil.getExchangeRate() > 0) {
+            if (ExchangeUtil.getCurrenciesRate() != null) {
                 symbol = AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol();
             } else {
                 symbol = ExchangeUtil.getExchangeType(marketType).getSymbol();

@@ -36,10 +36,19 @@ public class ExchangeUtil {
     }
 
     public enum Currency {
-        USD("$"), CNY(StringEscapeUtils.unescapeHtml("&yen;")), EUR("EUR"), GBP("GBP"), JPY("JPY"), KRW("KRW"), CAD("CAD"), AUD("AUD");
+        USD("USD", "$"),
+        CNY("CNY", StringEscapeUtils.unescapeHtml("&yen;")),
+        EUR("EUR", "€"),
+        GBP("GBP", "£"),
+        JPY("JPY", StringEscapeUtils.unescapeHtml("&yen;")),
+        KRW("KRW", "₩"),
+        CAD("CAD", "C$"),
+        AUD("AUD", "A$");
+
         private String symbol;
         private String name;
-        private Currency(String symbol) {
+        private Currency(String name, String symbol) {
+            this.name = name;
             this.symbol = symbol;
         }
 
@@ -55,25 +64,25 @@ public class ExchangeUtil {
     private static double mRate = -1;
     private static AbstractMap<Currency, Double> mCurrenciesRate = null;
 
-    public static void setExchangeRate(double rate) throws IOException {
-        mRate = rate;
-        String rateString = Double.toString(rate);
-        File file = FileUtil.getExchangeRateFile();
-        Utils.writeFile(rateString.getBytes(), file);
-    }
+//    public static void setExchangeRate(double rate) throws IOException {
+//        mRate = rate;
+//        String rateString = Double.toString(rate);
+//        File file = FileUtil.getExchangeRateFile();
+//        Utils.writeFile(rateString.getBytes(), file);
+//    }
 
-    public static double getExchangeRate() {
-        if (mRate == -1) {
-            File file = FileUtil.getExchangeRateFile();
-            String rateString = Utils.readFile(file);
-            if (Utils.isNubmer(rateString)) {
-                mRate = Float.valueOf(rateString);
-            } else {
-                mRate = 1;
-            }
-        }
-        return mRate;
-    }
+//    public static double getExchangeRate() {
+//        if (mRate == -1) {
+//            File file = FileUtil.getExchangeRateFile();
+//            String rateString = Utils.readFile(file);
+//            if (Utils.isNubmer(rateString)) {
+//                mRate = Float.valueOf(rateString);
+//            } else {
+//                mRate = 1;
+//            }
+//        }
+//        return mRate;
+//    }
 
     public static void setCurrenciesRate(JSONObject currenciesRateJSon) throws Exception {
         mCurrenciesRate = parseCurrenciesRate(currenciesRateJSon);
@@ -111,48 +120,30 @@ public class ExchangeUtil {
                 .getDefaultExchangeType();
         double rate = 1;
         if (currency != defaultCurrency) {
-            double preRate = getExchangeRate();
-            if (defaultCurrency == Currency.CNY) {
-                rate = rate * preRate;
-            } else {
-                rate = rate / preRate;
-            }
+            double preRate = getCurrenciesRate().get(currency);
+            double defaultRate = getCurrenciesRate().get(defaultCurrency);
+            rate = defaultRate / preRate;
         }
-
         return rate;
     }
 
     public static double getRate(MarketType marketType) {
-        Currency currency = AppSharedPreference.getInstance()
+        Currency defaultCurrency = AppSharedPreference.getInstance()
                 .getDefaultExchangeType();
+        Currency currency = getExchangeType(marketType);
         double rate = 1;
-        double preRate = getExchangeRate();
-        switch (marketType) {
-            case HUOBI:
-            case OKCOIN:
-            case BTCCHINA:
-            case CHBTC:
-
-                if (currency == Currency.USD) {
-                    rate = rate / preRate;
-                }
-                break;
-            case MARKET796:
-            case BTCE:
-            case BITSTAMP:
-            case BITFINEX:
-                if (currency == Currency.CNY) {
-                    rate = rate * preRate;
-                }
-                break;
-            default:
-                break;
-        }
-        if (rate < 0) {
-            rate = 1;
+        if (currency != defaultCurrency) {
+            double preRate = getCurrenciesRate().get(currency);
+            double defaultRate = getCurrenciesRate().get(defaultCurrency);
+            rate = defaultRate / preRate;
         }
         return rate;
+    }
 
+    public static double getRate() {
+        Currency defaultCurrency = AppSharedPreference.getInstance()
+                .getDefaultExchangeType();
+        return getCurrenciesRate().get(defaultCurrency);
     }
 
     public static Currency getExchangeType(MarketType marketType) {
