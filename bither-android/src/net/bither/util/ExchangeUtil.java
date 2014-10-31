@@ -40,10 +40,10 @@ public class ExchangeUtil {
         CNY("CNY", StringEscapeUtils.unescapeHtml("&yen;")),
         EUR("EUR", "€"),
         GBP("GBP", "£"),
-        JPY("JPY", "￥"),
+        JPY("JPY", StringEscapeUtils.unescapeHtml("&yen;")),
         KRW("KRW", "₩"),
         CAD("CAD", "C$"),
-        AUD("AUD", "＄A");
+        AUD("AUD", "A$");
 
         private String symbol;
         private String name;

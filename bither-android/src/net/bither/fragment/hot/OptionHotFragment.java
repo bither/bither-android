@@ -94,18 +94,17 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
     private SettingSelector currencySelector = new SettingSelector() {
+        private int length = ExchangeUtil.Currency.values().length;
 
         @Override
         public int getOptionCount() {
-            return 2;
+            return length;
         }
 
         @Override
         public void onOptionIndexSelected(int index) {
-            if (index == 0) {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.USD);
-            } else {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.CNY);
+            if (index >= 0 && index < length) {
+                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.values()[index]);
             }
         }
 
@@ -116,10 +115,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public String getOptionName(int index) {
-            if (index == 0) {
-                return "USD";
+            if(index >= 0 && index < length){
+                return ExchangeUtil.Currency.values()[index].getName();
             }
-            return "CNY";
+            return ExchangeUtil.Currency.values()[0].getName();
         }
 
 
