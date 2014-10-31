@@ -391,4 +391,8 @@
     <string name="rcheck_fail_recalculate_confirm">RCheck failed. Resign Tx?</string>
     <string name="rcheck_info">Duplicated r values in an address\' transaction history might result in exposing the private key.\n\nRCheck will check all the r values in history to make sure no duplicated found.</string>
     <string name="setting_name_rcheck">Check r-value</string>
+
+    <!-- trash -->
+    <string name="trash_private_key">Move to Trash Can</string>
+    <string name="trash_with_money_warn">This address still has some bitcoin.\nYou can\'t move it to trash can.</string>
 </resources>
