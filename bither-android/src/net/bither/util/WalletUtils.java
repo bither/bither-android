@@ -155,5 +155,15 @@ public class WalletUtils {
                 .WATCH_ONLY_ADDRESS_COUNT_LIMIT;
     }
 
+    public static void moveToTrash(String address) {
 
+    }
+
+    public static void restoreFromTrash(String address) {
+
+    }
+
+    public static List<String> trashList() {
+        return null;
+    }
 }
