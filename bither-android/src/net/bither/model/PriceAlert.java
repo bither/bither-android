@@ -18,7 +18,7 @@ public class PriceAlert implements Serializable {
     private static final byte[] paLock = new byte[0];
     private static List<PriceAlert> priceAlertList = getPriceAlertFromFile();
     private BitherSetting.MarketType marketType;
-    private ExchangeUtil.ExchangeType exchangeType;
+    private ExchangeUtil.Currency currency;
     private double lower;
     private double higher;
 
@@ -26,23 +26,23 @@ public class PriceAlert implements Serializable {
         this.marketType = marketType;
         this.lower = limit;
         this.higher = higher;
-        this.exchangeType = AppSharedPreference.getInstance().getDefaultExchangeType();
+        this.currency = AppSharedPreference.getInstance().getDefaultExchangeType();
     }
 
     public BitherSetting.MarketType getMarketType() {
         return this.marketType;
     }
 
-    public ExchangeUtil.ExchangeType getExchangeType() {
-        return this.exchangeType;
+    public ExchangeUtil.Currency getCurrency() {
+        return this.currency;
     }
 
     public double getExchangeLower() {
-        return this.lower * ExchangeUtil.getRate(getExchangeType());
+        return this.lower * ExchangeUtil.getRate(getCurrency());
     }
 
     public double getExchangeHigher() {
-        return this.higher * ExchangeUtil.getRate(getExchangeType());
+        return this.higher * ExchangeUtil.getRate(getCurrency());
     }
 
     public double getLower() {
@@ -73,7 +73,7 @@ public class PriceAlert implements Serializable {
     @Override
     public String toString() {
         return "h:" + this.higher + ",he:" + getExchangeHigher() + ",l:" + this.lower + "," +
-                "le:" + getExchangeLower() + "," + getExchangeType().getSymbol();
+                "le:" + getExchangeLower() + "," + getCurrency().getSymbol();
     }
 
     public static PriceAlert getPriceAlert(BitherSetting.MarketType marketType) {

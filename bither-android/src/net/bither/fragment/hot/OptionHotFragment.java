@@ -57,7 +57,7 @@ import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.ui.base.dialog.DialogDonate;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSetAvatar;
-import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
@@ -103,9 +103,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void onOptionIndexSelected(int index) {
             if (index == 0) {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeType.USD);
+                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.USD);
             } else {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeType.CNY);
+                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.CNY);
             }
         }
 

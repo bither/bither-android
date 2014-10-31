@@ -26,7 +26,7 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.PasswordSeed;
 import net.bither.qrcode.Qr;
-import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.ExchangeUtil;
 
 import java.util.Date;
 import java.util.Locale;
@@ -148,36 +148,36 @@ public class AppSharedPreference {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
-            setExchangeType(ExchangeType.CNY);
+            setExchangeType(ExchangeUtil.Currency.CNY);
             setMarketType(MarketType.HUOBI);
         } else {
-            setExchangeType(ExchangeType.USD);
+            setExchangeType(ExchangeUtil.Currency.USD);
             setMarketType(MarketType.BITSTAMP);
         }
 
     }
 
-    public ExchangeType getDefaultExchangeType() {
-        ExchangeType exchangeType = getExchangeType();
-        if (exchangeType == null) {
+    public ExchangeUtil.Currency getDefaultExchangeType() {
+        ExchangeUtil.Currency currency = getExchangeType();
+        if (currency == null) {
             setDefault();
         }
-        exchangeType = getExchangeType();
-        return exchangeType;
+        currency = getExchangeType();
+        return currency;
 
     }
 
-    private ExchangeType getExchangeType() {
+    private ExchangeUtil.Currency getExchangeType() {
         int type = this.mPreferences.getInt(DEFAULT_EXCHANGE_RATE, -1);
         if (type == -1) {
             return null;
         }
-        return ExchangeType.values()[type];
+        return ExchangeUtil.Currency.values()[type];
 
     }
 
-    public void setExchangeType(ExchangeType exchangeType) {
-        this.mPreferences.edit().putInt(DEFAULT_EXCHANGE_RATE, exchangeType.ordinal()).commit();
+    public void setExchangeType(ExchangeUtil.Currency currency) {
+        this.mPreferences.edit().putInt(DEFAULT_EXCHANGE_RATE, currency.ordinal()).commit();
     }
 
 

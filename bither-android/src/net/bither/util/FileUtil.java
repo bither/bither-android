@@ -71,6 +71,7 @@ public class FileUtil {
 
 
     private static final String EXCHANGERATE = "exchangerate";
+    private static final String CURRENCIES_RATE = "currencies_rate";
     private static final String MARKET_CAHER = "mark";
 
     private static final String IMAGE_CACHE_DIR = "image";
@@ -221,6 +222,11 @@ public class FileUtil {
     public static File getExchangeRateFile() {
         File file = getDiskDir("", false);
         return new File(file, EXCHANGERATE);
+    }
+
+    public static File getCurrenciesRateFile() {
+        File file = getDiskDir("", false);
+        return new File(file, CURRENCIES_RATE);
     }
 
     public static File getTickerFile() {

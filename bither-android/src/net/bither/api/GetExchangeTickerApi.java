@@ -16,24 +16,31 @@
 
 package net.bither.api;
 
+import net.bither.BitherSetting;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.model.Ticker;
 import net.bither.util.LogUtil;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.AbstractMap;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class GetExchangeTickerApi extends HttpGetResponse<List<Ticker>> {
 
 	private static final String CURRENCY_RATE = "currency_rate";
+    private static final String CURRENCIES_RATE = "currencies_rate";
 
 	private double mCurrencyRate;
+    private JSONObject mCurrenciesRate;
 
 	public GetExchangeTickerApi() {
 		setUrl(BitherUrl.BITHER_EXCHANGE_TICKER);
-
 	}
 
 	@Override
@@ -41,12 +48,15 @@ public class GetExchangeTickerApi extends HttpGetResponse<List<Ticker>> {
 		JSONObject json = new JSONObject(response);
 		LogUtil.d("http", getUrl() + "," + response);
 		this.mCurrencyRate = json.getDouble(CURRENCY_RATE);
+        this.mCurrenciesRate = json.getJSONObject(CURRENCIES_RATE);
 		this.result = Ticker.formatList(json);
 	}
 
 	public double getCurrencyRate() {
 		return mCurrencyRate;
-
 	}
 
+    public JSONObject getCurrenciesRate() {
+        return mCurrenciesRate;
+    }
 }
