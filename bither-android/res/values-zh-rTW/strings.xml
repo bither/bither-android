@@ -378,4 +378,6 @@
     <!-- trash -->
     <string name="trash_private_key">移入回收站</string>
     <string name="trash_with_money_warn">這個地址上還有比特幣.\n您不能把它移入回收站.</string>
+    <string name="trashing_private_key">正在移入回收站</string>
+    <string name="trash_can">回收站</string>
 </resources>

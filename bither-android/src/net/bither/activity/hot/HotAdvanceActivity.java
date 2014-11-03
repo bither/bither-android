@@ -79,6 +79,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvSyncInterval;
     private Button btnExportLog;
     private Button btnResetTx;
+    private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
 
@@ -95,6 +96,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnRCheck = (Button) findViewById(R.id.btn_r_check);
+        btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -104,6 +106,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvSyncInterval.setSelector(syncIntervalSelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
+        btnTrashCan.setOnClickListener(trashCanClick);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
@@ -168,6 +171,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
             }
 
+        }
+    };
+
+    private View.OnClickListener trashCanClick = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            //TODO to trash can activity
         }
     };
 

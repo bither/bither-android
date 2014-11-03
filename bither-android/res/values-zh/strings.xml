@@ -377,5 +377,8 @@
     <string name="setting_name_rcheck">r 值检查</string>
 
     <!-- trash -->
-    <string name="trash_private_key">移入回收站</string>\
+    <string name="trash_private_key">移入回收站</string>
+    <string name="trash_with_money_warn">这个地址内还有比特币.\n您不能把它移入回收站.</string>
+    <string name="trashing_private_key">正在移入回收站</string>
+    <string name="trash_can">回收站</string>
 </resources>
