@@ -30,6 +30,7 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.TrashCanActivity;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -59,6 +60,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
+    private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
 
@@ -73,11 +75,13 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         tvVserion = (TextView) findViewById(R.id.tv_version);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
+        btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        btnTrashCan.setOnClickListener(trashCanClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
     }
@@ -88,6 +92,15 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             hasAnyAction = true;
             DialogEditPassword dialog = new DialogEditPassword(ColdAdvanceActivity.this);
             dialog.show();
+        }
+    };
+
+
+    private View.OnClickListener trashCanClick = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ColdAdvanceActivity.this, TrashCanActivity.class));
         }
     };
 

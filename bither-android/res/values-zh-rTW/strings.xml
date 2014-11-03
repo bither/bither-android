@@ -374,4 +374,12 @@
     <string name="rcheck_fail_recalculate_confirm">r 值檢查失敗, 重新簽名交易?</string>
     <string name="rcheck_info">同一個地址的交易歷史中出現重複的 r 值, 有可能導致私鑰暴露.\n\nr 值檢查會檢查交易歷史, 並確保不存在重複 r 值.</string>
     <string name="setting_name_rcheck">r 值檢查</string>
+
+    <!-- trash -->
+    <string name="trash_private_key">移入回收站</string>
+    <string name="trash_with_money_warn">這個地址上還有比特幣.\n您不能把它移入回收站.</string>
+    <string name="trashing_private_key">正在移入回收站</string>
+    <string name="trash_can">回收站</string>
+    <string name="trash_can_empty">回收站空</string>
+    <string name="trash_address_restore">還原地址?</string>
 </resources>
