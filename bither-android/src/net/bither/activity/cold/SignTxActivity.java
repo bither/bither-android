@@ -27,6 +27,7 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.QRCodeEnodeUtil;
@@ -38,8 +39,8 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.GenericUtils;
-import net.bither.util.SecureCharSequence;
+
+import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.List;
@@ -102,9 +103,9 @@ public class SignTxActivity extends SwipeRightActivity implements
     private void showTransaction() {
         tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
-        tvAmount.setText(GenericUtils.formatValueWithBold(qrCodeTransport
+        tvAmount.setText(StringUtil.formatValueWithBold(qrCodeTransport
                 .getTo()));
-        tvFee.setText(GenericUtils.formatValueWithBold(qrCodeTransport.getFee()));
+        tvFee.setText(StringUtil.formatValueWithBold(qrCodeTransport.getFee()));
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
         if (address == null) {

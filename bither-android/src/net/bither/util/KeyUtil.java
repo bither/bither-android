@@ -23,7 +23,7 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.IUEntropy;

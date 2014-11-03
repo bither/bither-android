@@ -35,12 +35,13 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -62,7 +63,7 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
-import net.bither.util.SecureCharSequence;
+
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 

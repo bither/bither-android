@@ -41,6 +41,8 @@ import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.qrcode.ScanActivity;
@@ -61,10 +63,8 @@ import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.TransactionsUtil;
 
 import java.math.BigInteger;
@@ -284,7 +284,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
                                 amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
-                                new SecureCharSequence(etPassword));
+                                new SecureCharSequence(etPassword.getText()));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -414,12 +414,12 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             if (password != null) {
                 password.wipe();
             }
-            password = new SecureCharSequence(etPassword);
+            password = new SecureCharSequence(etPassword.getText());
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            SecureCharSequence p = new SecureCharSequence(etPassword);
+            SecureCharSequence p = new SecureCharSequence(etPassword.getText());
             if (p.length() > 0) {
                 if (!Utils.validPassword(p)) {
                     etPassword.setText(password);
@@ -442,7 +442,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         } else {
         }
         boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
-        SecureCharSequence password = new SecureCharSequence(etPassword);
+        SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
         password.wipe();

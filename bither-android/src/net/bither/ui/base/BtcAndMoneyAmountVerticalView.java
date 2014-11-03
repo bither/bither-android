@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.util.GenericUtils;
+import net.bither.bitherj.utils.GenericUtils;
 
 import java.math.BigInteger;
 

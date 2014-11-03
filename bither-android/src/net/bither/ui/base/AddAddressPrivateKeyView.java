@@ -31,6 +31,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -40,7 +41,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
-import net.bither.util.SecureCharSequence;
+
 import net.bither.xrandom.UEntropyActivity;
 
 import java.util.ArrayList;

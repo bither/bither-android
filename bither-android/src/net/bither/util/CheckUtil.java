@@ -23,17 +23,17 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

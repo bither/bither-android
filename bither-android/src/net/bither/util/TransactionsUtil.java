@@ -36,9 +36,8 @@ import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.TxProvider;
 import net.bither.http.HttpSetting;
-import net.bither.model.UnSignTransaction;
+import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
 
 import org.json.JSONArray;

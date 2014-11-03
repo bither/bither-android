@@ -25,10 +25,10 @@ import android.widget.LinearLayout;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.SecureCharSequence;
 
 public class DialogAddressWithShowPrivateKey extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener, IDialogPasswordListener {
