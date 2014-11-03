@@ -30,6 +30,7 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.TrashCanActivity;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -99,7 +100,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            //TODO to trash can activity
+            startActivity(new Intent(ColdAdvanceActivity.this, TrashCanActivity.class));
         }
     };
 

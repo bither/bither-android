@@ -160,6 +160,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
+            android:name=".TrashCanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
             android:name=".qrcode.ScanActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"

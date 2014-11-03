@@ -381,4 +381,6 @@
     <string name="trash_with_money_warn">这个地址内还有比特币.\n您不能把它移入回收站.</string>
     <string name="trashing_private_key">正在移入回收站</string>
     <string name="trash_can">回收站</string>
+    <string name="trash_can_empty">回收站空</string>
+    <string name="trash_address_restore">还原地址?</string>
 </resources>

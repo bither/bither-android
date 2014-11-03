@@ -30,6 +30,7 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.TrashCanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -178,7 +179,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            //TODO to trash can activity
+            startActivity(new Intent(HotAdvanceActivity.this, TrashCanActivity.class));
         }
     };
 

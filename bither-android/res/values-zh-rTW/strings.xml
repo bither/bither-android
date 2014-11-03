@@ -380,4 +380,6 @@
     <string name="trash_with_money_warn">這個地址上還有比特幣.\n您不能把它移入回收站.</string>
     <string name="trashing_private_key">正在移入回收站</string>
     <string name="trash_can">回收站</string>
+    <string name="trash_can_empty">回收站空</string>
+    <string name="trash_address_restore">還原地址?</string>
 </resources>
