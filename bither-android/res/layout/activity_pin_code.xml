@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/entry_keyboard_background_above_light"
+              android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </FrameLayout>
+
+    <net.bither.ui.base.keyboard.pin.PinEntryKeyboardView
+        android:id="@+id/kv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/entry_keyboard_background_above_light"
+        android:paddingTop="5dp"
+        android:paddingBottom="3dp"
+        android:keyPreviewLayout="@layout/entry_keyboard_preview_layout"
+        android:keyPreviewOffset="@dimen/entry_keyboard_key_preview_offset"
+        android:keyBackground="@drawable/entry_keyboard_key_btn_bg"
+        android:textColor="@color/entry_keyboard_normal_key_text"
+        android:shadowColor="@color/entry_keyboard_normal_key_shadow"
+        android:shadowRadius="3"
+        android:labelTextSize="@dimen/entry_keyboard_label_text_size"
+        android:keyTextSize="@dimen/entry_keyboard_key_text_size"/>
+</LinearLayout>
