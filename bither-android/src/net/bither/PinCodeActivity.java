@@ -24,8 +24,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
+import net.bither.ui.base.PinCodeDotsView;
 import net.bither.ui.base.keyboard.pin.PinEntryKeyboardView;
-import net.bither.util.LogUtil;
 
 /**
  * Created by songchenwen on 14-11-5.
@@ -34,6 +34,7 @@ public class PinCodeActivity extends Activity implements TextWatcher,
         PinEntryKeyboardView.PinEntryKeyboardViewListener {
     private EditText et;
     private PinEntryKeyboardView kv;
+    private PinCodeDotsView dv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class PinCodeActivity extends Activity implements TextWatcher,
     private void initView() {
         et = (EditText) findViewById(R.id.et);
         kv = (PinEntryKeyboardView) findViewById(R.id.kv);
+        dv = (PinCodeDotsView) findViewById(R.id.dv);
+        dv.setDotColor(getResources().getColor(R.color.pin_code_dot_color));
         kv.setListener(this);
         kv.registerEditText(et);
         et.addTextChangedListener(this);
@@ -53,7 +56,7 @@ public class PinCodeActivity extends Activity implements TextWatcher,
 
     @Override
     public void afterTextChanged(Editable s) {
-        LogUtil.i(PinCodeActivity.class.getSimpleName(), "text changed " + s);
+        dv.setFilledCount(s.length());
     }
 
     @Override

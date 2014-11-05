@@ -399,4 +399,7 @@
     <string name="trash_can">Trash Can</string>
     <string name="trash_can_empty">No address in trash can</string>
     <string name="trash_address_restore">Restore Address?</string>
+
+    <!-- pin code -->
+    <string name="pin_code_enter_notice">Enter your PIN code</string>
 </resources>

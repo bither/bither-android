@@ -382,4 +382,8 @@
     <string name="trash_can">回收站</string>
     <string name="trash_can_empty">回收站空</string>
     <string name="trash_address_restore">還原地址?</string>
+
+    <!-- pin code -->
+    <string name="pin_code_enter_notice">輸入您的PIN碼</string>
+
 </resources>
