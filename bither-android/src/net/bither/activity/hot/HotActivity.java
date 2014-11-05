@@ -35,6 +35,7 @@ import android.widget.FrameLayout;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
+import net.bither.PinCodeActivity;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;
@@ -123,6 +124,7 @@ public class HotActivity extends FragmentActivity {
             }
         }, 2 * 1000);
         DialogFirstRunWarning.show(this);
+        startActivity(new Intent(this, PinCodeActivity.class));
     }
 
     private void registerReceiver() {

@@ -196,6 +196,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
+            android:name=".PinCodeActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
