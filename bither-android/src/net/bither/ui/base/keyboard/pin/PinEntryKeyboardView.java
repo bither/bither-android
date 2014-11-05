@@ -29,6 +29,11 @@ import net.bither.ui.base.keyboard.EntryKeyboardView;
  * Created by songchenwen on 14-11-5.
  */
 public class PinEntryKeyboardView extends EntryKeyboardView {
+    public static interface PinEntryKeyboardViewListener {
+        public void clearText();
+    }
+
+    private PinEntryKeyboardViewListener listener;
 
     public PinEntryKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,6 +41,11 @@ public class PinEntryKeyboardView extends EntryKeyboardView {
 
     public PinEntryKeyboardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+
+    public void setListener(PinEntryKeyboardViewListener l) {
+        listener = l;
     }
 
     @Override
@@ -48,7 +58,9 @@ public class PinEntryKeyboardView extends EntryKeyboardView {
     }
 
     private void handleCancel(){
-
+        if (listener != null) {
+            listener.clearText();
+        }
     }
 
     @Override

@@ -20,14 +20,52 @@ package net.bither;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
+
+import net.bither.ui.base.keyboard.pin.PinEntryKeyboardView;
+import net.bither.util.LogUtil;
 
 /**
  * Created by songchenwen on 14-11-5.
  */
-public class PinCodeActivity extends Activity {
+public class PinCodeActivity extends Activity implements TextWatcher,
+        PinEntryKeyboardView.PinEntryKeyboardViewListener {
+    private EditText et;
+    private PinEntryKeyboardView kv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_code);
+        initView();
+    }
+
+    private void initView() {
+        et = (EditText) findViewById(R.id.et);
+        kv = (PinEntryKeyboardView) findViewById(R.id.kv);
+        kv.setListener(this);
+        kv.registerEditText(et);
+        et.addTextChangedListener(this);
+        et.requestFocus();
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        LogUtil.i(PinCodeActivity.class.getSimpleName(), "text changed " + s);
+    }
+
+    @Override
+    public void clearText() {
+        et.setText("");
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
 }
