@@ -20,21 +20,14 @@ package net.bither;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
 
-import net.bither.ui.base.PinCodeDotsView;
-import net.bither.ui.base.keyboard.pin.PinEntryKeyboardView;
+import net.bither.ui.base.PinCodeEnterView;
 
 /**
  * Created by songchenwen on 14-11-5.
  */
-public class PinCodeActivity extends Activity implements TextWatcher,
-        PinEntryKeyboardView.PinEntryKeyboardViewListener {
-    private EditText et;
-    private PinEntryKeyboardView kv;
-    private PinCodeDotsView dv;
+public class PinCodeActivity extends Activity implements PinCodeEnterView.PinCodeEnterViewListener {
+    private PinCodeEnterView pv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,31 +37,13 @@ public class PinCodeActivity extends Activity implements TextWatcher,
     }
 
     private void initView() {
-        et = (EditText) findViewById(R.id.et);
-        kv = (PinEntryKeyboardView) findViewById(R.id.kv);
-        dv = (PinCodeDotsView) findViewById(R.id.dv);
-        dv.setDotColor(getResources().getColor(R.color.pin_code_dot_color));
-        kv.setListener(this);
-        kv.registerEditText(et);
-        et.addTextChangedListener(this);
-        et.requestFocus();
+        pv = (PinCodeEnterView) findViewById(R.id.pv);
+        pv.setListener(this);
     }
 
-    @Override
-    public void afterTextChanged(Editable s) {
-        dv.setFilledCount(s.length());
-    }
 
     @Override
-    public void clearText() {
-        et.setText("");
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
+    public void onEntered(CharSequence code) {
+        finish();
     }
 }

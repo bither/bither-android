@@ -105,5 +105,6 @@ public class PinCodeDotsView extends View {
 
     public void setTotalDotCount(int totalDotCount) {
         this.totalDotCount = totalDotCount;
+        invalidate();
     }
 }
