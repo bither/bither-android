@@ -37,6 +37,7 @@ import net.bither.adapter.cold.ColdFragmentPagerAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
@@ -46,7 +47,8 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.pin.PinCodeActivity;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
@@ -109,6 +111,9 @@ public class ColdActivity extends FragmentActivity {
         DialogFirstRunWarning.show(this);
         registerReceiver(addressIsLoadedReceiver,
                 new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+        if (AppSharedPreference.getInstance().hasPinCode()) {
+            startActivity(new Intent(this, PinCodeActivity.class));
+        }
     }
 
     @Override
