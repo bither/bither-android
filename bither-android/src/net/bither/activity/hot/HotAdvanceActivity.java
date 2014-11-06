@@ -43,6 +43,9 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
+import net.bither.pin.PinCodeChangeActivity;
+import net.bither.pin.PinCodeDisableActivity;
+import net.bither.pin.PinCodeEnableActivity;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -116,6 +119,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
         tvVserion.setText(Version.name + " " + Version.version);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ssvPinCode.loadData();
     }
 
     private View.OnClickListener rCheckClick = new View.OnClickListener() {
@@ -346,7 +355,20 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onOptionIndexSelected(int index) {
-
+            if (hasPinCode) {
+                switch (index) {
+                    case 0:
+                        startActivity(new Intent(HotAdvanceActivity.this,
+                                PinCodeDisableActivity.class));
+                        return;
+                    case 1:
+                        startActivity(new Intent(HotAdvanceActivity.this,
+                                PinCodeChangeActivity.class));
+                        return;
+                }
+            } else {
+                startActivity(new Intent(HotAdvanceActivity.this, PinCodeEnableActivity.class));
+            }
         }
     };
 

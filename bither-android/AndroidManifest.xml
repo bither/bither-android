@@ -190,7 +190,7 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="net.bither.activity.hot.RCheckActivity"
             android:screenOrientation="portrait"
@@ -202,6 +202,18 @@
             android:stateNotNeeded="true"
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".pin.PinCodeEnableActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".pin.PinCodeDisableActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".pin.PinCodeChangeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"

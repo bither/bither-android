@@ -390,5 +390,14 @@
     <string name="pin_code_setting_open">开启 PIN 码</string>
     <string name="pin_code_setting_close">关闭 PIN 码</string>
     <string name="pin_code_setting_change">修改 PIN 码</string>
+    <string name="pin_code_setting_open_msg">输入您的 PIN 码</string>
+    <string name="pin_code_setting_open_repeat_msg">再次输入您的 PIN 码</string>
+    <string name="pin_code_setting_open_repeat_wrong">两次输入的 PIN 码不同</string>
+    <string name="pin_code_setting_change_old_msg">输入您的原 PIN 码</string>
+    <string name="pin_code_setting_change_old_wrong">原 PIN 码错误</string>
+    <string name="pin_code_setting_change_new_msg">输入您的新 PIN 码</string>
+    <string name="pin_code_setting_change_new_repeat_msg">再次输入您的新 PIN 码</string>
+    <string name="pin_code_setting_change_repeat_wrong">两次输入的新 PIN 码不同</string>
+    <string name="pin_code_setting_close_wrong">PIN 码错误</string>
 
 </resources>

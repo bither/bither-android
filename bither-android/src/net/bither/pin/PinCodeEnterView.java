@@ -166,6 +166,14 @@ public class PinCodeEnterView extends FrameLayout implements TextWatcher,
         }
     };
 
+    public boolean isEnabled() {
+        return et.isEnabled();
+    }
+
+    public void setEnabled(boolean enabled) {
+        et.setEnabled(enabled);
+    }
+
     @Override
     public void clearText() {
         et.setText("");

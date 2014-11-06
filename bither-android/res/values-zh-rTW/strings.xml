@@ -386,8 +386,17 @@
     <!-- pin code -->
     <string name="pin_code_enter_notice">輸入您的PIN 碼</string>
     <string name="pin_code_setting_name">PIN 碼</string>
-    <string name="pin_code_setting_open">開啟 PIN 码</string>
-    <string name="pin_code_setting_close">關閉 PIN 码</string>
-    <string name="pin_code_setting_change">修改 PIN 码</string>
+    <string name="pin_code_setting_open">開啟 PIN 碼</string>
+    <string name="pin_code_setting_close">關閉 PIN 碼</string>
+    <string name="pin_code_setting_change">修改 PIN 碼</string>
+    <string name="pin_code_setting_open_msg">輸入您的 PIN 碼</string>
+    <string name="pin_code_setting_open_repeat_msg">再次輸入您的 PIN 碼</string>
+    <string name="pin_code_setting_open_repeat_wrong">兩次輸入的 PIN 碼不同</string>
+    <string name="pin_code_setting_change_old_msg">輸入您的原 PIN 碼</string>
+    <string name="pin_code_setting_change_old_wrong">原 PIN 碼錯誤</string>
+    <string name="pin_code_setting_change_new_msg">輸入您的新 PIN 碼</string>
+    <string name="pin_code_setting_change_new_repeat_msg">再次輸入您的新 PIN 碼</string>
+    <string name="pin_code_setting_change_repeat_wrong">兩次輸入的新 PIN 碼不同</string>
+    <string name="pin_code_setting_close_wrong">PIN 碼錯誤</string>
 
 </resources>
