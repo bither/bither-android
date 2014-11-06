@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <translate
+        android:duration="20"
+        android:fromXDelta="0"
+        android:toXDelta="6%"/>
+    <translate
+        android:duration="40"
+        android:fillAfter="true"
+        android:fillBefore="true"
+        android:fromXDelta="6%"
+        android:repeatCount="3"
+        android:repeatMode="reverse"
+        android:startOffset="20"
+        android:toXDelta="-6%"/>
+    <translate
+        android:duration="20"
+        android:fromXDelta="-6%"
+        android:startOffset="150"
+        android:toXDelta="0"/>
+
+</set>

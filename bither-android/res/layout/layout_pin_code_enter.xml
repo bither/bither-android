@@ -41,6 +41,13 @@
                     android:layout_width="160dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"/>
+
+                <net.bither.ui.base.PinCodeDotsView
+                    android:id="@+id/dv_new"
+                    android:layout_width="160dp"
+                    android:layout_height="16dp"
+                    android:visibility="gone"
+                    android:layout_gravity="center"/>
             </FrameLayout>
         </LinearLayout>
     </FrameLayout>

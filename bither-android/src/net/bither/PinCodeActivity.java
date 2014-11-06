@@ -21,7 +21,9 @@ package net.bither;
 import android.app.Activity;
 import android.os.Bundle;
 
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PinCodeEnterView;
+import net.bither.util.LogUtil;
 
 /**
  * Created by songchenwen on 14-11-5.
@@ -41,9 +43,8 @@ public class PinCodeActivity extends Activity implements PinCodeEnterView.PinCod
         pv.setListener(this);
     }
 
-
     @Override
     public void onEntered(CharSequence code) {
-        finish();
+        pv.animateToNext();
     }
 }
