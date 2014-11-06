@@ -21,9 +21,9 @@ package net.bither;
 import android.app.Activity;
 import android.os.Bundle;
 
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PinCodeEnterView;
-import net.bither.util.LogUtil;
 
 /**
  * Created by songchenwen on 14-11-5.
@@ -45,6 +45,21 @@ public class PinCodeActivity extends Activity implements PinCodeEnterView.PinCod
 
     @Override
     public void onEntered(CharSequence code) {
-        pv.animateToNext();
+        if (AppSharedPreference.getInstance().checkPinCode(code)) {
+            super.finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
+        } else {
+            pv.shakeToClear();
+        }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+            BitherApplication.hotActivity.finish();
+        } else {
+            BitherApplication.coldActivity.finish();
+        }
     }
 }

@@ -64,6 +64,11 @@
 
                             <include layout="@layout/layout_vertical_seperator" />
 
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_pin_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
                             <Button
                                 android:id="@+id/btn_r_check"
                                 android:layout_width="match_parent"

@@ -402,4 +402,8 @@
 
     <!-- pin code -->
     <string name="pin_code_enter_notice">Enter your PIN code</string>
+    <string name="pin_code_setting_name">PIN Code</string>
+    <string name="pin_code_setting_open">Enable PIN Code</string>
+    <string name="pin_code_setting_close">Disable PIN Code</string>
+    <string name="pin_code_setting_change">Change PIN Code</string>
 </resources>

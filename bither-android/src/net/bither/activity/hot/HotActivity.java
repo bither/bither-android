@@ -124,7 +124,9 @@ public class HotActivity extends FragmentActivity {
             }
         }, 2 * 1000);
         DialogFirstRunWarning.show(this);
-        startActivity(new Intent(this, PinCodeActivity.class));
+        if(AppSharedPreference.getInstance().hasPinCode()) {
+            startActivity(new Intent(this, PinCodeActivity.class));
+        }
     }
 
     private void registerReceiver() {

@@ -385,6 +385,10 @@
     <string name="trash_address_restore">还原地址?</string>
 
     <!-- pin code -->
-    <string name="pin_code_enter_notice">输入您的PIN码</string>
+    <string name="pin_code_enter_notice">输入您的 PIN 码</string>
+    <string name="pin_code_setting_name">PIN 码</string>
+    <string name="pin_code_setting_open">开启 PIN 码</string>
+    <string name="pin_code_setting_close">关闭 PIN 码</string>
+    <string name="pin_code_setting_change">修改 PIN 码</string>
 
 </resources>
