@@ -35,7 +35,7 @@ import android.widget.FrameLayout;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
-import net.bither.PinCodeActivity;
+import net.bither.pin.PinCodeActivity;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;

@@ -196,7 +196,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
-            android:name=".PinCodeActivity"
+            android:name=".pin.PinCodeActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"

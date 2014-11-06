@@ -16,14 +16,15 @@
  *
  */
 
-package net.bither;
+package net.bither.pin;
 
 import android.app.Activity;
 import android.os.Bundle;
 
+import net.bither.BitherApplication;
+import net.bither.R;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
-import net.bither.ui.base.PinCodeEnterView;
 
 /**
  * Created by songchenwen on 14-11-5.

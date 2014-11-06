@@ -36,13 +36,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <net.bither.ui.base.PinCodeDotsView
+                <net.bither.pin.PinCodeDotsView
                     android:id="@+id/dv"
                     android:layout_width="160dp"
                     android:layout_height="16dp"
                     android:layout_gravity="center"/>
 
-                <net.bither.ui.base.PinCodeDotsView
+                <net.bither.pin.PinCodeDotsView
                     android:id="@+id/dv_new"
                     android:layout_width="160dp"
                     android:layout_height="16dp"

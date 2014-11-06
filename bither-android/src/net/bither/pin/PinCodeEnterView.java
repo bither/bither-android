@@ -16,7 +16,7 @@
  *
  */
 
-package net.bither.ui.base;
+package net.bither.pin;
 
 import android.content.Context;
 import android.os.Vibrator;
