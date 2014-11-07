@@ -7,4 +7,7 @@
 
     <fraction name="password_keyboard_number_key_width">22.5%p</fraction>
     <fraction name="password_keyboard_number_key_horizontal_gap">2%p</fraction>
+
+    <fraction name="pin_code_keyboard_key_width">31.2%p</fraction>
+    <fraction name="pin_code_keyboard_key_horizontal_gap">1.6%p</fraction>
 </resources>

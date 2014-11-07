@@ -19,14 +19,17 @@ package net.bither.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.common.primitives.Ints;
+
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.utils.Utils;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil;
+import net.bither.xrandom.URandom;
 
 import java.util.Currency;
 import java.util.Date;
@@ -59,6 +62,8 @@ public class AppSharedPreference {
     private static final String SYNC_INTERVAL = "sync_interval";
 
     private static final String PREFS_KEY_LAST_USED = "last_used";
+
+    private static final String PIN_CODE = "pin_code";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -302,7 +307,6 @@ public class AppSharedPreference {
 
     public void setSyncInterval(BitherSetting.SyncInterval syncInterval) {
         this.mPreferences.edit().putInt(SYNC_INTERVAL, syncInterval.ordinal()).commit();
-
     }
 
     public long getLastUsedAgo() {
@@ -313,5 +317,42 @@ public class AppSharedPreference {
     public void touchLastUsed() {
         final long now = System.currentTimeMillis();
         this.mPreferences.edit().putLong(PREFS_KEY_LAST_USED, now).commit();
+    }
+
+    public void setPinCode(CharSequence code) {
+        if (code == null || code.length() == 0) {
+            deletePinCode();
+        }
+        int salt = Ints.fromByteArray(new URandom().nextBytes(Ints.BYTES));
+        String hash = Integer.toString(salt) + ";" + Integer.toString((code.toString() + Integer
+                .toString(salt)).hashCode());
+        mPreferences.edit().putString(PIN_CODE, hash).commit();
+    }
+
+    public boolean hasPinCode() {
+        String hash = mPreferences.getString(PIN_CODE, "");
+        if (Utils.isEmpty(hash)) {
+            return false;
+        }
+        String[] strs = hash.split(";");
+        if (strs.length != 2) {
+            deletePinCode();
+            return false;
+        }
+        return true;
+    }
+
+    public void deletePinCode() {
+        mPreferences.edit().remove(PIN_CODE).commit();
+    }
+
+    public boolean checkPinCode(CharSequence code) {
+        if (hasPinCode()) {
+            String hash = mPreferences.getString(PIN_CODE, "");
+            String[] strs = hash.split(";");
+            return Utils.compareString(strs[1], Integer.toString((code.toString() + strs[0])
+                    .hashCode()));
+        }
+        return true;
     }
 }

@@ -78,4 +78,7 @@
 
     <!-- rcheck -->
     <color name="rcheck_end">#ff25bebc</color>
+
+    <!-- pin code -->
+    <color name="pin_code_dot_color">#eccccccc</color>
 </resources>

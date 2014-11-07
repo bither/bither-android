@@ -399,4 +399,20 @@
     <string name="trash_can">Trash Can</string>
     <string name="trash_can_empty">No address in trash can</string>
     <string name="trash_address_restore">Restore Address?</string>
+
+    <!-- pin code -->
+    <string name="pin_code_enter_notice">Enter your PIN code</string>
+    <string name="pin_code_setting_name">PIN Code</string>
+    <string name="pin_code_setting_open">Enable PIN Code</string>
+    <string name="pin_code_setting_close">Disable PIN Code</string>
+    <string name="pin_code_setting_change">Change PIN Code</string>
+    <string name="pin_code_setting_open_msg">Enter your PIN code</string>
+    <string name="pin_code_setting_open_repeat_msg">Enter your PIN code again</string>
+    <string name="pin_code_setting_open_repeat_wrong">PIN codes are not same</string>
+    <string name="pin_code_setting_change_old_msg">Enter your old PIN code</string>
+    <string name="pin_code_setting_change_old_wrong">Old PIN code is wrong</string>
+    <string name="pin_code_setting_change_new_msg">Enter your new PIN code</string>
+    <string name="pin_code_setting_change_new_repeat_msg">Enter your new PIN code again</string>
+    <string name="pin_code_setting_change_repeat_wrong">New PIN codes are not same</string>
+    <string name="pin_code_setting_close_wrong">PIN code is wrong</string>
 </resources>

@@ -55,6 +55,11 @@
                             <include layout="@layout/layout_vertical_seperator" />
 
                             <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_pin_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_private_key"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
