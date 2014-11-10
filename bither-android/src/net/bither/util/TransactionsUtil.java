@@ -192,10 +192,6 @@ public class TransactionsUtil {
                 transactions.add(tx);
 
                 count++;
-                double progress = BitherSetting.SYNC_TX_PROGRESS_BLOCK_HEIGHT
-                        + BitherSetting.SYNC_TX_PROGRESS_STEP1
-                        + BitherSetting.SYNC_TX_PROGRESS_STEP2 * (count / size);
-                BroadcastUtil.sendBroadcastProgressState(progress);
 
             }
 
@@ -333,10 +329,6 @@ public class TransactionsUtil {
             address.initTxs(transactions);
             address.setSyncComplete(true);
             address.updatePubkey();
-            BroadcastUtil
-                    .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
-
-
         }
     }
 

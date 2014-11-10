@@ -84,7 +84,7 @@ public class HotActivity extends BaseFragmentActivity {
     private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
 
     protected void onCreate(Bundle savedInstanceState) {
-        BroadcastUtil.removeProgressState();
+        AbstractApp.notificationService.removeProgressState();
         initAppState();
         super.onCreate(savedInstanceState);
         BitherApplication.hotActivity = this;
@@ -126,7 +126,7 @@ public class HotActivity extends BaseFragmentActivity {
     }
 
     private void registerReceiver() {
-        registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
+        registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl
                 .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
@@ -431,8 +431,8 @@ public class HotActivity extends BaseFragmentActivity {
     private final class ProgressBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
-                double progress = intent.getDoubleExtra(BroadcastUtil.ACTION_PROGRESS_INFO, 0);
+            if (intent != null && intent.hasExtra(NotificationAndroidImpl.ACTION_PROGRESS_INFO)) {
+                double progress = intent.getDoubleExtra(NotificationAndroidImpl.ACTION_PROGRESS_INFO, 0);
                 LogUtil.d("progress", "BlockchainBroadcastReceiver" + progress);
                 pbSync.setProgress(progress);
             }

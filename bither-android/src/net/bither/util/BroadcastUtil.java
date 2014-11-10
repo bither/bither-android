@@ -32,11 +32,6 @@ public class BroadcastUtil {
     public static final String ACTION_MARKET = R.class.getPackage().getName()
             + ".market";
 
-
-    public static final String ACTION_SYNC_BLOCK_AND_WALLET_STATE = R.class
-            .getPackage().getName() + ".sync_block_wallet";
-    public static final String ACTION_PROGRESS_INFO = "progress_info";
-
     public static final String ACTION_DOWLOAD_SPV_BLOCK = R.class.getPackage()
             .getName() + ".dowload_block_api_complete";
     public static final String ACTION_DOWLOAD_SPV_BLOCK_STATE = "complete";
@@ -58,19 +53,6 @@ public class BroadcastUtil {
     public static void removeMarketState() {
         BitherApplication.mContext.removeStickyBroadcast(new Intent(
                 ACTION_MARKET));
-    }
-
-    public static void sendBroadcastProgressState(double value) {
-        final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
-        broadcast.putExtra(ACTION_PROGRESS_INFO, value);
-        BitherApplication.mContext.sendBroadcast(broadcast);
-    }
-
-
-    public static void removeProgressState() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(
-                ACTION_SYNC_BLOCK_AND_WALLET_STATE));
-
     }
 
     public static void sendBroadcastGetSpvBlockComplete(boolean isComplete) {

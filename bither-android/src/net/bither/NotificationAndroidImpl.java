@@ -43,6 +43,10 @@ public class NotificationAndroidImpl implements NotificationService {
     public static final String MESSAGE_TX = "tx";
     public static final String MESSAGE_TX_NOTIFICATION_TYPE = "tx_notification_type";
 
+    public static final String ACTION_SYNC_BLOCK_AND_WALLET_STATE = R.class.getPackage().getName
+            () + ".sync_block_wallet";
+    public static final String ACTION_PROGRESS_INFO = "progress_info";
+
     @Override
     public void sendBroadcastSyncSPVFinished(boolean isFinished) {
         if (isFinished) {
@@ -111,5 +115,19 @@ public class NotificationAndroidImpl implements NotificationService {
         Intent intent = new Intent(connectedChangeBroadcast);
         intent.putExtra(connectedChangeBroadcast, isConnected);
         BitherApplication.mContext.sendBroadcast(intent);
+    }
+
+    @Override
+    public void sendBroadcastProgressState(double value) {
+        final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
+        broadcast.putExtra(ACTION_PROGRESS_INFO, value);
+        BitherApplication.mContext.sendBroadcast(broadcast);
+    }
+
+    @Override
+    public void removeProgressState() {
+        BitherApplication.mContext.removeStickyBroadcast(new Intent
+                (ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+
     }
 }
