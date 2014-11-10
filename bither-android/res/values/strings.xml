@@ -415,4 +415,8 @@
     <string name="pin_code_setting_change_new_repeat_msg">Enter your new PIN code again</string>
     <string name="pin_code_setting_change_repeat_wrong">New PIN codes are not same</string>
     <string name="pin_code_setting_close_wrong">PIN code is wrong</string>
+
+    <!-- launch sequence -->
+    <string name="launch_sequence_switch_to_cold">Switch to Bither Cold</string>
+    <string name="launch_sequence_switch_to_cold_warn">Set this phone as Bither Cold?\n\nBither Cold need to be run on a offline phone.\nYou can monitor Bither Cold by Bither Hot.\nOnce set you can\'t switch back.</string>
 </resources>

@@ -86,6 +86,9 @@ public class ChooseModeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(AppSharedPreference.getInstance().getAppMode() == null){
+            AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode.HOT);
+        }
         if (URandom.urandomFile.exists()) {
             if (UpgradeUtil.needUpgrade()) {
                 upgrade();
@@ -203,7 +206,6 @@ public class ChooseModeActivity extends Activity {
                 }
             }
         }
-        DialogFirstRunWarning.show(this);
     }
 
 
@@ -231,8 +233,6 @@ public class ChooseModeActivity extends Activity {
         llWarmExtraWaiting = findViewById(R.id.ll_warm_extra_waiting);
         llWarmExtraError = findViewById(R.id.ll_warm_extra_error);
         btnWarmExtraRetry = findViewById(R.id.btn_warm_extra_retry);
-        vCold.setOnClickListener(coldClick);
-        vWarm.setOnClickListener(warmClick);
         btnWarmExtraRetry.setOnClickListener(warmRetryClick);
     }
 

@@ -400,4 +400,8 @@
     <string name="pin_code_setting_change_repeat_wrong">两次输入的新 PIN 码不同</string>
     <string name="pin_code_setting_close_wrong">PIN 码错误</string>
 
+    <!-- launch sequence -->
+    <string name="launch_sequence_switch_to_cold">切换到冷钱包</string>
+    <string name="launch_sequence_switch_to_cold_warn">确认切换到冷钱包模式?\n\n冷钱包应该运行在离线的备用手机上.\n热钱包可以监控冷钱包.\n一旦切换成冷钱包便不能切换回热钱包.</string>
+
 </resources>
