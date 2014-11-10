@@ -18,7 +18,6 @@ package net.bither.activity.hot;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -28,11 +27,12 @@ import android.widget.ImageButton;
 import net.bither.R;
 import net.bither.fragment.hot.BlockListFragment;
 import net.bither.fragment.hot.PeerListFragment;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.ViewPagerTabs;
 import net.bither.ui.base.listener.IBackClickListener;
 
-public final class NetworkMonitorActivity extends FragmentActivity {
-	private PeerListFragment peerListFragment;
+public final class NetworkMonitorActivity extends BaseFragmentActivity {
+    private PeerListFragment peerListFragment;
 	private BlockListFragment blockListFragment;
 	// private FrameLayout flTitleBar;
 	private ImageButton ibtnBack;

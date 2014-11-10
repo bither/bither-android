@@ -19,11 +19,10 @@
 package net.bither.pin;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
-import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 
 /**
@@ -56,11 +55,9 @@ public class PinCodeActivity extends Activity implements PinCodeEnterView.PinCod
 
     @Override
     public void finish() {
-        super.finish();
-        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-            BitherApplication.hotActivity.finish();
-        } else {
-            BitherApplication.coldActivity.finish();
-        }
+        Intent i = new Intent();
+        i.setAction(Intent.ACTION_MAIN);
+        i.addCategory(Intent.CATEGORY_HOME);
+        startActivity(i);
     }
 }

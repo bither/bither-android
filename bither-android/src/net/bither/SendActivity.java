@@ -69,7 +69,8 @@ import net.bither.util.TransactionsUtil;
 
 import java.math.BigInteger;
 
-public class SendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+public class SendActivity extends SwipeRightActivity implements EntryKeyboardView
+        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -224,20 +225,20 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
 
     private Handler rcheckHandler = new Handler() {
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         final Tx tx = (Tx) msg.obj;
                         dp.setRCheckSuccess();
-                        if(!dp.isShowing()){
+                        if (!dp.isShowing()) {
                             dp.show();
                         }
                         tvAddressLabel.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this, tx,
-                                        sendConfirmListener);
+                                DialogSendConfirm dialog = new DialogSendConfirm(SendActivity
+                                        .this, tx, sendConfirmListener);
                                 dialog.show();
                                 dp.setWait();
                             }
@@ -246,7 +247,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     }
                 case HandlerMessage.MSG_FAILURE:
                     dp.setRecalculatingR();
-                    if(!dp.isShowing()){
+                    if (!dp.isShowing()) {
                         dp.show();
                     }
                     sendClick.onClick(btnSend);
@@ -283,8 +284,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
-                                new SecureCharSequence(etPassword.getText()));
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString()
+                                .trim(), new SecureCharSequence(etPassword.getText()));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);

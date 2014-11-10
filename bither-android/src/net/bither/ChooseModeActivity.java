@@ -16,7 +16,6 @@
 
 package net.bither;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -48,11 +47,11 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
-import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
@@ -61,7 +60,7 @@ import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
 
-public class ChooseModeActivity extends Activity {
+public class ChooseModeActivity extends BaseActivity {
     private static final int AnimHideDuration = 600;
     private static final int AnimGrowDuration = 500;
     private static final int ColdCheckInterval = 700;
@@ -619,5 +618,10 @@ public class ChooseModeActivity extends Activity {
                 BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
                 BitherApplication.mContext, BlockchainService.class);
         BitherApplication.mContext.startService(intent);
+    }
+
+    @Override
+    protected boolean shouldPresentPinCode() {
+        return false;
     }
 }

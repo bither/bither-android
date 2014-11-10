@@ -18,7 +18,6 @@
 
 package net.bither.xrandom;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -43,6 +42,7 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -59,7 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UEntropyActivity extends Activity implements UEntropyCollector
+public class UEntropyActivity extends BaseActivity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
     public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
@@ -502,5 +502,10 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 onFailed();
             }
         }
+    }
+
+    @Override
+    protected boolean shouldPresentPinCode() {
+        return false;
     }
 }
