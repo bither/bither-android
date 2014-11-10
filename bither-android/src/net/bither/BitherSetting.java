@@ -45,8 +45,8 @@ public class BitherSetting {
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
 
-    public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 100;
-    public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 10;
+    public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 150;
+    public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 50;
 
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;
