@@ -51,6 +51,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                 case TxWaitConfirm:
                     format = R.string.send_failed_pendding;
                     break;
+                case TxMaxSize:
+                    format = R.string.send_failed_max_tx_size;
+                    break;
             }
             type.registerFormatString(BitherApplication.mContext.getString(format));
         }

@@ -100,6 +100,7 @@
     <string name="send_failed_missing_btc">發送失敗. 可用餘額中缺少%s BTC.</string>
     <string name="send_failed_dust_out_put">發送失敗. 這樣小額的交易會被忽略.</string>
     <string name="send_failed_pendding">發送失敗. %s BTC 正在等待確認.\n請等待一個新的確認後再交易.</string>
+    <string name="send_failed_max_tx_size">發送失敗. 交易大小过大.\n請減少發送金額.</string>
     <string name="send_coins_fragment_sending_address_label">從</string>
     <string name="send_coins_fragment_receiving_address_label">發送給</string>
     <string name="send_coins_fragment_amount_label">金額</string>
