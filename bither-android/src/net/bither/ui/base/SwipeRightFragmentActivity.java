@@ -16,18 +16,17 @@
 
 package net.bither.ui.base;
 
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 
 import net.bither.R;
 
-public class SwipeRightFragmentActivity extends FragmentActivity {
-	protected SwipeRightTouchView mTouchView;
+public class SwipeRightFragmentActivity extends BaseFragmentActivity {
+    protected SwipeRightTouchView mTouchView;
 
-	@Override
-	public void setContentView(int layoutResID) {
+    @Override
+    public void setContentView(int layoutResID) {
 		super.setContentView(layoutResID);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
 		getWindow().getAttributes().dimAmount = 0.75f;

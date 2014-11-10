@@ -38,6 +38,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <LinearLayout
+                    android:id="@+id/ll_switch_to_cold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_switch_to_cold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ui_touchable_bg"
+                        android:gravity="left"
+                        android:padding="10dp"
+                        android:text="@string/launch_sequence_switch_to_cold"
+                        android:textColor="@color/text_field_text_color"
+                        android:textSize="18sp"/>
+
+                    <include layout="@layout/layout_vertical_seperator"/>
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/btn_avatar"
                     android:layout_width="match_parent"
@@ -49,9 +70,9 @@
                     android:padding="10dp"
                     android:text="@string/set_avatar"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
-                <include layout="@layout/layout_vertical_seperator" />
+                <include layout="@layout/layout_vertical_seperator"/>
 
                 <Button
                     android:id="@+id/btn_check_private_key"

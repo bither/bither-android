@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -49,6 +48,7 @@ import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.pin.PinCodeActivity;
 import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
@@ -72,7 +72,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ColdActivity extends FragmentActivity {
+public class ColdActivity extends BaseFragmentActivity {
 
     private TabButton tbtnMessage;
     private TabButton tbtnMain;
@@ -111,9 +111,6 @@ public class ColdActivity extends FragmentActivity {
         DialogFirstRunWarning.show(this);
         registerReceiver(addressIsLoadedReceiver,
                 new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
-        if (AppSharedPreference.getInstance().hasPinCode()) {
-            startActivity(new Intent(this, PinCodeActivity.class));
-        }
     }
 
     @Override

@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -35,7 +34,6 @@ import android.widget.FrameLayout;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
-import net.bither.pin.PinCodeActivity;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;
@@ -52,6 +50,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
@@ -69,7 +68,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HotActivity extends FragmentActivity {
+public class HotActivity extends BaseFragmentActivity {
     private TabButton tbtnMessage;
     private TabButton tbtnMain;
     private TabButton tbtnMe;
@@ -124,9 +123,6 @@ public class HotActivity extends FragmentActivity {
             }
         }, 2 * 1000);
         DialogFirstRunWarning.show(this);
-        if(AppSharedPreference.getInstance().hasPinCode()) {
-            startActivity(new Intent(this, PinCodeActivity.class));
-        }
     }
 
     private void registerReceiver() {
