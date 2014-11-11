@@ -47,7 +47,7 @@ public class PinCodeActivity extends Activity implements PinCodeEnterView.PinCod
     public void onEntered(CharSequence code) {
         if (AppSharedPreference.getInstance().checkPinCode(code)) {
             super.finish();
-            overridePendingTransition(0, R.anim.slide_out_bottom);
+            overridePendingTransition(0, R.anim.pin_out_exit);
         } else {
             pv.shakeToClear();
         }
