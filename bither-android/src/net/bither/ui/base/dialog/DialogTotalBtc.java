@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.utils.GenericUtils;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PieChartView;
@@ -137,14 +138,14 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
                 .getSymbol();
         if (btcPrivate != null && btcPrivate.signum() > 0 && price > 0) {
             tvPrivateMoney.setVisibility(View.VISIBLE);
-            tvPrivateMoney.setText(currencySymbol + " " + StringUtil.formatDoubleToMoneyString(
+            tvPrivateMoney.setText(currencySymbol + " " + Utils.formatDoubleToMoneyString(
                     (double) btcPrivate.longValue() / 100000000.0 * price));
         } else {
             tvPrivateMoney.setVisibility(View.GONE);
         }
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0 && price > 0) {
             tvWatchOnlyMoney.setVisibility(View.VISIBLE);
-            tvWatchOnlyMoney.setText(currencySymbol + " " + StringUtil.formatDoubleToMoneyString(
+            tvWatchOnlyMoney.setText(currencySymbol + " " + Utils.formatDoubleToMoneyString(
                     (double) btcWatchOnly.longValue() / 100000000.0 * price));
         } else {
             tvWatchOnlyMoney.setVisibility(View.GONE);

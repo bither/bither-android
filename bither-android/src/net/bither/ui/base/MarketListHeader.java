@@ -45,6 +45,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.hot.MarketFragment;
 import net.bither.model.Market;
 import net.bither.model.PriceAlert;
@@ -166,15 +167,15 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
             tvSell.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             tvBuy.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
-            tvPrice.setText(StringUtil.formatDoubleToMoneyString(ticker.getDefaultExchangePrice()));
-            tvHigh.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvPrice.setText(Utils.formatDoubleToMoneyString(ticker.getDefaultExchangePrice()));
+            tvHigh.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeHigh()));
-            tvLow.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvLow.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeLow()));
-            tvVolume.setText(StringUtil.formatDoubleToMoneyString(ticker.getAmount()));
-            tvSell.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvVolume.setText(Utils.formatDoubleToMoneyString(ticker.getAmount()));
+            tvSell.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeSell()));
-            tvBuy.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvBuy.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         }
     }
@@ -185,11 +186,11 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
         etAlertLow.setText("");
         if (priceAlert != null) {
             if (priceAlert.getExchangeHigher() > 0) {
-                etAlertHigh.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                etAlertHigh.setText(Utils.formatDoubleToMoneyString(priceAlert
                         .getExchangeHigher()));
             }
             if (priceAlert.getExchangeLower() > 0) {
-                etAlertLow.setText(StringUtil.formatDoubleToMoneyString(priceAlert
+                etAlertLow.setText(Utils.formatDoubleToMoneyString(priceAlert
                         .getExchangeLower()));
             }
         }
@@ -484,7 +485,7 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
                 if (v instanceof EditText) {
                     EditText et = (EditText) v;
                     if (et.getText().length() > 0) {
-                        et.setText(StringUtil.formatDoubleToMoneyString(Double.parseDouble(et
+                        et.setText(Utils.formatDoubleToMoneyString(Double.parseDouble(et
                                 .getText().toString())));
                     }
                 }

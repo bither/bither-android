@@ -37,6 +37,7 @@ import net.bither.BitherSetting;
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.charts.event.ITouchEventResponse;
 import net.bither.charts.view.MACandleStickChart;
 import net.bither.charts.view.MarketDepthChart;
@@ -179,15 +180,15 @@ public class MarketDetailActivity extends SwipeRightActivity implements OnChecke
             } else {
                 symbol = ExchangeUtil.getExchangeType(marketType).getSymbol();
             }
-            tvPrice.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvPrice.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangePrice()));
-            tvHigh.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvHigh.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeHigh()));
-            tvLow.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvLow.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeLow()));
-            tvSell.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvSell.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeSell()));
-            tvBuy.setText(symbol + StringUtil.formatDoubleToMoneyString(ticker
+            tvBuy.setText(symbol + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangeBuy()));
         } else {
             llTicker.setVisibility(View.GONE);

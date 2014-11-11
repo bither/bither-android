@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
@@ -81,12 +82,12 @@ public class MarketFragmentListItemView extends FrameLayout implements
         if (ExchangeUtil.getCurrenciesRate() != null) {
             tvPrice.setText(AppSharedPreference.getInstance()
                     .getDefaultExchangeType().getSymbol()
-                    + StringUtil.formatDoubleToMoneyString(ticker
+                    + Utils.formatDoubleToMoneyString(ticker
                     .getDefaultExchangePrice()));
         } else {
             tvPrice.setText(ExchangeUtil
                     .getExchangeType(market.getMarketType()).getSymbol()
-                    + StringUtil.formatDoubleToMoneyString(ticker.getPrice()));
+                    + Utils.formatDoubleToMoneyString(ticker.getPrice()));
         }
         if (market.getPriceAlert() == null) {
             ivPriceAlert.setVisibility(View.INVISIBLE);

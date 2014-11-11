@@ -17,6 +17,7 @@
 package net.bither.model;
 
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.utils.Utils;
 import net.bither.charts.entity.DateValueEntity;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.StringUtil;
@@ -86,7 +87,7 @@ public class Depth implements Serializable {
 				bidSumVolume = bidSumVolume + volume;
 				DateValueEntity dateValueEntity = new DateValueEntity(
 						(float) bidSumVolume,
-						StringUtil.formatDoubleToMoneyString(price), bidPrice);
+                        Utils.formatDoubleToMoneyString(price), bidPrice);
 				bidDateValueEntities.add(dateValueEntity);
 
 			}
@@ -108,14 +109,14 @@ public class Depth implements Serializable {
 				}
 				DateValueEntity dateValueEntity = new DateValueEntity(
 						(float) askSumVolume,
-						StringUtil.formatDoubleToMoneyString(price), askPrice);
+                        Utils.formatDoubleToMoneyString(price), askPrice);
 				askDateValueEntities.add(dateValueEntity);
 			}
 
 		}
 		int mixPrice = (askMinPrice + bidMaxPrice) / 2;
 		DateValueEntity zeroDateValue = new DateValueEntity(0,
-				StringUtil.formatDoubleToMoneyString(((double) mixPrice) / 100
+                Utils.formatDoubleToMoneyString(((double) mixPrice) / 100
 						* rate), mixPrice);
 		List<DateValueEntity> dateValueEntities = new ArrayList<DateValueEntity>();
 		dateValueEntities.addAll(bidDateValueEntities);

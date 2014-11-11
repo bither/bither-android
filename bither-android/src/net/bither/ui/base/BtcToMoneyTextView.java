@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.MarketUtil;
@@ -79,7 +80,7 @@ public class BtcToMoneyTextView extends TextView implements
 				double money = btc.doubleValue() / 100000000.0 * price;
 				setText(AppSharedPreference.getInstance()
 						.getDefaultExchangeType().getSymbol()
-						+ StringUtil.formatDoubleToMoneyString(money));
+						+ Utils.formatDoubleToMoneyString(money));
 			}
 		} else {
 			setText(BitherSetting.UNKONW_ADDRESS_STRING);
@@ -95,7 +96,7 @@ public class BtcToMoneyTextView extends TextView implements
 				double money = btc.doubleValue() / 100000000.0 * price;
 				setText(AppSharedPreference.getInstance()
 						.getDefaultExchangeType().getSymbol()
-						+ StringUtil.formatDoubleToMoneyString(money));
+						+ Utils.formatDoubleToMoneyString(money));
 			}
 		} else {
 			setText(BitherSetting.UNKONW_ADDRESS_STRING);

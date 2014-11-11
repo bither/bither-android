@@ -27,6 +27,7 @@ import android.widget.Button;
 
 import net.bither.R;
 import net.bither.bitherj.utils.GenericUtils;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.CurrencySymbolUtil;
@@ -93,7 +94,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
             if (price != 0) {
                 double money = (double) btc / 100000000.0 * price;
                 setText(AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol() +
-                        StringUtil.formatDoubleToMoneyString(money));
+                        Utils.formatDoubleToMoneyString(money));
                 showMoney = true;
             }
 
@@ -129,7 +130,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
             if (price != 0) {
                 double money = (double) btc / 100000000.0 * price;
                 setText(AppSharedPreference.getInstance().getDefaultExchangeType().getSymbol() +
-                        StringUtil.formatDoubleToMoneyString(money));
+                        Utils.formatDoubleToMoneyString(money));
             }
 
         }
