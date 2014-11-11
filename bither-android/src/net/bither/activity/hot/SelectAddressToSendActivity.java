@@ -37,6 +37,7 @@ import net.bither.SendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.listener.IBackClickListener;
@@ -62,6 +63,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
     private TextView tvAmount;
     private ListView lv;
     private TextView tvNoAddress;
+    private TextView tvSymbol;
     private ProgressBar pb;
 
     private ArrayList<AddressBalance> addresses = new ArrayList<AddressBalance>();
@@ -85,11 +87,13 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         tvAddress = (TextView) findViewById(R.id.tv_address);
         tvAmount = (TextView) findViewById(R.id.tv_btc);
+        tvSymbol = (TextView) findViewById(R.id.tv_symbol);
         tvNoAddress = (TextView) findViewById(R.id.tv_no_address);
         lv = (ListView) findViewById(R.id.lv);
         pb = (ProgressBar) findViewById(R.id.pb);
         lv.setAdapter(adapter);
         tvAddress.setText(receivingAddress);
+        tvSymbol.setText(AppSharedPreference.getInstance().getBitcoinUnit().name());
         tvAmount.setText(UnitUtil.formatValueWithBold(btc));
     }
 

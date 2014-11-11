@@ -223,19 +223,6 @@
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="2dp"
-                android:gravity="center"
-                android:shadowColor="@color/text_field_text_color"
-                android:shadowDx="1"
-                android:shadowDy="-1"
-                android:shadowRadius="0.5"
-                android:text="@string/bitcoin_symbol"
-                android:textColor="@color/white"
-                android:textSize="16sp"/>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

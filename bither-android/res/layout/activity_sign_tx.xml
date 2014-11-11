@@ -112,6 +112,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tv_symbol"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
@@ -149,6 +150,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/tv_fee_symbol"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"

@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
+import net.bither.preference.AppSharedPreference;
 import net.bither.util.StringUtil;
 import net.bither.util.UnitUtil;
 import net.bither.util.WalletUtils;
@@ -52,6 +53,11 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         TextView tvAddress = (TextView) findViewById(R.id.tv_address);
         TextView tvBtc = (TextView) findViewById(R.id.tv_btc);
         TextView tvFee = (TextView) findViewById(R.id.tv_fee);
+        TextView tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
+        String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        tvSymbol.setText(symbol);
+        tvFeeSymbol.setText(symbol);
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
         TextView tvLowPriorityWarn = (TextView) findViewById(R.id.tv_low_priority_warn);
