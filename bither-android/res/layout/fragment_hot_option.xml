@@ -38,6 +38,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_bitcoin_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <LinearLayout
                     android:id="@+id/ll_switch_to_cold"
                     android:layout_width="match_parent"

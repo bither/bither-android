@@ -33,8 +33,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.StringUtil;
+import net.bither.util.UnitUtil;
 
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
@@ -78,7 +77,6 @@ public class AddressFragmentListItemView extends FrameLayout implements
         ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
-        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSlimSymbol(tvBalance));
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
                 .v_transaction_immuture);
@@ -111,6 +109,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llExtra.setVisibility(View.VISIBLE);
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
+        ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSlimSymbol(tvBalance));
         if (address.hasPrivKey()) {
             ivWatchOnlyType.setVisibility(GONE);
             ivPrivateType.setVisibility(VISIBLE);
@@ -119,7 +118,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
             ivPrivateType.setVisibility(GONE);
         }
         if (this.address != null && this.address.isSyncComplete()) {
-            tvBalance.setText(StringUtil.formatValueWithBold(this.address.getBalance()));
+            tvBalance.setText(UnitUtil.formatValueWithBold(this.address.getBalance()));
             tvBalanceMoney.setBigInteger(BigInteger.valueOf(this.address.getBalance()));
             tvTransactionCount.setText(Integer.toString(this.address.txCount()));
 
@@ -144,10 +143,6 @@ public class AddressFragmentListItemView extends FrameLayout implements
             tvBalance.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             tvBalanceMoney.setBigInteger(null);
             vTransactionImmuture.setVisibility(View.GONE);
-//            if (address.isError()) {
-//                llExtra.setVisibility(View.GONE);
-//                llMonitorFailed.setVisibility(View.VISIBLE);
-//            }
         }
         if (address.isFromXRandom()) {
             ibtnXRandomLabel.setVisibility(View.VISIBLE);

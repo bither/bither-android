@@ -85,6 +85,11 @@
                         android:textSize="18sp" />
                 </LinearLayout>
 
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_bitcoin_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <FrameLayout
                     android:id="@+id/ll_back_up"
                     android:layout_width="match_parent"

@@ -390,8 +390,7 @@ public class HotActivity extends BaseFragmentActivity {
 
     }
 
-
-    private void refreshTotalBalance() {
+    public void refreshTotalBalance() {
         new Thread(new Runnable() {
             @Override
             public void run() {

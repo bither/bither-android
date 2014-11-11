@@ -31,10 +31,10 @@ import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PieChartView;
 import net.bither.ui.base.RotatableFrameLayout;
-import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 
 import java.math.BigInteger;
 
@@ -106,18 +106,18 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
             total = total.add(btcWatchOnly);
         }
-        tvBtc.setText(GenericUtils.formatValue(total.longValue()));
-        Bitmap btcSymbol = CurrencySymbolUtil.getBtcSlimSymbol(tvPrivate);
+        tvBtc.setText(UnitUtil.formatValue(total.longValue()));
+        Bitmap btcSymbol = UnitUtil.getBtcSlimSymbol(tvPrivate);
         ivPrivateSymbol.setImageBitmap(btcSymbol);
         ivWatchOnlySymbol.setImageBitmap(btcSymbol);
         if (btcPrivate != null && btcPrivate.signum() > 0) {
-            tvPrivate.setText(GenericUtils.formatValue(btcPrivate.longValue()));
+            tvPrivate.setText(UnitUtil.formatValue(btcPrivate.longValue()));
             llPrivate.setVisibility(View.VISIBLE);
         } else {
             llPrivate.setVisibility(View.GONE);
         }
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
-            tvWatchOnly.setText(GenericUtils.formatValue(btcWatchOnly.longValue()));
+            tvWatchOnly.setText(UnitUtil.formatValue(btcWatchOnly.longValue()));
             llWatchOnly.setVisibility(View.VISIBLE);
         } else {
             llWatchOnly.setVisibility(View.GONE);

@@ -26,14 +26,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import net.bither.R;
-import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 
 public class BtcToMoneyButton extends Button implements OnClickListener,
         MarketTickerChangedObserver {
@@ -69,7 +68,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
         } else {
             setBackgroundResource(R.drawable.btn_small_red_selector);
         }
-        setText(GenericUtils.formatValue(btc));
+        setText(UnitUtil.formatValue(btc));
         setCompoundDrawables(getSymbolDrawable(), null, null, null);
     }
 
@@ -77,7 +76,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
         if (showMoney) {
             return null;
         } else {
-            Bitmap bmp = CurrencySymbolUtil.getBtcSlimSymbol(this);
+            Bitmap bmp = UnitUtil.getBtcSlimSymbol(this);
             BitmapDrawable d = new BitmapDrawable(getResources(), bmp);
             d.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
             return d;
@@ -87,7 +86,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
     @Override
     public void onClick(View v) {
         if (showMoney) {
-            setText(GenericUtils.formatValue(btc));
+            setText(UnitUtil.formatValue(btc));
             showMoney = false;
         } else {
             getPrice();
@@ -124,7 +123,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
 
     private void showBtcInfo() {
         if (!showMoney) {
-            setText(GenericUtils.formatValue(btc));
+            setText(UnitUtil.formatValue(btc));
         } else {
             getPrice();
             if (price != 0) {

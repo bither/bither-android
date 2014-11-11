@@ -30,6 +30,7 @@ import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 import net.bither.util.WalletUtils;
 
 public class SubtransactionListItem extends FrameLayout implements View.OnClickListener {
@@ -86,7 +87,7 @@ public class SubtransactionListItem extends FrameLayout implements View.OnClickL
             tvMessage.setVisibility(View.VISIBLE);
         }
         if (value != 0) {
-            tvBtc.setText(GenericUtils.formatValue(value));
+            tvBtc.setText(UnitUtil.formatValue(value));
         } else {
             tvBtc.setText("");
         }
