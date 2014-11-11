@@ -45,6 +45,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.ChooseModeActivity;
 import net.bither.R;
@@ -74,6 +75,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 
 import java.io.File;
 import java.util.List;
@@ -84,6 +86,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvTransactionFee;
+    private SettingSelectorView ssvBitcoinUnit;
     private Button btnSwitchToCold;
     private Button btnAvatar;
     private Button btnCheck;
@@ -104,6 +107,50 @@ public class OptionHotFragment extends Fragment implements Selectable,
             startActivity(intent);
         }
     };
+
+    private SettingSelector bitcoinUnitSelector = new SettingSelector() {
+        @Override
+        public int getOptionCount() {
+            return UnitUtil.BitcoinUnit.values().length;
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            return UnitUtil.BitcoinUnit.values()[index].name();
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_bitcoin_unit);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getBitcoinUnit().ordinal();
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            if (index != getCurrentOptionIndex()) {
+                AppSharedPreference.getInstance().setBitcoinUnit(UnitUtil.BitcoinUnit.values()
+                        [index]);
+                if (BitherApplication.hotActivity != null) {
+                    BitherApplication.hotActivity.refreshTotalBalance();
+                }
+            }
+        }
+    };
+
     private SettingSelector currencySelector = new SettingSelector() {
         private int length = ExchangeUtil.Currency.values().length;
 
@@ -430,6 +477,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvCurrency = (SettingSelectorView) view.findViewById(R.id.ssv_currency);
         ssvMarket = (SettingSelectorView) view.findViewById(R.id.ssv_market);
         ssvTransactionFee = (SettingSelectorView) view.findViewById(R.id.ssv_transaction_fee);
+        ssvBitcoinUnit = (SettingSelectorView) view.findViewById(R.id.ssv_bitcoin_unit);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -443,6 +491,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
+        ssvBitcoinUnit.setSelector(bitcoinUnitSelector);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;

@@ -84,7 +84,6 @@ public class UnitUtil {
     private static final int MinBlackValue = 0;
 
     private static BitcoinUnit unit() {
-        AppSharedPreference.getInstance().setBitcoinUnit(BitcoinUnit.bits);
         return AppSharedPreference.getInstance().getBitcoinUnit();
     }
 

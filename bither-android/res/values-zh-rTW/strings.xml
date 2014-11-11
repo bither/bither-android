@@ -404,4 +404,6 @@
     <string name="launch_sequence_switch_to_cold">切換到冷錢包</string>
     <string name="launch_sequence_switch_to_cold_warn">確認切換到冷錢包模式?\n\n冷錢包應該運行在離線的備用手機上.\n熱錢包可以監控冷錢包.\n一旦切換成冷錢包便不能切換回熱錢包.</string>
 
+    <!-- bitcoin unit -->
+    <string name="setting_name_bitcoin_unit">顯示單位</string>
 </resources>

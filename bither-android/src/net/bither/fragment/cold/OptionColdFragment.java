@@ -51,6 +51,7 @@ import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -62,6 +63,7 @@ import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.UnitUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -75,12 +77,50 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private Button btnCloneFrom;
     private Button btnBackupTime;
     private Button btnAdvance;
+    private SettingSelectorView ssvBitcoinUnit;
     private FrameLayout flBackTime;
     private ProgressBar pbBackTime;
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
 
+    private SettingSelectorView.SettingSelector bitcoinUnitSelector = new SettingSelectorView
+            .SettingSelector() {
+        @Override
+        public int getOptionCount() {
+            return UnitUtil.BitcoinUnit.values().length;
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            return UnitUtil.BitcoinUnit.values()[index].name();
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_bitcoin_unit);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getBitcoinUnit().ordinal();
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            AppSharedPreference.getInstance().setBitcoinUnit(UnitUtil.BitcoinUnit.values()[index]);
+        }
+    };
 
     private OnClickListener toSignActivityClickListener = new OnClickListener() {
 
@@ -237,6 +277,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         btnCloneTo = (Button) view.findViewById(R.id.btn_clone_to);
         btnCloneFrom = (Button) view.findViewById(R.id.btn_clone_from);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
+        ssvBitcoinUnit = (SettingSelectorView) view.findViewById(R.id.ssv_bitcoin_unit);
         llQrForAll = (LinearLayout) view.findViewById(R.id.ll_qr_all_keys);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         flBackTime = (FrameLayout) view.findViewById(R.id.ll_back_up);
@@ -261,6 +302,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         btnCloneFrom.setOnClickListener(cloneFromClick);
         llQrForAll.setOnClickListener(qrForAllClick);
         btnAdvance.setOnClickListener(advanceClick);
+        ssvBitcoinUnit.setSelector(bitcoinUnitSelector);
         btnBackupTime = (Button) view.findViewById(R.id.btn_backup_time);
         btnBackupTime.setOnClickListener(backupTimeListener);
         showBackupTime();
