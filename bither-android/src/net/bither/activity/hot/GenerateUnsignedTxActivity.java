@@ -41,9 +41,9 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
-import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
@@ -137,15 +137,17 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         btnSend = (Button) findViewById(R.id.btn_send);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
-        tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
+        tvBalance.setText(UnitUtil.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvBalance));
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
-        btcAmountView.setInputPrecision(8);
-        btcAmountView.setHintPrecision(4);
-        btcAmountView.setShift(0);
+        int precision = (int) Math.floor(Math.log10(AppSharedPreference.getInstance()
+                .getBitcoinUnit().satoshis));
+        btcAmountView.setInputPrecision(precision);
+        btcAmountView.setHintPrecision(Math.min(4, precision));
+        btcAmountView.setShift(8 - precision);
 
         final CurrencyAmountView localAmountView = (CurrencyAmountView) findViewById(R.id
                 .cav_local);

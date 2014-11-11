@@ -45,6 +45,7 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
@@ -128,15 +129,16 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
+        tvBalance.setText(UnitUtil.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
-        btcAmountView.setInputPrecision(8);
-        btcAmountView.setHintPrecision(4);
-        btcAmountView.setShift(0);
+        int precision = (int)Math.floor(Math.log10(AppSharedPreference.getInstance().getBitcoinUnit().satoshis));
+        btcAmountView.setInputPrecision(precision);
+        btcAmountView.setHintPrecision(Math.min(4, precision));
+        btcAmountView.setShift(8 - precision);
 
         final CurrencyAmountView localAmountView = (CurrencyAmountView) findViewById(R.id
                 .cav_local);
