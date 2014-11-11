@@ -30,10 +30,10 @@ import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.PieChartView;
 import net.bither.ui.base.RotatableFrameLayout;
-import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 
 import java.math.BigInteger;
 
@@ -106,7 +106,7 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
             total = total.add(btcWatchOnly);
         }
         tvBtc.setText(GenericUtils.formatValue(total.longValue()));
-        Bitmap btcSymbol = CurrencySymbolUtil.getBtcSlimSymbol(tvPrivate);
+        Bitmap btcSymbol = UnitUtil.getBtcSlimSymbol(tvPrivate);
         ivPrivateSymbol.setImageBitmap(btcSymbol);
         ivWatchOnlySymbol.setImageBitmap(btcSymbol);
         if (btcPrivate != null && btcPrivate.signum() > 0) {

@@ -62,10 +62,10 @@ import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.TransactionsUtil;
+import net.bither.util.UnitUtil;
 
 import java.math.BigInteger;
 
@@ -129,7 +129,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
-        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
+        ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);

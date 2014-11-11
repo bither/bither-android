@@ -22,8 +22,8 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
-import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtil;
 
 import java.util.List;
 
@@ -39,8 +39,8 @@ public class DialogBalanceDetail extends DialogWithArrow {
         tvReceived = (TextView) findViewById(R.id.tv_received);
         tvSent = (TextView) findViewById(R.id.tv_sent);
         tvTransactionCount.setText(Integer.toString(info.txCount));
-        tvReceived.setText(StringUtil.formatValueWithBold(info.totalReceived));
-        tvSent.setText(StringUtil.formatValueWithBold(info.totalSent));
+        tvReceived.setText(UnitUtil.formatValueWithBold(info.totalReceived));
+        tvSent.setText(UnitUtil.formatValueWithBold(info.totalSent));
     }
 
     @Override

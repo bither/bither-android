@@ -29,6 +29,7 @@ import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil;
+import net.bither.util.UnitUtil;
 import net.bither.xrandom.URandom;
 
 import java.util.Currency;
@@ -64,6 +65,7 @@ public class AppSharedPreference {
     private static final String PREFS_KEY_LAST_USED = "last_used";
 
     private static final String PIN_CODE = "pin_code";
+    private static final String BITCOIN_UNIT = "bitcoin_unit";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -354,5 +356,18 @@ public class AppSharedPreference {
                     .hashCode()));
         }
         return true;
+    }
+
+    public UnitUtil.BitcoinUnit getBitcoinUnit() {
+        int ordinal = mPreferences.getInt(BITCOIN_UNIT, 0);
+        if (ordinal >= 0 && ordinal < UnitUtil.BitcoinUnit.values().length) {
+            return UnitUtil.BitcoinUnit.values()[ordinal];
+        } else {
+            return UnitUtil.BitcoinUnit.BTC;
+        }
+    }
+
+    public void setBitcoinUnit(UnitUtil.BitcoinUnit unit) {
+        mPreferences.edit().putInt(BITCOIN_UNIT, unit.ordinal()).commit();
     }
 }

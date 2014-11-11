@@ -50,10 +50,10 @@ import net.bither.model.Market;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.util.CurrencySymbolUtil;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.UnitUtil;
 import net.bither.util.WalletUtils;
 
 public class MarketListHeader extends FrameLayout implements MarketTickerChangedObserver,
@@ -132,7 +132,7 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
         refreshAnim.setFillBefore(false);
         refreshAnim.setRepeatCount(0);
         refreshAnim.setFillAfter(false);
-        ivVolumeSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvVolume));
+        ivVolumeSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvVolume, UnitUtil.BitcoinUnit.BTC));
         llTrending.setOnClickListener(new MarketDetailClick());
         llTrending.setOnTouchListener(new TrendingTouch());
         setMarket(MarketUtil.getDefaultMarket());

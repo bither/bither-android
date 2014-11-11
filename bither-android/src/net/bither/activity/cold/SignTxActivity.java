@@ -41,6 +41,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
 import net.bither.util.StringUtil;
+import net.bither.util.UnitUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.List;
@@ -103,9 +104,8 @@ public class SignTxActivity extends SwipeRightActivity implements
     private void showTransaction() {
         tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
-        tvAmount.setText(StringUtil.formatValueWithBold(qrCodeTransport
-                .getTo()));
-        tvFee.setText(StringUtil.formatValueWithBold(qrCodeTransport.getFee()));
+        tvAmount.setText(UnitUtil.formatValueWithBold(qrCodeTransport.getTo()));
+        tvFee.setText(UnitUtil.formatValueWithBold(qrCodeTransport.getFee()));
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
         if (address == null) {
