@@ -89,7 +89,10 @@ public class UnitUtil {
     }
 
     public static String formatValue(final long value) {
-        BitcoinUnit unit = unit();
+        return formatValue(value, unit());
+    }
+
+    public static String formatValue(final long value, BitcoinUnit unit){
         String sign = value < 0 ? "-" : "";
         long absValue = Math.abs(value);
         long coins = absValue / unit.satoshis;
