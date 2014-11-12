@@ -57,7 +57,6 @@ import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
@@ -245,7 +244,7 @@ public class HotActivity extends BaseFragmentActivity {
                     (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
             if (addresses != null && addresses.size() > 0) {
                 Address a = WalletUtils.findPrivateKey(addresses.get(0));
-                if (a != null && a.hasPrivKey()) {
+                if (a != null && a.hasPrivKey() && !a.isFromXRandom()) {
                     new DialogGenerateAddressFinalConfirm(this, addresses.size(),
                             a.isFromXRandom()).show();
                 }
@@ -268,7 +267,6 @@ public class HotActivity extends BaseFragmentActivity {
             DropdownMessage.showDropdownMessage(this, R.string.donate_thanks);
         }
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     private class PageChangeListener implements OnPageChangeListener {

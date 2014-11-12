@@ -21,6 +21,7 @@ package net.bither.xrandom;
 import com.google.common.primitives.Ints;
 
 import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.utils.Sha256Hash;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -32,7 +33,7 @@ import java.util.concurrent.Executors;
 
 public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public static final int POOL_SIZE = 32 * 200;
-    private static final int ENTROPY_XOR_MULTIPLIER = 16;
+    private static final int ENTROPY_XOR_MULTIPLIER = (int) Math.pow(2, 4);
 
     public static interface UEntropyCollectorListener {
         public void onUEntropySourceError(Exception e, IUEntropySource source);
@@ -137,11 +138,14 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                     }
                 }
                 in.read(itemBytes);
+                if (i == ENTROPY_XOR_MULTIPLIER - 1) {
+                    itemBytes = Sha256Hash.create(itemBytes).getBytes();
+                }
                 if (bytes == null) {
                     bytes = itemBytes;
                 } else {
                     for (int k = 0;
-                         k < bytes.length;
+                         k < bytes.length && k < itemBytes.length;
                          k++) {
                         bytes[k] = (byte) (bytes[k] ^ itemBytes[k]);
                     }

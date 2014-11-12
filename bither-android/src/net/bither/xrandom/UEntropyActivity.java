@@ -19,6 +19,7 @@
 package net.bither.xrandom;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -44,6 +45,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -289,15 +291,25 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.putExtra(BitherSetting.INTENT_REF
-                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                                AppSharedPreference.getInstance().getPasswordSeed() == null);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                                addresses);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                        DialogGenerateAddressFinalConfirm dialog = new
+                                DialogGenerateAddressFinalConfirm(UEntropyActivity.this,
+                                addresses.size(), true);
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                Intent intent = new Intent();
+                                intent.putExtra(BitherSetting.INTENT_REF
+                                        .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
+                                        AppSharedPreference.getInstance().getPasswordSeed() ==
+                                                null);
+                                intent.putExtra(BitherSetting.INTENT_REF
+                                        .ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                                overridePendingTransition(0, R.anim.slide_out_bottom);
+                            }
+                        });
+                        dialog.show();
                     }
                 });
             }
@@ -485,7 +497,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                     return;
                 }
 
-                KeyUtil.addAddressListByDesc(null, addressList);
+                KeyUtil.addAddressListByDesc(service, addressList);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
