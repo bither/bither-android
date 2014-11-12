@@ -67,6 +67,7 @@ public class EditPasswordThread extends Thread {
 
     public boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
         List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
+        addresses.addAll(AddressManager.getInstance().getTrashAddresses());
         if (addresses.size() == 0) {
             return true;
         }
