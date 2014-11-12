@@ -40,16 +40,17 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.UnitUtil;
+import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.preference.AppSharedPreference;
 
 /**
  * Created by songchenwen on 14-11-11.
  */
-public class UnitUtil {
-    public static enum BitcoinUnit {
-        BTC(100000000, 2, R.drawable.symbol_btc_slim, R.drawable.symbol_btc), bits(100, 0,
-                R.drawable.symbol_bits_slim, R.drawable.symbol_bits);
-
+public class UnitUtilWrapper {
+    public static enum BitcoinUnitWrapper {
+        BTC(BitcoinUnit.BTC), bits(BitcoinUnit.bits),;
+        public BitcoinUnit unit;
         public long satoshis;
         public int slimDrawable;
         public int boldDrawable;
@@ -57,11 +58,21 @@ public class UnitUtil {
         private Bitmap bmpSlim;
         private Bitmap bmp;
 
-        BitcoinUnit(long satoshis, int boldAfterDot, int slimDrawable, int boldDrawable) {
-            this.satoshis = satoshis;
-            this.slimDrawable = slimDrawable;
-            this.boldDrawable = boldDrawable;
-            this.boldAfterDot = boldAfterDot;
+        BitcoinUnitWrapper(BitcoinUnit unit) {
+            this.unit = unit;
+            satoshis = unit.satoshis;
+            switch (unit) {
+                case BTC:
+                    boldAfterDot = 2;
+                    slimDrawable = R.drawable.symbol_btc_slim;
+                    boldDrawable = R.drawable.symbol_btc;
+                    break;
+                case bits:
+                    boldAfterDot = 0;
+                    slimDrawable = R.drawable.symbol_bits_slim;
+                    boldDrawable = R.drawable.symbol_bits;
+                    break;
+            }
         }
 
         public Bitmap getBmpSlim() {
@@ -79,33 +90,28 @@ public class UnitUtil {
             }
             return bmp;
         }
+
+        public static final BitcoinUnitWrapper getWrapper(BitcoinUnit unit) {
+            switch (unit) {
+                case BTC:
+                    return BitcoinUnitWrapper.BTC;
+                case bits:
+                    return BitcoinUnitWrapper.bits;
+            }
+            return BitcoinUnitWrapper.BTC;
+        }
     }
 
     private static final int MinBlackValue = 0;
 
-    private static BitcoinUnit unit() {
+    private static BitcoinUnitWrapper unit() {
         return AppSharedPreference.getInstance().getBitcoinUnit();
     }
 
     public static String formatValue(final long value) {
-        return formatValue(value, unit());
+        return UnitUtil.formatValue(value, unit().unit);
     }
 
-    public static String formatValue(final long value, BitcoinUnit unit){
-        String sign = value < 0 ? "-" : "";
-        long absValue = Math.abs(value);
-        long coins = absValue / unit.satoshis;
-        long satoshis = absValue % unit.satoshis;
-        String strCoins = Long.toString(coins);
-        String strSatoshis = "";
-        strSatoshis = Long.toString(satoshis + unit.satoshis);
-        strSatoshis = strSatoshis.substring(1, strSatoshis.length());
-        if (unit.satoshis > Math.pow(10, 2)) {
-            strSatoshis = strSatoshis.replaceFirst("[0]{1," + Integer.toString((int) Math.floor
-                    (Math.log10(unit.satoshis) - 2)) + "}$", "");
-        }
-        return sign + strCoins + (strSatoshis.length() > 0 ? "." : "") + strSatoshis;
-    }
 
     public static SpannableString formatValueWithBold(final long value) {
         return formatValueWithBold(value, unit().boldAfterDot);
@@ -132,7 +138,7 @@ public class UnitUtil {
         return getBtcSymbol(tv, unit());
     }
 
-    public static Bitmap getBtcSymbol(TextView tv, BitcoinUnit unit) {
+    public static Bitmap getBtcSymbol(TextView tv, BitcoinUnitWrapper unit) {
         return getBtcSymbol(adjustTextColor(tv.getTextColors().getDefaultColor()),
                 tv.getTextSize(), unit);
     }
@@ -141,7 +147,7 @@ public class UnitUtil {
         return getBtcSymbol(color, 0, unit());
     }
 
-    public static Bitmap getBtcSymbol(int color, float textSize, BitcoinUnit unit) {
+    public static Bitmap getBtcSymbol(int color, float textSize, BitcoinUnitWrapper unit) {
         Bitmap bmp = scaleToTextSize(unit.getBmp(), textSize);
         if (color == Color.WHITE) {
             return bmp;
@@ -153,7 +159,7 @@ public class UnitUtil {
         return getBtcSlimSymbol(tv, unit());
     }
 
-    public static Bitmap getBtcSlimSymbol(TextView tv, BitcoinUnit unit) {
+    public static Bitmap getBtcSlimSymbol(TextView tv, BitcoinUnitWrapper unit) {
         return getBtcSlimSymbol(adjustTextColor(tv.getTextColors().getDefaultColor()),
                 tv.getTextSize(), unit);
     }
@@ -162,7 +168,7 @@ public class UnitUtil {
         return getBtcSlimSymbol(color, 0, unit());
     }
 
-    public static Bitmap getBtcSlimSymbol(int color, float textSize, BitcoinUnit unit) {
+    public static Bitmap getBtcSlimSymbol(int color, float textSize, BitcoinUnitWrapper unit) {
         Bitmap bmp = scaleToTextSize(unit.getBmpSlim(), textSize);
         if (color == Color.WHITE) {
             return bmp;

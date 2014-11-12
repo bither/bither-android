@@ -30,9 +30,8 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 public class BtcToMoneyButton extends Button implements OnClickListener,
         MarketTickerChangedObserver {
@@ -68,7 +67,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
         } else {
             setBackgroundResource(R.drawable.btn_small_red_selector);
         }
-        setText(UnitUtil.formatValue(btc));
+        setText(UnitUtilWrapper.formatValue(btc));
         setCompoundDrawables(getSymbolDrawable(), null, null, null);
     }
 
@@ -76,7 +75,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
         if (showMoney) {
             return null;
         } else {
-            Bitmap bmp = UnitUtil.getBtcSlimSymbol(this);
+            Bitmap bmp = UnitUtilWrapper.getBtcSlimSymbol(this);
             BitmapDrawable d = new BitmapDrawable(getResources(), bmp);
             d.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
             return d;
@@ -86,7 +85,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
     @Override
     public void onClick(View v) {
         if (showMoney) {
-            setText(UnitUtil.formatValue(btc));
+            setText(UnitUtilWrapper.formatValue(btc));
             showMoney = false;
         } else {
             getPrice();
@@ -123,7 +122,7 @@ public class BtcToMoneyButton extends Button implements OnClickListener,
 
     private void showBtcInfo() {
         if (!showMoney) {
-            setText(UnitUtil.formatValue(btc));
+            setText(UnitUtilWrapper.formatValue(btc));
         } else {
             getPrice();
             if (price != 0) {

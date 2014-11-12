@@ -42,7 +42,7 @@ import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.util.UIUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             }
             AddressBalance a = getItem(position);
             h.tvAddress.setText(a.address.getShortAddress());
-            h.tvBalance.setText(UnitUtil.formatValueWithBold(a.balance));
+            h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
             if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {

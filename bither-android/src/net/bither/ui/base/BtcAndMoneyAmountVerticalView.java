@@ -24,8 +24,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.utils.GenericUtils;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
 
@@ -72,7 +71,7 @@ public class BtcAndMoneyAmountVerticalView extends FrameLayout {
 			tvBtc.setTextColor(getContext().getResources()
 					.getColor(R.color.red));
 		}
-		tvBtc.setText(UnitUtil.formatValue(btc.longValue()));
+		tvBtc.setText(UnitUtilWrapper.formatValue(btc.longValue()));
 		tvMoney.setBigInteger(btc);
 	}
 

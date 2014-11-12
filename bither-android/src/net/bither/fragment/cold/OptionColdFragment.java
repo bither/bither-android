@@ -63,7 +63,7 @@ import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.StringUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.Date;
 import java.util.List;
@@ -88,12 +88,12 @@ public class OptionColdFragment extends Fragment implements Selectable {
             .SettingSelector() {
         @Override
         public int getOptionCount() {
-            return UnitUtil.BitcoinUnit.values().length;
+            return UnitUtilWrapper.BitcoinUnitWrapper.values().length;
         }
 
         @Override
         public String getOptionName(int index) {
-            return UnitUtil.BitcoinUnit.values()[index].name();
+            return UnitUtilWrapper.BitcoinUnitWrapper.values()[index].name();
         }
 
         @Override
@@ -118,7 +118,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onOptionIndexSelected(int index) {
-            AppSharedPreference.getInstance().setBitcoinUnit(UnitUtil.BitcoinUnit.values()[index]);
+            AppSharedPreference.getInstance().setBitcoinUnit(UnitUtilWrapper.BitcoinUnitWrapper
+                    .values()[index]);
         }
     };
 

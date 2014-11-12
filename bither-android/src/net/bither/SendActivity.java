@@ -42,7 +42,6 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
@@ -66,7 +65,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.TransactionsUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
 
@@ -129,8 +128,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        tvBalance.setText(UnitUtil.formatValue(address.getBalance()));
-        ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvBalance));
+        tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
+        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);

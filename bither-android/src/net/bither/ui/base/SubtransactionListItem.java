@@ -26,11 +26,10 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.utils.GenericUtils;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
 public class SubtransactionListItem extends FrameLayout implements View.OnClickListener {
@@ -87,7 +86,7 @@ public class SubtransactionListItem extends FrameLayout implements View.OnClickL
             tvMessage.setVisibility(View.VISIBLE);
         }
         if (value != 0) {
-            tvBtc.setText(UnitUtil.formatValue(value));
+            tvBtc.setText(UnitUtilWrapper.formatValue(value));
         } else {
             tvBtc.setText("");
         }

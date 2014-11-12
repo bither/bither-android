@@ -42,7 +42,7 @@ import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BitcoinURI;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,7 +94,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         lv.setAdapter(adapter);
         tvAddress.setText(receivingAddress);
         tvSymbol.setText(AppSharedPreference.getInstance().getBitcoinUnit().name());
-        tvAmount.setText(UnitUtil.formatValueWithBold(btc));
+        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(btc));
     }
 
     private void getAddressesForSending() {
@@ -150,7 +150,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             }
             AddressBalance a = getItem(position);
             h.tvAddress.setText(a.address.getShortAddress());
-            h.tvBalance.setText(UnitUtil.formatValueWithBold(a.balance));
+            h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
             if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {

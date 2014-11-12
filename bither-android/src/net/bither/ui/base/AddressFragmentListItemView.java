@@ -33,7 +33,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
@@ -109,7 +109,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llExtra.setVisibility(View.VISIBLE);
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
-        ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSlimSymbol(tvBalance));
+        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
         if (address.hasPrivKey()) {
             ivWatchOnlyType.setVisibility(GONE);
             ivPrivateType.setVisibility(VISIBLE);
@@ -118,7 +118,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
             ivPrivateType.setVisibility(GONE);
         }
         if (this.address != null && this.address.isSyncComplete()) {
-            tvBalance.setText(UnitUtil.formatValueWithBold(this.address.getBalance()));
+            tvBalance.setText(UnitUtilWrapper.formatValueWithBold(this.address.getBalance()));
             tvBalanceMoney.setBigInteger(BigInteger.valueOf(this.address.getBalance()));
             tvTransactionCount.setText(Integer.toString(this.address.txCount()));
 

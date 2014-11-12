@@ -23,7 +23,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.util.UIUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.List;
 
@@ -39,8 +39,8 @@ public class DialogBalanceDetail extends DialogWithArrow {
         tvReceived = (TextView) findViewById(R.id.tv_received);
         tvSent = (TextView) findViewById(R.id.tv_sent);
         tvTransactionCount.setText(Integer.toString(info.txCount));
-        tvReceived.setText(UnitUtil.formatValueWithBold(info.totalReceived));
-        tvSent.setText(UnitUtil.formatValueWithBold(info.totalSent));
+        tvReceived.setText(UnitUtilWrapper.formatValueWithBold(info.totalReceived));
+        tvSent.setText(UnitUtilWrapper.formatValueWithBold(info.totalSent));
     }
 
     @Override

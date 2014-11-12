@@ -66,7 +66,7 @@ import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 
 public class GenerateUnsignedTxActivity extends SwipeRightActivity implements EntryKeyboardView
@@ -137,8 +137,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         btnSend = (Button) findViewById(R.id.btn_send);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
-        tvBalance.setText(UnitUtil.formatValue(address.getBalance()));
-        ivBalanceSymbol.setImageBitmap(UnitUtil.getBtcSymbol(tvBalance));
+        tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
+        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);

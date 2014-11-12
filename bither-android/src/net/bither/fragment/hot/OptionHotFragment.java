@@ -75,7 +75,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.io.File;
 import java.util.List;
@@ -111,12 +111,12 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private SettingSelector bitcoinUnitSelector = new SettingSelector() {
         @Override
         public int getOptionCount() {
-            return UnitUtil.BitcoinUnit.values().length;
+            return UnitUtilWrapper.BitcoinUnitWrapper.values().length;
         }
 
         @Override
         public String getOptionName(int index) {
-            return UnitUtil.BitcoinUnit.values()[index].name();
+            return UnitUtilWrapper.BitcoinUnitWrapper.values()[index].name();
         }
 
         @Override
@@ -142,8 +142,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void onOptionIndexSelected(int index) {
             if (index != getCurrentOptionIndex()) {
-                AppSharedPreference.getInstance().setBitcoinUnit(UnitUtil.BitcoinUnit.values()
-                        [index]);
+                AppSharedPreference.getInstance().setBitcoinUnit(UnitUtilWrapper
+                        .BitcoinUnitWrapper.values()[index]);
                 if (BitherApplication.hotActivity != null) {
                     BitherApplication.hotActivity.refreshTotalBalance();
                 }

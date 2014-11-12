@@ -26,10 +26,11 @@ import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil;
-import net.bither.util.UnitUtil;
+import net.bither.util.UnitUtilWrapper;
 import net.bither.xrandom.URandom;
 
 import java.util.Currency;
@@ -358,16 +359,16 @@ public class AppSharedPreference {
         return true;
     }
 
-    public UnitUtil.BitcoinUnit getBitcoinUnit() {
+    public UnitUtilWrapper.BitcoinUnitWrapper getBitcoinUnit() {
         int ordinal = mPreferences.getInt(BITCOIN_UNIT, 0);
-        if (ordinal >= 0 && ordinal < UnitUtil.BitcoinUnit.values().length) {
-            return UnitUtil.BitcoinUnit.values()[ordinal];
+        if (ordinal >= 0 && ordinal < BitcoinUnit.values().length) {
+            return UnitUtilWrapper.BitcoinUnitWrapper.values()[ordinal];
         } else {
-            return UnitUtil.BitcoinUnit.BTC;
+            return UnitUtilWrapper.BitcoinUnitWrapper.BTC;
         }
     }
 
-    public void setBitcoinUnit(UnitUtil.BitcoinUnit unit) {
+    public void setBitcoinUnit(UnitUtilWrapper.BitcoinUnitWrapper unit) {
         mPreferences.edit().putInt(BITCOIN_UNIT, unit.ordinal()).commit();
     }
 }
