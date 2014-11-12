@@ -66,42 +66,16 @@ public class EditPasswordThread extends Thread {
     }
 
     public boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
-        List<Address> privKeyAddresses = AddressManager.getInstance().getPrivKeyAddresses();
-        List<Address> trashAddresses = AddressManager.getInstance().getTrashAddresses();
-        if (privKeyAddresses.size() + trashAddresses.size() == 0) {
-            return true;
-        }
         try {
-            for (Address a : privKeyAddresses) {
-                String encryptedStr = a.getEncryptPrivKey();
-                String newEncryptedStr = PrivateKeyUtil.changePassword(encryptedStr, oldPassword, newPassword);
-                if (newEncryptedStr == null) {
-                    return false;
-                }
-                a.setEncryptPrivKey(newEncryptedStr);
-            }
-            for (Address a : trashAddresses) {
-                String encryptedStr = a.getEncryptPrivKey();
-                String newEncryptedStr = PrivateKeyUtil.changePassword(encryptedStr, oldPassword, newPassword);
-                if (newEncryptedStr == null) {
-                    return false;
-                }
-                a.setEncryptPrivKey(newEncryptedStr);
-            }
-            if (privKeyAddresses.size() > 0) {
-                AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(privKeyAddresses.get
-                        (0)));
-            } else {
-                AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(trashAddresses.get
-                        (0)));
+            AddressManager.getInstance().changePassword(oldPassword, newPassword);
+            if (AddressManager.getInstance().getPrivKeyAddresses().size() > 0) {
+                AppSharedPreference.getInstance().setPasswordSeed(
+                        new PasswordSeed(AddressManager.getInstance().getPrivKeyAddresses().get(0)));
+            } else if (AddressManager.getInstance().getTrashAddresses().size() > 0) {
+                AppSharedPreference.getInstance().setPasswordSeed(
+                        new PasswordSeed(AddressManager.getInstance().getTrashAddresses().get(0)));
             }
 
-            for (Address address : privKeyAddresses) {
-                address.savePrivateKey();
-            }
-            for (Address address : trashAddresses) {
-                address.saveTrashKey();
-            }
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
                 BackupUtil.backupColdKey(false);
             } else {
