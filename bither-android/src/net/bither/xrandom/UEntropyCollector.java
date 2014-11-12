@@ -153,6 +153,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return new byte[length];
         }
         return bytes;
     }

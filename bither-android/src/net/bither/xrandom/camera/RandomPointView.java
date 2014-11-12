@@ -83,8 +83,8 @@ public class RandomPointView extends View {
                  i++) {
                 points[i * 2] = random.nextFloat() * width;
                 points[i * 2 + 1] = random.nextFloat() * height;
-                canvas.drawPoints(points, paint);
             }
+            canvas.drawPoints(points, paint);
             postDelayed(redraw, DotsRemainTime);
         }
         super.draw(canvas);

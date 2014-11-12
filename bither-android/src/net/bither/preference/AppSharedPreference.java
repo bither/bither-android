@@ -67,6 +67,7 @@ public class AppSharedPreference {
 
     private static final String PIN_CODE = "pin_code";
     private static final String BITCOIN_UNIT = "bitcoin_unit";
+    private static final String XRANDOM_INSTRUCTION_AUTO_SHOW = "xrandom_instruction_auto_show";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -370,5 +371,13 @@ public class AppSharedPreference {
 
     public void setBitcoinUnit(UnitUtilWrapper.BitcoinUnitWrapper unit) {
         mPreferences.edit().putInt(BITCOIN_UNIT, unit.ordinal()).commit();
+    }
+
+    public boolean shouldAutoShowXRandomInstruction() {
+        return mPreferences.getBoolean(XRANDOM_INSTRUCTION_AUTO_SHOW, true);
+    }
+
+    public void setAutoShowXRandomInstruction(boolean show) {
+        mPreferences.edit().putBoolean(XRANDOM_INSTRUCTION_AUTO_SHOW, show).commit();
     }
 }
