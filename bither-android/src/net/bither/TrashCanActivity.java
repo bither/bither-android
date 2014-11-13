@@ -33,6 +33,8 @@ import net.bither.bitherj.core.BitherjSettings;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.OverScrollableListView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
@@ -161,39 +163,42 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                         getString(R.string.trash_address_restore), new Runnable() {
                     @Override
                     public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
+                        new ThreadNeedService(dp, TrashCanActivity.this){
                             @Override
-                            public void run() {
-                                dp.show();
-                            }
-                        });
-                        AddressManager.getInstance().restorePrivKey(address);
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dp.dismiss();
-                                refresh();
-                                notifyDataSetChanged();
-                                if (AppSharedPreference.getInstance().getAppMode() ==
-                                        BitherjSettings.AppMode.HOT) {
-                                    Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
-                                            (1);
-                                    if (f instanceof HotAddressFragment) {
-                                        HotAddressFragment hotAddressFragment =
-                                                (HotAddressFragment) f;
-                                        hotAddressFragment.refresh();
+                            public void runWithService(BlockchainService service) {
+                                service.stopAndUnregister();
+                                AddressManager.getInstance().restorePrivKey(address);
+                                service.startAndRegister();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(dp.isShowing()) {
+                                            dp.dismiss();
+                                        }
+                                        refresh();
+                                        notifyDataSetChanged();
+                                        if (AppSharedPreference.getInstance().getAppMode() ==
+                                                BitherjSettings.AppMode.HOT) {
+                                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
+                                                    (1);
+                                            if (f instanceof HotAddressFragment) {
+                                                HotAddressFragment hotAddressFragment =
+                                                        (HotAddressFragment) f;
+                                                hotAddressFragment.refresh();
+                                            }
+                                        } else {
+                                            Fragment f = BitherApplication.coldActivity
+                                                    .getFragmentAtIndex(1);
+                                            if (f instanceof ColdAddressFragment) {
+                                                ColdAddressFragment coldAddressFragment =
+                                                        (ColdAddressFragment) f;
+                                                coldAddressFragment.refresh();
+                                            }
+                                        }
                                     }
-                                } else {
-                                    Fragment f = BitherApplication.coldActivity
-                                            .getFragmentAtIndex(1);
-                                    if (f instanceof ColdAddressFragment) {
-                                        ColdAddressFragment coldAddressFragment =
-                                                (ColdAddressFragment) f;
-                                        coldAddressFragment.refresh();
-                                    }
-                                }
+                                });
                             }
-                        });
+                        }.start();
                     }
                 }).show();
             }
