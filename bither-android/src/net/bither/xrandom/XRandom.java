@@ -18,10 +18,12 @@ package net.bither.xrandom;
 
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.IRandom;
+import net.bither.util.LogUtil;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 
-public class XRandom implements IRandom {
+public class XRandom extends SecureRandom implements IRandom {
 
     @Override
     public byte[] nextBytes(int length) {
@@ -35,6 +37,7 @@ public class XRandom implements IRandom {
     }
 
     private byte[] getRandomBytes(int byteLength) {
+        LogUtil.d(XRandom.class.getSimpleName(), "Request " + byteLength + " bytes from XRandom");
         byte[] uRandomBytes = getURandomBytes(byteLength);
         if (this.uEntropy == null) {
             return uRandomBytes;
@@ -69,5 +72,27 @@ public class XRandom implements IRandom {
             d = new BigInteger(uEntropyBytes);
         } while (d.equals(BigInteger.ZERO));
         return uEntropyBytes;
+    }
+
+    @Override
+    public void setSeed(long seed) {
+    }
+
+    @Override
+    public synchronized void nextBytes(byte[] bytes) {
+        byte[] nextBytes = getRandomBytes(bytes.length);
+        if (nextBytes.length != bytes.length) {
+            throw new RuntimeException("xrandom bytes length not match");
+        }
+        for (int i = 0;
+             i < bytes.length && i < nextBytes.length;
+             i++) {
+            bytes[i] = nextBytes[i];
+        }
+    }
+
+    @Override
+    public byte[] generateSeed(int numBytes) {
+        return getRandomBytes(numBytes);
     }
 }
