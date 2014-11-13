@@ -22,6 +22,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -35,6 +36,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -115,8 +117,14 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
 
         @Override
-        public String getOptionName(int index) {
-            return UnitUtilWrapper.BitcoinUnitWrapper.values()[index].name();
+        public CharSequence getOptionName(int index) {
+            UnitUtilWrapper.BitcoinUnitWrapper unit = UnitUtilWrapper.BitcoinUnitWrapper.values()
+                    [index];
+            SpannableString s = new SpannableString("  " + unit.name());
+            Bitmap bmp = UnitUtilWrapper.getBtcSlimSymbol(getResources().getColor(R.color.text_field_text_color),
+                    getResources().getDisplayMetrics().scaledDensity * 15.6f, unit);
+            s.setSpan(new ImageSpan(getActivity(), bmp, ImageSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return s;
         }
 
         @Override
@@ -174,9 +182,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public String getOptionName(int index) {
             if(index >= 0 && index < length){
-                return ExchangeUtil.Currency.values()[index].getName();
+                return ExchangeUtil.Currency.values()[index].getSymbol() + " " + ExchangeUtil
+                        .Currency.values()[index].getName();
             }
-            return ExchangeUtil.Currency.values()[0].getName();
+            return ExchangeUtil.Currency.values()[0].getSymbol() + " " + ExchangeUtil.Currency
+                    .values()[0].getName();
         }
 
 

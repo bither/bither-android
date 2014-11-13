@@ -66,9 +66,20 @@ public class PinCodeDotsView extends View {
     @Override
     public void draw(Canvas canvas) {
         canvas.drawARGB(0, 0, 0, 0);
-        float size = canvas.getHeight() - circlePaint.getStrokeWidth() * 2;
-        float distance = (canvas.getWidth() - circlePaint.getStrokeWidth() * 2 - size * 4) / 3;
-        float y = canvas.getHeight() / 2.0f;
+        int height = getHeight();
+        int width = getWidth();
+        if(height == 0 || width == 0){
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    invalidate();
+                }
+            }, 200);
+            return;
+        }
+        float size = height - circlePaint.getStrokeWidth() * 2;
+        float distance = (width - circlePaint.getStrokeWidth() * 2 - size * 4) / 3;
+        float y = height / 2.0f;
         float radius = size / 2.0f;
         for (int i = 0;
              i < totalDotCount;

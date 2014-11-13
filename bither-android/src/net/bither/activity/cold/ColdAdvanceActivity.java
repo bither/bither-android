@@ -93,6 +93,12 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         dp = new DialogProgress(this, R.string.please_wait);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ssvPinCode.loadData();
+    }
+
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

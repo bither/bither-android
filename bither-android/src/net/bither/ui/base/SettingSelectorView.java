@@ -28,19 +28,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.bitherj.utils.Utils;
 
 public class SettingSelectorView extends FrameLayout implements OnClickListener {
     public static interface SettingSelector {
         public int getOptionCount();
 
-        public String getOptionName(int index);
+        public CharSequence getOptionName(int index);
 
-        public String getOptionNote(int index);
+        public CharSequence getOptionNote(int index);
 
         public Drawable getOptionDrawable(int index);
 
-        public String getSettingName();
+        public CharSequence getSettingName();
 
         public int getCurrentOptionIndex();
 
@@ -141,8 +140,8 @@ public class SettingSelectorView extends FrameLayout implements OnClickListener 
                 TextView tvNote = (TextView) v.findViewById(R.id.tv_option_note);
                 ImageView iv = (ImageView) v.findViewById(R.id.iv_check);
                 tv.setText(selector.getOptionName(i));
-                String note = selector.getOptionNote(i);
-                if (Utils.isEmpty(note)) {
+                CharSequence note = selector.getOptionNote(i);
+                if (note == null || note.length() == 0) {
                     tvNote.setText("");
                 } else {
                     tvNote.setText(note);

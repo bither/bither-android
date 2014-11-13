@@ -19,10 +19,14 @@ package net.bither.fragment.cold;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -92,8 +96,16 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
 
         @Override
-        public String getOptionName(int index) {
-            return UnitUtilWrapper.BitcoinUnitWrapper.values()[index].name();
+        public CharSequence getOptionName(int index) {
+            UnitUtilWrapper.BitcoinUnitWrapper unit = UnitUtilWrapper.BitcoinUnitWrapper.values()
+                    [index];
+            SpannableString s = new SpannableString("  " + unit.name());
+            Bitmap bmp = UnitUtilWrapper.getBtcSlimSymbol(getResources().getColor(R.color
+                    .text_field_text_color), getResources().getDisplayMetrics().scaledDensity *
+                    15.6f, unit);
+            s.setSpan(new ImageSpan(getActivity(), bmp, ImageSpan.ALIGN_BASELINE), 0, 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return s;
         }
 
         @Override
