@@ -16,8 +16,6 @@
 
 package net.bither.xrandom;
 
-import net.bither.bitherj.AbstractApp;
-
 import net.bither.util.LogUtil;
 
 import java.math.BigInteger;
