@@ -43,9 +43,19 @@ public class PinCodeUtil {
     }
 
     public static boolean checkBackground() {
+        boolean beforeBack = isPreBackground;
         isPreBackground = !AbstractApp.bitherjApp.isApplicationRunInForeground();
-        if (isPreBackground) {
+        if (isPreBackground && !beforeBack) {
             backgroundEnterTime = System.currentTimeMillis();
+        }
+        return isPreBackground;
+    }
+
+    public static boolean checkBackgroundWithoutLockDelay() {
+        boolean beforeBack = isPreBackground;
+        isPreBackground = !AbstractApp.bitherjApp.isApplicationRunInForeground();
+        if (isPreBackground && !beforeBack) {
+            backgroundEnterTime = System.currentTimeMillis() - CausePinCodeBackgroundTime * 2;
         }
         return isPreBackground;
     }

@@ -55,7 +55,7 @@ public class BaseFragmentActivity extends FragmentActivity {
                     sleep(200);
                 } catch (InterruptedException e) {
                 }
-                PinCodeUtil.checkBackground();
+                PinCodeUtil.checkBackgroundWithoutLockDelay();
             }
         }.start();
     }

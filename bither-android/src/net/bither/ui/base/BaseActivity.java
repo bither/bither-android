@@ -55,7 +55,7 @@ public class BaseActivity extends Activity {
                     sleep(200);
                 } catch (InterruptedException e) {
                 }
-                PinCodeUtil.checkBackground();
+                PinCodeUtil.checkBackgroundWithoutLockDelay();
             }
         }.start();
     }
