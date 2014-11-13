@@ -196,7 +196,7 @@ public class HotActivity extends BaseFragmentActivity {
 
         configureTopBarSize();
 
-        tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        configureTabMainIcons();
         tbtnMain.setBigInteger(null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
@@ -379,7 +379,6 @@ public class HotActivity extends BaseFragmentActivity {
                 uploadAvatarRunnable.run();
                 DownloadAvatarRunnable downloadAvatarRunnable = new DownloadAvatarRunnable();
                 downloadAvatarRunnable.run();
-
             }
         }).start();
     }
@@ -405,13 +404,24 @@ public class HotActivity extends BaseFragmentActivity {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
+                        configureTabMainIcons();
                         tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf(btcWatchOnly));
-
                     }
                 });
-
             }
         }).start();
+    }
+
+    private void configureTabMainIcons() {
+        switch (AppSharedPreference.getInstance().getBitcoinUnit()) {
+            case bits:
+                tbtnMain.setIconResource(R.drawable.tab_main_bits,
+                        R.drawable.tab_main_bits_checked);
+                break;
+            case BTC:
+            default:
+                tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        }
     }
 
     public void notifPriceAlert(BitherSetting.MarketType marketType) {
