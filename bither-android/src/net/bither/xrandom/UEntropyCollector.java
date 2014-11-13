@@ -182,7 +182,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                  i++) {
                 int position = (int) (Math.random() * data.length);
                 try {
-                    locatorBytes = AbstractApp.random.nextBytes(Ints.BYTES);
+                    locatorBytes = URandom.nextBytes(Ints.BYTES);
                     int value = Math.abs(Ints.fromByteArray(locatorBytes));
                     position = (int) (((float) value / (float) Integer.MAX_VALUE) * data.length);
                 } catch (Exception e) {

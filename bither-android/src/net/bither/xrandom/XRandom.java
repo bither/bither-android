@@ -17,18 +17,13 @@
 package net.bither.xrandom;
 
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.IRandom;
+
 import net.bither.util.LogUtil;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-public class XRandom extends SecureRandom implements IRandom {
-
-    @Override
-    public byte[] nextBytes(int length) {
-        return getRandomBytes(length);
-    }
+public class XRandom extends SecureRandom  {
 
     private IUEntropy uEntropy;
 
@@ -55,8 +50,8 @@ public class XRandom extends SecureRandom implements IRandom {
         BigInteger d;
         byte[] uRandomBytes;
         do {
-            uRandomBytes = AbstractApp.random.nextBytes(length);
-            uRandomBytes[0] = (byte) (uRandomBytes[0] & 0x7F); // ensure positive number
+            uRandomBytes = URandom.nextBytes(length);
+
             d = new BigInteger(uRandomBytes);
 
         } while (d.equals(BigInteger.ZERO));
@@ -68,7 +63,6 @@ public class XRandom extends SecureRandom implements IRandom {
         byte[] uEntropyBytes;
         do {
             uEntropyBytes = this.uEntropy.nextBytes(length);
-            uEntropyBytes[0] = (byte) (uEntropyBytes[0] & 0x7F); // ensure positive number
             d = new BigInteger(uEntropyBytes);
         } while (d.equals(BigInteger.ZERO));
         return uEntropyBytes;

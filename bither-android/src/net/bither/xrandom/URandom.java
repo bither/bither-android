@@ -16,18 +16,18 @@
 
 package net.bither.xrandom;
 
-import net.bither.bitherj.IRandom;
+
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class URandom implements IRandom {
+public class URandom {
 
     public static File urandomFile = new File("/dev/urandom");
 
-    public synchronized byte[] nextBytes(int length) {
+    public static synchronized byte[] nextBytes(int length) {
         byte[] bytes = new byte[length];
         if (!urandomFile.exists()) {
             throw new RuntimeException("Unable to generate URandom bytes on this Android device");
