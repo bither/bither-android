@@ -166,9 +166,13 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                         new ThreadNeedService(dp, TrashCanActivity.this){
                             @Override
                             public void runWithService(BlockchainService service) {
-                                service.stopAndUnregister();
+                                if (service != null) {
+                                    service.stopAndUnregister();
+                                }
                                 AddressManager.getInstance().restorePrivKey(address);
-                                service.startAndRegister();
+                                if(service != null) {
+                                    service.startAndRegister();
+                                }
                                 ThreadUtil.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
