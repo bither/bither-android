@@ -151,6 +151,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             AddressBalance a = getItem(position);
             h.tvAddress.setText(a.address.getShortAddress());
             h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
+            h.ivSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(h.tvBalance));
             if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
@@ -179,6 +180,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         class ViewHolder {
             TextView tvAddress;
             TextView tvBalance;
+            ImageView ivSymbol;
             ImageView ivType;
             ImageButton ibtnAddressFull;
 
@@ -186,6 +188,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
                 tvAddress = (TextView) v.findViewById(R.id.tv_address);
                 tvBalance = (TextView) v.findViewById(R.id.tv_balance);
                 ivType = (ImageView) v.findViewById(R.id.iv_type);
+                ivSymbol = (ImageView) v.findViewById(R.id.iv_symbol);
                 ibtnAddressFull = (ImageButton) v.findViewById(R.id.ibtn_address_full);
             }
         }
