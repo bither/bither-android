@@ -63,7 +63,8 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         llOriginQRCode.setVisibility(View.GONE);
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey());
+        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey(),
+                address.getAddress());
     }
 
     @Override
@@ -160,7 +161,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                             public void run() {
                                 dialogProgress.dismiss();
                                 if (str != null) {
-                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str);
+                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str, address.getAddress());
                                     dialogPrivateKeyTextQrCode.show();
                                 } else {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
