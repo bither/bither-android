@@ -22,7 +22,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -54,6 +53,7 @@ import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
@@ -576,10 +576,26 @@ public class OptionHotFragment extends Fragment implements Selectable,
     }
 
     private void configureSwitchToCold() {
-        if (AddressManager.getInstance().getAllAddresses().size() > 0) {
-            llSwitchToCold.setVisibility(View.GONE);
+        final Runnable check = new Runnable() {
+            @Override
+            public void run() {
+                if (AddressManager.getInstance().getAllAddresses().size() > 0) {
+                    llSwitchToCold.setVisibility(View.GONE);
+                } else {
+                    llSwitchToCold.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+        if (AbstractApp.addressIsReady) {
+            check.run();
         } else {
-            llSwitchToCold.setVisibility(View.VISIBLE);
+            new Thread() {
+                @Override
+                public void run() {
+                    AddressManager.getInstance().getAllAddresses();
+                    ThreadUtil.runOnMainThread(check);
+                }
+            }.start();
         }
     }
 
