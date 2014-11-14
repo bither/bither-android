@@ -424,5 +424,5 @@
     <string name="launch_sequence_switch_to_cold_warn">Set this phone as Bither Cold?\n\nBither Cold need to be run on a offline phone.\nYou can monitor Bither Cold by Bither Hot.\nOnce set you can\'t switch back.</string>
 
     <!-- bitcoin unit -->
-    <string name="setting_name_bitcoin_unit">Display Unit</string>
+    <string name="setting_name_bitcoin_unit">Default Unit</string>
 </resources>

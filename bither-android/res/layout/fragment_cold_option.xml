@@ -22,6 +22,11 @@
                 android:paddingBottom="6dp"
                 android:paddingTop="10dp">
 
+                <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_bitcoin_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <Button
                     android:id="@+id/btn_get_sign"
                     android:layout_width="match_parent"
@@ -85,18 +90,13 @@
                         android:textSize="18sp" />
                 </LinearLayout>
 
-                <include layout="@layout/layout_vertical_seperator"/>
-
-                <net.bither.ui.base.SettingSelectorView
-                    android:id="@+id/ssv_bitcoin_unit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
                 <FrameLayout
                     android:id="@+id/ll_back_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
+
+                    <include layout="@layout/layout_vertical_seperator"/>
 
                     <Button
                         android:id="@+id/btn_backup_time"

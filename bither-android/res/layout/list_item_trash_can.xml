@@ -9,17 +9,32 @@
               android:paddingRight="15dp"
               android:paddingTop="5dp">
 
-    <TextView
-        android:id="@+id/tv_address"
+    <FrameLayout
+        android:id="@+id/fl_address"
         android:layout_width="wrap_content"
-        android:layout_height="34dp"
+        android:layout_height="80dp"
         android:layout_gravity="center"
-        android:gravity="center_vertical"
-        android:textColor="@color/text_field_text_color"
-        android:textSize="16sp"/>
+        android:background="@drawable/ui_touchable_bg"
+        android:focusable="true"
+        android:foreground="@drawable/dropdown_ic_arrow_selector"
+        android:foregroundGravity="bottom|right">
+
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_field_text_color"
+            android:textSize="18sp"/>
+    </FrameLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1"/>
 
     <ImageButton
-        android:id="@+id/ibtn_address_full"
+        android:id="@+id/ibtn_view_on_net"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -27,9 +42,5 @@
         android:background="@drawable/ui_touchable_bg"
         android:src="@drawable/address_full_show_button"/>
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_weight="1"/>
 
 </LinearLayout>

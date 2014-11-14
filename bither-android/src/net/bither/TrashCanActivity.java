@@ -18,12 +18,15 @@
 
 package net.bither;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -35,16 +38,17 @@ import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.OverScrollableListView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
-import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
  * Created by songchenwen on 14-11-3.
@@ -114,36 +118,77 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                 h = (ViewHolder) convertView.getTag();
             }
             Address address = getItem(position);
-            h.tv.setText(address.getShortAddress());
-            h.ibtnFull.setOnClickListener(new AddressFullClick(address.getAddress()));
+            h.tv.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
+            h.flAddress.setOnClickListener(new CopyClick(address.getAddress()));
+            h.ibtnViewOnNet.setOnClickListener(new ViewOnNetClick(address.getAddress()));
+            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                h.ibtnViewOnNet.setVisibility(View.VISIBLE);
+            } else {
+                h.ibtnViewOnNet.setVisibility(View.GONE);
+            }
             convertView.setOnClickListener(new ItemClick(address));
             return convertView;
         }
 
         class ViewHolder {
             TextView tv;
-            ImageButton ibtnFull;
+            FrameLayout flAddress;
+            ImageButton ibtnViewOnNet;
 
             public ViewHolder(View v) {
                 tv = (TextView) v.findViewById(R.id.tv_address);
-                ibtnFull = (ImageButton) v.findViewById(R.id.ibtn_address_full);
+                flAddress = (FrameLayout) v.findViewById(R.id.fl_address);
+                ibtnViewOnNet = (ImageButton) v.findViewById(R.id.ibtn_view_on_net);
                 v.setTag(this);
             }
         }
 
-        class AddressFullClick implements View.OnClickListener {
+        class CopyClick implements View.OnClickListener {
             private String address;
 
-            public AddressFullClick(String address) {
+            public CopyClick(String address) {
                 this.address = address;
             }
 
             @Override
             public void onClick(View v) {
-                LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
-                map.put(address, 0L);
-                DialogAddressFull dialog = new DialogAddressFull(TrashCanActivity.this, map);
-                dialog.show(v);
+                StringUtil.copyString(address);
+                DropdownMessage.showDropdownMessage(TrashCanActivity.this,
+                        R.string.copy_address_success);
+            }
+        }
+
+        class ViewOnNetClick implements View.OnClickListener {
+            private String address;
+
+            ViewOnNetClick(String address) {
+                this.address = address;
+            }
+
+            @Override
+            public void onClick(View v) {
+                DialogConfirmTask dialog = new DialogConfirmTask(v.getContext(),
+                        getString(R.string.address_option_view_on_blockchain_info), new Runnable() {
+                    @Override
+                    public void run() {
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http" +
+                                        "://blockchain.info/address/" + address)).addFlags(Intent
+                                        .FLAG_ACTIVITY_NEW_TASK);
+                                try {
+                                    startActivity(intent);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    DropdownMessage.showDropdownMessage(TrashCanActivity.this,
+                                            R.string.find_browser_error);
+                                }
+                            }
+                        });
+                    }
+                });
+                dialog.show();
             }
         }
 
