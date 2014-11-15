@@ -33,14 +33,31 @@
         android:layout_height="1dp"
         android:layout_weight="1"/>
 
-    <ImageButton
-        android:id="@+id/ibtn_view_on_net"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_marginLeft="5dp"
-        android:background="@drawable/ui_touchable_bg"
-        android:src="@drawable/address_full_show_button"/>
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/ibtn_view_on_net"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="3dp"
+            android:background="@drawable/ui_touchable_bg"
+            android:src="@drawable/address_full_show_button"/>
+
+        <ImageButton
+            android:id="@+id/ibtn_restore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="3dp"
+            android:background="@drawable/ui_touchable_bg"
+            android:src="@drawable/trash_can_restore"/>
+    </LinearLayout>
 
 
 </LinearLayout>

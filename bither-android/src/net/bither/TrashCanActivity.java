@@ -126,7 +126,7 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
             } else {
                 h.ibtnViewOnNet.setVisibility(View.GONE);
             }
-            convertView.setOnClickListener(new ItemClick(address));
+            h.ibtnRestore.setOnClickListener(new RestoreClick(address));
             return convertView;
         }
 
@@ -134,11 +134,13 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
             TextView tv;
             FrameLayout flAddress;
             ImageButton ibtnViewOnNet;
+            ImageButton ibtnRestore;
 
             public ViewHolder(View v) {
                 tv = (TextView) v.findViewById(R.id.tv_address);
                 flAddress = (FrameLayout) v.findViewById(R.id.fl_address);
                 ibtnViewOnNet = (ImageButton) v.findViewById(R.id.ibtn_view_on_net);
+                ibtnRestore = (ImageButton) v.findViewById(R.id.ibtn_restore);
                 v.setTag(this);
             }
         }
@@ -192,10 +194,10 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
             }
         }
 
-        class ItemClick implements View.OnClickListener {
+        class RestoreClick implements View.OnClickListener {
             private Address address;
 
-            ItemClick(Address address) {
+            RestoreClick(Address address) {
                 this.address = address;
             }
 
