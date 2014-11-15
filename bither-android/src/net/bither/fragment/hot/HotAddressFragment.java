@@ -322,6 +322,9 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                     lv.postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            if(addressesToShowAdded == null){
+                                return;
+                            }
                             for (int i = 0;
                                  i < addressesToShowAdded.size();
                                  i++) {

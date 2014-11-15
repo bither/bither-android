@@ -221,7 +221,9 @@ public class MarketFragment extends Fragment implements Refreshable,
 
     @Override
     public void onUnselected() {
-        header.reset();
+        if(header != null) {
+            header.reset();
+        }
     }
 
     public void notifPriceAlert(BitherSetting.MarketType marketType) {
