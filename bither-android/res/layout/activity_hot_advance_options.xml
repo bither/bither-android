@@ -30,7 +30,6 @@
                         android:paddingLeft="@dimen/card_list_padding"
                         android:paddingRight="@dimen/card_list_padding">
 
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -103,6 +102,7 @@
                                 android:padding="10dp"
                                 android:text="@string/trash_can"
                                 android:textColor="@color/text_field_text_color"
+                                android:drawableRight="@drawable/trash_can_button_icon"
                                 android:textSize="18sp"/>
 
                             <include layout="@layout/layout_vertical_seperator"/>
@@ -130,12 +130,10 @@
                                 android:text="@string/export_log"
                                 android:textColor="@color/text_field_text_color"
                                 android:textSize="18sp" />
-
-
                         </LinearLayout>
 
-
                         <include layout="@layout/layout_card_foreground_single" />
+
                     </FrameLayout>
 
                     <ImageView
@@ -177,13 +175,12 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-
-
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
             <include layout="@layout/layout_dropdown_message" />
+
         </FrameLayout>
 
         <FrameLayout
@@ -226,11 +223,7 @@
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-
             </LinearLayout>
-
         </FrameLayout>
-
     </net.bither.ui.base.SwipeRightTouchView>
-
 </FrameLayout>

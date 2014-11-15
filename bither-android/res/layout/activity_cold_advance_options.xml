@@ -78,11 +78,12 @@
                                 android:padding="10dp"
                                 android:text="@string/trash_can"
                                 android:textColor="@color/text_field_text_color"
+                                android:drawableRight="@drawable/trash_can_button_icon"
                                 android:textSize="18sp"/>
-
                         </LinearLayout>
 
                         <include layout="@layout/layout_card_foreground_single" />
+
                     </FrameLayout>
 
                     <ImageView
@@ -124,13 +125,12 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-
-
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
             <include layout="@layout/layout_dropdown_message" />
+
         </FrameLayout>
 
         <FrameLayout
@@ -176,5 +176,4 @@
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>
-
 </FrameLayout>
