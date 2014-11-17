@@ -42,8 +42,8 @@ public class ExchangeUtil {
         GBP("GBP", "£"),
         JPY("JPY", StringEscapeUtils.unescapeHtml("&yen;")),
         KRW("KRW", "₩"),
-        CAD("CAD", "C$"),
-        AUD("AUD", "A$");
+        CAD("CAD", "$"),
+        AUD("AUD", "$");
 
         private String symbol;
         private String name;
