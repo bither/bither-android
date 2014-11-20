@@ -192,32 +192,12 @@ public class PeerProvider implements IPeerProvider {
     public List<Peer> getPeersWithLimit(int limit) {
         List<Peer> peerItemList = new ArrayList<Peer>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from peers where peer_connected_cnt=1" +
-                " limit " + Integer.toString(limit);
+        String sql = "select * from peers order by peer_address limit " + Integer.toString(limit);
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
             peerItemList.add(applyCursor(c));
         }
         c.close();
-        if (peerItemList.size() < limit) {
-            sql = "select * from peers where peer_connected_cnt=0" +
-                    " limit " + Integer.toString(limit - peerItemList.size());
-            c = db.rawQuery(sql, null);
-            while (c.moveToNext()) {
-                peerItemList.add(applyCursor(c));
-            }
-            c.close();
-        }
-        if (peerItemList.size() < limit) {
-            sql = "select * from peers where peer_connected_cnt>1" +
-                    " limit " + Integer.toString(limit - peerItemList
-                    .size());
-            c = db.rawQuery(sql, null);
-            while (c.moveToNext()) {
-                peerItemList.add(applyCursor(c));
-            }
-            c.close();
-        }
         return peerItemList;
     }
 
@@ -295,5 +275,14 @@ public class PeerProvider implements IPeerProvider {
         }
         return peerItem;
 
+    }
+
+    public void recreate() {
+        SQLiteDatabase db = mDb.getWritableDatabase();
+        db.beginTransaction();
+        db.execSQL("drop table " + AbstractDb.Tables.PEERS + ";");
+        db.execSQL(AbstractDb.CREATE_PEER_SQL);
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }

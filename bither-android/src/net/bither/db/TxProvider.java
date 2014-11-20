@@ -796,6 +796,7 @@ public class TxProvider implements ITxProvider {
     }
 
     public void clearAllTx() {
+        // todo: it can be recreate
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         db.delete(AbstractDb.Tables.TXS, "", new String[0]);
