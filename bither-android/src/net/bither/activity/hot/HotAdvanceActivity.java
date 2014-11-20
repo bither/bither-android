@@ -163,11 +163,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
-                        final File databaseTargetDir = FileUtil.getDiskDir("db", true);
+                        final File databaseTargetDir = new File(FileUtil.getDiskDir("db", true), "db.sqlite");
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
-                            File databaseDir = new File("/data/data/net.bither/databases");
+                            File databaseDir = new File(BitherApplication.mDbHelper.getReadableDatabase().getPath());
                             FileUtil.copyFile(databaseDir, databaseTargetDir);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -175,7 +175,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         HotAdvanceActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                                         getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
                             }
