@@ -19,6 +19,7 @@
 package net.bither.activity.hot;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
@@ -67,6 +69,7 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 
@@ -160,9 +163,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         final File logTagDir = FileUtil.getDiskDir("log", true);
+                        final File databaseTargetDir = FileUtil.getDiskDir("db", true);
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
+                            File databaseDir = new File("/data/data/net.bither/databases");
+                            FileUtil.copyFile(databaseDir, databaseTargetDir);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
