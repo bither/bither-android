@@ -75,7 +75,10 @@ public class BlockUtil {
         return b;
     }
 
-    public static Block dowloadSpvBlock() throws Exception {
+    public synchronized static Block dowloadSpvBlock() throws Exception {
+        if (AppSharedPreference.getInstance().getDownloadSpvFinish()) {
+            return null;
+        }
         Block block = null;
         try {
             DownloadSpvApi downloadSpvApi = new DownloadSpvApi();

@@ -45,6 +45,7 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseActivity;
@@ -53,6 +54,7 @@ import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.ProgressDialog;
+import net.bither.util.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
@@ -85,7 +87,7 @@ public class ChooseModeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(AppSharedPreference.getInstance().getAppMode() == null){
+        if (AppSharedPreference.getInstance().getAppMode() == null) {
             AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode.HOT);
         }
         if (URandom.urandomFile.exists()) {
@@ -196,6 +198,7 @@ public class ChooseModeActivity extends BaseActivity {
             } else if (appMode == BitherjSettings.AppMode.HOT) {
                 BitherApplication.getBitherApplication().startBlockchainService();
                 if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
+                    new Thread(new DownloadSpvRunnable(null)).start();
                     initView();
                     configureWarmWait();
                 } else {
