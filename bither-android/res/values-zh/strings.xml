@@ -100,6 +100,7 @@
     <string name="send_failed_missing_btc">发送失败. 可用余额中缺少 %s BTC.</string>
     <string name="send_failed_dust_out_put">发送失败. 这样小额的交易会被忽略.</string>
     <string name="send_failed_pendding">发送失败. %s BTC 正在等待确认.\n请等待一个新的确认后再交易.</string>
+    <string name="send_failed_max_tx_size">发送失败. 交易大小过大.\n请减少发送金额.</string>
     <string name="send_coins_fragment_sending_address_label">从</string>
     <string name="send_coins_fragment_receiving_address_label">发送给</string>
     <string name="send_coins_fragment_amount_label">金额</string>
@@ -353,8 +354,9 @@
     <string name="xrandom_uncheck_warn">极随机(XRandom)能提高随机性.\n确认不使用吗?</string>
     <string name="xrandom_final_confirm">您已成功生成%d个极随机私钥</string>
     <string name="xrandom_info_detail">极随机通过采集数据源以增加随机性.\n\n数据源包括摄像头、麦克风、磁场感应器、重力感应器等设备内置传感器.</string>
-    <string name="xrandom_info_guide">\n\n采集过程中您可通过晃动设备等方式增加所采集数据的随机性.</string>
+    <string name="xrandom_info_guide">\n\n采集过程中您可通过晃动设备发出声音等方式增加所采集数据的随机性.</string>
     <string name="generating_private_key_final_confirm">您已成功生成%d个私钥</string>
+    <string name="xrandom_instruction_auto_show_check">下次不再显示</string>
 
     <!-- qrcode-->
     <string name="switch_qrcode">切换二维码</string>
@@ -375,4 +377,35 @@
     <string name="rcheck_fail_recalculate_confirm">r 值检查失败, 重新签名交易?</string>
     <string name="rcheck_info">同一个地址的交易历史中出现重复的 r 值, 有可能导致私钥暴露.\n\nr 值检查会检查交易历史, 并确保不存在重复 r 值.</string>
     <string name="setting_name_rcheck">r 值检查</string>
+
+    <!-- trash -->
+    <string name="trash_private_key">移入回收站</string>
+    <string name="trash_with_money_warn">这个地址内还有比特币.\n您不能把它移入回收站.</string>
+    <string name="trashing_private_key">正在移入回收站</string>
+    <string name="trash_can">回收站</string>
+    <string name="trash_can_empty">回收站空</string>
+    <string name="trash_address_restore">还原地址?</string>
+
+    <!-- pin code -->
+    <string name="pin_code_enter_notice">输入您的 PIN 码</string>
+    <string name="pin_code_setting_name">PIN 码</string>
+    <string name="pin_code_setting_open">开启 PIN 码</string>
+    <string name="pin_code_setting_close">关闭 PIN 码</string>
+    <string name="pin_code_setting_change">修改 PIN 码</string>
+    <string name="pin_code_setting_open_msg">输入您的 PIN 码</string>
+    <string name="pin_code_setting_open_repeat_msg">再次输入您的 PIN 码</string>
+    <string name="pin_code_setting_open_repeat_wrong">两次输入的 PIN 码不同</string>
+    <string name="pin_code_setting_change_old_msg">输入您的原 PIN 码</string>
+    <string name="pin_code_setting_change_old_wrong">原 PIN 码错误</string>
+    <string name="pin_code_setting_change_new_msg">输入您的新 PIN 码</string>
+    <string name="pin_code_setting_change_new_repeat_msg">再次输入您的新 PIN 码</string>
+    <string name="pin_code_setting_change_repeat_wrong">两次输入的新 PIN 码不同</string>
+    <string name="pin_code_setting_close_wrong">PIN 码错误</string>
+
+    <!-- launch sequence -->
+    <string name="launch_sequence_switch_to_cold">切换到冷钱包</string>
+    <string name="launch_sequence_switch_to_cold_warn">确认切换到冷钱包模式?\n\n冷钱包应该运行在离线的备用手机上.\n热钱包可以监控冷钱包.\n一旦切换成冷钱包便不能切换回热钱包.</string>
+
+    <!-- bitcoin unit -->
+    <string name="setting_name_bitcoin_unit">默认单位</string>
 </resources>

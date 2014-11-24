@@ -82,7 +82,7 @@ public class TrendingGraphicData {
 			throws JSONException {
 		double high = 0;
 		double low = Double.MAX_VALUE;
-		double rate = ExchangeUtil.getExchangeRate();
+		double rate = ExchangeUtil.getRate();
 		double[] prices = new double[jsonArray.length()];
 		for (int i = 0; i < jsonArray.length(); i++) {
 			double price = jsonArray.getDouble(i) / 100 * rate;

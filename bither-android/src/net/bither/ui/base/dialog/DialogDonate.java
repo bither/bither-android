@@ -41,8 +41,8 @@ import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.util.GenericUtils;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,8 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             }
             AddressBalance a = getItem(position);
             h.tvAddress.setText(a.address.getShortAddress());
-            h.tvBalance.setText(GenericUtils.formatValueWithBold(a.balance));
+            h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
+            h.ivSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(h.tvBalance));
             if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
@@ -172,6 +173,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
 
         class ViewHolder {
             TextView tvAddress;
+            ImageView ivSymbol;
             TextView tvBalance;
             ImageView ivType;
             ImageButton ibtnAddressFull;
@@ -180,6 +182,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
                 tvAddress = (TextView) v.findViewById(R.id.tv_address);
                 tvBalance = (TextView) v.findViewById(R.id.tv_balance);
                 ivType = (ImageView) v.findViewById(R.id.iv_type);
+                ivSymbol = (ImageView) v.findViewById(R.id.iv_symbol);
                 ibtnAddressFull = (ImageButton) v.findViewById(R.id.ibtn_address_full);
                 tvAddress.setTextColor(Color.WHITE);
                 tvBalance.setTextColor(Color.WHITE);

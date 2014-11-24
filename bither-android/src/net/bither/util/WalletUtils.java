@@ -24,6 +24,10 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 
+import com.google.zxing.common.StringUtils;
+
+import net.bither.AndroidImplAbstractApp;
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
@@ -33,8 +37,11 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 import net.bither.preference.AppSharedPreference;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -154,6 +161,4 @@ public class WalletUtils {
                 && AddressManager.getInstance().getWatchOnlyAddresses().size() >= BitherSetting
                 .WATCH_ONLY_ADDRESS_COUNT_LIMIT;
     }
-
-
 }

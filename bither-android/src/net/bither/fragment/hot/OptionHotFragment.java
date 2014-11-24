@@ -24,12 +24,20 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -38,11 +46,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.ChooseModeActivity;
 import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
@@ -54,10 +65,11 @@ import net.bither.runnable.UploadAvatarRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogDonate;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSetAvatar;
-import net.bither.util.ExchangeUtil.ExchangeType;
+import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
@@ -65,6 +77,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.io.File;
 import java.util.List;
@@ -75,6 +88,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvTransactionFee;
+    private SettingSelectorView ssvBitcoinUnit;
+    private Button btnSwitchToCold;
     private Button btnAvatar;
     private Button btnCheck;
     private Button btnDonate;
@@ -82,6 +97,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private TextView tvWebsite;
     private TextView tvVersion;
     private ImageView ivLogo;
+    private View llSwitchToCold;
 
 
     private DialogProgress dp;
@@ -93,19 +109,68 @@ public class OptionHotFragment extends Fragment implements Selectable,
             startActivity(intent);
         }
     };
-    private SettingSelector currencySelector = new SettingSelector() {
 
+    private SettingSelector bitcoinUnitSelector = new SettingSelector() {
         @Override
         public int getOptionCount() {
-            return 2;
+            return UnitUtilWrapper.BitcoinUnitWrapper.values().length;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            UnitUtilWrapper.BitcoinUnitWrapper unit = UnitUtilWrapper.BitcoinUnitWrapper.values()
+                    [index];
+            SpannableString s = new SpannableString("  " + unit.name());
+            Bitmap bmp = UnitUtilWrapper.getBtcSlimSymbol(getResources().getColor(R.color.text_field_text_color),
+                    getResources().getDisplayMetrics().scaledDensity * 15.6f, unit);
+            s.setSpan(new ImageSpan(getActivity(), bmp, ImageSpan.ALIGN_BASELINE), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return s;
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_bitcoin_unit);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getBitcoinUnit().ordinal();
         }
 
         @Override
         public void onOptionIndexSelected(int index) {
-            if (index == 0) {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeType.USD);
-            } else {
-                AppSharedPreference.getInstance().setExchangeType(ExchangeType.CNY);
+            if (index != getCurrentOptionIndex()) {
+                AppSharedPreference.getInstance().setBitcoinUnit(UnitUtilWrapper
+                        .BitcoinUnitWrapper.values()[index]);
+                if (BitherApplication.hotActivity != null) {
+                    BitherApplication.hotActivity.refreshTotalBalance();
+                }
+            }
+        }
+    };
+
+    private SettingSelector currencySelector = new SettingSelector() {
+        private int length = ExchangeUtil.Currency.values().length;
+
+        @Override
+        public int getOptionCount() {
+            return length;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            if (index >= 0 && index < length) {
+                AppSharedPreference.getInstance().setExchangeType(ExchangeUtil.Currency.values()[index]);
             }
         }
 
@@ -116,10 +181,12 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public String getOptionName(int index) {
-            if (index == 0) {
-                return "USD";
+            if(index >= 0 && index < length){
+                return ExchangeUtil.Currency.values()[index].getSymbol() + " " + ExchangeUtil
+                        .Currency.values()[index].getName();
             }
-            return "CNY";
+            return ExchangeUtil.Currency.values()[0].getSymbol() + " " + ExchangeUtil.Currency
+                    .values()[0].getName();
         }
 
 
@@ -254,6 +321,42 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener switchToColdClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
+                    getStyledConfirmString(getString(R.string
+                            .launch_sequence_switch_to_cold_warn)), new Runnable() {
+                @Override
+                public void run() {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode
+                                    .COLD);
+                            startActivity(new Intent(getActivity(), ChooseModeActivity.class));
+                            getActivity().overridePendingTransition(R.anim.activity_in_drop, 0);
+                            getActivity().finish();
+                        }
+                    });
+                }
+            });
+            dialog.show();
+        }
+
+        private SpannableString getStyledConfirmString(String str) {
+            int firstLineEnd = str.indexOf("\n");
+            SpannableString spn = new SpannableString(str);
+            spn.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.red)), 0,
+                    firstLineEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spn.setSpan(new StyleSpan(Typeface.BOLD), 0, firstLineEnd,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spn.setSpan(new RelativeSizeSpan(0.8f), firstLineEnd, str.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return spn;
+        }
+    };
+
     private OnClickListener checkClick = new OnClickListener() {
 
         @Override
@@ -384,10 +487,13 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvCurrency = (SettingSelectorView) view.findViewById(R.id.ssv_currency);
         ssvMarket = (SettingSelectorView) view.findViewById(R.id.ssv_market);
         ssvTransactionFee = (SettingSelectorView) view.findViewById(R.id.ssv_transaction_fee);
+        ssvBitcoinUnit = (SettingSelectorView) view.findViewById(R.id.ssv_bitcoin_unit);
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         ivLogo = (ImageView) view.findViewById(R.id.iv_logo);
+        btnSwitchToCold = (Button) view.findViewById(R.id.btn_switch_to_cold);
+        llSwitchToCold = view.findViewById(R.id.ll_switch_to_cold);
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnDonate = (Button) view.findViewById(R.id.btn_donate);
@@ -395,6 +501,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);
+        ssvBitcoinUnit.setSelector(bitcoinUnitSelector);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         String version = null;
@@ -410,6 +517,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         } else {
             tvVersion.setVisibility(View.GONE);
         }
+        btnSwitchToCold.setOnClickListener(switchToColdClick);
         btnCheck.setOnClickListener(checkClick);
         btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
@@ -427,10 +535,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
             btnAvatar.setCompoundDrawablesWithIntrinsicBounds(null, null,
                     getResources().getDrawable(R.drawable.avatar_button_icon), null);
         }
-    }
-
-    @Override
-    public void onSelected() {
     }
 
     private class UpdateAvatarThread extends Thread {
@@ -454,10 +558,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 Bitmap result = Bitmap.createBitmap(bmpBorder.getWidth(), bmpBorder.getHeight(),
                         bmpBorder.getConfig());
                 Canvas c = new Canvas(result);
-                c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding,
-                                result.getWidth() - borderPadding,
-                                result.getHeight() - borderPadding), null
-                );
+                c.drawBitmap(avatar, null, new Rect(borderPadding, borderPadding, result.getWidth
+                        () - borderPadding, result.getHeight() - borderPadding), null);
                 c.drawBitmap(bmpBorder, 0, 0, null);
                 final BitmapDrawable d = new BitmapDrawable(getResources(), result);
                 ThreadUtil.runOnMainThread(new Runnable() {
@@ -471,5 +573,40 @@ public class OptionHotFragment extends Fragment implements Selectable,
             UploadAvatarRunnable uploadAvatarRunnable = new UploadAvatarRunnable();
             uploadAvatarRunnable.run();
         }
+    }
+
+    private void configureSwitchToCold() {
+        final Runnable check = new Runnable() {
+            @Override
+            public void run() {
+                if (AddressManager.getInstance().getAllAddresses().size() > 0) {
+                    llSwitchToCold.setVisibility(View.GONE);
+                } else {
+                    llSwitchToCold.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+        if (AbstractApp.addressIsReady) {
+            check.run();
+        } else {
+            new Thread() {
+                @Override
+                public void run() {
+                    AddressManager.getInstance().getAllAddresses();
+                    ThreadUtil.runOnMainThread(check);
+                }
+            }.start();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        configureSwitchToCold();
+    }
+
+    @Override
+    public void onSelected() {
+        configureSwitchToCold();
     }
 }

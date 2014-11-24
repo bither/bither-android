@@ -120,28 +120,36 @@
                 android:layout_gravity="center_horizontal"
                 android:background="#ffEEEEEE"
                 android:orientation="horizontal"
-                android:paddingBottom="11dp"
+                android:paddingBottom="6dp"
                 android:paddingLeft="@dimen/card_padding"
-                android:paddingRight="@dimen/card_padding"
-                android:paddingTop="5dp">
+                android:paddingTop="0dp">
 
-                <TextView
-                    android:id="@+id/tv_transaction_count"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:layout_gravity="center_vertical"
-                    android:drawableLeft="@drawable/transaction_icon_small"
-                    android:drawablePadding="5dp"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/text_field_light_text_color"
-                    android:textSize="14sp"
-                    android:visibility="visible" />
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
 
-                <net.bither.ui.base.TransactionImmutureSummeryListItemView
-                    android:id="@+id/v_transaction_immuture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical" />
+                    <TextView
+                        android:id="@+id/tv_transaction_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:drawableLeft="@drawable/transaction_icon_small"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/text_field_light_text_color"
+                        android:textSize="14sp"
+                        android:visibility="visible"/>
+
+                    <net.bither.ui.base.TransactionImmutureSummeryListItemView
+                        android:id="@+id/v_transaction_immuture"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
 
                 <ImageView
                     android:layout_width="0dp"
@@ -153,7 +161,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:visibility="gone"
                     android:background="@drawable/transparent"
                     android:src="@drawable/xrandom_address_label_selector"/>
@@ -163,7 +173,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="@dimen/card_padding"
                     android:src="@drawable/address_type_watchonly"/>
 
                 <ImageView
@@ -171,8 +184,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/address_type_private_selector" />
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="@dimen/card_padding"
+                    android:src="@drawable/address_type_private_selector"/>
             </LinearLayout>
         </LinearLayout>
 

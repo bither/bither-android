@@ -40,6 +40,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
@@ -48,7 +49,6 @@ import net.bither.ui.base.CheckHeaderView.CheckHeaderViewListener;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.util.CheckUtil;
-import net.bither.util.SecureCharSequence;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

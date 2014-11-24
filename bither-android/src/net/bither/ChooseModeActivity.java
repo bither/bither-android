@@ -16,7 +16,6 @@
 
 package net.bither;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,14 +45,16 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
-import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.ProgressDialog;
+import net.bither.util.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
@@ -61,7 +62,7 @@ import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
 
-public class ChooseModeActivity extends Activity {
+public class ChooseModeActivity extends BaseActivity {
     private static final int AnimHideDuration = 600;
     private static final int AnimGrowDuration = 500;
     private static final int ColdCheckInterval = 700;
@@ -86,6 +87,9 @@ public class ChooseModeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (AppSharedPreference.getInstance().getAppMode() == null) {
+            AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode.HOT);
+        }
         if (URandom.urandomFile.exists()) {
             if (UpgradeUtil.needUpgrade()) {
                 upgrade();
@@ -203,7 +207,6 @@ public class ChooseModeActivity extends Activity {
                 }
             }
         }
-        DialogFirstRunWarning.show(this);
     }
 
 
@@ -231,8 +234,6 @@ public class ChooseModeActivity extends Activity {
         llWarmExtraWaiting = findViewById(R.id.ll_warm_extra_waiting);
         llWarmExtraError = findViewById(R.id.ll_warm_extra_error);
         btnWarmExtraRetry = findViewById(R.id.btn_warm_extra_retry);
-        vCold.setOnClickListener(coldClick);
-        vWarm.setOnClickListener(warmClick);
         btnWarmExtraRetry.setOnClickListener(warmRetryClick);
     }
 
@@ -619,5 +620,10 @@ public class ChooseModeActivity extends Activity {
                 BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
                 BitherApplication.mContext, BlockchainService.class);
         BitherApplication.mContext.startService(intent);
+    }
+
+    @Override
+    protected boolean shouldPresentPinCode() {
+        return false;
     }
 }

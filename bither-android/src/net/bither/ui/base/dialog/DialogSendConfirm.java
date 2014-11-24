@@ -25,7 +25,8 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
-import net.bither.util.GenericUtils;
+import net.bither.preference.AppSharedPreference;
+import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
@@ -51,14 +52,20 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         TextView tvAddress = (TextView) findViewById(R.id.tv_address);
         TextView tvBtc = (TextView) findViewById(R.id.tv_btc);
         TextView tvFee = (TextView) findViewById(R.id.tv_fee);
+        TextView tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
+        String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        tvSymbol.setText(symbol);
+        tvFeeSymbol.setText(symbol);
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
         TextView tvLowPriorityWarn = (TextView) findViewById(R.id.tv_low_priority_warn);
         if (tx.getFirstOutAddress() != null) {
             tvAddress.setText(WalletUtils.formatHash(tx.getFirstOutAddress(), 4, 24));
         }
-        tvBtc.setText(GenericUtils.formatValueWithBold(tx.amountSentToAddress(tx.getFirstOutAddress())));
-        tvFee.setText(GenericUtils.formatValueWithBold(tx.getFee()));
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(tx
+                .getFirstOutAddress())));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
         // This warning is no longer needed. As more and more mining pool upgrade their
         // bitcoin client to 0.9.+, low fee transactions get confirmed soon enough.
 //		if (isLowPriority(tx)) {

@@ -36,9 +36,8 @@ import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.TxProvider;
 import net.bither.http.HttpSetting;
-import net.bither.model.UnSignTransaction;
+import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
 
 import org.json.JSONArray;
@@ -193,10 +192,6 @@ public class TransactionsUtil {
                 transactions.add(tx);
 
                 count++;
-                double progress = BitherSetting.SYNC_TX_PROGRESS_BLOCK_HEIGHT
-                        + BitherSetting.SYNC_TX_PROGRESS_STEP1
-                        + BitherSetting.SYNC_TX_PROGRESS_STEP2 * (count / size);
-                BroadcastUtil.sendBroadcastProgressState(progress);
 
             }
 
@@ -334,10 +329,6 @@ public class TransactionsUtil {
             address.initTxs(transactions);
             address.setSyncComplete(true);
             address.updatePubkey();
-            BroadcastUtil
-                    .sendBroadcastProgressState(BitherSetting.SYNC_PROGRESS_COMPLETE);
-
-
         }
     }
 

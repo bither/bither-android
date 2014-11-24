@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -51,13 +50,13 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
@@ -68,7 +67,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HotActivity extends FragmentActivity {
+public class HotActivity extends BaseFragmentActivity {
     private TabButton tbtnMessage;
     private TabButton tbtnMain;
     private TabButton tbtnMe;
@@ -84,7 +83,7 @@ public class HotActivity extends FragmentActivity {
     private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
 
     protected void onCreate(Bundle savedInstanceState) {
-        BroadcastUtil.removeProgressState();
+        AbstractApp.notificationService.removeProgressState();
         initAppState();
         super.onCreate(savedInstanceState);
         BitherApplication.hotActivity = this;
@@ -126,7 +125,7 @@ public class HotActivity extends FragmentActivity {
     }
 
     private void registerReceiver() {
-        registerReceiver(broadcastReceiver, new IntentFilter(BroadcastUtil
+        registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl
                 .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
@@ -197,7 +196,7 @@ public class HotActivity extends FragmentActivity {
 
         configureTopBarSize();
 
-        tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        configureTabMainIcons();
         tbtnMain.setBigInteger(null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
@@ -245,7 +244,7 @@ public class HotActivity extends FragmentActivity {
                     (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
             if (addresses != null && addresses.size() > 0) {
                 Address a = WalletUtils.findPrivateKey(addresses.get(0));
-                if (a != null && a.hasPrivKey()) {
+                if (a != null && a.hasPrivKey() && !a.isFromXRandom()) {
                     new DialogGenerateAddressFinalConfirm(this, addresses.size(),
                             a.isFromXRandom()).show();
                 }
@@ -268,7 +267,6 @@ public class HotActivity extends FragmentActivity {
             DropdownMessage.showDropdownMessage(this, R.string.donate_thanks);
         }
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 
     private class PageChangeListener implements OnPageChangeListener {
@@ -381,7 +379,6 @@ public class HotActivity extends FragmentActivity {
                 uploadAvatarRunnable.run();
                 DownloadAvatarRunnable downloadAvatarRunnable = new DownloadAvatarRunnable();
                 downloadAvatarRunnable.run();
-
             }
         }).start();
     }
@@ -390,8 +387,7 @@ public class HotActivity extends FragmentActivity {
 
     }
 
-
-    private void refreshTotalBalance() {
+    public void refreshTotalBalance() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -408,13 +404,24 @@ public class HotActivity extends FragmentActivity {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
+                        configureTabMainIcons();
                         tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf(btcWatchOnly));
-
                     }
                 });
-
             }
         }).start();
+    }
+
+    private void configureTabMainIcons() {
+        switch (AppSharedPreference.getInstance().getBitcoinUnit()) {
+            case bits:
+                tbtnMain.setIconResource(R.drawable.tab_main_bits,
+                        R.drawable.tab_main_bits_checked);
+                break;
+            case BTC:
+            default:
+                tbtnMain.setIconResource(R.drawable.tab_main, R.drawable.tab_main_checked);
+        }
     }
 
     public void notifPriceAlert(BitherSetting.MarketType marketType) {
@@ -431,8 +438,8 @@ public class HotActivity extends FragmentActivity {
     private final class ProgressBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            if (intent != null && intent.hasExtra(BroadcastUtil.ACTION_PROGRESS_INFO)) {
-                double progress = intent.getDoubleExtra(BroadcastUtil.ACTION_PROGRESS_INFO, 0);
+            if (intent != null && intent.hasExtra(NotificationAndroidImpl.ACTION_PROGRESS_INFO)) {
+                double progress = intent.getDoubleExtra(NotificationAndroidImpl.ACTION_PROGRESS_INFO, 0);
                 LogUtil.d("progress", "BlockchainBroadcastReceiver" + progress);
                 pbSync.setProgress(progress);
             }

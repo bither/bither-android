@@ -27,11 +27,19 @@
         android:layout_height="1dp"
         android:layout_weight="1" />
 
+    <ImageView
+        android:id="@+id/iv_symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:adjustViewBounds="true"
+        android:layout_marginLeft="5dp"/>
+
     <TextView
         android:id="@+id/tv_balance"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="3dp"
         android:textColor="@color/text_field_text_color"
         android:textSize="20sp" />
 

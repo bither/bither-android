@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <net.bither.ui.base.OverScrollableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,19 +24,45 @@
                 android:paddingTop="10dp">
 
                 <net.bither.ui.base.SettingSelectorView
+                    android:id="@+id/ssv_bitcoin_unit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <net.bither.ui.base.SettingSelectorView
                     android:id="@+id/ssv_currency"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <net.bither.ui.base.SettingSelectorView
                     android:id="@+id/ssv_market"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <net.bither.ui.base.SettingSelectorView
                     android:id="@+id/ssv_transaction_fee"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_switch_to_cold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Button
+                        android:id="@+id/btn_switch_to_cold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ui_touchable_bg"
+                        android:gravity="left"
+                        android:padding="10dp"
+                        android:text="@string/launch_sequence_switch_to_cold"
+                        android:textColor="@color/text_field_text_color"
+                        android:textSize="18sp"/>
+
+                    <include layout="@layout/layout_vertical_seperator"/>
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/btn_avatar"
@@ -49,9 +75,9 @@
                     android:padding="10dp"
                     android:text="@string/set_avatar"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
-                <include layout="@layout/layout_vertical_seperator" />
+                <include layout="@layout/layout_vertical_seperator"/>
 
                 <Button
                     android:id="@+id/btn_check_private_key"
@@ -64,9 +90,9 @@
                     android:padding="10dp"
                     android:text="@string/check_private_key_button"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
-                <include layout="@layout/layout_vertical_seperator" />
+                <include layout="@layout/layout_vertical_seperator"/>
 
                 <Button
                     android:id="@+id/btn_donate"
@@ -79,9 +105,9 @@
                     android:padding="10dp"
                     android:text="@string/donate_button"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
-                <include layout="@layout/layout_vertical_seperator" />
+                <include layout="@layout/layout_vertical_seperator"/>
 
                 <Button
                     android:id="@+id/btn_advance"
@@ -94,10 +120,10 @@
                     android:padding="10dp"
                     android:text="@string/activity_name_advance"
                     android:textColor="@color/text_field_text_color"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
             </LinearLayout>
 
-            <include layout="@layout/layout_card_foreground_single" />
+            <include layout="@layout/layout_card_foreground_single"/>
         </FrameLayout>
 
         <ImageView
@@ -106,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:src="@drawable/setting_footer_logo" />
+            android:src="@drawable/setting_footer_logo"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -128,7 +154,7 @@
                     android:text="Bither Hot"
                     android:textColor="#ffc2c2c2"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/tv_version"
@@ -137,7 +163,7 @@
                     android:layout_marginLeft="5dp"
                     android:textColor="#ffc2c2c2"
                     android:textSize="13sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <TextView
@@ -149,7 +175,7 @@
                 android:text="http://Bither.net"
                 android:textColor="#ffc2c2c2"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </LinearLayout>
     </LinearLayout>
 

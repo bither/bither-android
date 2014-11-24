@@ -30,17 +30,22 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.TrashCanActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
-import net.bither.model.PasswordSeed;
+import net.bither.pin.PinCodeChangeActivity;
+import net.bither.pin.PinCodeDisableActivity;
+import net.bither.pin.PinCodeEnableActivity;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -62,7 +67,6 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 import net.bither.util.TransactionsUtil;
 
@@ -76,8 +80,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvSyncInterval;
+    private SettingSelectorView ssvPinCode;
     private Button btnExportLog;
     private Button btnResetTx;
+    private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
 
@@ -92,8 +98,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         tvVserion = (TextView) findViewById(R.id.tv_version);
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
+        ssvPinCode = (SettingSelectorView) findViewById(R.id.ssv_pin_code);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnRCheck = (Button) findViewById(R.id.btn_r_check);
+        btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -101,14 +109,22 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         ssvSyncInterval.setSelector(syncIntervalSelector);
+        ssvPinCode.setSelector(pinCodeSelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
+        btnTrashCan.setOnClickListener(trashCanClick);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
         tvVserion.setText(Version.name + " " + Version.version);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ssvPinCode.loadData();
     }
 
     private View.OnClickListener rCheckClick = new View.OnClickListener() {
@@ -153,7 +169,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         HotAdvanceActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                                         getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
                             }
@@ -167,6 +182,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
             }
 
+        }
+    };
+
+    private View.OnClickListener trashCanClick = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(HotAdvanceActivity.this, TrashCanActivity.class));
         }
     };
 
@@ -283,9 +306,71 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             }
         };
         threadNeedService.start();
-
-
     }
+
+    private SettingSelectorView.SettingSelector pinCodeSelector = new SettingSelectorView
+            .SettingSelector() {
+        private AppSharedPreference p = AppSharedPreference.getInstance();
+        private boolean hasPinCode;
+
+        @Override
+        public int getOptionCount() {
+            hasPinCode = p.hasPinCode();
+            return hasPinCode ? 2 : 1;
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            if (hasPinCode) {
+                switch (index) {
+                    case 0:
+                        return getString(R.string.pin_code_setting_close);
+                    case 1:
+                        return getString(R.string.pin_code_setting_change);
+                }
+            }
+            return getString(R.string.pin_code_setting_open);
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.pin_code_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            if (hasPinCode) {
+                switch (index) {
+                    case 0:
+                        startActivity(new Intent(HotAdvanceActivity.this,
+                                PinCodeDisableActivity.class));
+                        return;
+                    case 1:
+                        startActivity(new Intent(HotAdvanceActivity.this,
+                                PinCodeChangeActivity.class));
+                        return;
+                }
+            } else {
+                startActivity(new Intent(HotAdvanceActivity.this, PinCodeEnableActivity.class));
+            }
+        }
+    };
+
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {

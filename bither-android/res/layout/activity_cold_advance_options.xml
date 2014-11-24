@@ -55,6 +55,11 @@
                             <include layout="@layout/layout_vertical_seperator" />
 
                             <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_pin_code"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_private_key"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
@@ -63,9 +68,22 @@
                                 android:id="@+id/ssv_import_bip38_key"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
+
+                            <Button
+                                android:id="@+id/btn_trash_can"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ui_touchable_bg"
+                                android:gravity="left"
+                                android:padding="10dp"
+                                android:text="@string/trash_can"
+                                android:textColor="@color/text_field_text_color"
+                                android:drawableRight="@drawable/trash_can_button_icon"
+                                android:textSize="18sp"/>
                         </LinearLayout>
 
                         <include layout="@layout/layout_card_foreground_single" />
+
                     </FrameLayout>
 
                     <ImageView
@@ -107,13 +125,12 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
-
-
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
             <include layout="@layout/layout_dropdown_message" />
+
         </FrameLayout>
 
         <FrameLayout
@@ -159,5 +176,4 @@
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>
-
 </FrameLayout>

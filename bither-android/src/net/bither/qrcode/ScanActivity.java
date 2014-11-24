@@ -16,7 +16,6 @@
 
 package net.bither.qrcode;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,7 +44,6 @@ import android.widget.FrameLayout;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.PlanarYUVLuminanceSource;
-import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.ResultPointCallback;
@@ -54,6 +52,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 
 import net.bither.R;
 import net.bither.camera.CameraManager;
+import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.ScannerView;
 
 import org.slf4j.Logger;
@@ -63,10 +62,11 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class ScanActivity extends Activity implements SurfaceHolder.Callback, CompoundButton.OnCheckedChangeListener {
-	public static final String INTENT_EXTRA_RESULT = "result";
+public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback,
+        CompoundButton.OnCheckedChangeListener {
+    public static final String INTENT_EXTRA_RESULT = "result";
 
-	private static final long VIBRATE_DURATION = 50L;
+    private static final long VIBRATE_DURATION = 50L;
 	private static final long AUTO_FOCUS_INTERVAL_MS = 2500L;
 
 	private final CameraManager cameraManager = new CameraManager();
@@ -377,5 +377,10 @@ public class ScanActivity extends Activity implements SurfaceHolder.Callback, Co
 	public void finish() {
 		super.finish();
 		overridePendingTransition(R.anim.scanner_out_enter, 0);
-	};
+    }
+
+    @Override
+    protected boolean shouldPresentPinCode() {
+        return false;
+    }
 }

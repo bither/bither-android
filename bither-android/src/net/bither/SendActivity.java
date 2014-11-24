@@ -41,8 +41,10 @@ import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
@@ -60,16 +62,15 @@ import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.TransactionsUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
 
-public class SendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+public class SendActivity extends SwipeRightActivity implements EntryKeyboardView
+        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -127,15 +128,16 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        tvBalance.setText(GenericUtils.formatValue(address.getBalance()));
-        ivBalanceSymbol.setImageBitmap(CurrencySymbolUtil.getBtcSymbol(tvBalance));
+        tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
+        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
-        btcAmountView.setInputPrecision(8);
-        btcAmountView.setHintPrecision(4);
-        btcAmountView.setShift(0);
+        int precision = (int)Math.floor(Math.log10(AppSharedPreference.getInstance().getBitcoinUnit().satoshis));
+        btcAmountView.setInputPrecision(precision);
+        btcAmountView.setHintPrecision(Math.min(4, precision));
+        btcAmountView.setShift(8 - precision);
 
         final CurrencyAmountView localAmountView = (CurrencyAmountView) findViewById(R.id
                 .cav_local);
@@ -224,20 +226,20 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
 
     private Handler rcheckHandler = new Handler() {
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         final Tx tx = (Tx) msg.obj;
                         dp.setRCheckSuccess();
-                        if(!dp.isShowing()){
+                        if (!dp.isShowing()) {
                             dp.show();
                         }
                         tvAddressLabel.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                DialogSendConfirm dialog = new DialogSendConfirm(SendActivity.this, tx,
-                                        sendConfirmListener);
+                                DialogSendConfirm dialog = new DialogSendConfirm(SendActivity
+                                        .this, tx, sendConfirmListener);
                                 dialog.show();
                                 dp.setWait();
                             }
@@ -246,7 +248,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     }
                 case HandlerMessage.MSG_FAILURE:
                     dp.setRecalculatingR();
-                    if(!dp.isShowing()){
+                    if (!dp.isShowing()) {
                         dp.show();
                     }
                     sendClick.onClick(btnSend);
@@ -283,8 +285,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
-                                new SecureCharSequence(etPassword));
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString()
+                                .trim(), new SecureCharSequence(etPassword.getText()));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -414,12 +416,12 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             if (password != null) {
                 password.wipe();
             }
-            password = new SecureCharSequence(etPassword);
+            password = new SecureCharSequence(etPassword.getText());
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            SecureCharSequence p = new SecureCharSequence(etPassword);
+            SecureCharSequence p = new SecureCharSequence(etPassword.getText());
             if (p.length() > 0) {
                 if (!Utils.validPassword(p)) {
                     etPassword.setText(password);
@@ -442,7 +444,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         } else {
         }
         boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
-        SecureCharSequence password = new SecureCharSequence(etPassword);
+        SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
         password.wipe();

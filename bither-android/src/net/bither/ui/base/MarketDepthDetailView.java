@@ -28,7 +28,7 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.AnimationUtil;
-import net.bither.util.CurrencySymbolUtil;
+import net.bither.util.UnitUtilWrapper;
 
 public class MarketDepthDetailView extends LinearLayout {
 
@@ -69,7 +69,8 @@ public class MarketDepthDetailView extends LinearLayout {
         this.tvPrice = (TextView) findViewById(R.id.tv_detail_price);
         this.tvVolume = (TextView) findViewById(R.id.tv_detail_volume);
         this.ivSymbolBtc = (ImageView) findViewById(R.id.iv_symbol_btc);
-        this.btcBit = CurrencySymbolUtil.getBtcSlimSymbol(this.tvVolume);
+        this.btcBit = UnitUtilWrapper.getBtcSlimSymbol(this.tvVolume,
+                UnitUtilWrapper.BitcoinUnitWrapper.BTC);
         this.tvSymbol = (TextView) findViewById(R.id.tv_symbol);
         //TODO Used to calculate the widht, set the default value
         this.tvVolume.setText("10000.00");

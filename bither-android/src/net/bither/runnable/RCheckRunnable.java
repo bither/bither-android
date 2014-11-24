@@ -20,7 +20,6 @@ package net.bither.runnable;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
-import net.bither.util.TransactionsUtil;
 
 /**
  * Created by songchenwen on 14-10-20.

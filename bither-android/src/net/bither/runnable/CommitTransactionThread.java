@@ -20,7 +20,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.model.UnSignTransaction;
+import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ThreadUtil;

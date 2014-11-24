@@ -269,16 +269,22 @@ public class BlockchainService extends android.app.Service {
                     || (networkType == NetworkType.Wifi);
 
             if (networkIsAvailadble) {
-                if (hasEverything && BlockChain.getInstance() != null) {
+                if (hasEverything) {
                     log.debug("acquiring wakelock");
                     callWekelock();
                     if (!PeerManager.instance().isRunning()) {
                         startPeer();
                     }
-                } else if (!hasEverything) {
+                } else {
+                    if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
+                        BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
+                    }
                     PeerManager.instance().stop();
                 }
             } else {
+                if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
+                    BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
+                }
                 PeerManager.instance().stop();
             }
 

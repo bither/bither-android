@@ -276,22 +276,22 @@ public final class PeerListFragment extends ListFragment {
     };
 
     private void refreshPeer() {
-        Collections.sort(peerCacheList, new Comparator<Peer>() {
-            @Override
-            public int compare(Peer lhs, Peer rhs) {
-                if (lhs.getClientVersion() == 0 && rhs.getClientVersion() > 0) {
-                    return 1;
-                }
-                if (rhs.getClientVersion() == 0 && lhs.getClientVersion() > 0) {
-                    return -1;
-                }
-                return -1 * Long.valueOf(Utils.parseLongFromAddress(
-                        lhs.getPeerAddress())).compareTo(
-                        Long.valueOf(Utils.parseLongFromAddress(rhs.getPeerAddress())));
-
-            }
-        });
         if (peerCacheList != null) {
+            Collections.sort(peerCacheList, new Comparator<Peer>() {
+                @Override
+                public int compare(Peer lhs, Peer rhs) {
+                    if (lhs.getClientVersion() == 0 && rhs.getClientVersion() > 0) {
+                        return 1;
+                    }
+                    if (rhs.getClientVersion() == 0 && lhs.getClientVersion() > 0) {
+                        return -1;
+                    }
+                    return -1 * Long.valueOf(Utils.parseLongFromAddress(
+                            lhs.getPeerAddress())).compareTo(
+                            Long.valueOf(Utils.parseLongFromAddress(rhs.getPeerAddress())));
+
+                }
+            });
             for (final Peer peer : peerCacheList) {
                 adapter.add(peer);
             }

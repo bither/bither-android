@@ -18,8 +18,8 @@
 
 package net.bither.xrandom;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -38,17 +38,19 @@ import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
 import net.bither.util.PlaySound;
-import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
 
@@ -59,7 +61,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UEntropyActivity extends Activity implements UEntropyCollector
+public class UEntropyActivity extends BaseActivity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
     public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
@@ -289,15 +291,25 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.putExtra(BitherSetting.INTENT_REF
-                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                                AppSharedPreference.getInstance().getPasswordSeed() == null);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                                addresses);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                        DialogGenerateAddressFinalConfirm dialog = new
+                                DialogGenerateAddressFinalConfirm(UEntropyActivity.this,
+                                addresses.size(), true);
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                Intent intent = new Intent();
+                                intent.putExtra(BitherSetting.INTENT_REF
+                                        .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
+                                        AppSharedPreference.getInstance().getPasswordSeed() ==
+                                                null);
+                                intent.putExtra(BitherSetting.INTENT_REF
+                                        .ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
+                                setResult(RESULT_OK, intent);
+                                finish();
+                                overridePendingTransition(0, R.anim.slide_out_bottom);
+                            }
+                        });
+                        dialog.show();
                     }
                 });
             }
@@ -485,7 +497,7 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                     return;
                 }
 
-                KeyUtil.addAddressListByDesc(null, addressList);
+                KeyUtil.addAddressListByDesc(service, addressList);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -502,5 +514,10 @@ public class UEntropyActivity extends Activity implements UEntropyCollector
                 onFailed();
             }
         }
+    }
+
+    @Override
+    protected boolean shouldPresentPinCode() {
+        return false;
     }
 }

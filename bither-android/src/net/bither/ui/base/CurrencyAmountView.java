@@ -44,9 +44,10 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
-import net.bither.util.CurrencySymbolUtil;
-import net.bither.util.GenericUtils;
+import net.bither.bitherj.utils.GenericUtils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
@@ -134,8 +135,8 @@ public final class CurrencyAmountView extends FrameLayout {
 
     public void setCurrencySymbol(@Nullable final String currencyCode) {
         if (BitherApplication.mContext.getString(R.string.bitcoin_symbol).equals(currencyCode)) {
-            Bitmap bmp = CurrencySymbolUtil.getBtcSymbol(lessSignificantColor,
-                    textView.getTextSize());
+            Bitmap bmp = UnitUtilWrapper.getBtcSymbol(lessSignificantColor, textView.getTextSize
+                    (), AppSharedPreference.getInstance().getBitcoinUnit());
             currencySymbolDrawable = new BitmapDrawable(getResources(), bmp);
             currencySymbolDrawable.setBounds(0, 0, bmp.getWidth(), bmp.getHeight());
         } else if (currencyCode != null) {

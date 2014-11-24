@@ -16,7 +16,8 @@
 
 package net.bither.ui.base.listener;
 
-import net.bither.util.SecureCharSequence;
+
+import net.bither.bitherj.crypto.SecureCharSequence;
 
 public interface ICheckPasswordListener {
     public boolean checkPassword(SecureCharSequence password);

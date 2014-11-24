@@ -40,8 +40,8 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.ui.base.dialog.DialogTotalBtc;
 import net.bither.ui.base.dialog.DialogWithArrow;
-import net.bither.util.GenericUtils;
 import net.bither.util.UIUtil;
+import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
 
@@ -198,7 +198,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         if (btc == null) {
             tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
-            tvText.setText(GenericUtils.formatValue(btc.longValue()));
+            tvText.setText(UnitUtilWrapper.formatValue(btc.longValue()));
         }
         ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
         tvText.requestLayout();

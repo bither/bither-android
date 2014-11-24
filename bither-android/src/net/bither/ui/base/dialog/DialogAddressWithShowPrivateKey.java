@@ -20,15 +20,23 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.fragment.hot.HotAddressFragment;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.SecureCharSequence;
+import net.bither.util.ThreadUtil;
 
 public class DialogAddressWithShowPrivateKey extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener, IDialogPasswordListener {
@@ -50,11 +58,13 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         findViewById(R.id.tv_view_show_private_key).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
+        findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey());
+        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey(),
+                address.getAddress());
     }
 
     @Override
@@ -77,6 +87,14 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 break;
             case R.id.tv_private_key_qr_code_decrypted:
                 new DialogPassword(activity, this).show();
+                break;
+            case R.id.tv_trash_private_key:
+                if (address.getBalance() > 0) {
+                    new DialogConfirmTask(getContext(), getContext().getString(R.string
+                            .trash_with_money_warn), null).show();
+                } else {
+                    new DialogPassword(activity, this).show();
+                }
                 break;
             default:
                 return;
@@ -143,7 +161,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                             public void run() {
                                 dialogProgress.dismiss();
                                 if (str != null) {
-                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str);
+                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str, address.getAddress());
                                     dialogPrivateKeyTextQrCode.show();
                                 } else {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -158,7 +176,41 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                         });
                     }
                 }).start();
-
+                break;
+            case R.id.tv_trash_private_key:
+                final DialogProgress dp = new DialogProgress(getContext(),
+                        R.string.trashing_private_key, null);
+                dp.show();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        AddressManager.getInstance().trashPrivKey(address);
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                if (AppSharedPreference.getInstance().getAppMode() ==
+                                        BitherjSettings.AppMode.HOT) {
+                                    Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
+                                            (1);
+                                    if (f instanceof HotAddressFragment) {
+                                        HotAddressFragment hotAddressFragment =
+                                                (HotAddressFragment) f;
+                                        hotAddressFragment.refresh();
+                                    }
+                                } else {
+                                    Fragment f = BitherApplication.coldActivity
+                                            .getFragmentAtIndex(1);
+                                    if (f instanceof ColdAddressFragment) {
+                                        ColdAddressFragment coldAddressFragment =
+                                                (ColdAddressFragment) f;
+                                        coldAddressFragment.refresh();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }.start();
                 break;
         }
     }

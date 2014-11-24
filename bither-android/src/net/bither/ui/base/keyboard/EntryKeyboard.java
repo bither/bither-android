@@ -115,7 +115,9 @@ public class EntryKeyboard extends Keyboard {
     }
 
     public void setEnterKeyText(CharSequence text) {
-        mEnterKey.label = text;
+        if(mEnterKey != null) {
+            mEnterKey.label = text;
+        }
     }
 
     public int getEnterKeyIndex() {

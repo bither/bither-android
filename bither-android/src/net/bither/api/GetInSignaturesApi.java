@@ -20,7 +20,6 @@ package net.bither.api;
 
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
-import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
 /**

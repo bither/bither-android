@@ -30,12 +30,18 @@ import android.widget.TextView;
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.TrashCanActivity;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
+import net.bither.pin.PinCodeChangeActivity;
+import net.bither.pin.PinCodeDisableActivity;
+import net.bither.pin.PinCodeEnableActivity;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.qrcode.ScanQRCodeWithOtherActivity;
@@ -51,14 +57,15 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
 
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
+    private SettingSelectorView ssvPinCode;
     private Button btnEditPassword;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
+    private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
 
@@ -72,14 +79,24 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         tvVserion = (TextView) findViewById(R.id.tv_version);
+        ssvPinCode = (SettingSelectorView) findViewById(R.id.ssv_pin_code);
+        ssvPinCode.setSelector(pinCodeSelector);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
+        btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        btnTrashCan.setOnClickListener(trashCanClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ssvPinCode.loadData();
     }
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
@@ -91,6 +108,77 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+
+    private View.OnClickListener trashCanClick = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ColdAdvanceActivity.this, TrashCanActivity.class));
+        }
+    };
+
+    private SettingSelectorView.SettingSelector pinCodeSelector = new SettingSelectorView
+            .SettingSelector() {
+        private AppSharedPreference p = AppSharedPreference.getInstance();
+        private boolean hasPinCode;
+
+        @Override
+        public int getOptionCount() {
+            hasPinCode = p.hasPinCode();
+            return hasPinCode ? 2 : 1;
+        }
+
+        @Override
+        public String getOptionName(int index) {
+            if (hasPinCode) {
+                switch (index) {
+                    case 0:
+                        return getString(R.string.pin_code_setting_close);
+                    case 1:
+                        return getString(R.string.pin_code_setting_change);
+                }
+            }
+            return getString(R.string.pin_code_setting_open);
+        }
+
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public String getSettingName() {
+            return getString(R.string.pin_code_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            if (hasPinCode) {
+                switch (index) {
+                    case 0:
+                        startActivity(new Intent(ColdAdvanceActivity.this,
+                                PinCodeDisableActivity.class));
+                        return;
+                    case 1:
+                        startActivity(new Intent(ColdAdvanceActivity.this,
+                                PinCodeChangeActivity.class));
+                        return;
+                }
+            } else {
+                startActivity(new Intent(ColdAdvanceActivity.this, PinCodeEnableActivity.class));
+            }
+        }
+    };
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
                 @Override

@@ -17,6 +17,7 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -40,7 +42,6 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.xrandom.UEntropyActivity;
 
 import java.util.ArrayList;
@@ -94,11 +95,29 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         @Override
         public void onClick(View v) {
             if (cbxXRandom.isChecked()) {
-                Intent intent = new Intent(getContext(), UEntropyActivity.class);
-                intent.putExtra(UEntropyActivity.PrivateKeyCountKey, wvCount.getCurrentItem() + 1);
-                intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-                getContext().startActivity(intent);
-                activity.finish();
+                final Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(getContext(), UEntropyActivity.class);
+                        intent.putExtra(UEntropyActivity.PrivateKeyCountKey,
+                                wvCount.getCurrentItem() + 1);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                        getContext().startActivity(intent);
+                        activity.finish();
+                    }
+                };
+                if (AppSharedPreference.getInstance().shouldAutoShowXRandomInstruction()) {
+                    DialogXRandomInfo dialog = new DialogXRandomInfo(getContext(), true, true);
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            run.run();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    run.run();
+                }
             } else {
                 DialogPassword dialog = new DialogPassword(getContext(), AddAddressPrivateKeyView
                         .this);

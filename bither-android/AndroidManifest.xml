@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="net.bither"
           android:installLocation="internalOnly"
-          android:versionCode="120"
-          android:versionName="1.2.0">
+          android:versionCode="121"
+          android:versionName="1.2.1">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -160,6 +160,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
+            android:name=".TrashCanActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
             android:name=".qrcode.ScanActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
@@ -186,9 +190,28 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="net.bither.activity.hot.RCheckActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".pin.PinCodeActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".pin.PinCodeEnableActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".pin.PinCodeDisableActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".pin.PinCodeChangeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity

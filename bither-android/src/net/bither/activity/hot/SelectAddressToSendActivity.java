@@ -37,11 +37,12 @@ import net.bither.SendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BitcoinURI;
-import net.bither.util.GenericUtils;
+import net.bither.util.UnitUtilWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +63,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
     private TextView tvAmount;
     private ListView lv;
     private TextView tvNoAddress;
+    private TextView tvSymbol;
     private ProgressBar pb;
 
     private ArrayList<AddressBalance> addresses = new ArrayList<AddressBalance>();
@@ -85,12 +87,14 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
         tvAddress = (TextView) findViewById(R.id.tv_address);
         tvAmount = (TextView) findViewById(R.id.tv_btc);
+        tvSymbol = (TextView) findViewById(R.id.tv_symbol);
         tvNoAddress = (TextView) findViewById(R.id.tv_no_address);
         lv = (ListView) findViewById(R.id.lv);
         pb = (ProgressBar) findViewById(R.id.pb);
         lv.setAdapter(adapter);
         tvAddress.setText(receivingAddress);
-        tvAmount.setText(GenericUtils.formatValueWithBold(btc));
+        tvSymbol.setText(AppSharedPreference.getInstance().getBitcoinUnit().name());
+        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(btc));
     }
 
     private void getAddressesForSending() {
@@ -146,7 +150,8 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             }
             AddressBalance a = getItem(position);
             h.tvAddress.setText(a.address.getShortAddress());
-            h.tvBalance.setText(GenericUtils.formatValueWithBold(a.balance));
+            h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
+            h.ivSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(h.tvBalance));
             if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
@@ -175,6 +180,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         class ViewHolder {
             TextView tvAddress;
             TextView tvBalance;
+            ImageView ivSymbol;
             ImageView ivType;
             ImageButton ibtnAddressFull;
 
@@ -182,6 +188,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
                 tvAddress = (TextView) v.findViewById(R.id.tv_address);
                 tvBalance = (TextView) v.findViewById(R.id.tv_balance);
                 ivType = (ImageView) v.findViewById(R.id.iv_type);
+                ivSymbol = (ImageView) v.findViewById(R.id.iv_symbol);
                 ibtnAddressFull = (ImageButton) v.findViewById(R.id.ibtn_address_full);
             }
         }

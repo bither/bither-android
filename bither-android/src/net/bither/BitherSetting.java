@@ -45,8 +45,8 @@ public class BitherSetting {
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
 
-    public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 100;
-    public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 10;
+    public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 150;
+    public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 50;
 
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;
@@ -114,6 +114,40 @@ public class BitherSetting {
             return this.mVal;
         }
     }
+
+//    public enum Currency {
+//        USD("USD"), CNY("CNY"), EUR("EUR"), GBP("GBP"), JPY("JPY"), KRW("KRW"), CAD("CAD"), AUD("AUD");
+//
+//        private String mVal;
+//
+//        private Currency(String val) {
+//            this.mVal = val;
+//        }
+//
+//        public String getValue() {
+//            return this.mVal;
+//        }
+//    }
+//
+//    public static Currency getCurrencyFromName(String name) {
+//        if (name == null || name.length() == 0)
+//            return Currency.USD;
+//        if (name.equals("CNY"))
+//            return Currency.CNY;
+//        if (name.equals("EUR"))
+//            return Currency.EUR;
+//        if (name.equals("GBP"))
+//            return Currency.GBP;
+//        if (name.equals("JPY"))
+//            return Currency.JPY;
+//        if (name.equals("KRW"))
+//            return Currency.KRW;
+//        if (name.equals("CAD"))
+//            return Currency.CAD;
+//        if (name.equals("AUD"))
+//            return Currency.AUD;
+//        return Currency.USD;
+//    }
 
     public enum AddressType {
         Normal, TxTooMuch, SpecialAddress

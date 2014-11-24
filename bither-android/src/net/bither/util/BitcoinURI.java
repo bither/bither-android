@@ -18,6 +18,9 @@
 
 package net.bither.util;
 
+import net.bither.bitherj.utils.GenericUtils;
+import net.bither.bitherj.utils.UnitUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -330,7 +333,7 @@ public class BitcoinURI {
 
         if (amount != 0) {
             builder.append(QUESTION_MARK_SEPARATOR).append(FIELD_AMOUNT).append("=");
-            builder.append(GenericUtils.formatValue(amount));
+            builder.append(UnitUtil.formatValue(amount, UnitUtil.BitcoinUnit.BTC));
             questionMarkHasBeenOutput = true;
         }
 

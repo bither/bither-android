@@ -27,7 +27,9 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.QRCodeTxTransport;
@@ -38,8 +40,8 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.GenericUtils;
-import net.bither.util.SecureCharSequence;
+
+import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
 import java.util.List;
@@ -51,6 +53,8 @@ public class SignTxActivity extends SwipeRightActivity implements
     private TextView tvTo;
     private TextView tvAmount;
     private TextView tvFee;
+    private TextView tvSymbol;
+    private TextView tvFeeSymbol;
     private Button btnSign;
     private TextView tvCannotFindPrivateKey;
 
@@ -75,6 +79,8 @@ public class SignTxActivity extends SwipeRightActivity implements
         tvFee = (TextView) findViewById(R.id.tv_fee);
         btnSign = (Button) findViewById(R.id.btn_sign);
         tvCannotFindPrivateKey = (TextView) findViewById(R.id.tv_can_not_find_private_key);
+        tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
         btnSign.setEnabled(false);
         btnSign.setOnClickListener(signClick);
         dp = new DialogProgress(this, R.string.signing_transaction);
@@ -100,11 +106,13 @@ public class SignTxActivity extends SwipeRightActivity implements
     }
 
     private void showTransaction() {
+        String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        tvSymbol.setText(symbol);
+        tvFeeSymbol.setText(symbol);
         tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
-        tvAmount.setText(GenericUtils.formatValueWithBold(qrCodeTransport
-                .getTo()));
-        tvFee.setText(GenericUtils.formatValueWithBold(qrCodeTransport.getFee()));
+        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo()));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee()));
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
         if (address == null) {

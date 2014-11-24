@@ -21,6 +21,7 @@ package net.bither.xrandom;
 import com.google.common.primitives.Ints;
 
 import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.utils.Sha256Hash;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -32,6 +33,7 @@ import java.util.concurrent.Executors;
 
 public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public static final int POOL_SIZE = 32 * 200;
+    private static final int ENTROPY_XOR_MULTIPLIER = (int) Math.pow(2, 4);
 
     public static interface UEntropyCollectorListener {
         public void onUEntropySourceError(Exception e, IUEntropySource source);
@@ -121,19 +123,37 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
 
     @Override
     public byte[] nextBytes(int length) {
-        byte[] bytes = new byte[length];
+        byte[] bytes = null;
         if (!shouldCollectData()) {
             throw new IllegalStateException("UEntropyCollector is not running");
         }
         try {
-            while (in.available() < bytes.length) {
-                if (!shouldCollectData()) {
-                    throw new IllegalStateException("UEntropyCollector is not running");
+            for (int i = 0;
+                 i < ENTROPY_XOR_MULTIPLIER;
+                 i++) {
+                byte[] itemBytes = new byte[length];
+                while (in.available() < itemBytes.length) {
+                    if (!shouldCollectData()) {
+                        throw new IllegalStateException("UEntropyCollector is not running");
+                    }
+                }
+                in.read(itemBytes);
+                if (i == ENTROPY_XOR_MULTIPLIER - 1) {
+                    itemBytes = Sha256Hash.create(itemBytes).getBytes();
+                }
+                if (bytes == null) {
+                    bytes = itemBytes;
+                } else {
+                    for (int k = 0;
+                         k < bytes.length && k < itemBytes.length;
+                         k++) {
+                        bytes[k] = (byte) (bytes[k] ^ itemBytes[k]);
+                    }
                 }
             }
-            in.read(bytes);
         } catch (IOException e) {
             e.printStackTrace();
+            return new byte[length];
         }
         return bytes;
     }
@@ -162,7 +182,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
                  i++) {
                 int position = (int) (Math.random() * data.length);
                 try {
-                    locatorBytes = AbstractApp.random.nextBytes(Ints.BYTES);
+                    locatorBytes = URandom.nextBytes(Ints.BYTES);
                     int value = Math.abs(Ints.fromByteArray(locatorBytes));
                     position = (int) (((float) value / (float) Integer.MAX_VALUE) * data.length);
                 } catch (Exception e) {

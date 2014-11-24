@@ -24,6 +24,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
 import net.bither.api.GetExchangeTickerApi;
+import net.bither.bitherj.utils.Utils;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
@@ -75,8 +76,7 @@ public class BitherTimer {
             }
             GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
             getExchangeTickerApi.handleHttpGet();
-            double exchangeRate = getExchangeTickerApi.getCurrencyRate();
-            ExchangeUtil.setExchangeRate(exchangeRate);
+            ExchangeUtil.setCurrenciesRate(getExchangeTickerApi.getCurrenciesRate());
             List<Ticker> tickers = getExchangeTickerApi.getResult();
             if (tickers != null && tickers.size() > 0) {
                 comparePriceAlert(tickers);
@@ -135,7 +135,7 @@ public class BitherTimer {
         }
         contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
         contentText = contentText + " " + AppSharedPreference.getInstance()
-                .getDefaultExchangeType().getSymbol() + StringUtil.formatDoubleToMoneyString
+                .getDefaultExchangeType().getSymbol() + Utils.formatDoubleToMoneyString
                 (alertPrice);
         SystemUtil.nmNotifyDefault(nm, context,
                 BitherSetting.NOTIFICATION_ID_NETWORK_ALERT, intent,

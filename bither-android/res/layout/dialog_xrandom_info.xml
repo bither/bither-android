@@ -25,6 +25,22 @@
         android:text="@string/xrandom_info_detail"
         android:textSize="15sp"/>
 
+    <CheckedTextView
+        android:id="@+id/cbx_auto_show_negative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:gravity="left|center_vertical"
+        android:drawablePadding="5dp"
+        android:drawableLeft="@drawable/btn_check_light_selector"
+        android:textColor="@color/text_field_hint_color"
+        android:text="@string/xrandom_instruction_auto_show_check"
+        android:checked="true"
+        android:visibility="gone"
+        android:textSize="12sp"/>
+
     <Button
         android:id="@+id/btn_ok"
         android:layout_width="fill_parent"

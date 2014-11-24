@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -37,6 +36,8 @@ import net.bither.adapter.cold.ColdFragmentPagerAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -45,7 +46,9 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.model.PasswordSeed;
+import net.bither.pin.PinCodeActivity;
+import net.bither.preference.AppSharedPreference;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
 import net.bither.ui.base.dialog.DialogColdAddressCount;
@@ -59,7 +62,6 @@ import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -70,7 +72,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ColdActivity extends FragmentActivity {
+public class ColdActivity extends BaseFragmentActivity {
 
     private TabButton tbtnMessage;
     private TabButton tbtnMain;

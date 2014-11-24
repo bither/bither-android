@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Utils;
@@ -36,7 +37,6 @@ import net.bither.factory.ImportPrivateKey;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.SecureCharSequence;
 
 public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,

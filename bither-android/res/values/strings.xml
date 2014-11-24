@@ -107,6 +107,7 @@
     <string name="send_failed_missing_btc">Send failed. Lack of %s BTC.</string>
     <string name="send_failed_dust_out_put">Send failed. Sending coins this few will be ignored.</string>
     <string name="send_failed_pendding">Send failed. %s BTC to be confirmed.\nPlease wait for another confirmation.</string>
+    <string name="send_failed_max_tx_size">Send failed. Transaction size is to large.\nPlease reduce amount.</string>
     <string name="send_coins_fragment_sending_address_label">From</string>
     <string name="send_coins_fragment_receiving_address_label">Pay to</string>
     <string name="send_coins_fragment_amount_label">Amount to pay</string>
@@ -371,7 +372,9 @@
     <string name="xrandom_final_confirm">You have generated %d private keys from XRandom.</string>
     <string name="generating_private_key_final_confirm">You have generated %d private keys.</string>
     <string name="xrandom_info_detail">XRandom gathers data from sources to improve randomness.\n\nThe sources are sensors on your device like camera, microphone, magnetic sensor, gravity sensor, etc.</string>
-    <string name="xrandom_info_guide">\n\nShaking or rotating your device while gathering can improve randomness.</string>
+    <string name="xrandom_info_guide">\n\nShaking or rotating your device and make some noise while gathering can improve randomness.</string>
+    <string name="xrandom_instruction_auto_show_check">Don\'t show next time</string>
+
     <!-- qrcode-->
     <string name="switch_qrcode">Switch QRCode</string>
     <string name="use_old_version_qrcode">Switched to old version QR Codes, sign with Bither Cold &lt;1.1.0</string>
@@ -391,4 +394,35 @@
     <string name="rcheck_fail_recalculate_confirm">RCheck failed. Resign Tx?</string>
     <string name="rcheck_info">Duplicated r values in an address\' transaction history might result in exposing the private key.\n\nRCheck will check all the r values in history to make sure no duplicated found.</string>
     <string name="setting_name_rcheck">Check r-value</string>
+
+    <!-- trash -->
+    <string name="trash_private_key">Move to Trash Can</string>
+    <string name="trash_with_money_warn">This address still has some bitcoin.\nYou can\'t move it to trash can.</string>
+    <string name="trashing_private_key">Moving</string>
+    <string name="trash_can">Trash Can</string>
+    <string name="trash_can_empty">No address in trash can</string>
+    <string name="trash_address_restore">Restore Address?</string>
+
+    <!-- pin code -->
+    <string name="pin_code_enter_notice">Enter your PIN code</string>
+    <string name="pin_code_setting_name">PIN Code</string>
+    <string name="pin_code_setting_open">Enable PIN Code</string>
+    <string name="pin_code_setting_close">Disable PIN Code</string>
+    <string name="pin_code_setting_change">Change PIN Code</string>
+    <string name="pin_code_setting_open_msg">Enter your PIN code</string>
+    <string name="pin_code_setting_open_repeat_msg">Enter your PIN code again</string>
+    <string name="pin_code_setting_open_repeat_wrong">PIN codes are not same</string>
+    <string name="pin_code_setting_change_old_msg">Enter your old PIN code</string>
+    <string name="pin_code_setting_change_old_wrong">Old PIN code is wrong</string>
+    <string name="pin_code_setting_change_new_msg">Enter your new PIN code</string>
+    <string name="pin_code_setting_change_new_repeat_msg">Enter your new PIN code again</string>
+    <string name="pin_code_setting_change_repeat_wrong">New PIN codes are not same</string>
+    <string name="pin_code_setting_close_wrong">PIN code is wrong</string>
+
+    <!-- launch sequence -->
+    <string name="launch_sequence_switch_to_cold">Switch to Bither Cold</string>
+    <string name="launch_sequence_switch_to_cold_warn">Set this phone as Bither Cold?\n\nBither Cold need to be run on a offline phone.\nYou can monitor Bither Cold by Bither Hot.\nOnce set you can\'t switch back.</string>
+
+    <!-- bitcoin unit -->
+    <string name="setting_name_bitcoin_unit">Default Unit</string>
 </resources>

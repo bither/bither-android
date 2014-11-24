@@ -19,11 +19,11 @@ package net.bither.runnable;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.model.PasswordSeed;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.BackupUtil;
-import net.bither.util.SecureCharSequence;
 import net.bither.util.ThreadUtil;
 
 import java.util.List;
@@ -66,24 +66,16 @@ public class EditPasswordThread extends Thread {
     }
 
     public boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
-        List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
-        if (addresses.size() == 0) {
-            return true;
-        }
         try {
-            for (Address a : addresses) {
-                String encryptedStr = a.getEncryptPrivKey();
-                String newEncryptedStr = PrivateKeyUtil.changePassword(encryptedStr, oldPassword, newPassword);
-                if (newEncryptedStr == null) {
-                    return false;
-                }
-                a.setEncryptPrivKey(newEncryptedStr);
+            AddressManager.getInstance().changePassword(oldPassword, newPassword);
+            if (AddressManager.getInstance().getPrivKeyAddresses().size() > 0) {
+                AppSharedPreference.getInstance().setPasswordSeed(
+                        new PasswordSeed(AddressManager.getInstance().getPrivKeyAddresses().get(0)));
+            } else if (AddressManager.getInstance().getTrashAddresses().size() > 0) {
+                AppSharedPreference.getInstance().setPasswordSeed(
+                        new PasswordSeed(AddressManager.getInstance().getTrashAddresses().get(0)));
             }
-            AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(addresses.get
-                    (0)));
-            for (Address address : addresses) {
-                address.savePrivateKey();
-            }
+
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
                 BackupUtil.backupColdKey(false);
             } else {

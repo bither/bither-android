@@ -25,27 +25,32 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
 
 public class DialogPrivateKeyTextQrCode extends Dialog implements View.OnClickListener,
         DialogInterface.OnDismissListener, FancyQrCodeThread.FancyQrCodeListener {
     private Activity activity;
     private ImageView ivQr;
+    private TextView tvAddress;
     private ProgressBar pb;
     private String content;
+    private String address;
     private Bitmap qrCode;
     private int clickedView = 0;
 
-    public DialogPrivateKeyTextQrCode(Activity context, String privateText) {
+    public DialogPrivateKeyTextQrCode(Activity context, String privateText, String address) {
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
         setCanceledOnTouchOutside(true);
         this.content = privateText;
+        this.address = address;
         setContentView(R.layout.dialog_private_key_qr_code);
         setOnDismissListener(this);
         initView();
@@ -57,9 +62,11 @@ public class DialogPrivateKeyTextQrCode extends Dialog implements View.OnClickLi
 
     private void initView() {
         ivQr = (ImageView) findViewById(R.id.iv_qrcode);
+        tvAddress = (TextView) findViewById(R.id.tv_address);
         pb = (ProgressBar) findViewById(R.id.pb);
         findViewById(R.id.ll_container).setOnClickListener(this);
         findViewById(R.id.ll_back_up).setVisibility(View.GONE);
+        tvAddress.setText(WalletUtils.formatHash(address, 4, 20));
         ivQr.setOnClickListener(this);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
         ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
