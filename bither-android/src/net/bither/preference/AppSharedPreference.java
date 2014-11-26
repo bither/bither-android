@@ -326,6 +326,7 @@ public class AppSharedPreference {
     public void setPinCode(CharSequence code) {
         if (code == null || code.length() == 0) {
             deletePinCode();
+            return;
         }
         int salt = Ints.fromByteArray(new URandom().nextBytes(Ints.BYTES));
         String hash = Integer.toString(salt) + ";" + Integer.toString((code.toString() + Integer

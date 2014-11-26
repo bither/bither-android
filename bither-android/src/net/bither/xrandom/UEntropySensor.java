@@ -67,7 +67,17 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
         }
         sensors.removeAll(unregisteredSensors);
         if (sensors.size() == 0) {
-            collector.onError(new Exception("no sensor registered"), UEntropySensor.this);
+            if (visualizer != null) {
+                visualizer.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        collector.onError(new Exception("no sensor registered"),
+                                UEntropySensor.this);
+                    }
+                }, 100);
+            } else {
+                collector.onError(new Exception("no sensor registered"), UEntropySensor.this);
+            }
         }
         visualizer.setSensors(sensors);
     }
