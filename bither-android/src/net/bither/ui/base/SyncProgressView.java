@@ -57,19 +57,20 @@ public class SyncProgressView extends FrameLayout {
 		removeCallbacks(delayedShowProgress);
 		removeCallbacks(delayHide);
 		this.progress = progress;
-		if (progress >= 0 && progress < 1) {
+        LogUtil.d("progress", "progress:" + progress);
+		if (progress >= 0 && progress <= 1) {
 			if (getWidth() <= 0) {
 				postDelayed(delayedShowProgress, 100);
 				return;
 			}
-			LogUtil.d("progress", "progress:" + progress);
 			double p = Math.max(Math.min(progress, 1.0f), 0.1f);
 			iv.getLayoutParams().width = (int) (p * getWidth());
 			iv.requestLayout();
 			setVisibility(View.VISIBLE);
-		} else {
+		}
+        if(progress < 0 || progress >= 1) {
 			if (getVisibility() == VISIBLE) {
-				post(delayHide);
+				postDelayed(delayHide, 500);
 			} else {
 				setVisibility(View.GONE);
 			}
@@ -79,15 +80,9 @@ public class SyncProgressView extends FrameLayout {
 	private Runnable delayHide = new Runnable() {
 		@Override
 		public void run() {
-			int width = iv.getLayoutParams().width + getWidth() / 10;
-			if (width >= getWidth()) {
-				setVisibility(View.GONE);
-			} else {
-				iv.getLayoutParams().width = width;
-				iv.requestLayout();
-				postDelayed(delayHide, 100);
-				LogUtil.d("progress", "delayhide");
-			}
+            if(progress < 0 || progress >= 1) {
+                setVisibility(View.GONE);
+            }
 		}
 	};
 
