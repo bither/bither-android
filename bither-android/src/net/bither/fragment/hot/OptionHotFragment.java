@@ -579,7 +579,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         final Runnable check = new Runnable() {
             @Override
             public void run() {
-                if (AddressManager.getInstance().getAllAddresses().size() > 0) {
+                if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager.getInstance().getTrashAddresses().size() > 0) {
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);
