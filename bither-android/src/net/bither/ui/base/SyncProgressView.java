@@ -45,7 +45,7 @@ public class SyncProgressView extends FrameLayout {
 		super(context, attrs, defStyle);
 		initView();
 	}
-
+                
 	private void initView() {
 		removeAllViews();
 		iv = new ImageView(getContext());
