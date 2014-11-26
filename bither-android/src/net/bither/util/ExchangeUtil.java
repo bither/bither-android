@@ -95,8 +95,10 @@ public class ExchangeUtil {
             File file = FileUtil.getCurrenciesRateFile();
             String rateString = Utils.readFile(file);
             try {
-                JSONObject json = new JSONObject(rateString);
-                mCurrenciesRate = parseCurrenciesRate(json);
+                if (!Utils.isEmpty(rateString)) {
+                    JSONObject json = new JSONObject(rateString);
+                    mCurrenciesRate = parseCurrenciesRate(json);
+                }
             } catch (JSONException ex) {
                 mCurrenciesRate = null;
             }
