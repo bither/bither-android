@@ -122,7 +122,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -154,14 +154,14 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
                                 dialogProgress.dismiss();
                                 if (str != null) {
-                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str, address.getAddress());
+                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str.toString(), address.getAddress());
                                     dialogPrivateKeyTextQrCode.show();
                                 } else {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {

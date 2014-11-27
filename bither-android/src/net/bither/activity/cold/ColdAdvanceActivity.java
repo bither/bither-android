@@ -361,7 +361,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public boolean checkPassword(SecureCharSequence password) {
                         try {
-                            bip38DecodeString = Bip38.decrypt(bip38Content, password);
+                            bip38DecodeString = Bip38.decrypt(bip38Content, password).toString();
                             return bip38DecodeString != null;
                         } catch (Exception e) {
                             e.printStackTrace();

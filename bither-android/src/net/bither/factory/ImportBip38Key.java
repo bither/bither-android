@@ -50,7 +50,7 @@ public class ImportBip38Key implements IDialogPasswordListener {
             public void run() {
                 try {
                     result =
-                            Bip38.decrypt(content, password);
+                            Bip38.decrypt(content, password).toString();
                     if (result == null) {
                         password.wipe();
                         ThreadUtil.runOnMainThread(new Runnable() {

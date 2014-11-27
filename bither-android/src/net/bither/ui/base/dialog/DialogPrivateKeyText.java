@@ -22,28 +22,33 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.util.WalletUtils;
 
 public class DialogPrivateKeyText extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener {
     private Activity activity;
-    private String mPrivateKeyText;
+    private SecureCharSequence mPrivateKeyText;
     private TextView tvPrivateKeyText;
 
-    public DialogPrivateKeyText(Activity context, String privateKeyText) {
+    public DialogPrivateKeyText(Activity context, SecureCharSequence privateKeyText) {
         super(context);
-        this.mPrivateKeyText = privateKeyText;
         this.activity = context;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_show_private_key_text);
         tvPrivateKeyText = (TextView) findViewById(R.id.tv_view_show_private_key_text);
-        tvPrivateKeyText.setText(WalletUtils.formatHash(this.mPrivateKeyText, 4, 16));
+        mPrivateKeyText = WalletUtils.formatHashFromCharSequence(privateKeyText, 4, 16);
+        tvPrivateKeyText.setText(mPrivateKeyText);
+        privateKeyText.wipe();
         findViewById(R.id.tv_close).setOnClickListener(this);
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        mPrivateKeyText.wipe();
     }
+
+
 
     @Override
     public void onClick(View v) {
