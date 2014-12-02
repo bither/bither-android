@@ -138,7 +138,7 @@ public class ImportPrivateKey {
             encryptedPrivateString = QRCodeUtil.getNewVersionEncryptPrivKey(content);
         } else {
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
-            encryptedPrivateString = PrivateKeyUtil.getPrivateKeyString(ecKey);
+            encryptedPrivateString = PrivateKeyUtil.getEncryptedString(ecKey);
         }
         Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedPrivateString
                 , ecKey.isFromXRandom());
@@ -255,20 +255,27 @@ public class ImportPrivateKey {
 
     private ECKey getEckey() {
         ECKey ecKey = null;
+        DumpedPrivateKey dumpedPrivateKey = null;
         try {
             switch (this.importPrivateKeyType) {
                 case Text:
-                    ecKey = new DumpedPrivateKey(this.content).getKey();
+                    dumpedPrivateKey = new DumpedPrivateKey(this.content);
+                    ecKey = dumpedPrivateKey.getKey();
                     break;
                 case BitherQrcode:
                     ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
                     break;
                 case Bip38:
-                    ecKey = new DumpedPrivateKey(content).getKey();
+                    dumpedPrivateKey = new DumpedPrivateKey(this.content);
+                    ecKey = dumpedPrivateKey.getKey();
                     break;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (dumpedPrivateKey != null) {
+                dumpedPrivateKey.clearPrivateKey();
+            }
         }
         return ecKey;
     }
