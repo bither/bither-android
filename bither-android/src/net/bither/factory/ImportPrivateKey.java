@@ -67,10 +67,9 @@ public class ImportPrivateKey {
         ThreadNeedService threadNeedService = new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
+                ECKey ecKey = getEckey();
                 try {
-                    ECKey ecKey = getEckey();
                     if (ecKey == null) {
-                        password.wipe();
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
@@ -85,18 +84,17 @@ public class ImportPrivateKey {
                                 }
                             }
                         });
-                        return;
-                    }
-                    List<String> addressList = new ArrayList<String>();
-                    addressList.add(ecKey.toAddress());
-                    if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                        checkAddress(service, ecKey, addressList);
                     } else {
-                        addECKey(service, ecKey);
+                        List<String> addressList = new ArrayList<String>();
+                        addressList.add(ecKey.toAddress());
+                        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                            checkAddress(service, ecKey, addressList);
+                        } else {
+                            addECKey(service, ecKey);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    password.wipe();
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -107,6 +105,11 @@ public class ImportPrivateKey {
                             DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         }
                     });
+                } finally {
+                    password.wipe();
+                    if (ecKey != null) {
+                        ecKey.clearPrivateKey();
+                    }
                 }
             }
         };

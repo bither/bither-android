@@ -142,6 +142,7 @@ public class CheckUtil {
                                 address.getAddress(), password);
                         if (eckeyFromBackup != null) {
                             String encryptPrivateKey = PrivateKeyUtil.getEncryptedString(eckeyFromBackup);
+                            eckeyFromBackup.clearPrivateKey();
                             if (!Utils.isEmpty(encryptPrivateKey)) {
                                 address.setEncryptPrivKey(encryptPrivateKey);
                                 address.savePrivateKey();

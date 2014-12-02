@@ -51,6 +51,7 @@ public class KeyUtil {
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             Address address = new Address(ecKey.toAddress(),
                     ecKey.getPubKey(), PrivateKeyUtil.getEncryptedString(ecKey), ecKey.isFromXRandom());
+            ecKey.clearPrivateKey();
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
             if (AppSharedPreference.getInstance().getPasswordSeed() == null) {

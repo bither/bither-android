@@ -109,7 +109,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     };
 
 
-    private View.OnClickListener trashCanClick = new View.OnClickListener(){
+    private View.OnClickListener trashCanClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -346,7 +346,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public boolean checkPassword(SecureCharSequence password) {
                         ECKey ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
-                        return ecKey != null;
+                        boolean result = ecKey != null;
+                        ecKey.clearPrivateKey();
+                        return result;
                     }
                 });
                 dialogPassword.setTitle(R.string.import_private_key_qr_code_password);

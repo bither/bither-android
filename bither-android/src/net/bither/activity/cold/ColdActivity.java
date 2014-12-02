@@ -391,12 +391,12 @@ public class ColdActivity extends BaseFragmentActivity {
                                 continue;
                             }
                             passwordSeed = new PasswordSeed(keyString);
-                            passwordSeed.checkPassword(password);
-                            ECKey key = passwordSeed.getECKey();
+                            ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
                                         PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
                                 addressList.add(address);
+                                key.clearPrivateKey();
 
                             }
                         }
