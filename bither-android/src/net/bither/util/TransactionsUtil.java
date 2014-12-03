@@ -202,7 +202,7 @@ public class TransactionsUtil {
 
     }
 
-    public static List<In> getInSignatureFromBither(String str){
+    public static List<In> getInSignatureFromBither(String str) {
         List<In> result = new ArrayList<In>();
         if (str.length() > 0) {
             String[] txs = str.split(";");
@@ -308,32 +308,34 @@ public class TransactionsUtil {
         Block storedBlock = BlockChain.getInstance().getLastBlock();
         int storeBlockHeight = storedBlock.getBlockNo();
         for (Address address : AddressManager.getInstance().getAllAddresses()) {
-            List<Tx> transactions = new ArrayList<Tx>();
-            int apiBlockCount = 0;
-            BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
-                    address.getAddress());
-            bitherMytransactionsApi.handleHttpGet();
-            String txResult = bitherMytransactionsApi.getResult();
-            JSONObject jsonObject = new JSONObject(txResult);
-            if (!jsonObject.isNull(BLOCK_COUNT)) {
-                apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
-            }
-            List<Tx> temp = TransactionsUtil.getTransactionsFromBither(
-                    jsonObject, storeBlockHeight);
-            transactions.addAll(temp);
+            if (!address.isSyncComplete()) {
+                List<Tx> transactions = new ArrayList<Tx>();
+                int apiBlockCount = 0;
+                BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
+                        address.getAddress());
+                bitherMytransactionsApi.handleHttpGet();
+                String txResult = bitherMytransactionsApi.getResult();
+                JSONObject jsonObject = new JSONObject(txResult);
+                if (!jsonObject.isNull(BLOCK_COUNT)) {
+                    apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
+                }
+                List<Tx> temp = TransactionsUtil.getTransactionsFromBither(
+                        jsonObject, storeBlockHeight);
+                transactions.addAll(temp);
 
-            if (apiBlockCount < storeBlockHeight && storeBlockHeight - apiBlockCount < 100) {
-                BlockChain.getInstance().rollbackBlock(apiBlockCount);
+                if (apiBlockCount < storeBlockHeight && storeBlockHeight - apiBlockCount < 100) {
+                    BlockChain.getInstance().rollbackBlock(apiBlockCount);
+                }
+                Collections.sort(transactions, new ComparatorTx());
+                address.initTxs(transactions);
+                address.setSyncComplete(true);
+                address.updatePubkey();
             }
-            Collections.sort(transactions, new ComparatorTx());
-            address.initTxs(transactions);
-            address.setSyncComplete(true);
-            address.updatePubkey();
         }
     }
 
-    public static Thread completeInputsForAddressInBackground(final Address address){
-        Thread thread = new Thread(){
+    public static Thread completeInputsForAddressInBackground(final Address address) {
+        Thread thread = new Thread() {
             @Override
             public void run() {
                 completeInputsForAddress(address);
@@ -344,7 +346,7 @@ public class TransactionsUtil {
         return thread;
     }
 
-    public static void completeInputsForAddress(Address address){
+    public static void completeInputsForAddress(Address address) {
         try {
             int fromBlock = address.needCompleteInSignature();
             while (fromBlock > 0) {
