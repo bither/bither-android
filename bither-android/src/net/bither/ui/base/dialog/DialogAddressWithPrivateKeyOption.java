@@ -21,7 +21,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
@@ -31,7 +30,6 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
         .OnClickListener, DialogInterface.OnDismissListener {
     private DialogFancyQrCode dialogQr;
     private Address address;
-    private LinearLayout llOriginQRCode;
     private Activity activity;
     private int clickedView;
 
@@ -42,10 +40,8 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
         this.address = address;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_private_key_option);
-        llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
         findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
-        llOriginQRCode.setOnClickListener(this);
-        llOriginQRCode.setVisibility(View.GONE);
+        findViewById(R.id.tv_private_key_management).setOnClickListener(this);
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
     }
@@ -59,9 +55,6 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     @Override
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
-            case R.id.ll_origin_qr_code:
-                dialogQr.show();
-                break;
             case R.id.tv_view_on_blockchaininfo:
                 Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://blockchain.info/address/"
@@ -75,6 +68,9 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
                     DropdownMessage.showDropdownMessage(activity,
                             R.string.find_browser_error);
                 }
+                break;
+            case R.id.tv_private_key_management:
+                new DialogAddressWithShowPrivateKey(activity, address).show();
                 break;
             default:
                 return;

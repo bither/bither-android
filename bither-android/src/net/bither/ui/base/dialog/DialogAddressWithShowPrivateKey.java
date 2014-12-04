@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
@@ -189,6 +190,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                             @Override
                             public void run() {
                                 dp.dismiss();
+                                if (activity instanceof AddressDetailActivity) {
+                                    activity.finish();
+                                }
                                 if (AppSharedPreference.getInstance().getAppMode() ==
                                         BitherjSettings.AppMode.HOT) {
                                     Fragment f = BitherApplication.hotActivity.getFragmentAtIndex

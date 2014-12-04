@@ -228,6 +228,7 @@
     <string name="choose_mode_warm_desctription">Bither Hot : Online &amp; Simple.</string>
     <string name="choose_mode_warm_waiting">Loading…</string>
     <string name="choose_mode_warm_retry">Retry</string>
+    <string name="choose_mode_warm_change_to_cold">Change to Bither Cold</string>
     <string name="choose_mode_cold_confirm">Once mode is set, it can\'t be changed.\nBither Cold need to be run on a offline phone.\nSet this phone as Bither Cold?</string>
     <string name="choose_mode_warm_confirm">Once mode is set, it can\'t be changed.\nBither Hot is an online bitcoin wallet.\nSet this phone as Bither Hot?</string>
 
@@ -425,4 +426,7 @@
 
     <!-- bitcoin unit -->
     <string name="setting_name_bitcoin_unit">Default Unit</string>
+
+    <!--  Private Key Management -->
+    <string name="private_key_management">Private Key Management</string>
 </resources>

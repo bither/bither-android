@@ -22,14 +22,17 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.nineoldandroids.animation.ObjectAnimator;
+
 import net.bither.R;
 import net.bither.util.LogUtil;
 
 
 public class SyncProgressView extends FrameLayout {
-
+    private static final int AnimationDuration = 500;
 	private ImageView iv;
 	private double progress;
+    private ObjectAnimator animator;
 
 	public SyncProgressView(Context context) {
 		super(context);
@@ -63,14 +66,18 @@ public class SyncProgressView extends FrameLayout {
 				postDelayed(delayedShowProgress, 100);
 				return;
 			}
-			double p = Math.max(Math.min(progress, 1.0f), 0.1f);
-			iv.getLayoutParams().width = (int) (p * getWidth());
-			iv.requestLayout();
+			double p = Math.max(Math.min(progress, 1.0f), 0.2f);
+            if(animator != null && animator.isRunning()){
+                animator.cancel();
+            }
+            animator = ObjectAnimator.ofInt(new WrapLayoutParamsForAnimator(iv), "width", (int) (p * getWidth()));
+            animator.setDuration(AnimationDuration);
+            animator.start();
 			setVisibility(View.VISIBLE);
 		}
         if(progress < 0 || progress >= 1) {
 			if (getVisibility() == VISIBLE) {
-				postDelayed(delayHide, 500);
+				postDelayed(delayHide, AnimationDuration);
 			} else {
 				setVisibility(View.GONE);
 			}
