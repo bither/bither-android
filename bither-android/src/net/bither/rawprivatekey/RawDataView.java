@@ -122,7 +122,7 @@ public class RawDataView extends FrameLayout {
         return data.size();
     }
 
-    public BigInteger getData() {
+    public byte[] getData() {
         if (filledDataLength() < dataLength()) {
             return null;
         }
@@ -133,7 +133,7 @@ public class RawDataView extends FrameLayout {
              i++) {
             bytes[i] = getByteFromData(i * 8, false, false);
         }
-        return new BigInteger(1, bytes);
+        return bytes;
     }
 
     public BigInteger testNextZeroValue() {

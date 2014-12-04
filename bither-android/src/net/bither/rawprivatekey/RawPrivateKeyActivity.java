@@ -29,6 +29,7 @@ import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.UIUtil;
@@ -40,8 +41,6 @@ import java.math.BigInteger;
  * Created by songchenwen on 14/12/4.
  */
 public class RawPrivateKeyActivity extends SwipeRightActivity {
-    private BigInteger min;
-    private BigInteger max;
     private RawDataView vData;
     private Button btnZero;
     private Button btnOne;
@@ -57,7 +56,6 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_add_raw_private_key);
         initView();
-        initBoundaries();
     }
 
     private void initView() {
@@ -79,19 +77,27 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         llInput.setVisibility(View.VISIBLE);
     }
 
-    private void initBoundaries() {
-        min = BigInteger.ZERO;
-        max = ECKey.CURVE.getN();
-    }
-
     private void handleData() {
-        BigInteger data = vData.getData();
+        byte[] data = vData.getData();
         if (data == null) {
             return;
         }
-        ECKey key = new ECKey(data);
+        if (!checkValue(data)) {
+            DropdownMessage.showDropdownMessage(this, R.string.raw_private_key_not_safe,
+                    new Runnable() {
+                @Override
+                public void run() {
+                    vData.setDataSize(16, 16);
+                }
+            });
+            return;
+        }
+        BigInteger value = new BigInteger(1, data);
+        value = value.mod(ECKey.CURVE.getN());
+
+        ECKey key = new ECKey(value);
         String address = Utils.toAddress(key.getPubKeyHash());
-        SecureCharSequence privateKey = new DumpedPrivateKey(data.toByteArray(),
+        SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
                 true).toSecureCharSequence();
         tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey, 4, 16));
         tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
@@ -99,23 +105,29 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         llShow.setVisibility(View.VISIBLE);
     }
 
+    private boolean checkValue(byte[] data) {
+        BigInteger value = new BigInteger(1, data);
+        if (value.compareTo(BigInteger.ZERO) == 0 || value.compareTo(ECKey.CURVE.getN()) == 0) {
+            return false;
+        }
+        return true;
+    }
+
     private View.OnClickListener addDataClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            btnZero.setVisibility(View.VISIBLE);
-            btnOne.setVisibility(View.VISIBLE);
             if (vData.dataLength() > 0 && vData.filledDataLength() < vData.dataLength()) {
                 vData.addData(v == btnOne);
                 if (vData.filledDataLength() == vData.dataLength()) {
                     handleData();
                     return;
                 }
-                if (vData.testNextOneValue().compareTo(max) >= 0) {
-                    btnOne.setVisibility(View.GONE);
-                }
-                if (vData.testNextZeroValue().compareTo(min) <= 0) {
-                    btnZero.setVisibility(View.GONE);
-                }
+//                if (vData.testNextOneValue().compareTo(max) >= 0) {
+//                    btnOne.setVisibility(View.GONE);
+//                }
+//                if (vData.testNextZeroValue().compareTo(min) <= 0) {
+//                    btnZero.setVisibility(View.GONE);
+//                }
             }
         }
     };

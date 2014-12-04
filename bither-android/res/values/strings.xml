@@ -435,4 +435,5 @@
     <string name="raw_private_key_private_key">Private Key</string>
     <string name="raw_private_key_address">Address</string>
     <string name="raw_private_key_add">Add This Private Key</string>
+    <string name="raw_private_key_not_safe">This private key is not safe</string>
 </resources>
