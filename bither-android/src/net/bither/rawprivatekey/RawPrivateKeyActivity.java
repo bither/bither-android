@@ -23,9 +23,12 @@ import android.view.View;
 import android.widget.Button;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.UIUtil;
+
+import java.math.BigInteger;
 
 /**
  * Created by songchenwen on 14/12/4.
@@ -34,6 +37,8 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
     private RawDataView vData;
     private Button btnZero;
     private Button btnOne;
+    private BigInteger min;
+    private BigInteger max;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_add_raw_private_key);
         initView();
+        initBoundaries();
     }
 
     private void initView() {
@@ -55,11 +61,34 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         vData.setDataSize(16, 16);
     }
 
+    private void initBoundaries() {
+        min = BigInteger.ZERO;
+        max = ECKey.CURVE.getN();
+    }
+
+    private void handleData() {
+
+    }
+
     private View.OnClickListener addDataClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (vData.dataLength() > 0) {
+            if (vData.dataLength() > 0 && vData.filledDataLength() < vData.dataLength()) {
                 vData.addData(v == btnOne);
+                if (vData.filledDataLength() == vData.dataLength()) {
+                    handleData();
+                    return;
+                }
+                if (vData.testNextOneValue().compareTo(max) >= 0) {
+                    btnOne.setVisibility(View.GONE);
+                } else {
+                    btnOne.setVisibility(View.VISIBLE);
+                }
+                if (vData.testNextZeroValue().compareTo(min) <= 0) {
+                    btnZero.setVisibility(View.GONE);
+                } else {
+                    btnZero.setVisibility(View.VISIBLE);
+                }
             }
         }
     };

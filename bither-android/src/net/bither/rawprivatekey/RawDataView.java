@@ -31,6 +31,7 @@ import android.widget.ImageView;
 
 import net.bither.R;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 /**
@@ -110,8 +111,67 @@ public class RawDataView extends FrameLayout {
         organizeView();
     }
 
-    public long dataLength() {
+    public int dataLength() {
         return column * row;
+    }
+
+    public int filledDataLength() {
+        if (data == null) {
+            return 0;
+        }
+        return data.size();
+    }
+
+    public BigInteger getDate() {
+        if (filledDataLength() < dataLength()) {
+            return null;
+        }
+        int byteCount = dataLength() / 8;
+        byte[] bytes = new byte[byteCount];
+        for (int i = 0;
+             i < byteCount;
+             i++) {
+            bytes[i] = getByteFromData(i * 8, false, false);
+        }
+        return new BigInteger(1, bytes);
+    }
+
+    public BigInteger testNextZeroValue() {
+        int byteCount = dataLength() / 8;
+        byte[] bytes = new byte[byteCount];
+        for (int i = 0;
+             i < byteCount;
+             i++) {
+            bytes[i] = getByteFromData(i * 8, true, false);
+        }
+        return new BigInteger(1, bytes);
+    }
+
+    public BigInteger testNextOneValue() {
+        int byteCount = dataLength() / 8;
+        byte[] bytes = new byte[byteCount];
+        for (int i = 0;
+             i < byteCount;
+             i++) {
+            bytes[i] = getByteFromData(i * 8, false, true);
+        }
+        return new BigInteger(1, bytes);
+    }
+
+    private byte getByteFromData(int start, boolean fill, boolean lastValue) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = start;
+             i < start + 8;
+             i++) {
+            Boolean value = fill;
+            if (i < data.size()) {
+                value = data.get(i);
+            } else if (i == data.size()) {
+                value = lastValue;
+            }
+            builder.append(value ? '1' : '0');
+        }
+        return (byte) Integer.parseInt(builder.toString(), 2);
     }
 
     public void addData(boolean d) {
