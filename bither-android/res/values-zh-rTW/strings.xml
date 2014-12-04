@@ -408,4 +408,7 @@
 
     <!-- bitcoin unit -->
     <string name="setting_name_bitcoin_unit">默認單位</string>
+
+    <!--  Private Key Management -->
+    <string name="private_key_management">私鑰管理</string>
 </resources>

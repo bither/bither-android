@@ -425,4 +425,7 @@
 
     <!-- bitcoin unit -->
     <string name="setting_name_bitcoin_unit">Default Unit</string>
+
+    <!--  Private Key Management -->
+    <string name="private_key_management">Private Key Management</string>
 </resources>
