@@ -415,4 +415,7 @@
 
     <!-- Raw Private Key -->
     <string name="activity_name_raw_private_key">原始私鑰</string>
+    <string name="raw_private_key_private_key">私鑰</string>
+    <string name="raw_private_key_address">地址</string>
+    <string name="raw_private_key_add">添加此私鑰</string>
 </resources>

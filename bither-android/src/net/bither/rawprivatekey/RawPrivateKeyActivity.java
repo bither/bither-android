@@ -21,12 +21,18 @@ package net.bither.rawprivatekey;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
 
@@ -34,11 +40,16 @@ import java.math.BigInteger;
  * Created by songchenwen on 14/12/4.
  */
 public class RawPrivateKeyActivity extends SwipeRightActivity {
+    private BigInteger min;
+    private BigInteger max;
     private RawDataView vData;
     private Button btnZero;
     private Button btnOne;
-    private BigInteger min;
-    private BigInteger max;
+    private Button btnAdd;
+    private TextView tvPrivateKey;
+    private TextView tvAddress;
+    private LinearLayout llShow;
+    private LinearLayout llInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +67,16 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         btnZero.setOnClickListener(addDataClick);
         btnOne = (Button) findViewById(R.id.btn_one);
         btnOne.setOnClickListener(addDataClick);
+        llShow = (LinearLayout) findViewById(R.id.ll_show);
+        llInput = (LinearLayout) findViewById(R.id.ll_input);
+        tvPrivateKey = (TextView) findViewById(R.id.tv_private_key);
+        tvAddress = (TextView) findViewById(R.id.tv_address);
+        btnAdd = (Button) findViewById(R.id.btn_add);
         vData.setRestrictedSize(getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix
-                (16), (int)(getResources().getDisplayMetrics().heightPixels * 0.47f));
+                (16), (int) (getResources().getDisplayMetrics().heightPixels * 0.47f));
         vData.setDataSize(16, 16);
+        llShow.setVisibility(View.GONE);
+        llInput.setVisibility(View.VISIBLE);
     }
 
     private void initBoundaries() {
@@ -67,12 +85,25 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
     }
 
     private void handleData() {
-
+        BigInteger data = vData.getData();
+        if (data == null) {
+            return;
+        }
+        ECKey key = new ECKey(data);
+        String address = Utils.toAddress(key.getPubKeyHash());
+        SecureCharSequence privateKey = new DumpedPrivateKey(data.toByteArray(),
+                true).toSecureCharSequence();
+        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey, 4, 16));
+        tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
+        llInput.setVisibility(View.GONE);
+        llShow.setVisibility(View.VISIBLE);
     }
 
     private View.OnClickListener addDataClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            btnZero.setVisibility(View.VISIBLE);
+            btnOne.setVisibility(View.VISIBLE);
             if (vData.dataLength() > 0 && vData.filledDataLength() < vData.dataLength()) {
                 vData.addData(v == btnOne);
                 if (vData.filledDataLength() == vData.dataLength()) {
@@ -81,13 +112,9 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
                 }
                 if (vData.testNextOneValue().compareTo(max) >= 0) {
                     btnOne.setVisibility(View.GONE);
-                } else {
-                    btnOne.setVisibility(View.VISIBLE);
                 }
                 if (vData.testNextZeroValue().compareTo(min) <= 0) {
                     btnZero.setVisibility(View.GONE);
-                } else {
-                    btnZero.setVisibility(View.VISIBLE);
                 }
             }
         }

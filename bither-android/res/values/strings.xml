@@ -432,4 +432,7 @@
 
     <!-- Raw Private Key -->
     <string name="activity_name_raw_private_key">Raw Private Key</string>
+    <string name="raw_private_key_private_key">Private Key</string>
+    <string name="raw_private_key_address">Address</string>
+    <string name="raw_private_key_add">Add This Private Key</string>
 </resources>

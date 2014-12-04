@@ -122,7 +122,7 @@ public class RawDataView extends FrameLayout {
         return data.size();
     }
 
-    public BigInteger getDate() {
+    public BigInteger getData() {
         if (filledDataLength() < dataLength()) {
             return null;
         }

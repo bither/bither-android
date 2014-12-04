@@ -22,6 +22,7 @@
             android:layout_marginTop="@dimen/title_bar_below_margin">
 
             <LinearLayout
+                android:id="@+id/ll_input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -65,6 +66,81 @@
                         android:text="1"
                         android:layout_weight="1"/>
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_show"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/card_list_padding"
+                    android:paddingRight="@dimen/card_list_padding">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_field_hint_color"
+                            android:text="@string/raw_private_key_private_key"/>
+
+                        <TextView
+                            android:id="@+id/tv_private_key"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ui_touchable_foreground"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/text_field_text_color"
+                            android:fontFamily="monospace"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_field_hint_color"
+                            android:text="@string/raw_private_key_address"/>
+
+                        <TextView
+                            android:id="@+id/tv_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ui_touchable_foreground"
+                            android:padding="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/text_field_text_color"
+                            android:fontFamily="monospace"
+                            android:textSize="18sp"/>
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_card_foreground_single"/>
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/btn_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:padding="16dp"
+                    android:layout_gravity="center"
+                    android:textSize="16sp"
+                    android:text="@string/raw_private_key_add"/>
             </LinearLayout>
 
             <include layout="@layout/layout_dropdown_message"/>
