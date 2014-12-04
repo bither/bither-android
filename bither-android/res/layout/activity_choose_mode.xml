@@ -146,7 +146,21 @@
                     android:background="@drawable/dialog_btn_bg_selector"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_gravity="center"
                     android:text="@string/choose_mode_warm_retry"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/btn_change_to_cold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/dialog_btn_bg_selector"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:layout_gravity="center"
+                    android:text="@string/choose_mode_warm_change_to_cold"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
             </LinearLayout>

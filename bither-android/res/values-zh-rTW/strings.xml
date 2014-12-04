@@ -220,6 +220,7 @@
     <string name="choose_mode_warm_desctription">熱錢包 : 聯機, 易用!</string>
     <string name="choose_mode_warm_waiting">加載中…</string>
     <string name="choose_mode_warm_retry">重試</string>
+    <string name="choose_mode_warm_change_to_cold">切換到冷錢包</string>
     <string name="choose_mode_cold_confirm">模式設置後不能切換.\n冷錢包應該運行在離線的備用手機上.\n確認以冷錢包模式運行?</string>
     <string name="choose_mode_warm_confirm">模式設置後不能切換.\n熱錢包可以方便的在線發送交易.\n確認以熱錢包模式運行?</string>
 
