@@ -412,4 +412,7 @@
 
     <!--  Private Key Management -->
     <string name="private_key_management">私钥管理</string>
+
+    <!-- Raw Private Key -->
+    <string name="activity_name_raw_private_key">原始私钥</string>
 </resources>

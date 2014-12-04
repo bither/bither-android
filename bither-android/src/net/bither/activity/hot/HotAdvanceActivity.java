@@ -50,6 +50,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.qrcode.ScanQRCodeWithOtherActivity;
+import net.bither.rawprivatekey.RawPrivateKeyActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -118,6 +119,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
+        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
     }
 
@@ -126,6 +128,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         super.onResume();
         ssvPinCode.loadData();
     }
+
+    private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(HotAdvanceActivity.this, RawPrivateKeyActivity.class));
+        }
+    };
 
     private View.OnClickListener rCheckClick = new View.OnClickListener() {
 

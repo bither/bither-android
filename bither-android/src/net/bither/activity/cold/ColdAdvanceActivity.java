@@ -45,6 +45,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.qrcode.ScanQRCodeWithOtherActivity;
+import net.bither.rawprivatekey.RawPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
@@ -89,6 +90,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnTrashCan.setOnClickListener(trashCanClick);
+        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
     }
@@ -98,6 +100,13 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         super.onResume();
         ssvPinCode.loadData();
     }
+
+    private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ColdAdvanceActivity.this, RawPrivateKeyActivity.class));
+        }
+    };
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
