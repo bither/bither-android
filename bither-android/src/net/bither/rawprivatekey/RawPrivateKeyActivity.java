@@ -19,19 +19,36 @@
 package net.bither.rawprivatekey;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.fragment.hot.HotAddressFragment;
+import net.bither.preference.AppSharedPreference;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.BackupUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
@@ -40,7 +57,7 @@ import java.math.BigInteger;
 /**
  * Created by songchenwen on 14/12/4.
  */
-public class RawPrivateKeyActivity extends SwipeRightActivity {
+public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialogPasswordListener {
     private RawDataView vData;
     private Button btnZero;
     private Button btnOne;
@@ -70,6 +87,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         tvPrivateKey = (TextView) findViewById(R.id.tv_private_key);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         btnAdd = (Button) findViewById(R.id.btn_add);
+        btnAdd.setOnClickListener(addKeyClick);
         vData.setRestrictedSize(getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix
                 (16), (int) (getResources().getDisplayMetrics().heightPixels * 0.47f));
         vData.setDataSize(16, 16);
@@ -99,6 +117,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         String address = Utils.toAddress(key.getPubKeyHash());
         SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
                 true).toSecureCharSequence();
+        key.clearPrivateKey();
         tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey, 4, 16));
         tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
         llInput.setVisibility(View.GONE);
@@ -132,9 +151,73 @@ public class RawPrivateKeyActivity extends SwipeRightActivity {
         }
     };
 
+    private View.OnClickListener addKeyClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogPassword(RawPrivateKeyActivity.this, RawPrivateKeyActivity.this).show();
+        }
+    };
+
     @Override
     public void finish() {
         super.finish();
         overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
+    @Override
+    public void onPasswordEntered(final SecureCharSequence password) {
+        DialogProgress dp = new DialogProgress(this, R.string.please_wait);
+        dp.show();
+        new ThreadNeedService(dp, this) {
+            @Override
+            public void runWithService(BlockchainService service) {
+                if (service != null) {
+                    service.stopAndUnregister();
+                }
+                byte[] data = vData.getData();
+                ECKey key = new ECKey(data, null);
+                key = PrivateKeyUtil.encrypt(key, password);
+                key.clearPrivateKey();
+                Utils.wipeBytes(data);
+                password.wipe();
+                Address address = new Address(key.toAddress(), key.getPubKey(),
+                        PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
+                key.clearPrivateKey();
+                AddressManager.getInstance().addAddress(address);
+                if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+                    PasswordSeed passwordSeed = new PasswordSeed(address);
+                    AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
+                }
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
+                        .COLD) {
+                    BackupUtil.backupColdKey(false);
+                } else {
+                    BackupUtil.backupHotKey();
+                }
+                if (service != null) {
+                    service.startAndRegister();
+                }
+                ThreadUtil.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings
+                                .AppMode.HOT) {
+                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
+                            if (f instanceof HotAddressFragment) {
+                                HotAddressFragment hotAddressFragment = (HotAddressFragment) f;
+                                hotAddressFragment.refresh();
+                            }
+                        } else {
+                            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
+                            if (f instanceof ColdAddressFragment) {
+                                ColdAddressFragment coldAddressFragment = (ColdAddressFragment) f;
+                                coldAddressFragment.refresh();
+                            }
+                        }
+                    }
+                });
+            }
+        }.start();
     }
 }
