@@ -81,4 +81,8 @@
 
     <!-- pin code -->
     <color name="pin_code_dot_color">#eccccccc</color>
+
+    <!-- raw private key -->
+    <color name="raw_private_key_one">#feb993</color>
+    <color name="raw_private_key_zero">#a5fcff</color>
 </resources>

@@ -18,24 +18,53 @@
             android:id="@+id/fl_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="5dp"
             android:layout_marginTop="@dimen/title_bar_below_margin">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <FrameLayout
+                <net.bither.rawprivatekey.RawDataView
+                    android:id="@+id/v_data"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
-                    android:layout_weight="1"/>
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1">
+
+                    <Button
+                        android:id="@+id/btn_zero"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:textSize="40sp"
+                        android:text="0"
+                        android:layout_weight="1"/>
+
+                    <Button
+                        android:id="@+id/btn_one"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:textSize="40sp"
+                        android:text="1"
+                        android:layout_weight="1"/>
+                </LinearLayout>
             </LinearLayout>
 
             <include layout="@layout/layout_dropdown_message"/>
