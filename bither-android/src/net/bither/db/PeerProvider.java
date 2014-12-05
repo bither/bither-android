@@ -201,15 +201,8 @@ public class PeerProvider implements IPeerProvider {
             peerItemList.add(applyCursor(c));
         }
         c.close();
-        List<Peer> temp = new ArrayList<Peer>();
-        for (Peer peer : peerItemList) {
-            if (peer.getPeerAddress().getAddress().length > Ints.BYTES) {
-                clearIPV6();
-            } else {
-                temp.add(peer);
-            }
-        }
-        return temp;
+
+        return peerItemList;
     }
 
     public void clearIPV6() {
@@ -268,7 +261,12 @@ public class PeerProvider implements IPeerProvider {
         int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_ADDRESS);
         if (idColumn != -1) {
             try {
-                address = Utils.parseAddressFromLong(c.getLong(idColumn));
+                long addressLong = c.getLong(idColumn);
+                if (addressLong >= Integer.MIN_VALUE && addressLong <= Integer.MAX_VALUE) {
+                    address = Utils.parseAddressFromLong(c.getLong(idColumn));
+                } else {
+                    clearIPV6();
+                }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
