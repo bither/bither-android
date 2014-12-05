@@ -21,6 +21,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.db.AbstractDb;
@@ -198,7 +201,21 @@ public class PeerProvider implements IPeerProvider {
             peerItemList.add(applyCursor(c));
         }
         c.close();
-        return peerItemList;
+        List<Peer> temp = new ArrayList<Peer>();
+        for (Peer peer : peerItemList) {
+            if (peer.getPeerAddress().getAddress().length > Ints.BYTES) {
+                clearIPV6();
+            } else {
+                temp.add(peer);
+            }
+        }
+        return temp;
+    }
+
+    public void clearIPV6() {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.delete(AbstractDb.Tables.PEERS, "peer_address>? or peer_address<?"
+                , new String[]{Integer.toString(Integer.MAX_VALUE), Integer.toString(Integer.MIN_VALUE)});
     }
 
     public void cleanPeers() {
