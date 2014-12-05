@@ -33,6 +33,7 @@ import net.bither.R;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by songchenwen on 14/12/4.
@@ -134,6 +135,10 @@ public class RawDataView extends FrameLayout {
             bytes[i] = getByteFromData(i * 8, false, false);
         }
         return bytes;
+    }
+
+    public void clearData(){
+        Collections.fill(data, Boolean.FALSE);
     }
 
     public BigInteger testNextZeroValue() {

@@ -197,6 +197,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
                     service.stopAndUnregister();
                 }
                 byte[] data = vData.getData();
+                vData.clearData();
                 BigInteger value = new BigInteger(1, data);
                 value = value.mod(ECKey.CURVE.getN());
                 ECKey key = new ECKey(value);
