@@ -96,32 +96,54 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
     }
 
     private void handleData() {
-        byte[] data = vData.getData();
-        if (data == null) {
-            return;
-        }
-        if (!checkValue(data)) {
-            DropdownMessage.showDropdownMessage(this, R.string.raw_private_key_not_safe,
-                    new Runnable() {
-                @Override
-                public void run() {
-                    vData.setDataSize(16, 16);
+        final DialogProgress dp = new DialogProgress(this, R.string.please_wait);
+        dp.show();
+        new Thread() {
+            @Override
+            public void run() {
+                final byte[] data = vData.getData();
+                if (data == null) {
+                    return;
                 }
-            });
-            return;
-        }
-        BigInteger value = new BigInteger(1, data);
-        value = value.mod(ECKey.CURVE.getN());
+                if (!checkValue(data)) {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dp.dismiss();
+                            DropdownMessage.showDropdownMessage(RawPrivateKeyActivity.this,
+                                    R.string.raw_private_key_not_safe, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            vData.setDataSize(16, 16);
+                                        }
+                                    });
+                        }
+                    });
+                    return;
+                }
+                BigInteger value = new BigInteger(1, data);
+                value = value.mod(ECKey.CURVE.getN());
 
-        ECKey key = new ECKey(value);
-        String address = Utils.toAddress(key.getPubKeyHash());
-        SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
-                true).toSecureCharSequence();
-        key.clearPrivateKey();
-        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey, 4, 16));
-        tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
-        llInput.setVisibility(View.GONE);
-        llShow.setVisibility(View.VISIBLE);
+                ECKey key = new ECKey(value);
+                final String address = Utils.toAddress(key.getPubKeyHash());
+                final SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
+                        true).toSecureCharSequence();
+                Utils.wipeBytes(data);
+                key.clearPrivateKey();
+                ThreadUtil.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dp.dismiss();
+                        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey,
+                                4, 16));
+                        tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
+                        llInput.setVisibility(View.GONE);
+                        llShow.setVisibility(View.VISIBLE);
+                        privateKey.wipe();
+                    }
+                });
+            }
+        }.start();
     }
 
     private boolean checkValue(byte[] data) {
@@ -175,13 +197,14 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
                     service.stopAndUnregister();
                 }
                 byte[] data = vData.getData();
-                ECKey key = new ECKey(data, null);
+                BigInteger value = new BigInteger(1, data);
+                value = value.mod(ECKey.CURVE.getN());
+                ECKey key = new ECKey(value);
                 key = PrivateKeyUtil.encrypt(key, password);
-                key.clearPrivateKey();
                 Utils.wipeBytes(data);
                 password.wipe();
                 Address address = new Address(key.toAddress(), key.getPubKey(),
-                        PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
+                        PrivateKeyUtil.getEncryptedString(key), false);
                 key.clearPrivateKey();
                 AddressManager.getInstance().addAddress(address);
                 if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
