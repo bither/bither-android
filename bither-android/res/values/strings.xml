@@ -29,6 +29,7 @@
     <string name="address_option_delete">Stop monitoring</string>
     <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
+    <string name="address_option_view_on_blockmeta">View on BlockMeta.com</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
     <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
