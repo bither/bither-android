@@ -40,6 +40,7 @@ import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
@@ -82,6 +83,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvSyncInterval;
     private SettingSelectorView ssvPinCode;
+    private SettingSelectorView ssvQrCodeQuality;
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
@@ -106,11 +108,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
+        ssvQrCodeQuality = (SettingSelectorView) findViewById(R.id.ssv_qr_code_quality);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
         ssvSyncInterval.setSelector(syncIntervalSelector);
         ssvPinCode.setSelector(pinCodeSelector);
+        ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
@@ -239,7 +243,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             @Override
             public void run() {
                 if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
-                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, new IDialogPasswordListener() {
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
+                            new IDialogPasswordListener() {
                         @Override
                         public void onPasswordEntered(SecureCharSequence password) {
                             resetTx();
@@ -316,6 +321,53 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         };
         threadNeedService.start();
     }
+
+    private SettingSelectorView.SettingSelector qrCodeQualitySelector = new SettingSelectorView
+            .SettingSelector() {
+
+        @Override
+        public int getOptionCount() {
+            return QRCodeUtil.QRQuality.values().length;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.qr_code_quality_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getQRQuality().ordinal();
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            switch (index) {
+                case 1:
+                    return getString(R.string.qr_code_quality_setting_low);
+                case 0:
+                default:
+                    return getString(R.string.qr_code_quality_setting_normal);
+            }
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            if(index >= 0 && index < getOptionCount()){
+                AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()[index]);
+            }
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+    };
 
     private SettingSelectorView.SettingSelector pinCodeSelector = new SettingSelectorView
             .SettingSelector() {

@@ -420,4 +420,9 @@
     <string name="raw_private_key_address">地址</string>
     <string name="raw_private_key_add">添加此私钥</string>
     <string name="raw_private_key_not_safe">这个私钥不安全</string>
+
+    <!-- QR Code Quality -->
+    <string name="qr_code_quality_setting_name">二维码精度</string>
+    <string name="qr_code_quality_setting_normal">正常</string>
+    <string name="qr_code_quality_setting_low">较低</string>
 </resources>
