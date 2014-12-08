@@ -21,9 +21,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
-
 import net.bither.BitherApplication;
 import net.bither.bitherj.core.Peer;
 import net.bither.bitherj.db.AbstractDb;
@@ -207,7 +204,7 @@ public class PeerProvider implements IPeerProvider {
 
     public void clearIPV6() {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.delete(AbstractDb.Tables.PEERS, "peer_address>? or peer_address<?"
+        db.delete(AbstractDb.Tables.PEERS, "peer_address>? or peer_address<? or peer_address=0"
                 , new String[]{Integer.toString(Integer.MAX_VALUE), Integer.toString(Integer.MIN_VALUE)});
     }
 
@@ -256,18 +253,26 @@ public class PeerProvider implements IPeerProvider {
 
     }
 
+    private void deleteUnknowHost(long address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.delete(AbstractDb.Tables.PEERS, "peer_address=?"
+                , new String[]{Long.toString(address)});
+
+    }
+
     private Peer applyCursor(Cursor c) {
         InetAddress address = null;
         int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_ADDRESS);
         if (idColumn != -1) {
+            long addressLong = c.getLong(idColumn);
             try {
-                long addressLong = c.getLong(idColumn);
                 if (addressLong >= Integer.MIN_VALUE && addressLong <= Integer.MAX_VALUE) {
                     address = Utils.parseAddressFromLong(c.getLong(idColumn));
                 } else {
                     clearIPV6();
                 }
             } catch (UnknownHostException e) {
+                deleteUnknowHost(addressLong);
                 e.printStackTrace();
             }
         }
