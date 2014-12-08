@@ -245,12 +245,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
                     DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
                             new IDialogPasswordListener() {
-                        @Override
-                        public void onPasswordEntered(SecureCharSequence password) {
-                            resetTx();
+                                @Override
+                                public void onPasswordEntered(SecureCharSequence password) {
+                                    resetTx();
 
-                        }
-                    });
+                                }
+                            });
                     dialogPassword.show();
                 } else {
                     resetTx();
@@ -353,7 +353,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onOptionIndexSelected(int index) {
-            if(index >= 0 && index < getOptionCount()){
+            if (index >= 0 && index < getOptionCount()) {
                 AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()[index]);
             }
         }
@@ -707,7 +707,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     public boolean checkPassword(SecureCharSequence password) {
                         ECKey ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
                         boolean result = ecKey != null;
-                        ecKey.clearPrivateKey();
+                        if (ecKey != null) {
+                            ecKey.clearPrivateKey();
+                        }
                         return result;
                     }
                 });
