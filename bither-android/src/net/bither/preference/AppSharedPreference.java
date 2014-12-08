@@ -26,6 +26,7 @@ import net.bither.BitherSetting;
 import net.bither.BitherSetting.MarketType;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.Qr;
@@ -68,6 +69,8 @@ public class AppSharedPreference {
     private static final String PIN_CODE = "pin_code";
     private static final String BITCOIN_UNIT = "bitcoin_unit";
     private static final String XRANDOM_INSTRUCTION_AUTO_SHOW = "xrandom_instruction_auto_show";
+
+    private static final String QR_QUALITY = "qr_quality";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -165,19 +168,19 @@ public class AppSharedPreference {
         String currencyCode = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
         if (Utils.compareString(currencyCode, "CNY")) {
             setExchangeType(ExchangeUtil.Currency.CNY);
-        } else if(Utils.compareString(currencyCode, "EUR")) {
+        } else if (Utils.compareString(currencyCode, "EUR")) {
             setExchangeType(ExchangeUtil.Currency.EUR);
-        }else if(Utils.compareString(currencyCode, "GBP")) {
+        } else if (Utils.compareString(currencyCode, "GBP")) {
             setExchangeType(ExchangeUtil.Currency.GBP);
-        }else if(Utils.compareString(currencyCode, "JPY")){
+        } else if (Utils.compareString(currencyCode, "JPY")) {
             setExchangeType(ExchangeUtil.Currency.JPY);
-        }else if(Utils.compareString(currencyCode, "KRW")){
+        } else if (Utils.compareString(currencyCode, "KRW")) {
             setExchangeType(ExchangeUtil.Currency.KRW);
-        }else if(Utils.compareString(currencyCode, "CAD")){
+        } else if (Utils.compareString(currencyCode, "CAD")) {
             setExchangeType(ExchangeUtil.Currency.CAD);
-        }else if(Utils.compareString(currencyCode, "AUD")){
+        } else if (Utils.compareString(currencyCode, "AUD")) {
             setExchangeType(ExchangeUtil.Currency.AUD);
-        }else {
+        } else {
             setExchangeType(ExchangeUtil.Currency.USD);
         }
     }
@@ -380,5 +383,24 @@ public class AppSharedPreference {
 
     public void setAutoShowXRandomInstruction(boolean show) {
         mPreferences.edit().putBoolean(XRANDOM_INSTRUCTION_AUTO_SHOW, show).commit();
+    }
+
+    public QRCodeUtil.QRQuality getQRQuality() {
+        int ordinal = this.mPreferences.getInt(QR_QUALITY, 0);
+        if (ordinal < QRCodeUtil.QRQuality.values().length && ordinal >= 0) {
+            return QRCodeUtil.QRQuality.values()[ordinal];
+        }
+        return QRCodeUtil.QRQuality.Normal;
+
+    }
+
+    public void setQRQuality(QRCodeUtil.QRQuality qrQuality) {
+        int index = -1;
+        if (qrQuality != null) {
+            index = qrQuality.ordinal();
+        }
+        this.mPreferences.edit().putInt(QR_QUALITY, index).commit();
+
+
     }
 }

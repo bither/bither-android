@@ -25,6 +25,7 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.xrandom.URandom;
 
@@ -32,7 +33,6 @@ import java.io.File;
 import java.util.List;
 
 public class AndroidImplAbstractApp extends AbstractApp {
-
 
 
     @Override
@@ -82,6 +82,11 @@ public class AndroidImplAbstractApp extends AbstractApp {
                     }
                 }
                 return true;
+            }
+
+            @Override
+            public QRCodeUtil.QRQuality getQRQuality() {
+                return AppSharedPreference.getInstance().getQRQuality();
             }
         };
     }
