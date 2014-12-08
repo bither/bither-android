@@ -52,7 +52,10 @@ public class PeerProvider implements IPeerProvider {
         SQLiteDatabase db = mDb.getReadableDatabase();
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
-            peers.add(applyCursor(c));
+            Peer peer = applyCursor(c);
+            if (peer != null) {
+                peers.add(peer);
+            }
         }
         c.close();
         return peers;
@@ -195,7 +198,10 @@ public class PeerProvider implements IPeerProvider {
         String sql = "select * from peers order by peer_address limit " + Integer.toString(limit);
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
-            peerItemList.add(applyCursor(c));
+            Peer peer = applyCursor(c);
+            if (peer != null) {
+                peerItemList.add(peer);
+            }
         }
         c.close();
 
@@ -274,6 +280,7 @@ public class PeerProvider implements IPeerProvider {
             } catch (UnknownHostException e) {
                 deleteUnknowHost(addressLong);
                 e.printStackTrace();
+                return null;
             }
         }
         Peer peerItem = new Peer(address);
