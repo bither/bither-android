@@ -345,7 +345,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         RCheckRunnable runnable = new RCheckRunnable(address, tx);
                         runnable.setHandler(rcheckHandler);
                         new Thread(runnable).start();
-                        dp.setRChecking();
+                        // dp.setRChecking();
                         if(!dp.isShowing()){
                             dp.show();
                         }
@@ -368,7 +368,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                 case HandlerMessage.MSG_SUCCESS:
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         final Tx tx = (Tx) msg.obj;
-                        dp.setRCheckSuccess();
+                        // dp.setRCheckSuccess();
                         if (!dp.isShowing()) {
                             dp.show();
                         }
@@ -397,7 +397,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    dp.setRecalculatingR();
+                                    // dp.setRecalculatingR();
                                     sendClick.onClick(btnSend);
                                 }
                             });

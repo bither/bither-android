@@ -193,7 +193,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
-                        dp.setRChecking();
+                        //dp.setRChecking();
                         RCheckRunnable run = new RCheckRunnable(address, tx);
                         run.setHandler(rcheckHandler);
                         new Thread(run).start();
@@ -230,7 +230,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                 case HandlerMessage.MSG_SUCCESS:
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         final Tx tx = (Tx) msg.obj;
-                        dp.setRCheckSuccess();
+                        // dp.setRCheckSuccess();
                         if (!dp.isShowing()) {
                             dp.show();
                         }
@@ -247,7 +247,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         break;
                     }
                 case HandlerMessage.MSG_FAILURE:
-                    dp.setRecalculatingR();
+                    //TODO need more complicated logic to recalculate r, because rfc6979 will use the same r for the same transaction
+                   // dp.setRecalculatingR();
                     if (!dp.isShowing()) {
                         dp.show();
                     }

@@ -157,7 +157,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
 
     @Override
     public void onBackPressed() {
-        if(isFinishing){
+        if (isFinishing) {
             return;
         }
         if (generateThread.isAlive()) {
@@ -299,7 +299,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                             public void onDismiss(DialogInterface dialog) {
                                 Intent intent = new Intent();
                                 intent.putExtra(BitherSetting.INTENT_REF
-                                        .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
+                                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
                                         AppSharedPreference.getInstance().getPasswordSeed() ==
                                                 null);
                                 intent.putExtra(BitherSetting.INTENT_REF
@@ -468,6 +468,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                     XRandom xRandom = new XRandom(entropyCollector);
                     ECKey ecKey = ECKey.generateECKey(xRandom);
                     ecKey.setFromXRandom(true);
+
                     progress += itemProgress * progressKeyRate;
                     onProgress(progress);
                     if (cancelRunnable != null) {
@@ -480,7 +481,8 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                     // start encrypt
                     ecKey = PrivateKeyUtil.encrypt(ecKey, password);
                     Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(),
-                            PrivateKeyUtil.getPrivateKeyString(ecKey), ecKey.isFromXRandom());
+                            PrivateKeyUtil.getEncryptedString(ecKey), ecKey.isFromXRandom());
+                    ecKey.clearPrivateKey();
                     addressList.add(address);
                     addressStrs.add(address.getAddress());
 

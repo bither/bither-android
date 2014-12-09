@@ -44,7 +44,7 @@ public class PinCodeUtil {
 
     public static boolean checkBackground() {
         boolean beforeBack = isPreBackground;
-        isPreBackground = !AbstractApp.bitherjApp.isApplicationRunInForeground();
+        isPreBackground = !AbstractApp.bitherjSetting.isApplicationRunInForeground();
         if (isPreBackground && !beforeBack) {
             backgroundEnterTime = System.currentTimeMillis();
         }
@@ -53,7 +53,7 @@ public class PinCodeUtil {
 
     public static boolean checkBackgroundWithoutLockDelay() {
         boolean beforeBack = isPreBackground;
-        isPreBackground = !AbstractApp.bitherjApp.isApplicationRunInForeground();
+        isPreBackground = !AbstractApp.bitherjSetting.isApplicationRunInForeground();
         if (isPreBackground && !beforeBack) {
             backgroundEnterTime = System.currentTimeMillis() - CausePinCodeBackgroundTime * 2;
         }

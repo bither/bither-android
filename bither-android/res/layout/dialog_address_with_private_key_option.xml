@@ -19,27 +19,37 @@
         android:layout_height="1dp"
         android:background="#22ffffff" />
 
-    <LinearLayout
-        android:id="@+id/ll_origin_qr_code"
-        android:orientation="vertical"
+    <TextView
+        android:id="@+id/tv_view_on_blockmeta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/address_option_view_on_blockmeta"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp" />
+
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="1dp"
+        android:id="@+id/iv_blockmeta"
+        android:background="#22ffffff" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:duplicateParentState="true"
-            android:padding="10dp"
-            android:text="@string/fancy_qr_code_view_origin"
-            android:textColor="@color/dialog_text_color_selector"
-            android:textSize="18sp" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#22ffffff" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_private_key_management"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/private_key_management"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff" />
 
     <TextView
         android:id="@+id/tv_close"

@@ -110,12 +110,12 @@ public class BitcoinURI {
         checkNotNull(input);
 
         // Attempt to form the URI (fail fast syntax checking to official standards).
-        URI uri;
-        try {
-            uri = new URI(input);
-        } catch (URISyntaxException e) {
-            throw new BitcoinURIParseException("Bad URI syntax", e);
-        }
+//        URI uri;
+//        try {
+//            uri = new URI(input);
+//        } catch (URISyntaxException e) {
+//            throw new BitcoinURIParseException("Bad URI syntax", e);
+//        }
 
         // URI is formed as  bitcoin:<address>?<query parameters>
         // blockchain.info generates URIs of non-BIP compliant form bitcoin://address?....
@@ -135,7 +135,7 @@ public class BitcoinURI {
         } else if (input.startsWith("bitcoin:")) {
             schemeSpecificPart = input.substring("bitcoin:".length());
         } else {
-            throw new BitcoinURIParseException("Unsupported URI scheme: " + uri.getScheme());
+            throw new BitcoinURIParseException("Unsupported URI scheme");
         }
 
         // Split off the address from the rest of the query parameters.
@@ -154,7 +154,7 @@ public class BitcoinURI {
                 // Split into '<name>=<value>' tokens.
                 nameValuePairTokens = addressSplitTokens[1].split("&");
             } else {
-                throw new BitcoinURIParseException("Too many question marks in URI '" + uri + "'");
+                throw new BitcoinURIParseException("Too many question marks in URI");
             }
         }
 
@@ -214,6 +214,10 @@ public class BitcoinURI {
                 } catch (UnsupportedEncodingException e) {
                     // Unreachable.
                     throw new RuntimeException(e);
+                } catch (IllegalArgumentException e){
+                    if(nameToken != null && !nameToken.equals(FIELD_LABEL)) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

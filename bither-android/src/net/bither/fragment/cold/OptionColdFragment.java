@@ -156,7 +156,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 @Override
                 public void onPasswordEntered(SecureCharSequence password) {
                     password.wipe();
-                    String content = PrivateKeyUtil.getPrivateKeyStringFromAllPrivateAddresses();
+                    String content = PrivateKeyUtil.getEncryptPrivateKeyStringFromAllAddresses();
                     Intent intent = new Intent(getActivity(), BitherQRCodeActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                             getString(R.string.clone_to_title));
@@ -459,7 +459,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
 
         public void run() {
-            List<Address> addressList = PrivateKeyUtil.getECKeysFromString(content, password);
+            List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
             password.wipe();
             if (addressList == null || addressList.size() == 0) {
                 getActivity().runOnUiThread(new Runnable() {

@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
@@ -235,7 +236,52 @@ public class ChooseModeActivity extends BaseActivity {
         llWarmExtraError = findViewById(R.id.ll_warm_extra_error);
         btnWarmExtraRetry = findViewById(R.id.btn_warm_extra_retry);
         btnWarmExtraRetry.setOnClickListener(warmRetryClick);
+        findViewById(R.id.btn_change_to_cold).setOnClickListener(changeToColdClick);
     }
+
+    private OnClickListener changeToColdClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask dialog = new DialogConfirmTask(ChooseModeActivity.this,
+                    getStyledConfirmString(getString(R.string
+                            .launch_sequence_switch_to_cold_warn)),
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            stopService(new Intent(ChooseModeActivity.this, BlockchainService.class));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    modeSelected(BitherjSettings.AppMode.COLD);
+                                    llWarmExtraError.setVisibility(View.GONE);
+                                    vColdWalletInitCheck.check();
+                                    ObjectAnimator animator = ObjectAnimator.ofFloat(new ShowHideView(new
+                                                    View[]{vColdExtra, vColdBg, rlCold}, new View[]{rlWarm, vWarmBg, vWarmExtra}), "Progress",
+                                            1).setDuration(AnimHideDuration);
+                                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                                    vColdWalletInitCheck.prepareAnim();
+                                    animator.addListener(coldClickAnimListener);
+                                    animator.start();
+                                }
+                            });
+                        }
+                    });
+            dialog.show();
+        }
+
+
+        private SpannableString getStyledConfirmString(String str) {
+            int firstLineEnd = str.indexOf("\n");
+            SpannableString spn = new SpannableString(str);
+            spn.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.red)), 0,
+                    firstLineEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spn.setSpan(new StyleSpan(Typeface.BOLD), 0, firstLineEnd,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spn.setSpan(new RelativeSizeSpan(0.8f), firstLineEnd, str.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return spn;
+        }
+    };
 
     private OnClickListener coldClick = new OnClickListener() {
 

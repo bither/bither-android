@@ -22,6 +22,7 @@
     <string name="address_option_delete">停止监控</string>
     <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
+    <string name="address_option_view_on_blockmeta">在BlockMeta.com上查看</string>
     <string name="address_delete_confirmation">确认停止监控这个地址?</string>
     <string name="address_remonitor_confirmation">确认重新监控这个地址?</string>
     <string name="address_monitor_failed">监控失败</string>
@@ -220,6 +221,7 @@
     <string name="choose_mode_warm_desctription">热钱包 : 联机, 易用!</string>
     <string name="choose_mode_warm_waiting">加载中…</string>
     <string name="choose_mode_warm_retry">重试</string>
+    <string name="choose_mode_warm_change_to_cold">切换到冷钱包</string>
     <string name="choose_mode_cold_confirm">模式设置后不能切换.\n冷钱包应该运行在离线的备用手机上.\n确认以冷钱包模式运行?</string>
     <string name="choose_mode_warm_confirm">模式设置后不能切换.\n热钱包可以方便的在线发送交易.\n确认以热钱包模式运行?</string>
 
@@ -408,4 +410,19 @@
 
     <!-- bitcoin unit -->
     <string name="setting_name_bitcoin_unit">默认单位</string>
+
+    <!--  Private Key Management -->
+    <string name="private_key_management">私钥管理</string>
+
+    <!-- Raw Private Key -->
+    <string name="activity_name_raw_private_key">原始私钥</string>
+    <string name="raw_private_key_private_key">私钥</string>
+    <string name="raw_private_key_address">地址</string>
+    <string name="raw_private_key_add">添加此私钥</string>
+    <string name="raw_private_key_not_safe">这个私钥不安全</string>
+
+    <!-- QR Code Quality -->
+    <string name="qr_code_quality_setting_name">二维码精度</string>
+    <string name="qr_code_quality_setting_normal">正常</string>
+    <string name="qr_code_quality_setting_low">较低</string>
 </resources>

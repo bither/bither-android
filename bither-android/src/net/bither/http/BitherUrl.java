@@ -16,6 +16,12 @@
 
 package net.bither.http;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+
+import net.bither.R;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
 
 public class BitherUrl {
@@ -64,4 +70,19 @@ public class BitherUrl {
     public static final String BITHER_TREND_URL = BITHER_DNS.BITHER_STATS
             + "api/v1/exchange/%d/trend";
 
+    //other
+    public static final String BLOCKCHAIN_INFO_ADDRESS_URL = "http://blockchain.info/address/";
+    public static final String BLOCKMETA_ADDRESS_URL = "http://www.blockmeta.com/address/";
+
+    public static void gotoBrower(Activity activity, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
+        }
+
+    }
 }

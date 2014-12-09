@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="net.bither"
           android:installLocation="internalOnly"
-          android:versionCode="121"
-          android:versionName="1.2.1">
+          android:versionCode="122"
+          android:versionName="1.2.2">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -212,6 +212,10 @@
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
             android:name=".pin.PinCodeChangeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name=".rawprivatekey.RawPrivateKeyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity

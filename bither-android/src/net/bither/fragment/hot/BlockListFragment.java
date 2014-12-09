@@ -337,17 +337,8 @@ public final class BlockListFragment extends ListFragment {
             return getRecentBlocks(100);
         }
 
-        public List<Block> getRecentBlocks(final int maxBlocks) {
-            final List<Block> blocks = new ArrayList<Block>();
-            Block block = BlockChain.getInstance().getLastBlock();
-            while (block != null) {
-                blocks.add(block);
-                if (blocks.size() >= maxBlocks) {
-                    break;
-                }
-                block = BlockChain.getInstance().getBlock(block.getBlockPrev());
-            }
-            return blocks;
+        public List<Block> getRecentBlocks(final int limit) {
+            return BlockChain.getInstance().getLimitBlocks(limit);
         }
 
         private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

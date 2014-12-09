@@ -34,6 +34,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.Utils;
@@ -63,6 +64,25 @@ public class WalletUtils {
                                       final int groupSize, final int lineSize) {
         return formatHash(null, address, groupSize, lineSize,
                 BitherSetting.CHAR_THIN_SPACE);
+    }
+
+    // remeber to wipe #address
+    public static SecureCharSequence formatHashFromCharSequence(@Nonnull final SecureCharSequence address, final int groupSize, final int lineSize){
+        int length = address.length();
+        length = length + length / groupSize - 1;
+        char[] chars = new char[length];
+        for(int i = 0; i < length; i++){
+            if(i % (groupSize + 1) == groupSize){
+                if((i + 1) % (lineSize + lineSize / groupSize) == 0){
+                    chars[i] = '\n';
+                }else{
+                    chars[i] = ' ';
+                }
+            } else {
+                chars[i] = address.charAt(i - i / (groupSize + 1));
+            }
+        }
+        return new SecureCharSequence(chars);
     }
 
     public static boolean isInternal(@Nonnull final Tx tx) {

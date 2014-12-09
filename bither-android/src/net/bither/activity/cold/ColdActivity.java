@@ -46,8 +46,6 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.pin.PinCodeActivity;
-import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
@@ -393,12 +391,12 @@ public class ColdActivity extends BaseFragmentActivity {
                                 continue;
                             }
                             passwordSeed = new PasswordSeed(keyString);
-                            passwordSeed.checkPassword(password);
-                            ECKey key = passwordSeed.getECKey();
+                            ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
-                                        PrivateKeyUtil.getPrivateKeyString(key), key.isFromXRandom());
+                                        PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
                                 addressList.add(address);
+                                key.clearPrivateKey();
 
                             }
                         }

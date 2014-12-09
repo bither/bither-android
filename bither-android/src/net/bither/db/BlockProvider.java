@@ -66,6 +66,25 @@ public class BlockProvider implements IBlockProvider {
         return blockItems;
     }
 
+    @Override
+    public List<Block> getLimitBlocks(int limit) {
+        List<Block> blockItems = new ArrayList<Block>();
+        String sql = "select * from blocks order by block_no desc limit " + limit;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery(sql, null);
+        try {
+            while (c.moveToNext()) {
+                blockItems.add(applyCursor(c));
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+
+        return blockItems;
+    }
+
     public List<Block> getBlocksFrom(int blockNo) {
         List<Block> blockItems = new ArrayList<Block>();
         String sql = "select * from blocks where block_no>" + Integer.toString(blockNo) + " order by block_no desc";

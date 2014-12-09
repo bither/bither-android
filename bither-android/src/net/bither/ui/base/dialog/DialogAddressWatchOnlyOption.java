@@ -20,19 +20,28 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.utils.Utils;
+import net.bither.http.BitherUrl;
 import net.bither.ui.base.DropdownMessage;
+
+import java.util.Locale;
 
 public class DialogAddressWatchOnlyOption extends CenterDialog {
     private DialogFancyQrCode dialogQr;
     private Address address;
     private TextView tvViewOnBlockchainInfo;
+    private TextView tvBlockMeta;
     private TextView tvClose;
+    private ImageView ivBlockMeta;
     private Activity activity;
     private Runnable afterDelete;
+
 
     public DialogAddressWatchOnlyOption(Activity context, Address address,
                                         Runnable afterDelete) {
@@ -42,10 +51,20 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         this.afterDelete = afterDelete;
         setContentView(R.layout.dialog_address_watch_only_option);
         tvViewOnBlockchainInfo = (TextView) findViewById(R.id.tv_view_on_blockchaininfo);
+        tvBlockMeta = (TextView) findViewById(R.id.tv_view_on_blockmeta);
         tvClose = (TextView) findViewById(R.id.tv_close);
+        ivBlockMeta = (ImageView) findViewById(R.id.iv_blockmeta);
         tvViewOnBlockchainInfo.setOnClickListener(viewOnBlockchainInfoClick);
+        tvBlockMeta.setOnClickListener(viewOnBlockMetaClick);
         tvClose.setOnClickListener(closeClick);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
+        String defaultCountry = Locale.getDefault().getCountry();
+        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
+                (defaultCountry, "cn")) {
+        } else {
+            tvBlockMeta.setVisibility(View.GONE);
+            ivBlockMeta.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -58,16 +77,21 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://blockchain.info/address/" + address.getAddress())
-            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            try {
-                getContext().startActivity(intent);
-            } catch (Exception e) {
-                e.printStackTrace();
-                DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
-            }
+            BitherUrl.gotoBrower(activity,
+                    BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address.getAddress());
+
         }
     };
+    private View.OnClickListener viewOnBlockMetaClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss();
+            BitherUrl.gotoBrower(activity,
+                    BitherUrl.BLOCKMETA_ADDRESS_URL + address.getAddress());
+
+        }
+    };
+
 
     private View.OnClickListener closeClick = new View.OnClickListener() {
 

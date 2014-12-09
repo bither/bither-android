@@ -95,8 +95,10 @@ public class ExchangeUtil {
             File file = FileUtil.getCurrenciesRateFile();
             String rateString = Utils.readFile(file);
             try {
-                JSONObject json = new JSONObject(rateString);
-                mCurrenciesRate = parseCurrenciesRate(json);
+                if (!Utils.isEmpty(rateString)) {
+                    JSONObject json = new JSONObject(rateString);
+                    mCurrenciesRate = parseCurrenciesRate(json);
+                }
             } catch (JSONException ex) {
                 mCurrenciesRate = null;
             }
@@ -119,7 +121,7 @@ public class ExchangeUtil {
         Currency defaultCurrency = AppSharedPreference.getInstance()
                 .getDefaultExchangeType();
         double rate = 1;
-        if (currency != defaultCurrency) {
+        if (currency != defaultCurrency && getCurrenciesRate() != null) {
             double preRate = getCurrenciesRate().get(currency);
             double defaultRate = getCurrenciesRate().get(defaultCurrency);
             rate = defaultRate / preRate;
@@ -132,7 +134,7 @@ public class ExchangeUtil {
                 .getDefaultExchangeType();
         Currency currency = getExchangeType(marketType);
         double rate = 1;
-        if (currency != defaultCurrency) {
+        if (currency != defaultCurrency && getCurrenciesRate() != null) {
             double preRate = getCurrenciesRate().get(currency);
             double defaultRate = getCurrenciesRate().get(defaultCurrency);
             rate = defaultRate / preRate;
@@ -141,9 +143,13 @@ public class ExchangeUtil {
     }
 
     public static double getRate() {
-        Currency defaultCurrency = AppSharedPreference.getInstance()
-                .getDefaultExchangeType();
-        return getCurrenciesRate().get(defaultCurrency);
+        if (getCurrenciesRate() == null) {
+            return 1.0;
+        } else {
+            Currency defaultCurrency = AppSharedPreference.getInstance()
+                    .getDefaultExchangeType();
+            return getCurrenciesRate().get(defaultCurrency);
+        }
     }
 
     public static Currency getExchangeType(MarketType marketType) {

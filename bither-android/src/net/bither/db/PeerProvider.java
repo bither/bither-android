@@ -52,7 +52,10 @@ public class PeerProvider implements IPeerProvider {
         SQLiteDatabase db = mDb.getReadableDatabase();
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
-            peers.add(applyCursor(c));
+            Peer peer = applyCursor(c);
+            if (peer != null) {
+                peers.add(peer);
+            }
         }
         c.close();
         return peers;
@@ -195,10 +198,20 @@ public class PeerProvider implements IPeerProvider {
         String sql = "select * from peers order by peer_address limit " + Integer.toString(limit);
         Cursor c = db.rawQuery(sql, null);
         while (c.moveToNext()) {
-            peerItemList.add(applyCursor(c));
+            Peer peer = applyCursor(c);
+            if (peer != null) {
+                peerItemList.add(peer);
+            }
         }
         c.close();
+
         return peerItemList;
+    }
+
+    public void clearIPV6() {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.delete(AbstractDb.Tables.PEERS, "peer_address>? or peer_address<? or peer_address=0"
+                , new String[]{Integer.toString(Integer.MAX_VALUE), Integer.toString(Integer.MIN_VALUE)});
     }
 
     public void cleanPeers() {
@@ -246,14 +259,28 @@ public class PeerProvider implements IPeerProvider {
 
     }
 
+    private void deleteUnknowHost(long address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.delete(AbstractDb.Tables.PEERS, "peer_address=?"
+                , new String[]{Long.toString(address)});
+
+    }
+
     private Peer applyCursor(Cursor c) {
         InetAddress address = null;
         int idColumn = c.getColumnIndex(AbstractDb.PeersColumns.PEER_ADDRESS);
         if (idColumn != -1) {
+            long addressLong = c.getLong(idColumn);
             try {
-                address = Utils.parseAddressFromLong(c.getLong(idColumn));
+                if (addressLong >= Integer.MIN_VALUE && addressLong <= Integer.MAX_VALUE) {
+                    address = Utils.parseAddressFromLong(c.getLong(idColumn));
+                } else {
+                    clearIPV6();
+                }
             } catch (UnknownHostException e) {
+                deleteUnknowHost(addressLong);
                 e.printStackTrace();
+                return null;
             }
         }
         Peer peerItem = new Peer(address);

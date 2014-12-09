@@ -29,6 +29,7 @@
     <string name="address_option_delete">Stop monitoring</string>
     <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
+    <string name="address_option_view_on_blockmeta">View on BlockMeta.com</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
     <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
@@ -228,6 +229,7 @@
     <string name="choose_mode_warm_desctription">Bither Hot : Online &amp; Simple.</string>
     <string name="choose_mode_warm_waiting">Loading…</string>
     <string name="choose_mode_warm_retry">Retry</string>
+    <string name="choose_mode_warm_change_to_cold">Switch to Bither Cold</string>
     <string name="choose_mode_cold_confirm">Once mode is set, it can\'t be changed.\nBither Cold need to be run on a offline phone.\nSet this phone as Bither Cold?</string>
     <string name="choose_mode_warm_confirm">Once mode is set, it can\'t be changed.\nBither Hot is an online bitcoin wallet.\nSet this phone as Bither Hot?</string>
 
@@ -425,4 +427,19 @@
 
     <!-- bitcoin unit -->
     <string name="setting_name_bitcoin_unit">Default Unit</string>
+
+    <!--  Private Key Management -->
+    <string name="private_key_management">Private Key Management</string>
+
+    <!-- Raw Private Key -->
+    <string name="activity_name_raw_private_key">Raw Private Key</string>
+    <string name="raw_private_key_private_key">Private Key</string>
+    <string name="raw_private_key_address">Address</string>
+    <string name="raw_private_key_add">Add This Private Key</string>
+    <string name="raw_private_key_not_safe">This private key is not safe</string>
+
+    <!-- QR Code Quality -->
+    <string name="qr_code_quality_setting_name">QR Code Precision</string>
+    <string name="qr_code_quality_setting_normal">Normal</string>
+    <string name="qr_code_quality_setting_low">Low</string>
 </resources>

@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitherjSettings;
@@ -122,7 +123,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -154,14 +155,14 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final String str = PrivateKeyUtil.getPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
                                 dialogProgress.dismiss();
                                 if (str != null) {
-                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str, address.getAddress());
+                                    DialogPrivateKeyTextQrCode dialogPrivateKeyTextQrCode = new DialogPrivateKeyTextQrCode(activity, str.toString(), address.getAddress());
                                     dialogPrivateKeyTextQrCode.show();
                                 } else {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -189,6 +190,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                             @Override
                             public void run() {
                                 dp.dismiss();
+                                if (activity instanceof AddressDetailActivity) {
+                                    activity.finish();
+                                }
                                 if (AppSharedPreference.getInstance().getAppMode() ==
                                         BitherjSettings.AppMode.HOT) {
                                     Fragment f = BitherApplication.hotActivity.getFragmentAtIndex

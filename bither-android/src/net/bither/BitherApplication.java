@@ -32,6 +32,7 @@ import net.bither.bitherj.utils.Threading;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
 import net.bither.exception.UEHandler;
+import net.bither.qrcode.Qr;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.LinuxSecureRandom;
 
@@ -83,6 +84,7 @@ public class BitherApplication extends Application {
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        Qr.printQrContentSize();
     }
 
 

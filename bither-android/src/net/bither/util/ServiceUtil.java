@@ -29,45 +29,45 @@ public class ServiceUtil {
 
     }
 
-    private static List<Long> peerTimeList = new ArrayList<Long>();
-    private static final long ALLOWED_TIME_DRIFT = 2 * 24 * 60 * 60;
-
-    public static void addPeerTime(long peerTime) {
-        peerTimeList.add(peerTime);
-    }
-
-    public static boolean localTimeIsWrong() {
-        if (peerTimeList.size() < 3) {
-            return false;
-        }
-        // LogUtil.d("localTimeIsWrong","timeList:"+peerTimeList.size());
-        Collections.sort(peerTimeList);
-        List<Long> timeList = new ArrayList<Long>();
-        timeList.addAll(peerTimeList);
-        while (timeList.size() > 2) {
-            timeList = trimTimeList(timeList);
-            //   LogUtil.d("localTimeIsWrong","timeList:"+timeList.size());
-        }
-        long average = getAverage(timeList);
-        long currentTime = Utils.currentTimeMillis() / 1000;
-        //LogUtil.d("localTimeIsWrong","average:"+average+",currentTime:"+currentTime);
-        return average > currentTime + ALLOWED_TIME_DRIFT;
-    }
-
-    public static List<Long> trimTimeList(List<Long> timeList) {
-        if (timeList.size() > 2) {
-            long average = getAverage(timeList);
-            long firstDiff = Math.abs(timeList.get(0) - average);
-            long lastDiff = Math.abs(timeList.get(timeList.size() - 1) - average);
-            if (firstDiff > lastDiff) {
-                timeList.remove(0);
-            } else {
-                timeList.remove(timeList.size() - 1);
-            }
-
-        }
-        return timeList;
-    }
+//    private static List<Long> peerTimeList = new ArrayList<Long>();
+// private static final long ALLOWED_TIME_DRIFT = 2 * 24 * 60 * 60;
+//No longer check time logic (use in  bicoinj)
+//    public static void addPeerTime(long peerTime) {
+//        peerTimeList.add(peerTime);
+//    }
+//
+//    public static boolean localTimeIsWrong() {
+//        if (peerTimeList.size() < 3) {
+//            return false;
+//        }
+//        // LogUtil.d("localTimeIsWrong","timeList:"+peerTimeList.size());
+//        Collections.sort(peerTimeList);
+//        List<Long> timeList = new ArrayList<Long>();
+//        timeList.addAll(peerTimeList);
+//        while (timeList.size() > 2) {
+//            timeList = trimTimeList(timeList);
+//            //   LogUtil.d("localTimeIsWrong","timeList:"+timeList.size());
+//        }
+//        long average = getAverage(timeList);
+//        long currentTime = Utils.currentTimeMillis() / 1000;
+//        //LogUtil.d("localTimeIsWrong","average:"+average+",currentTime:"+currentTime);
+//        return average > currentTime + ALLOWED_TIME_DRIFT;
+//    }
+//
+//    public static List<Long> trimTimeList(List<Long> timeList) {
+//        if (timeList.size() > 2) {
+//            long average = getAverage(timeList);
+//            long firstDiff = Math.abs(timeList.get(0) - average);
+//            long lastDiff = Math.abs(timeList.get(timeList.size() - 1) - average);
+//            if (firstDiff > lastDiff) {
+//                timeList.remove(0);
+//            } else {
+//                timeList.remove(timeList.size() - 1);
+//            }
+//
+//        }
+//        return timeList;
+//    }
 
     public static long getAverage(List<Long> list) {
         long result = 0;

@@ -124,7 +124,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
             @Override
             public boolean checkPassword(SecureCharSequence password) {
                 try {
-                    decode = Bip38.decrypt(bip38KeyString, password);
+                    decode = Bip38.decrypt(bip38KeyString, password).toString();
                     return decode != null;
                 } catch (Exception e) {
                     e.printStackTrace();

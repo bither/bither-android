@@ -67,10 +67,9 @@ public class ImportPrivateKey {
         ThreadNeedService threadNeedService = new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
+                ECKey ecKey = getEckey();
                 try {
-                    ECKey ecKey = getEckey();
                     if (ecKey == null) {
-                        password.wipe();
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
@@ -85,18 +84,17 @@ public class ImportPrivateKey {
                                 }
                             }
                         });
-                        return;
-                    }
-                    List<String> addressList = new ArrayList<String>();
-                    addressList.add(ecKey.toAddress());
-                    if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                        checkAddress(service, ecKey, addressList);
                     } else {
-                        addECKey(service, ecKey);
+                        List<String> addressList = new ArrayList<String>();
+                        addressList.add(ecKey.toAddress());
+                        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                            checkAddress(service, ecKey, addressList);
+                        } else {
+                            addECKey(service, ecKey);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    password.wipe();
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -107,6 +105,11 @@ public class ImportPrivateKey {
                             DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         }
                     });
+                } finally {
+                    password.wipe();
+                    if (ecKey != null) {
+                        ecKey.clearPrivateKey();
+                    }
                 }
             }
         };
@@ -138,7 +141,7 @@ public class ImportPrivateKey {
             encryptedPrivateString = QRCodeUtil.getNewVersionEncryptPrivKey(content);
         } else {
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
-            encryptedPrivateString = PrivateKeyUtil.getPrivateKeyString(ecKey);
+            encryptedPrivateString = PrivateKeyUtil.getEncryptedString(ecKey);
         }
         Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedPrivateString
                 , ecKey.isFromXRandom());
@@ -255,20 +258,27 @@ public class ImportPrivateKey {
 
     private ECKey getEckey() {
         ECKey ecKey = null;
+        DumpedPrivateKey dumpedPrivateKey = null;
         try {
             switch (this.importPrivateKeyType) {
                 case Text:
-                    ecKey = new DumpedPrivateKey(this.content).getKey();
+                    dumpedPrivateKey = new DumpedPrivateKey(this.content);
+                    ecKey = dumpedPrivateKey.getKey();
                     break;
                 case BitherQrcode:
                     ecKey = PrivateKeyUtil.getECKeyFromSingleString(content, password);
                     break;
                 case Bip38:
-                    ecKey = new DumpedPrivateKey(content).getKey();
+                    dumpedPrivateKey = new DumpedPrivateKey(this.content);
+                    ecKey = dumpedPrivateKey.getKey();
                     break;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (dumpedPrivateKey != null) {
+                dumpedPrivateKey.clearPrivateKey();
+            }
         }
         return ecKey;
     }
