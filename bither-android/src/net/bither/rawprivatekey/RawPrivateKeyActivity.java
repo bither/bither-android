@@ -124,7 +124,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
                 BigInteger value = new BigInteger(1, data);
                 value = value.mod(ECKey.CURVE.getN());
 
-                ECKey key = new ECKey(value);
+                ECKey key = new ECKey(value, null, true);
                 final String address = Utils.toAddress(key.getPubKeyHash());
                 final SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
                         true).toSecureCharSequence();
@@ -200,7 +200,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
                 vData.clearData();
                 BigInteger value = new BigInteger(1, data);
                 value = value.mod(ECKey.CURVE.getN());
-                ECKey key = new ECKey(value);
+                ECKey key = new ECKey(value, null, true);
                 key = PrivateKeyUtil.encrypt(key, password);
                 Utils.wipeBytes(data);
                 password.wipe();
