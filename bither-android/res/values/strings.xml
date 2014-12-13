@@ -442,4 +442,7 @@
     <string name="qr_code_quality_setting_name">QR Code Precision</string>
     <string name="qr_code_quality_setting_normal">Normal</string>
     <string name="qr_code_quality_setting_low">Low</string>
+
+    <!-- Manual Delete Transaction -->
+    <string name="manual_delete_transaction_warning">Delete this transaction?</string>
 </resources>

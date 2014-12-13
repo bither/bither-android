@@ -226,7 +226,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         super.onPause();
     }
 
-    private void loadData() {
+    public void loadData() {
         header.showAddress(address, addressPosition);
         if (address != null && address.isSyncComplete()) {
             new Thread(new Runnable() {
