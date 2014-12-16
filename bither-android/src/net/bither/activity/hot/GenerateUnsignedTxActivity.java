@@ -187,8 +187,9 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeEnodeUtil.getPresignTxString(tx, null));
-            //todo add change addrss
+                    QRCodeEnodeUtil.getPresignTxString(tx, dialogSelectChangeAddress
+                            .getChangeAddress().equals(address) ? null :
+                            dialogSelectChangeAddress.getChangeAddress().getAddress()));
             intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
                     QRCodeEnodeUtil.oldGetPreSignString(tx));
 

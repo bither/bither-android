@@ -29,6 +29,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.QRCodeEnodeUtil;
@@ -124,6 +125,11 @@ public class SignTxActivity extends SwipeRightActivity implements
         tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo()));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee()));
         llChange.setVisibility(View.GONE);
+        if(!Utils.isEmpty(qrCodeTransport.getChangeAddress())){
+            llChange.setVisibility(View.VISIBLE);
+            tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
+            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getChangeAmt()));
+        }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
         if (address == null) {
