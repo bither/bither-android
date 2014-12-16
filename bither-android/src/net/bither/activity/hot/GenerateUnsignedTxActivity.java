@@ -221,7 +221,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         Tx tx = (Tx) msg.obj;
                         if (needConfirm) {
                             DialogSendConfirm dialog = new DialogSendConfirm
-                                    (GenerateUnsignedTxActivity.this, tx, sendConfirmListener);
+                                    (GenerateUnsignedTxActivity.this, tx,
+                                            dialogSelectChangeAddress.getChangeAddress().equals
+                                                    (address) ? null : dialogSelectChangeAddress
+                                                    .getChangeAddress().getAddress(),
+                                            sendConfirmListener);
                             dialog.show();
                         } else {
                             sendConfirmListener.onConfirm(tx);
@@ -287,7 +291,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
                                 amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                                .trim(), null);
+                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                                (), null);
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);

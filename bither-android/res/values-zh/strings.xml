@@ -432,4 +432,5 @@
     <!-- Select Change Address -->
     <string name="select_change_address_option_name">选择找零地址</string>
     <string name="select_change_address_label">选择找零地址</string>
+    <string name="send_confirm_change_to_label">找零到:</string>
 </resources>

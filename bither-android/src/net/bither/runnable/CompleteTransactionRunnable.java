@@ -35,6 +35,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     private SecureCharSequence password;
     private long amount;
     private String toAddress;
+    private String changeAddress;
     private boolean toSign = false;
 
     static {
@@ -61,6 +62,11 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
                                        SecureCharSequence password) throws Exception {
+        this(addressPosition, amount, toAddress, toAddress, password);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress, String changeAddress,
+                                       SecureCharSequence password) throws Exception {
         this.amount = amount;
         this.toAddress = toAddress;
         this.password = password;
@@ -76,6 +82,11 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                 throw new Exception("address not with private key");
             }
             toSign = true;
+        }
+        if(!Utils.isEmpty(changeAddress)){
+            this.changeAddress = changeAddress;
+        }else{
+            this.changeAddress = wallet.getAddress();
         }
     }
 

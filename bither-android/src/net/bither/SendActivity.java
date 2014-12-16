@@ -246,7 +246,9 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                             public void run() {
                                 dp.dismiss();
                                 DialogSendConfirm dialog = new DialogSendConfirm(SendActivity
-                                        .this, tx, sendConfirmListener);
+                                        .this, tx, dialogSelectChangeAddress.getChangeAddress()
+                                        .equals(address) ? null : dialogSelectChangeAddress
+                                        .getChangeAddress().getAddress(), sendConfirmListener);
                                 dialog.show();
                                 dp.setWait();
                             }
@@ -295,7 +297,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
                                 amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                                .trim(), new SecureCharSequence(etPassword.getText()));
+                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                                (), new SecureCharSequence(etPassword.getText()));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);

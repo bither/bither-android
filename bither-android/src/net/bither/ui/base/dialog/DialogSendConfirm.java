@@ -25,7 +25,10 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.UnitUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
+import net.bither.util.StringUtil;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
@@ -43,7 +46,8 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
     private Tx tx;
     private SendConfirmListener listener;
 
-    public DialogSendConfirm(Context context, Tx tx, SendConfirmListener listener) {
+    public DialogSendConfirm(Context context, Tx tx, String changeAddress,
+                             SendConfirmListener listener) {
         super(context);
         this.tx = tx;
         this.listener = listener;
@@ -54,17 +58,27 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         TextView tvFee = (TextView) findViewById(R.id.tv_fee);
         TextView tvSymbol = (TextView) findViewById(R.id.tv_symbol);
         TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
+        View llChange = findViewById(R.id.ll_change);
+        TextView tvAddressChange = (TextView) findViewById(R.id.tv_address_change);
+        TextView tvBtcChange = (TextView) findViewById(R.id.tv_btc_change);
+        TextView tvSymbolChange = (TextView) findViewById(R.id.tv_symbol_change);
         String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
         tvSymbol.setText(symbol);
         tvFeeSymbol.setText(symbol);
+        tvSymbolChange.setText(symbol);
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
-        TextView tvLowPriorityWarn = (TextView) findViewById(R.id.tv_low_priority_warn);
-        if (tx.getFirstOutAddress() != null) {
-            tvAddress.setText(WalletUtils.formatHash(tx.getFirstOutAddress(), 4, 24));
+        String outAddress = tx.getFirstOutAddressOtherThanChange(changeAddress);
+        if (Utils.isEmpty(changeAddress)) {
+            llChange.setVisibility(View.GONE);
+        } else {
+            tvAddressChange.setText(WalletUtils.formatHash(changeAddress, 4, 24));
+            tvBtcChange.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(changeAddress)));
         }
-        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(tx
-                .getFirstOutAddress())));
+        if (tx.getFirstOutAddress() != null) {
+            tvAddress.setText(WalletUtils.formatHash(outAddress, 4, 24));
+        }
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(outAddress)));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
         // This warning is no longer needed. As more and more mining pool upgrade their
         // bitcoin client to 0.9.+, low fee transactions get confirmed soon enough.
