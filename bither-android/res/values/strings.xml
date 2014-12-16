@@ -450,4 +450,6 @@
     <string name="select_change_address_option_name">Select Change Address</string>
     <string name="select_change_address_label">Select Change Address</string>
     <string name="send_confirm_change_to_label">Change to:</string>
+    <string name="sign_transaction_change_to_label">Change to:</string>
+    <string name="sign_transaction_change_amount_label">Change Amount:</string>
 </resources>
