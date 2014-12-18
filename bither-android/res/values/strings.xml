@@ -452,4 +452,8 @@
     <string name="send_confirm_change_to_label">Change to:</string>
     <string name="sign_transaction_change_to_label">Change to:</string>
     <string name="sign_transaction_change_amount_label">Change Amount:</string>
+
+    <!-- Sign Message -->
+    <string name="sign_message_activity_name">Sign Message</string>
+    <string name="sign_message_button">Sign</string>
 </resources>
