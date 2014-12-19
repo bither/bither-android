@@ -149,6 +149,8 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         new Thread() {
             @Override
             public void run() {
+                // TODO do the sign works here;
+                password.wipe();
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {

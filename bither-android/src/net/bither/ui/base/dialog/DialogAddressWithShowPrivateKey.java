@@ -18,6 +18,7 @@ package net.bither.ui.base.dialog;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.SignMessageActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
@@ -45,6 +47,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
     private DialogPrivateKeyQrCode dialogPrivateKey;
     private Address address;
     private LinearLayout llOriginQRCode;
+    private LinearLayout llSignMessage;
     private Activity activity;
     private int clickedView;
 
@@ -56,12 +59,19 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_show_private_key);
         llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
+        llSignMessage = (LinearLayout) findViewById(R.id.ll_sign_message);
         findViewById(R.id.tv_view_show_private_key).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
         findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
+        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
+            llSignMessage.setVisibility(View.VISIBLE);
+            llSignMessage.setOnClickListener(this);
+        } else {
+            llSignMessage.setVisibility(View.GONE);
+        }
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
         dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey(),
@@ -96,6 +106,11 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 } else {
                     new DialogPassword(activity, this).show();
                 }
+                break;
+            case R.id.ll_sign_message:
+                Intent intent = new Intent(activity, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
+                activity.startActivity(intent);
                 break;
             default:
                 return;
