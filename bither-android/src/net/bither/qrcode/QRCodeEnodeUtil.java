@@ -25,6 +25,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 
@@ -94,12 +95,19 @@ public class QRCodeEnodeUtil {
         return qrCodeTransport;
     }
 
-    public static String getPresignTxString(Tx tx) {
+    public static String getPresignTxString(Tx tx, String address) {
         QRCodeTxTransport qrCodeTransport = fromSendRequestWithUnsignedTransaction(tx);
         String preSignString = "";
         try {
+            String changeStr = "";
+            if (!Utils.isEmpty(address)) {
+                long changeAmt = tx.amountSentToAddress(address);
+                changeStr = Base58.bas58ToHexWithAddress(address) + QRCodeUtil.QR_CODE_SPLIT + Long.toHexString(changeAmt)
+                        .toLowerCase(Locale.US)
+                        + QRCodeUtil.QR_CODE_SPLIT;
+            }
             preSignString = Base58.bas58ToHexWithAddress(qrCodeTransport.getMyAddress())
-                    + QRCodeUtil.QR_CODE_SPLIT
+                    + QRCodeUtil.QR_CODE_SPLIT + changeStr
                     + Long.toHexString(qrCodeTransport.getFee())
                     .toLowerCase(Locale.US)
                     + QRCodeUtil.QR_CODE_SPLIT
@@ -124,6 +132,76 @@ public class QRCodeEnodeUtil {
     }
 
     public static QRCodeTxTransport formatQRCodeTransport(String str) {
+        try {
+
+            String[] strArray = QRCodeUtil.splitString(str);
+            if (is16Long(strArray[1])) {
+                return oldFormatQRCodeTransport(str);
+            } else {
+                return newFormatQRCodeTransport(str);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static boolean is16Long(String str) {
+        try {
+            Long.parseLong(
+                    str, 16);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static QRCodeTxTransport newFormatQRCodeTransport(String str) {
+        try {
+            String[] strArray = QRCodeUtil.splitString(str);
+            QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();
+            LogUtil.d("qrcode", "str," + str);
+            LogUtil.d("qrcode", "0," + strArray[0]);
+
+            String address = Base58.hexToBase58WithAddress(strArray[0]);
+            LogUtil.d("qrcode", "address," + address);
+            if (!Utils.validBicoinAddress(address)) {
+                return null;
+            }
+            qrCodeTransport.setMyAddress(address);
+            String changeAddress = Base58.hexToBase58WithAddress(strArray[1]);
+            if (!Utils.validBicoinAddress(changeAddress)) {
+                return null;
+            }
+            qrCodeTransport.setChangeAddress(changeAddress);
+            qrCodeTransport.setChangeAmt(Long.parseLong(strArray[2], 16));
+            qrCodeTransport.setFee(Long.parseLong(
+                    strArray[3], 16));
+            String toAddress = Base58.hexToBase58WithAddress(strArray[4]);
+            if (!Utils.validBicoinAddress(toAddress)) {
+                return null;
+            }
+            qrCodeTransport.setToAddress(toAddress);
+            qrCodeTransport.setTo(Long.parseLong(
+                    strArray[5], 16));
+            List<String> hashList = new ArrayList<String>();
+            for (int i = 6; i < strArray.length; i++) {
+                String text = strArray[i];
+                if (!Utils.isEmpty(text)) {
+                    hashList.add(text);
+                }
+            }
+            qrCodeTransport.setHashList(hashList);
+            return qrCodeTransport;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static QRCodeTxTransport oldFormatQRCodeTransport(String str) {
         try {
             String[] strArray = QRCodeUtil.splitString(str);
             QRCodeTxTransport qrCodeTransport = new QRCodeTxTransport();

@@ -55,8 +55,10 @@ import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogRCheck;
+import net.bither.ui.base.dialog.DialogSelectChangeAddress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.dialog.DialogSendOption;
 import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
@@ -70,7 +72,8 @@ import net.bither.util.UnitUtilWrapper;
 import java.math.BigInteger;
 
 public class SendActivity extends SwipeRightActivity implements EntryKeyboardView
-        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
+        DialogSendOption.DialogSendOptionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -86,6 +89,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     private PasswordEntryKeyboardView kvPassword;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
+    private DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private boolean isDonate = false;
 
@@ -128,13 +132,16 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
+        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
+        dialogSelectChangeAddress = new DialogSelectChangeAddress(this, address);
         tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
-        int precision = (int)Math.floor(Math.log10(AppSharedPreference.getInstance().getBitcoinUnit().satoshis));
+        int precision = (int) Math.floor(Math.log10(AppSharedPreference.getInstance()
+                .getBitcoinUnit().satoshis));
         btcAmountView.setInputPrecision(precision);
         btcAmountView.setHintPrecision(Math.min(4, precision));
         btcAmountView.setShift(8 - precision);
@@ -239,7 +246,9 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                             public void run() {
                                 dp.dismiss();
                                 DialogSendConfirm dialog = new DialogSendConfirm(SendActivity
-                                        .this, tx, sendConfirmListener);
+                                        .this, tx, dialogSelectChangeAddress.getChangeAddress()
+                                        .equals(address) ? null : dialogSelectChangeAddress
+                                        .getChangeAddress().getAddress(), sendConfirmListener);
                                 dialog.show();
                                 dp.setWait();
                             }
@@ -247,8 +256,9 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         break;
                     }
                 case HandlerMessage.MSG_FAILURE:
-                    //TODO need more complicated logic to recalculate r, because rfc6979 will use the same r for the same transaction
-                   // dp.setRecalculatingR();
+                    //TODO need more complicated logic to recalculate r,
+                    // because rfc6979 will use the same r for the same transaction
+                    // dp.setRecalculatingR();
                     if (!dp.isShowing()) {
                         dp.show();
                     }
@@ -287,7 +297,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
                                 amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                                .trim(), new SecureCharSequence(etPassword.getText()));
+                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                                (), new SecureCharSequence(etPassword.getText()));
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -357,6 +368,11 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     @Override
     public void onEntryKeyboardHide(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSelectChangeAddress() {
+        dialogSelectChangeAddress.show();
     }
 
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
@@ -464,6 +480,13 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         @Override
         public void onReceive(Context context, Intent intent) {
             amountCalculatorLink.setExchangeRate(getExchangeRate());
+        }
+    };
+
+    private OnClickListener optionClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogSendOption(SendActivity.this, address, SendActivity.this).show();
         }
     };
 

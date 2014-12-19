@@ -26,6 +26,10 @@ public class QRCodeTxTransport implements Serializable {
     private String mToAddress;
     private long mTo;
     private long mFee;
+    private long changeAmt;
+    private String changeAddress;
+
+
 
     public List<String> getHashList() {
         return mHashList;
@@ -67,7 +71,21 @@ public class QRCodeTxTransport implements Serializable {
         this.mFee = mFee;
     }
 
+    public String getChangeAddress() {
+        return changeAddress;
+    }
 
+    public void setChangeAddress(String changeAddress) {
+        this.changeAddress = changeAddress;
+    }
+
+    public long getChangeAmt() {
+        return changeAmt;
+    }
+
+    public void setChangeAmt(long changeAmt) {
+        this.changeAmt = changeAmt;
+    }
 
 
 
