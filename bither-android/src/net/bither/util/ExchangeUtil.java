@@ -121,7 +121,7 @@ public class ExchangeUtil {
         Currency defaultCurrency = AppSharedPreference.getInstance()
                 .getDefaultExchangeType();
         double rate = 1;
-        if (currency != defaultCurrency && getCurrenciesRate() != null) {
+        if (currency != null && getCurrenciesRate() != null && currency != defaultCurrency) {
             double preRate = getCurrenciesRate().get(currency);
             double defaultRate = getCurrenciesRate().get(defaultCurrency);
             rate = defaultRate / preRate;
@@ -134,7 +134,7 @@ public class ExchangeUtil {
                 .getDefaultExchangeType();
         Currency currency = getExchangeType(marketType);
         double rate = 1;
-        if (currency != defaultCurrency && getCurrenciesRate() != null) {
+        if (currency != null && getCurrenciesRate() != null && currency != defaultCurrency) {
             double preRate = getCurrenciesRate().get(currency);
             double defaultRate = getCurrenciesRate().get(defaultCurrency);
             rate = defaultRate / preRate;
