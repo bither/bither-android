@@ -433,4 +433,11 @@
     <string name="select_change_address_option_name">選擇找零地址</string>
     <string name="select_change_address_label">選擇找零地址</string>
     <string name="send_confirm_change_to_label">找零到:</string>
+
+    <!-- Sign Message -->
+    <string name="sign_message_activity_name">簽名消息</string>
+    <string name="sign_message_button">簽名</string>
+    <string name="sign_message_output_copy">複製</string>
+    <string name="sign_message_output_qr">顯示二維碼</string>
+    <string name="sign_message_output_copied">內容已復制</string>
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
 
     <LinearLayout
@@ -22,12 +22,12 @@
             android:paddingRight="5dp"
             android:text="@string/fancy_qr_code_view_origin"
             android:textColor="@color/dialog_text_color_selector"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#22ffffff" />
+            android:background="#22ffffff"/>
     </LinearLayout>
 
     <TextView
@@ -41,12 +41,12 @@
         android:paddingRight="5dp"
         android:text="@string/address_detail_private_key_qr_code_encrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="15sp" />
+        android:textSize="15sp"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff" />
+        android:background="#22ffffff"/>
 
     <TextView
         android:id="@+id/tv_private_key_qr_code_decrypted"
@@ -60,12 +60,12 @@
         android:paddingRight="5dp"
         android:text="@string/address_detail_private_key_qr_code_decrypted"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="15sp" />
+        android:textSize="15sp"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff" />
+        android:background="#22ffffff"/>
 
     <TextView
         android:id="@+id/tv_view_show_private_key"
@@ -78,12 +78,38 @@
         android:paddingRight="5dp"
         android:text="@string/private_key_text"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="15sp" />
+        android:textSize="15sp"/>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#22ffffff" />
+        android:background="#22ffffff"/>
+
+
+    <LinearLayout
+        android:id="@+id/ll_sign_message"
+        android:orientation="vertical"
+        android:background="@drawable/ui_touchable_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/sign_message_activity_name"
+            android:textColor="@color/dialog_text_color_selector"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#22ffffff"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_trash_private_key"
@@ -114,6 +140,6 @@
         android:paddingRight="5dp"
         android:text="@string/close"
         android:textColor="@color/dialog_text_color_selector"
-        android:textSize="15sp" />
+        android:textSize="15sp"/>
 
 </LinearLayout>

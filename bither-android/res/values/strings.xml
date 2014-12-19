@@ -452,4 +452,11 @@
     <string name="send_confirm_change_to_label">Change to:</string>
     <string name="sign_transaction_change_to_label">Change to:</string>
     <string name="sign_transaction_change_amount_label">Change Amount:</string>
+
+    <!-- Sign Message -->
+    <string name="sign_message_activity_name">Sign Message</string>
+    <string name="sign_message_button">Sign</string>
+    <string name="sign_message_output_copy">Copy</string>
+    <string name="sign_message_output_qr">Show QR Code</string>
+    <string name="sign_message_output_copied">Content Copied</string>
 </resources>
