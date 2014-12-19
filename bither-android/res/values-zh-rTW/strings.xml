@@ -437,4 +437,7 @@
     <!-- Sign Message -->
     <string name="sign_message_activity_name">簽名消息</string>
     <string name="sign_message_button">簽名</string>
+    <string name="sign_message_output_copy">複製</string>
+    <string name="sign_message_output_qr">顯示二維碼</string>
+    <string name="sign_message_output_copied">內容已復制</string>
 </resources>

@@ -39,7 +39,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textMultiLine"
-                            android:minHeight="100dp"
+                            android:minHeight="80dp"
                             android:background="@drawable/transparent"
                             android:paddingTop="4dp"
                             android:paddingBottom="6dp"
@@ -52,8 +52,10 @@
                     </FrameLayout>
 
                     <FrameLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
                         android:layout_gravity="center">
 
                         <ProgressBar
@@ -66,24 +68,48 @@
                             android:indeterminateDuration="600"
                             android:indeterminateOnly="true"/>
 
-                        <Button
-                            android:id="@+id/btn_sign"
+                        <ImageView
+                            android:id="@+id/iv_arrow_down"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/sign_message_button"
-                            android:padding="14dp"
-                            android:textSize="17sp"
-                            android:background="@drawable/entry_keyboard_key_btn_bg"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:visibility="invisible"
+                            android:src="@drawable/arrow_down"/>
+
+                        <FrameLayout
+                            android:id="@+id/fl_buttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+
+                            <Button
+                                android:id="@+id/btn_qr"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/scan_button_selector"
+                                android:layout_gravity="center|left"/>
+
+                            <Button
+                                android:id="@+id/btn_sign"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/sign_message_button"
+                                android:padding="14dp"
+                                android:textSize="17sp"
+                                android:background="@drawable/entry_keyboard_key_btn_bg"
+                                android:layout_gravity="center|right"/>
+                        </FrameLayout>
+
                     </FrameLayout>
 
                     <FrameLayout
+                        android:id="@+id/fl_output"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:background="@drawable/textarea_background">
 
                         <FrameLayout
-                            android:id="@+id/fl_output"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -92,7 +118,7 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="8dp"
                             android:background="@drawable/ui_touchable_bg"
-                            android:focusable="true"
+                            android:duplicateParentState="true"
                             android:foreground="@drawable/dropdown_ic_arrow_selector"
                             android:foregroundGravity="bottom|right">
 
@@ -100,7 +126,7 @@
                                 android:id="@+id/tv_output"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:minHeight="100dp"
+                                android:minHeight="80dp"
                                 android:textSize="15sp"
                                 android:gravity="top|left"
                                 android:textColor="@color/text_field_text_color"/>

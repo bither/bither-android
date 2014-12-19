@@ -84,7 +84,9 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
                 new DialogAddressWithShowPrivateKey(activity, address).show();
                 break;
             case R.id.tv_sign_message:
-                activity.startActivity(new Intent(activity, SignMessageActivity.class));
+                Intent intent = new Intent(activity, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
+                activity.startActivity(intent);
                 break;
             default:
                 return;
