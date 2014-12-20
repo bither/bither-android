@@ -36,6 +36,7 @@ import net.bither.ui.base.listener.IBackClickListener;
  * Created by songchenwen on 14/12/19.
  */
 public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
+    private static final int AddressRequestCode = 1059, MessageRequestCode = 1100, SignatureRequestCode = 1101;
 
     private InputMethodManager imm;
     private EditText etAddress, etMessage, etSignature;
@@ -86,6 +87,7 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
                 public void run() {
                     signed = false;
                     try {
+                        //TODO Verify signature here
                         Thread.sleep(500);
                     } catch (Exception e) {
 
@@ -95,8 +97,9 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
                         public void run() {
                             dp.dismiss();
                             DropdownMessage.showDropdownMessage(VerifyMessageSignatureActivity
-                                    .this,
-                                    signed ? R.string.verify_message_signature_verify_success : R.string.verify_message_signature_verify_failed);
+                                            .this,
+                                    signed ? R.string.verify_message_signature_verify_success : R
+                                            .string.verify_message_signature_verify_failed);
                         }
                     });
                 }
@@ -107,8 +110,21 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener qrClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            int requestCode;
+            switch (v.getId()) {
+                case R.id.btn_qr_address:
+                    requestCode = AddressRequestCode;
+                    break;
+                case R.id.btn_qr_message:
+                    requestCode = MessageRequestCode;
+                    break;
+                case R.id.btn_qr_signature:
+                default:
+                    requestCode = SignatureRequestCode;
+                    break;
+            }
             Intent intent = new Intent(VerifyMessageSignatureActivity.this, ScanActivity.class);
-            startActivityForResult(intent, v.getId());
+            startActivityForResult(intent, requestCode);
         }
     };
 
@@ -121,13 +137,13 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
             }
             input = input.trim();
             switch (requestCode) {
-                case R.id.btn_qr_address:
+                case AddressRequestCode:
                     etAddress.setText(input);
                     break;
-                case R.id.btn_qr_message:
+                case MessageRequestCode:
                     etMessage.setText(input);
                     break;
-                case R.id.btn_qr_signature:
+                case SignatureRequestCode:
                     etSignature.setText(input);
                     break;
                 default:

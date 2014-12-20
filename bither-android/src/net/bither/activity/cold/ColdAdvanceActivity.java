@@ -31,6 +31,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
+import net.bither.VerifyMessageSignatureActivity;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -94,6 +95,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnTrashCan.setOnClickListener(trashCanClick);
+        findViewById(R.id.btn_verify_signature).setOnClickListener(verifySignatureClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
@@ -130,6 +132,14 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+    private View.OnClickListener verifySignatureClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(ColdAdvanceActivity.this, VerifyMessageSignatureActivity
+                    .class));
+        }
+    };
+
     private SettingSelectorView.SettingSelector qrCodeQualitySelector = new SettingSelectorView
             .SettingSelector() {
 
@@ -162,7 +172,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onOptionIndexSelected(int index) {
             if (index >= 0 && index < getOptionCount()) {
-                AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()[index]);
+                AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()
+                        [index]);
             }
         }
 
@@ -241,66 +252,66 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     };
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-                @Override
-                public int getOptionCount() {
-                    hasAnyAction = true;
-                    return 2;
-                }
+        @Override
+        public int getOptionCount() {
+            hasAnyAction = true;
+            return 2;
+        }
 
-                @Override
-                public String getOptionName(int index) {
-                    switch (index) {
-                        case 0:
-                            return getString(R.string.import_private_key_qr_code);
-                        case 1:
-                            return getString(R.string.import_private_key_text);
-                        default:
-                            return "";
-                    }
-                }
+        @Override
+        public String getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.import_private_key_qr_code);
+                case 1:
+                    return getString(R.string.import_private_key_text);
+                default:
+                    return "";
+            }
+        }
 
-                @Override
-                public String getOptionNote(int index) {
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            switch (index) {
+                case 0:
+                    return getResources().getDrawable(R.drawable.scan_button_icon);
+                case 1:
+                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                default:
                     return null;
-                }
+            }
+        }
 
-                @Override
-                public Drawable getOptionDrawable(int index) {
-                    switch (index) {
-                        case 0:
-                            return getResources().getDrawable(R.drawable.scan_button_icon);
-                        case 1:
-                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                        default:
-                            return null;
-                    }
-                }
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_import_private_key);
+        }
 
-                @Override
-                public String getSettingName() {
-                    return getString(R.string.setting_name_import_private_key);
-                }
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
 
-                @Override
-                public int getCurrentOptionIndex() {
-                    return -1;
-                }
-
-                @Override
-                public void onOptionIndexSelected(int index) {
-                    hasAnyAction = true;
-                    switch (index) {
-                        case 0:
-                            importPrivateKeyFromQrCode();
-                            return;
-                        case 1:
-                            importPrivateKeyFromText();
-                            return;
-                        default:
-                            return;
-                    }
-                }
-            };
+        @Override
+        public void onOptionIndexSelected(int index) {
+            hasAnyAction = true;
+            switch (index) {
+                case 0:
+                    importPrivateKeyFromQrCode();
+                    return;
+                case 1:
+                    importPrivateKeyFromText();
+                    return;
+                default:
+                    return;
+            }
+        }
+    };
 
     private SettingSelectorView.SettingSelector importBip38KeySelector = new SettingSelectorView
             .SettingSelector() {
