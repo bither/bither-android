@@ -21,6 +21,8 @@ package net.bither;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -34,6 +36,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogSignMessageOutput;
@@ -81,6 +84,7 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         btnSign.setOnClickListener(signClick);
         btnQr.setOnClickListener(scanClick);
         flOutput.setOnClickListener(outputClick);
+        etInput.addTextChangedListener(twInput);
     }
 
     private View.OnClickListener signClick = new View.OnClickListener() {
@@ -139,32 +143,62 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         btnSign.setVisibility(View.INVISIBLE);
         btnQr.setVisibility(View.INVISIBLE);
         ivArrow.setVisibility(View.INVISIBLE);
+        flOutput.setVisibility(View.GONE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
         new Thread() {
             @Override
             public void run() {
-                // TODO do the sign works here;
-                password.wipe();
+                String output = null;
                 try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    output = address.signMessage(input, password);
+                } catch (Exception e) {
+                    tvOutput.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DropdownMessage.showDropdownMessage(SignMessageActivity.this, R.string.password_wrong);
+                        }
+                    });
                 }
+                password.wipe();
+                final String o = output;
                 tvOutput.post(new Runnable() {
                     @Override
                     public void run() {
-                        tvOutput.setText(input);
+                        if(!Utils.isEmpty(o)) {
+                            tvOutput.setText(o);
+                            flOutput.setVisibility(View.VISIBLE);
+                            ivArrow.setVisibility(View.VISIBLE);
+                        } else {
+                            btnSign.setVisibility(View.VISIBLE);
+                            btnQr.setVisibility(View.VISIBLE);
+                        }
                         etInput.setEnabled(true);
                         pbSign.setVisibility(View.INVISIBLE);
-                        ivArrow.setVisibility(View.VISIBLE);
-                        flOutput.setVisibility(View.VISIBLE);
-                        btnSign.setVisibility(View.VISIBLE);
-                        btnQr.setVisibility(View.VISIBLE);
                     }
                 });
             }
         }.start();
     }
+
+    private TextWatcher twInput = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            flOutput.setVisibility(View.GONE);
+            ivArrow.setVisibility(View.INVISIBLE);
+            btnSign.setVisibility(View.VISIBLE);
+            btnQr.setVisibility(View.VISIBLE);
+        }
+    };
 
     @Override
     public void finish() {
