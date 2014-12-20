@@ -75,6 +75,14 @@
             android:textColor="@color/white"
             android:textSize="14sp"/>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/sign_transaction_change_amount_label"
+            android:textColor="#aaffffff"
+            android:textSize="14sp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
