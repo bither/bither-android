@@ -25,6 +25,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -71,9 +72,9 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            String address = etAddress.getText().toString().trim();
-            String message = etMessage.getText().toString().trim();
-            String signature = etSignature.getText().toString().trim();
+            final String address = etAddress.getText().toString().trim();
+            final String message = etMessage.getText().toString().trim();
+            final String signature = etSignature.getText().toString().trim();
             if (Utils.isEmpty(address) || Utils.isEmpty(message) || Utils.isEmpty(signature)) {
                 return;
             }
@@ -85,13 +86,7 @@ public class VerifyMessageSignatureActivity extends SwipeRightFragmentActivity {
             new Thread() {
                 @Override
                 public void run() {
-                    signed = false;
-                    try {
-                        //TODO Verify signature here
-                        Thread.sleep(500);
-                    } catch (Exception e) {
-
-                    }
+                    signed = PrivateKeyUtil.verifyMessage(address, message, signature);
                     btnVerify.post(new Runnable() {
                         @Override
                         public void run() {
