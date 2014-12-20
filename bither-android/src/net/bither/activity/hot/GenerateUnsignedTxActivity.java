@@ -211,8 +211,6 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         super.onSaveInstanceState(outState);
     }
 
-    ;
-
     private Handler completeTransactionHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
