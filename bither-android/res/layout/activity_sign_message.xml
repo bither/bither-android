@@ -46,6 +46,7 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="8dp"
                             android:textSize="15sp"
+                            android:hint="@string/sign_message_input_hint"
                             android:gravity="top|left"
                             android:textColor="@color/text_field_text_color"
                             android:imeOptions="flagNoExtractUi"/>
