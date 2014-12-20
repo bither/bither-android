@@ -30,7 +30,8 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;

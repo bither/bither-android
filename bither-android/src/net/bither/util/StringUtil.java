@@ -70,19 +70,6 @@ public class StringUtil {
         }
     }
 
-    public static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0;
-             i < len;
-             i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s
-                    .charAt(i + 1), 16));
-        }
-        return data;
-    }
-
-
     public static boolean checkBackupFileOfCold(String fileName) {
         Pattern pattern = Pattern.compile("[^-]{6,6}_[^-]{6,6}.bak");
         Matcher matcher = pattern.matcher(fileName);

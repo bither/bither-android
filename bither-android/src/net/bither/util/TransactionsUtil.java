@@ -33,7 +33,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.exception.VerificationException;
 import net.bither.bitherj.script.Script;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
 import net.bither.http.HttpSetting;

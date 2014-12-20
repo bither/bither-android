@@ -44,7 +44,7 @@ import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
@@ -184,14 +184,15 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         @Override
         public void onConfirm(Tx tx) {
             GenerateUnsignedTxActivity.this.tx = tx;
+            String addressCannotBtParsed = getString(R.string.address_cannot_be_parsed);
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
                     QRCodeEnodeUtil.getPresignTxString(tx, dialogSelectChangeAddress
                             .getChangeAddress().equals(address) ? null :
-                            dialogSelectChangeAddress.getChangeAddress().getAddress()));
+                            dialogSelectChangeAddress.getChangeAddress().getAddress(), addressCannotBtParsed));
             intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                    QRCodeEnodeUtil.oldGetPreSignString(tx));
+                    QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
 
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));

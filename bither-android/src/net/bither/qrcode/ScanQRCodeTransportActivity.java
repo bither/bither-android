@@ -28,6 +28,7 @@ import com.google.zxing.Result;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.qrcode.QRCodeTransportPage;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.PlaySound;
 

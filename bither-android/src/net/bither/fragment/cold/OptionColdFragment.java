@@ -51,7 +51,7 @@ import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
-import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.DropdownMessage;

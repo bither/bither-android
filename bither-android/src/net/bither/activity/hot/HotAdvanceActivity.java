@@ -41,7 +41,7 @@ import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;

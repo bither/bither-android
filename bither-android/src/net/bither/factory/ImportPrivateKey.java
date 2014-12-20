@@ -29,7 +29,7 @@ import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
