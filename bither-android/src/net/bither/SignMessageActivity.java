@@ -129,12 +129,6 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
     };
 
     @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, R.anim.slide_out_right);
-    }
-
-    @Override
     public void onPasswordEntered(final SecureCharSequence password) {
         final String input = etInput.getText().toString().trim();
         if (Utils.isEmpty(input)) {
@@ -170,5 +164,11 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
                 });
             }
         }.start();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_out_right);
     }
 }

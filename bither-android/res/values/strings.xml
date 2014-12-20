@@ -459,4 +459,14 @@
     <string name="sign_message_output_copy">Copy</string>
     <string name="sign_message_output_qr">Show QR Code</string>
     <string name="sign_message_output_copied">Content Copied</string>
+    <string name="sign_message_input_hint">Message to sign</string>
+
+    <!-- Verify Message Signature -->
+    <string name="verify_message_signature_activity_name">Verify Message Signature</string>
+    <string name="verify_message_signature_address_hint">Signing Address</string>
+    <string name="verify_message_signature_message_hint">Original Message</string>
+    <string name="verify_message_signature_signature_hint">Signature</string>
+    <string name="verify_message_signature_verify_button">Verify Signature</string>
+    <string name="verify_message_signature_verify_success">Signature is correct</string>
+    <string name="verify_message_signature_verify_failed">Signature is not correct</string>
 </resources>

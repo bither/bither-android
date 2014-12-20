@@ -440,4 +440,14 @@
     <string name="sign_message_output_copy">复制</string>
     <string name="sign_message_output_qr">显示二维码</string>
     <string name="sign_message_output_copied">内容已复制</string>
+    <string name="sign_message_input_hint">待签名的消息</string>
+
+    <!-- Verify Message Signature -->
+    <string name="verify_message_signature_activity_name">验证消息签名</string>
+    <string name="verify_message_signature_address_hint">签名用的地址</string>
+    <string name="verify_message_signature_message_hint">原消息</string>
+    <string name="verify_message_signature_signature_hint">签名</string>
+    <string name="verify_message_signature_verify_button">验证签名</string>
+    <string name="verify_message_signature_verify_success">签名验证通过</string>
+    <string name="verify_message_signature_verify_failed">签名验证未通过</string>
 </resources>

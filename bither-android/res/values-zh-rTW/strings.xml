@@ -440,4 +440,14 @@
     <string name="sign_message_output_copy">複製</string>
     <string name="sign_message_output_qr">顯示二維碼</string>
     <string name="sign_message_output_copied">內容已復制</string>
+        <string name="sign_message_input_hint">待簽名的消息</string>
+
+    <!-- Verify Message Signature -->
+    <string name="verify_message_signature_activity_name">驗證消息簽名</string>
+    <string name="verify_message_signature_address_hint">簽名用的地址</string>
+    <string name="verify_message_signature_message_hint">原消息</string>
+    <string name="verify_message_signature_signature_hint">簽名</string>
+    <string name="verify_message_signature_verify_button">驗證簽名</string>
+    <string name="verify_message_signature_verify_success">簽名驗證通過</string>
+    <string name="verify_message_signature_verify_failed">簽名驗證未通過</string>
 </resources>
