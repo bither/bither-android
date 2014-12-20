@@ -69,7 +69,7 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         Button btnCancel = (Button) findViewById(R.id.btn_cancel);
         Button btnOk = (Button) findViewById(R.id.btn_ok);
         String outAddress = tx.getFirstOutAddressOtherThanChange(changeAddress);
-        if (Utils.isEmpty(changeAddress)) {
+        if (Utils.isEmpty(changeAddress) || tx.amountSentToAddress(changeAddress) <= 0) {
             llChange.setVisibility(View.GONE);
         } else {
             tvAddressChange.setText(WalletUtils.formatHash(changeAddress, 4, 24));

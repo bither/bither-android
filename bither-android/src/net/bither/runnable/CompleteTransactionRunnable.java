@@ -94,7 +94,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
-            Tx tx = wallet.buildTx(amount, toAddress);
+            Tx tx = wallet.buildTx(amount, toAddress, changeAddress);
             if (tx == null) {
                 obtainMessage(HandlerMessage.MSG_FAILURE, BitherApplication.mContext.getString(R
                         .string.send_failed));
