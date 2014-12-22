@@ -160,7 +160,16 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword.registerEditText(etPassword).setListener(this);
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
                 (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
+        findViewById(R.id.ll_balance).setOnClickListener(balanceClick);
     }
+
+    private OnClickListener balanceClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            amountCalculatorLink.setBtcAmount(address.getBalance());
+        }
+    };
+
 
     private OnClickListener scanClick = new OnClickListener() {
 
