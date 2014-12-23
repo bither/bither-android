@@ -148,20 +148,21 @@ public class TransactionsUtil {
                             in.setPrevTxHash(Sha256Hash.ZERO_HASH.getBytes());
                             in.setPrevOutSn(index);
                         } else {
+                            if (!tranInJson.isNull(PREV_TX_HASH)) {
+                                String prevOutHash = tranInJson
+                                        .getString(PREV_TX_HASH);
+                                int n = 0;
+                                if (!tranInJson.isNull(PREV_OUTPUT_SN)) {
+                                    n = tranInJson.getInt(PREV_OUTPUT_SN);
+                                }
+                                in.setPrevTxHash(Utils.reverseBytes(Utils.hexStringToByteArray(prevOutHash)));
+                                in.setPrevOutSn(n);
 
-                            String prevOutHash = tranInJson
-                                    .getString(PREV_TX_HASH);
-                            int n = 0;
-                            if (!tranInJson.isNull(PREV_OUTPUT_SN)) {
-                                n = tranInJson.getInt(PREV_OUTPUT_SN);
                             }
-                            in.setPrevTxHash(Utils.reverseBytes(Utils.hexStringToByteArray(prevOutHash)));
-                            in.setPrevOutSn(n);
-
+                            in.setInSn(i);
+                            in.setPrevOutScript(Script.createInputScript(EMPTY_BYTES, EMPTY_BYTES));
+                            tx.addInput(in);
                         }
-                        in.setInSn(i);
-                        in.setPrevOutScript(Script.createInputScript(EMPTY_BYTES, EMPTY_BYTES));
-                        tx.addInput(in);
 
 
                     }
