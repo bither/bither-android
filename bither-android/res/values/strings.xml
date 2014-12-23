@@ -453,6 +453,7 @@
     <string name="send_confirm_change_to_label">Change to:</string>
     <string name="sign_transaction_change_to_label">Change to:</string>
     <string name="sign_transaction_change_amount_label">Change Amount:</string>
+    <string name="select_change_address_change_to_same_warn">Pay to address &amp; change address can\'t be same</string>
 
     <!-- Sign Message -->
     <string name="sign_message_activity_name">Sign Message</string>

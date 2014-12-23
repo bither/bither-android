@@ -436,6 +436,7 @@
     <string name="send_confirm_change_to_label">找零到:</string>
     <string name="sign_transaction_change_to_label">找零到:</string>
     <string name="sign_transaction_change_amount_label">找零金額:</string>
+    <string name="select_change_address_change_to_same_warn">發送到的地址和找零地址不能相同</string>
 
     <!-- Sign Message -->
     <string name="sign_message_activity_name">簽名消息</string>

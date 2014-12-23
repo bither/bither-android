@@ -302,7 +302,13 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         public void onClick(View v) {
             final long btc = amountCalculatorLink.getAmount();
             if (btc > 0) {
-                if (Utils.validBicoinAddress(etAddress.getText().toString())) {
+                if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
+                    if (Utils.compareString(etAddress.getText().toString().trim(),
+                            dialogSelectChangeAddress.getChangeAddress().getAddress())) {
+                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                                R.string.select_change_address_change_to_same_warn);
+                        return;
+                    }
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
