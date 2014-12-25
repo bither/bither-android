@@ -5,8 +5,9 @@
               android:orientation="vertical">
 
     <TextView
-        android:layout_width="240dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minWidth="200dp"
         android:text="@string/sign_message_select_address"
         android:textColor="@color/white"
         android:textSize="16sp"/>
