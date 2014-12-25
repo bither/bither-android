@@ -35,20 +35,25 @@ import android.widget.TextView;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.Qr;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.QrCodeImageView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogFragmentFancyQrCodePager;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogSignMessageOutput;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 /**
  * Created by songchenwen on 14/12/16.
  */
 public class SignMessageActivity extends SwipeRightFragmentActivity implements
-        IDialogPasswordListener {
+        IDialogPasswordListener, DialogFragmentFancyQrCodePager.QrCodeThemeChangeListener {
     public static final String AddressKey = "ADDRESS";
     private static final int ScanRequestCode = 1051;
 
@@ -60,6 +65,9 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
     private Button btnQr;
     private ProgressBar pbSign;
     private ImageView ivArrow;
+    private View flAddress;
+    private TextView tvAddress;
+    private QrCodeImageView ivQr;
     private InputMethodManager imm;
 
     @Override
@@ -80,11 +88,19 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         btnQr = (Button) findViewById(R.id.btn_qr);
         ivArrow = (ImageView) findViewById(R.id.iv_arrow_down);
         pbSign = (ProgressBar) findViewById(R.id.pb_sign);
+        flAddress = findViewById(R.id.fl_address);
+        ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
+        tvAddress = (TextView) findViewById(R.id.tv_address);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         btnSign.setOnClickListener(signClick);
         btnQr.setOnClickListener(scanClick);
         flOutput.setOnClickListener(outputClick);
         etInput.addTextChangedListener(twInput);
+        flAddress.setOnClickListener(copyClick);
+        ivQr.setOnClickListener(qrClick);
+        tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
+        Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
     }
 
     private View.OnClickListener signClick = new View.OnClickListener() {
@@ -115,6 +131,10 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
                 return;
             }
             etInput.setText(input);
+            btnQr.setEnabled(true);
+            btnSign.setVisibility(View.VISIBLE);
+            pbSign.setVisibility(View.INVISIBLE);
+            ivArrow.setVisibility(View.INVISIBLE);
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -141,7 +161,7 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         etInput.setEnabled(false);
         pbSign.setVisibility(View.VISIBLE);
         btnSign.setVisibility(View.INVISIBLE);
-        btnQr.setVisibility(View.INVISIBLE);
+        btnQr.setEnabled(false);
         ivArrow.setVisibility(View.INVISIBLE);
         flOutput.setVisibility(View.GONE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
@@ -155,7 +175,8 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
                     tvOutput.post(new Runnable() {
                         @Override
                         public void run() {
-                            DropdownMessage.showDropdownMessage(SignMessageActivity.this, R.string.password_wrong);
+                            DropdownMessage.showDropdownMessage(SignMessageActivity.this,
+                                    R.string.password_wrong);
                         }
                     });
                 }
@@ -164,14 +185,14 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
                 tvOutput.post(new Runnable() {
                     @Override
                     public void run() {
-                        if(!Utils.isEmpty(o)) {
+                        if (!Utils.isEmpty(o)) {
                             tvOutput.setText(o);
                             flOutput.setVisibility(View.VISIBLE);
                             ivArrow.setVisibility(View.VISIBLE);
                         } else {
                             btnSign.setVisibility(View.VISIBLE);
-                            btnQr.setVisibility(View.VISIBLE);
                         }
+                        btnQr.setEnabled(true);
                         etInput.setEnabled(true);
                         pbSign.setVisibility(View.INVISIBLE);
                     }
@@ -196,7 +217,31 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
             flOutput.setVisibility(View.GONE);
             ivArrow.setVisibility(View.INVISIBLE);
             btnSign.setVisibility(View.VISIBLE);
-            btnQr.setVisibility(View.VISIBLE);
+            btnQr.setEnabled(true);
+        }
+    };
+
+    private View.OnClickListener copyClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (address != null) {
+                String text = address.getAddress();
+                StringUtil.copyString(text);
+                DropdownMessage.showDropdownMessage(SignMessageActivity.this,
+                        R.string.copy_address_success);
+            }
+        }
+    };
+
+    private View.OnClickListener qrClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
+                    .setQrCodeThemeChangeListener(SignMessageActivity.this).show
+                    (SignMessageActivity.this.getSupportFragmentManager(),
+                            DialogFragmentFancyQrCodePager.FragmentTag);
         }
     };
 
@@ -204,5 +249,10 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
     public void finish() {
         super.finish();
         overridePendingTransition(0, R.anim.slide_out_right);
+    }
+
+    @Override
+    public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme) {
+        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
     }
 }
