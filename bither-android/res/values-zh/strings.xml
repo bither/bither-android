@@ -450,7 +450,9 @@
     <string name="verify_message_signature_address_hint">签名用的地址</string>
     <string name="verify_message_signature_message_hint">原消息</string>
     <string name="verify_message_signature_signature_hint">签名</string>
-    <string name="verify_message_signature_verify_button">验证签名</string>
+    <string name="verify_message_signature_verify_button">验证</string>
+    <string name="verify_message_signature_verify_button_verifying">正在验证…</string>
+    <string name="verify_message_signature_verify_button_reverify">重新验证</string>
     <string name="verify_message_signature_verify_success">签名验证通过</string>
     <string name="verify_message_signature_verify_failed">签名验证未通过</string>
 </resources>

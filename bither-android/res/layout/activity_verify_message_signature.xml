@@ -135,7 +135,7 @@
 
                     </LinearLayout>
 
-                    <FrameLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp">
@@ -147,9 +147,43 @@
                             android:text="@string/verify_message_signature_verify_button"
                             android:padding="14dp"
                             android:textSize="17sp"
+                            android:layout_centerInParent="true"
                             android:background="@drawable/entry_keyboard_key_btn_bg"
                             android:layout_gravity="center"/>
-                    </FrameLayout>
+
+                        <ProgressBar
+                            android:id="@+id/pb_verify"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:indeterminateDrawable="@drawable/check_progress_bar"
+                            android:indeterminateDuration="600"
+                            android:indeterminateOnly="true"/>
+
+                        <ImageView
+                            android:id="@+id/iv_verify_success"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/checkmark"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="gone"/>
+
+                        <ImageView
+                            android:id="@+id/iv_verify_failed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/check_failed"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="gone"/>
+                    </RelativeLayout>
 
 
                 </LinearLayout>

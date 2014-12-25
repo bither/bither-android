@@ -468,7 +468,9 @@
     <string name="verify_message_signature_address_hint">Signing Address</string>
     <string name="verify_message_signature_message_hint">Original Message</string>
     <string name="verify_message_signature_signature_hint">Signature</string>
-    <string name="verify_message_signature_verify_button">Verify Signature</string>
+    <string name="verify_message_signature_verify_button">Verify</string>
+    <string name="verify_message_signature_verify_button_verifying">Verifying…</string>
+    <string name="verify_message_signature_verify_button_reverify">Reverify</string>
     <string name="verify_message_signature_verify_success">Signature is correct</string>
     <string name="verify_message_signature_verify_failed">Signature is not correct</string>
 </resources>

@@ -451,7 +451,9 @@
     <string name="verify_message_signature_address_hint">簽名用的地址</string>
     <string name="verify_message_signature_message_hint">原消息</string>
     <string name="verify_message_signature_signature_hint">簽名</string>
-    <string name="verify_message_signature_verify_button">驗證簽名</string>
+    <string name="verify_message_signature_verify_button">驗證</string>
+    <string name="verify_message_signature_verify_button_verifying">正在驗證…</string>
+    <string name="verify_message_signature_verify_button_reverify">重新驗證</string>
     <string name="verify_message_signature_verify_success">簽名驗證通過</string>
     <string name="verify_message_signature_verify_failed">簽名驗證未通過</string>
 </resources>
