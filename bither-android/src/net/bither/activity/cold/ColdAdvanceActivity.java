@@ -36,8 +36,8 @@ import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
@@ -95,7 +95,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnTrashCan.setOnClickListener(trashCanClick);
-        findViewById(R.id.btn_verify_signature).setOnClickListener(verifySignatureClick);
+        ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
+                (messageSigningSelector);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
@@ -132,11 +133,57 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
-    private View.OnClickListener verifySignatureClick = new View.OnClickListener() {
+    private SettingSelectorView.SettingSelector messageSigningSelector = new SettingSelectorView
+            .SettingSelector() {
+
+
         @Override
-        public void onClick(View v) {
-            startActivity(new Intent(ColdAdvanceActivity.this, VerifyMessageSignatureActivity
-                    .class));
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.sign_message_activity_name);
+                case 1:
+                default:
+                    return getString(R.string.verify_message_signature_activity_name);
+            }
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.sign_message_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            switch (index) {
+                case 0:
+                    break;
+                case 1:
+                default:
+                    startActivity(new Intent(ColdAdvanceActivity.this,
+                            VerifyMessageSignatureActivity.class));
+                    break;
+            }
         }
     };
 

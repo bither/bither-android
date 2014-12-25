@@ -40,8 +40,8 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
@@ -119,7 +119,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
-        findViewById(R.id.btn_verify_signature).setOnClickListener(verifySignatureClick);
+        ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
+                (messageSigningSelector);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
@@ -206,14 +207,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onClick(View v) {
             startActivity(new Intent(HotAdvanceActivity.this, TrashCanActivity.class));
-        }
-    };
-
-    private View.OnClickListener verifySignatureClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            startActivity(new Intent(HotAdvanceActivity.this, VerifyMessageSignatureActivity
-                    .class));
         }
     };
 
@@ -336,6 +329,60 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         };
         threadNeedService.start();
     }
+
+    private SettingSelectorView.SettingSelector messageSigningSelector = new SettingSelectorView
+            .SettingSelector() {
+
+
+        @Override
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.sign_message_activity_name);
+                case 1:
+                default:
+                    return getString(R.string.verify_message_signature_activity_name);
+            }
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.sign_message_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            switch (index) {
+                case 0:
+                    break;
+                case 1:
+                default:
+                    startActivity(new Intent(HotAdvanceActivity.this,
+                            VerifyMessageSignatureActivity.class));
+                    break;
+            }
+        }
+    };
 
     private SettingSelectorView.SettingSelector qrCodeQualitySelector = new SettingSelectorView
             .SettingSelector() {
