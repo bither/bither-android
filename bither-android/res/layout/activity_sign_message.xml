@@ -104,7 +104,7 @@
                                 android:id="@+id/et_input"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:inputType="textMultiLine"
+                                android:inputType="textMultiLine|textNoSuggestions"
                                 android:minHeight="80dp"
                                 android:background="@drawable/transparent"
                                 android:paddingTop="4dp"
