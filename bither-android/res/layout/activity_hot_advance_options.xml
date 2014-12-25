@@ -98,18 +98,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 
-                            <Button
-                                android:id="@+id/btn_verify_signature"
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_message_signing"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/ui_touchable_bg"
-                                android:gravity="left"
-                                android:padding="10dp"
-                                android:text="@string/verify_message_signature_activity_name"
-                                android:textColor="@color/text_field_text_color"
-                                android:textSize="18sp"/>
-
-                            <include layout="@layout/layout_vertical_seperator"/>
+                                android:layout_height="wrap_content"/>
 
                             <Button
                                 android:id="@+id/btn_trash_can"

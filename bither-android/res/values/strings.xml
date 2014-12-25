@@ -462,6 +462,7 @@
     <string name="sign_message_output_qr">Show QR Code</string>
     <string name="sign_message_output_copied">Content Copied</string>
     <string name="sign_message_input_hint">Message to sign</string>
+    <string name="sign_message_select_address">Select address to sign message</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">Verify Message Signature</string>
@@ -473,4 +474,5 @@
     <string name="verify_message_signature_verify_button_reverify">Reverify</string>
     <string name="verify_message_signature_verify_success">Signature is correct</string>
     <string name="verify_message_signature_verify_failed">Signature is not correct</string>
+    <string name="sign_message_setting_name">Message Signing</string>
 </resources>

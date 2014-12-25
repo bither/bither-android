@@ -444,6 +444,7 @@
     <string name="sign_message_output_qr">显示二维码</string>
     <string name="sign_message_output_copied">内容已复制</string>
     <string name="sign_message_input_hint">待签名的消息</string>
+    <string name="sign_message_select_address">选择签名消息用的地址</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">验证消息签名</string>
@@ -455,4 +456,5 @@
     <string name="verify_message_signature_verify_button_reverify">重新验证</string>
     <string name="verify_message_signature_verify_success">签名验证通过</string>
     <string name="verify_message_signature_verify_failed">签名验证未通过</string>
+    <string name="sign_message_setting_name">消息签名</string>
 </resources>
