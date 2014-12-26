@@ -23,11 +23,6 @@ import net.bither.util.BlockUtil;
 
 public class DownloadSpvRunnable extends BaseRunnable {
 
-    private BlockchainService mBlockchainService;
-
-    public DownloadSpvRunnable(BlockchainService blockchainService) {
-        this.mBlockchainService = blockchainService;
-    }
 
     @Override
     public void run() {

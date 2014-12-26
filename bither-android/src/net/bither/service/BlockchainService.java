@@ -194,7 +194,7 @@ public class BlockchainService extends android.app.Service {
             LogUtil.i("onStartCommand", "onStartCommand Service:" + action);
         }
         if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
-            new Thread(new DownloadSpvRunnable(BlockchainService.this)).start();
+            new Thread(new DownloadSpvRunnable()).start();
         }
         return START_NOT_STICKY;
     }
@@ -276,15 +276,11 @@ public class BlockchainService extends android.app.Service {
                         startPeer();
                     }
                 } else {
-                    if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-                        BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
-                    }
+
                     PeerManager.instance().stop();
                 }
             } else {
-                if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-                    BroadcastUtil.sendBroadcastGetSpvBlockComplete(false);
-                }
+
                 PeerManager.instance().stop();
             }
 

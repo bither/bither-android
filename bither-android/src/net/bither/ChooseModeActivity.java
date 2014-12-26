@@ -183,6 +183,7 @@ public class ChooseModeActivity extends BaseActivity {
         BitherjSettings.AppMode appMode = AppSharedPreference.getInstance().getAppMode();
         if (appMode == null) {
             BitherApplication.getBitherApplication().startBlockchainService();
+            dowloadSpvBlock();
             initView();
         } else {
             if (appMode == BitherjSettings.AppMode.COLD) {
@@ -198,8 +199,10 @@ public class ChooseModeActivity extends BaseActivity {
                 }
             } else if (appMode == BitherjSettings.AppMode.HOT) {
                 BitherApplication.getBitherApplication().startBlockchainService();
+
                 if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
                     initView();
+                    dowloadSpvBlock();
                     configureWarmWait();
                 } else {
                     gotoActivity(appMode);
