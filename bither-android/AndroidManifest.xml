@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="net.bither"
           android:installLocation="internalOnly"
-          android:versionCode="123"
-          android:versionName="1.2.3">
+          android:versionCode="130"
+          android:versionName="1.3.0">
 
     <uses-sdk
         android:minSdkVersion="9"
