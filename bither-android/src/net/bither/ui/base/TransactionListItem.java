@@ -21,28 +21,37 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.utils.Utils;
+import net.bither.db.TxProvider;
+import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogAddressFull;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogTransactionConfidence;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.StringUtil;
+import net.bither.util.ThreadUtil;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
-public class TransactionListItem extends FrameLayout implements MarketTickerChangedObserver {
+public class TransactionListItem extends FrameLayout implements MarketTickerChangedObserver,
+        View.OnLongClickListener {
 
-    private Activity activity;
+    private AddressDetailActivity activity;
     private TransactionImmutureConfidenceIconView vConfidenceIcon;
     private ImageButton ibtnAddressFull;
     private TextView tvTransactionAddress;
@@ -52,7 +61,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
     private Tx transaction;
     private Address address;
 
-    public TransactionListItem(Activity activity) {
+    public TransactionListItem(AddressDetailActivity activity) {
         super(activity);
         this.activity = activity;
         initView();
@@ -61,7 +70,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
     private void initView() {
         removeAllViews();
         addView(LayoutInflater.from(activity).inflate(R.layout
-                        .list_item_address_detail_transaction, null), LayoutParams.MATCH_PARENT,
+                .list_item_address_detail_transaction, null), LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT);
         vConfidenceIcon = (TransactionImmutureConfidenceIconView) findViewById(R.id
                 .fl_confidence_icon);
@@ -71,6 +80,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
         ibtnAddressFull = (ImageButton) findViewById(R.id.ibtn_address_full);
         ibtnAddressFull.setOnClickListener(addressFullClick);
         vConfidenceIcon.setOnClickListener(confidenceClick);
+        setOnLongClickListener(this);
     }
 
     private TransactionListItem(Context context, AttributeSet attrs) {
@@ -130,7 +140,6 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
                 tvTransactionAddress.setText(BitherSetting.UNKONW_ADDRESS_STRING);
             }
         }
-
     }
 
     public void onPause() {
@@ -211,4 +220,33 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
             dialog.show(v);
         }
     };
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (PeerManager.instance().isRunning() && !PeerManager.instance().isSynchronizing() &&
+                transaction != null && address != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -2);
+            if (transaction.getConfirmationCount() <= 0 && transaction.getTxDate().before(cal
+                    .getTime())) {
+                DialogConfirmTask dialog = new DialogConfirmTask(getContext(),
+                        getContext().getString(R.string.manual_delete_transaction_warning),
+                        new Runnable() {
+                    @Override
+                    public void run() {
+                        address.removeTx(transaction);
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.loadData();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+                return true;
+            }
+        }
+        return false;
+    }
 }

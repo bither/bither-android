@@ -23,6 +23,7 @@ import android.widget.BaseAdapter;
 
 import com.google.common.primitives.Longs;
 
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.ui.base.TransactionListItem;
@@ -31,11 +32,11 @@ import java.util.List;
 
 
 public class TransactionListAdapter extends BaseAdapter {
-    private Activity activity;
+    private AddressDetailActivity activity;
     private List<Tx> transactions;
     private Address address;
 
-    public TransactionListAdapter(Activity activity,
+    public TransactionListAdapter(AddressDetailActivity activity,
                                   List<Tx> transactions, Address address) {
         this.activity = activity;
         this.transactions = transactions;
@@ -68,5 +69,4 @@ public class TransactionListAdapter extends BaseAdapter {
         view.setTransaction(transactions.get(position), address);
         return convertView;
     }
-
 }

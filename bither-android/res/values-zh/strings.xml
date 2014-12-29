@@ -295,7 +295,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_failed">监控冷钱包失败</string>
     <string name="time_is_wrong">系统时间错误, 请重新设置</string>
     <string name="only_supports_the_compressed_private_key">只支持压缩格式的私钥</string>
-
+    <string name="old_version_no_support_change_adress">旧版本二维码不支持选择找零地址</string>
     <!-- select address to send -->
     <string name="select_address_to_send">请选择从哪个地址发送</string>
     <string name="select_address_to_send_no_address_fount">您没有一个拥有足够余额的地址</string>
@@ -425,4 +425,36 @@
     <string name="qr_code_quality_setting_name">二维码精度</string>
     <string name="qr_code_quality_setting_normal">正常</string>
     <string name="qr_code_quality_setting_low">较低</string>
+
+    <!-- Manual Delete Transaction -->
+    <string name="manual_delete_transaction_warning">删除此交易?</string>
+
+    <!-- Select Change Address -->
+    <string name="select_change_address_option_name">选择找零地址</string>
+    <string name="select_change_address_label">选择找零地址</string>
+    <string name="send_confirm_change_to_label">找零到:</string>
+    <string name="sign_transaction_change_to_label">找零到:</string>
+    <string name="sign_transaction_change_amount_label">找零金额:</string>
+    <string name="select_change_address_change_to_same_warn">发送到的地址和找零地址不能相同</string>
+
+    <!-- Sign Message -->
+    <string name="sign_message_activity_name">签名消息</string>
+    <string name="sign_message_button">签名</string>
+    <string name="sign_message_output_copy">复制</string>
+    <string name="sign_message_output_qr">显示二维码</string>
+    <string name="sign_message_output_copied">内容已复制</string>
+    <string name="sign_message_input_hint">待签名的消息</string>
+    <string name="sign_message_select_address">选择签名消息用的地址</string>
+
+    <!-- Verify Message Signature -->
+    <string name="verify_message_signature_activity_name">验证消息签名</string>
+    <string name="verify_message_signature_address_hint">签名用的地址</string>
+    <string name="verify_message_signature_message_hint">原消息</string>
+    <string name="verify_message_signature_signature_hint">签名</string>
+    <string name="verify_message_signature_verify_button">验证</string>
+    <string name="verify_message_signature_verify_button_verifying">正在验证…</string>
+    <string name="verify_message_signature_verify_button_reverify">重新验证</string>
+    <string name="verify_message_signature_verify_success">签名验证通过</string>
+    <string name="verify_message_signature_verify_failed">签名验证未通过</string>
+    <string name="sign_message_setting_name">消息签名</string>
 </resources>

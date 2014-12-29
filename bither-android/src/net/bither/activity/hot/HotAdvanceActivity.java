@@ -31,6 +31,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
+import net.bither.VerifyMessageSignatureActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -39,8 +40,8 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.QRCodeUtil;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
@@ -64,6 +65,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -118,6 +120,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
+        ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
+                (messageSigningSelector);
         dp = new DialogProgress(this, R.string.please_wait);
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
@@ -183,13 +187,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             @Override
                             public void run() {
                                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                        getString(R.string.export_success) + "\n" + logTagDir.getAbsolutePath());
+                                        getString(R.string.export_success) + "\n" + logTagDir
+                                                .getAbsolutePath());
                             }
                         });
                     }
                 };
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this
-                        , getString(R.string.export_log_prompt), confirmRunnable);
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
+                        .this, getString(R.string.export_log_prompt), confirmRunnable);
                 dialogConfirmTask.show();
             } else {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
@@ -215,7 +220,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         BitherApplication.reloadTxTime = System.currentTimeMillis();
-                        PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+                        PasswordSeed passwordSeed = AppSharedPreference.getInstance()
+                                .getPasswordSeed();
                         if (passwordSeed == null) {
                             resetTx();
                         } else {
@@ -223,13 +229,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         }
                     }
                 };
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this,
-                        getString(R.string.reload_tx_need_too_much_time), confirmRunnable
-                );
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
+                        .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
                 dialogConfirmTask.show();
 
             } else {
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.tx_cannot_reloding);
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                        R.string.tx_cannot_reloding);
             }
 
 
@@ -245,12 +251,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
                     DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
                             new IDialogPasswordListener() {
-                                @Override
-                                public void onPasswordEntered(SecureCharSequence password) {
-                                    resetTx();
+                        @Override
+                        public void onPasswordEntered(SecureCharSequence password) {
+                            resetTx();
 
-                                }
-                            });
+                        }
+                    });
                     dialogPassword.show();
                 } else {
                     resetTx();
@@ -289,7 +295,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         @Override
                         public void run() {
                             dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.reload_tx_failed);
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                    R.string.reload_tx_failed);
                         }
                     });
                     return;
@@ -303,7 +310,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         @Override
                         public void run() {
                             dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.reload_tx_success);
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                    R.string.reload_tx_success);
                         }
                     });
                 } catch (Exception e) {
@@ -312,7 +320,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         @Override
                         public void run() {
                             dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.network_or_connection_error);
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                    R.string.network_or_connection_error);
                         }
                     });
 
@@ -321,6 +330,61 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         };
         threadNeedService.start();
     }
+
+    private SettingSelectorView.SettingSelector messageSigningSelector = new SettingSelectorView
+            .SettingSelector() {
+
+
+        @Override
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.sign_message_activity_name);
+                case 1:
+                default:
+                    return getString(R.string.verify_message_signature_activity_name);
+            }
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.sign_message_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            switch (index) {
+                case 0:
+                    new DialogSignMessageSelectAddress(HotAdvanceActivity.this).show();
+                    break;
+                case 1:
+                default:
+                    startActivity(new Intent(HotAdvanceActivity.this,
+                            VerifyMessageSignatureActivity.class));
+                    break;
+            }
+        }
+    };
 
     private SettingSelectorView.SettingSelector qrCodeQualitySelector = new SettingSelectorView
             .SettingSelector() {
@@ -354,7 +418,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onOptionIndexSelected(int index) {
             if (index >= 0 && index < getOptionCount()) {
-                AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()[index]);
+                AppSharedPreference.getInstance().setQRQuality(QRCodeUtil.QRQuality.values()
+                        [index]);
             }
         }
 
@@ -435,135 +500,136 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-                @Override
-                public int getOptionCount() {
-                    hasAnyAction = true;
-                    return 2;
-                }
+        @Override
+        public int getOptionCount() {
+            hasAnyAction = true;
+            return 2;
+        }
 
-                @Override
-                public String getOptionName(int index) {
-                    switch (index) {
-                        case 0:
-                            return getString(R.string.import_private_key_qr_code);
-                        case 1:
-                            return getString(R.string.import_private_key_text);
-                        default:
-                            return "";
-                    }
-                }
+        @Override
+        public String getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.import_private_key_qr_code);
+                case 1:
+                    return getString(R.string.import_private_key_text);
+                default:
+                    return "";
+            }
+        }
 
-                @Override
-                public String getOptionNote(int index) {
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            switch (index) {
+                case 0:
+                    return getResources().getDrawable(R.drawable.scan_button_icon);
+                case 1:
+                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                default:
                     return null;
-                }
+            }
+        }
 
-                @Override
-                public Drawable getOptionDrawable(int index) {
-                    switch (index) {
-                        case 0:
-                            return getResources().getDrawable(R.drawable.scan_button_icon);
-                        case 1:
-                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                        default:
-                            return null;
-                    }
-                }
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_import_private_key);
+        }
 
-                @Override
-                public String getSettingName() {
-                    return getString(R.string.setting_name_import_private_key);
-                }
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
 
-                @Override
-                public int getCurrentOptionIndex() {
-                    return -1;
-                }
+        @Override
+        public void onOptionIndexSelected(int index) {
+            hasAnyAction = true;
+            switch (index) {
+                case 0:
+                    importPrivateKeyFromQrCode(false);
+                    return;
+                case 1:
+                    new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
+                    return;
+                default:
+                    return;
+            }
+        }
+    };
 
-                @Override
-                public void onOptionIndexSelected(int index) {
-                    hasAnyAction = true;
-                    switch (index) {
-                        case 0:
-                            importPrivateKeyFromQrCode(false);
-                            return;
-                        case 1:
-                            new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
-                            return;
-                        default:
-                            return;
-                    }
-                }
-            };
+    private SettingSelectorView.SettingSelector importBip38KeySelector = new SettingSelectorView
+            .SettingSelector() {
+        @Override
+        public int getOptionCount() {
 
-    private SettingSelectorView.SettingSelector importBip38KeySelector = new
-            SettingSelectorView.SettingSelector() {
-                @Override
-                public int getOptionCount() {
+            return 2;
+        }
 
-                    return 2;
-                }
+        @Override
+        public String getOptionName(int index) {
+            switch (index) {
+                case 0:
+                    return getString(R.string.import_bip38_key_qr_code);
+                case 1:
+                    return getString(R.string.import_bip38_key_text);
+                default:
+                    return "";
+            }
+        }
 
-                @Override
-                public String getOptionName(int index) {
-                    switch (index) {
-                        case 0:
-                            return getString(R.string.import_bip38_key_qr_code);
-                        case 1:
-                            return getString(R.string.import_bip38_key_text);
-                        default:
-                            return "";
-                    }
-                }
+        @Override
+        public String getOptionNote(int index) {
+            return null;
+        }
 
-                @Override
-                public String getOptionNote(int index) {
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            switch (index) {
+                case 0:
+                    return getResources().getDrawable(R.drawable.scan_button_icon);
+                case 1:
+                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                default:
                     return null;
-                }
+            }
+        }
 
-                @Override
-                public Drawable getOptionDrawable(int index) {
-                    switch (index) {
-                        case 0:
-                            return getResources().getDrawable(R.drawable.scan_button_icon);
-                        case 1:
-                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                        default:
-                            return null;
-                    }
-                }
+        @Override
+        public String getSettingName() {
+            return getString(R.string.setting_name_import_bip38_key);
+        }
 
-                @Override
-                public String getSettingName() {
-                    return getString(R.string.setting_name_import_bip38_key);
-                }
+        @Override
+        public int getCurrentOptionIndex() {
+            return -1;
+        }
 
-                @Override
-                public int getCurrentOptionIndex() {
-                    return -1;
-                }
-
-                @Override
-                public void onOptionIndexSelected(int index) {
-                    switch (index) {
-                        case 0:
-                            importPrivateKeyFromQrCode(true);
-                            return;
-                        case 1:
-                            new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
-                            return;
-                        default:
-                            return;
-                    }
-                }
-            };
+        @Override
+        public void onOptionIndexSelected(int index) {
+            switch (index) {
+                case 0:
+                    importPrivateKeyFromQrCode(true);
+                    return;
+                case 1:
+                    new DialogImportBip38KeyText(HotAdvanceActivity.this).show();
+                    return;
+                default:
+                    return;
+            }
+        }
+    };
 
     private SettingSelectorView.SettingSelector wifiSelector = new SettingSelectorView
             .SettingSelector() {
 
         @Override
         public void onOptionIndexSelected(int index) {
-            boolean orginSyncBlockOnluWifi = AppSharedPreference.getInstance().getSyncBlockOnlyWifi();
+            boolean orginSyncBlockOnluWifi = AppSharedPreference.getInstance()
+                    .getSyncBlockOnlyWifi();
             hasAnyAction = true;
             final boolean isOnlyWifi = index == 1;
             AppSharedPreference.getInstance().setSyncBlockOnlyWifi(isOnlyWifi);
@@ -615,7 +681,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
-    private SettingSelectorView.SettingSelector syncIntervalSelector = new SettingSelectorView.SettingSelector() {
+    private SettingSelectorView.SettingSelector syncIntervalSelector = new SettingSelectorView
+            .SettingSelector() {
         @Override
         public int getOptionCount() {
             return 2;
@@ -648,7 +715,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public int getCurrentOptionIndex() {
-            BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
+            BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance()
+                    .getSyncInterval();
             if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp) {
                 return 1;
             } else {
@@ -660,10 +728,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.Normal);
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval
+                            .Normal);
                     break;
                 case 1:
-                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval.OnlyOpenApp);
+                    AppSharedPreference.getInstance().setSyncInterval(BitherSetting.SyncInterval
+                            .OnlyOpenApp);
                     break;
             }
 
@@ -676,12 +746,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.import_bip38private_key_qr_code_scan_title));
             intent.putExtra(BitherSetting.INTENT_REF.QRCODE_TYPE, BitherSetting.QRCodeType.Bip38);
-            startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE);
+            startActivityForResult(intent, BitherSetting.INTENT_REF
+                    .IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE);
         } else {
             Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.import_private_key_qr_code_scan_title));
-            startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE);
+            startActivityForResult(intent, BitherSetting.INTENT_REF
+                    .IMPORT_PRIVATE_KEY_REQUEST_CODE);
         }
     }
 
@@ -717,8 +789,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
                 final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                DialogPasswordWithOther dialogPasswordWithOther = new DialogPasswordWithOther(this,
-                        new ImportPrivateKeyPasswordListenerI(null, true));
+                DialogPasswordWithOther dialogPasswordWithOther = new DialogPasswordWithOther
+                        (this, new ImportPrivateKeyPasswordListenerI(null, true));
                 dialogPasswordWithOther.setCheckPre(false);
                 dialogPasswordWithOther.setCheckPasswordListener(new ICheckPasswordListener() {
                     @Override
@@ -752,12 +824,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             if (dp != null && !dp.isShowing()) {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 if (isFromBip38) {
-                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this, walletIDialogPasswordListener);
+                    DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
+                            walletIDialogPasswordListener);
                     dialogPassword.show();
 
                 } else {
-                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
-                            ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp, content, password);
+                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity
+                            .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp,
+                            content, password);
                     importPrivateKey.importPrivateKey();
 
                 }
@@ -804,8 +878,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             }, getFinishAnimationDuration());
                         }
                     }
-                }
-        );
+                });
     }
 
 

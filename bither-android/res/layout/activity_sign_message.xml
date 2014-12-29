@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <net.bither.ui.base.OverScrollableScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:paddingTop="7dp"
+                    android:paddingBottom="18dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:background="@drawable/textarea_background">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"/>
+
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:orientation="vertical">
+
+                                <FrameLayout
+                                    android:id="@+id/fl_address"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/ui_touchable_bg"
+                                    android:focusable="true"
+                                    android:foreground="@drawable/dropdown_ic_arrow_selector"
+                                    android:foregroundGravity="bottom|right">
+
+                                    <TextView
+                                        android:id="@+id/tv_address"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:textColor="@color/text_field_text_color"
+                                        android:textSize="14sp"/>
+                                </FrameLayout>
+                            </LinearLayout>
+                        </FrameLayout>
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"/>
+
+                        <net.bither.ui.base.QrCodeImageView
+                            android:id="@+id/iv_qrcode"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/qrcode_frame"/>
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/textarea_background">
+
+                            <EditText
+                                android:id="@+id/et_input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textMultiLine|textNoSuggestions"
+                                android:minHeight="80dp"
+                                android:background="@drawable/transparent"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="6dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:textSize="15sp"
+                                android:hint="@string/sign_message_input_hint"
+                                android:gravity="top|left"
+                                android:textColor="@color/text_field_text_color"
+                                android:imeOptions="flagNoExtractUi"/>
+                        </FrameLayout>
+
+                        <Button
+                            android:id="@+id/btn_qr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/scan_button_selector"
+                            android:layout_gravity="top"
+                            android:layout_marginTop="10dp"/>
+
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:layout_gravity="center">
+
+                        <ProgressBar
+                            android:id="@+id/pb_sign"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:visibility="invisible"
+                            android:indeterminateDrawable="@drawable/check_progress_bar"
+                            android:indeterminateDuration="600"
+                            android:indeterminateOnly="true"/>
+
+                        <ImageView
+                            android:id="@+id/iv_arrow_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="invisible"
+                            android:src="@drawable/arrow_down"/>
+
+                        <FrameLayout
+                            android:id="@+id/fl_buttons"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center">
+
+                            <Button
+                                android:id="@+id/btn_sign"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/sign_message_button"
+                                android:padding="14dp"
+                                android:textSize="17sp"
+                                android:background="@drawable/entry_keyboard_key_btn_bg"
+                                android:layout_gravity="center"/>
+                        </FrameLayout>
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/fl_output"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:background="@drawable/textarea_background">
+
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingTop="4dp"
+                            android:paddingBottom="6dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:background="@drawable/ui_touchable_bg"
+                            android:duplicateParentState="true"
+                            android:foreground="@drawable/dropdown_ic_arrow_selector"
+                            android:foregroundGravity="bottom|right">
+
+                            <TextView
+                                android:id="@+id/tv_output"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:minHeight="80dp"
+                                android:textSize="15sp"
+                                android:gravity="top|left"
+                                android:textColor="@color/text_field_text_color"/>
+                        </FrameLayout>
+                    </FrameLayout>
+
+                </LinearLayout>
+            </net.bither.ui.base.OverScrollableScrollView>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/sign_message_activity_name"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

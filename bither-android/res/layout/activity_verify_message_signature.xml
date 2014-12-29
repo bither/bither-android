@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <net.bither.ui.base.OverScrollableScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/et_address"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="text|textNoSuggestions"
+                            android:minHeight="40dp"
+                            android:background="@drawable/textarea_background"
+                            android:hint="@string/verify_message_signature_address_hint"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:textSize="15sp"
+                            android:gravity="center|left"
+                            android:textColor="@color/text_field_text_color"
+                            android:imeOptions="flagNoExtractUi"/>
+
+                        <Button
+                            android:id="@+id/btn_qr_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="3dp"
+                            android:background="@drawable/scan_button_selector"
+                            android:layout_gravity="center_vertical"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/et_message"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="textMultiLine|textNoSuggestions"
+                            android:minHeight="100dp"
+                            android:background="@drawable/textarea_background"
+                            android:hint="@string/verify_message_signature_message_hint"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:textSize="15sp"
+                            android:gravity="top|left"
+                            android:textColor="@color/text_field_text_color"
+                            android:imeOptions="flagNoExtractUi"/>
+
+                        <Button
+                            android:id="@+id/btn_qr_message"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="3dp"
+                            android:background="@drawable/scan_button_selector"
+                            android:layout_gravity="top"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+
+                        <EditText
+                            android:id="@+id/et_signature"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:inputType="textMultiLine|textNoSuggestions"
+                            android:minHeight="100dp"
+                            android:background="@drawable/textarea_background"
+                            android:hint="@string/verify_message_signature_signature_hint"
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:textSize="15sp"
+                            android:gravity="top|left"
+                            android:textColor="@color/text_field_text_color"
+                            android:imeOptions="flagNoExtractUi"/>
+
+                        <Button
+                            android:id="@+id/btn_qr_signature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="3dp"
+                            android:background="@drawable/scan_button_selector"
+                            android:layout_gravity="top"/>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp">
+
+                        <Button
+                            android:id="@+id/btn_verify"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/verify_message_signature_verify_button"
+                            android:padding="14dp"
+                            android:textSize="17sp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/entry_keyboard_key_btn_bg"
+                            android:layout_gravity="center"/>
+
+                        <ProgressBar
+                            android:id="@+id/pb_verify"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:indeterminateDrawable="@drawable/check_progress_bar"
+                            android:indeterminateDuration="600"
+                            android:indeterminateOnly="true"/>
+
+                        <ImageView
+                            android:id="@+id/iv_verify_success"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/checkmark"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="gone"/>
+
+                        <ImageView
+                            android:id="@+id/iv_verify_failed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/check_failed"
+                            android:layout_toLeftOf="@id/btn_verify"
+                            android:layout_marginRight="16dp"
+                            android:layout_centerVertical="true"
+                            android:visibility="gone"/>
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+            </net.bither.ui.base.OverScrollableScrollView>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/verify_message_signature_activity_name"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

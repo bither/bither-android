@@ -19,16 +19,15 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.SignMessageActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
-import net.bither.ui.base.DropdownMessage;
 
 import java.util.Locale;
 
@@ -41,8 +40,7 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     private TextView tvBlockMeta;
     private ImageView ivBlockMeta;
 
-    public DialogAddressWithPrivateKeyOption(Activity context,
-                                             Address address) {
+    public DialogAddressWithPrivateKeyOption(Activity context, Address address) {
         super(context);
         this.activity = context;
         this.address = address;
@@ -52,12 +50,13 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
         ivBlockMeta = (ImageView) findViewById(R.id.iv_blockmeta);
         findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
         findViewById(R.id.tv_private_key_management).setOnClickListener(this);
+        findViewById(R.id.tv_sign_message).setOnClickListener(this);
         findViewById(R.id.tv_close).setOnClickListener(this);
         tvBlockMeta.setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
         String defaultCountry = Locale.getDefault().getCountry();
-        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
-                (defaultCountry, "cn")) {
+        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString(defaultCountry,
+                "cn")) {
         } else {
             tvBlockMeta.setVisibility(View.GONE);
             ivBlockMeta.setVisibility(View.GONE);
@@ -74,15 +73,20 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
             case R.id.tv_view_on_blockchaininfo:
-                BitherUrl.gotoBrower(activity,
-                        BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address.getAddress());
+                BitherUrl.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
+                        .getAddress());
                 break;
             case R.id.tv_view_on_blockmeta:
-                BitherUrl.gotoBrower(activity,
-                        BitherUrl.BLOCKMETA_ADDRESS_URL + address.getAddress());
+                BitherUrl.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
+                        .getAddress());
                 break;
             case R.id.tv_private_key_management:
                 new DialogAddressWithShowPrivateKey(activity, address).show();
+                break;
+            case R.id.tv_sign_message:
+                Intent intent = new Intent(activity, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
+                activity.startActivity(intent);
                 break;
             default:
                 return;

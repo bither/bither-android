@@ -28,11 +28,12 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
-import net.bither.qrcode.QRCodeEnodeUtil;
-import net.bither.qrcode.QRCodeTxTransport;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.SwipeRightActivity;
@@ -55,6 +56,11 @@ public class SignTxActivity extends SwipeRightActivity implements
     private TextView tvFee;
     private TextView tvSymbol;
     private TextView tvFeeSymbol;
+    private View llChange;
+    private TextView tvAddressChange;
+    private TextView tvAmountChange;
+    private TextView tvSymbolChange;
+
     private Button btnSign;
     private TextView tvCannotFindPrivateKey;
 
@@ -77,6 +83,10 @@ public class SignTxActivity extends SwipeRightActivity implements
         tvTo = (TextView) findViewById(R.id.tv_address_to);
         tvAmount = (TextView) findViewById(R.id.tv_amount);
         tvFee = (TextView) findViewById(R.id.tv_fee);
+        llChange = findViewById(R.id.ll_change);
+        tvAddressChange = (TextView) findViewById(R.id.tv_address_change);
+        tvAmountChange = (TextView) findViewById(R.id.tv_amount_change);
+        tvSymbolChange = (TextView) findViewById(R.id.tv_symbol_change);
         btnSign = (Button) findViewById(R.id.btn_sign);
         tvCannotFindPrivateKey = (TextView) findViewById(R.id.tv_can_not_find_private_key);
         tvSymbol = (TextView) findViewById(R.id.tv_symbol);
@@ -109,10 +119,17 @@ public class SignTxActivity extends SwipeRightActivity implements
         String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
         tvSymbol.setText(symbol);
         tvFeeSymbol.setText(symbol);
+        tvSymbolChange.setText(symbol);
         tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
         tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo()));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee()));
+        llChange.setVisibility(View.GONE);
+        if(!Utils.isEmpty(qrCodeTransport.getChangeAddress())){
+            llChange.setVisibility(View.VISIBLE);
+            tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
+            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getChangeAmt()));
+        }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
         if (address == null) {

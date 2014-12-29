@@ -30,7 +30,8 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.utils.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.QrCodeFragment;
 import net.bither.fragment.QrCodeFragment.QrCodeFragmentDelegate;
@@ -44,14 +45,15 @@ import java.util.List;
 
 public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
     private List<String> contents;
-
+    private List<String> oldContents;
+    private boolean hasChangeAddress = false;
     private ViewPager pager;
     private TextView tvTitle;
     private ImageView ivSeparator;
     private ImageButton btnSwitch;
     private boolean isNewVerion;
     private boolean hasOldQRCode;
-    private List<String> oldContents;
+
     private QRFragmentPagerAdapter adapter;
 
     @Override
@@ -62,11 +64,18 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
         String codeString = null;
         String oldString = null;
         if (intent != null && intent.getExtras() != null) {
-            codeString = intent.getExtras().getString(BitherSetting.INTENT_REF.QR_CODE_STRING);
-            oldString = intent.getExtras().getString(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING);
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.QR_CODE_STRING)) {
+                codeString = intent.getExtras().getString(BitherSetting.INTENT_REF.QR_CODE_STRING);
+            }
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING)) {
+                oldString = intent.getExtras().getString(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING);
+            }
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING)) {
+                hasChangeAddress = intent.getExtras().getBoolean(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING);
+            }
         }
-        hasOldQRCode = !Utils.isEmpty(oldString);
-        if (hasOldQRCode) {
+        hasOldQRCode = !Utils.isEmpty(oldString) || hasChangeAddress;
+        if (!Utils.isEmpty(oldString)) {
             this.oldContents = QRCodeUtil.getQrCodeStringList(QRCodeEnodeUtil.oldEncodeQrCodeString(oldString));
         }
         if (Utils.isEmpty(codeString)) {
@@ -130,8 +139,11 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
     private View.OnClickListener switchClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            new DialogQRCodeOption(BitherQRCodeActivity.this, BitherQRCodeActivity.this).show();
+            if (hasChangeAddress) {
+                DropdownMessage.showDropdownMessage(BitherQRCodeActivity.this, R.string.old_version_no_support_change_adress);
+            } else {
+                new DialogQRCodeOption(BitherQRCodeActivity.this, BitherQRCodeActivity.this).show();
+            }
         }
     };
 

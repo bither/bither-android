@@ -306,6 +306,7 @@
     <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
     <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
     <string name="only_supports_the_compressed_private_key">Only supports the compressed format of private key</string>
+    <string name="old_version_no_support_change_adress">old version QR Code does not support change address selection</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>
@@ -442,4 +443,36 @@
     <string name="qr_code_quality_setting_name">QR Code Precision</string>
     <string name="qr_code_quality_setting_normal">Normal</string>
     <string name="qr_code_quality_setting_low">Low</string>
+
+    <!-- Manual Delete Transaction -->
+    <string name="manual_delete_transaction_warning">Delete this transaction?</string>
+
+    <!-- Select Change Address -->
+    <string name="select_change_address_option_name">Select Change Address</string>
+    <string name="select_change_address_label">Select Change Address</string>
+    <string name="send_confirm_change_to_label">Change to:</string>
+    <string name="sign_transaction_change_to_label">Change to:</string>
+    <string name="sign_transaction_change_amount_label">Change Amount:</string>
+    <string name="select_change_address_change_to_same_warn">Pay to address &amp; change address can\'t be same</string>
+
+    <!-- Sign Message -->
+    <string name="sign_message_activity_name">Sign Message</string>
+    <string name="sign_message_button">Sign</string>
+    <string name="sign_message_output_copy">Copy</string>
+    <string name="sign_message_output_qr">Show QR Code</string>
+    <string name="sign_message_output_copied">Content Copied</string>
+    <string name="sign_message_input_hint">Message to sign</string>
+    <string name="sign_message_select_address">Select address to sign message</string>
+
+    <!-- Verify Message Signature -->
+    <string name="verify_message_signature_activity_name">Verify Message Signature</string>
+    <string name="verify_message_signature_address_hint">Signing Address</string>
+    <string name="verify_message_signature_message_hint">Original Message</string>
+    <string name="verify_message_signature_signature_hint">Signature</string>
+    <string name="verify_message_signature_verify_button">Verify</string>
+    <string name="verify_message_signature_verify_button_verifying">Verifying…</string>
+    <string name="verify_message_signature_verify_button_reverify">Reverify</string>
+    <string name="verify_message_signature_verify_success">Signature is correct</string>
+    <string name="verify_message_signature_verify_failed">Signature is not correct</string>
+    <string name="sign_message_setting_name">Message Signing</string>
 </resources>

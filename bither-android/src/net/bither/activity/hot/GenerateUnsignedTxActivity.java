@@ -41,10 +41,11 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
@@ -56,8 +57,10 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogRCheck;
+import net.bither.ui.base.dialog.DialogSelectChangeAddress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
+import net.bither.ui.base.dialog.DialogSendOption;
 import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
@@ -70,7 +73,8 @@ import net.bither.util.UnitUtilWrapper;
 
 
 public class GenerateUnsignedTxActivity extends SwipeRightActivity implements EntryKeyboardView
-        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
+        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
+        DialogSendOption.DialogSendOptionListener {
     private static final String ADDRESS_POSITION_SAVE_KEY = "address_position";
     private int addressPosition;
     private Address address;
@@ -84,6 +88,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     private ImageView ivBalanceSymbol;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
+    private DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private Tx tx;
 
@@ -141,6 +146,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
+        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
+        dialogSelectChangeAddress = new DialogSelectChangeAddress(this, address);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
         btcAmountView.setCurrencySymbol(getString(R.string.bitcoin_symbol));
         int precision = (int) Math.floor(Math.log10(AppSharedPreference.getInstance()
@@ -162,7 +169,15 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         btnSend.setOnClickListener(sendClick);
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
                 (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
+        findViewById(R.id.ll_balance).setOnClickListener(balanceClick);
     }
+
+    private OnClickListener balanceClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            amountCalculatorLink.setBtcAmount(address.getBalance());
+        }
+    };
 
     private OnClickListener scanClick = new OnClickListener() {
 
@@ -178,12 +193,21 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         @Override
         public void onConfirm(Tx tx) {
             GenerateUnsignedTxActivity.this.tx = tx;
+            String addressCannotBtParsed = getString(R.string.address_cannot_be_parsed);
             Intent intent = new Intent(GenerateUnsignedTxActivity.this,
                     UnsignedTxQrCodeActivity.class);
+            String changeAddress = dialogSelectChangeAddress
+                    .getChangeAddress().equals(address) ? null :
+                    dialogSelectChangeAddress.getChangeAddress().getAddress();
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeEnodeUtil.getPresignTxString(tx));
-            intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                    QRCodeEnodeUtil.oldGetPreSignString(tx));
+                    QRCodeEnodeUtil.getPresignTxString(tx, changeAddress, addressCannotBtParsed));
+            if (Utils.isEmpty(changeAddress)) {
+                intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
+                        QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
+            } else {
+                intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING
+                        , true);
+            }
 
             intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                     getString(R.string.unsigned_transaction_qr_code_title));
@@ -202,8 +226,6 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         super.onSaveInstanceState(outState);
     }
 
-    ;
-
     private Handler completeTransactionHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -213,11 +235,15 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     }
                     if (msg.obj != null && msg.obj instanceof Tx) {
                         Tx tx = (Tx) msg.obj;
-                        if(needConfirm){
+                        if (needConfirm) {
                             DialogSendConfirm dialog = new DialogSendConfirm
-                                    (GenerateUnsignedTxActivity.this, tx, sendConfirmListener);
+                                    (GenerateUnsignedTxActivity.this, tx,
+                                            dialogSelectChangeAddress.getChangeAddress().equals
+                                                    (address) ? null : dialogSelectChangeAddress
+                                                    .getChangeAddress().getAddress(),
+                                            sendConfirmListener);
                             dialog.show();
-                        }else{
+                        } else {
                             sendConfirmListener.onConfirm(tx);
                         }
                     } else {
@@ -267,8 +293,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     public void onCommitTransactionFailed() {
         needConfirm = true;
         btnSend.setEnabled(true);
-        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
-                R.string.send_failed);
+        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this, R.string.send_failed);
     }
 
     private OnClickListener sendClick = new OnClickListener() {
@@ -277,12 +302,19 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         public void onClick(View v) {
             final long btc = amountCalculatorLink.getAmount();
             if (btc > 0) {
-                if (Utils.validBicoinAddress(etAddress.getText().toString())) {
+                if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
+                    if (Utils.compareString(etAddress.getText().toString().trim(),
+                            dialogSelectChangeAddress.getChangeAddress().getAddress())) {
+                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                                R.string.select_change_address_change_to_same_warn);
+                        return;
+                    }
                     try {
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(),
-                                null);
+                                amountCalculatorLink.getAmount(), etAddress.getText().toString()
+                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                                (), null);
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -346,7 +378,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         runnable.setHandler(rcheckHandler);
                         new Thread(runnable).start();
                         // dp.setRChecking();
-                        if(!dp.isShowing()){
+                        if (!dp.isShowing()) {
                             dp.show();
                         }
                         return;
@@ -387,10 +419,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         break;
                     }
                 case HandlerMessage.MSG_FAILURE:
-                    if(dp.isShowing()) {
+                    if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    new DialogConfirmTask(GenerateUnsignedTxActivity.this, getString(R.string.rcheck_fail_recalculate_confirm), new Runnable() {
+                    new DialogConfirmTask(GenerateUnsignedTxActivity.this,
+                            getString(R.string.rcheck_fail_recalculate_confirm), new Runnable() {
                         @Override
                         public void run() {
                             needConfirm = false;
@@ -429,6 +462,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     @Override
     public void onEntryKeyboardHide(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSelectChangeAddress() {
+        dialogSelectChangeAddress.show();
     }
 
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
@@ -499,6 +537,14 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         @Override
         public void onReceive(Context context, Intent intent) {
             amountCalculatorLink.setExchangeRate(getExchangeRate());
+        }
+    };
+
+    private OnClickListener optionClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogSendOption(GenerateUnsignedTxActivity.this, address,
+                    GenerateUnsignedTxActivity.this).show();
         }
     };
 

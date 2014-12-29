@@ -84,7 +84,6 @@ public class BitherApplication extends Application {
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        Qr.printQrContentSize();
     }
 
 

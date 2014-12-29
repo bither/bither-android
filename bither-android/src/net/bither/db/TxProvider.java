@@ -803,6 +803,7 @@ public class TxProvider implements ITxProvider {
         db.delete(AbstractDb.Tables.OUTS, "", new String[0]);
         db.delete(AbstractDb.Tables.INS, "", new String[0]);
         db.delete(AbstractDb.Tables.ADDRESSES_TXS, "", new String[0]);
+        db.delete(AbstractDb.Tables.PEERS, "", new String[0]);
         db.setTransactionSuccessful();
         db.endTransaction();
     }

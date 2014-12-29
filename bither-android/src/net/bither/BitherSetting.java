@@ -81,6 +81,7 @@ public class
         public static final int SEND_REQUEST_CODE = 437;
         public static final String QR_CODE_STRING = "qr_code_string";
         public static final String OLD_QR_CODE_STRING = "old_qr_code_string";
+        public static final String QR_CODE_HAS_CHANGE_ADDRESS_STRING = "qr_code_has_change_address";
         public static final String TITLE_STRING = "title_string";
         public static final String QRCODE_TYPE = "qrcode_type";
         public static final String MARKET_INTENT = "market_intnet";
