@@ -16,20 +16,14 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createHDKeyTable(db);
-        createAddressTable(db);
+        db.execSQL(AbstractDb.CREATE_ADDRESSES_SQL);
+        db.execSQL(AbstractDb.CREATE_BITHER_ID_SQL);
+        db.execSQL(AbstractDb.CREATE_HD_SEEDS_SQL);
+        db.execSQL(AbstractDb.CREATE_HDM_ADDRESSES_SQL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-    }
-
-    private void  createAddressTable(SQLiteDatabase db) {
-        db.execSQL(AbstractDb.CREATE_ADDRESSES_SQL);
-    }
-
-    private void createHDKeyTable(SQLiteDatabase db) {
-        db.execSQL(AbstractDb.CREATE_HD_SEEDS_SQL);
     }
 }
