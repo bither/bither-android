@@ -17,6 +17,7 @@
 package net.bither.db;
 
 import net.bither.bitherj.db.AbstractDb;
+import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.db.IBlockProvider;
 import net.bither.bitherj.db.IPeerProvider;
 import net.bither.bitherj.db.ITxProvider;
@@ -35,5 +36,10 @@ public class AndroidDbImpl extends AbstractDb {
     @Override
     public ITxProvider initTxProvider() {
         return TxProvider.getInstance();
+    }
+
+    @Override
+    public IAddressProvider initAddressProvider() {
+        return AddressProvider.getInstance();
     }
 }
