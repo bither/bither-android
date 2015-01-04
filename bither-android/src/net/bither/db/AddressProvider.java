@@ -72,10 +72,11 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed) {
+    public int addHDKey(String encryptSeed, boolean isXrandom) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         return (int)db.insert(AbstractDb.Tables.HDSeeds, null, cv);
     }
 
@@ -174,7 +175,7 @@ public class AddressProvider implements IAddressProvider {
                 pubs.hot = pub1;
                 pubs.cold = pub2;
                 pubs.remote = pub3;
-                addresses.add(new HDMAddress(pubs, isSynced, true, null));
+                addresses.add(new HDMAddress(pubs, isSynced, null));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
