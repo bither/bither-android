@@ -30,6 +30,6 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void createHDKeyTable(SQLiteDatabase db) {
-        db.execSQL(AbstractDb.CREATE_HD_KEYS_SQL);
+        db.execSQL(AbstractDb.CREATE_HD_SEEDS_SQL);
     }
 }

@@ -43,7 +43,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public HDMKeychain getKeychain(int hdKeyId) {
+    public HDMKeychain getKeychain(int hdSeedId) {
         HDMKeychain result = null;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select * from hd_keys";
@@ -56,7 +56,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public List<HDMAddress> getHDMAddress() {
+    public List<HDMAddress> getHDMAddress(int hdSeedId) {
         return null;
     }
 
@@ -89,9 +89,9 @@ public class AddressProvider implements IAddressProvider {
     }
 
     private void applyContentValues(String encryptSeed, String bitherId, String encryptBitherPassword, ContentValues cv) {
-        cv.put(AbstractDb.HDKeysColumns.ENCRYPT_SEED, encryptSeed);
-        cv.put(AbstractDb.HDKeysColumns.BITHER_ID, bitherId);
-        cv.put(AbstractDb.HDKeysColumns.ENCRYPT_BITHER_PASSWORD, encryptBitherPassword);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.BITHER_ID, bitherId);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_BITHER_PASSWORD, encryptBitherPassword);
     }
 
     private HDMKeychain applyCursor(Cursor c) {
@@ -99,19 +99,19 @@ public class AddressProvider implements IAddressProvider {
         String encryptSeed = "";
         String bitherId = "";
         String encryptBitherPassword = "";
-        int idColumn = c.getColumnIndex(AbstractDb.HDKeysColumns.HD_KEY_ID);
+        int idColumn = c.getColumnIndex(AbstractDb.HDSeedsColumns.HD_SEED_ID);
         if (idColumn != -1) {
             hdKeyId = c.getInt(idColumn);
         }
-        idColumn = c.getColumnIndex(AbstractDb.HDKeysColumns.ENCRYPT_SEED);
+        idColumn = c.getColumnIndex(AbstractDb.HDSeedsColumns.ENCRYPT_SEED);
         if (idColumn != -1) {
             encryptSeed = c.getString(idColumn);
         }
-        idColumn = c.getColumnIndex(AbstractDb.HDKeysColumns.BITHER_ID);
+        idColumn = c.getColumnIndex(AbstractDb.HDSeedsColumns.BITHER_ID);
         if (idColumn != -1) {
             bitherId = c.getString(idColumn);
         }
-        idColumn = c.getColumnIndex(AbstractDb.HDKeysColumns.ENCRYPT_BITHER_PASSWORD);
+        idColumn = c.getColumnIndex(AbstractDb.HDSeedsColumns.ENCRYPT_BITHER_PASSWORD);
         if (idColumn != -1) {
             encryptBitherPassword = c.getString(idColumn);
         }
