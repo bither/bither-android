@@ -29,7 +29,6 @@ import java.io.InputStream;
  * Created by songchenwen on 14/12/31.
  */
 public class MnemonicCodeAndroid extends MnemonicCode {
-
     public MnemonicCodeAndroid() throws IOException {
         super();
     }

@@ -28,11 +28,13 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
 import net.bither.exception.UEHandler;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.qrcode.Qr;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.LinuxSecureRandom;
@@ -40,6 +42,7 @@ import net.bither.xrandom.LinuxSecureRandom;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -171,6 +174,11 @@ public class BitherApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                try {
+                    MnemonicCode.setInstance(new MnemonicCodeAndroid());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 AddressManager.getInstance();
                 initLogging();
             }
