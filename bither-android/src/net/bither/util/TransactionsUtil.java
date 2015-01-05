@@ -78,7 +78,9 @@ public class TransactionsUtil {
                 }
                 String txString = txArray.getString(1);
                 byte[] txBytes = Base64.decode(txString, Base64.URL_SAFE);
+                // LogUtil.d("height", "h:" + height);
                 Tx tx = new Tx(txBytes);
+
                 tx.setBlockNo(height);
                 transactions.add(tx);
             }
@@ -199,18 +201,26 @@ public class TransactionsUtil {
             if (!address.isSyncComplete()) {
                 List<Tx> transactions = new ArrayList<Tx>();
                 int apiBlockCount = 0;
-                BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
-                        address.getAddress());
-                bitherMytransactionsApi.handleHttpGet();
-                String txResult = bitherMytransactionsApi.getResult();
-                JSONObject jsonObject = new JSONObject(txResult);
-                if (!jsonObject.isNull(BLOCK_COUNT)) {
-                    apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
+                int txSum = 0;
+                boolean needGetTxs = true;
+                int page = 1;
+                while (needGetTxs) {
+                    BitherMytransactionsApi bitherMytransactionsApi = new BitherMytransactionsApi(
+                            address.getAddress(), page);
+                    bitherMytransactionsApi.handleHttpGet();
+                    String txResult = bitherMytransactionsApi.getResult();
+                    JSONObject jsonObject = new JSONObject(txResult);
+                    if (!jsonObject.isNull(BLOCK_COUNT)) {
+                        apiBlockCount = jsonObject.getInt(BLOCK_COUNT);
+                    }
+                    int txCnt = jsonObject.getInt(TX_CNT);
+                    List<Tx> temp = TransactionsUtil.getTransactionsFromBither(
+                            jsonObject, storeBlockHeight);
+                    transactions.addAll(temp);
+                    txSum = txSum + transactions.size();
+                    needGetTxs = txSum < txCnt;
+                    page++;
                 }
-                List<Tx> temp = TransactionsUtil.getTransactionsFromBither(
-                        jsonObject, storeBlockHeight);
-                transactions.addAll(temp);
-
                 if (apiBlockCount < storeBlockHeight && storeBlockHeight - apiBlockCount < 100) {
                     BlockChain.getInstance().rollbackBlock(apiBlockCount);
                 }

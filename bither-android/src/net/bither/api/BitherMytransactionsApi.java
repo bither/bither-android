@@ -25,11 +25,19 @@ import net.bither.util.StringUtil;
 public class BitherMytransactionsApi extends HttpGetResponse<String> {
 
     public BitherMytransactionsApi(String address) {
+        this(address, 1);
+    }
+
+    public BitherMytransactionsApi(String address, int page) {
         String url = Utils.format(BitherUrl.BITHER_Q_MYTRANSACTIONS,
                 address);
+        if (page > 1) {
+            url = url + page;
+        }
         setUrl(url);
-        LogUtil.d("http", url);
+
     }
+
 
     @Override
     public void setResult(String response) throws Exception {
