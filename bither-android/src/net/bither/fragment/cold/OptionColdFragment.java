@@ -47,6 +47,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.preference.AppSharedPreference;
@@ -331,7 +332,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
             } else {
                 flBackTime.setVisibility(View.VISIBLE);
                 String relativeDate = DateTimeUtil.getRelativeDate(getActivity(), date).toString();
-                btnBackupTime.setText(StringUtil.format(getString(R.string.last_time_of_back_up)
+                btnBackupTime.setText(Utils.format(getString(R.string.last_time_of_back_up)
                         + " ", relativeDate));
             }
         } else {

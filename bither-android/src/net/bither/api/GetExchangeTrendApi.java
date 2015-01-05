@@ -17,6 +17,7 @@
 package net.bither.api;
 
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.model.TrendingGraphicData;
@@ -27,8 +28,8 @@ import org.json.JSONArray;
 public class GetExchangeTrendApi extends HttpGetResponse<TrendingGraphicData> {
 
 	public GetExchangeTrendApi(MarketType marketType) {
-		String url = StringUtil.format(BitherUrl.BITHER_TREND_URL,
-				marketType.getValue());
+		String url = Utils.format(BitherUrl.BITHER_TREND_URL,
+                marketType.getValue());
 		setUrl(url);
 
 	}

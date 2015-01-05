@@ -18,17 +18,15 @@
 
 package net.bither.api;
 
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.util.StringUtil;
 
-/**
- * Created by songchenwen on 14-10-21.
- */
 public class GetInSignaturesApi extends HttpGetResponse<String> {
 
-    public GetInSignaturesApi(String address, int fromBlock){
-        String url = StringUtil.format(BitherUrl.BITHER_IN_SIGNATURES_API, address, fromBlock);
+    public GetInSignaturesApi(String address, int fromBlock) {
+        String url = Utils.format(BitherUrl.BITHER_IN_SIGNATURES_API, address, fromBlock);
         setUrl(url);
     }
 

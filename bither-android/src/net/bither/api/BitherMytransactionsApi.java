@@ -16,6 +16,7 @@
 
 package net.bither.api;
 
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.util.LogUtil;
@@ -23,17 +24,18 @@ import net.bither.util.StringUtil;
 
 public class BitherMytransactionsApi extends HttpGetResponse<String> {
 
-	public BitherMytransactionsApi(String address) {
-		String url = StringUtil.format(BitherUrl.BITHER_Q_MYTRANSACTIONS,
-				address);
-		setUrl(url);
-		LogUtil.d("http", url);
-	}
+    public BitherMytransactionsApi(String address) {
+        String url = Utils.format(BitherUrl.BITHER_Q_MYTRANSACTIONS,
+                address);
+        setUrl(url);
+        LogUtil.d("http", url);
+    }
 
-	@Override
-	public void setResult(String response) throws Exception {
-		this.result = response;
+    @Override
+    public void setResult(String response) throws Exception {
+        this.result = response;
+        LogUtil.d("result", response);
 
-	}
+    }
 
 }

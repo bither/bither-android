@@ -17,6 +17,7 @@
 package net.bither.api;
 
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.utils.Utils;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
 import net.bither.model.Depth;
@@ -30,8 +31,8 @@ public class GetExchangeDepthApi extends HttpGetResponse<Depth> {
 
 	public GetExchangeDepthApi(MarketType marketType) {
 		this.marketType = marketType;
-		String url = StringUtil.format(BitherUrl.BITHER_DEPTH_URL,
-				this.marketType.getValue());
+		String url = Utils.format(BitherUrl.BITHER_DEPTH_URL,
+                this.marketType.getValue());
 		setUrl(url);
 	}
 

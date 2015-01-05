@@ -54,151 +54,35 @@ import java.util.List;
 
 public class TransactionsUtil {
 
-    private static final String EXPLORER_VERSION = "ver";
-    private static final String EXPLORER_IN = "in";
-    private static final String EXPLORER_OUT = "out";
 
-    private static final String EXPLORER_OUT_ADDRESS = "address";
-    private static final String EXPLORER_COINBASE = "coinbase";
-    private static final String EXPLORER_SEQUENCE = "sequence";
-    private static final String EXPLORER_TIME = "time";
-
-    private static final String TXS = "txs";
-    private static final String BITHER_BLOCK_HASH = "block_hash";
-    private static final String TX_HASH = "tx_hash";
-    private static final String BITHER_BLOCK_NO = "block_no";
-    private static final String BITHER_VALUE = "val";
-    private static final String PREV_TX_HASH = "prev";
-    private static final String PREV_OUTPUT_SN = "n";
-    private static final String SCRIPT_PUB_KEY = "script";
+    private static final String TX = "tx";
     private static final String BLOCK_COUNT = "block_count";
+    private static final String TX_CNT = "tx_cnt";
 
-    private static final byte[] EMPTY_BYTES = new byte[32];
 
     private static List<UnSignTransaction> unsignTxs = new ArrayList<UnSignTransaction>();
 
-    public static List<Tx> getTransactionsFromBither(
-            JSONObject jsonObject, int storeBlockHeight) throws JSONException,
-            AddressFormatException,
-            VerificationException, ParseException, NoSuchFieldException,
-            IllegalAccessException, IllegalArgumentException {
+    private static List<Tx> getTransactionsFromBither(
+            JSONObject jsonObject, int storeBlockHeight) throws JSONException {
         List<Tx> transactions = new ArrayList<Tx>();
-
-        if (!jsonObject.isNull(TXS)) {
-            JSONArray txArray = jsonObject.getJSONArray(TXS);
-            double count = 0;
-            double size = txArray.length();
-
-            for (int j = 0; j < txArray.length(); j++) {
-                JSONObject tranJsonObject = txArray.getJSONObject(j);
-                String txHash = tranJsonObject.getString(TX_HASH);
-                byte[] txHashByte = Utils.reverseBytes(Utils.hexStringToByteArray(txHash));
-                int height = tranJsonObject.getInt(BITHER_BLOCK_NO);
+        if (!jsonObject.isNull(TX)) {
+            JSONArray txsArray = jsonObject.getJSONArray(TX);
+            for (int i = 0; i < txsArray.length(); i++) {
+                JSONArray txArray = txsArray.getJSONArray(i);
+                if (txArray.length() < 2) {
+                    continue;
+                }
+                int height = txArray.getInt(0);
                 if (height > storeBlockHeight && storeBlockHeight > 0) {
                     continue;
                 }
-                int version = 1;
-
-                int updateTime = (int) (new Date().getTime() / 1000);
-                if (!tranJsonObject.isNull(EXPLORER_TIME)) {
-                    updateTime = (int) (DateTimeUtil
-                            .getDateTimeForTimeZone(tranJsonObject
-                                    .getString(EXPLORER_TIME)).getTime() / 1000);
-                }
-                if (!tranJsonObject.isNull(EXPLORER_VERSION)) {
-                    version = tranJsonObject.getInt(EXPLORER_VERSION);
-
-                }
-                Tx tx = new Tx();
-                tx.setTxHash(txHashByte);
-                tx.setTxTime(updateTime);
-                if (!tranJsonObject.isNull(EXPLORER_OUT)) {
-                    JSONArray tranOutArray = tranJsonObject
-                            .getJSONArray(EXPLORER_OUT);
-                    for (int i = 0; i < tranOutArray.length(); i++) {
-                        JSONObject tranOutJson = tranOutArray.getJSONObject(i);
-                        long value = tranOutJson
-                                .getLong(BITHER_VALUE);
-                        if (!tranOutJson.isNull(SCRIPT_PUB_KEY)) {
-                            String str = tranOutJson.getString(SCRIPT_PUB_KEY);
-                            Out out = new Out(
-                                    tx, value,
-                                    Utils.hexStringToByteArray(str));
-                            out.setTxHash(txHashByte);
-                            out.setOutSn(i);
-                            tx.addOutput(out);
-                        }
-
-                    }
-
-                }
-
-                if (!tranJsonObject.isNull(EXPLORER_IN)) {
-                    JSONArray tranInArray = tranJsonObject
-                            .getJSONArray(EXPLORER_IN);
-                    for (int i = 0; i < tranInArray.length(); i++) {
-                        JSONObject tranInJson = tranInArray.getJSONObject(i);
-                        In in = new In();
-                        in.setTxHash(txHashByte);
-                        if (!tranInJson.isNull(EXPLORER_COINBASE)) {
-                            int index = 0;
-                            if (!tranInJson.isNull(EXPLORER_SEQUENCE)) {
-                                index = tranInJson.getInt(EXPLORER_SEQUENCE);
-                            }
-                            in.setPrevTxHash(Sha256Hash.ZERO_HASH.getBytes());
-                            in.setPrevOutSn(index);
-                        } else {
-                            if (!tranInJson.isNull(PREV_TX_HASH)) {
-                                String prevOutHash = tranInJson
-                                        .getString(PREV_TX_HASH);
-                                int n = 0;
-                                if (!tranInJson.isNull(PREV_OUTPUT_SN)) {
-                                    n = tranInJson.getInt(PREV_OUTPUT_SN);
-                                }
-                                in.setPrevTxHash(Utils.reverseBytes(Utils.hexStringToByteArray(prevOutHash)));
-                                in.setPrevOutSn(n);
-
-                            }
-                            in.setInSn(i);
-                            in.setPrevOutScript(Script.createInputScript(EMPTY_BYTES, EMPTY_BYTES));
-                            tx.addInput(in);
-                        }
-
-
-                    }
-                }
-                tx.setTxVer(version);
+                String txString = txArray.getString(1);
+                byte[] txBytes = Base64.decode(txString, Base64.URL_SAFE);
+                Tx tx = new Tx(txBytes);
                 tx.setBlockNo(height);
-                for (Tx temp : transactions) {
-                    if (temp.getBlockNo() == tx.getBlockNo()) {
-                        boolean marketSpent = false;
-                        for (In tempIn : temp.getIns()) {
-                            if (Arrays.equals(tempIn.getPrevTxHash(), tx.getTxHash())) {
-                                tx.setTxTime(temp.getTxTime() - 1);
-                                marketSpent = true;
-
-                            }
-                        }
-
-                        if (!marketSpent) {
-                            for (In tempIn : tx.getIns()) {
-                                if (Arrays.equals(tempIn.getPrevTxHash(), temp.getTxHash())) {
-                                    tx.setTxTime(temp.getTxTime() + 1);
-                                }
-                            }
-                        }
-                    }
-                }
-
                 transactions.add(tx);
-
-                count++;
-
             }
-
         }
-        Collections.sort(transactions, new ComparatorTx());
-        LogUtil.d("transaction", "transactions.num:" + transactions.size());
         return transactions;
 
     }
@@ -240,6 +124,7 @@ public class TransactionsUtil {
     }
 
     // TODO display unSignTx
+
     public static UnSignTransaction getUnsignTxFromCache(String address) {
         synchronized (unsignTxs) {
             for (UnSignTransaction unSignTransaction : unsignTxs) {
@@ -306,8 +191,10 @@ public class TransactionsUtil {
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.HOT) {
             return;
         }
+
         Block storedBlock = BlockChain.getInstance().getLastBlock();
         int storeBlockHeight = storedBlock.getBlockNo();
+
         for (Address address : AddressManager.getInstance().getAllAddresses()) {
             if (!address.isSyncComplete()) {
                 List<Tx> transactions = new ArrayList<Tx>();

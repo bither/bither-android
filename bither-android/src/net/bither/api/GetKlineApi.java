@@ -18,6 +18,7 @@ package net.bither.api;
 
 import net.bither.BitherSetting.KlineTimeType;
 import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.utils.Utils;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.http.BitherUrl;
 import net.bither.http.HttpGetResponse;
@@ -37,7 +38,7 @@ public class GetKlineApi extends HttpGetResponse<List<IStickEntity>> {
 
         this.klineTimeType = klineTimeType;
         this.marketType = marketType;
-        String url = StringUtil.format(BitherUrl.BITHER_KLINE_URL,
+        String url = Utils.format(BitherUrl.BITHER_KLINE_URL,
                 marketType.getValue(), klineTimeType.getValue());
         setUrl(url);
 

@@ -45,13 +45,6 @@ public class StringUtil {
     }
 
 
-
-
-    public static String format(String format, Object... args) {
-
-        return String.format(Locale.US, format, args);
-    }
-
     public static String makeFragmentName(int paramInt1, int paramInt2) {
         return "android:switcher:" + paramInt1 + ":" + paramInt2;
     }

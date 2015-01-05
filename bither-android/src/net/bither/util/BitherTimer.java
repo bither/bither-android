@@ -133,7 +133,7 @@ public class BitherTimer {
         } else {
             contentText = context.getString(R.string.price_alert_lower_than);
         }
-        contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
+        contentText = Utils.format(contentText, BitherSetting.getMarketName(marketType));
         contentText = contentText + " " + AppSharedPreference.getInstance()
                 .getDefaultExchangeType().getSymbol() + Utils.formatDoubleToMoneyString
                 (alertPrice);

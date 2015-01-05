@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,7 +141,7 @@ public class ImageFileUtil {
     }
 
     public static String getAvatarFileName(long time) {
-        return StringUtil.format(AVATAR_FILE_NAME, time);
+        return Utils.format(AVATAR_FILE_NAME, time);
     }
 
 }

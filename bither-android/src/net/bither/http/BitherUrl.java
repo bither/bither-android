@@ -21,20 +21,25 @@ import android.content.Intent;
 import android.net.Uri;
 
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.util.StringUtil;
 
 public class BitherUrl {
     public static final class BITHER_DNS {
-        private static final String FOTMAT_HTTP = "http://%s/";
+        private static final String FORMAT_HTTP = "http://%s/";
 
         public static final String BITHER_BITCOIN_DOMAIN = "b.getcai.com";
         public static final String BITHER_USER_DOMAIN = "bu.getcai.com";
         public static final String BITHER_STATS_DOMAIN = "bs.getcai.com";
 
-        public static final String BITHER_BITCOIN = StringUtil.format(FOTMAT_HTTP, BITHER_BITCOIN_DOMAIN);
-        public static final String BITHER_USER = StringUtil.format(FOTMAT_HTTP, BITHER_USER_DOMAIN);
-        public static final String BITHER_STATS = StringUtil.format(FOTMAT_HTTP, BITHER_STATS_DOMAIN);
+        public static final String BITHER_BC1_DOMAIN = "bc1.bither.net";
+
+
+        public static final String BITHER_BITCOIN = Utils.format(FORMAT_HTTP, BITHER_BITCOIN_DOMAIN);
+        public static final String BITHER_USER = Utils.format(FORMAT_HTTP, BITHER_USER_DOMAIN);
+        public static final String BITHER_STATS = Utils.format(FORMAT_HTTP, BITHER_STATS_DOMAIN);
+
+        public static final String BITHER_BC1 = Utils.format(FORMAT_HTTP, BITHER_BC1_DOMAIN);
 
 
     }
@@ -47,13 +52,14 @@ public class BitherUrl {
     public static final String BITHER_ERROR_API = BITHER_DNS.BITHER_USER
             + "api/v1/error";
 
+
     //bither bitcoin
     public static final String BITHER_Q_GETBLOCK_COUNT_URL = BITHER_DNS.BITHER_BITCOIN
             + "api/v1/block/count";
     public static final String BITHER_BLOCKHEADER = BITHER_DNS.BITHER_BITCOIN
             + "api/v1/block/%d/list";
-    public static final String BITHER_Q_MYTRANSACTIONS = BITHER_DNS.BITHER_BITCOIN
-            + "api/v1/address/%s/transaction";
+    public static final String BITHER_Q_MYTRANSACTIONS = BITHER_DNS.BITHER_BC1
+            + "api/v2/address/%s/transaction";
     public static final String BITHER_GET_SPVBLOCK_API = BITHER_DNS.BITHER_BITCOIN
             + "api/v1/block/spv";
     public static final String BITHER_GET_ONE_SPVBLOCK_API = BITHER_DNS.BITHER_BITCOIN +
