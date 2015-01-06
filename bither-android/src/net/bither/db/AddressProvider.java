@@ -72,6 +72,11 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public boolean isHDSeedFromXRandom(int hdSeedId) {
+        return false;
+    }
+
+    @Override
     public int addHDKey(String encryptSeed, boolean isXrandom) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -154,6 +159,36 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public List<HDMAddress> getHDMAddressInUse(HDMKeychain keychain) {
+        return null;
+    }
+
+    @Override
+    public void prepareHDMAddresses(int hdSeedId, List<HDMAddress.Pubs> pubs) {
+
+    }
+
+    @Override
+    public ArrayList<HDMAddress.Pubs> getUncompletedHDMAddressPubs(int hdSeedId, int count) {
+        return null;
+    }
+
+    @Override
+    public int maxHDMAddressPubIndex(int hdSeedId) {
+        return 0;
+    }
+
+    @Override
+    public void completeHDMAddresses(int hdSeedId, List<HDMAddress> addresses) {
+
+    }
+
+    @Override
+    public int uncompletedHDMAddressCount(int hdSeedId) {
+        return 0;
+    }
+
+
     public List<HDMAddress> getHDMAddressInUse(int hdSeedId) {
         List<HDMAddress> addresses = new ArrayList<HDMAddress>();
         Cursor c = null;
@@ -186,7 +221,7 @@ public class AddressProvider implements IAddressProvider {
         return addresses;
     }
 
-    @Override
+
     public void addHDMAddress(int hdSeedId, List<Integer> indexes, List<byte[]> pubKeys1, List<byte[]> pubKeys2) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         boolean isExist = false;
@@ -225,7 +260,7 @@ public class AddressProvider implements IAddressProvider {
         }
     }
 
-    @Override
+
     public void completeHDMAddresses(int hdSeedId, List<Integer> indexes
             , List<byte[]> pubKeys3, List<String> addresses) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
