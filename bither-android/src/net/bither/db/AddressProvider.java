@@ -72,6 +72,11 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public void setEncryptSeed(int hdSeedId, String encryptedSeed) {
+
+    }
+
+    @Override
     public boolean isHDSeedFromXRandom(int hdSeedId) {
         return false;
     }
