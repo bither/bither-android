@@ -458,7 +458,7 @@ public class ColdActivity extends BaseFragmentActivity {
                 ((ColdAddressFragment) fragment).refresh();
             }
             if (AddressManager.getInstance().getPrivKeyAddresses() != null
-                    && AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
+                    && AddressManager.getInstance().getPrivKeyAddresses().size() == 0 && AddressManager.getInstance().getHdmKeychain() == null) {
                 checkBackup();
             }
         }
