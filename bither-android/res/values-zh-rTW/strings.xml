@@ -461,4 +461,6 @@
 
     <!-- hdm add -->
     <string name="hdm_cold_seed_count_limit">您只能生成一個 HDM 賬戶</string>
+    <string name="hdm_account_cold_address_list_label">HDM 賬戶</string>
+    <string name="hdm_seed_generation_notice">HDM 結合了分層確定性和多重簽名兩種技術.\n\nHDM 運用多重簽名技術來避免分層確定性錢包的缺陷.\n\n比太使用2/3 的多重簽名來生成HDM 地址. \n\n三個私鑰分別由熱錢包, 冷錢包和BitherID服務器上的確定性種子來生成.</string>
 </resources>

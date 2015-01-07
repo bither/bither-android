@@ -45,11 +45,8 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        int count = 0;
+        int count = 1;
         if(hasHDMKeychain()){
-            count ++;
-        }
-        if(privates.size() > 0){
             count ++;
         }
         return count;
@@ -120,6 +117,6 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     }
 
     private boolean hasHDMKeychain(){
-        return AddressManager.getInstance().getHdmKeychain() != null;
+        return AddressManager.getInstance().hasHDMKeychain();
     }
 }

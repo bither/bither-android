@@ -119,7 +119,7 @@ public class ColdActivity extends BaseFragmentActivity {
                     (BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
             if (addresses != null && addresses.size() > 0) {
                 Address a = WalletUtils.findPrivateKey(addresses.get(0));
-                if (a != null && a.hasPrivKey()) {
+                if (a != null && a.hasPrivKey() && !a.isFromXRandom()) {
                     new DialogGenerateAddressFinalConfirm(this, addresses.size(),
                             a.isFromXRandom()).show();
                 }
