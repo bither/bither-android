@@ -178,7 +178,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".xrandom.UEntropyActivity"
+            android:name=".xrandom.PrivateKeyUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
