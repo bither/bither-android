@@ -74,6 +74,8 @@ public class EditPasswordThread extends Thread {
             } else if (AddressManager.getInstance().getTrashAddresses().size() > 0) {
                 AppSharedPreference.getInstance().setPasswordSeed(
                         new PasswordSeed(AddressManager.getInstance().getTrashAddresses().get(0)));
+            } else if (AddressManager.getInstance().getHdmKeychain() != null){
+                AppSharedPreference.getInstance().setPasswordSeed(AddressManager.getInstance().getHdmKeychain().createPasswordSeed(newPassword));
             }
 
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {

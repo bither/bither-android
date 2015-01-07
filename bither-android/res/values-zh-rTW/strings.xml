@@ -458,4 +458,7 @@
     <string name="verify_message_signature_verify_success">簽名驗證通過</string>
     <string name="verify_message_signature_verify_failed">簽名驗證未通過</string>
     <string name="sign_message_setting_name">消息簽名</string>
+
+    <!-- hdm add -->
+    <string name="hdm_cold_seed_count_limit">您只能生成一個 HDM 賬戶</string>
 </resources>

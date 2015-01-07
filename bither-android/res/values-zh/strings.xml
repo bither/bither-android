@@ -457,4 +457,8 @@
     <string name="verify_message_signature_verify_success">签名验证通过</string>
     <string name="verify_message_signature_verify_failed">签名验证未通过</string>
     <string name="sign_message_setting_name">消息签名</string>
+    <string name="add_address_tab_hdm"></string>
+
+    <!-- hdm add -->
+    <string name="hdm_cold_seed_count_limit">您只能生成一个 HDM 账户</string>
 </resources>
