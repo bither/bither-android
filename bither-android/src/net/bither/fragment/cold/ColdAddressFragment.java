@@ -29,6 +29,7 @@ import net.bither.adapter.cold.AddressOfColdFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.ui.base.SmoothScrollListRunnable;
@@ -87,9 +88,9 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
             if (ps != null) {
                 privates.clear();
                 privates.addAll(ps);
-                mAdapter.notifyDataSetChanged();
             }
-            if (privates.size() == 0) {
+            mAdapter.notifyDataSetChanged();
+            if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain()) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lvPrivate.setVisibility(View.GONE);
             } else {
@@ -136,9 +137,16 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
                     || addressesToShowAdded.size() == 0) {
                 return;
             }
+            int startIndex = 0;
+            if(AddressManager.getInstance().hasHDMKeychain()){
+                startIndex = 1;
+                if(addressesToShowAdded.contains(AddAddressColdHDMFragment.HDMSeedAddressPlaceHolder)){
+                    startIndex = 0;
+                }
+            }
             for (int i = 0; i < addressesToShowAdded.size()
-                    && i < lvPrivate.getChildCount(); i++) {
-                View v = lvPrivate.getChildAt(i);
+                    && i + startIndex < lvPrivate.getChildCount(); i++) {
+                View v = lvPrivate.getChildAt(i + startIndex);
                 v.startAnimation(AnimationUtils.loadAnimation(getActivity(),
                         R.anim.address_notification));
             }

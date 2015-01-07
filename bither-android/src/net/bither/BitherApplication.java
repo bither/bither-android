@@ -82,10 +82,10 @@ public class BitherApplication extends Application {
         AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();
         appAndroid.construct();
         AbstractApp.notificationService.removeAddressLoadCompleteState();
-        initApp();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .permitDiskReads().permitDiskWrites().penaltyLog().build());
         Threading.throwOnLockCycles();
+        initApp();
         mBitherApplication = this;
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
@@ -174,13 +174,13 @@ public class BitherApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                AddressManager.getInstance();
+                initLogging();
                 try {
                     MnemonicCode.setInstance(new MnemonicCodeAndroid());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                AddressManager.getInstance();
-                initLogging();
             }
         }).start();
     }

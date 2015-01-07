@@ -181,4 +181,15 @@ public class WalletUtils {
                 && AddressManager.getInstance().getWatchOnlyAddresses().size() >= BitherSetting
                 .WATCH_ONLY_ADDRESS_COUNT_LIMIT;
     }
+
+    public static boolean isHDMLimit() {
+        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
+            return AddressManager.getInstance().getHdmKeychain() != null;
+        } else {
+            if(AddressManager.getInstance().getHdmKeychain() == null){
+                return false;
+            }
+            return AddressManager.getInstance().getHdmKeychain().getAddresses().size() >= BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT;
+        }
+    }
 }

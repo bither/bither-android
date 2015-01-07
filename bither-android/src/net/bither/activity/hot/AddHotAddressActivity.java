@@ -255,8 +255,6 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         overridePendingTransition(0, R.anim.slide_out_bottom);
     }
 
-    ;
-
     public static interface AddAddress {
         public ArrayList<String> getAddresses();
     }

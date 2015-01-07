@@ -1,18 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffcccccc" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffcccccc">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/title_bar_below_margin" >
 
-        <FrameLayout
-            android:id="@+id/fl_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <net.bither.ui.base.OverScrollableViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
 
         <include layout="@layout/layout_dropdown_message" />
     </FrameLayout>
@@ -31,21 +30,70 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center"
             android:background="@drawable/action_bar_black_left_button"
-            android:src="@drawable/action_bar_glyph_cancel" />
+            android:src="@drawable/action_bar_glyph_cancel"/>
 
-        <TextView
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <ToggleButton
+                    android:id="@+id/tbtn_private_key"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/action_bar_toggle_button_left"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/add_address_tab_private_key"
+                    android:textOn="@string/add_address_tab_private_key"
+                    android:textSize="14sp"/>
+
+                <ToggleButton
+                    android:id="@+id/tbtn_hdm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/action_bar_toggle_button_right"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/add_address_tab_hdm"
+                    android:textOn="@string/add_address_tab_hdm"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/icon_bar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:shadowColor="@color/text_field_text_color"
-            android:shadowDx="1"
-            android:shadowDy="-1"
-            android:shadowRadius="0.5"
-            android:text="@string/activity_name_add_cold_address"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btn_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="-2dp"
+                android:background="@drawable/action_bar_dark_green_right_button"
+                android:gravity="center"
+                android:src="@drawable/action_bar_glyph_done"
+                android:visibility="invisible"/>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
