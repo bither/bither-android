@@ -90,8 +90,9 @@ public class TxProvider implements ITxProvider {
             while (c.moveToNext()) {
                 In inItem = applyCursorIn(c);
                 Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
-                if (tx != null)
+                if (tx != null) {
                     tx.getIns().add(inItem);
+                }
             }
             c.close();
 
@@ -101,8 +102,9 @@ public class TxProvider implements ITxProvider {
             while (c.moveToNext()) {
                 Out out = applyCursorOut(c);
                 Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
-                if (tx != null)
+                if (tx != null) {
                     tx.getOuts().add(out);
+                }
             }
             c.close();
 
@@ -354,7 +356,6 @@ public class TxProvider implements ITxProvider {
             }
 
         }
-
         return addressTxes;
     }
 

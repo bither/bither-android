@@ -16,12 +16,10 @@
 
 package net.bither.ui.base;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -35,8 +33,6 @@ import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.TxProvider;
-import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogTransactionConfidence;
