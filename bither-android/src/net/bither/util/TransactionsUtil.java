@@ -224,6 +224,7 @@ public class TransactionsUtil {
                 if (apiBlockCount < storeBlockHeight && storeBlockHeight - apiBlockCount < 100) {
                     BlockChain.getInstance().rollbackBlock(apiBlockCount);
                 }
+                transactions = AddressManager.getInstance().compressTxsForApi(transactions, address);
                 Collections.sort(transactions, new ComparatorTx());
                 address.initTxs(transactions);
                 address.setSyncComplete(true);

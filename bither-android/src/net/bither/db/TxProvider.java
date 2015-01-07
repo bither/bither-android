@@ -223,12 +223,45 @@ public class TxProvider implements ITxProvider {
     }
 
     public void addTxs(List<Tx> txItems) {
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        List<Tx> addTxItems = new ArrayList<Tx>();
-        String existSql = "select count(0) cnt from txs where tx_hash=";
+        if (txItems.size() > 0) {
+            SQLiteDatabase db = this.mDb.getWritableDatabase();
+            db.beginTransaction();
+            for (Tx txItem : txItems) {
+
+                addTxToDb(db, txItem);
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        }
+    }
+
+    private void insertTx(SQLiteDatabase db, Tx txItem) {
+        String existSql = "select count(0) cnt from txs where tx_hash=?";
+        Cursor c = db.rawQuery(existSql, new String[]{Base58.encode(txItem.getTxHash())});
+        int cnt = 0;
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                cnt = c.getInt(idColumn);
+            }
+        }
+        c.close();
+        if (cnt == 0) {
+            ContentValues cv = new ContentValues();
+            applyContentValues(txItem, cv);
+            db.insert(AbstractDb.Tables.TXS, null, cv);
+        }
+
+    }
+
+    private List<AddressTx> insertIn(SQLiteDatabase db, Tx txItem) {
         Cursor c;
-        for (Tx txItem : txItems) {
-            c = db.rawQuery(existSql + "'" + Base58.encode(txItem.getTxHash()) + "'", null);
+        String sql;
+        ContentValues cv;
+        List<AddressTx> addressTxes = new ArrayList<AddressTx>();
+        for (In inItem : txItem.getIns()) {
+            String existSql = "select count(0) cnt from ins where tx_hash=? and in_sn=?";
+            c = db.rawQuery(existSql, new String[]{Base58.encode(inItem.getTxHash()), Integer.toString(inItem.getInSn())});
             int cnt = 0;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("cnt");
@@ -236,90 +269,96 @@ public class TxProvider implements ITxProvider {
                     cnt = c.getInt(idColumn);
                 }
             }
-            if (cnt == 0) {
-                addTxItems.add(txItem);
-            }
             c.close();
-        }
-        if (addTxItems.size() > 0) {
-            db = this.mDb.getWritableDatabase();
-            db.beginTransaction();
-            for (Tx txItem : addTxItems) {
-                //LogUtil.d("txDb", Base58.encode(txItem.getTxHash()) + "," + Utils.bytesToHexString(txItem.getTxHash()));
-                addTxToDb(db, txItem);
-                //List<Tx> txList = getTxAndDetailByAddress("1B5XuAJNTN2Upi7AXs7tJCxvFGjhPna6Q5");
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-        }
-    }
-
-    private void addTxToDb(SQLiteDatabase db, Tx txItem) {
-        ContentValues cv = new ContentValues();
-        applyContentValues(txItem, cv);
-        db.insert(AbstractDb.Tables.TXS, null, cv);
-        Cursor c;
-        String sql;
-        List<Object[]> addressesTxsRels = new ArrayList<Object[]>();
-        try {
-            for (In inItem : txItem.getIns()) {
-
-                sql = "select out_address from outs where tx_hash='"
-                        + Base58.encode(inItem.getPrevTxHash()) + "' and out_sn=" + inItem.getPrevOutSn();
-                c = db.rawQuery(sql, null);
-                while (c.moveToNext()) {
-                    int idColumn = c.getColumnIndex("out_address");
-                    if (idColumn != -1) {
-                        addressesTxsRels.add(new Object[]{c.getString(idColumn), txItem.getTxHash()});
-                    }
-                }
-                c.close();
+            if (cnt == 0) {
                 cv = new ContentValues();
                 applyContentValues(inItem, cv);
                 db.insert(AbstractDb.Tables.INS, null, cv);
-
-                sql = "update outs set out_status=" + Out.OutStatus.spent.getValue() +
-                        " where tx_hash='" + Base58.encode(inItem.getPrevTxHash()) + "' and out_sn=" + inItem.getPrevOutSn();
-                db.execSQL(sql);
             }
-            for (Out outItem : txItem.getOuts()) {
 
+            sql = "select out_address from outs where tx_hash=? and out_sn=?";
+            c = db.rawQuery(sql, new String[]{
+                    Base58.encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())
+            });
+            while (c.moveToNext()) {
+                int idColumn = c.getColumnIndex("out_address");
+                if (idColumn != -1) {
+                    addressTxes.add(new AddressTx(c.getString(idColumn), Base58.encode(txItem.getTxHash())));
+                }
+            }
+            c.close();
+            sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
+            db.execSQL(sql, new String[]{Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
+        }
+        return addressTxes;
+
+    }
+
+    private List<AddressTx> insertOut(SQLiteDatabase db, Tx txItem) {
+        Cursor c;
+        String sql;
+        ContentValues cv;
+        List<AddressTx> addressTxes = new ArrayList<AddressTx>();
+        for (Out outItem : txItem.getOuts()) {
+            String existSql = "select count(0) cnt from outs where tx_hash=? and out_sn=?";
+            c = db.rawQuery(existSql, new String[]{Base58.encode(outItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            int cnt = 0;
+            if (c.moveToNext()) {
+                int idColumn = c.getColumnIndex("cnt");
+                if (idColumn != -1) {
+                    cnt = c.getInt(idColumn);
+                }
+            }
+            c.close();
+            if (cnt == 0) {
                 cv = new ContentValues();
                 applyContentValues(outItem, cv);
                 db.insert(AbstractDb.Tables.OUTS, null, cv);
-                if (!Utils.isEmpty(outItem.getOutAddress())) {
-                    addressesTxsRels.add(new Object[]{outItem.getOutAddress(), txItem.getTxHash()});
-                }
-                sql = "select tx_hash from ins where prev_tx_hash='" + Base58.encode(txItem.getTxHash())
-                        + "' and prev_out_sn=" + outItem.getOutSn();
-                c = db.rawQuery(sql, null);
-                boolean isSpentByExistTx = false;
-                if (c.moveToNext()) {
-                    int idColumn = c.getColumnIndex("tx_hash");
-                    if (idColumn != -1) {
-                        addressesTxsRels.add(new Object[]{outItem.getOutAddress(), Base58.decode(c.getString(idColumn))});
-                    }
-                    isSpentByExistTx = true;
-                }
-                c.close();
-                if (isSpentByExistTx) {
-                    sql = "update outs set out_status=" + Out.OutStatus.spent.getValue() +
-                            " where tx_hash='" + Base58.encode(txItem.getTxHash()) + "' and out_sn=" + outItem.getOutSn();
-                    db.execSQL(sql);
-                }
-
             }
-            for (Object[] array : addressesTxsRels) {
-                sql = "insert or ignore into addresses_txs(address, tx_hash) values('"
-                        + array[0] + "','" + Base58.encode((byte[]) array[1]) + "')";
-                db.execSQL(sql);
+            if (!Utils.isEmpty(outItem.getOutAddress())) {
+                addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem.getTxHash())));
+            }
+            sql = "select tx_hash from ins where prev_tx_hash=? and prev_out_sn=?";
+            c = db.rawQuery(sql, new String[]{Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            boolean isSpentByExistTx = false;
+            if (c.moveToNext()) {
+                int idColumn = c.getColumnIndex("tx_hash");
+                if (idColumn != -1) {
+                    addressTxes.add(new AddressTx(outItem.getOutAddress(), c.getString(idColumn)));
+                }
+                isSpentByExistTx = true;
+            }
+            c.close();
+            if (isSpentByExistTx) {
+                sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
+                db.execSQL(sql, new String[]{
+                        Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                });
             }
 
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
+        }
+
+        return addressTxes;
+    }
+
+    private void addTxToDb(SQLiteDatabase db, Tx txItem) {
+        insertTx(db, txItem);
+        List<AddressTx> addressesTxsRels = new ArrayList<AddressTx>();
+        List<AddressTx> temp = insertIn(db, txItem);
+        if (temp != null && temp.size() > 0) {
+            addressesTxsRels.addAll(temp);
+        }
+        temp = insertOut(db, txItem);
+        if (temp != null && temp.size() > 0) {
+            addressesTxsRels.addAll(temp);
+        }
+        for (AddressTx addressTx : addressesTxsRels) {
+            String sql = "insert or ignore into addresses_txs(address, tx_hash) values(?,?)";
+            db.execSQL(sql, new String[]{addressTx.getAddress(), addressTx.getTxHash()});
         }
 
     }
+
 
     public void remove(byte[] txHash) {
         String txHashStr = Base58.encode(txHash);
@@ -704,12 +743,12 @@ public class TxProvider implements ITxProvider {
         return outItemList;
     }
 
-    public List<In> getRelatedIn(String address){
+    public List<In> getRelatedIn(String address) {
         List<In> list = new ArrayList<In>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select ins.* from ins,addresses_txs " +
                 "where ins.tx_hash=addresses_txs.tx_hash and addresses_txs.address=? ";
-        Cursor c = db.rawQuery(sql, new String[] {address});
+        Cursor c = db.rawQuery(sql, new String[]{address});
         try {
             while (c.moveToNext()) {
                 list.add(applyCursorIn(c));
@@ -826,7 +865,7 @@ public class TxProvider implements ITxProvider {
         String sql = "select max(txs.block_no) from outs,ins,txs where outs.out_address=? " +
                 "and ins.prev_tx_hash=outs.tx_hash and ins.prev_out_sn=outs.out_sn " +
                 "and ifnull(ins.in_signature,'')='' and txs.tx_hash=ins.tx_hash";
-        Cursor c = db.rawQuery(sql, new String[] {address});
+        Cursor c = db.rawQuery(sql, new String[]{address});
         if (c.moveToNext()) {
             result = c.getInt(0);
         }
@@ -965,6 +1004,35 @@ public class TxProvider implements ITxProvider {
             outItem.setOutAddress(c.getString(idColumn));
         }
         return outItem;
+    }
+
+    private static class AddressTx {
+        private String address;
+        private String txHash;
+
+        public AddressTx(String address, String txHash) {
+            this.address = address;
+            this.txHash = txHash;
+
+        }
+
+        public String getTxHash() {
+            return txHash;
+        }
+
+        public void setTxHash(String txHash) {
+            this.txHash = txHash;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+
     }
 }
 
