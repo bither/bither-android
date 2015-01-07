@@ -42,6 +42,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.KeyUtil;
+import net.bither.xrandom.PrivateKeyUEntropyActivity;
 import net.bither.xrandom.UEntropyActivity;
 
 import java.util.ArrayList;
@@ -98,8 +99,8 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
                 final Runnable run = new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(getContext(), UEntropyActivity.class);
-                        intent.putExtra(UEntropyActivity.PrivateKeyCountKey,
+                        Intent intent = new Intent(getContext(), PrivateKeyUEntropyActivity.class);
+                        intent.putExtra(PrivateKeyUEntropyActivity.PrivateKeyCountKey,
                                 wvCount.getCurrentItem() + 1);
                         intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                         getContext().startActivity(intent);
