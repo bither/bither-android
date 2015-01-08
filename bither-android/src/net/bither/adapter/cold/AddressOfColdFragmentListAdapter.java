@@ -34,13 +34,14 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     private static final int ItemTypeHDMKeychain = 1;
 
     private FragmentActivity activity;
-
     private List<Address> privates;
+    private ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
     public AddressOfColdFragmentListAdapter(FragmentActivity activity,
-                                            List<Address> privates) {
+                                            List<Address> privates, ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate) {
         this.activity = activity;
         this.privates = privates;
+        this.requestHDMServerQrCodeDelegate = requestHDMServerQrCodeDelegate;
     }
 
     @Override
@@ -94,7 +95,7 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         ColdAddressFragmentHDMListItemView view;
         if (convertView == null
                 || !(convertView instanceof ColdAddressFragmentHDMListItemView)) {
-            convertView = new ColdAddressFragmentHDMListItemView(activity);
+            convertView = new ColdAddressFragmentHDMListItemView(activity, requestHDMServerQrCodeDelegate);
         }
         view = (ColdAddressFragmentHDMListItemView) convertView;
         view.setKeychain(AddressManager.getInstance().getHdmKeychain());

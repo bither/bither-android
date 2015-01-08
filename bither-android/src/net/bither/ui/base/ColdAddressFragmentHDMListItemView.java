@@ -44,15 +44,21 @@ import java.util.List;
  * Created by songchenwen on 15/1/7.
  */
 public class ColdAddressFragmentHDMListItemView extends FrameLayout {
+    public static interface RequestHDMServerQrCodeDelegate {
+        public void requestHDMServerQrCode(HDMKeychain keychain);
+    }
+
     private Activity activity;
     private HDMKeychain keychain;
     private ImageView ivType;
     private ImageButton ibtnXRandomLabel;
     private DialogProgress dp;
+    private RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
-    public ColdAddressFragmentHDMListItemView(Activity context) {
+    public ColdAddressFragmentHDMListItemView(Activity context, RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate) {
         super(context);
         activity = context;
+        this.requestHDMServerQrCodeDelegate = requestHDMServerQrCodeDelegate;
         View v = LayoutInflater.from(activity).inflate(R.layout
                 .list_item_address_fragment_cold_hdm, null);
         addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -67,6 +73,7 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
         findViewById(R.id.ibtn_seed_option).setOnClickListener(seedOptionClick);
         findViewById(R.id.ibtn_qr_code_option).setOnClickListener(qrCodeOptionClick);
         dp = new DialogProgress(getContext(), R.string.please_wait);
+        dp.setCancelable(false);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
@@ -96,7 +103,52 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
                 }
             }));
             actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_word_list,
+                    new Runnable() {
+                @Override
+                public void run() {
+                    new DialogPassword(getContext(), new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(SecureCharSequence password) {
+                            showHDMSeed(password);
+                        }
+                    }).show();
+                }
+            }));
             return actions;
+        }
+
+        private void showHDMSeedQRCode(SecureCharSequence password){
+            password.wipe();
+            String content = keychain.getEncryptedSeed();
+            new DialogSimpleQr(getContext(), content, R.string.hdm_cold_seed_qr_code).show();
+        }
+
+        private void showHDMSeed(final SecureCharSequence password){
+            if(!dp.isShowing()){
+                dp.show();
+            }
+            new Thread(){
+                @Override
+                public void run() {
+                    final ArrayList<String> words = new ArrayList<String>();
+                    try {
+                        words.addAll(keychain.getSeedWords(password));
+                    } catch (MnemonicException.MnemonicLengthException e) {
+                        e.printStackTrace();
+                    }
+                    if(words.size() > 0){
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(dp.isShowing()){
+                                    dp.dismiss();
+                                }
+                                new DialogHDMSeedWordList(getContext(), words).show();
+                            }
+                        });
+                    }
+                }
+            }.start();
         }
     };
 
