@@ -25,6 +25,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.UpgradeAddressUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.BaseRunnable;
@@ -42,6 +43,7 @@ public class UpgradeUtil {
     // old watch only dir
     private static final String WALLET_WATCH_ONLY_OLD = "w";
     public static final int BITHERJ_VERSION_CODE = 9;
+    public static final int UPGRADE_ADDRESS_TO_DB = 130;
     private static final String WALLET_SEQUENCE_WATCH_ONLY = "sequence_watch_only";
     private static final String WALLET_SEQUENCE_PRIVATE = "sequence_private";
     private static final String WALLET_ROM_CACHE = "wallet";
@@ -56,7 +58,7 @@ public class UpgradeUtil {
 
     public static boolean needUpgrade() {
         int verionCode = AppSharedPreference.getInstance().getVerionCode();
-        return verionCode < BITHERJ_VERSION_CODE && verionCode > 0 || getOldWatchOnlyCacheDir().exists();
+        return (verionCode < UPGRADE_ADDRESS_TO_DB && verionCode > 0) || getOldWatchOnlyCacheDir().exists();
     }
 
     public static void upgradeNewVerion(Handler handler) {
@@ -65,18 +67,17 @@ public class UpgradeUtil {
             public void run() {
                 obtainMessage(HandlerMessage.MSG_PREPARE);
                 try {
-                    long beginTime = System.currentTimeMillis();
                     if (getOldWatchOnlyCacheDir().exists()) {
                         upgradeV4();
                         upgradeToBitherj();
-                    }
-                    int verionCode = AppSharedPreference.getInstance().getVerionCode();
-                    if (verionCode < BITHERJ_VERSION_CODE && verionCode > 0) {
-                        upgradeToBitherj();
-                    }
-                    long nowTime = System.currentTimeMillis();
-                    if (nowTime - beginTime < 2000) {
-                        Thread.sleep(2000 - (nowTime - beginTime));
+                    } else {
+                        int verionCode = AppSharedPreference.getInstance().getVerionCode();
+                        if (verionCode < BITHERJ_VERSION_CODE) {
+                            upgradeToBitherj();
+                        } else if (verionCode < UPGRADE_ADDRESS_TO_DB) {
+
+                            UpgradeAddressUtil.upgradeAddress();
+                        }
                     }
                     obtainMessage(HandlerMessage.MSG_SUCCESS);
                 } catch (Exception e) {
