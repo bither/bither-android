@@ -52,21 +52,29 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         ivType.setOnLongClickListener(typeClick);
-        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
+        findViewById(R.id.ibtn_seed_option).setOnClickListener(seedOptionClick);
+        findViewById(R.id.ibtn_qr_code_option).setOnClickListener(qrCodeOptionClick);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            //TODO show hdm keychain option dialog
+            seedOptionClick.onClick(v);
             return true;
         }
     };
 
-    private OnClickListener optionClick = new OnClickListener() {
+    private OnClickListener seedOptionClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            typeClick.onLongClick(ivType);
+            //TODO seed option hdm cold
+        }
+    };
+
+    private OnClickListener qrCodeOptionClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //TODO qr code option hdm cold
         }
     };
 

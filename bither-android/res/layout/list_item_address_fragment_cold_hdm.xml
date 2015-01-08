@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             android:paddingBottom="0dp"
             android:paddingLeft="20dp"
-            android:paddingRight="9dp"
+            android:paddingRight="4dp"
             android:paddingTop="12dp">
 
             <TextView
@@ -41,11 +41,18 @@
                 android:layout_gravity="center">
 
                 <ImageButton
-                    android:id="@+id/ibtn_option"
+                    android:id="@+id/ibtn_qr_code_option"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/ui_touchable_bg"
-                    android:src="@drawable/advance_button_icon"/>
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/hdm_button_qr_code_selector"/>
+
+                <ImageButton
+                    android:id="@+id/ibtn_seed_option"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/hdm_button_seed_selector"/>
             </LinearLayout>
         </LinearLayout>
 
