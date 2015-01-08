@@ -45,6 +45,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
@@ -160,6 +161,12 @@ public class ChooseModeActivity extends BaseActivity {
                         progressDialog.dismiss();
                     }
                     setVersionCode();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AddressManager.getInstance().reloadAddress();
+                        }
+                    }).start();
                     initActivity();
                     if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
                         dowloadSpvBlock();
