@@ -11,7 +11,9 @@ import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IAddressProvider;
+import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
+import net.bither.bitherj.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +89,7 @@ public class AddressProvider implements IAddressProvider {
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
-        return (int)db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        return (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
     }
 
     @Override
@@ -234,7 +236,7 @@ public class AddressProvider implements IAddressProvider {
         try {
             for (Integer hdSeedIndex : indexes) {
                 String sql = "select count(0) from hdm_addresses where hd_seed_id=? and hd_seed_index=?";
-                c = db.rawQuery(sql, new String[] {Integer.toString(hdSeedId), hdSeedIndex.toString()});
+                c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId), hdSeedIndex.toString()});
                 if (c.moveToNext()) {
                     isExist |= c.getInt(0) > 0;
                 }
@@ -303,7 +305,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void syncComplete(int hdSeedId, int hdSeedIndex) {
+    public void updateSyncComplete(int hdSeedId, int hdSeedIndex) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, 1);
@@ -311,53 +313,141 @@ public class AddressProvider implements IAddressProvider {
                 , new String[]{Integer.toString(hdSeedId), Integer.toString(hdSeedIndex)});
     }
 
+    //normal
     @Override
-    public List<Address> getPrivKeyAddresses() {
-        return null;
-    }
-
-    @Override
-    public String getEncryptPrivKeyFromAddress(String address) {
-        return null;
+    public List<Address> getAddresses() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery("select * from addresses  order by sort_time desc", null);
+        List<Address> addressList = new ArrayList<Address>();
+        if (c.moveToNext()) {
+            Address address = null;
+            try {
+                address = applyAddressCursor(c);
+            } catch (AddressFormatException e) {
+                e.printStackTrace();
+            }
+            if (address != null) {
+                addressList.add(address);
+            }
+        }
+        c.close();
+        return addressList;
     }
 
     @Override
     public void addPrivKeyAddress(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = applyContentValues(address);
+        db.insert(AbstractDb.Tables.Addresses, null, cv);
 
     }
 
-    @Override
-    public List<Address> getWatchOnlyAddresses() {
-        return null;
-    }
 
     @Override
     public void addWatchOnlyAddress(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = applyContentValues(address);
+        db.insert(AbstractDb.Tables.Addresses, null, cv);
 
     }
 
     @Override
     public void removeWatchOnlyAddress(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.delete(AbstractDb.Tables.Addresses, AbstractDb.AddressesColumns.ADDRESS + "=? and "
+                + AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY + " is null", new String[]{
+                address.getAddress()
+        });
 
     }
 
-    @Override
-    public List<Address> getTrashAddresses() {
-        return null;
-    }
 
     @Override
     public void trashPrivKeyAddress(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.IS_TRASH, 1);
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address.getAddress()});
 
     }
 
     @Override
     public void restorePrivKeyAddress(Address address) {
-
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.IS_TRASH, 0);
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address.getAddress()});
     }
 
     @Override
-    public void syncComplete(Address address) {
+    public void updateSyncComplete(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.IS_SYNCED, address.isSyncComplete() ? 1 : 0);
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address.getAddress()});
+    }
 
+    private ContentValues applyContentValues(Address address) {
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.ADDRESS, address.getAddress());
+        if (!Utils.isEmpty(address.getEncryptPrivKey())) {
+            cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKey());
+        }
+        cv.put(AbstractDb.AddressesColumns.PUB_KEY, Base58.encode(address.getPubKey()));
+        cv.put(AbstractDb.AddressesColumns.IS_XRANDOM, address.isFromXRandom() ? 1 : 0);
+        cv.put(AbstractDb.AddressesColumns.IS_SYNCED, address.isSyncComplete() ? 1 : 0);
+        cv.put(AbstractDb.AddressesColumns.IS_TRASH, address.isTrashed() ? 1 : 0);
+        cv.put(AbstractDb.AddressesColumns.SORT_TIME, address.getSortTime());
+        return cv;
+
+    }
+
+    private Address applyAddressCursor(Cursor c) throws AddressFormatException {
+        Address address;
+        int idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.ADDRESS);
+        String addressStr = null;
+        String encryptPrivateKey = null;
+        byte[] pubKey = null;
+        boolean isXRandom = false;
+        boolean isSynced = false;
+        boolean isTrash = false;
+        long sortTime = 0;
+
+        if (idColumn != -1) {
+            addressStr = c.getString(idColumn);
+            if (!Utils.validBicoinAddress(addressStr)) {
+                return null;
+            }
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY);
+        if (idColumn != -1) {
+            encryptPrivateKey = c.getString(idColumn);
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.PUB_KEY);
+        if (idColumn != -1) {
+            pubKey = Base58.decode(c.getString(idColumn));
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.IS_XRANDOM);
+        if (idColumn != -1) {
+            isXRandom = c.getInt(idColumn) == 1;
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.IS_SYNCED);
+        if (idColumn != -1) {
+            isSynced = c.getInt(idColumn) == 1;
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.IS_TRASH);
+        if (idColumn != -1) {
+            isTrash = c.getInt(idColumn) == 1;
+        }
+        idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.SORT_TIME);
+        if (idColumn != -1) {
+            sortTime = c.getLong(idColumn);
+        }
+        address = new Address(addressStr, pubKey, sortTime, isSynced, isXRandom, isTrash, encryptPrivateKey);
+
+        return address;
     }
 }
