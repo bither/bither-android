@@ -462,8 +462,8 @@
     <!-- hdm add -->
     <string name="hdm_cold_seed_count_limit">您只能生成一個 HDM 賬戶</string>
     <string name="hdm_account_cold_address_list_label">HDM 冷</string>
-    <string name="hdm_seed_generation_notice">HDM 結合了分層確定性和多重簽名兩種技術.\n\nHDM 運用多重簽名技術來避免分層確定性錢包的缺陷.\n\n比太使用 2/3 的多重簽名來生成 HDM 地址.\n\n三個私鑰分別由熱錢包, 冷錢包和 ƀID 服務器上的確定性種子來生成.</string>
+    <string name="hdm_seed_generation_notice">HDM 結合了分層確定性和多重簽名兩種技術.\n\nHDM 運用多重簽名技術來避免分層確定性錢包的缺陷.\n\n比太使用 2/3 的多重簽名來生成 HDM 地址.\n\n三個私鑰分別由熱錢包, 冷錢包和 HDM 服務器上的確定性種子來生成.</string>
     <string name="hdm_keychain_xrandom_final_confirm">您生成了一個極隨機 HDM 賬戶.</string>
     <string name="hdm_cold_pub_key_qr_code_name">HDM 帳號二維碼</string>
-    <string name="hdm_bither_id_qr_code_name">ƀID 二維碼</string>
+    <string name="hdm_server_qr_code_name">HDM 服務器二維碼</string>
 </resources>

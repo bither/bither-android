@@ -35,13 +35,13 @@ import java.util.List;
  */
 public abstract class DialogWithActions extends CenterDialog implements DialogInterface
         .OnDismissListener, View.OnClickListener {
-    private static final int ActionTagIndex = 1206;
+    private static final int ActionTagIndex = R.id.dialog_with_actions_action;
     private View clickedView;
 
     public DialogWithActions(Context context) {
         super(context);
         setContentView(R.layout.dialog_with_actions);
-        initView();
+        setOnDismissListener(this);
     }
 
     private void initView() {
@@ -50,17 +50,19 @@ public abstract class DialogWithActions extends CenterDialog implements DialogIn
         LayoutInflater inflater = LayoutInflater.from(getContext());
         List<Action> actions = getActions();
         for (Action a : actions) {
-            View v = inflater.inflate(R.layout.dialog_with_actions_list_item, ll, true);
+            View v = inflater.inflate(R.layout.dialog_with_actions_list_item, ll, false);
             TextView tvName = (TextView) v.findViewById(R.id.tv_name);
             tvName.setText(a.getName());
             tvName.setTag(ActionTagIndex, a);
             tvName.setOnClickListener(this);
+            ll.addView(v);
         }
     }
 
     @Override
     public void show() {
         clickedView = null;
+        initView();
         super.show();
     }
 
@@ -75,7 +77,10 @@ public abstract class DialogWithActions extends CenterDialog implements DialogIn
         if (clickedView != null) {
             Object t = clickedView.getTag(ActionTagIndex);
             if (t != null && t instanceof Action) {
-                ((Action) t).getAction().run();
+                Runnable r = ((Action) t).getAction();
+                if(r != null){
+                    r.run();
+                }
             }
         }
     }
@@ -112,5 +117,19 @@ public abstract class DialogWithActions extends CenterDialog implements DialogIn
             this.action = action;
         }
 
+    }
+
+    public static abstract class DialogWithActionsClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            new DialogWithActions(v.getContext()) {
+                @Override
+                protected List<Action> getActions() {
+                    return DialogWithActionsClickListener.this.getActions();
+                }
+            }.show();
+        }
+
+        protected abstract List<Action> getActions();
     }
 }

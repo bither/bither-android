@@ -16,8 +16,11 @@
 
 package net.bither.qrcode;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -29,8 +32,11 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.util.Base43;
 import net.bither.util.LogUtil;
+import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,6 +195,33 @@ public class Qr {
         is.close();
 
         return baos.toByteArray();
+    }
+
+    public static final void showQrWithDialogFor(String content,final Context context){
+        showQrWithDialogFor(content, context, null);
+    }
+
+
+    public static final void showQrWithDialogFor(String content, Dialog dialogToDismiss){
+        showQrWithDialogFor(content, dialogToDismiss.getContext(), dialogToDismiss);
+    }
+
+    public static final void showQrWithDialogFor(String content, final Context context, final Dialog dialogToDismiss){
+        int size = Math.min(UIUtil.getScreenHeight(), UIUtil.getScreenWidth());
+        final Bitmap qr = Qr.bitmap(content, size, Color.BLACK, Color.WHITE, UIUtil.dip2pix(2.5f));
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if(dialogToDismiss != null && dialogToDismiss.isShowing()){
+                    dialogToDismiss.dismiss();
+                }
+                CenterDialog d = new CenterDialog(context);
+                ImageView iv = new ImageView(context);
+                iv.setImageBitmap(qr);
+                d.setContentView(iv);
+                d.show();
+            }
+        });
     }
 
     public static void printQrContentSize() {
