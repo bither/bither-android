@@ -251,12 +251,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
                     DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
                             new IDialogPasswordListener() {
-                        @Override
-                        public void onPasswordEntered(SecureCharSequence password) {
-                            resetTx();
+                                @Override
+                                public void onPasswordEntered(SecureCharSequence password) {
+                                    resetTx();
 
-                        }
-                    });
+                                }
+                            });
                     dialogPassword.show();
                 } else {
                     resetTx();
@@ -278,28 +278,15 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
             @Override
             public void runWithService(BlockchainService service) {
-                try {
-                    service.stopAndUnregister();
-                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                        address.setSyncComplete(false);
-                        address.updatePubkey();
+                service.stopAndUnregister();
+                for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                    address.setSyncComplete(false);
+                    address.updateSyncComplete();
 
-                    }
-                    TxProvider.getInstance().clearAllTx();
-                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                        address.notificatTx(null, Tx.TxNotificationType.txFromApi);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                    R.string.reload_tx_failed);
-                        }
-                    });
-                    return;
+                }
+                TxProvider.getInstance().clearAllTx();
+                for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                    address.notificatTx(null, Tx.TxNotificationType.txFromApi);
                 }
                 try {
                     if (!AddressManager.getInstance().addressIsSyncComplete()) {
@@ -500,66 +487,66 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            hasAnyAction = true;
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    hasAnyAction = true;
+                    return 2;
+                }
 
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
+                @Override
+                public String getOptionName(int index) {
+                    switch (index) {
+                        case 0:
+                            return getString(R.string.import_private_key_qr_code);
+                        case 1:
+                            return getString(R.string.import_private_key_text);
+                        default:
+                            return "";
+                    }
+                }
 
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
+                @Override
+                public String getOptionNote(int index) {
                     return null;
-            }
-        }
+                }
 
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    switch (index) {
+                        case 0:
+                            return getResources().getDrawable(R.drawable.scan_button_icon);
+                        case 1:
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                        default:
+                            return null;
+                    }
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
+                @Override
+                public String getSettingName() {
+                    return getString(R.string.setting_name_import_private_key);
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            hasAnyAction = true;
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode(false);
-                    return;
-                case 1:
-                    new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
+                @Override
+                public int getCurrentOptionIndex() {
+                    return -1;
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    hasAnyAction = true;
+                    switch (index) {
+                        case 0:
+                            importPrivateKeyFromQrCode(false);
+                            return;
+                        case 1:
+                            new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
 
     private SettingSelectorView.SettingSelector importBip38KeySelector = new SettingSelectorView
             .SettingSelector() {

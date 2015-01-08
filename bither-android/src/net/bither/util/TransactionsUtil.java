@@ -220,7 +220,7 @@ public class TransactionsUtil {
                 Collections.sort(transactions, new ComparatorTx());
                 address.initTxs(transactions);
                 address.setSyncComplete(true);
-                address.updatePubkey();
+                address.updateSyncComplete();
             }
         }
     }

@@ -305,7 +305,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void updateSyncComplete(int hdSeedId, int hdSeedIndex) {
+    public void syncComplete(int hdSeedId, int hdSeedIndex) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, 1);
@@ -335,16 +335,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void addPrivKeyAddress(Address address) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = applyContentValues(address);
-        db.insert(AbstractDb.Tables.Addresses, null, cv);
-
-    }
-
-
-    @Override
-    public void addWatchOnlyAddress(Address address) {
+    public void addAddress(Address address) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = applyContentValues(address);
         db.insert(AbstractDb.Tables.Addresses, null, cv);
@@ -377,6 +368,8 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.AddressesColumns.IS_TRASH, 0);
+        cv.put(AbstractDb.AddressesColumns.SORT_TIME, address.getSortTime());
+        cv.put(AbstractDb.AddressesColumns.IS_SYNCED, 0);
         db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
                 , new String[]{address.getAddress()});
     }
@@ -389,6 +382,16 @@ public class AddressProvider implements IAddressProvider {
         db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
                 , new String[]{address.getAddress()});
     }
+
+    @Override
+    public void updatePrivateKey(Address address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKey());
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address.getAddress()});
+    }
+
 
     private ContentValues applyContentValues(Address address) {
         ContentValues cv = new ContentValues();
