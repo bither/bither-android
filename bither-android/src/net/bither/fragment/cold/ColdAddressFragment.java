@@ -29,16 +29,17 @@ import net.bither.adapter.cold.AddressOfColdFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.utils.Utils;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
+import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
 import net.bither.ui.base.SmoothScrollListRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ColdAddressFragment extends Fragment implements Refreshable,
-        Selectable {
+        Selectable, ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate {
     private ListView lvPrivate;
     private View ivNoAddress;
     private AddressOfColdFragmentListAdapter mAdapter;
@@ -59,7 +60,7 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
         lvPrivate = (ListView) view.findViewById(R.id.lv_address);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         privates = new ArrayList<Address>();
-        mAdapter = new AddressOfColdFragmentListAdapter(getActivity(), privates);
+        mAdapter = new AddressOfColdFragmentListAdapter(getActivity(), privates, this);
         lvPrivate.setAdapter(mAdapter);
         if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
@@ -153,4 +154,9 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
             addressesToShowAdded = null;
         }
     };
+
+    @Override
+    public void requestHDMServerQrCode(HDMKeychain keychain) {
+        //TODO requestHDMServerQrCode
+    }
 }

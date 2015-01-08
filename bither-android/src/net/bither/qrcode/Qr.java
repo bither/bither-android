@@ -16,8 +16,11 @@
 
 package net.bither.qrcode;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -29,8 +32,11 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.util.Base43;
 import net.bither.util.LogUtil;
+import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
