@@ -16,17 +16,13 @@
 
 package net.bither.runnable;
 
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.BackupUtil;
 import net.bither.util.ThreadUtil;
-
-import java.util.List;
 
 public class EditPasswordThread extends Thread {
     private SecureCharSequence oldPassword;

@@ -19,7 +19,7 @@ package net.bither.util;
 import android.util.Log;
 
 import net.bither.api.DownloadSpvApi;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.preference.AppSharedPreference;

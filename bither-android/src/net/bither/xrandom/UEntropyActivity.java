@@ -36,7 +36,7 @@ import net.bither.R;
 import net.bither.activity.cold.AddColdAddressActivity;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;

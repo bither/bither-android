@@ -44,9 +44,8 @@ import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseActivity;
@@ -55,7 +54,6 @@ import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.ProgressDialog;
-import net.bither.util.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;

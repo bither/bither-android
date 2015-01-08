@@ -55,7 +55,7 @@ import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;

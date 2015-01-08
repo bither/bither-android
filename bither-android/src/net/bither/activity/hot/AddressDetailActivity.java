@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -47,9 +48,14 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AddressDetailActivity extends SwipeRightFragmentActivity {
+    private int page = 1;
+    private boolean hasMore = true;
+    private boolean isLoding = false;
+
     private int addressPosition;
     private boolean hasPrivateKey;
     private Address address;
@@ -207,6 +213,27 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         header = new AddressDetailHeader(this);
         lv.addHeaderView(header, null, false);
         lv.setAdapter(mAdapter);
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 2
+                        && hasMore && !isLoding
+                        && lastFirstVisibleItem < firstVisibleItem) {
+                    page++;
+                    loadTx();
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+
+            }
+        });
         loadData();
     }
 
@@ -228,21 +255,38 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     public void loadData() {
         header.showAddress(address, addressPosition);
-        if (address != null && address.isSyncComplete()) {
+        page = 1;
+        loadTx();
+
+    }
+
+    private void loadTx() {
+        if (address != null && address.isSyncComplete() && !isLoding && hasMore) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<Tx> txs = address.getTxs();
+                    isLoding = true;
+                    final List<Tx> txs = address.getTxs(page);
+                    if (page == 1) {
+                        transactions.clear();
+                    }
+                    if (txs != null && txs.size() > 0) {
+                        transactions.addAll(txs);
+                        hasMore = true;
+                    } else {
+                        hasMore = false;
+                    }
+                    Collections.sort(transactions);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            transactions.clear();
-                            transactions.addAll(txs);
                             mAdapter.notifyDataSetChanged();
+                            isLoding = false;
                         }
                     });
                 }
             }).start();
         }
+
     }
 }

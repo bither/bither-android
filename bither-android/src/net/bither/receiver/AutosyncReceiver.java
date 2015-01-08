@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.bither.BitherApplication;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.LogUtil;

@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
@@ -50,31 +51,13 @@ public class TxProvider implements ITxProvider {
         this.mDb = db;
     }
 
-//    public List<Tx> getTxByAddress(String address) {
-//        List<Tx> txItemList = new ArrayList<Tx>();
-//        String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address='" +
-//                address + "' order by b.block_no";
-//        SQLiteDatabase db = this.mDb.getReadableDatabase();
-//        Cursor c = db.rawQuery(sql, null);
-//        try {
-//            while (c.moveToNext()) {
-//                txItemList.add(applyCursor(c));
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        c.close();
-//        return txItemList;
-//    }
-
     public List<Tx> getTxAndDetailByAddress(String address) {
         List<Tx> txItemList = new ArrayList<Tx>();
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address='"
-                    + address + "' order by b.block_no ";
-            Cursor c = db.rawQuery(sql, null);
+            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by b.block_no desc";
+            Cursor c = db.rawQuery(sql, new String[]{address});
             while (c.moveToNext()) {
                 Tx txItem = applyCursor(c);
                 txItem.setIns(new ArrayList<In>());
@@ -83,30 +66,64 @@ public class TxProvider implements ITxProvider {
                 txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
             }
             c.close();
+            addInForTxDetail(db, address, txDict);
+            addOutForTxDetail(db, address, txDict);
 
-            sql = "select b.* from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
-                    + "order by b.tx_hash ,b.in_sn";
-            c = db.rawQuery(sql, new String[]{address});
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        }
+        return txItemList;
+    }
+
+    private void addInForTxDetail(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
+        String sql = "select b.* from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
+                + "order by b.tx_hash ,b.in_sn";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        while (c.moveToNext()) {
+            In inItem = applyCursorIn(c);
+            Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+            if (tx != null) {
+                tx.getIns().add(inItem);
+            }
+        }
+        c.close();
+    }
+
+    private void addOutForTxDetail(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
+        String sql = "select b.* from addresses_txs a, outs b where a.tx_hash=b.tx_hash and a.address=? "
+                + "order by b.tx_hash,b.out_sn";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        while (c.moveToNext()) {
+            Out out = applyCursorOut(c);
+            Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+            if (tx != null) {
+                tx.getOuts().add(out);
+            }
+        }
+        c.close();
+    }
+
+    @Override
+    public List<Tx> getTxAndDetailByAddress(String address, int page) {
+        List<Tx> txItemList = new ArrayList<Tx>();
+
+        HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        try {
+            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by b.block_no desc limit ?,? ";
+            Cursor c = db.rawQuery(sql, new String[]{
+                    address, Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
+            });
             while (c.moveToNext()) {
-                In inItem = applyCursorIn(c);
-                Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
-                if (tx != null) {
-                    tx.getIns().add(inItem);
-                }
+                Tx txItem = applyCursor(c);
+                txItem.setIns(new ArrayList<In>());
+                txItem.setOuts(new ArrayList<Out>());
+                txItemList.add(txItem);
+                txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
             }
             c.close();
-
-            sql = "select b.* from addresses_txs a, outs b where a.tx_hash=b.tx_hash and a.address=? "
-                    + "order by b.tx_hash,b.out_sn";
-            c = db.rawQuery(sql, new String[]{address});
-            while (c.moveToNext()) {
-                Out out = applyCursorOut(c);
-                Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
-                if (tx != null) {
-                    tx.getOuts().add(out);
-                }
-            }
-            c.close();
+            addInForTxDetail(db, address, txDict);
+            addOutForTxDetail(db, address, txDict);
 
         } catch (AddressFormatException e) {
             e.printStackTrace();
