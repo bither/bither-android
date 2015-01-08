@@ -484,4 +484,8 @@
     <string name="hdm_keychain_xrandom_final_confirm">You have generated 1 HDM account from XRandom.</string>
     <string name="hdm_cold_pub_key_qr_code_name">HDM Account QR Code</string>
     <string name="hdm_server_qr_code_name">HDM Server QR Code</string>
+    <string name="hdm_cold_seed_qr_code">HDM Cold Seed QR Code</string>
+    <string name="hdm_hot_seed_qr_code">HDM Hot Seed QR Code</string>
+    <string name="hdm_cold_seed_word_list">HDM Cold Seed</string>
+    <string name="hdm_hot_seed_word_list">HDM Hot Seed</string>
 </resources>

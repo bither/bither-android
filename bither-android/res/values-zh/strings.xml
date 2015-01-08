@@ -465,4 +465,8 @@
     <string name="hdm_keychain_xrandom_final_confirm">您生成了一个极随机 HDM 账户.</string>
     <string name="hdm_cold_pub_key_qr_code_name">HDM 帐号二维码</string>
     <string name="hdm_server_qr_code_name">HDM 服务器二维码</string>
+    <string name="hdm_cold_seed_qr_code">HDM 冷种子二维码</string>
+    <string name="hdm_hot_seed_qr_code">HDM 热种子二维码</string>
+    <string name="hdm_cold_seed_word_list">HDM 冷种子</string>
+    <string name="hdm_hot_seed_word_list">HDM 热种子</string>
 </resources>

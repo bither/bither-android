@@ -28,9 +28,11 @@ import android.widget.ImageView;
 import net.bither.R;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.qrcode.Qr;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -81,6 +83,19 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
         @Override
         protected List<DialogWithActions.Action> getActions() {
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
+            actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_qr_code,
+                    new Runnable() {
+                @Override
+                public void run() {
+                    new DialogPassword(getContext(), new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(SecureCharSequence password) {
+                            showHDMSeedQRCode(password);
+                        }
+                    }).show();
+                }
+            }));
+            actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_word_list,
             return actions;
         }
     };
@@ -107,34 +122,45 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
 
                 @Override
                 public void run() {
-                    showHDMServerQrCode();
+                    requestHDMServerQrCode();
                 }
             }));
             return actions;
         }
+
+        private void showPublicKeyQrCode(final SecureCharSequence password){
+            if(!dp.isShowing()){
+                dp.show();
+            }
+            new Thread(){
+                @Override
+                public void run() {
+                    try{
+                        final String pub = keychain.getExternalChainRootPubExtendedAsHex(password);
+                        password.wipe();
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                new DialogSimpleQr(getContext(), pub,
+                                        R.string.hdm_cold_pub_key_qr_code_name).show();
+                            }
+                        });
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+
+        private void requestHDMServerQrCode(){
+            if(requestHDMServerQrCodeDelegate != null){
+                requestHDMServerQrCodeDelegate.requestHDMServerQrCode(keychain);
+            }
+        }
     };
 
-    private void showPublicKeyQrCode(final SecureCharSequence password){
-        if(!dp.isShowing()){
-            dp.show();
-        }
-        new Thread(){
-            @Override
-            public void run() {
-                try{
-                    String pub = keychain.getExternalChainRootPubExtendedAsHex(password);
-                    password.wipe();
-                    Qr.showQrWithDialogFor(pub, dp);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
 
-    private void showHDMServerQrCode(){
-       //TODO showHDMServerQrCode
-    }
 
     public void setKeychain(HDMKeychain chain) {
         this.keychain = chain;

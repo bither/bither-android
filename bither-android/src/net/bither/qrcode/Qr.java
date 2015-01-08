@@ -197,33 +197,6 @@ public class Qr {
         return baos.toByteArray();
     }
 
-    public static final void showQrWithDialogFor(String content,final Context context){
-        showQrWithDialogFor(content, context, null);
-    }
-
-
-    public static final void showQrWithDialogFor(String content, Dialog dialogToDismiss){
-        showQrWithDialogFor(content, dialogToDismiss.getContext(), dialogToDismiss);
-    }
-
-    public static final void showQrWithDialogFor(String content, final Context context, final Dialog dialogToDismiss){
-        int size = Math.min(UIUtil.getScreenHeight(), UIUtil.getScreenWidth());
-        final Bitmap qr = Qr.bitmap(content, size, Color.BLACK, Color.WHITE, UIUtil.dip2pix(2.5f));
-        ThreadUtil.runOnMainThread(new Runnable() {
-            @Override
-            public void run() {
-                if(dialogToDismiss != null && dialogToDismiss.isShowing()){
-                    dialogToDismiss.dismiss();
-                }
-                CenterDialog d = new CenterDialog(context);
-                ImageView iv = new ImageView(context);
-                iv.setImageBitmap(qr);
-                d.setContentView(iv);
-                d.show();
-            }
-        });
-    }
-
     public static void printQrContentSize() {
         for (int versionNum = 1;
              versionNum <= 40;

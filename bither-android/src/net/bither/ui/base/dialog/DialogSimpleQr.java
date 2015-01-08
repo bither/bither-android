@@ -1,0 +1,85 @@
+/*
+ *
+ *  * Copyright 2014 http://Bither.net
+ *  *
+ *  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  * you may not use this file except in compliance with the License.
+ *  * You may obtain a copy of the License at
+ *  *
+ *  *    http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing, software
+ *  * distributed under the License is distributed on an "AS IS" BASIS,
+ *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  * See the License for the specific language governing permissions and
+ *  * limitations under the License.
+ *
+ */
+
+package net.bither.ui.base.dialog;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import net.bither.R;
+import net.bither.bitherj.utils.Utils;
+import net.bither.runnable.FancyQrCodeThread;
+import net.bither.util.UIUtil;
+
+/**
+ * Created by songchenwen on 15/1/8.
+ */
+public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrCodeListener,
+        View.OnClickListener {
+    private ImageView ivQr;
+    private ProgressBar pb;
+
+
+    public DialogSimpleQr(Context context, String content) {
+        this(context, content, null);
+    }
+
+    public DialogSimpleQr(Context context, String content, int title) {
+        this(context, content, context.getString(title));
+    }
+
+    public DialogSimpleQr(Context context, String content, String title) {
+        super(context, R.style.tipsDialog);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        getWindow().getAttributes().dimAmount = 0.8f;
+        setCanceledOnTouchOutside(true);
+        setContentView(R.layout.dialog_simple_qr);
+        if (!Utils.isEmpty(title)) {
+            TextView tvTitle = (TextView) findViewById(R.id.tv_title);
+            tvTitle.setText(title);
+        }
+        ivQr = (ImageView) findViewById(R.id.iv_qrcode);
+        pb = (ProgressBar) findViewById(R.id.pb);
+        findViewById(R.id.ll_container).setOnClickListener(this);
+        ivQr.setOnClickListener(this);
+        int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
+        ivQr.getLayoutParams().width = ivQr.getLayoutParams().height = size;
+        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT);
+        new FancyQrCodeThread(content, ivQr.getLayoutParams().width, Color.BLACK, Color.WHITE,
+                this, false).start();
+    }
+
+    @Override
+    public void generated(Bitmap bmp) {
+        pb.setVisibility(View.GONE);
+        ivQr.setImageBitmap(bmp);
+    }
+
+    @Override
+    public void onClick(View v) {
+        dismiss();
+    }
+}
