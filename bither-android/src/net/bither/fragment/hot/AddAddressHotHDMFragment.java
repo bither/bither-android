@@ -149,7 +149,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         }
                     });
                 }
-            });
+            }).show();
         }
     };
 
