@@ -246,6 +246,7 @@
     <string name="check_address_private_key_title">%s 的私钥</string>
     <string name="check_address_password">密码正确</string>
     <string name="check_private_key_safe">您的私钥很安全</string>
+    <string name="check_private_key_danger">您的私钥存在风险</string>
     <string name="checking_private_key">正在检查私钥</string>
     <string name="check_private_key_button">一键检查私钥</string>
     <string name="private_key_is_empty">你还没有添加私钥, 请先添加私钥</string>

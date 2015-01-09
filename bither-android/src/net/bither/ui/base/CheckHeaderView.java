@@ -112,7 +112,11 @@ public class CheckHeaderView extends FrameLayout implements IDialogPasswordListe
     }
 
     public void stop() {
-        tvStatus.setText(R.string.check_private_key_safe);
+        if(percent < 1){
+            tvStatus.setText(R.string.check_private_key_danger);
+        } else {
+            tvStatus.setText(R.string.check_private_key_safe);
+        }
         Animation anim = AnimationUtils.loadAnimation(getContext(), R.anim.check_points_scale_down);
         anim.setDuration(ScaleDownAnimDuration);
         anim.setAnimationListener(scaleDownListener);

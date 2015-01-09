@@ -254,6 +254,7 @@
     <string name="check_address_private_key_title">Private key of %s</string>
     <string name="check_address_password">Password is correct</string>
     <string name="check_private_key_safe">Private keys are safe.</string>
+    <string name="check_private_key_danger">Private keys are in danger</string>
     <string name="checking_private_key">Checking private keys</string>
     <string name="check_private_key_button">Check Private Keys</string>
     <string name="check_points">%</string>
