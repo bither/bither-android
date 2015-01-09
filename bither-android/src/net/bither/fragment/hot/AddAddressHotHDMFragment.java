@@ -18,6 +18,8 @@
 
 package net.bither.fragment.hot;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,11 +30,16 @@ import android.widget.FrameLayout;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMKeychain;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +48,8 @@ import java.util.List;
  */
 public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity
         .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate {
+    private static final int XRandomRequestCode = 1552;
+
     private FrameLayout flContainer;
     private View vBg;
     private View llHot;
@@ -80,19 +89,54 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                     new Runnable() {
                 @Override
                 public void run() {
-
+                    HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
+                    startActivityForResult(new Intent(getActivity(),
+                            HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
                 }
             }));
             actions.add(new DialogWithActions.Action(R.string
                     .hdm_keychain_add_hot_not_from_xrandom, new Runnable() {
                 @Override
                 public void run() {
-
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
+                                    passwordGetter.getPassword());
+                            AddressManager.getInstance().setHDMKeychain(keychain);
+                            if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+                                AppSharedPreference.getInstance().setPasswordSeed(keychain
+                                        .createPasswordSeed(passwordGetter.getPassword()));
+                            }
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    moveToCold(true);
+                                }
+                            });
+                        }
+                    }.start();
                 }
             }));
             return actions;
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (XRandomRequestCode == requestCode && resultCode == Activity.RESULT_OK &&
+                AddressManager.getInstance().hasHDMKeychain()) {
+            llCold.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    moveToCold(true);
+                }
+            }, 500);
+        }
+    }
 
     private void findCurrentStep() {
         moveToHot(false);

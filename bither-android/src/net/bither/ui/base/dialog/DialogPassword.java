@@ -365,8 +365,8 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             public void afterPasswordDialogDismiss();
         }
 
-        private ReentrantLock executeLock = new ReentrantLock();
-        private Condition fullCondition = executeLock.newCondition();
+        private ReentrantLock getPasswordLock = new ReentrantLock();
+        private Condition withPasswordCondition = getPasswordLock.newCondition();
         private Context context;
         private SecureCharSequence password;
         private PasswordGetterDelegate delegate;
@@ -378,6 +378,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         public PasswordGetter(Context context, PasswordGetterDelegate delegate) {
             this.context = context;
             this.delegate = delegate;
+        }
+
+        public void setPassword(SecureCharSequence password){
+            this.password = password;
         }
 
         public SecureCharSequence getPassword() {
@@ -392,12 +396,12 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                     }
                 });
                 try {
-                    executeLock.lockInterruptibly();
-                    fullCondition.await();
+                    getPasswordLock.lockInterruptibly();
+                    withPasswordCondition.await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    executeLock.unlock();
+                    getPasswordLock.unlock();
                 }
             }
             return password;
@@ -405,12 +409,12 @@ public class DialogPassword extends Dialog implements OnDismissListener,
 
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
-            this.password = password;
+            setPassword(password);
             try {
-                executeLock.lock();
-                fullCondition.signal();
+                getPasswordLock.lock();
+                withPasswordCondition.signal();
             } finally {
-                executeLock.unlock();
+                getPasswordLock.unlock();
             }
             if (delegate != null) {
                 delegate.afterPasswordDialogDismiss();

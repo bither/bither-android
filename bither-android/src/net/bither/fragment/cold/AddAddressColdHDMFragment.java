@@ -43,7 +43,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.xrandom.HDMKeychainUEntropyActivity;
+import net.bither.xrandom.HDMKeychainColdUEntropyActivity;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
                 final Runnable run = new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(getActivity(), HDMKeychainUEntropyActivity.class);
+                        Intent intent = new Intent(getActivity(), HDMKeychainColdUEntropyActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
                         getActivity().startActivity(intent);
                         activity.finish();

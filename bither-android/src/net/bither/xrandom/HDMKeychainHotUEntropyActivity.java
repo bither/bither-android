@@ -20,11 +20,9 @@ package net.bither.xrandom;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
@@ -34,15 +32,15 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;
-
-import java.util.ArrayList;
+import net.bither.ui.base.dialog.DialogPassword;
 
 /**
- * Created by songchenwen on 15/1/7.
+ * Created by songchenwen on 15/1/9.
  */
-public class HDMKeychainUEntropyActivity extends UEntropyActivity {
+public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
     private static final int MinGeneratingTime = 5000;
     private GenerateThread generateThread;
+    public static DialogPassword.PasswordGetter passwordGetter;
 
     @Override
     Thread getGeneratingThreadWithXRandom(UEntropyCollector collector,
@@ -59,18 +57,11 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
     @Override
     void didSuccess(Object obj) {
         DialogGenerateHDMKeychainFinalConfirm dialog = new DialogGenerateHDMKeychainFinalConfirm
-                (HDMKeychainUEntropyActivity.this);
+                (HDMKeychainHotUEntropyActivity.this);
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                Intent intent = new Intent();
-                intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                        AppSharedPreference.getInstance().getPasswordSeed() == null);
-                ArrayList<String> addresses = new ArrayList<String>();
-                addresses.add(AddAddressColdHDMFragment.HDMSeedAddressPlaceHolder);
-                intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                        addresses);
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_OK);
                 finish();
                 overridePendingTransition(0, R.anim.slide_out_bottom);
             }
@@ -91,7 +82,7 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
         private UEntropyCollector entropyCollector;
 
         public GenerateThread(UEntropyCollector collector, SecureCharSequence password) {
-            super(null, HDMKeychainUEntropyActivity.this);
+            super(null, HDMKeychainHotUEntropyActivity.this);
             this.password = password;
             entropyCollector = collector;
         }
@@ -115,9 +106,6 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
                 password.wipe();
                 password = null;
             }
-            if (service != null) {
-                service.startAndRegister();
-            }
             entropyCollector.stop();
         }
 
@@ -130,9 +118,6 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
 
             try {
                 entropyCollector.start();
-                if (service != null) {
-                    service.stopAndUnregister();
-                }
 
                 XRandom xRandom = new XRandom(entropyCollector);
 
@@ -157,15 +142,12 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
                     AppSharedPreference.getInstance().setPasswordSeed(chain.createPasswordSeed
                             (password));
                 }
-                password.wipe();
-                // start encrypt
 
                 progress += itemProgress * progressEntryptRate;
                 onProgress(progress);
 
                 entropyCollector.stop();
-                password.wipe();
-                password = null;
+                passwordGetter.setPassword(password);
                 success = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -184,8 +166,8 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
         }
     }
 
-    private static class DialogGenerateHDMKeychainFinalConfirm extends CenterDialog implements View
-            .OnClickListener {
+    private static class DialogGenerateHDMKeychainFinalConfirm extends CenterDialog implements
+            View.OnClickListener {
         private TextView tv;
 
         public DialogGenerateHDMKeychainFinalConfirm(Context context) {
@@ -200,5 +182,17 @@ public class HDMKeychainUEntropyActivity extends UEntropyActivity {
         public void onClick(View v) {
             dismiss();
         }
+    }
+
+    @Override
+    protected void backToFromActivity() {
+        overridePendingTransition(R.anim.uentropy_activity_back_enter, 0);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        passwordGetter = null;
     }
 }

@@ -323,7 +323,7 @@ public abstract class UEntropyActivity extends BaseActivity implements UEntropyC
         });
     }
 
-    private void backToFromActivity() {
+    protected void backToFromActivity() {
         isFinishing = true;
         Class target;
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {

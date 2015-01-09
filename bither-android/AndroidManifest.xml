@@ -185,7 +185,14 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".xrandom.HDMKeychainUEntropyActivity"
+            android:name=".xrandom.HDMKeychainColdUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.HDMKeychainHotUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
