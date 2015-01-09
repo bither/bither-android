@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/action_bar_toggle_button_right"
+                    android:background="@drawable/action_bar_toggle_button_middle"
                     android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -73,27 +73,24 @@
                     android:textOff="@string/add_address_tab_watch_only"
                     android:textOn="@string/add_address_tab_watch_only"
                     android:textSize="14sp" />
+
+                <ToggleButton
+                    android:id="@+id/tbtn_hdm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/action_bar_toggle_button_right"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/add_address_tab_hdm"
+                    android:textOn="@string/add_address_tab_hdm"
+                    android:textSize="14sp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/icon_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="horizontal" >
-
-            <ImageButton
-                android:id="@+id/btn_ok"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_marginRight="-2dp"
-                android:background="@drawable/action_bar_dark_green_right_button"
-                android:gravity="center"
-                android:src="@drawable/action_bar_glyph_done"
-                android:visibility="invisible" />
-        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
