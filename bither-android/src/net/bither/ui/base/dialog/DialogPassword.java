@@ -33,20 +33,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.CheckUtil;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class DialogPassword extends Dialog implements OnDismissListener,
         TextView.OnEditorActionListener {
@@ -352,5 +355,73 @@ public class DialogPassword extends Dialog implements OnDismissListener,
 
     public void setNeedCancelEvent(boolean needCancelEvent) {
         this.needCancelEvent = needCancelEvent;
+    }
+
+    //This class should not be used on main thread
+    public static final class PasswordGetter implements IDialogPasswordListener {
+        public static interface PasswordGetterDelegate {
+            public void beforePasswordDialogShow();
+
+            public void afterPasswordDialogDismiss();
+        }
+
+        private ReentrantLock executeLock = new ReentrantLock();
+        private Condition fullCondition = executeLock.newCondition();
+        private Context context;
+        private SecureCharSequence password;
+        private PasswordGetterDelegate delegate;
+
+        public PasswordGetter(Context context) {
+            this(context, null);
+        }
+
+        public PasswordGetter(Context context, PasswordGetterDelegate delegate) {
+            this.context = context;
+            this.delegate = delegate;
+        }
+
+        public SecureCharSequence getPassword() {
+            if (password == null) {
+                ThreadUtil.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (delegate != null) {
+                            delegate.beforePasswordDialogShow();
+                        }
+                        new DialogPassword(context, PasswordGetter.this).show();
+                    }
+                });
+                try {
+                    executeLock.lockInterruptibly();
+                    fullCondition.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    executeLock.unlock();
+                }
+            }
+            return password;
+        }
+
+        @Override
+        public void onPasswordEntered(SecureCharSequence password) {
+            this.password = password;
+            try {
+                executeLock.lock();
+                fullCondition.signal();
+            } finally {
+                executeLock.unlock();
+            }
+            if (delegate != null) {
+                delegate.afterPasswordDialogDismiss();
+            }
+        }
+
+        public void wipe() {
+            if (password != null) {
+                password.wipe();
+                password = null;
+            }
+        }
     }
 }

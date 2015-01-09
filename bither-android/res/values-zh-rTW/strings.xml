@@ -475,4 +475,11 @@
     <!-- hdm check -->
     <string name="hdm_keychain_check_title_cold">HDM 冷</string>
     <string name="hdm_keychain_check_title_hot">HDM 熱</string>
+
+    <!-- hdm hot add -->
+    <string name="hdm_keychain_add_hot">HDM 熱</string>
+    <string name="hdm_keychain_add_cold">HDM 冷</string>
+    <string name="hdm_keychain_add_server">HDM 服務器</string>
+    <string name="hdm_keychain_add_hot_from_xrandom">使用 XRandom 生成 HDM 熱</string>
+    <string name="hdm_keychain_add_hot_not_from_xrandom">不使用 XRandom 生成 HDM 熱</string>
 </resources>

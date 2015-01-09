@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:padding="30dp"
+        android:layout_gravity="center_horizontal|top">
+
+        <View
+            android:id="@+id/v_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/ll_hot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_hot"
+                android:visibility="invisible"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/hdm_keychain_add_one_part_icon"
+                android:duplicateParentState="true"
+                android:background="@drawable/transparent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_hot"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_cold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_cold"
+                android:visibility="invisible"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/hdm_keychain_add_one_part_icon"
+                android:duplicateParentState="true"
+                android:background="@drawable/transparent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_cold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_server"
+                android:visibility="invisible"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/hdm_keychain_add_one_part_icon"
+                android:duplicateParentState="true"
+                android:background="@drawable/transparent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hdm_keychain_add_server"/>
+
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>
