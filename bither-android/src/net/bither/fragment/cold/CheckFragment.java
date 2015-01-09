@@ -38,12 +38,14 @@ import com.nineoldandroids.animation.Animator.AnimatorListener;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.CheckHeaderView;
 import net.bither.ui.base.CheckHeaderView.CheckHeaderViewListener;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
@@ -55,6 +57,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CheckFragment extends Fragment implements CheckHeaderViewListener {
+    private static final String HDMKeychainAsAddressFaker = "HDM Keychain";
 
     private static final int PrivateKeyCheckThreadCount = 1;
     private static final int ListExpandAnimDuration = 500;
@@ -144,6 +147,10 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             }
         }
 
+        public boolean isHDM() {
+            return Utils.compareString(address, HDMKeychainAsAddressFaker);
+        }
+
         public boolean isWaiting() {
             return waiting;
         }
@@ -166,12 +173,17 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
         final List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
+        if (AddressManager.getInstance().hasHDMKeychain()) {
+            CheckPoint point = new CheckPoint(HDMKeychainAsAddressFaker);
+            checkPoints.add(point);
+            checks.add(CheckUtil.initCheckForHDMKeychain(AddressManager.getInstance()
+                    .getHdmKeychain(), password).setCheckListener(point));
+        }
         for (int i = 0; i < addresses.size(); i++) {
             Address address = addresses.get(i);
             CheckPoint point = new CheckPoint(address.getAddress());
             checkPoints.add(point);
-            checks.add(CheckUtil.initCheckForPrivateKey(address, new SecureCharSequence(password))
-                    .setCheckListener(point));
+            checks.add(CheckUtil.initCheckForPrivateKey(address, password).setCheckListener(point));
         }
         password.wipe();
         adapter.notifyDataSetChanged();
@@ -222,9 +234,22 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
                 h = (ViewHolder) convertView.getTag();
             }
             CheckPoint point = getItem(position);
-            h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
-            h.ibtnFull.setOnClickListener(new AddressFullClick(point
-                    .getAddress()));
+            if (!point.isHDM()) {
+                h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
+            } else {
+                int resourceId = R.string.hdm_keychain_check_title_cold;
+                if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT){
+                    resourceId = R.string.hdm_keychain_check_title_hot;
+                }
+                h.tv.setText(resourceId);
+            }
+            if (!point.isHDM()) {
+                h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
+                h.ibtnFull.setVisibility(View.VISIBLE);
+            } else {
+                h.ibtnFull.setOnClickListener(null);
+                h.ibtnFull.setVisibility(View.INVISIBLE);
+            }
             if (point.isWaiting()) {
                 h.pb.setVisibility(View.GONE);
                 h.iv.setVisibility(View.GONE);
@@ -233,13 +258,13 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
                     h.pb.setVisibility(View.VISIBLE);
                     h.iv.setVisibility(View.GONE);
                 } else {
-                    h.iv.setVisibility(View.VISIBLE);
-                    h.pb.setVisibility(View.GONE);
                     if (point.getResult()) {
                         h.iv.setImageResource(R.drawable.checkmark);
                     } else {
                         h.iv.setImageResource(R.drawable.check_failed);
                     }
+                    h.iv.setVisibility(View.VISIBLE);
+                    h.pb.setVisibility(View.GONE);
                 }
             }
             return convertView;

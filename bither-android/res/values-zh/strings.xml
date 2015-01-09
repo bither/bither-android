@@ -458,7 +458,7 @@
     <string name="verify_message_signature_verify_failed">签名验证未通过</string>
     <string name="sign_message_setting_name">消息签名</string>
 
-    <!-- hdm add -->
+    <!-- hdm cold add -->
     <string name="hdm_cold_seed_count_limit">您只能生成一个 HDM 账户</string>
     <string name="hdm_account_cold_address_list_label">HDM 冷</string>
     <string name="hdm_seed_generation_notice">HDM 结合了分层确定性和多重签名两种技术.\n\nHDM 运用多重签名技术来避免分层确定性钱包的缺陷.\n\n比太使用 2/3 的多重签名来生成 HDM 地址.\n\n三个私钥分别由热钱包, 冷钱包和 HDM 服务器上的确定性种子来生成.</string>
@@ -469,4 +469,8 @@
     <string name="hdm_hot_seed_qr_code">HDM 热种子二维码</string>
     <string name="hdm_cold_seed_word_list">HDM 冷种子</string>
     <string name="hdm_hot_seed_word_list">HDM 热种子</string>
+
+    <!-- hdm check -->
+    <string name="hdm_keychain_check_title_cold">HDM 冷</string>
+    <string name="hdm_keychain_check_title_hot">HDM 热</string>
 </resources>

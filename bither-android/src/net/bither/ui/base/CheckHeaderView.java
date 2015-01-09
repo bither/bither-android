@@ -130,8 +130,8 @@ public class CheckHeaderView extends FrameLayout implements IDialogPasswordListe
     };
 
     public void check() {
-        if (AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses()
-                .size() == 0) {
+        if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses()
+                .size() == 0) && !AddressManager.getInstance().hasHDMKeychain()) {
             DropdownMessage.showDropdownMessage((Activity) getContext(),
                     R.string.private_key_is_empty);
             return;

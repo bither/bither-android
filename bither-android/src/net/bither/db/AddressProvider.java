@@ -85,7 +85,14 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed, boolean isXrandom) {
+    public String getHDMFristAddress(int hdSeedId) {
+        //TODO need to get the first address of hdm keychain
+        return null;
+    }
+
+    @Override
+    public int addHDKey(String encryptSeed, String firstAddress, boolean isXrandom) {
+        //TODO need to store the first address of hdm keychain
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);

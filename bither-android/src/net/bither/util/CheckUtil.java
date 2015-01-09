@@ -21,7 +21,9 @@ import android.provider.Settings;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
@@ -30,6 +32,7 @@ import net.bither.model.Check;
 import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
 
@@ -152,11 +155,29 @@ public class CheckUtil {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                    } finally {
-                        password.wipe();
                     }
+                }
+                return result;
+            }
+        });
+        return check;
+    }
 
-
+    public static Check initCheckForHDMKeychain(final HDMKeychain keychain, final SecureCharSequence password){
+        int titleResource = R.string.hdm_keychain_check_title_cold;
+        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT){
+            titleResource = R.string.hdm_keychain_check_title_hot;
+        }
+        String title = BitherApplication.mContext.getString(titleResource);
+        Check check = new Check(title, new ICheckAction() {
+            @Override
+            public boolean check() {
+                boolean result = false;
+                try{
+                    result = keychain.checkWithPassword(password);
+                    //TODO need to check backup here?
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
                 return result;
             }
