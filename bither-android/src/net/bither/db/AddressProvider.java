@@ -281,9 +281,11 @@ public class AddressProvider implements IAddressProvider {
                 Integer.toString(hdSeedId)
         });
         int maxIndex = 0;
-        int idColumn = cursor.getColumnIndex(AbstractDb.HDMAddressesColumns.HD_SEED_INDEX);
-        if (idColumn != -1) {
-            maxIndex = cursor.getInt(idColumn);
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.HDMAddressesColumns.HD_SEED_INDEX);
+            if (idColumn != -1) {
+                maxIndex = cursor.getInt(idColumn);
+            }
         }
         cursor.close();
         return maxIndex;
@@ -297,9 +299,11 @@ public class AddressProvider implements IAddressProvider {
                 Integer.toString(hdSeedId)
         });
         int count = 0;
-        int idColumn = cursor.getColumnIndex("cnt");
-        if (idColumn != -1) {
-            count = cursor.getInt(idColumn);
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                count = cursor.getInt(idColumn);
+            }
         }
         cursor.close();
         return count;
