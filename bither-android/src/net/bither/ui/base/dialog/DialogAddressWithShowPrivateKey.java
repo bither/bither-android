@@ -74,7 +74,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         }
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKeyOfQRCode(),
+        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getFullEncryptPrivKey(),
                 address.getAddress());
     }
 
@@ -138,7 +138,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getFullEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -170,7 +170,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getFullEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
