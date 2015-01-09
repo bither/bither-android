@@ -14,6 +14,7 @@ import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -319,7 +320,7 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery("select * from addresses  order by sort_time desc", null);
         List<Address> addressList = new ArrayList<Address>();
-        if (c.moveToNext()) {
+        while (c.moveToNext()) {
             Address address = null;
             try {
                 address = applyAddressCursor(c);
@@ -449,6 +450,7 @@ public class AddressProvider implements IAddressProvider {
         if (idColumn != -1) {
             sortTime = c.getLong(idColumn);
         }
+        LogUtil.d("address",encryptPrivateKey);
         address = new Address(addressStr, pubKey, sortTime, isSynced, isXRandom, isTrash, encryptPrivateKey);
 
         return address;

@@ -145,7 +145,7 @@ public class CheckUtil {
                             eckeyFromBackup.clearPrivateKey();
                             if (!Utils.isEmpty(encryptPrivateKey)) {
                                 address.setEncryptPrivKey(encryptPrivateKey);
-                                address.savePrivateKey();
+                                address.updatePrivateKey();
                                 result = true;
                             }
 

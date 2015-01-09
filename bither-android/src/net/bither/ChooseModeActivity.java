@@ -161,12 +161,6 @@ public class ChooseModeActivity extends BaseActivity {
                         progressDialog.dismiss();
                     }
                     setVersionCode();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AddressManager.getInstance().reloadAddress();
-                        }
-                    }).start();
                     initActivity();
                     if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
                         dowloadSpvBlock();
