@@ -384,6 +384,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             this.password = password;
         }
 
+        public boolean hasPassword() {
+            return password != null;
+        }
+
         public SecureCharSequence getPassword() {
             if (password == null) {
                 ThreadUtil.runOnMainThread(new Runnable() {

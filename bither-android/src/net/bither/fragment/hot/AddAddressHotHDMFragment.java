@@ -31,7 +31,11 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.ScanActivity;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
@@ -49,6 +53,7 @@ import java.util.List;
 public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity
         .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate {
     private static final int XRandomRequestCode = 1552;
+    private static final int ScanColdRequestCode = 1623;
 
     private FrameLayout flContainer;
     private View vBg;
@@ -57,6 +62,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private View llServer;
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
+
+    private byte[] coldRoot;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,6 +84,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         lpContainer.height = size;
         lpContainer.width = size;
         llHot.setOnClickListener(hotClick);
+        llCold.setOnClickListener(coldClick);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
     }
@@ -125,10 +133,30 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         }
     };
 
+    private View.OnClickListener coldClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
+                    new Runnable() {
+
+                @Override
+                public void run() {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(getActivity(), ScanActivity.class);
+                            startActivityForResult(intent, ScanColdRequestCode);
+                        }
+                    });
+                }
+            });
+        }
+    };
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (XRandomRequestCode == requestCode && resultCode == Activity.RESULT_OK &&
-                AddressManager.getInstance().hasHDMKeychain()) {
+                AddressManager.getInstance().getHdmKeychain() != null) {
             llCold.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -136,11 +164,40 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 }
             }, 500);
         }
+        if (ScanColdRequestCode == requestCode && resultCode == Activity.RESULT_OK) {
+            String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            try {
+                coldRoot = Utils.hexStringToByteArray(result);
+                if (!dp.isShowing() && passwordGetter.hasPassword()) {
+                    dp.show();
+                }
+                new Thread() {
+                    @Override
+                    public void run() {
+                        AddressManager.getInstance().getHdmKeychain().prepareAddresses(100,
+                                passwordGetter.getPassword(), coldRoot);
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                moveToServer(true);
+                            }
+                        });
+                    }
+                }.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(getActivity(),
+                        R.string.hdm_keychain_add_scan_cold);
+            }
+        }
     }
 
     private void findCurrentStep() {
         moveToHot(false);
-        if (AddressManager.getInstance().hasHDMKeychain()) {
+        if (AddressManager.getInstance().getHdmKeychain() != null) {
             moveToCold(false);
             if (AddressManager.getInstance().getHdmKeychain().uncompletedAddressCount() > 0) {
                 moveToServer(false);
@@ -194,6 +251,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     public void onDestroyView() {
         if (passwordGetter != null) {
             passwordGetter.wipe();
+        }
+        if (coldRoot != null) {
+            Utils.wipeBytes(coldRoot);
         }
         super.onDestroyView();
     }

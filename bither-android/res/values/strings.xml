@@ -483,7 +483,7 @@
     <string name="hdm_account_cold_address_list_label">HDM Cold</string>
     <string name="hdm_seed_generation_notice">HDM is the hybrid of Hierarchical Deterministic &amp; Multisig technics.\n\nHDM uses Multisig to avoid HD wallet\'s vulnerability.\n\nBither uses 2 of 3 Multisig for HDM.\n\nThe 3 keys are generated from 3 HD seeds by Bither Hot, Bither Cold &amp; HDM server.</string>
     <string name="hdm_keychain_xrandom_final_confirm">You have generated 1 HDM account from XRandom.</string>
-    <string name="hdm_cold_pub_key_qr_code_name">HDM Account QR Code</string>
+    <string name="hdm_cold_pub_key_qr_code_name">HDM Cold Account QR Code</string>
     <string name="hdm_server_qr_code_name">HDM Server QR Code</string>
     <string name="hdm_cold_seed_qr_code">HDM Cold Seed QR Code</string>
     <string name="hdm_hot_seed_qr_code">HDM Hot Seed QR Code</string>
@@ -500,4 +500,5 @@
     <string name="hdm_keychain_add_server">HDM Server</string>
     <string name="hdm_keychain_add_hot_from_xrandom">HDM Hot with XRandom</string>
     <string name="hdm_keychain_add_hot_not_from_xrandom">HDM Hot without XRandom</string>
+    <string name="hdm_keychain_add_scan_cold">Scan HDM Cold Account QR Code</string>
 </resources>
