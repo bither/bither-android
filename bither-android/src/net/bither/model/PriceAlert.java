@@ -5,7 +5,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.LogUtil;
-
+import net.bither.bitherj.BitherjSettings.MarketType;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,19 +17,19 @@ public class PriceAlert implements Serializable {
 
     private static final byte[] paLock = new byte[0];
     private static List<PriceAlert> priceAlertList = getPriceAlertFromFile();
-    private BitherSetting.MarketType marketType;
+    private MarketType marketType;
     private ExchangeUtil.Currency currency;
     private double lower;
     private double higher;
 
-    public PriceAlert(BitherSetting.MarketType marketType, double limit, double higher) {
+    public PriceAlert(MarketType marketType, double limit, double higher) {
         this.marketType = marketType;
         this.lower = limit;
         this.higher = higher;
         this.currency = AppSharedPreference.getInstance().getDefaultExchangeType();
     }
 
-    public BitherSetting.MarketType getMarketType() {
+    public MarketType getMarketType() {
         return this.marketType;
     }
 
@@ -76,7 +76,7 @@ public class PriceAlert implements Serializable {
                 "le:" + getExchangeLower() + "," + getCurrency().getSymbol();
     }
 
-    public static PriceAlert getPriceAlert(BitherSetting.MarketType marketType) {
+    public static PriceAlert getPriceAlert(MarketType marketType) {
         for (PriceAlert priceAlert : priceAlertList) {
             if (priceAlert.getMarketType() == marketType) {
                 return priceAlert;

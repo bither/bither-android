@@ -17,8 +17,7 @@
 package net.bither.runnable;
 
 import net.bither.bitherj.core.Block;
-import net.bither.service.BlockchainService;
-import net.bither.util.BlockUtil;
+import net.bither.bitherj.utils.BlockUtil;
 
 
 public class DownloadSpvRunnable extends BaseRunnable {

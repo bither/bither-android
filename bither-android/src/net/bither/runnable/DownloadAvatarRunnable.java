@@ -17,9 +17,9 @@
 
 package net.bither.runnable;
 
-import net.bither.api.DownloadFile;
+import net.bither.bitherj.api.DownloadFile;
 import net.bither.bitherj.utils.Utils;
-import net.bither.http.BitherUrl;
+import net.bither.bitherj.http.BitherUrl;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageFileUtil;
 

@@ -19,8 +19,8 @@ package net.bither.util;
 import android.util.Base64;
 
 import net.bither.BitherSetting;
-import net.bither.api.BitherMytransactionsApi;
-import net.bither.api.GetInSignaturesApi;
+import net.bither.bitherj.api.BitherMytransactionsApi;
+import net.bither.bitherj.api.GetInSignaturesApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
@@ -31,7 +31,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.http.HttpSetting;
+import net.bither.bitherj.http.HttpSetting;
 import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.preference.AppSharedPreference;
 

@@ -18,13 +18,13 @@ package net.bither;
 
 import android.text.format.DateUtils;
 
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.exception.AddressFormatException;
 
 import java.nio.charset.Charset;
 
 
-public class
-        BitherSetting {
+public class BitherSetting {
 
     public static final String DONATE_ADDRESS = "1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3";
     public static final long DONATE_AMOUNT = 100000;
@@ -90,32 +90,6 @@ public class
     }
 
 
-    public enum KlineTimeType {
-        ONE_MINUTE(1), FIVE_MINUTES(5), ONE_HOUR(60), ONE_DAY(1440);
-        private int mVal;
-
-        private KlineTimeType(int val) {
-            this.mVal = val;
-        }
-
-        public int getValue() {
-            return this.mVal;
-        }
-    }
-
-    public enum MarketType {
-        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6), BITFINEX(7),
-        MARKET796(8);
-        private int mVal;
-
-        private MarketType(int val) {
-            this.mVal = val;
-        }
-
-        public int getValue() {
-            return this.mVal;
-        }
-    }
 
 //    public enum Currency {
 //        USD("USD"), CNY("CNY"), EUR("EUR"), GBP("GBP"), JPY("JPY"), KRW("KRW"), CAD("CAD"), AUD("AUD");
@@ -155,7 +129,7 @@ public class
         Normal, TxTooMuch, SpecialAddress
     }
 
-    public static String getMarketName(MarketType marketType) {
+    public static String getMarketName(BitherjSettings.MarketType marketType) {
         String name = "";
         switch (marketType) {
             case HUOBI:

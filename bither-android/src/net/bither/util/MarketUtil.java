@@ -16,11 +16,11 @@
 
 package net.bither.util;
 
-import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-
+import net.bither.bitherj.BitherjSettings.MarketType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class MarketUtil {
 	}
 
 	public static Market getDefaultMarket() {
-		MarketType marketType = AppSharedPreference.getInstance()
+		BitherjSettings.MarketType marketType = AppSharedPreference.getInstance()
 				.getDefaultMarket();
 		Market market = getMarket(marketType);
 		return market;

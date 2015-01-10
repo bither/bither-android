@@ -34,8 +34,9 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-import net.bither.BitherSetting.KlineTimeType;
-import net.bither.BitherSetting.MarketType;
+
+import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.R;
 import net.bither.bitherj.utils.Utils;
 import net.bither.charts.event.ITouchEventResponse;
@@ -63,7 +64,6 @@ import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
 
 import java.util.Date;
 

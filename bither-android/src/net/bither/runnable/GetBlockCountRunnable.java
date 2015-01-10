@@ -16,7 +16,7 @@
 
 package net.bither.runnable;
 
-import net.bither.api.GetBlockCountApi;
+import net.bither.bitherj.api.GetBlockCountApi;
 
 public class GetBlockCountRunnable extends BaseRunnable {
 

@@ -40,7 +40,7 @@ import net.bither.bitherj.exception.BlockStoreException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
-import net.bither.util.BlockUtil;
+import net.bither.bitherj.utils.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;

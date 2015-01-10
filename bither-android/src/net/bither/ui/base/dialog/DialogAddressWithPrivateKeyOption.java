@@ -27,7 +27,8 @@ import net.bither.R;
 import net.bither.SignMessageActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
-import net.bither.http.BitherUrl;
+import net.bither.bitherj.http.BitherUrl;
+import net.bither.util.UIUtil;
 
 import java.util.Locale;
 
@@ -73,11 +74,11 @@ public class DialogAddressWithPrivateKeyOption extends CenterDialog implements V
     public void onDismiss(DialogInterface dialog) {
         switch (clickedView) {
             case R.id.tv_view_on_blockchaininfo:
-                BitherUrl.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
+                UIUtil.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
                         .getAddress());
                 break;
             case R.id.tv_view_on_blockmeta:
-                BitherUrl.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
+                UIUtil.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
                         .getAddress());
                 break;
             case R.id.tv_private_key_management:

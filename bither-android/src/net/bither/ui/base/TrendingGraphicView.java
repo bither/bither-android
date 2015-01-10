@@ -29,7 +29,7 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 
-import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.model.TrendingGraphicData;
 import net.bither.util.TrendingGraphicUtil;
 import net.bither.util.TrendingGraphicUtil.TrendingGraphicListener;

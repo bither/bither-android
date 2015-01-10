@@ -16,7 +16,13 @@
 
 package net.bither.util;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+
 import net.bither.BitherApplication;
+import net.bither.R;
+import net.bither.ui.base.DropdownMessage;
 
 public class UIUtil {
     public static final int SwitchToAbcActionId = 18203;
@@ -34,5 +40,17 @@ public class UIUtil {
 
     public static int getScreenHeight() {
         return BitherApplication.mContext.getResources().getDisplayMetrics().heightPixels;
+    }
+
+    public static void gotoBrower(Activity activity, String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
+        }
+
     }
 }

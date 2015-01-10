@@ -16,8 +16,8 @@
 
 package net.bither.util;
 
-import net.bither.BitherSetting;
-import net.bither.BitherSetting.MarketType;
+
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
@@ -47,6 +47,7 @@ public class ExchangeUtil {
 
         private String symbol;
         private String name;
+
         private Currency(String name, String symbol) {
             this.name = name;
             this.symbol = symbol;
@@ -129,7 +130,7 @@ public class ExchangeUtil {
         return rate;
     }
 
-    public static double getRate(MarketType marketType) {
+    public static double getRate(BitherjSettings.MarketType marketType) {
         Currency defaultCurrency = AppSharedPreference.getInstance()
                 .getDefaultExchangeType();
         Currency currency = getExchangeType(marketType);
@@ -152,7 +153,7 @@ public class ExchangeUtil {
         }
     }
 
-    public static Currency getExchangeType(MarketType marketType) {
+    public static Currency getExchangeType(BitherjSettings.MarketType marketType) {
         switch (marketType) {
             case HUOBI:
             case OKCOIN:

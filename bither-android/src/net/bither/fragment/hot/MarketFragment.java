@@ -33,9 +33,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.adapter.hot.MarketFragmentListAdapter;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
@@ -226,7 +226,7 @@ public class MarketFragment extends Fragment implements Refreshable,
         }
     }
 
-    public void notifPriceAlert(BitherSetting.MarketType marketType) {
+    public void notifPriceAlert(BitherjSettings.MarketType marketType) {
         Market market = MarketUtil.getMarket(marketType);
         header.setMarket(market);
     }

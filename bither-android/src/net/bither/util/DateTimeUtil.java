@@ -19,7 +19,7 @@ package net.bither.util;
 import android.content.Context;
 import android.text.format.DateUtils;
 
-import net.bither.BitherSetting.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.KlineTimeType;
 import net.bither.R;
 
 import java.text.ParseException;

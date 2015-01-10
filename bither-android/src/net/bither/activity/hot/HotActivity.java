@@ -37,6 +37,7 @@ import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.PeerManager;
@@ -424,7 +425,7 @@ public class HotActivity extends BaseFragmentActivity {
         }
     }
 
-    public void notifPriceAlert(BitherSetting.MarketType marketType) {
+    public void notifPriceAlert(BitherjSettings.MarketType marketType) {
         if (mPager.getCurrentItem() != 0) {
             mPager.setCurrentItem(0);
         }

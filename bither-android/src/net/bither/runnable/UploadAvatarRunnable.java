@@ -16,7 +16,7 @@
 
 package net.bither.runnable;
 
-import net.bither.api.UploadAvatarApi;
+import net.bither.bitherj.api.UploadAvatarApi;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ImageFileUtil;

@@ -16,12 +16,15 @@
 
 package net.bither.runnable;
 
-import net.bither.BitherSetting.KlineTimeType;
-import net.bither.BitherSetting.MarketType;
-import net.bither.api.GetKlineApi;
+import net.bither.bitherj.BitherjSettings.MarketType;
+import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.api.GetKlineApi;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.model.KLine;
+import net.bither.util.ChartsUtil;
 import net.bither.util.KLineUtil;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
@@ -47,7 +50,11 @@ public class GetKLineRunnable extends BaseRunnable {
             GetKlineApi getKlineApi = new GetKlineApi(this.marketType,
                     this.mKlineTimeType);
             getKlineApi.handleHttpGet();
-            List<IStickEntity> entityList = getKlineApi.getResult();
+
+        JSONArray jsonArray = new JSONArray(getKlineApi.getResult());
+            List<IStickEntity> entityList = ChartsUtil.formatJsonArray(this.marketType,
+                    this.mKlineTimeType, jsonArray);
+
             kLine = new KLine(this.marketType, this.mKlineTimeType, entityList);
             obtainMessage(HandlerMessage.MSG_SUCCESS, kLine);
             KLineUtil.addKline(kLine);

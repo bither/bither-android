@@ -23,7 +23,7 @@ import com.google.common.primitives.Ints;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.qrcode.QRCodeUtil;

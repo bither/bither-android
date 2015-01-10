@@ -16,8 +16,8 @@
 
 package net.bither.model;
 
-import net.bither.BitherSetting.KlineTimeType;
-import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.charts.entity.IStickEntity;
 
 import java.io.Serializable;
