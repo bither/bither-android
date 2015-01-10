@@ -481,4 +481,7 @@
     <string name="hdm_keychain_add_server">HDM 服务器</string>
     <string name="hdm_keychain_add_hot_from_xrandom">使用 XRandom 生成 HDM 热</string>
     <string name="hdm_keychain_add_hot_not_from_xrandom">不使用 XRandom 生成 HDM 热</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_title">在冷钱包选择 HDM 服务器二维码来签名</string>
+    <string name="hdm_keychain_add_scan_signed_server_qr_code_action">扫描已签名服务器二维码</string>
+    <string name="hdm_keychain_add_signed_server_qr_code_title">已签名服务器二维码</string>
 </resources>

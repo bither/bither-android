@@ -30,6 +30,7 @@ import android.widget.FrameLayout;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
@@ -67,6 +68,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private DialogProgress dp;
 
     private boolean isServerClicked = false;
+
+    private HDMBId hdmBid;
+
     private byte[] coldRoot;
 
     @Override
@@ -91,6 +95,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold.setOnClickListener(coldClick);
         llServer.setOnClickListener(serverClick);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
+        dp.setCancelable(false);
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
     }
 
@@ -186,6 +191,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 AddressManager.getInstance().getHdmKeychain().prepareAddresses
                                         (count, passwordGetter.getPassword(), Arrays.copyOf(coldRoot, coldRoot.length));
                             }
+                            initHDMBidFromColdRoot();
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -228,7 +234,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
         @Override
         public void onClick(View v) {
-            if (coldRoot == null) {
+            if (coldRoot == null && hdmBid == null) {
                 isServerClicked = true;
                 coldClick.onClick(llCold);
                 return;
@@ -239,20 +245,24 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             new Thread() {
                 @Override
                 public void run() {
-                    DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes
-                            (Arrays.copyOf(coldRoot, coldRoot.length));
-                    DeterministicKey key = root.deriveSoftened(0);
-                    String address = Utils.toAddress(key.getPubKeyHash());
-                    root.wipe();
-                    key.wipe();
-                    ThreadUtil.runOnMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp.isShowing()) {
-                                dp.dismiss();
+                    try {
+                        initHDMBidFromColdRoot();
+                        final String preSign = hdmBid.getPreSignString();
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+
                             }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (dp.isShowing()) {
+                            dp.dismiss();
                         }
-                    });
+                    }
                 }
             }.start();
         }
@@ -307,8 +317,22 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llServer.setSelected(true);
     }
 
+    private void initHDMBidFromColdRoot() {
+        if(hdmBid != null){
+            return;
+        }
+        DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
+                (coldRoot, coldRoot.length));
+        DeterministicKey key = root.deriveSoftened(0);
+        String address = Utils.toAddress(key.getPubKeyHash());
+        root.wipe();
+        key.wipe();
+        hdmBid = new HDMBId(address);
+    }
+
     @Override
     public ArrayList<String> getAddresses() {
+        //TODO getAddresses
         return null;
     }
 
