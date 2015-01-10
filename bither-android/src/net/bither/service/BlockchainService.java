@@ -45,7 +45,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
 import net.bither.util.NetworkUtil.NetworkType;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.util.UpgradeUtil;
 
 import org.slf4j.Logger;

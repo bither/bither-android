@@ -41,7 +41,6 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
-import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
@@ -68,7 +67,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.util.UnitUtilWrapper;
 
 

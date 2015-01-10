@@ -20,7 +20,6 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -73,10 +72,9 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;

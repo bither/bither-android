@@ -24,7 +24,7 @@ import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 
 public class CommitTransactionThread extends ThreadNeedService {
     public static interface CommitTransactionListener {

@@ -16,8 +16,8 @@
 
 package net.bither.runnable;
 
-import net.bither.BitherSetting;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.BitherjSettings.AddressType;
+import net.bither.bitherj.utils.TransactionsUtil;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class CheckAddressRunnable extends BaseRunnable {
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
-            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(this.addressList);
+            AddressType addressType = TransactionsUtil.checkAddress(this.addressList);
             obtainMessage(HandlerMessage.MSG_SUCCESS, addressType);
         } catch (Exception e) {
             e.printStackTrace();

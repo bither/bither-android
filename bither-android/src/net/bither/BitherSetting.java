@@ -125,9 +125,6 @@ public class BitherSetting {
 //        return Currency.USD;
 //    }
 
-    public enum AddressType {
-        Normal, TxTooMuch, SpecialAddress
-    }
 
     public static String getMarketName(BitherjSettings.MarketType marketType) {
         String name = "";

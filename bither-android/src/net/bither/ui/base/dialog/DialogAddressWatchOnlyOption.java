@@ -24,7 +24,7 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
-import net.bither.bitherj.http.BitherUrl;
+import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.util.UIUtil;
 
 import java.util.Locale;

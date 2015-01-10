@@ -66,7 +66,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
