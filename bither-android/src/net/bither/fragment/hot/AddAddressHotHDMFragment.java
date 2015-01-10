@@ -31,6 +31,8 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
+import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
@@ -45,6 +47,7 @@ import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,6 +66,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
 
+    private boolean isServerClicked = false;
     private byte[] coldRoot;
 
     @Override
@@ -85,6 +89,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         lpContainer.width = size;
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
+        llServer.setOnClickListener(serverClick);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
     }
@@ -168,32 +173,90 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             try {
                 coldRoot = Utils.hexStringToByteArray(result);
-                if (!dp.isShowing() && passwordGetter.hasPassword()) {
+                final int count = 100 - AddressManager.getInstance().getHdmKeychain()
+                        .uncompletedAddressCount();
+                if (!dp.isShowing() && passwordGetter.hasPassword() && count > 0) {
                     dp.show();
                 }
                 new Thread() {
                     @Override
                     public void run() {
-                        AddressManager.getInstance().getHdmKeychain().prepareAddresses(100,
-                                passwordGetter.getPassword(), coldRoot);
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dp.isShowing()) {
-                                    dp.dismiss();
-                                }
-                                moveToServer(true);
+                        try {
+                            if (count > 0) {
+                                AddressManager.getInstance().getHdmKeychain().prepareAddresses
+                                        (count, passwordGetter.getPassword(), Arrays.copyOf(coldRoot, coldRoot.length));
                             }
-                        });
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    if (isServerClicked) {
+                                        serverClick.onClick(llServer);
+                                    } else {
+                                        moveToServer(true);
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            coldRoot = null;
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    DropdownMessage.showDropdownMessage(getActivity(),
+                                            R.string.hdm_keychain_add_scan_cold);
+                                }
+                            });
+                        }
                     }
                 }.start();
             } catch (Exception e) {
                 e.printStackTrace();
+                coldRoot = null;
                 DropdownMessage.showDropdownMessage(getActivity(),
                         R.string.hdm_keychain_add_scan_cold);
             }
         }
     }
+
+    private View.OnClickListener serverClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (coldRoot == null) {
+                isServerClicked = true;
+                coldClick.onClick(llCold);
+                return;
+            }
+            if (!dp.isShowing()) {
+                dp.show();
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes
+                            (Arrays.copyOf(coldRoot, coldRoot.length));
+                    DeterministicKey key = root.deriveSoftened(0);
+                    String address = Utils.toAddress(key.getPubKeyHash());
+                    root.wipe();
+                    key.wipe();
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                        }
+                    });
+                }
+            }.start();
+        }
+    };
 
     private void findCurrentStep() {
         moveToHot(false);
@@ -224,11 +287,14 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void moveToServer(boolean anim) {
+        if (llServer.isEnabled()) {
+            return;
+        }
         llHot.setEnabled(false);
         llHot.setSelected(true);
         llCold.setEnabled(false);
         llCold.setSelected(true);
-        llServer.setEnabled(false);
+        llServer.setEnabled(true);
         llServer.setSelected(false);
     }
 

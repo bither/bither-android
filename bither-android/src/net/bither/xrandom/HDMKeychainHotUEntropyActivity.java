@@ -102,10 +102,6 @@ public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
         }
 
         private void finishGenerate(BlockchainService service) {
-            if (password != null) {
-                password.wipe();
-                password = null;
-            }
             entropyCollector.stop();
         }
 

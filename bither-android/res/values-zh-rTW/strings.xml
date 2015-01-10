@@ -469,8 +469,8 @@
     <string name="hdm_server_qr_code_name">HDM 服務器二維碼</string>
     <string name="hdm_cold_seed_qr_code">HDM 冷種子二維碼</string>
     <string name="hdm_hot_seed_qr_code">HDM 熱種子二維碼</string>
-    <string name="hdm_cold_seed_word_list">HDM 冷種子</string>
-    <string name="hdm_hot_seed_word_list">HDM 熱種子</string>
+    <string name="hdm_cold_seed_word_list">HDM 密語(冷)</string>
+    <string name="hdm_hot_seed_word_list">HDM 密語(熱)</string>
 
     <!-- hdm check -->
     <string name="hdm_keychain_check_title_cold">HDM 冷</string>

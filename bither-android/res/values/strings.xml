@@ -487,8 +487,8 @@
     <string name="hdm_server_qr_code_name">HDM Server QR Code</string>
     <string name="hdm_cold_seed_qr_code">HDM Cold Seed QR Code</string>
     <string name="hdm_hot_seed_qr_code">HDM Hot Seed QR Code</string>
-    <string name="hdm_cold_seed_word_list">HDM Cold Seed</string>
-    <string name="hdm_hot_seed_word_list">HDM Hot Seed</string>
+    <string name="hdm_cold_seed_word_list">HDM Cold Phrase</string>
+    <string name="hdm_hot_seed_word_list">HDM Hot Phrase</string>
 
     <!-- hdm check -->
     <string name="hdm_keychain_check_title_cold">HDM Cold</string>
