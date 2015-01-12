@@ -150,11 +150,11 @@ public class Base43 {
 		return (byte) remainder;
 	}
 
-	private static byte[] copyOfRange(final byte[] source, final int from,
-			final int to) {
-		final byte[] range = new byte[to - from];
-		System.arraycopy(source, from, range, 0, range.length);
+    private static byte[] copyOfRange(final byte[] source, final int from,
+                                      final int to) {
+        final byte[] range = new byte[to - from];
+        System.arraycopy(source, from, range, 0, range.length);
 
-		return range;
-	}
+        return range;
+    }
 }
