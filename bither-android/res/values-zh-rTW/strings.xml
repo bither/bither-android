@@ -488,4 +488,7 @@
     <string name="hdm_keychain_add_signed_server_qr_code_title">已簽名服務器二維碼</string>
     <string name="hdm_keychain_add_sign_server_qr_code_error">簽名服務器二維碼出錯</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放棄簽名?</string>
+
+    <!-- show hdm address -->
+    <string name="address_group_hdm_hot">HDM 熱</string>
 </resources>

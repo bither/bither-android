@@ -35,6 +35,7 @@ import net.bither.adapter.hot.HotAddressFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -58,6 +59,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private View ivNoAddress;
     private List<Address> watchOnlys;
     private List<Address> privates;
+    private List<HDMAddress> hdms;
     private boolean isLoading = false;
 
     private SelectedThread selectedThread;
@@ -71,22 +73,28 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         broadcastIntentFilter.addAction(BroadcastUtil.ACTION_MARKET);
         watchOnlys = new ArrayList<Address>();
         privates = new ArrayList<Address>();
-
+        hdms = new ArrayList<HDMAddress>();
     }
 
     public void refresh() {
         if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
             List<Address> ws = AddressManager.getInstance().getWatchOnlyAddresses();
+            List<HDMAddress> hs = AddressManager.getInstance().getHdmKeychain() == null ? null :
+                    AddressManager.getInstance().getHdmKeychain().getAddresses();
             watchOnlys.clear();
             privates.clear();
+            hdms.clear();
             if (ws != null) {
                 watchOnlys.addAll(ws);
             }
             if (ps != null) {
                 privates.addAll(ps);
             }
-            if (watchOnlys.size() + privates.size() == 0) {
+            if (hs != null) {
+                hdms.addAll(hs);
+            }
+            if (watchOnlys.size() + privates.size() + hdms.size() == 0) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lv.setVisibility(View.GONE);
             } else {
@@ -115,7 +123,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         View view = inflater.inflate(R.layout.fragment_hot_address, container, false);
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
-        mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, lv);
+        mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         refresh();

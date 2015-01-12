@@ -486,4 +486,7 @@
     <string name="hdm_keychain_add_signed_server_qr_code_title">已签名服务器二维码</string>
     <string name="hdm_keychain_add_sign_server_qr_code_error">签名服务器二维码出错</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放弃签名?</string>
+
+    <!-- show hdm address -->
+    <string name="address_group_hdm_hot">HDM 热</string>
 </resources>

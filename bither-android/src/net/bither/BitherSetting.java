@@ -74,6 +74,7 @@ public class BitherSetting {
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
         public static final String ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG =
                 "address_has_private_key_pass_value_tag";
+        public static final String ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG = "address_is_hdm_key_pass_value_tag";
         public static final String ADDRESS_POSITION_PASS_VALUE_TAG =
                 "address_position_pass_value_tag";
         public static final String ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG = "add_private_key_suggest_check_tag";

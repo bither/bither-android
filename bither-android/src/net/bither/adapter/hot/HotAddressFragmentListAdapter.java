@@ -32,6 +32,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
@@ -42,20 +43,25 @@ import java.util.List;
 
 public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter implements
         PinnedExpandableListViewAdapter {
+    private static final int PrivateGroupTag = 0;
+    private static final int WatchOnlyGroupTag = 1;
+    private static final int HDMGroupTag = 2;
+
     private FragmentActivity activity;
     private List<Address> watchOnlys;
     private List<Address> privates;
+    private List<HDMAddress> hdms;
     private LayoutInflater mLayoutInflater;
     private PinnedHeaderAddressExpandableListView mListView;
     private boolean isHeaderNeedChange = false;
 
-    public HotAddressFragmentListAdapter(FragmentActivity activity,
-                                         List<Address> watchOnlys,
-                                         List<Address> privates,
+    public HotAddressFragmentListAdapter(FragmentActivity activity, List<Address> watchOnlys,
+                                         List<Address> privates, List<HDMAddress> hdms,
                                          PinnedHeaderAddressExpandableListView listView) {
         this.activity = activity;
         this.watchOnlys = watchOnlys;
         this.privates = privates;
+        this.hdms = hdms;
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
@@ -84,8 +90,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     @Override
-    public Boolean getGroup(int groupPosition) {
-        return isPrivate(groupPosition);
+    public Integer getGroup(int groupPosition) {
+        return Integer.valueOf((int) getGroupId(groupPosition));
     }
 
     @Override
@@ -97,12 +103,24 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (watchOnlys != null && watchOnlys.size() > 0) {
             count++;
         }
+        if (hdms != null && hdms.size() > 0) {
+            count++;
+        }
         return count;
     }
 
     @Override
     public long getGroupId(int groupPosition) {
-        return groupPosition;
+        if (groupPosition == getPrivateGroupIndex()) {
+            return PrivateGroupTag;
+        }
+        if (groupPosition == getWatchOnlyGroupIndex()) {
+            return WatchOnlyGroupTag;
+        }
+        if (groupPosition == getHDMGroupIndex()) {
+            return HDMGroupTag;
+        }
+        return -1;
     }
 
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView,
@@ -115,7 +133,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         } else {
             holder = (GroupViewHolder) convertView.getTag();
         }
-        holder.show(isPrivate(groupPosition));
+        holder.show((int) getGroupId(groupPosition));
         convertView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,13 +154,20 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             indicator = (ImageView) v.findViewById(R.id.iv_indicator);
         }
 
-        public void show(boolean isPrivate) {
-            if (isPrivate) {
-                tvGroup.setText(R.string.address_group_private);
-                ivType.setImageResource(R.drawable.address_type_private);
-            } else {
-                tvGroup.setText(R.string.address_group_watch_only);
-                ivType.setImageResource(R.drawable.address_type_watchonly);
+        public void show(int groupTag) {
+            switch (groupTag) {
+                case PrivateGroupTag:
+                    tvGroup.setText(R.string.address_group_private);
+                    ivType.setImageResource(R.drawable.address_type_private);
+                    return;
+                case WatchOnlyGroupTag:
+                    tvGroup.setText(R.string.address_group_watch_only);
+                    ivType.setImageResource(R.drawable.address_type_watchonly);
+                    return;
+                case HDMGroupTag:
+                    tvGroup.setText(R.string.address_group_hdm_hot);
+                    ivType.setImageResource(R.drawable.address_type_hdm);
+                    return;
             }
         }
 
@@ -152,10 +177,15 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     public Address getChild(int groupPosition, int childPosition) {
-        if (isPrivate(groupPosition)) {
-            return privates.get(childPosition);
-        } else {
-            return watchOnlys.get(childPosition);
+        switch ((int) getGroupId(groupPosition)) {
+            case PrivateGroupTag:
+                return privates.get(childPosition);
+            case WatchOnlyGroupTag:
+                return watchOnlys.get(childPosition);
+            case HDMGroupTag:
+                return hdms.get(childPosition);
+            default:
+                return null;
         }
     }
 
@@ -165,18 +195,15 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     public int getChildrenCount(int groupPosition) {
-        if (isPrivate(groupPosition)) {
-            if (privates == null) {
-                return 0;
-            } else {
-                return privates.size();
-            }
-        } else {
-            if (watchOnlys == null) {
-                return 0;
-            } else {
-                return watchOnlys.size();
-            }
+        switch ((int) getGroupId(groupPosition)) {
+            case PrivateGroupTag:
+                return privates == null ? 0 : privates.size();
+            case WatchOnlyGroupTag:
+                return watchOnlys == null ? 0 : watchOnlys.size();
+            case HDMGroupTag:
+                return hdms == null ? 0 : hdms.size();
+            default:
+                return -1;
         }
     }
 
@@ -188,40 +215,38 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             convertView = new AddressFragmentListItemView(activity);
         }
         view = (AddressFragmentListItemView) convertView;
-        Address a;
-        if (isPrivate(groupPosition)) {
-            a = privates.get(childPosition);
-            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition,
-                    isPrivate(groupPosition)));
+        Address a = getChild(groupPosition, childPosition);
+
+        if (a.hasPrivKey()) {
+            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
+                    getGroupId(groupPosition)));
         } else {
-            a = watchOnlys.get(childPosition);
-            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition,
-                    isPrivate(groupPosition)));
+            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
+                    getGroupId(groupPosition)));
         }
         view.setAddress(a);
-        view.setOnClickListener(new AddressDetailClick(childPosition, isPrivate(groupPosition)));
+        view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         return convertView;
     }
 
     private class AddressLongClick implements OnLongClickListener {
         private int position;
-        private boolean isPrivate;
+        private int groupTag;
 
-        public AddressLongClick(int position, boolean isPrivate) {
+        public AddressLongClick(int position, int groupTag) {
             this.position = position;
-            this.isPrivate = isPrivate;
+            this.groupTag = groupTag;
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if (isPrivate) {
-                DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
-                        (activity, privates.get(position));
-                dialog.show();
-            } else {
-                DialogAddressWatchOnlyLongClick dialog = new DialogAddressWatchOnlyLongClick
-                        (activity, watchOnlys.get(position));
-                dialog.show();
+            switch (groupTag) {
+                case PrivateGroupTag:
+                    new DialogAddressWithShowPrivateKey(activity, privates.get(position)).show();
+                case WatchOnlyGroupTag:
+                    new DialogAddressWatchOnlyLongClick(activity, watchOnlys.get(position)).show();
+                case HDMGroupTag:
+                    //TODO hdm address dialog
             }
             return true;
         }
@@ -230,11 +255,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private class AddressDetailClick implements OnClickListener {
         private int position;
         private boolean isPrivate;
+        private boolean isHDM;
         private boolean clicked = false;
 
-        public AddressDetailClick(int position, boolean isPrivate) {
+        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM) {
             this.position = position;
             this.isPrivate = isPrivate;
+            this.isHDM = isHDM;
         }
 
         @Override
@@ -245,6 +272,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
                         isPrivate);
+                intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
                 activity.startActivity(intent);
                 v.postDelayed(new Runnable() {
                     @Override
@@ -278,7 +306,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (groupPosition != mGroupPosition || isHeaderNeedChange) {
             if (groupPosition >= 0 && groupPosition < getGroupCount()) {
                 GroupViewHolder holder = new GroupViewHolder(header);
-                holder.show(isPrivate(groupPosition));
+                holder.show((int) getGroupId(groupPosition));
                 holder.indicator.setVisibility(View.VISIBLE);
                 try {
                     if (android.os.Build.VERSION.SDK_INT > 10) {
@@ -295,11 +323,35 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         isHeaderNeedChange = false;
     }
 
-    private boolean isPrivate(int groupPosition) {
-        if (getGroupCount() == 1) {
-            return privates != null && privates.size() > 0;
-        } else {
-            return groupPosition == 0;
+    public int getPrivateGroupIndex() {
+        if (privates == null || privates.size() == 0) {
+            return -1;
         }
+        return 0;
+    }
+
+    public int getWatchOnlyGroupIndex() {
+        if (watchOnlys == null || watchOnlys.size() == 0) {
+            return -1;
+        }
+        int index = 0;
+        if (privates != null && privates.size() > 0) {
+            index++;
+        }
+        return index;
+    }
+
+    public int getHDMGroupIndex() {
+        if (hdms == null || hdms.size() == 0) {
+            return -1;
+        }
+        int index = 0;
+        if (privates != null && privates.size() > 0) {
+            index++;
+        }
+        if (watchOnlys != null && watchOnlys.size() > 0) {
+            index++;
+        }
+        return index;
     }
 }

@@ -506,4 +506,7 @@
     <string name="hdm_keychain_add_signed_server_qr_code_title">Signed Server QR Code</string>
     <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code error</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">Give up signing?</string>
+
+    <!-- show hdm address -->
+    <string name="address_group_hdm_hot">HDM Hot</string>
 </resources>
