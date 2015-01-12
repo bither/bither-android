@@ -203,7 +203,7 @@ public class AddressProvider implements IAddressProvider {
                     "where hd_seed_id=? and address is not null order by hd_seed_index";
             c = db.rawQuery(sql, new String[]{Integer.toString(keychain.getHdSeedId())});
             while (c.moveToNext()) {
-                HDMAddress hdmAddress = applyHDMAddress(c);
+                HDMAddress hdmAddress = applyHDMAddress(c, keychain);
                 if (hdmAddress != null) {
                     addresses.add(hdmAddress);
                 }
@@ -468,17 +468,15 @@ public class AddressProvider implements IAddressProvider {
 
     }
 
-    private HDMAddress applyHDMAddress(Cursor c) throws AddressFormatException {
+    private HDMAddress applyHDMAddress(Cursor c, HDMKeychain keychain) throws AddressFormatException
+
+    {
         HDMAddress hdmAddress;
-        HDMKeychain hdmKeychain = null;
+
         String address = null;
         boolean isSynced = false;
 
-        int idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.HD_SEED_ID);
-        if (idColumn != -1) {
-            hdmKeychain = new HDMKeychain(c.getInt(idColumn));
-        }
-        idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.ADDRESS);
+        int idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.ADDRESS);
         if (idColumn != -1) {
             address = c.getString(idColumn);
         }
@@ -487,7 +485,7 @@ public class AddressProvider implements IAddressProvider {
             isSynced = c.getInt(idColumn) == 1;
         }
         HDMAddress.Pubs pubs = applyPubs(c);
-        hdmAddress = new HDMAddress(pubs, address, isSynced, hdmKeychain);
+        hdmAddress = new HDMAddress(pubs, address, isSynced, keychain);
         return hdmAddress;
 
     }
