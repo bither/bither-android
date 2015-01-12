@@ -256,7 +256,7 @@ public class AddressProvider implements IAddressProvider {
     public List<HDMAddress.Pubs> getUncompletedHDMAddressPubs(int hdSeedId, int count) {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         List<HDMAddress.Pubs> pubsList = new ArrayList<HDMAddress.Pubs>();
-        Cursor cursor = db.rawQuery("select * from hdm_addresses where hd_seed_id=? pub_key_remote is null limit ? ", new String[]{
+        Cursor cursor = db.rawQuery("select * from hdm_addresses where hd_seed_id=? and pub_key_remote is null limit ? ", new String[]{
                 Integer.toString(hdSeedId), Integer.toString(count)
         });
         try {
@@ -502,15 +502,15 @@ public class AddressProvider implements IAddressProvider {
             hdSeedIndex = c.getInt(idColumn);
         }
         idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.PUB_KEY_HOT);
-        if (idColumn != -1) {
+        if (idColumn != -1 && !c.isNull(idColumn)) {
             hot = Base58.decode(c.getString(idColumn));
         }
         idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.PUB_KEY_COLD);
-        if (idColumn != -1) {
+        if (idColumn != -1 && !c.isNull(idColumn)) {
             cold = Base58.decode(c.getString(idColumn));
         }
         idColumn = c.getColumnIndex(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE);
-        if (idColumn != -1) {
+        if (idColumn != -1 && !c.isNull(idColumn)) {
             remote = Base58.decode(c.getString(idColumn));
         }
         HDMAddress.Pubs pubs = new HDMAddress.Pubs(hot, cold, remote, hdSeedIndex);
