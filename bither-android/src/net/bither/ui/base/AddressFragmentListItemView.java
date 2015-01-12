@@ -47,8 +47,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private BtcToMoneyTextView tvBalanceMoney;
-    public ImageView ivWatchOnlyType;
-    public ImageView ivPrivateType;
+    public ImageView ivType;
     private ImageButton ibtnXRandomLabel;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
@@ -73,8 +72,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llExtra = findViewById(R.id.ll_extra);
         llMonitorFailed = findViewById(R.id.ll_monitor_failed);
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
-        ivWatchOnlyType = (ImageView) findViewById(R.id.iv_type_watchonly);
-        ivPrivateType = (ImageView) findViewById(R.id.iv_type_private);
+        ivType = (ImageView) findViewById(R.id.iv_type);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
@@ -110,12 +108,12 @@ public class AddressFragmentListItemView extends FrameLayout implements
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
-        if (address.hasPrivKey()) {
-            ivWatchOnlyType.setVisibility(GONE);
-            ivPrivateType.setVisibility(VISIBLE);
+        if(address.isHDM()){
+            ivType.setImageResource(R.drawable.address_type_hdm_selector);
+        }else if (address.hasPrivKey()) {
+            ivType.setImageResource(R.drawable.address_type_private_selector);
         } else {
-            ivWatchOnlyType.setVisibility(VISIBLE);
-            ivPrivateType.setVisibility(GONE);
+            ivType.setImageResource(R.drawable.address_type_watchonly_selector);
         }
         if (this.address != null && this.address.isSyncComplete()) {
             tvBalance.setText(UnitUtilWrapper.formatValueWithBold(this.address.getBalance()));

@@ -216,14 +216,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
-
-        if (a.hasPrivKey()) {
-            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
-                    getGroupId(groupPosition)));
-        } else {
-            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
-                    getGroupId(groupPosition)));
-        }
+        view.ivType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
+                getGroupId(groupPosition)));
         view.setAddress(a);
         view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         return convertView;
