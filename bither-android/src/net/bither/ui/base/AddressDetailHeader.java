@@ -234,6 +234,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                     Intent intent = new Intent(activity, SendActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
                             addressPosition);
+                    intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG,
+                            address.isHDM());
                     activity.startActivityForResult(intent, BitherSetting.INTENT_REF
                             .SEND_REQUEST_CODE);
                 } else {

@@ -21,10 +21,10 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ThreadUtil;
-import net.bither.bitherj.utils.TransactionsUtil;
 
 public class CommitTransactionThread extends ThreadNeedService {
     public static interface CommitTransactionListener {
@@ -38,13 +38,16 @@ public class CommitTransactionThread extends ThreadNeedService {
     private Tx tx;
     private CommitTransactionListener listener;
 
-    public CommitTransactionThread(DialogProgress dp, int addressPosition, Tx tx,
+    public CommitTransactionThread(DialogProgress dp, int addressPosition, Tx tx, boolean isHDM,
                                    boolean withPrivateKey, CommitTransactionListener listener)
             throws Exception {
         super(dp, dp.getContext());
         this.addressPosition = addressPosition;
         this.listener = listener;
-        if (withPrivateKey) {
+        if (isHDM) {
+            wallet = AddressManager.getInstance().getHdmKeychain().getAddresses().get
+                    (addressPosition);
+        } else if (withPrivateKey) {
             Address a = AddressManager.getInstance().getPrivKeyAddresses().get(addressPosition);
             if (a.hasPrivKey()) {
                 wallet = a;

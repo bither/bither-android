@@ -20,13 +20,16 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
 
+import java.util.List;
 
 
 public class CompleteTransactionRunnable extends BaseRunnable {
@@ -60,17 +63,22 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         }
     }
 
-    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       SecureCharSequence password) throws Exception {
-        this(addressPosition, amount, toAddress, toAddress, password);
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress, boolean isHDM, SecureCharSequence password) throws Exception {
+        this(addressPosition, amount, toAddress, toAddress, isHDM, password);
     }
 
-    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress, String changeAddress,
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, boolean isHDM,
                                        SecureCharSequence password) throws Exception {
         this.amount = amount;
         this.toAddress = toAddress;
         this.password = password;
-        if (password == null || password.length() == 0) {
+        if (isHDM) {
+            Address a = AddressManager.getInstance().getHdmKeychain().getAddresses().get
+                    (addressPosition);
+            wallet = a;
+            toSign = true;
+        } else if (password == null || password.length() == 0) {
             Address a = AddressManager.getInstance().getWatchOnlyAddresses().get(addressPosition);
             wallet = a;
             toSign = false;
@@ -101,7 +109,19 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                 return;
             }
             if (toSign) {
-                wallet.signTx(tx, password);
+                if (wallet.isHDM()) {
+                    ((HDMAddress) wallet).signTx(tx, password,
+                            new HDMAddress.HDMFetchOtherSignatureDelegate() {
+
+                                @Override
+                                public List<TransactionSignature> getOtherSignature(int addressIndex, CharSequence password, List<byte[]> unsignHash, Tx tx) {
+                                    //TODO HDMFetchOtherSignatureFromServer
+                                    return null;
+                                }
+                            });
+                } else {
+                    wallet.signTx(tx, password);
+                }
                 password.wipe();
                 LogUtil.i("SignTransaction", "sign transaction hash: " + Utils.hashToString(tx
                         .getTxHash()) + " , " +
