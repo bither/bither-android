@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -170,6 +171,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         public void show(int groupTag, boolean touch) {
+            if (touch && resetHeaderChartOverlayRunnable.getHeader() != this) {
+                resetHeaderChartOverlayRunnable.setHeader(this);
+            }
             switch (groupTag) {
                 case PrivateGroupTag:
                     tvGroup.setText(R.string.address_group_private);
@@ -207,6 +211,20 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                         hdmAdd();
                     }
                 });
+            } else {
+                flHDMSeed.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmSeed();
+                    }
+                }));
+
+                flHDMAdd.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmAdd();
+                    }
+                }));
             }
         }
 
@@ -225,6 +243,58 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             dp.setCancelable(false);
             new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()
                     .getHdmKeychain(), dp).show();
+        }
+
+
+        private ResetHeaderChartOverlayRunnable resetHeaderChartOverlayRunnable = new
+                ResetHeaderChartOverlayRunnable();
+
+        private class ResetHeaderChartOverlayRunnable implements Runnable {
+            GroupViewHolder header;
+
+            public void setHeader(GroupViewHolder iv) {
+                this.header = iv;
+            }
+
+            public GroupViewHolder getHeader() {
+                return header;
+            }
+
+            @Override
+            public void run() {
+                if (header != null) {
+                    header.flHDMAdd.setPressed(false);
+                    header.flHDMSeed.setPressed(false);
+                    mListView.requestLayout();
+                }
+            }
+        }
+
+        private class HeaderTouch implements View.OnTouchListener {
+            private Runnable action;
+
+            HeaderTouch(Runnable action) {
+                this.action = action;
+            }
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mListView.removeCallbacks(resetHeaderChartOverlayRunnable);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    v.setPressed(true);
+                }
+                if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    v.setPressed(false);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.setPressed(false);
+                    action.run();
+                }
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    mListView.postDelayed(resetHeaderChartOverlayRunnable, 200);
+                }
+                return true;
+            }
         }
 
         public ImageView indicator;
