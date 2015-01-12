@@ -31,14 +31,64 @@
         android:textColor="#ff0099cc"
         android:textSize="18dp" />
 
-    <ImageView
-        android:id="@+id/iv_type"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="5dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/address_type_private" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:id="@+id/ll_hdm"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/fl_hdm_seed"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ui_touchable_bg"
+                android:layout_marginLeft="2dp"
+                android:focusable="false">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:focusable="false"
+                    android:duplicateParentState="true"
+                    android:src="@drawable/hdm_button_seed_selector"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_hdm_add"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ui_touchable_bg"
+                android:focusable="false">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"
+                    android:focusable="false"
+                    android:duplicateParentState="true"
+                    android:src="@drawable/hdm_button_add_address_selector"/>
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_type"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/address_type_private"/>
+    </FrameLayout>
 </LinearLayout>

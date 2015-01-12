@@ -104,6 +104,11 @@
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.AddHDMAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name="net.bither.activity.hot.GenerateUnsignedTxActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"

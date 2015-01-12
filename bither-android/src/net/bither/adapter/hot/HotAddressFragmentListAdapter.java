@@ -20,24 +20,34 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogHDMAddressOptions;
+import net.bither.ui.base.dialog.DialogHDMSeedOptions;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.WalletUtils;
 
 import java.util.List;
 
@@ -147,33 +157,153 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         return convertView;
     }
 
-    private static class GroupViewHolder {
+    private class GroupViewHolder {
         public GroupViewHolder(View v) {
             tvGroup = (TextView) v.findViewById(R.id.tv_group);
             ivType = (ImageView) v.findViewById(R.id.iv_type);
             indicator = (ImageView) v.findViewById(R.id.iv_indicator);
+            llHDM = (LinearLayout) v.findViewById(R.id.ll_hdm);
+            flHDMAdd = (FrameLayout) v.findViewById(R.id.fl_hdm_add);
+            flHDMSeed = (FrameLayout) v.findViewById(R.id.fl_hdm_seed);
         }
 
         public void show(int groupTag) {
+            show(groupTag, false);
+        }
+
+        public void show(int groupTag, boolean touch) {
+            if (touch && resetHeaderChartOverlayRunnable.getHeader() != this) {
+                resetHeaderChartOverlayRunnable.setHeader(this);
+            }
             switch (groupTag) {
                 case PrivateGroupTag:
                     tvGroup.setText(R.string.address_group_private);
                     ivType.setImageResource(R.drawable.address_type_private);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
                     return;
                 case WatchOnlyGroupTag:
                     tvGroup.setText(R.string.address_group_watch_only);
                     ivType.setImageResource(R.drawable.address_type_watchonly);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
                     return;
                 case HDMGroupTag:
                     tvGroup.setText(R.string.address_group_hdm_hot);
-                    ivType.setImageResource(R.drawable.address_type_hdm);
+                    ivType.setVisibility(View.INVISIBLE);
+                    llHDM.setVisibility(View.VISIBLE);
+                    configureHDM(touch);
                     return;
+            }
+        }
+
+        private void configureHDM(boolean touch) {
+            if (!touch) {
+                flHDMSeed.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmSeed();
+                    }
+                });
+
+                flHDMAdd.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmAdd();
+                    }
+                });
+            } else {
+                flHDMSeed.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmSeed();
+                    }
+                }));
+
+                flHDMAdd.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmAdd();
+                    }
+                }));
+            }
+        }
+
+        private void hdmAdd() {
+            if (WalletUtils.isHDMAddressLimit()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
+                return;
+            }
+            activity.startActivityForResult(new Intent(activity, AddHDMAddressActivity.class),
+                    BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+            activity.overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
+        }
+
+        private void hdmSeed() {
+            DialogProgress dp = new DialogProgress(flHDMSeed.getContext(), R.string.please_wait);
+            dp.setCancelable(false);
+            new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()
+                    .getHdmKeychain(), dp).show();
+        }
+
+
+        private ResetHeaderChartOverlayRunnable resetHeaderChartOverlayRunnable = new
+                ResetHeaderChartOverlayRunnable();
+
+        private class ResetHeaderChartOverlayRunnable implements Runnable {
+            GroupViewHolder header;
+
+            public void setHeader(GroupViewHolder iv) {
+                this.header = iv;
+            }
+
+            public GroupViewHolder getHeader() {
+                return header;
+            }
+
+            @Override
+            public void run() {
+                if (header != null) {
+                    header.flHDMAdd.setPressed(false);
+                    header.flHDMSeed.setPressed(false);
+                    mListView.requestLayout();
+                }
+            }
+        }
+
+        private class HeaderTouch implements View.OnTouchListener {
+            private Runnable action;
+
+            HeaderTouch(Runnable action) {
+                this.action = action;
+            }
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mListView.removeCallbacks(resetHeaderChartOverlayRunnable);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    v.setPressed(true);
+                }
+                if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    v.setPressed(false);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.setPressed(false);
+                    action.run();
+                }
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    mListView.postDelayed(resetHeaderChartOverlayRunnable, 200);
+                }
+                return true;
             }
         }
 
         public ImageView indicator;
         public TextView tvGroup;
         public ImageView ivType;
+        public LinearLayout llHDM;
+        public FrameLayout flHDMSeed;
+        public FrameLayout flHDMAdd;
     }
 
     public Address getChild(int groupPosition, int childPosition) {
@@ -216,37 +346,27 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
-
-        if (a.hasPrivKey()) {
-            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
-                    getGroupId(groupPosition)));
-        } else {
-            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
-                    getGroupId(groupPosition)));
-        }
+        view.ivType.setOnLongClickListener(new AddressLongClick(a));
         view.setAddress(a);
         view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         return convertView;
     }
 
     private class AddressLongClick implements OnLongClickListener {
-        private int position;
-        private int groupTag;
+        private Address address;
 
-        public AddressLongClick(int position, int groupTag) {
-            this.position = position;
-            this.groupTag = groupTag;
+        public AddressLongClick(Address address) {
+            this.address = address;
         }
 
         @Override
         public boolean onLongClick(View v) {
-            switch (groupTag) {
-                case PrivateGroupTag:
-                    new DialogAddressWithShowPrivateKey(activity, privates.get(position)).show();
-                case WatchOnlyGroupTag:
-                    new DialogAddressWatchOnlyLongClick(activity, watchOnlys.get(position)).show();
-                case HDMGroupTag:
-                    //TODO hdm address dialog
+            if (address.isHDM()) {
+                new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
+            } else if (address.hasPrivKey()) {
+                new DialogAddressWithShowPrivateKey(activity, address).show();
+            } else {
+                new DialogAddressWatchOnlyLongClick(activity, address).show();
             }
             return true;
         }
@@ -306,7 +426,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (groupPosition != mGroupPosition || isHeaderNeedChange) {
             if (groupPosition >= 0 && groupPosition < getGroupCount()) {
                 GroupViewHolder holder = new GroupViewHolder(header);
-                holder.show((int) getGroupId(groupPosition));
+                holder.show((int) getGroupId(groupPosition), true);
                 holder.indicator.setVisibility(View.VISIBLE);
                 try {
                     if (android.os.Build.VERSION.SDK_INT > 10) {

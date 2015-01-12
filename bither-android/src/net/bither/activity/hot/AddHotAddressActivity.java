@@ -181,7 +181,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
                 tbtnHDM.setChecked(false);
             }
         } else if (position == 2) {
-            if (WalletUtils.isHDMLimit()) {
+            if (WalletUtils.isHDMKeychainLimit()) {
                 DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
                         R.string.watch_only_address_count_limit);
                 tbtnHDM.setChecked(false);
@@ -207,7 +207,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
             if (!WalletUtils.isWatchOnlyLimit()) {
                 count++;
             }
-            if (!WalletUtils.isHDMLimit()) {
+            if (!WalletUtils.isHDMKeychainLimit()) {
                 count++;
             }
             return count;
@@ -247,7 +247,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     private int getHDMIndex() {
-        if (WalletUtils.isHDMLimit()) {
+        if (WalletUtils.isHDMKeychainLimit()) {
             return -1;
         }
         int index = 0;

@@ -33,7 +33,6 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
-import net.bither.fragment.hot.AddAddressWatchOnlyFragment;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -153,7 +152,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
     private void initPosition(int position) {
         if (position == 1) {
-            if (WalletUtils.isHDMLimit()) {
+            if (WalletUtils.isHDMKeychainLimit()) {
                 DropdownMessage.showDropdownMessage(AddColdAddressActivity.this,
                         R.string.hdm_cold_seed_count_limit);
                 tbtnHDM.setChecked(false);
@@ -189,7 +188,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
             if (!WalletUtils.isPrivateLimit()) {
                 count++;
             }
-            if (!WalletUtils.isHDMLimit()) {
+            if (!WalletUtils.isHDMKeychainLimit()) {
                 count++;
             }
             return count;
@@ -210,7 +209,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
                 if (index == 0) {
                     if (!WalletUtils.isPrivateLimit()) {
                         return getPrivateKeyView();
-                    } else if (!WalletUtils.isHDMLimit()) {
+                    } else if (!WalletUtils.isHDMKeychainLimit()) {
                         return getHDMView();
                     } else {
                         return null;

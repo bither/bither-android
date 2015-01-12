@@ -80,8 +80,8 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         if (AbstractApp.addressIsReady) {
             List<Address> ps = AddressManager.getInstance().getPrivKeyAddresses();
             List<Address> ws = AddressManager.getInstance().getWatchOnlyAddresses();
-            List<HDMAddress> hs = AddressManager.getInstance().getHdmKeychain() == null ? null :
-                    AddressManager.getInstance().getHdmKeychain().getAddresses();
+            List<HDMAddress> hs = AddressManager.getInstance().hasHDMKeychain() ? AddressManager
+                    .getInstance().getHdmKeychain().getAddresses() : null;
             watchOnlys.clear();
             privates.clear();
             hdms.clear();
