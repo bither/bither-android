@@ -25,19 +25,25 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogHDMSeedOptions;
+import net.bither.ui.base.dialog.DialogProgress;
 
 import java.util.List;
 
@@ -147,33 +153,79 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         return convertView;
     }
 
-    private static class GroupViewHolder {
+    private class GroupViewHolder {
         public GroupViewHolder(View v) {
             tvGroup = (TextView) v.findViewById(R.id.tv_group);
             ivType = (ImageView) v.findViewById(R.id.iv_type);
             indicator = (ImageView) v.findViewById(R.id.iv_indicator);
+            llHDM = (LinearLayout) v.findViewById(R.id.ll_hdm);
+            flHDMAdd = (FrameLayout) v.findViewById(R.id.fl_hdm_add);
+            flHDMSeed = (FrameLayout) v.findViewById(R.id.fl_hdm_seed);
         }
 
         public void show(int groupTag) {
+            show(groupTag, false);
+        }
+
+        public void show(int groupTag, boolean touch) {
             switch (groupTag) {
                 case PrivateGroupTag:
                     tvGroup.setText(R.string.address_group_private);
                     ivType.setImageResource(R.drawable.address_type_private);
+                    llHDM.setVisibility(View.GONE);
+                    ivType.setVisibility(View.VISIBLE);
                     return;
                 case WatchOnlyGroupTag:
                     tvGroup.setText(R.string.address_group_watch_only);
                     ivType.setImageResource(R.drawable.address_type_watchonly);
+                    llHDM.setVisibility(View.GONE);
+                    ivType.setVisibility(View.VISIBLE);
                     return;
                 case HDMGroupTag:
                     tvGroup.setText(R.string.address_group_hdm_hot);
-                    ivType.setImageResource(R.drawable.address_type_hdm);
+                    ivType.setVisibility(View.GONE);
+                    llHDM.setVisibility(View.VISIBLE);
+                    configureHDM(touch);
                     return;
             }
+        }
+
+        private void configureHDM(boolean touch) {
+            if (!touch) {
+                flHDMSeed.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmSeed();
+                    }
+                });
+
+                flHDMAdd.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmAdd();
+                    }
+                });
+            }
+        }
+
+        private void hdmAdd() {
+            activity.startActivityForResult(new Intent(activity, AddHDMAddressActivity.class),
+                    BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+        }
+
+        private void hdmSeed() {
+            DialogProgress dp = new DialogProgress(flHDMSeed.getContext(), R.string.please_wait);
+            dp.setCancelable(false);
+            new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()
+                    .getHdmKeychain(), dp).show();
         }
 
         public ImageView indicator;
         public TextView tvGroup;
         public ImageView ivType;
+        public LinearLayout llHDM;
+        public FrameLayout flHDMSeed;
+        public FrameLayout flHDMAdd;
     }
 
     public Address getChild(int groupPosition, int childPosition) {
@@ -300,7 +352,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (groupPosition != mGroupPosition || isHeaderNeedChange) {
             if (groupPosition >= 0 && groupPosition < getGroupCount()) {
                 GroupViewHolder holder = new GroupViewHolder(header);
-                holder.show((int) getGroupId(groupPosition));
+                holder.show((int) getGroupId(groupPosition), true);
                 holder.indicator.setVisibility(View.VISIBLE);
                 try {
                     if (android.os.Build.VERSION.SDK_INT > 10) {
