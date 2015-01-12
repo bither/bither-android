@@ -509,6 +509,7 @@
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM Hot</string>
+    <string name="hdm_address_trash_at_least_one_warn">You can\'t trash all the addresses in an HDM account</string>
 
     <!-- hdm hot address add -->
     <string name="hdm_address_count_limit">Reached HDM address count limit</string>

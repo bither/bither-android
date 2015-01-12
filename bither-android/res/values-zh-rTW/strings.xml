@@ -491,6 +491,7 @@
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM 熱</string>
+    <string name="hdm_address_trash_at_least_one_warn">您不能將HDM 帳號裡的所有地址都放入回收站</string>
 
     <!-- hdm hot address add -->
     <string name="hdm_address_count_limit">已達 HDM 地址數上限</string>

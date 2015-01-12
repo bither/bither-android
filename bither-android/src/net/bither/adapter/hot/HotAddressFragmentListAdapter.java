@@ -44,6 +44,7 @@ import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.dialog.DialogHDMSeedOptions;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.WalletUtils;
@@ -345,31 +346,27 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
-        view.ivType.setOnLongClickListener(new AddressLongClick(childPosition, (int)
-                getGroupId(groupPosition)));
+        view.ivType.setOnLongClickListener(new AddressLongClick(a));
         view.setAddress(a);
         view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         return convertView;
     }
 
     private class AddressLongClick implements OnLongClickListener {
-        private int position;
-        private int groupTag;
+        private Address address;
 
-        public AddressLongClick(int position, int groupTag) {
-            this.position = position;
-            this.groupTag = groupTag;
+        public AddressLongClick(Address address) {
+            this.address = address;
         }
 
         @Override
         public boolean onLongClick(View v) {
-            switch (groupTag) {
-                case PrivateGroupTag:
-                    new DialogAddressWithShowPrivateKey(activity, privates.get(position)).show();
-                case WatchOnlyGroupTag:
-                    new DialogAddressWatchOnlyLongClick(activity, watchOnlys.get(position)).show();
-                case HDMGroupTag:
-                    //TODO hdm address dialog
+            if (address.isHDM()) {
+                new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
+            } else if (address.hasPrivKey()) {
+                new DialogAddressWithShowPrivateKey(activity, address).show();
+            } else {
+                new DialogAddressWatchOnlyLongClick(activity, address).show();
             }
             return true;
         }

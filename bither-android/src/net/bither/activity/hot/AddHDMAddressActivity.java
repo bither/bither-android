@@ -33,6 +33,8 @@ import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -139,9 +141,12 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
 
     private void performAdd() {
         final int count = wvCount.getCurrentItem() + 1;
-        new Thread() {
+        new ThreadNeedService(null, this) {
             @Override
-            public void run() {
+            public void runWithService(BlockchainService service) {
+                if (service != null) {
+                    service.stopAndUnregister();
+                }
                 final List<HDMAddress> as = keychain.completeAddresses(count,
                         passwordGetter.getPassword(), new HDMKeychain.HDMFetchRemotePublicKeys() {
                             @Override
@@ -154,6 +159,9 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                 }
                             }
                         });
+                if (service != null) {
+                    service.startAndRegister();
+                }
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

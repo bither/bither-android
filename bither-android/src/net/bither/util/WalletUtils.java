@@ -25,9 +25,10 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -155,6 +156,13 @@ public class WalletUtils {
             if (Utils.compareString(address,
                     bitherAddressWithPrivateKey.getAddress())) {
                 return bitherAddressWithPrivateKey;
+            }
+        }
+        if (AddressManager.getInstance().hasHDMKeychain()) {
+            for (HDMAddress a : AddressManager.getInstance().getHdmKeychain().getAddresses()) {
+                if (Utils.compareString(address, a.getAddress())) {
+                    return a;
+                }
             }
         }
         return null;

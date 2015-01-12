@@ -34,6 +34,7 @@ import net.bither.R;
 import net.bither.adapter.TransactionListAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.AddressDetailHeader;
@@ -44,6 +45,7 @@ import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.TransactionListItem;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyOption;
 import net.bither.ui.base.dialog.DialogAddressWithPrivateKeyOption;
+import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
@@ -231,7 +233,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
             Dialog dialog = null;
             if(address.isHDM()){
-                //TODO hdm address option dialog
+                new DialogHDMAddressOptions(AddressDetailActivity.this,
+                        (HDMAddress) address).show();
             }else if (address.hasPrivKey()) {
                 dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
             } else {
