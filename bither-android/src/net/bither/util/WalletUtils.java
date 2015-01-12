@@ -175,14 +175,24 @@ public class WalletUtils {
                 .WATCH_ONLY_ADDRESS_COUNT_LIMIT;
     }
 
-    public static boolean isHDMLimit() {
+    public static boolean isHDMKeychainLimit() {
         if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
             return AddressManager.getInstance().getHdmKeychain() != null;
         } else {
             if(AddressManager.getInstance().getHdmKeychain() == null){
                 return false;
             }
-            return AddressManager.getInstance().getHdmKeychain().getAddresses().size() >= BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT;
+            return AddressManager.getInstance().getHdmKeychain().getAllCompletedAddresses().size() > 0;
         }
+    }
+
+    public static boolean isHDMAddressLimit(){
+        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
+            return true;
+        }
+        if(AddressManager.getInstance().getHdmKeychain() == null){
+            return false;
+        }
+        return AddressManager.getInstance().getHdmKeychain().getAllCompletedAddresses().size() >= BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT;
     }
 }
