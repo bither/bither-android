@@ -33,6 +33,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
@@ -243,7 +244,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 @Override
                 public void run() {
                     try {
-                        hdmBid.setSignString(result, passwordGetter.getPassword());
+                        hdmBid.setSignature(result, passwordGetter.getPassword());
                         final List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain()
                                 .completeAddresses(1, passwordGetter.getPassword(),
                                         new HDMKeychain.HDMFetchRemotePublicKeys() {
@@ -251,6 +252,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                             public void completeRemotePublicKeys(CharSequence
                                                                                          password, List<HDMAddress.Pubs> partialPubs) {
                                                 //TODO get pubs from server for hdm
+                                                for(HDMAddress.Pubs p : partialPubs){
+                                                    p.remote = ECKey.generateECKey(new SecureRandom()).getPubKey();
+                                                }
                                             }
                                         });
                         ThreadUtil.runOnMainThread(new Runnable() {
