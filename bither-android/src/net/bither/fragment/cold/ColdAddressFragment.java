@@ -16,6 +16,8 @@
 
 package net.bither.fragment.cold;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,16 +32,26 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
+import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SmoothScrollListRunnable;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSimpleQr;
+import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ColdAddressFragment extends Fragment implements Refreshable,
         Selectable, ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate {
+    private static final int HDMServerQrCodeRequestCode = 1320;
     private ListView lvPrivate;
     private View ivNoAddress;
     private AddressOfColdFragmentListAdapter mAdapter;
@@ -157,6 +169,58 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
 
     @Override
     public void requestHDMServerQrCode(HDMKeychain keychain) {
-        //TODO requestHDMServerQrCode
+        startActivityForResult(new Intent(getActivity(), ScanActivity.class),
+                HDMServerQrCodeRequestCode);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (HDMServerQrCodeRequestCode == requestCode && resultCode == Activity.RESULT_OK) {
+            final String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            if (Utils.isEmpty(result)) {
+                return;
+            }
+            new DialogPassword(getActivity(), new IDialogPasswordListener() {
+                @Override
+                public void onPasswordEntered(final SecureCharSequence password) {
+                    final DialogProgress dp = new DialogProgress(getActivity(),
+                            R.string.please_wait);
+                    dp.setCancelable(false);
+                    dp.show();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                final String signed = AddressManager.getInstance().getHdmKeychain
+                                        ().signHDMBId(result, password);
+                                password.wipe();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (dp.isShowing()) {
+                                            dp.dismiss();
+                                        }
+                                        new DialogSimpleQr(getActivity(), signed,
+                                                R.string.hdm_keychain_add_signed_server_qr_code_title).show();
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (dp.isShowing()) {
+                                            dp.dismiss();
+                                        }
+                                        DropdownMessage.showDropdownMessage(getActivity(),
+                                                R.string.hdm_keychain_add_sign_server_qr_code_error);
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+                }
+            }).show();
+        }
     }
 }

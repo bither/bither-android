@@ -247,13 +247,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         final List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain()
                                 .completeAddresses(1, passwordGetter.getPassword(),
                                         new HDMKeychain.HDMFetchRemotePublicKeys() {
-                                    @Override
-                                    public void completeRemotePublicKeys(CharSequence password,
-                                                                         List<HDMAddress.Pubs>
-                                                                                 partialPubs) {
-                                        //
-                                    }
-                                });
+                                            @Override
+                                            public void completeRemotePublicKeys(CharSequence
+                                                                                         password, List<HDMAddress.Pubs> partialPubs) {
+                                                //TODO get pubs from server for hdm
+                                            }
+                                        });
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {

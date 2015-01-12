@@ -504,5 +504,6 @@
     <string name="hdm_keychain_add_unsigned_server_qr_code_title">Choose HDM Server QR Code on Bither Cold</string>
     <string name="hdm_keychain_add_scan_signed_server_qr_code_action">Scan Signed Server QR Code</string>
     <string name="hdm_keychain_add_signed_server_qr_code_title">Signed Server QR Code</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code error</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">Give up signing?</string>
 </resources>
