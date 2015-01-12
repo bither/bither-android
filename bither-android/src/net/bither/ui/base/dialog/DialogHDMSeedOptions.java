@@ -21,9 +21,11 @@ package net.bither.ui.base.dialog;
 import android.content.Context;
 
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
 
@@ -47,7 +49,10 @@ public class DialogHDMSeedOptions extends DialogWithActions {
     @Override
     protected List<Action> getActions() {
         ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
-        actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_qr_code, new Runnable() {
+        boolean isCold = AppSharedPreference.getInstance().getAppMode() == BitherjSettings
+                .AppMode.COLD;
+        actions.add(new DialogWithActions.Action(isCold ? R.string.hdm_cold_seed_qr_code : R
+                .string.hdm_hot_seed_qr_code, new Runnable() {
             @Override
             public void run() {
                 new DialogPassword(getContext(), new IDialogPasswordListener() {
@@ -58,7 +63,8 @@ public class DialogHDMSeedOptions extends DialogWithActions {
                 }).show();
             }
         }));
-        actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_word_list, new Runnable() {
+        actions.add(new DialogWithActions.Action(isCold ? R.string.hdm_cold_seed_word_list : R
+                .string.hdm_hot_seed_word_list, new Runnable() {
             @Override
             public void run() {
                 new DialogPassword(getContext(), new IDialogPasswordListener() {

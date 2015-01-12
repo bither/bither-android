@@ -489,4 +489,11 @@
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM 热</string>
+
+    <!-- hdm hot address add -->
+    <string name="hdm_address_count_limit">已达 HDM 地址数上限</string>
+    <string name="activity_name_add_hdm_address">增加 HDM 地址</string>
+    <string name="hdm_address_add_count_label">增加多少个 HDM 地址?</string>
+    <string name="hdm_address_add_need_cold_pub">需要 HDM 冷帐号二维码才能继续</string>
+    <string name="hdm_address_add_button">增加</string>
 </resources>

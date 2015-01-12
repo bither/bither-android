@@ -38,12 +38,14 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.dialog.DialogHDMSeedOptions;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.WalletUtils;
 
 import java.util.List;
 
@@ -172,18 +174,18 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 case PrivateGroupTag:
                     tvGroup.setText(R.string.address_group_private);
                     ivType.setImageResource(R.drawable.address_type_private);
-                    llHDM.setVisibility(View.GONE);
+                    llHDM.setVisibility(View.INVISIBLE);
                     ivType.setVisibility(View.VISIBLE);
                     return;
                 case WatchOnlyGroupTag:
                     tvGroup.setText(R.string.address_group_watch_only);
                     ivType.setImageResource(R.drawable.address_type_watchonly);
-                    llHDM.setVisibility(View.GONE);
+                    llHDM.setVisibility(View.INVISIBLE);
                     ivType.setVisibility(View.VISIBLE);
                     return;
                 case HDMGroupTag:
                     tvGroup.setText(R.string.address_group_hdm_hot);
-                    ivType.setVisibility(View.GONE);
+                    ivType.setVisibility(View.INVISIBLE);
                     llHDM.setVisibility(View.VISIBLE);
                     configureHDM(touch);
                     return;
@@ -209,8 +211,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         private void hdmAdd() {
+            if (WalletUtils.isHDMAddressLimit()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
+                return;
+            }
             activity.startActivityForResult(new Intent(activity, AddHDMAddressActivity.class),
                     BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+            activity.overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
         }
 
         private void hdmSeed() {
