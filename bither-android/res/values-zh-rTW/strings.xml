@@ -469,8 +469,8 @@
     <string name="hdm_server_qr_code_name">HDM 服務器二維碼</string>
     <string name="hdm_cold_seed_qr_code">HDM 冷種子二維碼</string>
     <string name="hdm_hot_seed_qr_code">HDM 熱種子二維碼</string>
-    <string name="hdm_cold_seed_word_list">HDM 冷種子</string>
-    <string name="hdm_hot_seed_word_list">HDM 熱種子</string>
+    <string name="hdm_cold_seed_word_list">HDM 密語(冷)</string>
+    <string name="hdm_hot_seed_word_list">HDM 密語(熱)</string>
 
     <!-- hdm check -->
     <string name="hdm_keychain_check_title_cold">HDM 冷</string>
@@ -483,4 +483,9 @@
     <string name="hdm_keychain_add_hot_from_xrandom">使用 XRandom 生成 HDM 熱</string>
     <string name="hdm_keychain_add_hot_not_from_xrandom">不使用 XRandom 生成 HDM 熱</string>
     <string name="hdm_keychain_add_scan_cold">掃描 HDM 冷帳號二維碼</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_title">在冷錢包選擇HDM 服務器二維碼來簽名</string>
+    <string name="hdm_keychain_add_scan_signed_server_qr_code_action">掃描已簽名服務器二維碼</string>
+    <string name="hdm_keychain_add_signed_server_qr_code_title">已簽名服務器二維碼</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">簽名服務器二維碼出錯</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放棄簽名?</string>
 </resources>

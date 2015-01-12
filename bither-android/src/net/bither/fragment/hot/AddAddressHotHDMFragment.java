@@ -30,12 +30,17 @@ import android.widget.FrameLayout;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
+import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
@@ -45,6 +50,7 @@ import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -54,6 +60,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
+    private static final int ServerQRCodeRequestCode = 1135;
 
     private FrameLayout flContainer;
     private View vBg;
@@ -62,6 +69,10 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private View llServer;
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
+
+    private boolean isServerClicked = false;
+
+    private HDMBId hdmBid;
 
     private byte[] coldRoot;
 
@@ -85,7 +96,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         lpContainer.width = size;
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
+        llServer.setOnClickListener(serverClick);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
+        dp.setCancelable(false);
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
     }
 
@@ -149,7 +162,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         }
                     });
                 }
-            });
+            }).show();
         }
     };
 
@@ -168,32 +181,151 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             try {
                 coldRoot = Utils.hexStringToByteArray(result);
-                if (!dp.isShowing() && passwordGetter.hasPassword()) {
+                final int count = 100 - AddressManager.getInstance().getHdmKeychain()
+                        .uncompletedAddressCount();
+                if (!dp.isShowing() && passwordGetter.hasPassword() && count > 0) {
                     dp.show();
                 }
                 new Thread() {
                     @Override
                     public void run() {
-                        AddressManager.getInstance().getHdmKeychain().prepareAddresses(100,
-                                passwordGetter.getPassword(), coldRoot);
+                        try {
+                            if (count > 0) {
+                                AddressManager.getInstance().getHdmKeychain().prepareAddresses
+                                        (count, passwordGetter.getPassword(), Arrays.copyOf(coldRoot, coldRoot.length));
+                            }
+                            initHDMBidFromColdRoot();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    if (isServerClicked) {
+                                        serverClick.onClick(llServer);
+                                    } else {
+                                        moveToServer(true);
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            coldRoot = null;
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    DropdownMessage.showDropdownMessage(getActivity(),
+                                            R.string.hdm_keychain_add_scan_cold);
+                                }
+                            });
+                        }
+                    }
+                }.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+                coldRoot = null;
+                DropdownMessage.showDropdownMessage(getActivity(),
+                        R.string.hdm_keychain_add_scan_cold);
+            }
+        }
+        if (ServerQRCodeRequestCode == requestCode && resultCode == Activity.RESULT_OK) {
+            final String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            if (hdmBid == null) {
+                return;
+            }
+            if (!dp.isShowing()) {
+                dp.show();
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        hdmBid.setSignString(result, passwordGetter.getPassword());
+                        final List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain()
+                                .completeAddresses(1, passwordGetter.getPassword(),
+                                        new HDMKeychain.HDMFetchRemotePublicKeys() {
+                                            @Override
+                                            public void completeRemotePublicKeys(CharSequence
+                                                                                         password, List<HDMAddress.Pubs> partialPubs) {
+                                                //TODO get pubs from server for hdm
+                                            }
+                                        });
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
-                                moveToServer(true);
+                                if (as.size() > 0) {
+
+                                    moveToFinal();
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
                             }
                         });
                     }
-                }.start();
-            } catch (Exception e) {
-                e.printStackTrace();
-                DropdownMessage.showDropdownMessage(getActivity(),
-                        R.string.hdm_keychain_add_scan_cold);
-            }
+                }
+            }.start();
         }
     }
+
+    private View.OnClickListener serverClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (coldRoot == null && hdmBid == null) {
+                isServerClicked = true;
+                coldClick.onClick(llCold);
+                return;
+            }
+            if (!dp.isShowing()) {
+                dp.show();
+            }
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        initHDMBidFromColdRoot();
+                        final String preSign = hdmBid.getPreSignString();
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                new DialogHDMServerUnsignedQRCode(getActivity(), preSign,
+                                        new DialogHDMServerUnsignedQRCode
+                                                .DialogHDMServerUnsignedQRCodeListener() {
+                                    @Override
+                                    public void scanSignedHDMServerQRCode() {
+                                        startActivityForResult(new Intent(getActivity(),
+                                                ScanActivity.class), ServerQRCodeRequestCode);
+                                    }
+                                }).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
+                    }
+                }
+            }.start();
+        }
+    };
 
     private void findCurrentStep() {
         moveToHot(false);
@@ -224,11 +356,14 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void moveToServer(boolean anim) {
+        if (llServer.isEnabled()) {
+            return;
+        }
         llHot.setEnabled(false);
         llHot.setSelected(true);
         llCold.setEnabled(false);
         llCold.setSelected(true);
-        llServer.setEnabled(false);
+        llServer.setEnabled(true);
         llServer.setSelected(false);
     }
 
@@ -239,11 +374,35 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold.setSelected(true);
         llServer.setEnabled(false);
         llServer.setSelected(true);
+        llServer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ((AddHotAddressActivity) getActivity()).save();
+            }
+        }, 500);
+    }
+
+    private void initHDMBidFromColdRoot() {
+        if(hdmBid != null){
+            return;
+        }
+        DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
+                (coldRoot, coldRoot.length));
+        DeterministicKey key = root.deriveSoftened(0);
+        String address = Utils.toAddress(key.getPubKeyHash());
+        root.wipe();
+        key.wipe();
+        hdmBid = new HDMBId(address);
     }
 
     @Override
     public ArrayList<String> getAddresses() {
-        return null;
+        List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain().getAddresses();
+        ArrayList<String> s = new ArrayList<String>();
+        for (HDMAddress a : as) {
+            s.add(a.getAddress());
+        }
+        return s;
     }
 
 

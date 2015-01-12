@@ -487,8 +487,8 @@
     <string name="hdm_server_qr_code_name">HDM Server QR Code</string>
     <string name="hdm_cold_seed_qr_code">HDM Cold Seed QR Code</string>
     <string name="hdm_hot_seed_qr_code">HDM Hot Seed QR Code</string>
-    <string name="hdm_cold_seed_word_list">HDM Cold Seed</string>
-    <string name="hdm_hot_seed_word_list">HDM Hot Seed</string>
+    <string name="hdm_cold_seed_word_list">HDM Cold Phrase</string>
+    <string name="hdm_hot_seed_word_list">HDM Hot Phrase</string>
 
     <!-- hdm check -->
     <string name="hdm_keychain_check_title_cold">HDM Cold</string>
@@ -501,4 +501,9 @@
     <string name="hdm_keychain_add_hot_from_xrandom">HDM Hot with XRandom</string>
     <string name="hdm_keychain_add_hot_not_from_xrandom">HDM Hot without XRandom</string>
     <string name="hdm_keychain_add_scan_cold">Scan HDM Cold Account QR Code</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_title">Choose HDM Server QR Code on Bither Cold</string>
+    <string name="hdm_keychain_add_scan_signed_server_qr_code_action">Scan Signed Server QR Code</string>
+    <string name="hdm_keychain_add_signed_server_qr_code_title">Signed Server QR Code</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code error</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">Give up signing?</string>
 </resources>
