@@ -80,8 +80,8 @@
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
-    <string name="add_address_tab_watch_only">Watch Only</string>
-    <string name="add_address_tab_private_key">Private Key</string>
+    <string name="add_address_tab_watch_only">Monitor</string>
+    <string name="add_address_tab_private_key">Private</string>
     <string name="add_address_coming_soon">Coming Soon…</string>
     <string name="add_address_scan">Scan</string>
     <string name="add_address_delete">Delete</string>

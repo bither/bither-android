@@ -1,19 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffcccccc" >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffcccccc">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/title_bar_below_margin" >
+        android:layout_marginTop="@dimen/title_bar_below_margin">
 
         <net.bither.ui.base.OverScrollableViewPager
             android:id="@+id/pager"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"/>
 
-        <include layout="@layout/layout_dropdown_message" />
+        <include layout="@layout/layout_dropdown_message"/>
     </FrameLayout>
 
     <LinearLayout
@@ -22,7 +22,7 @@
         android:layout_height="49.0dip"
         android:layout_gravity="top"
         android:background="@drawable/action_bar_black_bg"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/ibtn_cancel"
@@ -30,19 +30,19 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center"
             android:background="@drawable/action_bar_black_left_button"
-            android:src="@drawable/action_bar_glyph_cancel" />
+            android:src="@drawable/action_bar_glyph_cancel"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <ToggleButton
                     android:id="@+id/tbtn_private_key"
@@ -57,7 +57,7 @@
                     android:textColor="@color/white"
                     android:textOff="@string/add_address_tab_private_key"
                     android:textOn="@string/add_address_tab_private_key"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
 
                 <ToggleButton
                     android:id="@+id/tbtn_watch_only"
@@ -72,7 +72,7 @@
                     android:textColor="@color/white"
                     android:textOff="@string/add_address_tab_watch_only"
                     android:textOn="@string/add_address_tab_watch_only"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
 
                 <ToggleButton
                     android:id="@+id/tbtn_hdm"
@@ -91,6 +91,13 @@
             </LinearLayout>
         </LinearLayout>
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center"
+            android:background="@drawable/action_bar_black_left_button"
+            android:src="@drawable/action_bar_glyph_cancel"
+            android:visibility="invisible"/>
     </LinearLayout>
 
 </RelativeLayout>
