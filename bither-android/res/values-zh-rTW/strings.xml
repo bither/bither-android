@@ -92,6 +92,7 @@
     <string name="password_wrong">密碼錯誤</string>
     <string name="decrypt_failed">解密失敗</string>
     <string name="wallet_loading">錢包初始化中, 請稍後再試.</string>
+    <string name="add_address_watch_only_scanned_address_warning">比太只能監控冷錢包監控二維碼,\n不能監控其它地址</string>
 
 
     <!-- send -->

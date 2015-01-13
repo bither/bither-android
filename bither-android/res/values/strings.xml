@@ -79,7 +79,6 @@
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
-
     <!-- add address -->
     <string name="add_address_tab_watch_only">Watch Only</string>
     <string name="add_address_tab_private_key">Private Key</string>
@@ -100,6 +99,7 @@
     <string name="password_wrong">Wrong Password</string>
     <string name="decrypt_failed">Decryption Failed</string>
     <string name="wallet_loading">Loading wallets, Please try again later.</string>
+    <string name="add_address_watch_only_scanned_address_warning">Bither can only monitor Bither Cold monitor QR code,\nnot other addresses.</string>
 
     <!-- send -->
     <string name="send_progress_dialog_message">Sending</string>
@@ -517,4 +517,5 @@
     <string name="hdm_address_add_count_label">How many HDM addresses to add?</string>
     <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
     <string name="hdm_address_add_button">Add</string>
+
 </resources>

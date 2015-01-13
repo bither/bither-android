@@ -187,12 +187,12 @@ public class HDMTriangleBgView extends View {
         }
 
         private void animCompleted() {
-            if (animCompletion != null) {
-                post(animCompletion);
-            }
             animating = false;
             beginAnimTime = -1;
             filledRate = 1;
+            if (animCompletion != null) {
+                post(animCompletion);
+            }
         }
 
         @Override

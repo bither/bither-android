@@ -93,6 +93,7 @@
     <string name="password_wrong">密码错误</string>
     <string name="decrypt_failed">解密失败</string>
     <string name="wallet_loading">钱包初始化中, 请稍后再试.</string>
+    <string name="add_address_watch_only_scanned_address_warning">比太只能监控冷钱包监控二维码,\n不能监控其它地址</string>
 
     <!-- send -->
     <string name="send_progress_dialog_message">发送中</string>
