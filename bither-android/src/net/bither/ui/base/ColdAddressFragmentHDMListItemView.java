@@ -29,6 +29,7 @@ import net.bither.R;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.ui.base.dialog.DialogHDMSeedOptions;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -84,71 +85,10 @@ public class ColdAddressFragmentHDMListItemView extends FrameLayout {
         }
     };
 
-    private OnClickListener seedOptionClick = new DialogWithActions
-            .DialogWithActionsClickListener() {
-
+    private OnClickListener seedOptionClick = new OnClickListener() {
         @Override
-        protected List<DialogWithActions.Action> getActions() {
-            ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
-            actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_qr_code,
-                    new Runnable() {
-                @Override
-                public void run() {
-                    new DialogPassword(getContext(), new IDialogPasswordListener() {
-                        @Override
-                        public void onPasswordEntered(SecureCharSequence password) {
-                            showHDMSeedQRCode(password);
-                        }
-                    }).show();
-                }
-            }));
-            actions.add(new DialogWithActions.Action(R.string.hdm_cold_seed_word_list,
-                    new Runnable() {
-                @Override
-                public void run() {
-                    new DialogPassword(getContext(), new IDialogPasswordListener() {
-                        @Override
-                        public void onPasswordEntered(SecureCharSequence password) {
-                            showHDMSeed(password);
-                        }
-                    }).show();
-                }
-            }));
-            return actions;
-        }
-
-        private void showHDMSeedQRCode(SecureCharSequence password){
-            password.wipe();
-            String content = keychain.getEncryptedSeed();
-            new DialogSimpleQr(getContext(), content, R.string.hdm_cold_seed_qr_code).show();
-        }
-
-        private void showHDMSeed(final SecureCharSequence password){
-            if(!dp.isShowing()){
-                dp.show();
-            }
-            new Thread(){
-                @Override
-                public void run() {
-                    final ArrayList<String> words = new ArrayList<String>();
-                    try {
-                        words.addAll(keychain.getSeedWords(password));
-                    } catch (MnemonicException.MnemonicLengthException e) {
-                        e.printStackTrace();
-                    }
-                    if(words.size() > 0){
-                        post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(dp.isShowing()){
-                                    dp.dismiss();
-                                }
-                                new DialogHDMSeedWordList(getContext(), words).show();
-                            }
-                        });
-                    }
-                }
-            }.start();
+        public void onClick(View v) {
+            new DialogHDMSeedOptions(getContext(), keychain, dp).show();
         }
     };
 

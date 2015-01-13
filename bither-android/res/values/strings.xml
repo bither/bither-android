@@ -509,4 +509,12 @@
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM Hot</string>
+    <string name="hdm_address_trash_at_least_one_warn">You can\'t trash all the addresses in an HDM account</string>
+
+    <!-- hdm hot address add -->
+    <string name="hdm_address_count_limit">Reached HDM address count limit</string>
+    <string name="activity_name_add_hdm_address">Add HDM Address</string>
+    <string name="hdm_address_add_count_label">How many HDM addresses to add?</string>
+    <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
+    <string name="hdm_address_add_button">Add</string>
 </resources>

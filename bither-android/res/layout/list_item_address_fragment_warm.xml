@@ -169,7 +169,7 @@
                     android:src="@drawable/xrandom_address_label_selector"/>
 
                 <ImageView
-                    android:id="@+id/iv_type_watchonly"
+                    android:id="@+id/iv_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -178,17 +178,6 @@
                     android:paddingBottom="5dp"
                     android:paddingRight="@dimen/card_padding"
                     android:src="@drawable/address_type_watchonly"/>
-
-                <ImageView
-                    android:id="@+id/iv_type_private"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:paddingRight="@dimen/card_padding"
-                    android:src="@drawable/address_type_private_selector"/>
             </LinearLayout>
         </LinearLayout>
 

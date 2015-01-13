@@ -39,6 +39,8 @@ import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
@@ -240,11 +242,14 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             if (!dp.isShowing()) {
                 dp.show();
             }
-            new Thread() {
+            new ThreadNeedService(null, getActivity()) {
                 @Override
-                public void run() {
+                public void runWithService(BlockchainService service) {
                     try {
                         hdmBid.setSignature(result, passwordGetter.getPassword());
+                        if (service != null) {
+                            service.stopAndUnregister();
+                        }
                         final List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain()
                                 .completeAddresses(1, passwordGetter.getPassword(),
                                         new HDMKeychain.HDMFetchRemotePublicKeys() {
@@ -257,6 +262,10 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                 }
                                             }
                                         });
+
+                        if (service != null) {
+                            service.startAndRegister();
+                        }
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
