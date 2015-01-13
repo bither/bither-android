@@ -100,8 +100,8 @@ public class TrendingGraphicView extends View {
 
     public void setMarketType(MarketType market) {
         removeCallbacks(retryRunnable);
-        TrendingGraphicData data = TrendingGraphicUtil.getTrendingGraphicData(
-                market, new TrendingGraphicListener() {
+        TrendingGraphicData data = TrendingGraphicUtil.getTrendingGraphicData(market,
+                new TrendingGraphicListener() {
 
                     @Override
                     public void success(TrendingGraphicData trendingGraphicData) {
@@ -112,8 +112,7 @@ public class TrendingGraphicView extends View {
                     public void error() {
                         postDelayed(retryRunnable, 30000);
                     }
-                }
-        );
+                });
         if (market != this.market && data == null) {
             setData(null);
         }
@@ -129,11 +128,10 @@ public class TrendingGraphicView extends View {
             return;
         }
         if (rateAnimation == null) {
-            rateAnimation = new RateAnimation(TrendingGraphicData
-                    .getEmptyData().getRates(), data.getRates());
+            rateAnimation = new RateAnimation(TrendingGraphicData.getEmptyData().getRates(),
+                    data.getRates());
         } else {
-            RateAnimation anim = new RateAnimation(
-                    rateAnimation.getCurrenRates(), data.getRates());
+            RateAnimation anim = new RateAnimation(rateAnimation.getCurrenRates(), data.getRates());
             rateAnimation = anim;
         }
         causeDraw();
@@ -264,8 +262,7 @@ public class TrendingGraphicView extends View {
             for (int i = 0;
                  i < rates.length;
                  i++) {
-                rates[i] = progress * (endRates[i] - startRates[i])
-                        + startRates[i];
+                rates[i] = progress * (endRates[i] - startRates[i]) + startRates[i];
             }
             return rates;
         }
@@ -277,9 +274,7 @@ public class TrendingGraphicView extends View {
         }
 
         public boolean isRunning() {
-            if (startTime > 0
-                    && startTime + TransformDuration > System
-                    .currentTimeMillis()) {
+            if (startTime > 0 && startTime + TransformDuration > System.currentTimeMillis()) {
                 return true;
             }
             return false;
