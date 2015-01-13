@@ -330,6 +330,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 coldClick.onClick(llCold);
                 return;
             }
+            if (dp == null) {
+                dp = new DialogProgress(getActivity(), R.string.please_wait);
+            }
             if (!dp.isShowing()) {
                 dp.show();
             }
@@ -448,7 +451,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void initHDMBidFromColdRoot() {
-        if (hdmBid != null) {
+        if (hdmBid == null) {
             if (hdmBid != null) {
                 return;
             }
