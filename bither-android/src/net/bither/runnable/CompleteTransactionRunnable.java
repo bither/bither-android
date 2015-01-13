@@ -18,9 +18,11 @@ package net.bither.runnable;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.api.SignatureHDMApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
@@ -91,9 +93,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             toSign = true;
         }
-        if(!Utils.isEmpty(changeAddress)){
+        if (!Utils.isEmpty(changeAddress)) {
             this.changeAddress = changeAddress;
-        }else{
+        } else {
             this.changeAddress = wallet.getAddress();
         }
     }
@@ -115,7 +117,15 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
                                 @Override
                                 public List<TransactionSignature> getOtherSignature(int addressIndex, CharSequence password, List<byte[]> unsignHash, Tx tx) {
-                                    //TODO HDMFetchOtherSignatureFromServer
+                                    try {
+                                        HDMBId hdmbId = HDMBId.getHDMBidFromDb();
+                                        byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
+                                        SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb().getAddress(), addressIndex, decryptedPassword, unsignHash);
+                                        signatureHDMApi.handleHttpPost();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
                                     return null;
                                 }
                             });
