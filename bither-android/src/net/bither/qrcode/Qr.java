@@ -16,11 +16,8 @@
 
 package net.bither.qrcode;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.widget.ImageView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -32,22 +29,12 @@ import com.google.zxing.qrcode.decoder.Version;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.ui.base.dialog.CenterDialog;
-import net.bither.util.Base43;
 import net.bither.util.LogUtil;
-import net.bither.util.ThreadUtil;
-import net.bither.util.UIUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
 
@@ -156,46 +143,6 @@ public class Qr {
         }
     }
 
-    public static String encodeBinary(@Nonnull final byte[] bytes) {
-        try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(bytes.length);
-            final GZIPOutputStream gos = new GZIPOutputStream(bos);
-            gos.write(bytes);
-            gos.close();
-
-            final byte[] gzippedBytes = bos.toByteArray();
-            final boolean useCompressioon = gzippedBytes.length < bytes.length;
-
-            final StringBuilder str = new StringBuilder();
-            str.append(useCompressioon ? 'Z' : '-');
-            str.append(Base43.encode(useCompressioon ? gzippedBytes : bytes));
-
-            return str.toString();
-        } catch (final IOException x) {
-            throw new RuntimeException(x);
-        }
-    }
-
-    public static byte[] decodeBinary(@Nonnull final String content) throws IOException {
-        final boolean useCompression = content.charAt(0) == 'Z';
-        final byte[] bytes = Base43.decode(content.substring(1));
-
-        InputStream is = new ByteArrayInputStream(bytes);
-        if (useCompression) {
-            is = new GZIPInputStream(is);
-        }
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        final byte[] buf = new byte[4096];
-        int read;
-        while (-1 != (read = is.read(buf))) {
-            baos.write(buf, 0, read);
-        }
-        baos.close();
-        is.close();
-
-        return baos.toByteArray();
-    }
 
     public static void printQrContentSize() {
         for (int versionNum = 1;

@@ -243,10 +243,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             switch (groupTag) {
                 case PrivateGroupTag:
                     new DialogAddressWithShowPrivateKey(activity, privates.get(position)).show();
+                    break;
                 case WatchOnlyGroupTag:
                     new DialogAddressWatchOnlyLongClick(activity, watchOnlys.get(position)).show();
+                    break;
                 case HDMGroupTag:
                     //TODO hdm address dialog
+                    break;
             }
             return true;
         }
