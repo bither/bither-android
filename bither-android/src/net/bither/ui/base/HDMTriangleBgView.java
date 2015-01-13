@@ -38,7 +38,7 @@ public class HDMTriangleBgView extends View {
 
     private static final Paint paint = new Paint();
     private static final float LineWidth = UIUtil.dip2pix(2);
-    private static final int LineColor = Color.argb(30, 0, 0, 0);
+    private static final int LineColor = Color.argb(15, 0, 0, 0);
 
     static {
         paint.setColor(LineColor);
