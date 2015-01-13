@@ -19,6 +19,7 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -32,11 +33,14 @@ import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
 public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         IDialogPasswordListener {
+    public static final int ScanPrivateKeyQRCodeRequestCode = 1603;
+
     private Activity activity;
     private EditText et;
     private TextView tvError;
@@ -45,6 +49,8 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     private String privateKeyString;
     private DialogProgress pd;
 
+    private int clickedId;
+
     public DialogImportPrivateKeyText(Activity context) {
         super(context);
         this.activity = context;
@@ -52,6 +58,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         et = (EditText) findViewById(R.id.et);
         tvError = (TextView) findViewById(R.id.tv_error);
         et.addTextChangedListener(textWatcher);
+        findViewById(R.id.ibtn_scan).setOnClickListener(this);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         findViewById(R.id.btn_cancel).setOnClickListener(this);
         setOnShowListener(this);
@@ -61,6 +68,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
 
     @Override
     public void show() {
+        clickedId = 0;
         privateKeyString = null;
         et.setText("");
         tvError.setVisibility(View.GONE);
@@ -69,6 +77,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
 
     @Override
     public void onClick(View v) {
+        clickedId = v.getId();
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
             tvError.setText(R.string.import_private_key_text_format_erro);
@@ -103,7 +112,10 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
             d.show();
         }
         et.setText("");
-
+        if (clickedId == R.id.ibtn_scan) {
+            activity.startActivityForResult(new Intent(activity, ScanActivity.class),
+                    ScanPrivateKeyQRCodeRequestCode);
+        }
     }
 
     private TextWatcher textWatcher = new TextWatcher() {
