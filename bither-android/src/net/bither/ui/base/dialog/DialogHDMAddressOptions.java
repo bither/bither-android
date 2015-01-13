@@ -75,7 +75,7 @@ public class DialogHDMAddressOptions extends DialogWithActions {
                 }
             }));
         }
-        acitons.add(new Action(R.string.trash_private_key, new Runnable() {
+        Action moveToTrashAction = new Action(R.string.trash_private_key, new Runnable() {
             @Override
             public void run() {
                 if (address.getBalance() > 0) {
@@ -130,7 +130,9 @@ public class DialogHDMAddressOptions extends DialogWithActions {
                     }
                 }).show();
             }
-        }));
+        });
+        // Not support move hdm address to trash now
+        // acitons.add(moveToTrashAction);
         return acitons;
     }
 }
