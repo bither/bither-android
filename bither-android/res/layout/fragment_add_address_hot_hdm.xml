@@ -7,8 +7,8 @@
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp"
-        android:padding="30dp"
+        android:layout_marginTop="60dp"
+        android:padding="0dp"
         android:layout_gravity="center_horizontal|top">
 
         <net.bither.ui.base.HDMTriangleBgView
@@ -33,13 +33,29 @@
                 android:text="@string/hdm_keychain_add_hot"
                 android:visibility="invisible"/>
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/hdm_keychain_add_one_part_icon"
-                android:duplicateParentState="true"
-                android:background="@drawable/transparent"/>
+                android:duplicateParentState="true">
+
+                <ImageView
+                    android:id="@+id/iv_hot_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_one_part_enabled_light"
+                    android:visibility="invisible"
+                    android:background="@drawable/transparent"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_hot_icon_selector"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/transparent"/>
+            </FrameLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,13 +84,28 @@
                 android:text="@string/hdm_keychain_add_cold"
                 android:visibility="invisible"/>
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/hdm_keychain_add_one_part_icon"
-                android:duplicateParentState="true"
-                android:background="@drawable/transparent"/>
+                android:duplicateParentState="true">
+
+                <ImageView
+                    android:id="@+id/iv_cold_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_one_part_enabled_light"
+                    android:visibility="invisible"
+                    android:background="@drawable/transparent"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_cold_icon_selector"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/transparent"/>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -103,13 +134,28 @@
                 android:text="@string/hdm_keychain_add_server"
                 android:visibility="invisible"/>
 
-            <ImageView
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/hdm_keychain_add_one_part_icon"
-                android:duplicateParentState="true"
-                android:background="@drawable/transparent"/>
+                android:duplicateParentState="true">
+
+                <ImageView
+                    android:id="@+id/iv_server_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_one_part_enabled_light"
+                    android:visibility="invisible"
+                    android:background="@drawable/transparent"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/hdm_keychain_add_server_icon_selector"
+                    android:duplicateParentState="true"
+                    android:background="@drawable/transparent"/>
+            </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"

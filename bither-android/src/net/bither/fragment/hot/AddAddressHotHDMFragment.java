@@ -25,7 +25,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
@@ -34,7 +36,6 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
@@ -72,6 +73,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private View llHot;
     private View llCold;
     private View llServer;
+    private ImageView ivHotLight;
+    private ImageView ivColdLight;
+    private ImageView ivServerLight;
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
 
@@ -100,9 +104,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llHot = v.findViewById(R.id.ll_hot);
         llCold = v.findViewById(R.id.ll_cold);
         llServer = v.findViewById(R.id.ll_server);
+        ivHotLight = (ImageView) v.findViewById(R.id.iv_hot_light);
+        ivColdLight = (ImageView) v.findViewById(R.id.iv_cold_light);
+        ivServerLight = (ImageView) v.findViewById(R.id.iv_server_light);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
         lpContainer.width = UIUtil.getScreenWidth();
-        lpContainer.height = (int) (lpContainer.width / 2 * Math.tan(Math.PI / 3));
+        lpContainer.height = lpContainer.width;
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
         llServer.setOnClickListener(serverClick);
@@ -378,6 +385,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold.setSelected(false);
         llServer.setEnabled(false);
         llServer.setSelected(false);
+        showFlash(ivHotLight);
     }
 
     private void moveToCold(boolean anim) {
@@ -389,10 +397,13 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         if (!anim) {
             vBg.addLine(llHot, llCold);
             llCold.setEnabled(true);
+            showFlash(ivColdLight);
         } else {
+            stopAllFlash();
             vBg.addLineAnimated(llHot, llCold, new Runnable() {
                 @Override
                 public void run() {
+                    showFlash(ivColdLight);
                     llCold.setEnabled(true);
                 }
             });
@@ -411,10 +422,13 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         if (!anim) {
             vBg.addLine(llCold, llServer);
             llServer.setEnabled(true);
+            showFlash(ivServerLight);
         } else {
+            stopAllFlash();
             vBg.addLineAnimated(llCold, llServer, new Runnable() {
                 @Override
                 public void run() {
+                    showFlash(ivServerLight);
                     llServer.setEnabled(true);
                 }
             });
@@ -428,6 +442,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold.setSelected(true);
         llServer.setEnabled(false);
         llServer.setSelected(true);
+        stopAllFlash();
         vBg.addLineAnimated(llServer, llHot, new Runnable() {
             @Override
             public void run() {
@@ -439,6 +454,26 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 }, 500);
             }
         });
+    }
+
+    private void stopAllFlash() {
+        showFlash(null);
+    }
+
+    private void showFlash(ImageView iv) {
+        ImageView[] ivs = new ImageView[]{ivHotLight, ivColdLight, ivServerLight};
+        for (ImageView v : ivs) {
+            if (v != iv) {
+                v.clearAnimation();
+                v.setVisibility(View.INVISIBLE);
+            }
+        }
+        if (iv != null) {
+            iv.setVisibility(View.VISIBLE);
+            iv.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                    R.anim.hdm_keychain_add_one_part_flash));
+
+        }
     }
 
     private void initHDMBidFromColdRoot() {

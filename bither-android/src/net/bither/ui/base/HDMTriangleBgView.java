@@ -34,11 +34,11 @@ import java.util.ArrayList;
  * Created by songchenwen on 15/1/13.
  */
 public class HDMTriangleBgView extends View {
-    private static final int AnimationDuration = 300;
+    private static final int AnimationDuration = 800;
 
     private static final Paint paint = new Paint();
     private static final float LineWidth = UIUtil.dip2pix(2);
-    private static final int LineColor = Color.argb(15, 0, 0, 0);
+    private static final int LineColor = Color.argb(25, 0, 0, 0);
 
     static {
         paint.setColor(LineColor);
