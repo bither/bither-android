@@ -24,6 +24,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.PasswordException;
@@ -31,6 +32,7 @@ import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -117,16 +119,23 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
                                 @Override
                                 public List<TransactionSignature> getOtherSignature(int addressIndex, CharSequence password, List<byte[]> unsignHash, Tx tx) {
+                                    List<TransactionSignature> transactionSignatureList = new ArrayList<TransactionSignature>();
                                     try {
+
                                         HDMBId hdmbId = HDMBId.getHDMBidFromDb();
                                         byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
                                         SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb().getAddress(), addressIndex, decryptedPassword, unsignHash);
                                         signatureHDMApi.handleHttpPost();
+                                        List<byte[]> bytesList = signatureHDMApi.getResult();
+                                        for (byte[] bytes : bytesList) {
+                                            TransactionSignature transactionSignature = new TransactionSignature(ECKey.ECDSASignature.decodeFromDER(bytes), TransactionSignature.SigHash.ALL, false);
+                                            transactionSignatureList.add(transactionSignature);
+                                        }
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
 
-                                    return null;
+                                    return transactionSignatureList;
                                 }
                             });
                 } else {

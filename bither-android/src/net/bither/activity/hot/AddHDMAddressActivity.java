@@ -29,6 +29,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.Utils;
@@ -153,9 +154,19 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                             public void completeRemotePublicKeys(CharSequence password,
                                                                  List<HDMAddress.Pubs>
                                                                          partialPubs) {
-                                //TODO get pubs from server for hdm
-                                for (HDMAddress.Pubs p : partialPubs) {
-                                    p.remote = ECKey.generateECKey(new SecureRandom()).getPubKey();
+                                try {
+                                    HDMBId hdmBid = HDMBId.getHDMBidFromDb();
+                                    HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                        }
+                                    });
                                 }
                             }
                         });

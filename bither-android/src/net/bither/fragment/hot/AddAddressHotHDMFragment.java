@@ -264,16 +264,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                             public void completeRemotePublicKeys(CharSequence
                                                                                          password, List<HDMAddress.Pubs> partialPubs) {
                                                 try {
-                                                    byte[] decryptedPassword = hdmBid.decryptHDMBIdPassword(password);
-                                                    CreateHDMAddressApi createHDMAddressApi = new
-                                                            CreateHDMAddressApi(hdmBid.getAddress(), partialPubs, decryptedPassword);
-                                                    createHDMAddressApi.handleHttpPost();
-                                                    List<byte[]> remotePubs = createHDMAddressApi.getResult();
-                                                    for (int i = 0; i < partialPubs.size(); i++) {
-                                                        HDMAddress.Pubs pubs = partialPubs.get(i);
-                                                        pubs.remote = remotePubs.get(i);
-                                                    }
-
+                                                    HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                                 } catch (Exception e) {
                                                     ThreadUtil.runOnMainThread(new Runnable() {
                                                         @Override
