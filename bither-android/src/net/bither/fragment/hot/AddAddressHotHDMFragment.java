@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.api.CreateHDMAddressApi;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -111,13 +112,13 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
             actions.add(new DialogWithActions.Action(R.string.hdm_keychain_add_hot_from_xrandom,
                     new Runnable() {
-                @Override
-                public void run() {
-                    HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
-                    startActivityForResult(new Intent(getActivity(),
-                            HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
-                }
-            }));
+                        @Override
+                        public void run() {
+                            HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
+                            startActivityForResult(new Intent(getActivity(),
+                                    HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
+                        }
+                    }));
             actions.add(new DialogWithActions.Action(R.string
                     .hdm_keychain_add_hot_not_from_xrandom, new Runnable() {
                 @Override
@@ -135,7 +136,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(dp.isShowing()) {
+                                    if (dp.isShowing()) {
                                         dp.dismiss();
                                     }
                                     moveToCold(true);
@@ -155,17 +156,17 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
                     new Runnable() {
 
-                @Override
-                public void run() {
-                    ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(getActivity(), ScanActivity.class);
-                            startActivityForResult(intent, ScanColdRequestCode);
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                                    startActivityForResult(intent, ScanColdRequestCode);
+                                }
+                            });
                         }
-                    });
-                }
-            }).show();
+                    }).show();
         }
     };
 
@@ -256,9 +257,27 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                             @Override
                                             public void completeRemotePublicKeys(CharSequence
                                                                                          password, List<HDMAddress.Pubs> partialPubs) {
-                                                //TODO get pubs from server for hdm
-                                                for(HDMAddress.Pubs p : partialPubs){
-                                                    p.remote = ECKey.generateECKey(new SecureRandom()).getPubKey();
+                                                try {
+                                                    byte[] decryptedPassword = hdmBid.decryptHDMBIdPassword(password);
+                                                    CreateHDMAddressApi createHDMAddressApi = new
+                                                            CreateHDMAddressApi(hdmBid.getAddress(), partialPubs, decryptedPassword);
+                                                    createHDMAddressApi.handleHttpPost();
+                                                    List<byte[]> remotePubs = createHDMAddressApi.getResult();
+                                                    for (int i = 0; i < partialPubs.size(); i++) {
+                                                        HDMAddress.Pubs pubs = partialPubs.get(i);
+                                                        pubs.remote = remotePubs.get(i);
+                                                    }
+
+                                                } catch (Exception e) {
+                                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (dp != null && dp.isShowing()) {
+                                                                dp.dismiss();
+                                                            }
+                                                        }
+                                                    });
+                                                    e.printStackTrace();
                                                 }
                                             }
                                         });
@@ -269,7 +288,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (dp.isShowing()) {
+                                if (dp != null && dp.isShowing()) {
                                     dp.dismiss();
                                 }
                                 if (as.size() > 0) {
@@ -321,12 +340,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 new DialogHDMServerUnsignedQRCode(getActivity(), preSign,
                                         new DialogHDMServerUnsignedQRCode
                                                 .DialogHDMServerUnsignedQRCodeListener() {
-                                    @Override
-                                    public void scanSignedHDMServerQRCode() {
-                                        startActivityForResult(new Intent(getActivity(),
-                                                ScanActivity.class), ServerQRCodeRequestCode);
-                                    }
-                                }).show();
+                                            @Override
+                                            public void scanSignedHDMServerQRCode() {
+                                                startActivityForResult(new Intent(getActivity(),
+                                                        ScanActivity.class), ServerQRCodeRequestCode);
+                                            }
+                                        }).show();
                             }
                         });
                     } catch (Exception e) {
@@ -396,7 +415,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void initHDMBidFromColdRoot() {
-        if(hdmBid != null){
+        if (hdmBid != null) {
             return;
         }
         DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
