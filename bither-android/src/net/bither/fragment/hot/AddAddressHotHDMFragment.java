@@ -101,7 +101,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold = v.findViewById(R.id.ll_cold);
         llServer = v.findViewById(R.id.ll_server);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
-        lpContainer.width =  UIUtil.getScreenWidth();
+        lpContainer.width = UIUtil.getScreenWidth();
         lpContainer.height = (int) (lpContainer.width / 2 * Math.tan(Math.PI / 3));
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
@@ -296,11 +296,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             public void run() {
                                 if (dd.isShowing()) {
                                     dd.dismiss();
-                                if (dp != null && dp.isShowing()) {
-                                    dp.dismiss();
-                                }
-                                if (as.size() > 0) {
-                                    moveToFinal();
+                                    if (dp != null && dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    if (as.size() > 0) {
+                                        moveToFinal();
+                                    }
                                 }
                             }
                         });
@@ -448,16 +449,17 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     private void initHDMBidFromColdRoot() {
         if (hdmBid != null) {
-        if(hdmBid != null){
-            return;
+            if (hdmBid != null) {
+                return;
+            }
+            DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
+                    (coldRoot, coldRoot.length));
+            DeterministicKey key = root.deriveSoftened(0);
+            String address = Utils.toAddress(key.getPubKeyHash());
+            root.wipe();
+            key.wipe();
+            hdmBid = new HDMBId(address);
         }
-        DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
-                (coldRoot, coldRoot.length));
-        DeterministicKey key = root.deriveSoftened(0);
-        String address = Utils.toAddress(key.getPubKeyHash());
-        root.wipe();
-        key.wipe();
-        hdmBid = new HDMBId(address);
     }
 
     @Override
