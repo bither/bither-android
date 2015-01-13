@@ -43,6 +43,7 @@ import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -67,7 +68,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private static final int ServerQRCodeRequestCode = 1135;
 
     private FrameLayout flContainer;
-    private View vBg;
+    private HDMTriangleBgView vBg;
     private View llHot;
     private View llCold;
     private View llServer;
@@ -84,20 +85,24 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_address_hot_hdm, container, false);
         initView(v);
-        findCurrentStep();
+        v.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findCurrentStep();
+            }
+        }, 100);
         return v;
     }
 
     private void initView(View v) {
         flContainer = (FrameLayout) v.findViewById(R.id.fl_container);
-        vBg = v.findViewById(R.id.v_bg);
+        vBg = (HDMTriangleBgView) v.findViewById(R.id.v_bg);
         llHot = v.findViewById(R.id.ll_hot);
         llCold = v.findViewById(R.id.ll_cold);
         llServer = v.findViewById(R.id.ll_server);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
-        int size = Math.min(UIUtil.getScreenHeight(), UIUtil.getScreenWidth());
-        lpContainer.height = size;
-        lpContainer.width = size;
+        lpContainer.width =  UIUtil.getScreenWidth();
+        lpContainer.height = (int) (lpContainer.width / 2 * Math.tan(Math.PI / 3));
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
         llServer.setOnClickListener(serverClick);
@@ -243,6 +248,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             if (!dp.isShowing()) {
                 dp.show();
             }
+            final DialogProgress dd = dp;
             new ThreadNeedService(null, getActivity()) {
                 @Override
                 public void runWithService(BlockchainService service) {
@@ -288,11 +294,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (dd.isShowing()) {
+                                    dd.dismiss();
                                 if (dp != null && dp.isShowing()) {
                                     dp.dismiss();
                                 }
                                 if (as.size() > 0) {
-
                                     moveToFinal();
                                 }
                             }
@@ -302,8 +309,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (dp.isShowing()) {
-                                    dp.dismiss();
+                                if (dd.isShowing()) {
+                                    dd.dismiss();
                                 }
                             }
                         });
@@ -381,10 +388,20 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private void moveToCold(boolean anim) {
         llHot.setEnabled(false);
         llHot.setSelected(true);
-        llCold.setEnabled(true);
-        llCold.setSelected(false);
         llServer.setEnabled(false);
         llServer.setSelected(false);
+        llCold.setSelected(false);
+        if (!anim) {
+            vBg.addLine(llHot, llCold);
+            llCold.setEnabled(true);
+        } else {
+            vBg.addLineAnimated(llHot, llCold, new Runnable() {
+                @Override
+                public void run() {
+                    llCold.setEnabled(true);
+                }
+            });
+        }
     }
 
     private void moveToServer(boolean anim) {
@@ -395,8 +412,18 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llHot.setSelected(true);
         llCold.setEnabled(false);
         llCold.setSelected(true);
-        llServer.setEnabled(true);
         llServer.setSelected(false);
+        if (!anim) {
+            vBg.addLine(llCold, llServer);
+            llServer.setEnabled(true);
+        } else {
+            vBg.addLineAnimated(llCold, llServer, new Runnable() {
+                @Override
+                public void run() {
+                    llServer.setEnabled(true);
+                }
+            });
+        }
     }
 
     private void moveToFinal() {
@@ -406,16 +433,22 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llCold.setSelected(true);
         llServer.setEnabled(false);
         llServer.setSelected(true);
-        llServer.postDelayed(new Runnable() {
+        vBg.addLineAnimated(llServer, llHot, new Runnable() {
             @Override
             public void run() {
-                ((AddHotAddressActivity) getActivity()).save();
+                llServer.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((AddHotAddressActivity) getActivity()).save();
+                    }
+                }, 500);
             }
-        }, 500);
+        });
     }
 
     private void initHDMBidFromColdRoot() {
         if (hdmBid != null) {
+        if(hdmBid != null){
             return;
         }
         DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
