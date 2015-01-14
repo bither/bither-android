@@ -230,7 +230,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                             R.string.address_detail_send_balance_zero);
                     return;
                 }
-                if (address.hasPrivKey()) {
+                if (address.isHDM() || address.hasPrivKey()) {
                     Intent intent = new Intent(activity, SendActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
                             addressPosition);
