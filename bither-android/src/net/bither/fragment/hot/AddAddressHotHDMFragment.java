@@ -45,6 +45,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogHDMInfo;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -106,6 +107,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         ivHotLight = (ImageView) v.findViewById(R.id.iv_hot_light);
         ivColdLight = (ImageView) v.findViewById(R.id.iv_cold_light);
         ivServerLight = (ImageView) v.findViewById(R.id.iv_server_light);
+        v.findViewById(R.id.ibtn_info).setOnClickListener(DialogHDMInfo.ShowClick);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
         lpContainer.width = UIUtil.getScreenWidth();
         lpContainer.height = lpContainer.width;
