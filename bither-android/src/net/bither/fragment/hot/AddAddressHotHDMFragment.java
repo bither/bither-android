@@ -31,7 +31,6 @@ import android.widget.ImageView;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
-import net.bither.bitherj.api.CreateHDMAddressApi;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -273,6 +272,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                 try {
                                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                                 } catch (Exception e) {
+                                                    e.printStackTrace();
                                                     ThreadUtil.runOnMainThread(new Runnable() {
                                                         @Override
                                                         public void run() {
@@ -281,7 +281,6 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                             }
                                                         }
                                                     });
-                                                    e.printStackTrace();
                                                 }
                                             }
                                         });

@@ -184,7 +184,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         } else if (position == 2) {
             if (WalletUtils.isHDMKeychainLimit()) {
                 DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
-                        R.string.watch_only_address_count_limit);
+                        R.string.hdm_cold_seed_count_limit);
                 tbtnHDM.setChecked(false);
             } else {
                 if (tbtnPrivateKey.isChecked() || tbtnWatchOnly.isChecked()) {

@@ -31,7 +31,6 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
@@ -42,7 +41,6 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -160,9 +158,6 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    if (service != null) {
-                                        service.startAndRegister();
-                                    }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
