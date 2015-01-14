@@ -101,7 +101,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
                 final ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
                 for (Address a : as) {
                     long balance = a.getBalance();
-                    if (balance > 0) {
+                    if (balance >= 0) {
                         availableAddresses.add(new AddressBalance(a, balance));
                     }
                 }
@@ -146,7 +146,9 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             h.tvAddress.setText(a.address.getShortAddress());
             h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
             h.ivSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(h.tvBalance));
-            if (a.address.hasPrivKey()) {
+            if (a.address.isHDM()) {
+                h.ivType.setImageResource(R.drawable.address_type_hdm);
+            } else if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
                 h.ivType.setImageResource(R.drawable.address_type_watchonly);
@@ -201,7 +203,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
         public void onClick(View v) {
             int position;
             Class<?> target;
-            if (address.address.hasPrivKey()) {
+            if (address.address.isHDM() || address.address.hasPrivKey()) {
                 position = AddressManager.getInstance().getPrivKeyAddresses().indexOf(address.address);
                 target = SendActivity.class;
             } else {
@@ -211,6 +213,8 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             intent = new Intent(getContext(), target);
             intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
             intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS, BitherSetting.DONATE_ADDRESS);
+            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG,
+                    address.address.isHDM());
             if (address.balance > BitherSetting.DONATE_AMOUNT) {
                 intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_AMOUNT, BitherSetting.DONATE_AMOUNT);
             } else {
@@ -231,6 +235,9 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
 
         @Override
         public int compareTo(AddressBalance another) {
+            if (address.isHDM() && !another.address.isHDM()) {
+                return -1;
+            }
             if (address.hasPrivKey() && !another.address.hasPrivKey()) {
                 return 1;
             }

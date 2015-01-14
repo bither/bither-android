@@ -152,7 +152,9 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             h.tvAddress.setText(a.address.getShortAddress());
             h.tvBalance.setText(UnitUtilWrapper.formatValueWithBold(a.balance));
             h.ivSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(h.tvBalance));
-            if (a.address.hasPrivKey()) {
+            if (a.address.isHDM()) {
+                h.ivType.setImageResource(R.drawable.address_type_hdm);
+            } else if (a.address.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
                 h.ivType.setImageResource(R.drawable.address_type_watchonly);
@@ -205,7 +207,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         public void onClick(View v) {
             int position;
             Class<?> target;
-            if (address.hasPrivKey()) {
+            if (address.isHDM() || address.hasPrivKey()) {
                 position = AddressManager.getInstance().getPrivKeyAddresses().indexOf(address);
                 target = SendActivity.class;
             } else {
@@ -214,6 +216,8 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
             }
             Intent intent = new Intent(SelectAddressToSendActivity.this, target);
             intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
+            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG,
+                    address.isHDM());
             intent.putExtra(INTENT_EXTRA_ADDRESS, receivingAddress);
             intent.putExtra(INTENT_EXTRA_AMOUNT, btc);
             intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
@@ -249,6 +253,9 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
 
         @Override
         public int compareTo(AddressBalance another) {
+            if (address.isHDM() && !another.address.isHDM()) {
+                return -1;
+            }
             if (address.hasPrivKey() && !another.address.hasPrivKey()) {
                 return 1;
             }
