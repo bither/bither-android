@@ -447,18 +447,20 @@ public class AddressProvider implements IAddressProvider {
 
     @Override
     public void updatePrivateKey(Address address) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKeyOfDb());
-        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
-                , new String[]{address.getAddress()});
+        if (address.hasPrivKey()) {
+            SQLiteDatabase db = this.mDb.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKeyOfDb());
+            db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                    , new String[]{address.getAddress()});
+        }
     }
 
 
     private ContentValues applyContentValues(Address address) {
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.AddressesColumns.ADDRESS, address.getAddress());
-        if (!Utils.isEmpty(address.getEncryptPrivKeyOfDb())) {
+        if (address.hasPrivKey()) {
             cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKeyOfDb());
         }
         cv.put(AbstractDb.AddressesColumns.PUB_KEY, Base58.encode(address.getPubKey()));
