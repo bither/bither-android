@@ -438,9 +438,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     e.printStackTrace();
                 }
                 mGroupPosition = groupPosition;
+                isHeaderNeedChange = false;
             }
         }
-        isHeaderNeedChange = false;
     }
 
     public int getPrivateGroupIndex() {

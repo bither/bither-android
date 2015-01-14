@@ -93,6 +93,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             if (hs != null) {
                 hdms.addAll(hs);
             }
+            mAdapter.notifyDataSetChanged();
             if (watchOnlys.size() + privates.size() + hdms.size() == 0) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lv.setVisibility(View.GONE);
@@ -100,7 +101,6 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 ivNoAddress.setVisibility(View.GONE);
                 lv.setVisibility(View.VISIBLE);
             }
-            mAdapter.notifyDataSetChanged();
             for (int i = 0;
                  i < mAdapter.getGroupCount();
                  i++) {
