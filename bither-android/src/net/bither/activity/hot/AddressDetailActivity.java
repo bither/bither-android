@@ -59,7 +59,6 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
     private boolean isLoding = false;
 
     private int addressPosition;
-    private boolean hasPrivateKey;
     private Address address;
     private ArrayList<Tx> transactions = new ArrayList<Tx>();
     private ListView lv;

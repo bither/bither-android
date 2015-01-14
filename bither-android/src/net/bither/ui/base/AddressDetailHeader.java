@@ -123,7 +123,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             tvNoTransactions.setVisibility(View.GONE);
         }
         btnBalance.setAmount(address.getBalance());
-        if (address.hasPrivKey()) {
+        if (address.isHDM() || address.hasPrivKey()) {
             btnSend.setCompoundDrawables(null, null, null, null);
         } else {
             Drawable d = getContext().getResources().getDrawable(R.drawable
