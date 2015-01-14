@@ -40,6 +40,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,12 +159,16 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                 } catch (Exception e) {
                                     e.printStackTrace();
-                                    runOnUiThread(new Runnable() {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             if (dd.isShowing()) {
                                                 dd.dismiss();
                                             }
+                                            //TODO show some error message here 
+                                            DropdownMessage.showDropdownMessage
+                                                    (AddHDMAddressActivity.this,
+                                                            R.string.network_or_connection_error);
                                         }
                                     });
                                 }
@@ -177,6 +182,9 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                     public void run() {
                         if (dd.isShowing()) {
                             dd.dismiss();
+                        }
+                        if (as.size() == 0) {
+                            return;
                         }
                         ArrayList<String> s = new ArrayList<String>();
                         for (HDMAddress a : as) {

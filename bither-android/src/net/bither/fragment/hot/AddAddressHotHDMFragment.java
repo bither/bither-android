@@ -279,6 +279,10 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                             if (dp != null && dp.isShowing()) {
                                                                 dp.dismiss();
                                                             }
+                                                            //TODO show some error message here
+                                                            DropdownMessage.showDropdownMessage
+                                                                    (getActivity(),
+                                                                            R.string.network_or_connection_error);
                                                         }
                                                     });
                                                 }
