@@ -265,14 +265,15 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         if (service != null) {
                             service.stopAndUnregister();
                         }
-                        final List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain()
+                        final HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
+                        final List<HDMAddress> as = keychain
                                 .completeAddresses(1, passwordGetter.getPassword(),
                                         new HDMKeychain.HDMFetchRemotePublicKeys() {
                                             @Override
                                             public void completeRemotePublicKeys(CharSequence
                                                                                          password, List<HDMAddress.Pubs> partialPubs) {
                                                 try {
-                                                    HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
+                                                    HDMKeychain.getRemotePublicKeys(keychain, hdmBid, password, partialPubs);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                     ThreadUtil.runOnMainThread(new Runnable() {
