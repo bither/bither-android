@@ -47,7 +47,6 @@ import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
@@ -252,107 +251,77 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             if (addressesToShowAdded == null || addressesToShowAdded.size() == 0) {
                 return;
             }
-            if (watchOnlys != null && watchOnlys.size() > 0) {
-                boolean isWatchOnly = false;
-                int position = 0;
-                for (int i = 0;
-                     i < watchOnlys.size();
-                     i++) {
-                    if (Utils.compareString(watchOnlys.get(i).getAddress(),
-                            addressesToShowAdded.get(0))) {
-                        isWatchOnly = true;
-                        position = i;
-                        break;
+            boolean isHDM = false;
+            boolean isPrivate = false;
+            if (addressesToShowAdded.get(0).startsWith("3")) {
+                isHDM = true;
+            }
+            if (!isHDM) {
+                if (privates != null && privates.size() > 0) {
+                    for (Address a : privates) {
+                        if (Utils.compareString(a.getAddress(), addressesToShowAdded.get(0))) {
+                            isPrivate = true;
+                        }
                     }
                 }
-                if (isWatchOnly) {
-                    int group = 1;
-                    if (privates == null || privates.size() == 0) {
-                        group = 0;
+                if (!isPrivate) {
+                    if (watchOnlys == null || watchOnlys.size() == 0) {
+                        addressesToShowAdded = null;
+                        return;
                     }
-                    lv.expandGroup(group);
-                    if (position == 0) {
-                        lv.setSelection(lv.getFlatListPosition(ExpandableListView
-                                .getPackedPositionForGroup(group)));
-                    } else {
-                        lv.setSelectionFromTop(lv.getFlatListPosition(ExpandableListView
-                                .getPackedPositionForChild(group, position)), UIUtil.dip2pix(35));
+                    boolean foundWatchonly = false;
+                    for (Address a : watchOnlys) {
+                        if (Utils.compareString(a.getAddress(), addressesToShowAdded.get(0))) {
+                            foundWatchonly = true;
+                            break;
+                        }
                     }
-                    final int g = group;
-                    final int p = position;
-                    lv.postDelayed(new Runnable() {
+                    if (!foundWatchonly) {
+                        addressesToShowAdded = null;
+                        return;
+                    }
+                }
+            }
+            int group = mAdapter.getWatchOnlyGroupIndex();
+            if (isHDM) {
+                group = mAdapter.getHDMGroupIndex();
+            } else if (isPrivate) {
+                group = mAdapter.getPrivateGroupIndex();
+            }
+            int position = 0;
+            if (isHDM) {
+                position = hdms.size() - addressesToShowAdded.size();
+            }
 
-                        @Override
-                        public void run() {
-                            for (int i = 0;
-                                 i < addressesToShowAdded.size();
-                                 i++) {
-                                int position = lv.getFlatListPosition(ExpandableListView
-                                        .getPackedPositionForChild(g, p + i));
-                                if (position >= lv.getFirstVisiblePosition() && position <= lv
-                                        .getLastVisiblePosition()) {
-                                    View v = lv.getChildAt(position - lv.getFirstVisiblePosition());
-                                    v.startAnimation(AnimationUtils.loadAnimation(getActivity(),
-                                            R.anim.address_notification));
-                                }
-                            }
-                            addressesToShowAdded = null;
-                        }
-                    }, 400);
-                    return;
-                }
+            if (position == 0) {
+                lv.setSelection(lv.getFlatListPosition(ExpandableListView
+                        .getPackedPositionForGroup(group)));
+            } else {
+                lv.setSelectionFromTop(lv.getFlatListPosition(ExpandableListView
+                        .getPackedPositionForChild(group, position)), UIUtil.dip2pix(35));
             }
-            if (privates != null && privates.size() > 0) {
-                boolean isPrivate = false;
-                int position = 0;
-                for (int i = 0;
-                     i < privates.size();
-                     i++) {
-                    if (Utils.compareString(privates.get(i).getAddress(),
-                            addressesToShowAdded.get(0))) {
-                        position = i;
-                        isPrivate = true;
-                        break;
-                    }
-                }
-                if (isPrivate) {
-                    int group = 0;
-                    lv.expandGroup(group);
-                    if (position == 0) {
-                        lv.setSelection(lv.getFlatListPosition(ExpandableListView
-                                .getPackedPositionForGroup(group)));
-                    } else {
-                        lv.setSelectionFromTop(lv.getFlatListPosition(ExpandableListView
-                                .getPackedPositionForChild(group, position)), UIUtil.dip2pix(35));
-                    }
-                    final int g = group;
-                    final int p = position;
-                    lv.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(addressesToShowAdded == null){
-                                return;
-                            }
-                            for (int i = 0;
-                                 i < addressesToShowAdded.size();
-                                 i++) {
-                                int position = lv.getFlatListPosition(ExpandableListView
-                                        .getPackedPositionForChild(g, p + i));
-                                LogUtil.d("Anim", "anim position: " + position);
-                                if (position >= lv.getFirstVisiblePosition() && position <= lv
-                                        .getLastVisiblePosition()) {
-                                    View v = lv.getChildAt(position - lv.getFirstVisiblePosition());
-                                    v.startAnimation(AnimationUtils.loadAnimation(lv.getContext(),
-                                            R.anim.address_notification));
-                                }
-                            }
-                            addressesToShowAdded = null;
+
+            final int g = group;
+            final int p = position;
+            lv.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    for (int i = 0;
+                         i < addressesToShowAdded.size();
+                         i++) {
+                        int position = lv.getFlatListPosition(ExpandableListView
+                                .getPackedPositionForChild(g, p + i));
+                        if (position >= lv.getFirstVisiblePosition() && position <= lv
+                                .getLastVisiblePosition()) {
+                            View v = lv.getChildAt(position - lv.getFirstVisiblePosition());
+                            v.startAnimation(AnimationUtils.loadAnimation(getActivity(),
+                                    R.anim.address_notification));
                         }
-                    }, 400);
-                    return;
+                    }
+                    addressesToShowAdded = null;
                 }
-            }
-            addressesToShowAdded = null;
+            }, 400);
         }
     };
 

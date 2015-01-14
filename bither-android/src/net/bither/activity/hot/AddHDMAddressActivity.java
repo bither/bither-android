@@ -142,9 +142,10 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
 
     private void performAdd() {
         final int count = wvCount.getCurrentItem() + 1;
+        final DialogProgress dd = dp;
         new ThreadNeedService(null, this) {
             @Override
-            public void runWithService(BlockchainService service) {
+            public void runWithService(final BlockchainService service) {
                 if (service != null) {
                     service.stopAndUnregister();
                 }
@@ -159,11 +160,14 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                 } catch (Exception e) {
                                     e.printStackTrace();
+                                    if (service != null) {
+                                        service.startAndRegister();
+                                    }
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
+                                            if (dd.isShowing()) {
+                                                dd.dismiss();
                                             }
                                         }
                                     });
@@ -176,8 +180,8 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (dp.isShowing()) {
-                            dp.dismiss();
+                        if (dd.isShowing()) {
+                            dd.dismiss();
                         }
                         ArrayList<String> s = new ArrayList<String>();
                         for (HDMAddress a : as) {
