@@ -77,8 +77,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
             addressPosition = getIntent().getExtras().getInt(
                     BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
             boolean hasPrivateKey = getIntent().getExtras().getBoolean(
-                            BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
-                            false);
+                    BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
+                    false);
             boolean isHDM = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
                     .ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, false);
             if (isHDM) {
@@ -203,19 +203,19 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
                 public void run() {
                     isLoding = true;
                     final List<Tx> txs = address.getTxs(page);
-                    if (page == 1) {
-                        transactions.clear();
-                    }
-                    if (txs != null && txs.size() > 0) {
-                        transactions.addAll(txs);
-                        hasMore = true;
-                    } else {
-                        hasMore = false;
-                    }
-                    Collections.sort(transactions);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (page == 1) {
+                                transactions.clear();
+                            }
+                            if (txs != null && txs.size() > 0) {
+                                transactions.addAll(txs);
+                                hasMore = true;
+                            } else {
+                                hasMore = false;
+                            }
+                            Collections.sort(transactions);
                             mAdapter.notifyDataSetChanged();
                             isLoding = false;
                         }
@@ -231,21 +231,21 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         @Override
         public void onClick(View v) {
             Dialog dialog = null;
-            if(address.isHDM()){
+            if (address.isHDM()) {
                 new DialogHDMAddressOptions(AddressDetailActivity.this,
                         (HDMAddress) address).show();
-            }else if (address.hasPrivKey()) {
+            } else if (address.hasPrivKey()) {
                 dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
             } else {
                 dialog = new DialogAddressWatchOnlyOption(AddressDetailActivity.this, address,
                         new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        });
             }
-            if(dialog != null) {
+            if (dialog != null) {
                 dialog.show();
             }
         }
