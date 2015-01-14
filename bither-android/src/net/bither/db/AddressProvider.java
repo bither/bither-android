@@ -15,6 +15,7 @@ import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -277,10 +278,11 @@ public class AddressProvider implements IAddressProvider {
     @Override
     public int maxHDMAddressPubIndex(int hdSeedId) {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select max(hd_seed_index) hd_seed_index from hdm_addresses where hd_seed_id=?  ", new String[]{
+
+        Cursor cursor = db.rawQuery("select ifnull(max(hd_seed_index),-1)  hd_seed_index from hdm_addresses where hd_seed_id=?  ", new String[]{
                 Integer.toString(hdSeedId)
         });
-        int maxIndex = 0;
+        int maxIndex = -1;
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDMAddressesColumns.HD_SEED_INDEX);
             if (idColumn != -1) {
