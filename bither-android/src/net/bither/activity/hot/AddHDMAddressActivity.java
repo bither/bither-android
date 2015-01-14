@@ -156,7 +156,7 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                                                          partialPubs) {
                                 try {
                                     HDMBId hdmBid = HDMBId.getHDMBidFromDb();
-                                    HDMKeychain.getRemotePublicKeys(keychain, hdmBid, password, partialPubs);
+                                    HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     ThreadUtil.runOnMainThread(new Runnable() {
