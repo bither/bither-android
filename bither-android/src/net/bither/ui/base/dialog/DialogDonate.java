@@ -101,7 +101,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
                 final ArrayList<AddressBalance> availableAddresses = new ArrayList<AddressBalance>();
                 for (Address a : as) {
                     long balance = a.getBalance();
-                    if (balance >= 0) {
+                    if (balance > 0) {
                         availableAddresses.add(new AddressBalance(a, balance));
                     }
                 }
