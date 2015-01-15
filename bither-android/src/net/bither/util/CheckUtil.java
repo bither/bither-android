@@ -158,6 +158,7 @@ public class CheckUtil {
                         e.printStackTrace();
                     }
                 }
+                password.wipe();
                 return result;
             }
         });
@@ -180,6 +181,7 @@ public class CheckUtil {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
+                password.wipe();
                 return result;
             }
         });

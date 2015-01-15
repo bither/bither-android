@@ -25,9 +25,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
@@ -44,6 +53,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
+import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMInfo;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
@@ -68,14 +78,18 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private static final int ScanColdRequestCode = 1623;
     private static final int ServerQRCodeRequestCode = 1135;
 
+    private FrameLayout flParent;
     private FrameLayout flContainer;
     private HDMTriangleBgView vBg;
-    private View llHot;
-    private View llCold;
-    private View llServer;
+    private LinearLayout llHot;
+    private LinearLayout llCold;
+    private LinearLayout llServer;
     private ImageView ivHotLight;
     private ImageView ivColdLight;
     private ImageView ivServerLight;
+    private TextView tvHot;
+    private TextView tvCold;
+    private TextView tvServer;
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
 
@@ -99,18 +113,26 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void initView(View v) {
+        flParent = (FrameLayout) v.findViewById(R.id.fl_parent);
         flContainer = (FrameLayout) v.findViewById(R.id.fl_container);
         vBg = (HDMTriangleBgView) v.findViewById(R.id.v_bg);
-        llHot = v.findViewById(R.id.ll_hot);
-        llCold = v.findViewById(R.id.ll_cold);
-        llServer = v.findViewById(R.id.ll_server);
+        llHot = (LinearLayout) v.findViewById(R.id.ll_hot);
+        llCold = (LinearLayout) v.findViewById(R.id.ll_cold);
+        llServer = (LinearLayout) v.findViewById(R.id.ll_server);
         ivHotLight = (ImageView) v.findViewById(R.id.iv_hot_light);
         ivColdLight = (ImageView) v.findViewById(R.id.iv_cold_light);
         ivServerLight = (ImageView) v.findViewById(R.id.iv_server_light);
+        tvHot = (TextView) v.findViewById(R.id.tv_hot);
+        tvCold = (TextView) v.findViewById(R.id.tv_cold);
+        tvServer = (TextView) v.findViewById(R.id.tv_server);
         v.findViewById(R.id.ibtn_info).setOnClickListener(DialogHDMInfo.ShowClick);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
         lpContainer.width = UIUtil.getScreenWidth();
-        lpContainer.height = lpContainer.width;
+        lpContainer.height = lpContainer.width - flContainer.getPaddingLeft() - flContainer
+                .getPaddingRight() + flContainer.getPaddingTop() + flContainer.getPaddingBottom();
+        flParent.getLayoutParams().width = lpContainer.width;
+        flParent.getLayoutParams().height = lpContainer.height;
+
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
         llServer.setOnClickListener(serverClick);
@@ -452,12 +474,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         vBg.addLineAnimated(llServer, llHot, new Runnable() {
             @Override
             public void run() {
-                llServer.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((AddHotAddressActivity) getActivity()).save();
-                    }
-                }, 500);
+                finalAnimation();
             }
         });
     }
@@ -497,6 +514,62 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         }
     }
 
+    private void finalAnimation() {
+        final int fadeDuration = 400;
+        final int zoomDuration = 500;
+
+        AlphaAnimation fadeOut = new AlphaAnimation(1, 0);
+        fadeOut.setDuration(fadeDuration);
+        fadeOut.setFillAfter(true);
+        vBg.startAnimation(fadeOut);
+        tvHot.startAnimation(fadeOut);
+        tvCold.startAnimation(fadeOut);
+        tvServer.startAnimation(fadeOut);
+        flContainer.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                vBg.setVisibility(View.GONE);
+                tvHot.setVisibility(View.INVISIBLE);
+                tvCold.setVisibility(View.INVISIBLE);
+                tvServer.setVisibility(View.INVISIBLE);
+
+                int[] size = getCompactContainerSize();
+                WrapLayoutParamsForAnimator animWrapper = new WrapLayoutParamsForAnimator
+                        (flContainer);
+                ObjectAnimator animatorWidth = ObjectAnimator.ofInt(animWrapper, "width",
+                        size[0]).setDuration(zoomDuration);
+                ObjectAnimator animatorHeight = ObjectAnimator.ofInt(animWrapper, "height",
+                        size[1]).setDuration(zoomDuration);
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(animatorWidth, animatorHeight);
+                animatorSet.start();
+
+                flContainer.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.hdm_keychain_add_spin);
+                        anim.setFillAfter(true);
+                        flContainer.startAnimation(anim);
+                        flContainer.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((AddHotAddressActivity) getActivity()).save();
+                            }
+                        }, anim.getDuration());
+                    }
+                }, zoomDuration / 3 * 2);
+            }
+        }, fadeDuration);
+    }
+
+    private int[] getCompactContainerSize() {
+        int extraHeight = tvHot.getHeight();
+        int width = llCold.getWidth() * 2;
+        int height = (int) (width / 4 * Math.tan(Math.PI / 3)) + width / 2 + extraHeight * 2;
+        return new int[]{width + flContainer.getPaddingLeft() + flContainer.getPaddingRight(),
+                height + flContainer.getPaddingTop() + flContainer.getPaddingBottom()};
+    }
+
     @Override
     public ArrayList<String> getAddresses() {
         List<HDMAddress> as = AddressManager.getInstance().getHdmKeychain().getAddresses();
@@ -506,7 +579,6 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         }
         return s;
     }
-
 
     @Override
     public void onDestroyView() {

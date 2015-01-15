@@ -177,13 +177,14 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             CheckPoint point = new CheckPoint(HDMKeychainAsAddressFaker);
             checkPoints.add(point);
             checks.add(CheckUtil.initCheckForHDMKeychain(AddressManager.getInstance()
-                    .getHdmKeychain(), password).setCheckListener(point));
+                    .getHdmKeychain(), new SecureCharSequence(password)).setCheckListener(point));
         }
         for (int i = 0; i < addresses.size(); i++) {
             Address address = addresses.get(i);
             CheckPoint point = new CheckPoint(address.getAddress());
             checkPoints.add(point);
-            checks.add(CheckUtil.initCheckForPrivateKey(address, password).setCheckListener(point));
+            checks.add(CheckUtil.initCheckForPrivateKey(address, new SecureCharSequence(password)
+            ).setCheckListener(point));
         }
         password.wipe();
         adapter.notifyDataSetChanged();
