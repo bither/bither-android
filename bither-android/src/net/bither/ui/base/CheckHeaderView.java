@@ -112,7 +112,7 @@ public class CheckHeaderView extends FrameLayout implements IDialogPasswordListe
     }
 
     public void stop() {
-        if(percent < 1){
+        if(passedCheckCount < totalCheckCount){
             tvStatus.setText(R.string.check_private_key_danger);
         } else {
             tvStatus.setText(R.string.check_private_key_safe);
