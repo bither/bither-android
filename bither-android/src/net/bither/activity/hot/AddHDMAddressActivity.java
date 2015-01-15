@@ -27,6 +27,7 @@ import android.view.View;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -40,6 +41,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.ExceptionUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -132,7 +134,6 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
             } catch (Exception e) {
                 e.printStackTrace();
                 DropdownMessage.showDropdownMessage(this, R.string.hdm_address_add_need_cold_pub);
-
             }
             return;
         }
@@ -159,16 +160,19 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                 } catch (Exception e) {
                                     e.printStackTrace();
+                                    int msg = R.string.network_or_connection_error;
+                                    if (e instanceof Http400Exception) {
+                                        msg = ExceptionUtil.getHDMHttpExceptionMessage((
+                                                (Http400Exception) e).getErrorCode());
+                                    }
+                                    final int m = msg;
                                     ThreadUtil.runOnMainThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             if (dd.isShowing()) {
                                                 dd.dismiss();
                                             }
-                                            //TODO show some error message here 
-                                            DropdownMessage.showDropdownMessage
-                                                    (AddHDMAddressActivity.this,
-                                                            R.string.network_or_connection_error);
+                                            DropdownMessage.showDropdownMessage(AddHDMAddressActivity.this, m);
                                         }
                                     });
                                 }

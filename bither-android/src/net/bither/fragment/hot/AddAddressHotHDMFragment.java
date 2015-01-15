@@ -25,11 +25,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +38,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -60,6 +59,7 @@ import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.ExceptionUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
@@ -298,16 +298,21 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                     HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
+                                                    int msg = R.string.network_or_connection_error;
+                                                    if (e instanceof Http400Exception) {
+                                                        msg = ExceptionUtil
+                                                                .getHDMHttpExceptionMessage((
+                                                                        (Http400Exception) e)
+                                                                        .getErrorCode());
+                                                    }
+                                                    final int m = msg;
                                                     ThreadUtil.runOnMainThread(new Runnable() {
                                                         @Override
                                                         public void run() {
                                                             if (dp != null && dp.isShowing()) {
                                                                 dp.dismiss();
                                                             }
-                                                            //TODO show some error message here
-                                                            DropdownMessage.showDropdownMessage
-                                                                    (getActivity(),
-                                                                            R.string.network_or_connection_error);
+                                                            DropdownMessage.showDropdownMessage(getActivity(), m);
                                                         }
                                                     });
                                                 }
@@ -387,9 +392,16 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
+                        int msg = R.string.network_or_connection_error;
+                        if (e instanceof Http400Exception) {
+                            msg = ExceptionUtil.getHDMHttpExceptionMessage(((Http400Exception) e)
+                                    .getErrorCode());
+                        }
+                        final int m = msg;
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
+                        DropdownMessage.showDropdownMessage(getActivity(), m);
                     }
                 }
             }.start();
