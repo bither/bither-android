@@ -656,7 +656,7 @@ public class TxProvider implements ITxProvider {
     public List<Out> getUnspendOutWithAddress(String address) {
         List<Out> outItems = new ArrayList<Out>();
         String unspendOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash " +
-                "and b.block_no is null and a.out_address=? and a.out_status=?";
+                " and a.out_address=? and a.out_status=?";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery(unspendOutSql,
                 new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});

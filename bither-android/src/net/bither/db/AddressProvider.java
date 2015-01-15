@@ -80,7 +80,7 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptedSeed);
-        db.update(AbstractDb.Tables.HDMAddresses, cv, "hd_seed_id=?"
+        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
                 , new String[]{Integer.toString(hdSeedId)});
 
     }
