@@ -19,7 +19,6 @@
 package net.bither.xrandom;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -56,17 +55,9 @@ public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
 
     @Override
     void didSuccess(Object obj) {
-        DialogGenerateHDMKeychainFinalConfirm dialog = new DialogGenerateHDMKeychainFinalConfirm
-                (HDMKeychainHotUEntropyActivity.this);
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                setResult(RESULT_OK);
-                finish();
-                overridePendingTransition(0, R.anim.slide_out_bottom);
-            }
-        });
-        dialog.show();
+        setResult(RESULT_OK);
+        finish();
+        overridePendingTransition(0, R.anim.slide_out_bottom);
     }
 
     private class GenerateThread extends ThreadNeedService {

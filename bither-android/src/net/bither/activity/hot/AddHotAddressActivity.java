@@ -25,7 +25,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ToggleButton;
 
@@ -53,6 +52,10 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     private AddAddressPrivateKeyFragment vPrivateKey;
     private AddAddressHotHDMFragment vHDM;
 
+    private boolean privateLimit;
+    private boolean watchOnlyLimit;
+    private boolean hdmLimit;
+
     private boolean shouldSuggestCheck = false;
 
     @Override
@@ -64,6 +67,9 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         } else {
             shouldSuggestCheck = false;
         }
+        privateLimit = WalletUtils.isPrivateLimit();
+        watchOnlyLimit = WalletUtils.isWatchOnlyLimit();
+        hdmLimit = WalletUtils.isHDMKeychainLimit();
         initView();
     }
 
@@ -83,8 +89,8 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         if (adapter.getCount() > 2) {
             tbtnPrivateKey.setChecked(true);
         } else {
-            if (WalletUtils.isPrivateLimit()) {
-                if (!WalletUtils.isWatchOnlyLimit()) {
+            if (privateLimit) {
+                if (!watchOnlyLimit) {
                     tbtnWatchOnly.setChecked(true);
                 } else {
                     tbtnHDM.setChecked(true);
@@ -156,7 +162,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
 
     private void initPosition(int position) {
         if (position == 0) {
-            if (WalletUtils.isPrivateLimit()) {
+            if (privateLimit) {
                 DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
                         R.string.private_key_count_limit);
                 tbtnPrivateKey.setChecked(false);
@@ -169,7 +175,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
                 tbtnPrivateKey.setChecked(true);
             }
         } else if (position == 1) {
-            if (WalletUtils.isWatchOnlyLimit()) {
+            if (watchOnlyLimit) {
                 DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
                         R.string.watch_only_address_count_limit);
                 tbtnWatchOnly.setChecked(false);
@@ -182,7 +188,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
                 tbtnHDM.setChecked(false);
             }
         } else if (position == 2) {
-            if (WalletUtils.isHDMKeychainLimit()) {
+            if (hdmLimit) {
                 DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
                         R.string.hdm_cold_seed_count_limit);
                 tbtnHDM.setChecked(false);
@@ -202,13 +208,13 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         @Override
         public int getCount() {
             int count = 0;
-            if (!WalletUtils.isPrivateLimit()) {
+            if (!privateLimit) {
                 count++;
             }
-            if (!WalletUtils.isWatchOnlyLimit()) {
+            if (!watchOnlyLimit) {
                 count++;
             }
-            if (!WalletUtils.isHDMKeychainLimit()) {
+            if (!hdmLimit) {
                 count++;
             }
             return count;
@@ -230,32 +236,32 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     };
 
     private int getPrivateIndex() {
-        if (WalletUtils.isPrivateLimit()) {
+        if (privateLimit) {
             return -1;
         }
         return 0;
     }
 
     private int getWatchOnlyIndex() {
-        if (WalletUtils.isWatchOnlyLimit()) {
+        if (watchOnlyLimit) {
             return -1;
         }
         int index = 0;
-        if (!WalletUtils.isPrivateLimit()) {
+        if (!privateLimit) {
             index++;
         }
         return index;
     }
 
     private int getHDMIndex() {
-        if (WalletUtils.isHDMKeychainLimit()) {
+        if (hdmLimit) {
             return -1;
         }
         int index = 0;
-        if (!WalletUtils.isPrivateLimit()) {
+        if (!privateLimit) {
             index++;
         }
-        if (!WalletUtils.isWatchOnlyLimit()) {
+        if (!watchOnlyLimit) {
             index++;
         }
         return index;
