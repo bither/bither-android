@@ -56,9 +56,9 @@ import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMInfo;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
+import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.util.ExceptionUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -141,23 +141,22 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
     }
 
-    private View.OnClickListener hotClick = new DialogWithActions.DialogWithActionsClickListener() {
+    private View.OnClickListener hotClick = new View.OnClickListener() {
+
         @Override
-        protected List<DialogWithActions.Action> getActions() {
-            ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
-            actions.add(new DialogWithActions.Action(R.string.hdm_keychain_add_hot_from_xrandom,
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
-                            startActivityForResult(new Intent(getActivity(),
-                                    HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
-                        }
-                    }));
-            actions.add(new DialogWithActions.Action(R.string
-                    .hdm_keychain_add_hot_not_from_xrandom, new Runnable() {
+        public void onClick(View v) {
+            new DialogHdmKeychainAddHot(getActivity(), new DialogHdmKeychainAddHot
+                    .DialogHdmKeychainAddHotDelegate() {
+
                 @Override
-                public void run() {
+                public void addWithXRandom() {
+                    HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
+                    startActivityForResult(new Intent(getActivity(),
+                            HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
+                }
+
+                @Override
+                public void addWithoutXRandom() {
                     new Thread() {
                         @Override
                         public void run() {
@@ -180,8 +179,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         }
                     }.start();
                 }
-            }));
-            return actions;
+            }).show();
         }
     };
 

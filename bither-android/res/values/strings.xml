@@ -498,8 +498,7 @@
     <string name="hdm_keychain_add_hot">HDM Hot</string>
     <string name="hdm_keychain_add_cold">HDM Cold</string>
     <string name="hdm_keychain_add_server">HDM Server</string>
-    <string name="hdm_keychain_add_hot_from_xrandom">HDM Hot with XRandom</string>
-    <string name="hdm_keychain_add_hot_not_from_xrandom">HDM Hot without XRandom</string>
+    <string name="hdm_keychain_add_hot_confirm">Generate HDM Hot account</string>
     <string name="hdm_keychain_add_scan_cold">Scan HDM Cold Account QR Code</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_title">Choose HDM Server QR Code on Bither Cold</string>
     <string name="hdm_keychain_add_scan_signed_server_qr_code_action">Scan Signed Server QR Code</string>
