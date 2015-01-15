@@ -254,7 +254,7 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         @Override
         public int compareTo(AddressBalance another) {
             if (address.isHDM() && !another.address.isHDM()) {
-                return -1;
+                return 1;
             }
             if (address.hasPrivKey() && !another.address.hasPrivKey()) {
                 return 1;

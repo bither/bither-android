@@ -53,9 +53,9 @@ import java.util.List;
 
 public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter implements
         PinnedExpandableListViewAdapter {
-    private static final int PrivateGroupTag = 0;
-    private static final int WatchOnlyGroupTag = 1;
-    private static final int HDMGroupTag = 2;
+    private static final int HDMGroupTag = 0;
+    private static final int PrivateGroupTag = 1;
+    private static final int WatchOnlyGroupTag = 2;
 
     private FragmentActivity activity;
     private List<Address> watchOnlys;
@@ -443,35 +443,33 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
     }
 
-    public int getPrivateGroupIndex() {
-        if (privates == null || privates.size() == 0) {
+    public int getHDMGroupIndex() {
+        if (hdms == null || hdms.size() == 0) {
             return -1;
         }
         return 0;
     }
 
-    public int getWatchOnlyGroupIndex() {
-        if (watchOnlys == null || watchOnlys.size() == 0) {
+    public int getPrivateGroupIndex() {
+        if (privates == null || privates.size() == 0) {
             return -1;
         }
         int index = 0;
+        if (hdms != null && hdms.size() > 0) {
+            index++;
+        }
+        return index;
+    }
+
+    public int getWatchOnlyGroupIndex() {
+        int index = 0;
+        if (hdms != null && hdms.size() > 0) {
+            index++;
+        }
         if (privates != null && privates.size() > 0) {
             index++;
         }
         return index;
     }
 
-    public int getHDMGroupIndex() {
-        if (hdms == null || hdms.size() == 0) {
-            return -1;
-        }
-        int index = 0;
-        if (privates != null && privates.size() > 0) {
-            index++;
-        }
-        if (watchOnlys != null && watchOnlys.size() > 0) {
-            index++;
-        }
-        return index;
-    }
 }
