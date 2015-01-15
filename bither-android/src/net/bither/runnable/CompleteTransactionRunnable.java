@@ -19,6 +19,7 @@ package net.bither.runnable;
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.api.SignatureHDMApi;
+import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
@@ -132,7 +133,12 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                                             transactionSignatureList.add(transactionSignature);
                                         }
                                     } catch (Exception e) {
-                                        e.printStackTrace();
+                                        if (e instanceof Http400Exception) {
+                                            throw new HDMServerSignException(R.string
+                                                    .hdm_address_sign_tx_server_error);
+                                        } else {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
 
                                     return transactionSignatureList;

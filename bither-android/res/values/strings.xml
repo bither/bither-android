@@ -504,12 +504,14 @@
     <string name="hdm_keychain_add_unsigned_server_qr_code_title">Choose HDM Server QR Code on Bither Cold</string>
     <string name="hdm_keychain_add_scan_signed_server_qr_code_action">Scan Signed Server QR Code</string>
     <string name="hdm_keychain_add_signed_server_qr_code_title">Signed Server QR Code</string>
-    <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code error</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code is wrong</string>
+    <string name="hdm_exception_bid_already_exists">HDM Cold account is already bound to another Hot account</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">Give up signing?</string>
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM Hot</string>
     <string name="hdm_address_trash_at_least_one_warn">You can\'t trash all the addresses in an HDM account</string>
+    <string name="hdm_address_sign_tx_server_error">HDM server signing went wrong</string>
 
     <!-- hdm hot address add -->
     <string name="hdm_address_count_limit">Reached HDM address count limit</string>
@@ -517,5 +519,4 @@
     <string name="hdm_address_add_count_label">How many HDM addresses to add?</string>
     <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
     <string name="hdm_address_add_button">Add</string>
-
 </resources>

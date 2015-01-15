@@ -488,11 +488,13 @@
     <string name="hdm_keychain_add_scan_signed_server_qr_code_action">掃描已簽名服務器二維碼</string>
     <string name="hdm_keychain_add_signed_server_qr_code_title">已簽名服務器二維碼</string>
     <string name="hdm_keychain_add_sign_server_qr_code_error">簽名服務器二維碼出錯</string>
+    <string name="hdm_exception_bid_already_exists">此 HDM 冷賬戶已被綁定到另一個 HDM 熱賬戶</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放棄簽名?</string>
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM 熱</string>
     <string name="hdm_address_trash_at_least_one_warn">您不能將HDM 帳號裡的所有地址都放入回收站</string>
+    <string name="hdm_address_sign_tx_server_error">HDM 服務器簽名出錯</string>
 
     <!-- hdm hot address add -->
     <string name="hdm_address_count_limit">已達 HDM 地址數上限</string>

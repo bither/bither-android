@@ -487,11 +487,13 @@
     <string name="hdm_keychain_add_scan_signed_server_qr_code_action">扫描已签名服务器二维码</string>
     <string name="hdm_keychain_add_signed_server_qr_code_title">已签名服务器二维码</string>
     <string name="hdm_keychain_add_sign_server_qr_code_error">签名服务器二维码出错</string>
+    <string name="hdm_exception_bid_already_exists">此 HDM 冷账户已被绑定到另一个 HDM 热账户</string>
     <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放弃签名?</string>
 
     <!-- show hdm address -->
     <string name="address_group_hdm_hot">HDM 热</string>
     <string name="hdm_address_trash_at_least_one_warn">您不能将 HDM 帐号里的所有地址都放入回收站</string>
+    <string name="hdm_address_sign_tx_server_error">HDM 服务器签名出错</string>
 
     <!-- hdm hot address add -->
     <string name="hdm_address_count_limit">已达 HDM 地址数上限</string>
@@ -499,4 +501,6 @@
     <string name="hdm_address_add_count_label">增加多少个 HDM 地址?</string>
     <string name="hdm_address_add_need_cold_pub">需要 HDM 冷帐号二维码才能继续</string>
     <string name="hdm_address_add_button">增加</string>
+
+    <!-- hdm server exception -->
 </resources>
