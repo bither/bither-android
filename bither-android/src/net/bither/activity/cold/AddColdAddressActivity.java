@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ToggleButton;
 
@@ -84,18 +83,6 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
                 tbtnPrivateKey.setChecked(true);
             }
         }
-        tbtnPrivateKey.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int width = Math.max(tbtnHDM.getWidth(), tbtnPrivateKey.getWidth());
-                if(tbtnHDM.getWidth() < width){
-                    tbtnHDM.getLayoutParams().width = width;
-                }
-                if(tbtnPrivateKey.getWidth() < width){
-                    tbtnPrivateKey.getLayoutParams().width = width;
-                }
-            }
-        });
     }
 
     private AddAddressColdHDMFragment getHDMView() {
