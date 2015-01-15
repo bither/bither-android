@@ -379,7 +379,8 @@ public class AddressProvider implements IAddressProvider {
     @Override
     public List<Address> getAddresses() {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select * from addresses  order by sort_time desc", null);
+        Cursor c = db.rawQuery("select address,encrypt_private_key,pub_key,is_xrandom,is_trash,is_synced,sort_time " +
+                "from addresses  order by sort_time desc", null);
         List<Address> addressList = new ArrayList<Address>();
         while (c.moveToNext()) {
             Address address = null;

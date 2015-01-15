@@ -671,6 +671,25 @@ public class TxProvider implements ITxProvider {
         return outItems;
     }
 
+    public long getSumUnspendOutWithAddress(String address) {
+        long sum = 0;
+        String unspendOutSql = "select sum(a.out_value) sum from outs a,txs b where a.tx_hash=b.tx_hash " +
+                " and a.out_address=? and a.out_status=?";
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery(unspendOutSql,
+                new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});
+
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("sum");
+            if (idColumn != -1) {
+                sum = c.getLong(idColumn);
+
+            }
+        }
+        c.close();
+        return sum;
+    }
+
     public List<Out> getUnSpendOutCanSpendWithAddress(String address) {
         List<Out> outItems = new ArrayList<Out>();
         String confirmedOutSql = "select a.*,b.block_no*a.out_value coin_depth from outs a,txs b" +
@@ -726,10 +745,13 @@ public class TxProvider implements ITxProvider {
     public int txCount(String address) {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(*) from addresses_txs  where address='" + address + "'";
+        String sql = "select count(0) cnt from addresses_txs  where address='" + address + "'";
         Cursor c = db.rawQuery(sql, null);
         if (c.moveToNext()) {
-            result = c.getInt(0);
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                result = c.getInt(idColumn);
+            }
         }
         c.close();
 
