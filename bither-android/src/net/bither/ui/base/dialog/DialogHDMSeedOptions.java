@@ -39,18 +39,18 @@ public class DialogHDMSeedOptions extends DialogWithActions {
 
     private DialogProgress dp;
     private HDMKeychain keychain;
+    boolean isCold;
 
     public DialogHDMSeedOptions(Context context, HDMKeychain keychain, DialogProgress dp) {
         super(context);
         this.keychain = keychain;
         this.dp = dp;
+        isCold = AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD;
     }
 
     @Override
     protected List<Action> getActions() {
         ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
-        boolean isCold = AppSharedPreference.getInstance().getAppMode() == BitherjSettings
-                .AppMode.COLD;
         actions.add(new DialogWithActions.Action(isCold ? R.string.hdm_cold_seed_qr_code : R
                 .string.hdm_hot_seed_qr_code, new Runnable() {
             @Override
@@ -82,7 +82,8 @@ public class DialogHDMSeedOptions extends DialogWithActions {
     private void showHDMSeedQRCode(SecureCharSequence password) {
         password.wipe();
         String content = keychain.getEncryptedSeed();
-        new DialogSimpleQr(getContext(), content, R.string.hdm_cold_seed_qr_code).show();
+        new DialogSimpleQr(getContext(), content, isCold ? R.string.hdm_cold_seed_qr_code : R
+                .string.hdm_hot_seed_qr_code).show();
     }
 
     private void showHDMSeed(final SecureCharSequence password) {
