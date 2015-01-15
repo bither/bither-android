@@ -41,7 +41,7 @@ public class DialogHDMSeedWordList extends CenterDialog implements View.OnClickL
         findViewById(R.id.tv_close).setOnClickListener(this);
         tv = (TextView) findViewById(R.id.tv);
         tv.setMaxWidth(UIUtil.getScreenWidth() - UIUtil.dip2pix(100));
-        tv.setText(Joiner.on(" ").join(words));
+        tv.setText(Joiner.on("-").join(words));
     }
 
     @Override
