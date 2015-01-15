@@ -519,4 +519,5 @@
     <string name="hdm_address_add_count_label">How many HDM addresses to add?</string>
     <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
     <string name="hdm_address_add_button">Add</string>
+    <string name="hdm_address_add_cold_pub_not_match">HDM Cold account is not same as before</string>
 </resources>

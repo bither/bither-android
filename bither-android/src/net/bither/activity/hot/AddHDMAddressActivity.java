@@ -122,13 +122,26 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                 new Thread() {
                     @Override
                     public void run() {
-                        keychain.prepareAddresses(count, passwordGetter.getPassword(), pub);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                performAdd();
+                        try {
+                            keychain.prepareAddresses(count, passwordGetter.getPassword(), pub);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    performAdd();
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (e instanceof HDMKeychain.HDMColdPubNotSameException) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DropdownMessage.showDropdownMessage(AddHDMAddressActivity
+                                                .this, R.string.hdm_address_add_cold_pub_not_match);
+                                    }
+                                });
                             }
-                        });
+                        }
                     }
                 }.start();
             } catch (Exception e) {
