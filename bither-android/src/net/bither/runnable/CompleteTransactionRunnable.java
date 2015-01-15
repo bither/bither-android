@@ -165,8 +165,20 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             return e.getMessage();
         } else if (e != null && e instanceof PasswordException) {
             return BitherApplication.mContext.getString(R.string.password_wrong);
+        } else if (e != null && e instanceof HDMServerSignException) {
+            return e.getMessage();
         } else {
             return BitherApplication.mContext.getString(R.string.send_failed);
+        }
+    }
+
+    private static final class HDMServerSignException extends RuntimeException {
+        HDMServerSignException(int msg) {
+            this(BitherApplication.mContext.getString(msg));
+        }
+
+        HDMServerSignException(String msg) {
+            super(msg);
         }
     }
 }
