@@ -708,7 +708,7 @@ public class TxProvider implements ITxProvider {
             }
             c.close();
             sql = "select b.tx_hash,b.in_sn,b.prev_tx_hash,b.prev_out_sn " +
-                    "from addresses_txs a, ins b, txs c" +
+                    "from addresses_txs a, ins b, txs c " +
                     "where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.block_no is null and a.address=? "
                     + "order by b.tx_hash ,b.in_sn";
             c = db.rawQuery(sql, new String[]{address});
