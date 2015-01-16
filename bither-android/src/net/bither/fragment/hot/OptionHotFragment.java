@@ -181,7 +181,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public String getOptionName(int index) {
-            if(index >= 0 && index < length){
+            if (index >= 0 && index < length) {
                 return ExchangeUtil.Currency.values()[index].getSymbol() + " " + ExchangeUtil
                         .Currency.values()[index].getName();
             }
@@ -361,7 +361,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            if (AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
+            if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                    && !AddressManager.getInstance().hasHDMKeychain()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
