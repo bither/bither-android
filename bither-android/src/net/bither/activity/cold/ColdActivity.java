@@ -40,6 +40,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
@@ -382,20 +383,17 @@ public class ColdActivity extends BaseFragmentActivity {
             public void run() {
                 String[] strings = BackupUtil.getBackupKeyStrList(file);
                 HDMKeychain hdmKeychain = null;
-                boolean check;
+                boolean check = false;
                 if (strings != null && strings.length > 0) {
                     if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
-                        strings[0] = strings[0].substring(1);
-                        String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(strings[0]);
-                        String address = Base58.hexToBase58WithAddress(passwordSeeds[0]);
-                        String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+                        String keychainString = strings[0].substring(1);
                         try {
-                            hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString)
-                                    , password, null);
-                        } catch (Exception e) {
+
+                            check = HDMKeychain.checkPassword(keychainString, password);
+                        } catch (MnemonicException
+                                .MnemonicLengthException e) {
                             e.printStackTrace();
                         }
-                        check = Utils.compareString(address, hdmKeychain.getFirstAddressFromSeed(password));
                     } else {
                         PasswordSeed passwordSeed = new PasswordSeed(strings[0]);
                         check = passwordSeed.checkPassword(password);

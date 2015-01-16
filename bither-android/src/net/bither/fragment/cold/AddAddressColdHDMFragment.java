@@ -31,6 +31,7 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -43,6 +44,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.BackupUtil;
 import net.bither.xrandom.HDMKeychainColdUEntropyActivity;
 
 import java.security.SecureRandom;
@@ -119,8 +121,13 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
             public void runWithService(BlockchainService service) {
                 chain = new HDMKeychain(new SecureRandom(), password);
                 AddressManager.getInstance().setHDMKeychain(chain);
-                if(AppSharedPreference.getInstance().getPasswordSeed() == null){
+                if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
                     AppSharedPreference.getInstance().setPasswordSeed(chain.createPasswordSeed(password));
+                }
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+                    BackupUtil.backupColdKey(false);
+                } else {
+                    BackupUtil.backupHotKey();
                 }
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
@@ -148,7 +155,7 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (!isChecked && !ignoreListener) {
                 cbxXRandom.setChecked(true);
-                if(dialog == null){
+                if (dialog == null) {
                     dialog = new DialogConfirmTask(getActivity(),
                             getResources().getString(R.string.xrandom_uncheck_warn), new Runnable() {
                         @Override
@@ -172,7 +179,7 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
     @Override
     public ArrayList<String> getAddresses() {
         ArrayList<String> as = new ArrayList<String>();
-        if(chain != null){
+        if (chain != null) {
             as.add(HDMSeedAddressPlaceHolder);
         }
         return as;
