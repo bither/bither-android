@@ -11,10 +11,13 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <ImageButton
+            android:id="@+id/ibtn_info"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_gravity="center_vertical"
+            android:background="@drawable/transparent"
+            android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:src="@drawable/hdm_label"/>
 
@@ -25,15 +28,6 @@
             android:textSize="18dp"
             android:textColor="@color/text_field_text_color"
             android:text=" = HD + Multisig"/>
-
-        <ImageButton
-            android:id="@+id/ibtn_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/transparent"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/xrandom_info_icon_selector"/>
     </LinearLayout>
 
     <FrameLayout
