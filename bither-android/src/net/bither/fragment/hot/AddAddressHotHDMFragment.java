@@ -352,6 +352,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 if (dd.isShowing()) {
                                     dd.dismiss();
                                 }
+                                DropdownMessage.showDropdownMessage(getActivity(),
+                                        R.string.hdm_keychain_add_sign_server_qr_code_error);
                             }
                         });
                     }
