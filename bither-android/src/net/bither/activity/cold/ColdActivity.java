@@ -390,8 +390,7 @@ public class ColdActivity extends BaseFragmentActivity {
                         try {
 
                             check = HDMKeychain.checkPassword(keychainString, password);
-                        } catch (MnemonicException
-                                .MnemonicLengthException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
