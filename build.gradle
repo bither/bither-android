@@ -53,6 +53,7 @@ subprojects {
             exclude 'META-INF/LICENSE'
             exclude 'META-INF/DEPENDENCIES'
             exclude 'org/apache/http/entity/mime/version.properties'
+            exclude 'org/apache/http/version.properties'
             exclude 'lib/x86_64/darwin/libscrypt.dylib'
             exclude 'lib/x86_64/freebsd/libscrypt.so'
             exclude 'lib/x86_64/linux/libscrypt.so'
