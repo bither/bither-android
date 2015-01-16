@@ -69,7 +69,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         }
         privateLimit = WalletUtils.isPrivateLimit();
         watchOnlyLimit = WalletUtils.isWatchOnlyLimit();
-        hdmLimit = WalletUtils.isHDMKeychainLimit();
+        hdmLimit = false;
         initView();
     }
 

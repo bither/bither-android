@@ -62,6 +62,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ExceptionUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+import net.bither.util.WalletUtils;
 import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.security.SecureRandom;
@@ -99,10 +100,13 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     private byte[] coldRoot;
 
+    private boolean hdmKeychainLimit;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_address_hot_hdm, container, false);
         initView(v);
+        hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
         v.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -145,6 +149,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
         @Override
         public void onClick(View v) {
+            if (hdmKeychainLimit) {
+                return;
+            }
             new DialogHdmKeychainAddHot(getActivity(), new DialogHdmKeychainAddHot
                     .DialogHdmKeychainAddHotDelegate() {
 
@@ -186,6 +193,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private View.OnClickListener coldClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (hdmKeychainLimit) {
+                return;
+            }
             new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
                     new Runnable() {
 
@@ -329,7 +339,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                         dp.dismiss();
                                     }
                                     if (as.size() > 0) {
-                                        moveToFinal();
+                                        moveToFinal(true);
                                     }
                                 }
                             }
@@ -354,6 +364,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
         @Override
         public void onClick(View v) {
+            if (hdmKeychainLimit) {
+                return;
+            }
             if (coldRoot == null && hdmBid == null) {
                 isServerClicked = true;
                 coldClick.onClick(llCold);
@@ -412,6 +425,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             moveToCold(false);
             if (AddressManager.getInstance().getHdmKeychain().uncompletedAddressCount() > 0) {
                 moveToServer(false);
+                if (hdmKeychainLimit) {
+                    moveToFinal(false);
+                }
             }
         }
     }
@@ -473,7 +489,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         }
     }
 
-    private void moveToFinal() {
+    private void moveToFinal(boolean animToFinish) {
+        hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
         llHot.setEnabled(false);
         llHot.setSelected(true);
         llCold.setEnabled(false);
@@ -481,12 +498,21 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llServer.setEnabled(false);
         llServer.setSelected(true);
         stopAllFlash();
-        vBg.addLineAnimated(llServer, llHot, new Runnable() {
-            @Override
-            public void run() {
-                finalAnimation();
+        if (!animToFinish) {
+            vBg.addLine(llServer, llHot);
+            if (hdmKeychainLimit) {
+                llHot.setEnabled(true);
+                llCold.setEnabled(true);
+                llServer.setEnabled(true);
             }
-        });
+        } else {
+            vBg.addLineAnimated(llServer, llHot, new Runnable() {
+                @Override
+                public void run() {
+                    finalAnimation();
+                }
+            });
+        }
     }
 
     private void stopAllFlash() {
