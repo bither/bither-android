@@ -186,6 +186,16 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public void changeHDBIdPassword(HDMBId hdmbId) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmbId.getEncryptedBitherPasswordString());
+        db.update(AbstractDb.Tables.HDM_BID, cv
+                , AbstractDb.HDMBIdColumns.HDM_BID + "=?", new String[]{hdmbId.getAddress()});
+
+    }
+
+    @Override
     public void changeHDMBIdPassword(String encryptBitherPassword) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
