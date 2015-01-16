@@ -188,7 +188,6 @@ public class TxProvider implements ITxProvider {
 
             if (txItem != null) {
                 addInsAndOuts(db, txItem);
-
             }
         } catch (AddressFormatException e) {
             e.printStackTrace();
