@@ -24,7 +24,6 @@ import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
@@ -96,8 +95,16 @@ public class DialogHDMSeedOptions extends DialogWithActions {
                 final ArrayList<String> words = new ArrayList<String>();
                 try {
                     words.addAll(keychain.getSeedWords(password));
-                } catch (MnemonicException.MnemonicLengthException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                        }
+                    });
                 }
                 if (words.size() > 0) {
                     ThreadUtil.runOnMainThread(new Runnable() {
