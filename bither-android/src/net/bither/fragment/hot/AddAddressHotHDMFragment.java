@@ -363,9 +363,21 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private View.OnClickListener serverClick = new View.OnClickListener() {
+        private boolean clicked = false;
 
         @Override
         public void onClick(View v) {
+            if (clicked) {
+                return;
+            }
+            clicked = true;
+            v.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    clicked = false;
+                }
+            }, 800);
+            
             if (hdmKeychainLimit) {
                 return;
             }
