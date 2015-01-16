@@ -207,7 +207,11 @@ public class SelectAddressToSendActivity extends SwipeRightActivity {
         public void onClick(View v) {
             int position;
             Class<?> target;
-            if (address.isHDM() || address.hasPrivKey()) {
+            if (address.isHDM()) {
+                position = AddressManager.getInstance().getHdmKeychain().getAddresses().indexOf
+                        (address);
+                target = SendActivity.class;
+            } else if (address.hasPrivKey()) {
                 position = AddressManager.getInstance().getPrivKeyAddresses().indexOf(address);
                 target = SendActivity.class;
             } else {

@@ -203,7 +203,11 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
         public void onClick(View v) {
             int position;
             Class<?> target;
-            if (address.address.isHDM() || address.address.hasPrivKey()) {
+            if (address.address.isHDM()) {
+                position = AddressManager.getInstance().getHdmKeychain().getAddresses().indexOf
+                        (address.address);
+                target = SendActivity.class;
+            } else if (address.address.hasPrivKey()) {
                 position = AddressManager.getInstance().getPrivKeyAddresses().indexOf(address.address);
                 target = SendActivity.class;
             } else {
