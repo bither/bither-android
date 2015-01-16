@@ -272,23 +272,6 @@ public class TxProvider implements ITxProvider {
 
     }
 
-    public boolean isSendFromMe(In in) {
-        String sql = "select count(0) cnt from outs where tx_hash=? and out_sn=?";
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery(sql, new String[]{
-                Base58.encode(in.getPrevTxHash()), Integer.toString(in.getPrevOutSn())
-        });
-        int cnt = 0;
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("cnt");
-            if (idColumn != -1) {
-                cnt = c.getInt(idColumn);
-            }
-        }
-        c.close();
-        return cnt > 0;
-    }
-
     private List<AddressTx> insertIn(SQLiteDatabase db, Tx txItem) {
         Cursor c;
         String sql;
