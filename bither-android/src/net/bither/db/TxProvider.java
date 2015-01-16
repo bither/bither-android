@@ -696,7 +696,7 @@ public class TxProvider implements ITxProvider {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
             String sql = "select b.* from addresses_txs a, txs b " +
-                    "where a.tx_hash=b.tx_hash and a.address=? and b.block_no is null" +
+                    "where a.tx_hash=b.tx_hash and a.address=? and b.block_no is null " +
                     "order by b.block_no desc";
             Cursor c = db.rawQuery(sql, new String[]{address});
             while (c.moveToNext()) {
