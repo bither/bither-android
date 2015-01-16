@@ -97,9 +97,9 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         llHDM = (LinearLayout) findViewById(R.id.ll_hdm);
         flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
         findViewById(R.id.ll_below_chart).setOnClickListener(dismissClick);
-        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
-        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
-        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
+        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
+        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
+        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
         flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
                 .getLayoutParams().width * LogoSizeRate);
         vPieChart.setRotateListener(this);
@@ -183,9 +183,9 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         vPieChart.postDelayed(new Runnable() {
             @Override
             public void run() {
-                vPieChart.setAmounts(btcPrivate == null ? BigInteger.ZERO : btcPrivate,
-                        btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly,
-                        btcHdm == null ? BigInteger.ZERO : btcHdm);
+                vPieChart.setAmounts(btcHdm == null ? BigInteger.ZERO : btcHdm,
+                        btcPrivate == null ? BigInteger.ZERO : btcPrivate,
+                        btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
             }
         }, 100);
     }
