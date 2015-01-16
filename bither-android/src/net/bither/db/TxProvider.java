@@ -671,10 +671,10 @@ public class TxProvider implements ITxProvider {
         return outItems;
     }
 
-    public long getSumUnspendOutWithAddress(String address) {
+    public long getConfirmedBalanceWithAddress(String address) {
         long sum = 0;
-        String unspendOutSql = "select sum(a.out_value) sum from outs a,txs b where a.tx_hash=b.tx_hash " +
-                " and a.out_address=? and a.out_status=?";
+        String unspendOutSql = "select ifnull(sum(a.out_value),0) sum from outs a,txs b where a.tx_hash=b.tx_hash " +
+                " and a.out_address=? and a.out_status=? and b.block_no is not null";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery(unspendOutSql,
                 new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});
@@ -683,11 +683,62 @@ public class TxProvider implements ITxProvider {
             int idColumn = c.getColumnIndex("sum");
             if (idColumn != -1) {
                 sum = c.getLong(idColumn);
-
             }
         }
         c.close();
         return sum;
+    }
+
+    public List<Tx> getUnconfirmedTxWithAddress(String address) {
+        List<Tx> txList = new ArrayList<Tx>();
+
+        HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        try {
+            String sql = "select b.* from addresses_txs a, txs b " +
+                    "where a.tx_hash=b.tx_hash and a.address=? and b.block_no is null" +
+                    "order by b.block_no desc";
+            Cursor c = db.rawQuery(sql, new String[]{address});
+            while (c.moveToNext()) {
+                Tx txItem = applyCursor(c);
+                txItem.setIns(new ArrayList<In>());
+                txItem.setOuts(new ArrayList<Out>());
+                txList.add(txItem);
+                txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
+            }
+            c.close();
+            sql = "select b.tx_hash,b.in_sn,b.prev_tx_hash,b.prev_out_sn " +
+                    "from addresses_txs a, ins b, txs c" +
+                    "where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.block_no is null and a.address=? "
+                    + "order by b.tx_hash ,b.in_sn";
+            c = db.rawQuery(sql, new String[]{address});
+            while (c.moveToNext()) {
+                In inItem = applyCursorIn(c);
+                Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+                if (tx != null) {
+                    tx.getIns().add(inItem);
+                }
+            }
+            c.close();
+
+            sql = "select b.tx_hash,b.out_sn,b.out_value,b.out_address " +
+                    "from addresses_txs a, outs b, txs c " +
+                    "where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.block_no is null and a.address=? "
+                    + "order by b.tx_hash,b.out_sn";
+            c = db.rawQuery(sql, new String[]{address});
+            while (c.moveToNext()) {
+                Out out = applyCursorOut(c);
+                Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+                if (tx != null) {
+                    tx.getOuts().add(out);
+                }
+            }
+            c.close();
+
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        }
+        return txList;
     }
 
     public List<Out> getUnSpendOutCanSpendWithAddress(String address) {
