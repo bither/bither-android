@@ -45,6 +45,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
@@ -228,8 +229,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureCloneButton() {
-        if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
-                .size() > 0) {
+        if ((AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
+                .size() > 0) || AddressManager.getInstance().hasHDMKeychain()) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
         } else {
@@ -461,8 +462,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
-            password.wipe();
-            if (addressList == null || addressList.size() == 0) {
+            HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
+
+            if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null)) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -476,7 +478,12 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
+
             KeyUtil.addAddressListByDesc(null, addressList);
+            if (hdmKeychain != null) {
+                KeyUtil.setHDKeyChain(null, hdmKeychain, password);
+            }
+            password.wipe();
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

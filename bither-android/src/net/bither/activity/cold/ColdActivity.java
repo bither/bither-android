@@ -35,9 +35,12 @@ import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -46,6 +49,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.image.glcrop.Util;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
@@ -377,20 +381,49 @@ public class ColdActivity extends BaseFragmentActivity {
             @Override
             public void run() {
                 String[] strings = BackupUtil.getBackupKeyStrList(file);
+                HDMKeychain hdmKeychain = null;
+                boolean check;
                 if (strings != null && strings.length > 0) {
-                    PasswordSeed passwordSeed = new PasswordSeed(strings[0]);
-                    boolean check = passwordSeed.checkPassword(password);
+                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+                        strings[0] = strings[0].substring(1);
+                        String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(strings[0]);
+                        String address = Base58.hexToBase58WithAddress(passwordSeeds[0]);
+                        String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+                        try {
+                            hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString)
+                                    , password, null);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        check = Utils.compareString(address, hdmKeychain.getFirstAddressFromSeed(password));
+                    } else {
+                        PasswordSeed passwordSeed = new PasswordSeed(strings[0]);
+                        check = passwordSeed.checkPassword(password);
+                    }
                     if (!check) {
                         checkPasswordWrong();
                     } else {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
+                            if (keyString.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+
+                                String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                                String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+
+                                try {
+                                    hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString)
+                                            , password, null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                continue;
+                            }
                             String[] strs = QRCodeUtil.splitString(keyString);
                             if (strs.length != 4) {
                                 continue;
                             }
-                            passwordSeed = new PasswordSeed(keyString);
+                            PasswordSeed passwordSeed = new PasswordSeed(keyString);
                             ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
@@ -400,8 +433,12 @@ public class ColdActivity extends BaseFragmentActivity {
 
                             }
                         }
-                        password.wipe();
+
                         KeyUtil.addAddressListByDesc(null, addressList);
+                        if (hdmKeychain != null) {
+                            KeyUtil.setHDKeyChain(null, hdmKeychain, password);
+                        }
+                        password.wipe();
                         recoverBackupSuccess();
                     }
 

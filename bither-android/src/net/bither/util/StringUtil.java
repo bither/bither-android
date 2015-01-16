@@ -31,19 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtil {
-    public static boolean checkAddressIsNull(String addressStr) {
-        byte[] EMPTY_BYTES = new byte[32];
-        String address;
-        try {
-            address = new Script(Script.createInputScript(EMPTY_BYTES, EMPTY_BYTES)).getToAddress();
-            return Utils.compareString(addressStr, address);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        return false;
-
-    }
-
 
     public static String makeFragmentName(int paramInt1, int paramInt2) {
         return "android:switcher:" + paramInt1 + ":" + paramInt2;

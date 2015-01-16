@@ -203,7 +203,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
                         e.printStackTrace();
                     }
                 }
-                if (subAddress == null || StringUtil.checkAddressIsNull(subAddress)) {
+                if (subAddress == null) {
                     subAddress = getContext().getResources().getString(R.string
                             .address_cannot_be_parsed);
                 }
