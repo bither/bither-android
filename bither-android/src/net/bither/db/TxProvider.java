@@ -723,57 +723,57 @@ public class TxProvider implements ITxProvider {
         return txList;
     }
 
-    public List<Out> getUnSpendOutCanSpendWithAddress(String address) {
-        List<Out> outItems = new ArrayList<Out>();
-        String confirmedOutSql = "select a.*,b.block_no*a.out_value coin_depth from outs a,txs b" +
-                " where a.tx_hash=b.tx_hash and b.block_no is not null and a.out_address=? and a.out_status=?";
-        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
-                " is null and a.out_address=? and a.out_status=? and b.source>=?";
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery(confirmedOutSql,
-                new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});
-        try {
-            while (c.moveToNext()) {
-                Out outItem = applyCursorOut(c);
-                int idColumn = c.getColumnIndex("coin_depth");
-                if (idColumn != -1) {
-                    outItem.setCoinDepth(c.getLong(idColumn));
-                }
-                outItems.add(outItem);
-            }
-            c.close();
-            c = db.rawQuery(selfOutSql, new String[]{address,
-                    Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
-            while (c.moveToNext()) {
-                outItems.add(applyCursorOut(c));
-            }
-            c.close();
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        }
-        return outItems;
-    }
-
-    public List<Out> getUnSpendOutButNotConfirmWithAddress(String address) {
-        List<Out> outItems = new ArrayList<Out>();
-        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
-                " is null and a.out_address=? and a.out_status=? and b.source=?";
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery(selfOutSql, new String[]{address,
-                Integer.toString(Out.OutStatus.unspent.getValue()), "0"});
-        try {
-            while (c.moveToNext()) {
-                outItems.add(applyCursorOut(c));
-
-            }
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        } finally {
-            c.close();
-        }
-
-        return outItems;
-    }
+//    public List<Out> getUnSpendOutCanSpendWithAddress(String address) {
+//        List<Out> outItems = new ArrayList<Out>();
+//        String confirmedOutSql = "select a.*,b.block_no*a.out_value coin_depth from outs a,txs b" +
+//                " where a.tx_hash=b.tx_hash and b.block_no is not null and a.out_address=? and a.out_status=?";
+//        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
+//                " is null and a.out_address=? and a.out_status=? and b.source>=?";
+//        SQLiteDatabase db = this.mDb.getReadableDatabase();
+//        Cursor c = db.rawQuery(confirmedOutSql,
+//                new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});
+//        try {
+//            while (c.moveToNext()) {
+//                Out outItem = applyCursorOut(c);
+//                int idColumn = c.getColumnIndex("coin_depth");
+//                if (idColumn != -1) {
+//                    outItem.setCoinDepth(c.getLong(idColumn));
+//                }
+//                outItems.add(outItem);
+//            }
+//            c.close();
+//            c = db.rawQuery(selfOutSql, new String[]{address,
+//                    Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
+//            while (c.moveToNext()) {
+//                outItems.add(applyCursorOut(c));
+//            }
+//            c.close();
+//        } catch (AddressFormatException e) {
+//            e.printStackTrace();
+//        }
+//        return outItems;
+//    }
+//
+//    public List<Out> getUnSpendOutButNotConfirmWithAddress(String address) {
+//        List<Out> outItems = new ArrayList<Out>();
+//        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
+//                " is null and a.out_address=? and a.out_status=? and b.source=?";
+//        SQLiteDatabase db = this.mDb.getReadableDatabase();
+//        Cursor c = db.rawQuery(selfOutSql, new String[]{address,
+//                Integer.toString(Out.OutStatus.unspent.getValue()), "0"});
+//        try {
+//            while (c.moveToNext()) {
+//                outItems.add(applyCursorOut(c));
+//
+//            }
+//        } catch (AddressFormatException e) {
+//            e.printStackTrace();
+//        } finally {
+//            c.close();
+//        }
+//
+//        return outItems;
+//    }
 
     public int txCount(String address) {
         int result = 0;
