@@ -6,11 +6,28 @@
               android:layout_gravity="center"
               android:layout_height="match_parent">
 
-    <ImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/hdm_label"/>
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/hdm_label"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="26dp"
+            android:layout_marginLeft="5dp"
+            android:text="HDM"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv"

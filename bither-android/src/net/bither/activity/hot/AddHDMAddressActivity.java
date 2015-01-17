@@ -32,6 +32,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
@@ -42,6 +43,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.ExceptionUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -124,8 +126,13 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                 new Thread() {
                     @Override
                     public void run() {
+                        final SecureCharSequence password = passwordGetter.getPassword();
+                        if (password == null) {
+                            return;
+                        }
                         try {
-                            keychain.prepareAddresses(count, passwordGetter.getPassword(), pub);
+                            int prepared = keychain.prepareAddresses(count, password, pub);
+                            LogUtil.i("Add", "try to prepare: " + count + ", prepared: " + prepared);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -161,11 +168,15 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
         new ThreadNeedService(null, this) {
             @Override
             public void runWithService(final BlockchainService service) {
+                final SecureCharSequence password = passwordGetter.getPassword();
+                if (password == null) {
+                    return;
+                }
                 if (service != null) {
                     service.stopAndUnregister();
                 }
-                final List<HDMAddress> as = keychain.completeAddresses(count,
-                        passwordGetter.getPassword(), new HDMKeychain.HDMFetchRemotePublicKeys() {
+                final List<HDMAddress> as = keychain.completeAddresses(count, password,
+                        new HDMKeychain.HDMFetchRemotePublicKeys() {
                             @Override
                             public void completeRemotePublicKeys(CharSequence password,
                                                                  List<HDMAddress.Pubs>
@@ -193,6 +204,7 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                 }
                             }
                         });
+                LogUtil.i("Add", "try to complete: " + count + ", completed: " + as.size());
                 if (service != null) {
                     service.startAndRegister();
                 }
@@ -230,7 +242,6 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
         public int getItemsCount() {
             int max = BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT - AddressManager.getInstance
                     ().getHdmKeychain().getAllCompletedAddresses().size();
-            max = Math.min(max, BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
             return max;
         }
 

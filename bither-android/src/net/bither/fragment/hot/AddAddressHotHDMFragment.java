@@ -44,6 +44,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
@@ -168,9 +169,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                     new Thread() {
                         @Override
                         public void run() {
-                            HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
-                                    passwordGetter.getPassword());
-                            KeyUtil.setHDKeyChain(keychain, passwordGetter.getPassword());
+                            SecureCharSequence password = passwordGetter.getPassword();
+                            if (password == null) {
+                                return;
+                            }
+                            HDMKeychain keychain = new HDMKeychain(new SecureRandom(), password);
+                            KeyUtil.setHDKeyChain(keychain, password);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -235,8 +239,20 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                     public void run() {
                         try {
                             if (count > 0) {
+                                SecureCharSequence password = passwordGetter.getPassword();
+                                if (password == null) {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                        }
+                                    });
+                                    return;
+                                }
                                 AddressManager.getInstance().getHdmKeychain().prepareAddresses
-                                        (count, passwordGetter.getPassword(), Arrays.copyOf(coldRoot, coldRoot.length));
+                                        (count, password, Arrays.copyOf(coldRoot, coldRoot.length));
                             }
                             initHDMBidFromColdRoot();
                             ThreadUtil.runOnMainThread(new Runnable() {
@@ -288,13 +304,17 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 @Override
                 public void runWithService(BlockchainService service) {
                     try {
-                        hdmBid.setSignature(result, passwordGetter.getPassword());
+                        SecureCharSequence password = passwordGetter.getPassword();
+                        if(password == null){
+                            return;
+                        }
+                        hdmBid.setSignature(result, password);
                         if (service != null) {
                             service.stopAndUnregister();
                         }
                         final HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
                         final List<HDMAddress> as = keychain
-                                .completeAddresses(1, passwordGetter.getPassword(),
+                                .completeAddresses(1, password,
                                         new HDMKeychain.HDMFetchRemotePublicKeys() {
                                             @Override
                                             public void completeRemotePublicKeys(CharSequence

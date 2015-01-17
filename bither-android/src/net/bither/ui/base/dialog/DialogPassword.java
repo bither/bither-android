@@ -396,7 +396,9 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                         if (delegate != null) {
                             delegate.beforePasswordDialogShow();
                         }
-                        new DialogPassword(context, PasswordGetter.this).show();
+                        DialogPassword d = new DialogPassword(context, PasswordGetter.this);
+                        d.setNeedCancelEvent(true);
+                        d.show();
                     }
                 });
                 try {
@@ -420,7 +422,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             } finally {
                 getPasswordLock.unlock();
             }
-            if (delegate != null) {
+            if (delegate != null && password != null) {
                 delegate.afterPasswordDialogDismiss();
             }
         }
