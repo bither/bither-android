@@ -21,11 +21,8 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.Tx;
 import net.bither.util.UIUtil;
 import net.bither.util.UnitUtilWrapper;
-
-import java.util.List;
 
 public class DialogBalanceDetail extends DialogWithArrow {
     private TextView tvTransactionCount;
@@ -55,16 +52,9 @@ public class DialogBalanceDetail extends DialogWithArrow {
         public long totalSent;
 
         public Info(Address address){
-            List<Tx> txs = address.getTxs();
-            txCount = txs.size();
-            totalReceived = 0;
-            for (Tx tx : txs) {
-                long amount = tx.deltaAmountFrom(address);
-                if (amount > 0) {
-                    totalReceived += amount;
-                }
-            }
-            totalSent = totalReceived - address.getBalance();
+            txCount = address.txCount();
+            totalReceived = address.totalReceive();
+            totalSent = address.totalSend();
         }
     }
 }
