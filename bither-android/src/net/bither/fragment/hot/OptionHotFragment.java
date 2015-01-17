@@ -54,8 +54,8 @@ import net.bither.activity.hot.CheckPrivateKeyActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
@@ -580,7 +580,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
         final Runnable check = new Runnable() {
             @Override
             public void run() {
-                if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager.getInstance().getTrashAddresses().size() > 0) {
+                if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager
+                        .getInstance().getTrashAddresses().size() > 0 || AddressManager
+                        .getInstance().getHdmKeychain() != null) {
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);

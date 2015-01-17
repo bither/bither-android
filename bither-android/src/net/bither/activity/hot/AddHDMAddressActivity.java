@@ -119,7 +119,8 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                 final byte[] pub = Utils.hexStringToByteArray(result);
                 final int count = Math.min(BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT -
                         keychain.getAllCompletedAddresses().size() - keychain
-                        .uncompletedAddressCount(), 100);
+                        .uncompletedAddressCount(),
+                        BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
                 new Thread() {
                     @Override
                     public void run() {
@@ -229,7 +230,7 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
         public int getItemsCount() {
             int max = BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT - AddressManager.getInstance
                     ().getHdmKeychain().getAllCompletedAddresses().size();
-            max = Math.min(max, 100);
+            max = Math.min(max, BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
             return max;
         }
 

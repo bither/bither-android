@@ -45,7 +45,8 @@ public class BitherSetting {
 
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    public static final int HDM_ADDRESS_PER_SEED_COUNT_LIMIT = 200;
+    public static final int HDM_ADDRESS_PER_SEED_COUNT_LIMIT = 100;
+    public static final int HDM_ADDRESS_PER_SEED_PREPARE_COUNT = 100;
     public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 150;
     public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 50;
 

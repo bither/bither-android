@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.api.http.Http400Exception;
@@ -46,7 +47,6 @@ import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
-import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -225,8 +225,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             try {
                 coldRoot = Utils.hexStringToByteArray(result);
-                final int count = 100 - AddressManager.getInstance().getHdmKeychain()
-                        .uncompletedAddressCount();
+                final int count = BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT -
+                        AddressManager.getInstance().getHdmKeychain().uncompletedAddressCount();
                 if (!dp.isShowing() && passwordGetter.hasPassword() && count > 0) {
                     dp.show();
                 }
