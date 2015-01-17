@@ -607,7 +607,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             }
                         }, anim.getDuration());
                     }
-                }, zoomDuration / 3 * 2);
+                }, zoomDuration);
             }
         }, fadeDuration);
     }
