@@ -117,8 +117,9 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
             final String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             try {
                 final byte[] pub = Utils.hexStringToByteArray(result);
-                final int count = (wvCount.getCurrentItem() + 1) - keychain
-                        .uncompletedAddressCount();
+                final int count = Math.min(BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT -
+                        keychain.getAllCompletedAddresses().size() - keychain
+                        .uncompletedAddressCount(), 100);
                 new Thread() {
                     @Override
                     public void run() {
