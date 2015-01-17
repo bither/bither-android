@@ -196,7 +196,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             etPassword.setText("");
             try {
                 dp.setWait();
-                new CommitTransactionThread(dp, addressPosition, tx, true, isHDM,
+                new CommitTransactionThread(dp, addressPosition, tx, isHDM, true,
                         SendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
