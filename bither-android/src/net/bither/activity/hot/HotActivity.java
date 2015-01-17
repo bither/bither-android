@@ -104,24 +104,11 @@ public class HotActivity extends BaseFragmentActivity {
                         }
                     }
                 }, 100);
-                mPager.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showNewCount();
-                    }
-                }, 500);
+
                 onNewIntent(getIntent());
 
             }
         }, 500);
-//        mPager.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (ServiceUtil.localTimeIsWrong()) {
-//                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.time_is_wrong);
-//                }
-//            }
-//        }, 2 * 1000);
         DialogFirstRunWarning.show(this);
     }
 
@@ -196,7 +183,6 @@ public class HotActivity extends BaseFragmentActivity {
         tbtnMe = (TabButton) findViewById(R.id.tbtn_me);
 
         configureTopBarSize();
-
         configureTabMainIcons();
         tbtnMain.setBigInteger(null, null, null);
         if (AbstractApp.addressIsReady) {
@@ -204,14 +190,18 @@ public class HotActivity extends BaseFragmentActivity {
         }
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
         tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
-
         mPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new HotFragmentPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mAdapter);
-        mPager.setCurrentItem(1);
-        mPager.setOffscreenPageLimit(2);
-        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
-                tbtnMain, tbtnMe}, mPager));
+        mPager.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter = new HotFragmentPagerAdapter(getSupportFragmentManager());
+                mPager.setAdapter(mAdapter);
+                mPager.setCurrentItem(1);
+                mPager.setOffscreenPageLimit(2);
+                mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
+                        tbtnMain, tbtnMe}, mPager));
+            }
+        }, 100);
     }
 
     private void initClick() {
@@ -322,7 +312,7 @@ public class HotActivity extends BaseFragmentActivity {
         }
 
         public void onPageSelected(int position) {
-            showNewCount();
+
             if (position >= 0 && position < indicators.size()) {
                 for (int i = 0;
                      i < indicators.size();
@@ -382,10 +372,6 @@ public class HotActivity extends BaseFragmentActivity {
                 downloadAvatarRunnable.run();
             }
         }).start();
-    }
-
-    public void showNewCount() {
-
     }
 
     public void refreshTotalBalance() {
