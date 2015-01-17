@@ -135,9 +135,9 @@ public class TxProvider implements ITxProvider {
         List<Tx> txItemList = new ArrayList<Tx>();
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from txs where block_no is null or block_no = ?";
+        String sql = "select * from txs where block_no is null";
         try {
-            Cursor c = db.rawQuery(sql, new String[]{Integer.toString(Tx.TX_UNCONFIRMED)});
+            Cursor c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 Tx txItem = applyCursor(c);
                 txItem.setIns(new ArrayList<In>());
@@ -147,9 +147,9 @@ public class TxProvider implements ITxProvider {
             }
             c.close();
 
-            sql = "select b.* from txs a, ins b  where a.tx_hash=b.tx_hash  and ( a.block_no is null or a.block_no = ? ) "
+            sql = "select b.* from txs a, ins b  where a.tx_hash=b.tx_hash  and a.block_no is null "
                     + "order by b.tx_hash ,b.in_sn";
-            c = db.rawQuery(sql, new String[]{Integer.toString(Tx.TX_UNCONFIRMED)});
+            c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 In inItem = applyCursorIn(c);
                 Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
@@ -157,9 +157,9 @@ public class TxProvider implements ITxProvider {
             }
             c.close();
 
-            sql = "select b.* from txs a, outs b where a.tx_hash=b.tx_hash and ( a.block_no is null or a.block_no = ? ) "
+            sql = "select b.* from txs a, outs b where a.tx_hash=b.tx_hash and a.block_no is null "
                     + "order by b.tx_hash,b.out_sn";
-            c = db.rawQuery(sql, new String[]{Integer.toString(Tx.TX_UNCONFIRMED)});
+            c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 Out out = applyCursorOut(c);
                 Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
@@ -925,14 +925,21 @@ public class TxProvider implements ITxProvider {
     }
 
     public void clearAllTx() {
-        // todo: it can be recreate
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        SQLiteDatabase db = mDb.getWritableDatabase();
         db.beginTransaction();
-        db.delete(AbstractDb.Tables.TXS, "", new String[0]);
-        db.delete(AbstractDb.Tables.OUTS, "", new String[0]);
-        db.delete(AbstractDb.Tables.INS, "", new String[0]);
-        db.delete(AbstractDb.Tables.ADDRESSES_TXS, "", new String[0]);
-        db.delete(AbstractDb.Tables.PEERS, "", new String[0]);
+        db.execSQL("drop table " + AbstractDb.Tables.TXS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.OUTS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.INS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.ADDRESSES_TXS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.PEERS + ";");
+        db.execSQL(AbstractDb.CREATE_TXS_SQL);
+        db.execSQL(AbstractDb.CREATE_TX_BLOCK_NO_INDEX);
+        db.execSQL(AbstractDb.CREATE_OUTS_SQL);
+        db.execSQL(AbstractDb.CREATE_OUT_OUT_ADDRESS_INDEX);
+        db.execSQL(AbstractDb.CREATE_INS_SQL);
+        db.execSQL(AbstractDb.CREATE_IN_PREV_TX_HASH_INDEX);
+        db.execSQL(AbstractDb.CREATE_ADDRESSTXS_SQL);
+        db.execSQL(AbstractDb.CREATE_PEER_SQL);
         db.setTransactionSuccessful();
         db.endTransaction();
     }
@@ -966,6 +973,8 @@ public class TxProvider implements ITxProvider {
     private void applyContentValues(Tx txItem, ContentValues cv) {
         if (txItem.getBlockNo() != Tx.TX_UNCONFIRMED) {
             cv.put(AbstractDb.TxsColumns.BLOCK_NO, txItem.getBlockNo());
+        } else {
+            cv.putNull(AbstractDb.TxsColumns.BLOCK_NO);
         }
         cv.put(AbstractDb.TxsColumns.TX_HASH, Base58.encode(txItem.getTxHash()));
         cv.put(AbstractDb.TxsColumns.SOURCE, txItem.getSource());
@@ -981,6 +990,8 @@ public class TxProvider implements ITxProvider {
         cv.put(AbstractDb.InsColumns.PREV_OUT_SN, inItem.getPrevOutSn());
         if (inItem.getInSignature() != null) {
             cv.put(AbstractDb.InsColumns.IN_SIGNATURE, Base58.encode(inItem.getInSignature()));
+        } else {
+            cv.putNull(AbstractDb.InsColumns.IN_SIGNATURE);
         }
         cv.put(AbstractDb.InsColumns.IN_SEQUENCE, inItem.getInSequence());
     }
@@ -993,6 +1004,8 @@ public class TxProvider implements ITxProvider {
         cv.put(AbstractDb.OutsColumns.OUT_STATUS, outItem.getOutStatus().getValue());
         if (!Utils.isEmpty(outItem.getOutAddress())) {
             cv.put(AbstractDb.OutsColumns.OUT_ADDRESS, outItem.getOutAddress());
+        } else {
+            cv.putNull(AbstractDb.OutsColumns.OUT_ADDRESS);
         }
     }
 
