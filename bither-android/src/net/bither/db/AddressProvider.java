@@ -15,6 +15,7 @@ import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
@@ -129,7 +130,7 @@ public class AddressProvider implements IAddressProvider {
 
     @Override
     public HDMBId getHDMBId() {
-        HDMBId hdmbId;
+        HDMBId hdmbId = null;
         Cursor c = null;
         String address = null;
         String encryptBitherPassword = null;
@@ -149,13 +150,16 @@ public class AddressProvider implements IAddressProvider {
                 }
 
             }
+            if (!Utils.isEmpty(address) && !Utils.isEmpty(encryptBitherPassword)) {
+                hdmbId = new HDMBId(address, encryptBitherPassword);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             if (c != null)
                 c.close();
         }
-        hdmbId = new HDMBId(address, encryptBitherPassword);
+
         return hdmbId;
     }
 
