@@ -33,6 +33,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -181,8 +182,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
-                            SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
-                            FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+//                            if (BitherjSettings.DEV_DEBUG) {
+//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+//
+//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
+//                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
