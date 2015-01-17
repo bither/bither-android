@@ -791,6 +791,38 @@ public class TxProvider implements ITxProvider {
         return result;
     }
 
+    public long totalReceive(String address) {
+        long result = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select ifnull(sum(out_value),0) total from outs where out_address=?";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("total");
+            if (idColumn != -1) {
+                result = c.getLong(idColumn);
+            }
+        }
+        c.close();
+        return result;
+    }
+
+    public long totalSend(String address) {
+        long result = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select ifnull(sum(b.out_value),0) total " +
+                " from ins a, outs b " +
+                " where a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn and b.out_address=?";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("total");
+            if (idColumn != -1) {
+                result = c.getLong(idColumn);
+            }
+        }
+        c.close();
+        return result;
+    }
+
     public void txSentBySelfHasSaw(byte[] txHash) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         String sql = "update txs set source=source+1 where tx_hash=? and source>=1";
