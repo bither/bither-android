@@ -56,7 +56,7 @@ public class TxProvider implements ITxProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by b.block_no desc";
+            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc";
             Cursor c = db.rawQuery(sql, new String[]{address});
             while (c.moveToNext()) {
                 Tx txItem = applyCursor(c);
@@ -110,7 +110,7 @@ public class TxProvider implements ITxProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by b.block_no desc limit ?,? ";
+            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc limit ?,? ";
             Cursor c = db.rawQuery(sql, new String[]{
                     address, Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
             });
