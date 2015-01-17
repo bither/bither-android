@@ -794,15 +794,51 @@ public class TxProvider implements ITxProvider {
     public long totalReceive(String address) {
         long result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select ifnull(sum(out_value),0) total from outs where out_address=?";
-        Cursor c = db.rawQuery(sql, new String[]{address});
+        String sql = "select ifnull(sum(a.out_value),0) total " +
+                " from outs a where a.out_address=? " +
+                "   and not exists (select count(0) from ins b, outs c " +
+                "     where a.tx_hash=b.tx_hash and b.prev_tx_hash=c.tx_hash and b.prev_out_sn=c.out_sn " +
+                "       and c.out_address=?)";
+        Cursor c = db.rawQuery(sql, new String[]{address, address});
         if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("total");
-            if (idColumn != -1) {
-                result = c.getLong(idColumn);
-            }
+            result = c.getLong(0);
         }
         c.close();
+        sql = "select a.tx_hash " +
+                " from outs a,(select b.tx_hash, c.out_address, count(0) cnt from ins b, outs c" +
+                "                where b.prev_tx_hash = c.tx_hash and b.prev_out_sn=c.out_sn" +
+                "                group by b.tx_hash, c.out_address" +
+                "                having cnt >1) d " +
+                " where a.out_address=? and a.tx_hash=d.tx_hash and a.out_address=d.out_address" +
+                "   and exists (select count(0) from ins b, outs c " +
+                "     where a.tx_hash=b.tx_hash and b.prev_tx_hash=c.tx_hash and b.prev_out_sn=c.out_sn " +
+                "       and c.out_address=?)";
+        ArrayList<String> txs = new ArrayList<String>();
+        c = db.rawQuery(sql, new String[]{address, address});
+        while (c.moveToNext()) {
+            txs.add(c.getString(0));
+        }
+        c.close();
+        for (String tx : txs) {
+            long sum = 0;
+            sql = "select ifnull(sum(out_value),0) from outs where tx_hash=? and out_address=?";
+            c = db.rawQuery(sql, new String[]{tx, address});
+            if (c.moveToNext()) {
+                sum += c.getLong(0);
+            }
+            c.close();
+            sql = "select ifnull(sum(b.out_value),0) from ins a, outs b " +
+                    " where a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn " +
+                    "   and a.tx_hash=? and b.out_address=?";
+            c = db.rawQuery(sql, new String[]{tx, address});
+            if (c.moveToNext()) {
+                sum -= c.getLong(0);
+            }
+            c.close();
+            if (sum > 0) {
+                result += sum;
+            }
+        }
         return result;
     }
 
