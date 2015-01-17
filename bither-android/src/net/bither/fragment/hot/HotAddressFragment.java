@@ -253,14 +253,32 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             }
             boolean isHDM = false;
             boolean isPrivate = false;
+            int position = 0;
             if (addressesToShowAdded.get(0).startsWith("3")) {
                 isHDM = true;
             }
-            if (!isHDM) {
+            if (isHDM) {
+                if (addressesToShowAdded.size() == 1) {
+                    for (int i = 0;
+                         i < hdms.size();
+                         i++) {
+                        if (Utils.compareString(hdms.get(i).getAddress(),
+                                addressesToShowAdded.get(0))) {
+                            position = i;
+                            break;
+                        }
+                    }
+                }
+            } else {
                 if (privates != null && privates.size() > 0) {
-                    for (Address a : privates) {
-                        if (Utils.compareString(a.getAddress(), addressesToShowAdded.get(0))) {
+                    for (int i = 0;
+                         i < privates.size();
+                         i++) {
+                        if (Utils.compareString(privates.get(i).getAddress(),
+                                addressesToShowAdded.get(0))) {
                             isPrivate = true;
+                            position = i;
+                            break;
                         }
                     }
                 }
@@ -270,9 +288,13 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                         return;
                     }
                     boolean foundWatchonly = false;
-                    for (Address a : watchOnlys) {
-                        if (Utils.compareString(a.getAddress(), addressesToShowAdded.get(0))) {
+                    for (int i = 0;
+                         i < watchOnlys.size();
+                         i++) {
+                        if (Utils.compareString(watchOnlys.get(i).getAddress(),
+                                addressesToShowAdded.get(0))) {
                             foundWatchonly = true;
+                            position = i;
                             break;
                         }
                     }
@@ -288,9 +310,12 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             } else if (isPrivate) {
                 group = mAdapter.getPrivateGroupIndex();
             }
-            int position = 0;
-            if (isHDM) {
-                position = hdms.size() - addressesToShowAdded.size();
+
+            if (addressesToShowAdded.size() > 1) {
+                position = 0;
+                if (isHDM) {
+                    position = hdms.size() - addressesToShowAdded.size();
+                }
             }
 
             if (position == 0) {
