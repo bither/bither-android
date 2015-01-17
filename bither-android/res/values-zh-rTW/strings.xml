@@ -30,6 +30,7 @@
     <string name="address_monitor_failed_multiple_address">不能監控此類多簽名地址</string>
     <string name="total_btc_prefix">總計:</string>
     <string name="total_address_prefix">私鑰數:</string>
+    <string name="total_hdm_keychain_prefix">HDM 冷:</string>
     <string name="please_wait">請稍候…</string>
     <string name="address_group_watch_only">冷錢包地址</string>
     <string name="address_group_private">熱錢包地址</string>

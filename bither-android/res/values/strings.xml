@@ -37,6 +37,7 @@
     <string name="address_monitor_failed_multiple_address">Can not monitor special MultiSig address</string>
     <string name="total_btc_prefix">Total:</string>
     <string name="total_address_prefix">Private Key Count:</string>
+    <string name="total_hdm_keychain_prefix">HDM Cold:</string>
     <string name="please_wait">Please wait…</string>
     <string name="address_group_watch_only">Cold Wallet Address</string>
     <string name="address_group_private">Hot Wallet Address</string>

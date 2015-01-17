@@ -18,6 +18,7 @@ package net.bither.ui.base.dialog;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
@@ -25,16 +26,23 @@ import net.bither.bitherj.core.AddressManager;
 
 public class DialogColdAddressCount extends DialogWithArrow {
     private TextView tvCount;
+    private LinearLayout llHDM;
 
     public DialogColdAddressCount(Context context) {
         super(context);
         setContentView(R.layout.dialog_cold_address_count);
         tvCount = (TextView) findViewById(R.id.tv_count);
+        llHDM = (LinearLayout) findViewById(R.id.ll_hdm);
     }
 
     @Override
     public void show(View fromView) {
         tvCount.setText(Integer.toString(AddressManager.getInstance().getPrivKeyAddresses().size()));
+        if (AddressManager.getInstance().hasHDMKeychain()) {
+            llHDM.setVisibility(View.VISIBLE);
+        } else {
+            llHDM.setVisibility(View.GONE);
+        }
         super.show(fromView);
     }
 }
