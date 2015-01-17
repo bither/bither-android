@@ -42,6 +42,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.ExceptionUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -125,7 +126,8 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                     @Override
                     public void run() {
                         try {
-                            keychain.prepareAddresses(count, passwordGetter.getPassword(), pub);
+                            int prepared = keychain.prepareAddresses(count, passwordGetter.getPassword(), pub);
+                            LogUtil.i("Add", "try to prepare: " + count + ", prepared: " + prepared);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -193,6 +195,7 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
                                 }
                             }
                         });
+                LogUtil.i("Add", "try to complete: " + count + ", completed: " + as.size());
                 if (service != null) {
                     service.startAndRegister();
                 }
@@ -230,7 +233,6 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
         public int getItemsCount() {
             int max = BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT - AddressManager.getInstance
                     ().getHdmKeychain().getAllCompletedAddresses().size();
-            max = Math.min(max, BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
             return max;
         }
 
