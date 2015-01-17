@@ -796,7 +796,7 @@ public class TxProvider implements ITxProvider {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select ifnull(sum(a.out_value),0) total " +
                 " from outs a where a.out_address=? " +
-                "   and not exists (select count(0) from ins b, outs c " +
+                "   and not exists (select 1 from ins b, outs c " +
                 "     where a.tx_hash=b.tx_hash and b.prev_tx_hash=c.tx_hash and b.prev_out_sn=c.out_sn " +
                 "       and c.out_address=?)";
         Cursor c = db.rawQuery(sql, new String[]{address, address});
@@ -810,7 +810,7 @@ public class TxProvider implements ITxProvider {
                 "                group by b.tx_hash, c.out_address" +
                 "                having cnt >1) d " +
                 " where a.out_address=? and a.tx_hash=d.tx_hash and a.out_address=d.out_address" +
-                "   and exists (select count(0) from ins b, outs c " +
+                "   and exists (select 1 from ins b, outs c " +
                 "     where a.tx_hash=b.tx_hash and b.prev_tx_hash=c.tx_hash and b.prev_out_sn=c.out_sn " +
                 "       and c.out_address=?)";
         ArrayList<String> txs = new ArrayList<String>();
