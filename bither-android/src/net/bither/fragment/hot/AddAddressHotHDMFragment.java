@@ -349,6 +349,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 if (dd.isShowing()) {
                                     dd.dismiss();
                                 }
+                                DropdownMessage.showDropdownMessage(getActivity(),
+                                        R.string.hdm_keychain_add_sign_server_qr_code_error);
                             }
                         });
                     }
@@ -358,9 +360,21 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private View.OnClickListener serverClick = new View.OnClickListener() {
+        private boolean clicked = false;
 
         @Override
         public void onClick(View v) {
+            if (clicked) {
+                return;
+            }
+            clicked = true;
+            v.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    clicked = false;
+                }
+            }, 800);
+            
             if (hdmKeychainLimit) {
                 return;
             }
@@ -590,7 +604,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             }
                         }, anim.getDuration());
                     }
-                }, zoomDuration / 3 * 2);
+                }, zoomDuration);
             }
         }, fadeDuration);
     }
