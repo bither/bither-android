@@ -232,7 +232,7 @@ public class BackupUtil {
 
                 }
             }
-            if (AddressManager.getInstance().hasHDMKeychain()) {
+            if (AddressManager.getInstance().getHdmKeychain() != null) {
                 try {
                     HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
                     String address = keychain.getFirstAddressFromDb();
