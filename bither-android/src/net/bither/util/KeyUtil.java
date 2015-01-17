@@ -106,10 +106,7 @@ public class KeyUtil {
 
     }
 
-    public static void setHDKeyChain(BlockchainService service, HDMKeychain keyChain, CharSequence password) {
-        if (service != null) {
-            service.stopAndUnregister();
-        }
+    public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password) {
         AddressManager.getInstance().setHDMKeychain(keyChain);
         if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
             AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
@@ -118,9 +115,6 @@ public class KeyUtil {
             BackupUtil.backupColdKey(false);
         } else {
             BackupUtil.backupHotKey();
-        }
-        if (service != null) {
-            service.startAndRegister();
         }
 
     }

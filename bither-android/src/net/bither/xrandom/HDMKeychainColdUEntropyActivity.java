@@ -34,6 +34,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;
+import net.bither.util.KeyUtil;
 
 import java.util.ArrayList;
 
@@ -150,13 +151,7 @@ public class HDMKeychainColdUEntropyActivity extends UEntropyActivity {
                     runOnUiThread(cancelRunnable);
                     return;
                 }
-
-                AddressManager.getInstance().setHDMKeychain(chain);
-                if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                    AppSharedPreference.getInstance().setPasswordSeed(chain.createPasswordSeed
-                            (password));
-                }
-
+                KeyUtil.setHDKeyChain(chain, password);
                 progress += itemProgress * progressEntryptRate;
                 onProgress(progress);
 

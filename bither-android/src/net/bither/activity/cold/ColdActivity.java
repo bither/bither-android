@@ -403,8 +403,11 @@ public class ColdActivity extends BaseFragmentActivity {
                         List<Address> addressList = new
                                 ArrayList<Address>();
                         for (String keyString : strings) {
+                            String[] strs = QRCodeUtil.splitString(keyString);
+                            if (strs.length != 4) {
+                                continue;
+                            }
                             if (keyString.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
-
                                 String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
                                 String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
 
@@ -416,10 +419,7 @@ public class ColdActivity extends BaseFragmentActivity {
                                 }
                                 continue;
                             }
-                            String[] strs = QRCodeUtil.splitString(keyString);
-                            if (strs.length != 4) {
-                                continue;
-                            }
+
                             PasswordSeed passwordSeed = new PasswordSeed(keyString);
                             ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
@@ -433,7 +433,7 @@ public class ColdActivity extends BaseFragmentActivity {
 
                         KeyUtil.addAddressListByDesc(null, addressList);
                         if (hdmKeychain != null) {
-                            KeyUtil.setHDKeyChain(null, hdmKeychain, password);
+                            KeyUtil.setHDKeyChain(hdmKeychain, password);
                         }
                         password.wipe();
                         recoverBackupSuccess();

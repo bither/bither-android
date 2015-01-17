@@ -179,8 +179,8 @@ public class TxProvider implements ITxProvider {
         Tx txItem = null;
         String txHashStr = Base58.encode(txHash);
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from txs where tx_hash='" + txHashStr + "'";
-        Cursor c = db.rawQuery(sql, null);
+        String sql = "select * from txs where tx_hash=?";
+        Cursor c = db.rawQuery(sql, new String[]{txHashStr});
         try {
             if (c.moveToNext()) {
                 txItem = applyCursor(c);
@@ -201,8 +201,8 @@ public class TxProvider implements ITxProvider {
         String txHashStr = Base58.encode(txItem.getTxHash());
         txItem.setOuts(new ArrayList<Out>());
         txItem.setIns(new ArrayList<In>());
-        String sql = "select * from ins where tx_hash='" + txHashStr + "' order by in_sn";
-        Cursor c = db.rawQuery(sql, null);
+        String sql = "select * from ins where tx_hash=? order by in_sn";
+        Cursor c = db.rawQuery(sql, new String[]{txHashStr});
         while (c.moveToNext()) {
             In inItem = applyCursorIn(c);
             inItem.setTx(txItem);
@@ -210,8 +210,8 @@ public class TxProvider implements ITxProvider {
         }
         c.close();
 
-        sql = "select * from outs where tx_hash='" + txHashStr + "' order by out_sn";
-        c = db.rawQuery(sql, null);
+        sql = "select * from outs where tx_hash=? order by out_sn";
+        c = db.rawQuery(sql, new String[]{txHashStr});
         while (c.moveToNext()) {
             Out outItem = applyCursorOut(c);
             outItem.setTx(txItem);
@@ -223,8 +223,8 @@ public class TxProvider implements ITxProvider {
     public boolean isExist(byte[] txHash) {
         boolean result = false;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(0) from txs where tx_hash='" + Base58.encode(txHash) + "'";
-        Cursor c = db.rawQuery(sql, null);
+        String sql = "select count(0) from txs where tx_hash=?";
+        Cursor c = db.rawQuery(sql, new String[]{Base58.encode(txHash)});
         if (c.moveToNext()) {
             result = c.getInt(0) > 0;
         }
@@ -445,8 +445,8 @@ public class TxProvider implements ITxProvider {
     private List<String> getRelayTx(String txHash) {
         List<String> relayTxHashes = new ArrayList<String>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String relayTx = "select distinct tx_hash from ins where prev_tx_hash='" + txHash + "'";
-        Cursor c = db.rawQuery(relayTx, null);
+        String relayTx = "select distinct tx_hash from ins where prev_tx_hash=?";
+        Cursor c = db.rawQuery(relayTx, new String[]{txHash});
         while (c.moveToNext()) {
             relayTxHashes.add(c.getString(0));
         }
@@ -778,8 +778,8 @@ public class TxProvider implements ITxProvider {
     public int txCount(String address) {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(0) cnt from addresses_txs  where address='" + address + "'";
-        Cursor c = db.rawQuery(sql, null);
+        String sql = "select count(0) cnt from addresses_txs  where address=?";
+        Cursor c = db.rawQuery(sql, new String[]{address});
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex("cnt");
             if (idColumn != -1) {
@@ -793,8 +793,8 @@ public class TxProvider implements ITxProvider {
 
     public void txSentBySelfHasSaw(byte[] txHash) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
-        String sql = "update txs set source=source+1 where tx_hash='" + Base58.encode(txHash) + "' and source>=1";
-        db.execSQL(sql);
+        String sql = "update txs set source=source+1 where tx_hash=? and source>=1";
+        db.execSQL(sql, new String[]{Base58.encode(txHash)});
     }
 
     public List<Out> getOuts() {
@@ -882,8 +882,8 @@ public class TxProvider implements ITxProvider {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select b.out_value " +
                 "from ins a left outer join outs b on a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn " +
-                "where a.tx_hash='" + Base58.encode(txHash) + "'";
-        Cursor c = db.rawQuery(sql, null);
+                "where a.tx_hash=?";
+        Cursor c = db.rawQuery(sql, new String[]{Base58.encode(txHash)});
         while (c.moveToNext()) {
             int idColumn = c.getColumnIndex("out_value");
             if (idColumn != -1) {
@@ -905,8 +905,8 @@ public class TxProvider implements ITxProvider {
             for (In inItem : txItem.getIns()) {
                 Tx tx;
                 String txHashStr = Base58.encode(inItem.getTxHash());
-                String sql = "select * from txs where tx_hash='" + txHashStr + "'";
-                Cursor c = db.rawQuery(sql, null);
+                String sql = "select * from txs where tx_hash=?";
+                Cursor c = db.rawQuery(sql, new String[]{txHashStr});
                 if (c.moveToNext()) {
                     tx = applyCursor(c);
                     c.close();

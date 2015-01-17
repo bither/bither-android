@@ -45,6 +45,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BackupUtil;
+import net.bither.util.KeyUtil;
 import net.bither.xrandom.HDMKeychainColdUEntropyActivity;
 
 import java.security.SecureRandom;
@@ -120,15 +121,7 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
             @Override
             public void runWithService(BlockchainService service) {
                 chain = new HDMKeychain(new SecureRandom(), password);
-                AddressManager.getInstance().setHDMKeychain(chain);
-                if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                    AppSharedPreference.getInstance().setPasswordSeed(chain.createPasswordSeed(password));
-                }
-                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-                    BackupUtil.backupColdKey(false);
-                } else {
-                    BackupUtil.backupHotKey();
-                }
+                KeyUtil.setHDKeyChain(chain, password);
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override

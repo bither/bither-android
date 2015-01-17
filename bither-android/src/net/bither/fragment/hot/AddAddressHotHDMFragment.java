@@ -60,6 +60,7 @@ import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ExceptionUtil;
+import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -169,11 +170,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         public void run() {
                             HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
                                     passwordGetter.getPassword());
-                            AddressManager.getInstance().setHDMKeychain(keychain);
-                            if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                                AppSharedPreference.getInstance().setPasswordSeed(keychain
-                                        .createPasswordSeed(passwordGetter.getPassword()));
-                            }
+                            KeyUtil.setHDKeyChain(keychain, passwordGetter.getPassword());
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
