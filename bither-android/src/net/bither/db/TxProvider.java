@@ -815,23 +815,23 @@ public class TxProvider implements ITxProvider {
         return outItemList;
     }
 
-    public List<Out> getUnSpentOuts() {
-        List<Out> outItemList = new ArrayList<Out>();
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from outs where out_status=?";
-        Cursor c = db.rawQuery(sql, new String[]{"0"});
-        try {
-            while (c.moveToNext()) {
-                outItemList.add(applyCursorOut(c));
-            }
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        } finally {
-            c.close();
-        }
-
-        return outItemList;
-    }
+//    public List<Out> getUnSpentOuts() {
+//        List<Out> outItemList = new ArrayList<Out>();
+//        SQLiteDatabase db = this.mDb.getReadableDatabase();
+//        String sql = "select * from outs where out_status=?";
+//        Cursor c = db.rawQuery(sql, new String[]{"0"});
+//        try {
+//            while (c.moveToNext()) {
+//                outItemList.add(applyCursorOut(c));
+//            }
+//        } catch (AddressFormatException e) {
+//            e.printStackTrace();
+//        } finally {
+//            c.close();
+//        }
+//
+//        return outItemList;
+//    }
 
     public List<In> getRelatedIn(String address) {
         List<In> list = new ArrayList<In>();
@@ -877,24 +877,24 @@ public class TxProvider implements ITxProvider {
         return txItemList;
     }
 
-    public List<Long> txInValues(byte[] txHash) {
-        List<Long> inValues = new ArrayList<Long>();
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select b.out_value " +
-                "from ins a left outer join outs b on a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn " +
-                "where a.tx_hash=?";
-        Cursor c = db.rawQuery(sql, new String[]{Base58.encode(txHash)});
-        while (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("out_value");
-            if (idColumn != -1) {
-                inValues.add(c.getLong(idColumn));
-            } else {
-                inValues.add(null);
-            }
-        }
-        c.close();
-        return inValues;
-    }
+//    public List<Long> txInValues(byte[] txHash) {
+//        List<Long> inValues = new ArrayList<Long>();
+//        SQLiteDatabase db = this.mDb.getReadableDatabase();
+//        String sql = "select b.out_value " +
+//                "from ins a left outer join outs b on a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn " +
+//                "where a.tx_hash=?";
+//        Cursor c = db.rawQuery(sql, new String[]{Base58.encode(txHash)});
+//        while (c.moveToNext()) {
+//            int idColumn = c.getColumnIndex("out_value");
+//            if (idColumn != -1) {
+//                inValues.add(c.getLong(idColumn));
+//            } else {
+//                inValues.add(null);
+//            }
+//        }
+//        c.close();
+//        return inValues;
+//    }
 
     public HashMap<Sha256Hash, Tx> getTxDependencies(Tx txItem) {
         HashMap<Sha256Hash, Tx> result = new HashMap<Sha256Hash, Tx>();
