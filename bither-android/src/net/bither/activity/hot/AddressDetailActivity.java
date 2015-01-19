@@ -133,7 +133,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-                if (firstVisibleItem + visibleItemCount >= totalItemCount - 2
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
                         && hasMore && !isLoding
                         && lastFirstVisibleItem < firstVisibleItem) {
                     page++;
