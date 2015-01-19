@@ -35,6 +35,7 @@ import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
@@ -231,7 +232,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                     return;
                 }
                 if (address.isHDM() || address.hasPrivKey()) {
-                    Intent intent = new Intent(activity, SendActivity.class);
+                    Intent intent = new Intent(activity, address.isHDM() ? HdmSendActivity.class
+                            : SendActivity.class);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
                             addressPosition);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG,
