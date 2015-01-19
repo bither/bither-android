@@ -32,6 +32,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +76,21 @@ public class TxProvider implements ITxProvider {
         return txItemList;
     }
 
+    private void addInForTxDetail2(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
+        String sql = "select b.tx_hash,b.in_sn, " +
+                " from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
+                + "order by b.tx_hash ,b.in_sn";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        while (c.moveToNext()) {
+            In inItem = applyCursorIn(c);
+            Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+            if (tx != null) {
+                tx.getIns().add(inItem);
+            }
+        }
+        c.close();
+    }
+
     private void addInForTxDetail(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
         String sql = "select b.* from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
                 + "order by b.tx_hash ,b.in_sn";
@@ -84,6 +100,20 @@ public class TxProvider implements ITxProvider {
             Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
             if (tx != null) {
                 tx.getIns().add(inItem);
+            }
+        }
+        c.close();
+    }
+
+    private void addOutForTxDetail2(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
+        String sql = "select b.tx_hash,b.out_sn,b.out_value,b.out_address from addresses_txs a, outs b where a.tx_hash=b.tx_hash and a.address=? "
+                + "order by b.tx_hash,b.out_sn";
+        Cursor c = db.rawQuery(sql, new String[]{address});
+        while (c.moveToNext()) {
+            Out out = applyCursorOut(c);
+            Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+            if (tx != null) {
+                tx.getOuts().add(out);
             }
         }
         c.close();
@@ -114,17 +144,42 @@ public class TxProvider implements ITxProvider {
             Cursor c = db.rawQuery(sql, new String[]{
                     address, Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
             });
+            StringBuilder txsStrBuilder = new StringBuilder();
             while (c.moveToNext()) {
                 Tx txItem = applyCursor(c);
                 txItem.setIns(new ArrayList<In>());
                 txItem.setOuts(new ArrayList<Out>());
                 txItemList.add(txItem);
                 txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
+                txsStrBuilder.append("'").append(Base58.encode(txItem.getTxHash())).append("'").append(",");
             }
             c.close();
-            addInForTxDetail(db, address, txDict);
-            addOutForTxDetail(db, address, txDict);
 
+            if (txsStrBuilder.length() > 1) {
+                String txs = txsStrBuilder.substring(0, txsStrBuilder.length() - 1);
+                sql = Utils.format("select b.* from ins b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash ,b.in_sn", txs) ;
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    In inItem = applyCursorIn(c);
+                    Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+                    if (tx != null) {
+                        tx.getIns().add(inItem);
+                    }
+                }
+                c.close();
+                sql = Utils.format("select b.* from outs b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash,b.out_sn", txs);
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    Out out = applyCursorOut(c);
+                    Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+                    if (tx != null) {
+                        tx.getOuts().add(out);
+                    }
+                }
+                c.close();
+            }
         } catch (AddressFormatException e) {
             e.printStackTrace();
         }
