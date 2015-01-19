@@ -27,7 +27,7 @@
             android:layout_gravity="center_vertical"
             android:textSize="18dp"
             android:textColor="@color/text_field_text_color"
-            android:text=" HDM = HD + Multisig"/>
+            android:text="HDM = HD + Multisig"/>
     </LinearLayout>
 
     <FrameLayout
