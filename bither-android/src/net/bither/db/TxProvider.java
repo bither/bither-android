@@ -57,7 +57,8 @@ public class TxProvider implements ITxProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc";
+            String sql = "select b.* from addresses_txs a, txs b" +
+                    " where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc";
             Cursor c = db.rawQuery(sql, new String[]{address});
             while (c.moveToNext()) {
                 Tx txItem = applyCursor(c);
@@ -76,21 +77,6 @@ public class TxProvider implements ITxProvider {
         return txItemList;
     }
 
-    private void addInForTxDetail2(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
-        String sql = "select b.tx_hash,b.in_sn, " +
-                " from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
-                + "order by b.tx_hash ,b.in_sn";
-        Cursor c = db.rawQuery(sql, new String[]{address});
-        while (c.moveToNext()) {
-            In inItem = applyCursorIn(c);
-            Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
-            if (tx != null) {
-                tx.getIns().add(inItem);
-            }
-        }
-        c.close();
-    }
-
     private void addInForTxDetail(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
         String sql = "select b.* from addresses_txs a, ins b where a.tx_hash=b.tx_hash and a.address=? "
                 + "order by b.tx_hash ,b.in_sn";
@@ -100,20 +86,6 @@ public class TxProvider implements ITxProvider {
             Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
             if (tx != null) {
                 tx.getIns().add(inItem);
-            }
-        }
-        c.close();
-    }
-
-    private void addOutForTxDetail2(SQLiteDatabase db, String address, HashMap<Sha256Hash, Tx> txDict) throws AddressFormatException {
-        String sql = "select b.tx_hash,b.out_sn,b.out_value,b.out_address from addresses_txs a, outs b where a.tx_hash=b.tx_hash and a.address=? "
-                + "order by b.tx_hash,b.out_sn";
-        Cursor c = db.rawQuery(sql, new String[]{address});
-        while (c.moveToNext()) {
-            Out out = applyCursorOut(c);
-            Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
-            if (tx != null) {
-                tx.getOuts().add(out);
             }
         }
         c.close();
@@ -140,7 +112,8 @@ public class TxProvider implements ITxProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select b.* from addresses_txs a, txs b where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc limit ?,? ";
+            String sql = "select b.* from addresses_txs a, txs b" +
+                    " where a.tx_hash=b.tx_hash and a.address=? order by ifnull(b.block_no,4294967295) desc limit ?,? ";
             Cursor c = db.rawQuery(sql, new String[]{
                     address, Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
             });
@@ -778,58 +751,6 @@ public class TxProvider implements ITxProvider {
         return txList;
     }
 
-//    public List<Out> getUnSpendOutCanSpendWithAddress(String address) {
-//        List<Out> outItems = new ArrayList<Out>();
-//        String confirmedOutSql = "select a.*,b.block_no*a.out_value coin_depth from outs a,txs b" +
-//                " where a.tx_hash=b.tx_hash and b.block_no is not null and a.out_address=? and a.out_status=?";
-//        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
-//                " is null and a.out_address=? and a.out_status=? and b.source>=?";
-//        SQLiteDatabase db = this.mDb.getReadableDatabase();
-//        Cursor c = db.rawQuery(confirmedOutSql,
-//                new String[]{address, Integer.toString(Out.OutStatus.unspent.getValue())});
-//        try {
-//            while (c.moveToNext()) {
-//                Out outItem = applyCursorOut(c);
-//                int idColumn = c.getColumnIndex("coin_depth");
-//                if (idColumn != -1) {
-//                    outItem.setCoinDepth(c.getLong(idColumn));
-//                }
-//                outItems.add(outItem);
-//            }
-//            c.close();
-//            c = db.rawQuery(selfOutSql, new String[]{address,
-//                    Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
-//            while (c.moveToNext()) {
-//                outItems.add(applyCursorOut(c));
-//            }
-//            c.close();
-//        } catch (AddressFormatException e) {
-//            e.printStackTrace();
-//        }
-//        return outItems;
-//    }
-//
-//    public List<Out> getUnSpendOutButNotConfirmWithAddress(String address) {
-//        List<Out> outItems = new ArrayList<Out>();
-//        String selfOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash and b.block_no" +
-//                " is null and a.out_address=? and a.out_status=? and b.source=?";
-//        SQLiteDatabase db = this.mDb.getReadableDatabase();
-//        Cursor c = db.rawQuery(selfOutSql, new String[]{address,
-//                Integer.toString(Out.OutStatus.unspent.getValue()), "0"});
-//        try {
-//            while (c.moveToNext()) {
-//                outItems.add(applyCursorOut(c));
-//
-//            }
-//        } catch (AddressFormatException e) {
-//            e.printStackTrace();
-//        } finally {
-//            c.close();
-//        }
-//
-//        return outItems;
-//    }
-
     public int txCount(String address) {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
@@ -866,23 +787,6 @@ public class TxProvider implements ITxProvider {
         return result;
     }
 
-    public long totalSend(String address) {
-        long result = 0;
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select ifnull(sum(b.out_value),0) total " +
-                " from ins a, outs b " +
-                " where a.prev_tx_hash=b.tx_hash and a.prev_out_sn=b.out_sn and b.out_address=?";
-        Cursor c = db.rawQuery(sql, new String[]{address});
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("total");
-            if (idColumn != -1) {
-                result = c.getLong(idColumn);
-            }
-        }
-        c.close();
-        return result;
-    }
-
     public void txSentBySelfHasSaw(byte[] txHash) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         String sql = "update txs set source=source+1 where tx_hash=? and source>=1";
@@ -906,24 +810,6 @@ public class TxProvider implements ITxProvider {
 
         return outItemList;
     }
-
-//    public List<Out> getUnSpentOuts() {
-//        List<Out> outItemList = new ArrayList<Out>();
-//        SQLiteDatabase db = this.mDb.getReadableDatabase();
-//        String sql = "select * from outs where out_status=?";
-//        Cursor c = db.rawQuery(sql, new String[]{"0"});
-//        try {
-//            while (c.moveToNext()) {
-//                outItemList.add(applyCursorOut(c));
-//            }
-//        } catch (AddressFormatException e) {
-//            e.printStackTrace();
-//        } finally {
-//            c.close();
-//        }
-//
-//        return outItemList;
-//    }
 
     public List<In> getRelatedIn(String address) {
         List<In> list = new ArrayList<In>();
