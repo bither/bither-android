@@ -33,18 +33,15 @@
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
-            <CheckBox
+            <ImageButton
                 android:id="@+id/cbx_show_avatar"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="80dp"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/fancy_qr_code_avatar_selector"
-                android:button="@drawable/transparent"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/transparent"
-                android:checked="true"/>
+                android:background="@drawable/transparent"
+                android:src="@drawable/fancy_qr_code_avatar_selector"
+                android:gravity="center"/>
 
             <ImageView
                 android:id="@+id/iv_show_avatar_separator"

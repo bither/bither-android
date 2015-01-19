@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/fancy_qr_code_avatar_checked_pressed" android:state_checked="true" android:state_pressed="true"/>
-    <item android:drawable="@drawable/fancy_qr_code_avatar_checked_normal" android:state_checked="true"/>
+    <item android:drawable="@drawable/fancy_qr_code_avatar_checked_pressed" android:state_selected="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/fancy_qr_code_avatar_checked_normal" android:state_selected="true"/>
     <item android:drawable="@drawable/fancy_qr_code_avatar_unchecked_pressed" android:state_pressed="true"/>
     <item android:drawable="@drawable/fancy_qr_code_avatar_unchecked_normal"/>
 </selector>
