@@ -62,7 +62,7 @@ import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSelectChangeAddress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
 import net.bither.ui.base.dialog.DialogSendConfirm.SendConfirmListener;
-import net.bither.ui.base.dialog.DialogSendOption;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
@@ -73,10 +73,10 @@ import net.bither.util.MarketUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
-public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboardView
-        .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
-        DialogSendOption.DialogSendOptionListener {
+public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
     private Address address;
     private TextView tvAddressLabel;
@@ -94,6 +94,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private View vKeyboardContainer;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
+    private boolean signWithCold = false;
     private boolean isDonate = false;
 
     @Override
@@ -386,11 +387,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         vKeyboardContainer.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onSelectChangeAddress() {
-        dialogSelectChangeAddress.show();
-    }
-
     private final class ReceivingAddressListener implements OnFocusChangeListener, TextWatcher {
         @Override
         public void onFocusChange(final View v, final boolean hasFocus) {
@@ -499,10 +495,20 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         }
     };
 
-    private OnClickListener optionClick = new OnClickListener() {
+    private DialogWithActions.DialogWithActionsClickListener optionClick = new DialogWithActions
+            .DialogWithActionsClickListener() {
+
         @Override
-        public void onClick(View v) {
-            new DialogSendOption(HdmSendActivity.this, address, HdmSendActivity.this).show();
+        protected List<DialogWithActions.Action> getActions() {
+            ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
+            actions.add(new DialogWithActions.Action(R.string.select_change_address_option_name,
+                    new Runnable() {
+                @Override
+                public void run() {
+                    dialogSelectChangeAddress.show();
+                }
+            }));
+            return actions;
         }
     };
 
