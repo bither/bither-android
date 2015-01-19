@@ -75,7 +75,6 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
         DialogSendOption.DialogSendOptionListener {
     private int addressPosition;
-    private boolean isHDM;
     private Address address;
     private TextView tvAddressLabel;
 
@@ -99,24 +98,13 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_send);
-        isHDM = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
-                .ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, false);
         if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
                 .ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
                     .ADDRESS_POSITION_PASS_VALUE_TAG);
-            if (isHDM) {
-                if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
-                        .getHdmKeychain().getAddresses().size()) {
-                    address = AddressManager.getInstance().getHdmKeychain().getAddresses().get
-                            (addressPosition);
-                }
-            } else {
-                if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
-                        .getPrivKeyAddresses().size()) {
-                    address = AddressManager.getInstance().getPrivKeyAddresses().get
-                            (addressPosition);
-                }
+            if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
+                    .getPrivKeyAddresses().size()) {
+                address = AddressManager.getInstance().getPrivKeyAddresses().get(addressPosition);
             }
         }
         if (address == null) {
@@ -196,8 +184,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             etPassword.setText("");
             try {
                 dp.setWait();
-                new CommitTransactionThread(dp, addressPosition, tx, isHDM, true,
-                        SendActivity.this).start();
+                new CommitTransactionThread(dp, addressPosition, tx, false, true, SendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
             }

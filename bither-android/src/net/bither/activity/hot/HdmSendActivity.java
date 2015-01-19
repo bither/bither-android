@@ -78,7 +78,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
         DialogSendOption.DialogSendOptionListener {
     private int addressPosition;
-    private boolean isHDM;
     private Address address;
     private TextView tvAddressLabel;
 
@@ -102,24 +101,14 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_send);
-        isHDM = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
-                .ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, false);
         if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
                 .ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
                     .ADDRESS_POSITION_PASS_VALUE_TAG);
-            if (isHDM) {
-                if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
-                        .getHdmKeychain().getAddresses().size()) {
-                    address = AddressManager.getInstance().getHdmKeychain().getAddresses().get
-                            (addressPosition);
-                }
-            } else {
-                if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
-                        .getPrivKeyAddresses().size()) {
-                    address = AddressManager.getInstance().getPrivKeyAddresses().get
-                            (addressPosition);
-                }
+            if (addressPosition >= 0 && addressPosition < AddressManager.getInstance()
+                    .getHdmKeychain().getAddresses().size()) {
+                address = AddressManager.getInstance().getHdmKeychain().getAddresses().get
+                        (addressPosition);
             }
         }
         if (address == null) {
@@ -199,8 +188,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             etPassword.setText("");
             try {
                 dp.setWait();
-                new CommitTransactionThread(dp, addressPosition, tx, isHDM, true,
-                        HdmSendActivity.this).start();
+                new CommitTransactionThread(dp, addressPosition, tx, true, true, HdmSendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -234,7 +222,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(HdmSendActivity.this, R.string.password_wrong);
+                    DropdownMessage.showDropdownMessage(HdmSendActivity.this,
+                            R.string.password_wrong);
                     break;
                 case HandlerMessage.MSG_FAILURE:
                     if (dp.isShowing()) {
