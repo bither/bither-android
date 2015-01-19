@@ -19,76 +19,79 @@ package net.bither.util;
 import android.os.Handler;
 import android.os.Looper;
 
-import net.bither.BitherSetting.MarketType;
-import net.bither.api.GetExchangeTrendApi;
+import net.bither.bitherj.BitherjSettings.MarketType;
+import net.bither.bitherj.api.GetExchangeTrendApi;
 import net.bither.model.TrendingGraphicData;
 import net.bither.runnable.BaseRunnable;
 
+import org.json.JSONArray;
+
 public class TrendingGraphicUtil {
 
-	public static int TRENDING_GRAPIC_COUNT = 25;
+    public static int TRENDING_GRAPIC_COUNT = 25;
 
-	public interface TrendingGraphicListener {
+    public interface TrendingGraphicListener {
 
-		void error();
+        void error();
 
-		void success(TrendingGraphicData trendingGraphicData);
-	}
+        void success(TrendingGraphicData trendingGraphicData);
+    }
 
-	private static TrendingGraphicData[] trendingDatas = new TrendingGraphicData[MarketType
-			.values().length + 1];
+    private static TrendingGraphicData[] trendingDatas = new TrendingGraphicData[MarketType
+            .values().length + 1];
 
-	public static TrendingGraphicData getTrendingGraphicData(
-			final MarketType marketType,
-			final TrendingGraphicListener trendingGraphicListener) {
+    public static TrendingGraphicData getTrendingGraphicData(
+            final MarketType marketType,
+            final TrendingGraphicListener trendingGraphicListener) {
 
-		TrendingGraphicData trendingGraphicData = trendingDatas[marketType
-				.getValue()];
-		if (trendingGraphicData != null && !trendingGraphicData.isExpired()) {
-			return trendingGraphicData;
-		}
-		BaseRunnable baseRunnable = new BaseRunnable() {
+        TrendingGraphicData trendingGraphicData = trendingDatas[marketType
+                .getValue()];
+        if (trendingGraphicData != null && !trendingGraphicData.isExpired()) {
+            return trendingGraphicData;
+        }
+        BaseRunnable baseRunnable = new BaseRunnable() {
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
-				try {
-					GetExchangeTrendApi getExchangeTrendApi = new GetExchangeTrendApi(
-							marketType);
-					getExchangeTrendApi.handleHttpGet();
-					final TrendingGraphicData trendingGraphicData = getExchangeTrendApi
-							.getResult();
-					trendingDatas[marketType.getValue()] = trendingGraphicData;
-					if (trendingGraphicListener != null) {
-						new Handler(Looper.getMainLooper())
-								.post(new Runnable() {
+                try {
+                    GetExchangeTrendApi getExchangeTrendApi = new GetExchangeTrendApi(
+                            marketType);
+                    getExchangeTrendApi.handleHttpGet();
+                    JSONArray jsonArray = new JSONArray(getExchangeTrendApi
+                            .getResult());
+                    final TrendingGraphicData trendingGraphicData = TrendingGraphicData.format(jsonArray);
+                    trendingDatas[marketType.getValue()] = trendingGraphicData;
+                    if (trendingGraphicListener != null) {
+                        new Handler(Looper.getMainLooper())
+                                .post(new Runnable() {
 
-									@Override
-									public void run() {
-										trendingGraphicListener
-												.success(trendingGraphicData);
-									}
-								});
-					}
-				} catch (Exception e) {
-					if (trendingGraphicListener != null) {
-						new Handler(Looper.getMainLooper())
-								.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        trendingGraphicListener
+                                                .success(trendingGraphicData);
+                                    }
+                                });
+                    }
+                } catch (Exception e) {
+                    if (trendingGraphicListener != null) {
+                        new Handler(Looper.getMainLooper())
+                                .post(new Runnable() {
 
-									@Override
-									public void run() {
-										trendingGraphicListener.error();
-									}
-								});
-					}
-					e.printStackTrace();
-				}
+                                    @Override
+                                    public void run() {
+                                        trendingGraphicListener.error();
+                                    }
+                                });
+                    }
+                    e.printStackTrace();
+                }
 
-			}
-		};
-		new Thread(baseRunnable).start();
+            }
+        };
+        new Thread(baseRunnable).start();
 
-		return null;
-	}
+        return null;
+    }
 
 }

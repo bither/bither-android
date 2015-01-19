@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -33,6 +34,7 @@ import net.bither.R;
 import net.bither.adapter.TransactionListAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.AddressDetailHeader;
@@ -43,122 +45,27 @@ import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.TransactionListItem;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyOption;
 import net.bither.ui.base.dialog.DialogAddressWithPrivateKeyOption;
+import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AddressDetailActivity extends SwipeRightFragmentActivity {
-    private int addressPosition;
-    private boolean hasPrivateKey;
-    private Address address;
-    private OnClickListener optionClick = new OnClickListener() {
+    private int page = 1;
+    private boolean hasMore = true;
+    private boolean isLoding = false;
 
-        @Override
-        public void onClick(View v) {
-            Dialog dialog = null;
-            if (address.hasPrivKey()) {
-                dialog = new DialogAddressWithPrivateKeyOption(
-                        AddressDetailActivity.this, address);
-            } else {
-                dialog = new DialogAddressWatchOnlyOption(
-                        AddressDetailActivity.this, address, new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                }
-                );
-            }
-            dialog.show();
-        }
-    };
+    private int addressPosition;
+    private Address address;
     private ArrayList<Tx> transactions = new ArrayList<Tx>();
     private ListView lv;
-    private OnClickListener scrollToTopClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (lv.getFirstVisiblePosition() != 0) {
-                lv.post(new SmoothScrollListRunnable(lv, 0, null));
-            }
-        }
-    };
     private FrameLayout flTitleBar;
     private TransactionListAdapter mAdapter;
     private AddressDetailHeader header;
     private TxAndBlockBroadcastReceiver txAndBlockBroadcastReceiver = new TxAndBlockBroadcastReceiver();
-    private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int itemCount = lv.getChildCount();
-            for (int i = 0;
-                 i < itemCount;
-                 i++) {
-                View v = lv.getChildAt(i);
-                if (v instanceof MarketTickerChangedObserver) {
-                    MarketTickerChangedObserver o = (MarketTickerChangedObserver) v;
-                    o.onMarketTickerChanged();
-                }
-            }
-
-        }
-    };
-
-
-    private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent == null ||
-                    (!Utils.compareString(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE, intent.getAction())
-                            && !Utils.compareString(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
-                return;
-            }
-            if (intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
-                String receiveAddressStr = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
-                if (Utils.compareString(receiveAddressStr, address.getAddress())) {
-                    loadData();
-                }
-
-            } else {
-                loadData();
-            }
-
-        }
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IntentFilter txAndBlockReceiver = new IntentFilter();
-        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
-        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
-        IntentFilter marketFilter = new IntentFilter(
-                BroadcastUtil.ACTION_MARKET);
-        registerReceiver(txAndBlockBroadcastReceiver, txAndBlockReceiver);
-        registerReceiver(marketBroadcastReceiver, marketFilter);
-        for (int i = 0;
-             i < lv.getChildCount();
-             i++) {
-            View v = lv.getChildAt(i);
-            if (v instanceof TransactionListItem) {
-                TransactionListItem item = (TransactionListItem) v;
-                item.onResume();
-            }
-        }
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BitherSetting.INTENT_REF.SEND_REQUEST_CODE
-                && resultCode == RESULT_OK) {
-            DropdownMessage.showDropdownMessage(this, R.string.send_success);
-            loadData();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,12 +76,19 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
                 BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(
                     BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
-            hasPrivateKey = getIntent()
-                    .getExtras()
-                    .getBoolean(
-                            BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
-                            false);
-            if (hasPrivateKey) {
+            boolean hasPrivateKey = getIntent().getExtras().getBoolean(
+                    BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
+                    false);
+            boolean isHDM = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
+                    .ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, false);
+            if (isHDM) {
+                if (addressPosition >= 0 && AddressManager.getInstance().hasHDMKeychain() &&
+                        AddressManager.getInstance().getHdmKeychain().getAddresses().size() >
+                                addressPosition) {
+                    address = AddressManager.getInstance().getHdmKeychain().getAddresses().get
+                            (addressPosition);
+                }
+            } else if (hasPrivateKey) {
                 if (addressPosition >= 0
                         && AddressManager.getInstance().getPrivKeyAddresses() != null && addressPosition <
                         AddressManager.getInstance().getPrivKeyAddresses().size()) {
@@ -192,6 +106,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         }
         if (address == null) {
             finish();
+            return;
         }
         initView();
     }
@@ -207,7 +122,56 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         header = new AddressDetailHeader(this);
         lv.addHeaderView(header, null, false);
         lv.setAdapter(mAdapter);
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
+                        && hasMore && !isLoding
+                        && lastFirstVisibleItem < firstVisibleItem) {
+                    page++;
+                    loadTx();
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+
+            }
+        });
         loadData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter txAndBlockReceiver = new IntentFilter();
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
+        txAndBlockReceiver.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        IntentFilter marketFilter = new IntentFilter(BroadcastUtil.ACTION_MARKET);
+        registerReceiver(txAndBlockBroadcastReceiver, txAndBlockReceiver);
+        registerReceiver(marketBroadcastReceiver, marketFilter);
+        for (int i = 0;
+             i < lv.getChildCount();
+             i++) {
+            View v = lv.getChildAt(i);
+            if (v instanceof TransactionListItem) {
+                TransactionListItem item = (TransactionListItem) v;
+                item.onResume();
+            }
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BitherSetting.INTENT_REF.SEND_REQUEST_CODE && resultCode == RESULT_OK) {
+            DropdownMessage.showDropdownMessage(this, R.string.send_success);
+            loadData();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -228,21 +192,113 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
 
     public void loadData() {
         header.showAddress(address, addressPosition);
-        if (address != null && address.isSyncComplete()) {
+        page = 1;
+        loadTx();
+    }
+
+    private void loadTx() {
+        if (address != null && address.isSyncComplete() && !isLoding && hasMore) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<Tx> txs = address.getTxs();
+                    isLoding = true;
+                    final List<Tx> txs = address.getTxs(page);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            transactions.clear();
-                            transactions.addAll(txs);
+                            if (page == 1) {
+                                transactions.clear();
+                            }
+                            if (txs != null && txs.size() > 0) {
+                                transactions.addAll(txs);
+                                hasMore = true;
+                            } else {
+                                hasMore = false;
+                            }
+                            Collections.sort(transactions);
                             mAdapter.notifyDataSetChanged();
+                            isLoding = false;
                         }
                     });
                 }
             }).start();
         }
     }
+
+
+    private OnClickListener optionClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Dialog dialog = null;
+            if (address.isHDM()) {
+                new DialogHDMAddressOptions(AddressDetailActivity.this,
+                        (HDMAddress) address).show();
+            } else if (address.hasPrivKey()) {
+                dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
+            } else {
+                dialog = new DialogAddressWatchOnlyOption(AddressDetailActivity.this, address,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        });
+            }
+            if (dialog != null) {
+                dialog.show();
+            }
+        }
+    };
+
+    private OnClickListener scrollToTopClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (lv.getFirstVisiblePosition() != 0) {
+                lv.post(new SmoothScrollListRunnable(lv, 0, null));
+            }
+        }
+    };
+
+    private BroadcastReceiver marketBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int itemCount = lv.getChildCount();
+            for (int i = 0;
+                 i < itemCount;
+                 i++) {
+                View v = lv.getChildAt(i);
+                if (v instanceof MarketTickerChangedObserver) {
+                    MarketTickerChangedObserver o = (MarketTickerChangedObserver) v;
+                    o.onMarketTickerChanged();
+                }
+            }
+        }
+    };
+
+
+    private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || (!Utils.compareString(NotificationAndroidImpl
+                    .ACTION_ADDRESS_BALANCE, intent.getAction()) && !Utils.compareString
+                    (NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE, intent.getAction()))) {
+                return;
+            }
+            if (intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
+                String receiveAddressStr = intent.getStringExtra(NotificationAndroidImpl
+                        .MESSAGE_ADDRESS);
+                if (Utils.compareString(receiveAddressStr, address.getAddress())) {
+                    loadData();
+                }
+
+            } else {
+                loadData();
+            }
+
+        }
+    }
+
 }

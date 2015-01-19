@@ -16,7 +16,6 @@
 
 package net.bither.adapter;
 
-import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

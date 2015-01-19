@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.preference.AppSharedPreference;

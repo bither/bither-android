@@ -30,6 +30,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.qrcode.QRCodeTransportPage;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.util.PlaySound;
 
 import java.util.ArrayList;
@@ -89,18 +90,25 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 
 	@Override
 	public boolean resultValid(String result) {
+        boolean repeated = true;
 		if (!Utils.compareString(result, lastResult)) {
+            repeated = false;
 			shake();
 		}
 		lastResult = result;
 		QRCodeTransportPage page = QRCodeTransportPage
 				.formatQrCodeTransport(result);
 		if (page == null) {
-			return false;
-		}
-		if (page.getCurrentPage() == pages.size()) {
-			return true;
-		}
+            if (!repeated && Utils.validBicoinAddress(result) && Utils.compareString(tvTitle.getText()
+                    .toString(), getString(R.string.scan_for_all_addresses_in_bither_cold_title))) {
+                DropdownMessage.showDropdownMessage(this,
+                        R.string.add_address_watch_only_scanned_address_warning);
+            }
+            return false;
+        }
+        if (page.getCurrentPage() == pages.size()) {
+            return true;
+        }
 		return false;
 	}
 

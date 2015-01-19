@@ -24,7 +24,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -38,7 +38,8 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
+import net.bither.bitherj.BitherjSettings.AddressType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,7 @@ public class ImportPrivateKey {
 
     private void checkAddress(BlockchainService service, ECKey ecKey, List<String> addressList) {
         try {
-            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            AddressType addressType = TransactionsUtil.checkAddress(addressList);
             handlerResult(service, ecKey, addressType);
         } catch (Exception e) {
             ThreadUtil.runOnMainThread(new Runnable() {
@@ -220,7 +221,7 @@ public class ImportPrivateKey {
 
 
     private void handlerResult(BlockchainService blockchainService, ECKey ecKey
-            , BitherSetting.AddressType addressType) {
+            , AddressType addressType) {
         switch (addressType) {
             case Normal:
                 addECKey(blockchainService, ecKey);

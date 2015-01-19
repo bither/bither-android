@@ -3,8 +3,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="net.bither"
           android:installLocation="internalOnly"
-          android:versionCode="123"
-          android:versionName="1.2.3">
+          android:versionCode="130"
+          android:versionName="1.3.0">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -104,6 +104,11 @@
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.AddHDMAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name="net.bither.activity.hot.GenerateUnsignedTxActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
@@ -178,7 +183,21 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
-            android:name=".xrandom.UEntropyActivity"
+            android:name=".xrandom.PrivateKeyUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.HDMKeychainColdUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.HDMKeychainHotUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"

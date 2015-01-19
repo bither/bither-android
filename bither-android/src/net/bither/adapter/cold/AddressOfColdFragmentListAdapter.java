@@ -22,31 +22,60 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
 import net.bither.ui.base.ColdAddressFragmentListItemView;
 
 import java.util.List;
 
 public class AddressOfColdFragmentListAdapter extends BaseAdapter {
-    private FragmentActivity activity;
+    private static final Object HDMKeychainPlaceHolder = new Object();
+    private static final int ItemTypePrivateKey = 0;
+    private static final int ItemTypeHDMKeychain = 1;
 
+    private FragmentActivity activity;
     private List<Address> privates;
+    private ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
     public AddressOfColdFragmentListAdapter(FragmentActivity activity,
-                                            List<Address> privates) {
+                                            List<Address> privates, ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate) {
         this.activity = activity;
         this.privates = privates;
+        this.requestHDMServerQrCodeDelegate = requestHDMServerQrCodeDelegate;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        int count = 1;
+        if(hasHDMKeychain()){
+            count ++;
+        }
+        return count;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Object o = getItem(position);
+        if(o == HDMKeychainPlaceHolder){
+            return ItemTypeHDMKeychain;
+        }
+        return ItemTypePrivateKey;
     }
 
     @Override
     public int getCount() {
-
-        return this.privates.size();
+        return privates.size() + (hasHDMKeychain() ? 1 : 0);
     }
 
     @Override
     public Object getItem(int position) {
-
-        return this.privates.get(position);
+        if(hasHDMKeychain()){
+            if(position == 0){
+                return HDMKeychainPlaceHolder;
+            }
+            position--;
+        }
+        return privates.get(position);
     }
 
     @Override
@@ -56,6 +85,24 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if(getItemViewType(position) == ItemTypeHDMKeychain){
+            return getViewForHDMKeychain(position, convertView, parent);
+        }
+        return getViewForPrivateKey(position, convertView, parent);
+    }
+
+    private View getViewForHDMKeychain(int position, View convertView, ViewGroup parent){
+        ColdAddressFragmentHDMListItemView view;
+        if (convertView == null
+                || !(convertView instanceof ColdAddressFragmentHDMListItemView)) {
+            convertView = new ColdAddressFragmentHDMListItemView(activity, requestHDMServerQrCodeDelegate);
+        }
+        view = (ColdAddressFragmentHDMListItemView) convertView;
+        view.setKeychain(AddressManager.getInstance().getHdmKeychain());
+        return convertView;
+    }
+
+    private View getViewForPrivateKey(int position, View convertView, ViewGroup parent){
         ColdAddressFragmentListItemView view;
         if (convertView == null
                 || !(convertView instanceof ColdAddressFragmentListItemView)) {
@@ -64,9 +111,13 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         view = (ColdAddressFragmentListItemView) convertView;
         Address a;
 
-        a = privates.get(position);
+        a = (Address) getItem(position);
 
         view.showAddress(a);
         return convertView;
+    }
+
+    private boolean hasHDMKeychain(){
+        return AddressManager.getInstance().hasHDMKeychain();
     }
 }

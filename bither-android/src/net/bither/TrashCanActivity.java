@@ -32,7 +32,7 @@ import android.widget.TextView;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.preference.AppSharedPreference;

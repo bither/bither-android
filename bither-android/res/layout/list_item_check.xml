@@ -45,7 +45,6 @@
         android:id="@+id/iv_check_state"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_gravity="center"
-        android:background="@drawable/checkmark" />
+        android:layout_gravity="center" />
 
 </LinearLayout>

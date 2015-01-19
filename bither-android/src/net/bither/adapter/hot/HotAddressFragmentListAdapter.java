@@ -20,42 +20,58 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogHDMAddressOptions;
+import net.bither.ui.base.dialog.DialogHDMSeedOptions;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.WalletUtils;
 
 import java.util.List;
 
 public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter implements
         PinnedExpandableListViewAdapter {
+    private static final int HDMGroupTag = 0;
+    private static final int PrivateGroupTag = 1;
+    private static final int WatchOnlyGroupTag = 2;
+
     private FragmentActivity activity;
     private List<Address> watchOnlys;
     private List<Address> privates;
+    private List<HDMAddress> hdms;
     private LayoutInflater mLayoutInflater;
     private PinnedHeaderAddressExpandableListView mListView;
     private boolean isHeaderNeedChange = false;
 
-    public HotAddressFragmentListAdapter(FragmentActivity activity,
-                                         List<Address> watchOnlys,
-                                         List<Address> privates,
+    public HotAddressFragmentListAdapter(FragmentActivity activity, List<Address> watchOnlys,
+                                         List<Address> privates, List<HDMAddress> hdms,
                                          PinnedHeaderAddressExpandableListView listView) {
         this.activity = activity;
         this.watchOnlys = watchOnlys;
         this.privates = privates;
+        this.hdms = hdms;
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
@@ -84,8 +100,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     @Override
-    public Boolean getGroup(int groupPosition) {
-        return isPrivate(groupPosition);
+    public Integer getGroup(int groupPosition) {
+        return Integer.valueOf((int) getGroupId(groupPosition));
     }
 
     @Override
@@ -97,12 +113,24 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (watchOnlys != null && watchOnlys.size() > 0) {
             count++;
         }
+        if (hdms != null && hdms.size() > 0) {
+            count++;
+        }
         return count;
     }
 
     @Override
     public long getGroupId(int groupPosition) {
-        return groupPosition;
+        if (groupPosition == getPrivateGroupIndex()) {
+            return PrivateGroupTag;
+        }
+        if (groupPosition == getWatchOnlyGroupIndex()) {
+            return WatchOnlyGroupTag;
+        }
+        if (groupPosition == getHDMGroupIndex()) {
+            return HDMGroupTag;
+        }
+        return -1;
     }
 
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView,
@@ -115,7 +143,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         } else {
             holder = (GroupViewHolder) convertView.getTag();
         }
-        holder.show(isPrivate(groupPosition));
+        holder.show((int) getGroupId(groupPosition));
         convertView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,33 +157,165 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         return convertView;
     }
 
-    private static class GroupViewHolder {
+    private class GroupViewHolder {
         public GroupViewHolder(View v) {
             tvGroup = (TextView) v.findViewById(R.id.tv_group);
             ivType = (ImageView) v.findViewById(R.id.iv_type);
             indicator = (ImageView) v.findViewById(R.id.iv_indicator);
+            llHDM = (LinearLayout) v.findViewById(R.id.ll_hdm);
+            flHDMAdd = (FrameLayout) v.findViewById(R.id.fl_hdm_add);
+            flHDMSeed = (FrameLayout) v.findViewById(R.id.fl_hdm_seed);
         }
 
-        public void show(boolean isPrivate) {
-            if (isPrivate) {
-                tvGroup.setText(R.string.address_group_private);
-                ivType.setImageResource(R.drawable.address_type_private);
+        public void show(int groupTag) {
+            show(groupTag, false);
+        }
+
+        public void show(int groupTag, boolean touch) {
+            if (touch && resetHeaderChartOverlayRunnable.getHeader() != this) {
+                resetHeaderChartOverlayRunnable.setHeader(this);
+            }
+            switch (groupTag) {
+                case PrivateGroupTag:
+                    tvGroup.setText(R.string.address_group_private);
+                    ivType.setImageResource(R.drawable.address_type_private);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
+                    return;
+                case WatchOnlyGroupTag:
+                    tvGroup.setText(R.string.address_group_watch_only);
+                    ivType.setImageResource(R.drawable.address_type_watchonly);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
+                    return;
+                case HDMGroupTag:
+                    tvGroup.setText(R.string.address_group_hdm_hot);
+                    ivType.setVisibility(View.INVISIBLE);
+                    llHDM.setVisibility(View.VISIBLE);
+                    configureHDM(touch);
+                    return;
+            }
+        }
+
+        private void configureHDM(boolean touch) {
+            if (!touch) {
+                flHDMSeed.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmSeed();
+                    }
+                });
+
+                flHDMAdd.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        hdmAdd();
+                    }
+                });
             } else {
-                tvGroup.setText(R.string.address_group_watch_only);
-                ivType.setImageResource(R.drawable.address_type_watchonly);
+                flHDMSeed.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmSeed();
+                    }
+                }));
+
+                flHDMAdd.setOnTouchListener(new HeaderTouch(new Runnable() {
+                    @Override
+                    public void run() {
+                        hdmAdd();
+                    }
+                }));
+            }
+        }
+
+        private void hdmAdd() {
+            if (WalletUtils.isHDMAddressLimit()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
+                return;
+            }
+            activity.startActivityForResult(new Intent(activity, AddHDMAddressActivity.class),
+                    BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+            activity.overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
+        }
+
+        private void hdmSeed() {
+            DialogProgress dp = new DialogProgress(flHDMSeed.getContext(), R.string.please_wait);
+            dp.setCancelable(false);
+            new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()
+                    .getHdmKeychain(), dp).show();
+        }
+
+
+        private ResetHeaderChartOverlayRunnable resetHeaderChartOverlayRunnable = new
+                ResetHeaderChartOverlayRunnable();
+
+        private class ResetHeaderChartOverlayRunnable implements Runnable {
+            GroupViewHolder header;
+
+            public void setHeader(GroupViewHolder iv) {
+                this.header = iv;
+            }
+
+            public GroupViewHolder getHeader() {
+                return header;
+            }
+
+            @Override
+            public void run() {
+                if (header != null) {
+                    header.flHDMAdd.setPressed(false);
+                    header.flHDMSeed.setPressed(false);
+                    mListView.requestLayout();
+                }
+            }
+        }
+
+        private class HeaderTouch implements View.OnTouchListener {
+            private Runnable action;
+
+            HeaderTouch(Runnable action) {
+                this.action = action;
+            }
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mListView.removeCallbacks(resetHeaderChartOverlayRunnable);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    v.setPressed(true);
+                }
+                if (event.getAction() == MotionEvent.ACTION_CANCEL) {
+                    v.setPressed(false);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.setPressed(false);
+                    action.run();
+                }
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    mListView.postDelayed(resetHeaderChartOverlayRunnable, 200);
+                }
+                return true;
             }
         }
 
         public ImageView indicator;
         public TextView tvGroup;
         public ImageView ivType;
+        public LinearLayout llHDM;
+        public FrameLayout flHDMSeed;
+        public FrameLayout flHDMAdd;
     }
 
     public Address getChild(int groupPosition, int childPosition) {
-        if (isPrivate(groupPosition)) {
-            return privates.get(childPosition);
-        } else {
-            return watchOnlys.get(childPosition);
+        switch ((int) getGroupId(groupPosition)) {
+            case PrivateGroupTag:
+                return privates.get(childPosition);
+            case WatchOnlyGroupTag:
+                return watchOnlys.get(childPosition);
+            case HDMGroupTag:
+                return hdms.get(childPosition);
+            default:
+                return null;
         }
     }
 
@@ -165,18 +325,15 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     }
 
     public int getChildrenCount(int groupPosition) {
-        if (isPrivate(groupPosition)) {
-            if (privates == null) {
-                return 0;
-            } else {
-                return privates.size();
-            }
-        } else {
-            if (watchOnlys == null) {
-                return 0;
-            } else {
-                return watchOnlys.size();
-            }
+        switch ((int) getGroupId(groupPosition)) {
+            case PrivateGroupTag:
+                return privates == null ? 0 : privates.size();
+            case WatchOnlyGroupTag:
+                return watchOnlys == null ? 0 : watchOnlys.size();
+            case HDMGroupTag:
+                return hdms == null ? 0 : hdms.size();
+            default:
+                return -1;
         }
     }
 
@@ -188,40 +345,28 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             convertView = new AddressFragmentListItemView(activity);
         }
         view = (AddressFragmentListItemView) convertView;
-        Address a;
-        if (isPrivate(groupPosition)) {
-            a = privates.get(childPosition);
-            view.ivPrivateType.setOnLongClickListener(new AddressLongClick(childPosition,
-                    isPrivate(groupPosition)));
-        } else {
-            a = watchOnlys.get(childPosition);
-            view.ivWatchOnlyType.setOnLongClickListener(new AddressLongClick(childPosition,
-                    isPrivate(groupPosition)));
-        }
+        Address a = getChild(groupPosition, childPosition);
+        view.ivType.setOnLongClickListener(new AddressLongClick(a));
         view.setAddress(a);
-        view.setOnClickListener(new AddressDetailClick(childPosition, isPrivate(groupPosition)));
+        view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         return convertView;
     }
 
     private class AddressLongClick implements OnLongClickListener {
-        private int position;
-        private boolean isPrivate;
+        private Address address;
 
-        public AddressLongClick(int position, boolean isPrivate) {
-            this.position = position;
-            this.isPrivate = isPrivate;
+        public AddressLongClick(Address address) {
+            this.address = address;
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if (isPrivate) {
-                DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
-                        (activity, privates.get(position));
-                dialog.show();
+            if (address.isHDM()) {
+                new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
+            } else if (address.hasPrivKey()) {
+                new DialogAddressWithShowPrivateKey(activity, address).show();
             } else {
-                DialogAddressWatchOnlyLongClick dialog = new DialogAddressWatchOnlyLongClick
-                        (activity, watchOnlys.get(position));
-                dialog.show();
+                new DialogAddressWatchOnlyLongClick(activity, address).show();
             }
             return true;
         }
@@ -230,11 +375,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private class AddressDetailClick implements OnClickListener {
         private int position;
         private boolean isPrivate;
+        private boolean isHDM;
         private boolean clicked = false;
 
-        public AddressDetailClick(int position, boolean isPrivate) {
+        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM) {
             this.position = position;
             this.isPrivate = isPrivate;
+            this.isHDM = isHDM;
         }
 
         @Override
@@ -245,6 +392,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
                         isPrivate);
+                intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
                 activity.startActivity(intent);
                 v.postDelayed(new Runnable() {
                     @Override
@@ -278,7 +426,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (groupPosition != mGroupPosition || isHeaderNeedChange) {
             if (groupPosition >= 0 && groupPosition < getGroupCount()) {
                 GroupViewHolder holder = new GroupViewHolder(header);
-                holder.show(isPrivate(groupPosition));
+                holder.show((int) getGroupId(groupPosition), true);
                 holder.indicator.setVisibility(View.VISIBLE);
                 try {
                     if (android.os.Build.VERSION.SDK_INT > 10) {
@@ -290,16 +438,38 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     e.printStackTrace();
                 }
                 mGroupPosition = groupPosition;
+                isHeaderNeedChange = false;
             }
         }
-        isHeaderNeedChange = false;
     }
 
-    private boolean isPrivate(int groupPosition) {
-        if (getGroupCount() == 1) {
-            return privates != null && privates.size() > 0;
-        } else {
-            return groupPosition == 0;
+    public int getHDMGroupIndex() {
+        if (hdms == null || hdms.size() == 0) {
+            return -1;
         }
+        return 0;
     }
+
+    public int getPrivateGroupIndex() {
+        if (privates == null || privates.size() == 0) {
+            return -1;
+        }
+        int index = 0;
+        if (hdms != null && hdms.size() > 0) {
+            index++;
+        }
+        return index;
+    }
+
+    public int getWatchOnlyGroupIndex() {
+        int index = 0;
+        if (hdms != null && hdms.size() > 0) {
+            index++;
+        }
+        if (privates != null && privates.size() > 0) {
+            index++;
+        }
+        return index;
+    }
+
 }

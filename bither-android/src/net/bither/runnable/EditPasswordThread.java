@@ -16,17 +16,13 @@
 
 package net.bither.runnable;
 
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.BackupUtil;
 import net.bither.util.ThreadUtil;
-
-import java.util.List;
 
 public class EditPasswordThread extends Thread {
     private SecureCharSequence oldPassword;
@@ -74,6 +70,8 @@ public class EditPasswordThread extends Thread {
             } else if (AddressManager.getInstance().getTrashAddresses().size() > 0) {
                 AppSharedPreference.getInstance().setPasswordSeed(
                         new PasswordSeed(AddressManager.getInstance().getTrashAddresses().get(0)));
+            } else if (AddressManager.getInstance().getHdmKeychain() != null){
+                AppSharedPreference.getInstance().setPasswordSeed(AddressManager.getInstance().getHdmKeychain().createPasswordSeed(newPassword));
             }
 
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {

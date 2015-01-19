@@ -37,8 +37,10 @@ import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.HotFragmentPagerAdapter;
 import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
@@ -58,7 +60,6 @@ import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.LogUtil;
-import net.bither.util.ServiceUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -103,24 +104,11 @@ public class HotActivity extends BaseFragmentActivity {
                         }
                     }
                 }, 100);
-                mPager.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showNewCount();
-                    }
-                }, 500);
+
                 onNewIntent(getIntent());
 
             }
         }, 500);
-//        mPager.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (ServiceUtil.localTimeIsWrong()) {
-//                    DropdownMessage.showDropdownMessage(HotActivity.this, R.string.time_is_wrong);
-//                }
-//            }
-//        }, 2 * 1000);
         DialogFirstRunWarning.show(this);
     }
 
@@ -195,22 +183,25 @@ public class HotActivity extends BaseFragmentActivity {
         tbtnMe = (TabButton) findViewById(R.id.tbtn_me);
 
         configureTopBarSize();
-
         configureTabMainIcons();
-        tbtnMain.setBigInteger(null, null);
+        tbtnMain.setBigInteger(null, null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
         tbtnMessage.setIconResource(R.drawable.tab_market, R.drawable.tab_market_checked);
         tbtnMe.setIconResource(R.drawable.tab_option, R.drawable.tab_option_checked);
-
         mPager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new HotFragmentPagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mAdapter);
-        mPager.setCurrentItem(1);
-        mPager.setOffscreenPageLimit(2);
-        mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
-                tbtnMain, tbtnMe}, mPager));
+        mPager.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter = new HotFragmentPagerAdapter(getSupportFragmentManager());
+                mPager.setAdapter(mAdapter);
+                mPager.setCurrentItem(1);
+                mPager.setOffscreenPageLimit(2);
+                mPager.setOnPageChangeListener(new PageChangeListener(new TabButton[]{tbtnMessage,
+                        tbtnMain, tbtnMe}, mPager));
+            }
+        }, 100);
     }
 
     private void initClick() {
@@ -321,7 +312,7 @@ public class HotActivity extends BaseFragmentActivity {
         }
 
         public void onPageSelected(int position) {
-            showNewCount();
+
             if (position >= 0 && position < indicators.size()) {
                 for (int i = 0;
                      i < indicators.size();
@@ -383,29 +374,34 @@ public class HotActivity extends BaseFragmentActivity {
         }).start();
     }
 
-    public void showNewCount() {
-
-    }
-
     public void refreshTotalBalance() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                long toatlPrivate = 0;
-                long toatlWatchOnly = 0;
+                long totalPrivate = 0;
+                long totalWatchOnly = 0;
+                long totalHdm = 0;
                 for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
-                    toatlPrivate += address.getBalance();
+                    totalPrivate += address.getBalance();
                 }
                 for (Address address : AddressManager.getInstance().getWatchOnlyAddresses()) {
-                    toatlWatchOnly += address.getBalance();
+                    totalWatchOnly += address.getBalance();
                 }
-                final long btcPrivate = toatlPrivate;
-                final long btcWatchOnly = toatlWatchOnly;
+                if (AddressManager.getInstance().hasHDMKeychain()) {
+                    for (HDMAddress address : AddressManager.getInstance().getHdmKeychain()
+                            .getAddresses()) {
+                        totalHdm += address.getBalance();
+                    }
+                }
+                final long btcPrivate = totalPrivate;
+                final long btcWatchOnly = totalWatchOnly;
+                final long btcHdm = totalHdm;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         configureTabMainIcons();
-                        tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf(btcWatchOnly));
+                        tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate),
+                                BigInteger.valueOf(btcWatchOnly), BigInteger.valueOf(btcHdm));
                     }
                 });
             }
@@ -424,7 +420,7 @@ public class HotActivity extends BaseFragmentActivity {
         }
     }
 
-    public void notifPriceAlert(BitherSetting.MarketType marketType) {
+    public void notifPriceAlert(BitherjSettings.MarketType marketType) {
         if (mPager.getCurrentItem() != 0) {
             mPager.setCurrentItem(0);
         }

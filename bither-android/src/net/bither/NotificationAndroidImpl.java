@@ -23,6 +23,7 @@ import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.BroadcastUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,11 @@ public class NotificationAndroidImpl implements NotificationService {
             final Intent broadcast = new Intent(ACTION_SYNC_FROM_SPV_FINISHED);
             BitherApplication.mContext.sendStickyBroadcast(broadcast);
         }
+    }
+
+    @Override
+    public void sendBroadcastGetSpvBlockComplete(boolean isComplete) {
+        BroadcastUtil.sendBroadcastGetSpvBlockComplete(isComplete);
     }
 
     @Override

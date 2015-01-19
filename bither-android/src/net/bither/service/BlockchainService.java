@@ -34,19 +34,19 @@ import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
-import net.bither.bitherj.core.BlockChain;
+import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.exception.BlockStoreException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
-import net.bither.util.BlockUtil;
+import net.bither.bitherj.utils.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
 import net.bither.util.NetworkUtil.NetworkType;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.util.UpgradeUtil;
 
 import org.slf4j.Logger;
@@ -329,7 +329,10 @@ public class BlockchainService extends android.app.Service {
                 return;
             }
             if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-                BlockUtil.dowloadSpvBlock();
+                Block block = BlockUtil.dowloadSpvBlock();
+                if (block == null) {
+                    return;
+                }
             }
             if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
                 if (!AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()) {

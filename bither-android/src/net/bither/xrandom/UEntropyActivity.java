@@ -36,7 +36,7 @@ import net.bither.R;
 import net.bither.activity.cold.AddColdAddressActivity;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
@@ -61,18 +61,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UEntropyActivity extends BaseActivity implements UEntropyCollector
+public abstract class UEntropyActivity extends BaseActivity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
-    public static final String PrivateKeyCountKey = UEntropyActivity.class.getName() + ".private_key_count_key";
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
-    private static final int MinGeneratingTime = 5000;
 
     private static final int VIBRATE_DURATION = 50;
 
     private Vibrator vibrator;
 
     private UEntropyCollector entropyCollector;
-    private GenerateThread generateThread;
+    private Thread generateThread;
 
     private View vOverlay;
     private View vOverlayTop;
@@ -85,17 +83,10 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
 
     private boolean isFinishing = false;
 
-    private int targetCount;
-
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, R.anim.uentropy_activity_start_exit);
-        targetCount = getIntent().getExtras().getInt(PrivateKeyCountKey, 0);
-        if (targetCount <= 0) {
-            super.finish();
-            return;
-        }
         setContentView(R.layout.activity_uentropy);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vOverlay = findViewById(R.id.v_overlay);
@@ -116,7 +107,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                     public void run() {
                         isFinishing = true;
                         dpCancel.show();
-                        generateThread.cancel(cancelRunnable);
+                        cancelGenerating(cancelRunnable);
                     }
                 });
             }
@@ -128,7 +119,6 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                 entropyCollector), new UEntropyMic(entropyCollector,
                 (AudioVisualizerView) findViewById(R.id.v_mic)), new UEntropySensor(this,
                 entropyCollector, (SensorVisualizerView) findViewById(R.id.v_sensor)));
-        generateThread = new GenerateThread();
 
         vOverlay.postDelayed(new Runnable() {
             @Override
@@ -160,7 +150,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
         if (isFinishing) {
             return;
         }
-        if (generateThread.isAlive()) {
+        if (generateThread != null && generateThread.isAlive()) {
             cancelGenerate();
         } else {
             cancelRunnable.run();
@@ -270,7 +260,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
 
     }
 
-    private void onProgress(final double progress) {
+    protected void onProgress(final double progress) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -280,7 +270,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
         });
     }
 
-    private void onSuccess(final ArrayList<String> addresses) {
+    protected void onSuccess(final Object obj) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -291,32 +281,14 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
-                        DialogGenerateAddressFinalConfirm dialog = new
-                                DialogGenerateAddressFinalConfirm(UEntropyActivity.this,
-                                addresses.size(), true);
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                Intent intent = new Intent();
-                                intent.putExtra(BitherSetting.INTENT_REF
-                                                .ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                                        AppSharedPreference.getInstance().getPasswordSeed() ==
-                                                null);
-                                intent.putExtra(BitherSetting.INTENT_REF
-                                        .ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
-                                setResult(RESULT_OK, intent);
-                                finish();
-                                overridePendingTransition(0, R.anim.slide_out_bottom);
-                            }
-                        });
-                        dialog.show();
+                        didSuccess(obj);
                     }
                 });
             }
         });
     }
 
-    private void onFailed() {
+    protected void onFailed() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -351,7 +323,7 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
         });
     }
 
-    private void backToFromActivity() {
+    protected void backToFromActivity() {
         isFinishing = true;
         Class target;
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
@@ -393,130 +365,16 @@ public class UEntropyActivity extends BaseActivity implements UEntropyCollector
             backToFromActivity();
         } else {
             startAnimation();
-            generateThread.setPassword(password);
+            generateThread = getGeneratingThreadWithXRandom(entropyCollector, password);
             generateThread.start();
         }
     }
 
-    private class GenerateThread extends ThreadNeedService {
-        private double saveProgress = 0.1;
-        private double startProgress = 0.01;
-        private double progressKeyRate = 0.5;
-        private double progressEntryptRate = 0.5;
+    abstract Thread getGeneratingThreadWithXRandom(UEntropyCollector collector, SecureCharSequence password);
 
-        private long startGeneratingTime;
+    abstract void cancelGenerating(Runnable cancelRunnable);
 
-        private SecureCharSequence password;
-        private Runnable cancelRunnable;
-
-        public GenerateThread() {
-            super(null, UEntropyActivity.this);
-        }
-
-        public void setPassword(SecureCharSequence password) {
-            this.password = password;
-        }
-
-        @Override
-        public synchronized void start() {
-            if (password == null) {
-                throw new IllegalStateException("GenerateThread does not have password");
-            }
-            startGeneratingTime = System.currentTimeMillis();
-            super.start();
-            onProgress(startProgress);
-        }
-
-        public void cancel(Runnable cancelRunnable) {
-            this.cancelRunnable = cancelRunnable;
-        }
-
-        private void finishGenerate(BlockchainService service) {
-            if (password != null) {
-                password.wipe();
-                password = null;
-            }
-            if (service != null) {
-                service.startAndRegister();
-            }
-            entropyCollector.stop();
-        }
-
-        @Override
-        public void runWithService(BlockchainService service) {
-            boolean success = false;
-            final ArrayList<String> addressStrs = new ArrayList<String>();
-            double progress = startProgress;
-            double itemProgress = (1.0 - startProgress - saveProgress) / (double) targetCount;
-
-            try {
-                entropyCollector.start();
-                if (service != null) {
-                    service.stopAndUnregister();
-                }
-
-                List<Address> addressList = new ArrayList<Address>();
-                for (int i = 0;
-                     i < targetCount;
-                     i++) {
-                    if (cancelRunnable != null) {
-                        finishGenerate(service);
-                        runOnUiThread(cancelRunnable);
-                        return;
-                    }
-
-                    XRandom xRandom = new XRandom(entropyCollector);
-                    ECKey ecKey = ECKey.generateECKey(xRandom);
-                    ecKey.setFromXRandom(true);
-
-                    progress += itemProgress * progressKeyRate;
-                    onProgress(progress);
-                    if (cancelRunnable != null) {
-                        finishGenerate(service);
-                        runOnUiThread(cancelRunnable);
-                        return;
-                    }
-
-
-                    // start encrypt
-                    ecKey = PrivateKeyUtil.encrypt(ecKey, password);
-                    Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(),
-                            PrivateKeyUtil.getEncryptedString(ecKey), ecKey.isFromXRandom());
-                    ecKey.clearPrivateKey();
-                    addressList.add(address);
-                    addressStrs.add(address.getAddress());
-
-                    progress += itemProgress * progressEntryptRate;
-                    onProgress(progress);
-                }
-                entropyCollector.stop();
-                password.wipe();
-                password = null;
-
-                if (cancelRunnable != null) {
-                    finishGenerate(service);
-                    runOnUiThread(cancelRunnable);
-                    return;
-                }
-
-                KeyUtil.addAddressListByDesc(service, addressList);
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            finishGenerate(service);
-            if (success) {
-                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) {
-
-                }
-                onProgress(1);
-                onSuccess(addressStrs);
-            } else {
-                onFailed();
-            }
-        }
-    }
+    abstract void didSuccess(Object obj);
 
     @Override
     protected boolean shouldPresentPinCode() {

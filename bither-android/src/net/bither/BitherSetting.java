@@ -18,13 +18,13 @@ package net.bither;
 
 import android.text.format.DateUtils;
 
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.exception.AddressFormatException;
 
 import java.nio.charset.Charset;
 
 
-public class
-        BitherSetting {
+public class BitherSetting {
 
     public static final String DONATE_ADDRESS = "1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3";
     public static final long DONATE_AMOUNT = 100000;
@@ -45,7 +45,8 @@ public class
 
     public static final Charset UTF_8 = Charset.forName("UTF-8");
 
-
+    public static final int HDM_ADDRESS_PER_SEED_COUNT_LIMIT = 100;
+    public static final int HDM_ADDRESS_PER_SEED_PREPARE_COUNT = 100;
     public static final int WATCH_ONLY_ADDRESS_COUNT_LIMIT = 150;
     public static final int PRIVATE_KEY_OF_HOT_COUNT_LIMIT = 50;
 
@@ -74,6 +75,7 @@ public class
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
         public static final String ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG =
                 "address_has_private_key_pass_value_tag";
+        public static final String ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG = "address_is_hdm_key_pass_value_tag";
         public static final String ADDRESS_POSITION_PASS_VALUE_TAG =
                 "address_position_pass_value_tag";
         public static final String ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG = "add_private_key_suggest_check_tag";
@@ -90,32 +92,6 @@ public class
     }
 
 
-    public enum KlineTimeType {
-        ONE_MINUTE(1), FIVE_MINUTES(5), ONE_HOUR(60), ONE_DAY(1440);
-        private int mVal;
-
-        private KlineTimeType(int val) {
-            this.mVal = val;
-        }
-
-        public int getValue() {
-            return this.mVal;
-        }
-    }
-
-    public enum MarketType {
-        BITSTAMP(1), BTCE(2), HUOBI(3), OKCOIN(4), BTCCHINA(5), CHBTC(6), BITFINEX(7),
-        MARKET796(8);
-        private int mVal;
-
-        private MarketType(int val) {
-            this.mVal = val;
-        }
-
-        public int getValue() {
-            return this.mVal;
-        }
-    }
 
 //    public enum Currency {
 //        USD("USD"), CNY("CNY"), EUR("EUR"), GBP("GBP"), JPY("JPY"), KRW("KRW"), CAD("CAD"), AUD("AUD");
@@ -151,11 +127,8 @@ public class
 //        return Currency.USD;
 //    }
 
-    public enum AddressType {
-        Normal, TxTooMuch, SpecialAddress
-    }
 
-    public static String getMarketName(MarketType marketType) {
+    public static String getMarketName(BitherjSettings.MarketType marketType) {
         String name = "";
         switch (marketType) {
             case HUOBI:

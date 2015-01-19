@@ -16,42 +16,45 @@
 
 package net.bither.runnable;
 
-import net.bither.BitherSetting.MarketType;
-import net.bither.api.GetExchangeDepthApi;
+import net.bither.bitherj.BitherjSettings.MarketType;
+import net.bither.bitherj.api.GetExchangeDepthApi;
 import net.bither.model.Depth;
 import net.bither.util.DepthUtil;
 
+import org.json.JSONObject;
+
 public class GetExchangeDepthRunnable extends BaseRunnable {
 
-	private MarketType marketType;
+    private MarketType marketType;
 
-	public GetExchangeDepthRunnable(MarketType marketType) {
-		this.marketType = marketType;
+    public GetExchangeDepthRunnable(MarketType marketType) {
+        this.marketType = marketType;
 
-	}
+    }
 
-	@Override
-	public void run() {
-		boolean hasCache = false;
-		obtainMessage(HandlerMessage.MSG_PREPARE);
-		try {
-			Depth depth = DepthUtil.getKDepth(this.marketType);
-			hasCache = depth != null;
-			obtainMessage(HandlerMessage.MSG_SUCCESS_FROM_CACHE, depth);
-			GetExchangeDepthApi getExchangeDepthApi = new GetExchangeDepthApi(
-					marketType);
-			getExchangeDepthApi.handleHttpGet();
-			depth = getExchangeDepthApi.getResult();
-			depth.setMarketType(this.marketType);
-			DepthUtil.addDepth(depth);
-			obtainMessage(HandlerMessage.MSG_SUCCESS, depth);
-		} catch (Exception e) {
-			if (!hasCache) {
-				obtainMessage(HandlerMessage.MSG_FAILURE);
-			}
-			e.printStackTrace();
-		}
+    @Override
+    public void run() {
+        boolean hasCache = false;
+        obtainMessage(HandlerMessage.MSG_PREPARE);
+        try {
+            Depth depth = DepthUtil.getKDepth(this.marketType);
+            hasCache = depth != null;
+            obtainMessage(HandlerMessage.MSG_SUCCESS_FROM_CACHE, depth);
+            GetExchangeDepthApi getExchangeDepthApi = new GetExchangeDepthApi(
+                    marketType);
+            getExchangeDepthApi.handleHttpGet();
+            JSONObject json = new JSONObject(getExchangeDepthApi.getResult());
+            depth = Depth.formatJsonOfMarketDepth(this.marketType, json);
+            depth.setMarketType(this.marketType);
+            DepthUtil.addDepth(depth);
+            obtainMessage(HandlerMessage.MSG_SUCCESS, depth);
+        } catch (Exception e) {
+            if (!hasCache) {
+                obtainMessage(HandlerMessage.MSG_FAILURE);
+            }
+            e.printStackTrace();
+        }
 
-	}
+    }
 
 }

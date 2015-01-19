@@ -22,16 +22,20 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.StrictMode;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Threading;
+import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
 import net.bither.exception.UEHandler;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.qrcode.Qr;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.LinuxSecureRandom;
@@ -39,6 +43,7 @@ import net.bither.xrandom.LinuxSecureRandom;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -63,6 +68,7 @@ public class BitherApplication extends Application {
     public static long reloadTxTime = -1;
     public static Context mContext;
     public static SQLiteOpenHelper mDbHelper;
+    public static SQLiteOpenHelper mAddressDbHelper;
 
 
     @Override
@@ -71,15 +77,16 @@ public class BitherApplication extends Application {
         super.onCreate();
         mContext = getApplicationContext();
         mDbHelper = new BitherDatabaseHelper(mContext);
+        mAddressDbHelper = new AddressDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
         AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();
         appAndroid.construct();
         AbstractApp.notificationService.removeAddressLoadCompleteState();
-        initApp();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .permitDiskReads().permitDiskWrites().penaltyLog().build());
         Threading.throwOnLockCycles();
+        initApp();
         mBitherApplication = this;
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
@@ -170,9 +177,23 @@ public class BitherApplication extends Application {
             public void run() {
                 AddressManager.getInstance();
                 initLogging();
+                try {
+                    MnemonicCode.setInstance(new MnemonicCodeAndroid());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
 
-
+    /**
+     * Workaround for bug pre-Froyo, see here for more info:
+     * http://android-developers.blogspot.com/2011/09/androids-http-clients.html
+     */
+//    public static void disableConnectionReuseIfNecessary() {
+//        // HTTP connection reuse which was buggy pre-froyo
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+//            System.setProperty("http.keepAlive", "false");
+//        }
+//    }
 }

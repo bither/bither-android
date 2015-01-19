@@ -56,20 +56,21 @@ public class BitherDatabaseHelper extends SQLiteOpenHelper {
 
     private void createTxsTable(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_TXS_SQL);
+        db.execSQL(AbstractDb.CREATE_TX_BLOCK_NO_INDEX);
     }
 
     private void createAddressTxsTable(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_ADDRESSTXS_SQL);
-
     }
 
     private void createInsTable(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_INS_SQL);
+        db.execSQL(AbstractDb.CREATE_IN_PREV_TX_HASH_INDEX);
     }
 
     private void createOutsTable(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_OUTS_SQL);
-
+        db.execSQL(AbstractDb.CREATE_OUT_OUT_ADDRESS_INDEX);
     }
 
     private void createPeersTable(SQLiteDatabase db) {

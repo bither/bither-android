@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
 import net.bither.service.LocalBinder;

@@ -28,4 +28,7 @@
         android:button="@null"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"/>
+
+
+    <include layout="@layout/layout_dropdown_message"/>
 </merge>

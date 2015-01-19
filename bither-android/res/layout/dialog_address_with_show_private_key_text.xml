@@ -14,6 +14,10 @@
         android:fontFamily="monospace"
         android:textSize="18sp" />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff"/>
 
     <TextView
         android:id="@+id/tv_close"

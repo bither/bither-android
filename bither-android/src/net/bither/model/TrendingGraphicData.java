@@ -69,7 +69,11 @@ public class TrendingGraphicData {
 		rates = new double[count];
 		double interval = high - low;
 		for (int i = 0; i < count; i++) {
-			rates[i] = Math.max(0, prices[i] - low) / interval;
+            if(interval == 0){
+                rates[i] = 0.5;
+            }else {
+                rates[i] = Math.max(0, prices[i] - low) / interval;
+            }
 		}
 	}
 

@@ -39,7 +39,7 @@ import net.bither.R;
 import net.bither.adapter.hot.TransactionsOfBlockListAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Block;
 import net.bither.bitherj.core.BlockChain;
 import net.bither.bitherj.core.Tx;

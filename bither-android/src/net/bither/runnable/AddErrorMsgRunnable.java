@@ -16,7 +16,7 @@
 
 package net.bither.runnable;
 
-import net.bither.api.BitherErrorApi;
+import net.bither.bitherj.api.BitherErrorApi;
 import net.bither.bitherj.utils.Utils;
 import net.bither.exception.UEHandler;
 

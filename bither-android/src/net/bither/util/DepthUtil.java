@@ -16,7 +16,7 @@
 
 package net.bither.util;
 
-import net.bither.BitherSetting.MarketType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.model.Depth;
 
 import java.io.File;
@@ -24,36 +24,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DepthUtil {
-	private static List<Depth> depths = init();
+    private static List<Depth> depths = init();
 
-	private static List<Depth> init() {
-		File file = FileUtil.getDepthFile();
-		@SuppressWarnings("unchecked")
-		List<Depth> depths = (List<Depth>) FileUtil.deserialize(file);
-		if (depths == null) {
-			depths = new ArrayList<Depth>();
-		}
-		return depths;
-	}
+    private static List<Depth> init() {
+        File file = FileUtil.getDepthFile();
+        @SuppressWarnings("unchecked")
+        List<Depth> depths = (List<Depth>) FileUtil.deserialize(file);
+        if (depths == null) {
+            depths = new ArrayList<Depth>();
+        }
+        return depths;
+    }
 
-	public static Depth getKDepth(MarketType marketType) {
-		synchronized (depths) {
-			for (Depth depth : depths) {
-				if (depth.getMarketType() == marketType) {
-					return depth;
-				}
-			}
-			return null;
-		}
-	}
+    public static Depth getKDepth(MarketType marketType) {
+        synchronized (depths) {
+            for (Depth depth : depths) {
+                if (depth.getMarketType() == marketType) {
+                    return depth;
+                }
+            }
+            return null;
+        }
+    }
 
-	public static void addDepth(Depth depth) {
-		synchronized (depths) {
-			File file = FileUtil.getDepthFile();
-			depths.remove(depth);
-			depths.add(depth);
-			FileUtil.serializeObject(file, depths);
-		}
-	}
+    public static void addDepth(Depth depth) {
+        synchronized (depths) {
+            File file = FileUtil.getDepthFile();
+            depths.remove(depth);
+            depths.add(depth);
+            FileUtil.serializeObject(file, depths);
+        }
+    }
 
 }

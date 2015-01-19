@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.BitherjSettings.AddressType;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -39,7 +40,8 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.TransactionsUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -190,7 +192,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             for (Address bitherAddress : wallets) {
                 addressList.add(bitherAddress.getAddress());
             }
-            BitherSetting.AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            AddressType addressType = TransactionsUtil.checkAddress(addressList);
             switch (addressType) {
                 case Normal:
                     KeyUtil.addAddressListByDesc(service, wallets);

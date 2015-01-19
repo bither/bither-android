@@ -41,11 +41,11 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
-import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CommitTransactionThread;
 import net.bither.runnable.CompleteTransactionRunnable;
@@ -68,7 +68,6 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.TransactionsUtil;
 import net.bither.util.UnitUtilWrapper;
 
 
@@ -313,8 +312,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                         CompleteTransactionRunnable completeRunnable = new
                                 CompleteTransactionRunnable(addressPosition,
                                 amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
-                                (), null);
+                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress(), false, null);
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -410,7 +408,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                                 dp.setWait();
                                 try {
                                     new CommitTransactionThread(dp, addressPosition, tx, false,
-                                            GenerateUnsignedTxActivity.this).start();
+                                            false, GenerateUnsignedTxActivity.this).start();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

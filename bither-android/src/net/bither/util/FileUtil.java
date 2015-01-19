@@ -170,10 +170,10 @@ public class FileUtil {
     }
 
     public static File getExternalCacheDir(Context context) {
-        if (SdkUtils.hasFroyo()) {
-
-            return context.getExternalCacheDir();
-        }
+//        if (SdkUtils.hasFroyo()) {
+//
+//            return context.getCacheDir();
+//        }
 
         // Before Froyo we need to construct the external cache dir ourselves
         final String cacheDir = "/Android/data/" + context.getPackageName()

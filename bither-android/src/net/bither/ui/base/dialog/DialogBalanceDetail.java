@@ -55,15 +55,8 @@ public class DialogBalanceDetail extends DialogWithArrow {
         public long totalSent;
 
         public Info(Address address){
-            List<Tx> txs = address.getTxs();
-            txCount = txs.size();
-            totalReceived = 0;
-            for (Tx tx : txs) {
-                long amount = tx.deltaAmountFrom(address);
-                if (amount > 0) {
-                    totalReceived += amount;
-                }
-            }
+            txCount = address.txCount();
+            totalReceived = address.totalReceive();
             totalSent = totalReceived - address.getBalance();
         }
     }

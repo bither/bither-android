@@ -23,11 +23,14 @@ import android.content.Intent;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
-import net.bither.api.GetExchangeTickerApi;
+import net.bither.bitherj.api.GetExchangeTickerApi;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
+import net.bither.bitherj.BitherjSettings.MarketType;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
@@ -77,7 +80,8 @@ public class BitherTimer {
             GetExchangeTickerApi getExchangeTickerApi = new GetExchangeTickerApi();
             getExchangeTickerApi.handleHttpGet();
             ExchangeUtil.setCurrenciesRate(getExchangeTickerApi.getCurrenciesRate());
-            List<Ticker> tickers = getExchangeTickerApi.getResult();
+            JSONObject json = new JSONObject(getExchangeTickerApi.getResult());
+            List<Ticker> tickers = Ticker.formatList(json);
             if (tickers != null && tickers.size() > 0) {
                 comparePriceAlert(tickers);
                 FileUtil.serializeObject(file, tickers);
@@ -118,7 +122,7 @@ public class BitherTimer {
 
     }
 
-    private void notif(final BitherSetting.MarketType marketType, boolean isHigher,
+    private void notif(final MarketType marketType, boolean isHigher,
                        double alertPrice) {
         LogUtil.d("price", "notif");
         NotificationManager nm = (NotificationManager) context
@@ -133,7 +137,7 @@ public class BitherTimer {
         } else {
             contentText = context.getString(R.string.price_alert_lower_than);
         }
-        contentText = StringUtil.format(contentText, BitherSetting.getMarketName(marketType));
+        contentText = Utils.format(contentText, BitherSetting.getMarketName(marketType));
         contentText = contentText + " " + AppSharedPreference.getInstance()
                 .getDefaultExchangeType().getSymbol() + Utils.formatDoubleToMoneyString
                 (alertPrice);

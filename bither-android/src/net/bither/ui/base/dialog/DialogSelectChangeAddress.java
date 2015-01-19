@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -101,7 +100,9 @@ public class DialogSelectChangeAddress extends CenterDialog {
             }
             Address a = getItem(position);
             h.tvAddress.setText(a.getShortAddress());
-            if (a.hasPrivKey()) {
+            if (a.isHDM()) {
+                h.ivType.setImageResource(R.drawable.address_type_hdm);
+            } else if (a.hasPrivKey()) {
                 h.ivType.setImageResource(R.drawable.address_type_private);
             } else {
                 h.ivType.setImageResource(R.drawable.address_type_watchonly);

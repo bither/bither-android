@@ -22,8 +22,11 @@ import android.os.Looper;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.exception.AddressFormatException;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -227,6 +230,17 @@ public class BackupUtil {
                             + passwordSeed.toPasswordSeedString()
                             + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
 
+                }
+            }
+            if (AddressManager.getInstance().getHdmKeychain() != null) {
+                try {
+                    HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
+                    String address = keychain.getFirstAddressFromDb();
+                    backupString += QRCodeUtil.HDM_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
+                            + QRCodeUtil.QR_CODE_SPLIT
+                            + keychain.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
+                } catch (AddressFormatException e) {
+                    e.printStackTrace();
                 }
             }
             if (!Utils.isEmpty(backupString)) {

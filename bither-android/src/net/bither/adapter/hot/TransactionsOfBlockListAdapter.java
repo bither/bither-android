@@ -218,13 +218,13 @@ public class TransactionsOfBlockListAdapter extends BaseAdapter {
             rowConfidenceCircular.setVisibility(View.VISIBLE);
             rowConfidenceTextual.setVisibility(View.GONE);
 
-            rowConfidenceCircular.setText(StringUtil.format(formatString, 1, 1,
+            rowConfidenceCircular.setText(Utils.format(formatString, 1, 1,
                     tx.getSawByPeerCnt(), maxConnectedPeers / 2));
 
         } else if (tx.getConfirmationCount() == 0) {
             rowConfidenceCircular.setVisibility(View.VISIBLE);
             rowConfidenceTextual.setVisibility(View.GONE);
-            rowConfidenceCircular.setText(StringUtil.format(
+            rowConfidenceCircular.setText(Utils.format(
                     formatString,
                     tx.getConfirmationCount(),
                     isCoinBase, MAX_NUM_CONFIRMATIONS, 1, 1));

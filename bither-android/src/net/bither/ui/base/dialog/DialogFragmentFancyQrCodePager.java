@@ -32,8 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.widget.ImageButton;
 
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
@@ -59,7 +58,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     private View vContainer;
     private String content;
     private ViewPager pager;
-    private CheckBox tbtnShowAvatar;
+    private ImageButton tbtnShowAvatar;
     private View ivShowAvatarSeparator;
     private PagerAdapter adapter;
     private QrCodeThemeChangeListener listener;
@@ -86,7 +85,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
                              Bundle savedInstanceState) {
         vContainer = inflater.inflate(R.layout.dialog_fancy_qr_code_pager, container, false);
         pager = (ViewPager) vContainer.findViewById(R.id.pager);
-        tbtnShowAvatar = (CheckBox) vContainer.findViewById(R.id.cbx_show_avatar);
+        tbtnShowAvatar = (ImageButton) vContainer.findViewById(R.id.cbx_show_avatar);
         ivShowAvatarSeparator = vContainer.findViewById(R.id.iv_show_avatar_separator);
         vContainer.setOnClickListener(this);
         vContainer.findViewById(R.id.ibtn_share).setOnClickListener(this);
@@ -96,7 +95,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         pager.getLayoutParams().width = pager.getLayoutParams().height = size;
         pager.setAdapter(adapter);
         pager.setCurrentItem(AppSharedPreference.getInstance().getFancyQrCodeTheme().ordinal());
-        tbtnShowAvatar.setOnCheckedChangeListener(showAvatarCheckedChange);
+        tbtnShowAvatar.setOnClickListener(showAvatarCheckedChange);
         return vContainer;
     }
 
@@ -115,11 +114,11 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         if (AppSharedPreference.getInstance().hasUserAvatar()) {
             ivShowAvatarSeparator.setVisibility(View.VISIBLE);
             tbtnShowAvatar.setVisibility(View.VISIBLE);
-            tbtnShowAvatar.setChecked(true);
+            tbtnShowAvatar.setSelected(true);
         } else {
             ivShowAvatarSeparator.setVisibility(View.GONE);
             tbtnShowAvatar.setVisibility(View.GONE);
-            tbtnShowAvatar.setChecked(false);
+            tbtnShowAvatar.setSelected(false);
         }
         super.onStart();
     }
@@ -160,11 +159,10 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         }
     }
 
-    private CompoundButton.OnCheckedChangeListener showAvatarCheckedChange = new CompoundButton
-            .OnCheckedChangeListener() {
-
+    private View.OnClickListener showAvatarCheckedChange = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        public void onClick(View v) {
+            tbtnShowAvatar.setSelected(!tbtnShowAvatar.isSelected());
             FragmentManager manager = getChildFragmentManager();
             List<Fragment> fragments = manager.getFragments();
             if (fragments == null) {
@@ -172,7 +170,8 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             }
             for (Fragment f : fragments) {
                 if (f instanceof DialogFragmentFancyQrCodeSinglePage) {
-                    ((DialogFragmentFancyQrCodeSinglePage) f).setShowAvatar(isChecked);
+                    ((DialogFragmentFancyQrCodeSinglePage) f).setShowAvatar(tbtnShowAvatar
+                            .isSelected());
                 }
             }
         }
@@ -190,9 +189,8 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             if (position >= 0 && position < Qr.QrCodeTheme.values().length) {
                 theme = Qr.QrCodeTheme.values()[position];
             }
-            return DialogFragmentFancyQrCodeSinglePage.newInstance(content,
-                    theme).setShowAvatar(tbtnShowAvatar.isChecked()).setOnClickListener
-                    (DialogFragmentFancyQrCodePager.this);
+            return DialogFragmentFancyQrCodeSinglePage.newInstance(content, theme).setShowAvatar
+                    (tbtnShowAvatar.isSelected()).setOnClickListener(DialogFragmentFancyQrCodePager.this);
         }
 
         @Override

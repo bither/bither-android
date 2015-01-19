@@ -24,9 +24,12 @@ import net.bither.bitherj.AbstractApp;
 
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.NotificationService;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
+import net.bither.preference.PersistentCookieStore;
+
+import org.apache.http.client.CookieStore;
 
 import java.io.File;
 import java.util.List;
@@ -86,6 +89,21 @@ public class AndroidImplAbstractApp extends AbstractApp {
             @Override
             public QRCodeUtil.QRQuality getQRQuality() {
                 return AppSharedPreference.getInstance().getQRQuality();
+            }
+
+            @Override
+            public boolean getDownloadSpvFinish() {
+                return AppSharedPreference.getInstance().getDownloadSpvFinish();
+            }
+
+            @Override
+            public void setDownloadSpvFinish(boolean finish) {
+                AppSharedPreference.getInstance().setDownloadSpvFinish(finish);
+            }
+
+            @Override
+            public CookieStore getCookieStore() {
+                return PersistentCookieStore.getInstance();
             }
         };
     }

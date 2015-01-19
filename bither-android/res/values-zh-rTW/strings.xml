@@ -30,6 +30,7 @@
     <string name="address_monitor_failed_multiple_address">不能監控此類多簽名地址</string>
     <string name="total_btc_prefix">總計:</string>
     <string name="total_address_prefix">私鑰數:</string>
+    <string name="total_hdm_keychain_prefix">HDM 冷:</string>
     <string name="please_wait">請稍候…</string>
     <string name="address_group_watch_only">冷錢包地址</string>
     <string name="address_group_private">熱錢包地址</string>
@@ -92,6 +93,7 @@
     <string name="password_wrong">密碼錯誤</string>
     <string name="decrypt_failed">解密失敗</string>
     <string name="wallet_loading">錢包初始化中, 請稍後再試.</string>
+    <string name="add_address_watch_only_scanned_address_warning">比太只能監控冷錢包監控二維碼,\n不能監控其它地址</string>
 
 
     <!-- send -->
@@ -246,6 +248,7 @@
     <string name="check_address_private_key_title">%s 的私鑰</string>
     <string name="check_address_password">密碼正確</string>
     <string name="check_private_key_safe">您的私鑰很安全</string>
+    <string name="check_private_key_danger">您的私鑰存在風險</string>
     <string name="checking_private_key">正在檢查私鑰</string>
     <string name="check_private_key_button">一鍵檢查私鑰</string>
     <string name="private_key_is_empty">你還沒有添加私鑰, 請先添加私鑰</string>
@@ -345,7 +348,7 @@
     <string name="first_run_dialog_line_2">請不要清除比太數據</string>
 
     <!-- upgrade -->
-    <string name="begin_upgrade">即將開始升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
+    <string name="begin_upgrade">正在升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
     <string name="upgrading">升級中...</string>
 
     <!-- xrandom -->
@@ -458,4 +461,46 @@
     <string name="verify_message_signature_verify_success">簽名驗證通過</string>
     <string name="verify_message_signature_verify_failed">簽名驗證未通過</string>
     <string name="sign_message_setting_name">消息簽名</string>
+
+    <!-- hdm cold add -->
+    <string name="hdm_cold_seed_count_limit">您只能生成一個 HDM 賬戶</string>
+    <string name="hdm_account_cold_address_list_label">HDM 冷</string>
+    <string name="hdm_seed_generation_notice">HDM 結合了分層確定性和多重簽名兩種技術.\n\nHDM 運用多重簽名技術來避免分層確定性錢包的缺陷.\n\n比太使用 2/3 的多重簽名來生成 HDM 地址.\n\n三個私鑰分別由熱錢包, 冷錢包和 HDM 服務器上的確定性種子生成.</string>
+    <string name="hdm_keychain_xrandom_final_confirm">您生成了一個極隨機 HDM 賬戶.</string>
+    <string name="hdm_cold_pub_key_qr_code_name">HDM 冷帳號二維碼</string>
+    <string name="hdm_server_qr_code_name">HDM 服務器二維碼</string>
+    <string name="hdm_cold_seed_qr_code">HDM 冷種子二維碼</string>
+    <string name="hdm_hot_seed_qr_code">HDM 熱種子二維碼</string>
+    <string name="hdm_cold_seed_word_list">HDM 密語(冷)</string>
+    <string name="hdm_hot_seed_word_list">HDM 密語(熱)</string>
+
+    <!-- hdm check -->
+    <string name="hdm_keychain_check_title_cold">HDM 冷</string>
+    <string name="hdm_keychain_check_title_hot">HDM 熱</string>
+
+    <!-- hdm hot add -->
+    <string name="hdm_keychain_add_hot">HDM 熱</string>
+    <string name="hdm_keychain_add_cold">HDM 冷</string>
+    <string name="hdm_keychain_add_server">HDM 服務器</string>
+    <string name="hdm_keychain_add_hot_confirm">生成 HDM 熱帳號</string>
+    <string name="hdm_keychain_add_scan_cold">掃描 HDM 冷帳號二維碼</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_title">在冷錢包選擇 HDM 服務器二維碼來簽名</string>
+    <string name="hdm_keychain_add_scan_signed_server_qr_code_action">掃描已簽名服務器二維碼</string>
+    <string name="hdm_keychain_add_signed_server_qr_code_title">已簽名服務器二維碼</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">簽名服務器二維碼出錯</string>
+    <string name="hdm_exception_bid_already_exists">此 HDM 冷賬戶已被綁定到另一個 HDM 熱賬戶</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">放棄簽名?</string>
+
+    <!-- show hdm address -->
+    <string name="address_group_hdm_hot">HDM 熱</string>
+    <string name="hdm_address_trash_at_least_one_warn">您不能將HDM 帳號裡的所有地址都放入回收站</string>
+    <string name="hdm_address_sign_tx_server_error">HDM 服務器簽名出錯</string>
+
+    <!-- hdm hot address add -->
+    <string name="hdm_address_count_limit">已達 HDM 地址數上限</string>
+    <string name="activity_name_add_hdm_address">增加 HDM 地址</string>
+    <string name="hdm_address_add_count_label">增加多少個 HDM 地址?</string>
+    <string name="hdm_address_add_need_cold_pub">需要 HDM 冷帳號二維碼才能繼續</string>
+    <string name="hdm_address_add_button">增加</string>
+    <string name="hdm_address_add_cold_pub_not_match">HDM 冷帳號和之前不同</string>
 </resources>

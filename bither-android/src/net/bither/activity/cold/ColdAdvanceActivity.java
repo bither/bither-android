@@ -38,6 +38,7 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
@@ -497,6 +498,23 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 });
                 dialogPasswordWithOther.setTitle(R.string.enter_bip38_key_password);
                 dialogPasswordWithOther.show();
+                break;
+            case DialogImportPrivateKeyText.ScanPrivateKeyQRCodeRequestCode:
+                final String priv = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (!Utils.validBitcoinPrivateKey(priv)) {
+                    DropdownMessage.showDropdownMessage(this,
+                            R.string.import_private_key_text_format_erro);
+                    break;
+                }
+                new DialogPassword(this, new IDialogPasswordListener() {
+                    @Override
+                    public void onPasswordEntered(SecureCharSequence password) {
+                        ImportPrivateKey importPrivateKey = new ImportPrivateKey
+                                (ColdAdvanceActivity.this, ImportPrivateKey.ImportPrivateKeyType
+                                        .Text, dp, priv, password);
+                        importPrivateKey.importPrivateKey();
+                    }
+                }).show();
                 break;
         }
     }

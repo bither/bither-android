@@ -37,6 +37,7 @@
     <string name="address_monitor_failed_multiple_address">Can not monitor special MultiSig address</string>
     <string name="total_btc_prefix">Total:</string>
     <string name="total_address_prefix">Private Key Count:</string>
+    <string name="total_hdm_keychain_prefix">HDM Cold:</string>
     <string name="please_wait">Please wait…</string>
     <string name="address_group_watch_only">Cold Wallet Address</string>
     <string name="address_group_private">Hot Wallet Address</string>
@@ -79,10 +80,9 @@
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
-
     <!-- add address -->
-    <string name="add_address_tab_watch_only">Watch Only</string>
-    <string name="add_address_tab_private_key">Private Key</string>
+    <string name="add_address_tab_watch_only">Monitor</string>
+    <string name="add_address_tab_private_key">Private</string>
     <string name="add_address_coming_soon">Coming Soon…</string>
     <string name="add_address_scan">Scan</string>
     <string name="add_address_delete">Delete</string>
@@ -100,6 +100,7 @@
     <string name="password_wrong">Wrong Password</string>
     <string name="decrypt_failed">Decryption Failed</string>
     <string name="wallet_loading">Loading wallets, Please try again later.</string>
+    <string name="add_address_watch_only_scanned_address_warning">Bither can only monitor Bither Cold monitor QR code,\nnot other addresses.</string>
 
     <!-- send -->
     <string name="send_progress_dialog_message">Sending</string>
@@ -254,6 +255,7 @@
     <string name="check_address_private_key_title">Private key of %s</string>
     <string name="check_address_password">Password is correct</string>
     <string name="check_private_key_safe">Private keys are safe.</string>
+    <string name="check_private_key_danger">Private keys are in danger</string>
     <string name="checking_private_key">Checking private keys</string>
     <string name="check_private_key_button">Check Private Keys</string>
     <string name="check_points">%</string>
@@ -362,7 +364,7 @@
     <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
 
     <!-- upgrade -->
-    <string name="begin_upgrade">Ready to upgrade?\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
+    <string name="begin_upgrade">Upgrading...\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
     <string name="upgrading">Upgrading...</string>
 
     <!-- xrandom -->
@@ -475,4 +477,47 @@
     <string name="verify_message_signature_verify_success">Signature is correct</string>
     <string name="verify_message_signature_verify_failed">Signature is not correct</string>
     <string name="sign_message_setting_name">Message Signing</string>
+
+    <!-- hdm cold add -->
+    <string name="add_address_tab_hdm" translatable="false">HDM</string>
+    <string name="hdm_cold_seed_count_limit">You can only have 1 HDM account</string>
+    <string name="hdm_account_cold_address_list_label">HDM Cold</string>
+    <string name="hdm_seed_generation_notice">HDM is the hybrid of Hierarchical Deterministic &amp; Multisig technics.\n\nHDM uses Multisig to avoid HD wallet\'s vulnerability.\n\nBither uses 2 of 3 Multisig for HDM.\n\nThe 3 keys are generated from 3 HD seeds by Bither Hot, Bither Cold &amp; HDM server.</string>
+    <string name="hdm_keychain_xrandom_final_confirm">You have generated 1 HDM account from XRandom.</string>
+    <string name="hdm_cold_pub_key_qr_code_name">HDM Cold Account QR Code</string>
+    <string name="hdm_server_qr_code_name">HDM Server QR Code</string>
+    <string name="hdm_cold_seed_qr_code">HDM Cold Seed QR Code</string>
+    <string name="hdm_hot_seed_qr_code">HDM Hot Seed QR Code</string>
+    <string name="hdm_cold_seed_word_list">HDM Cold Phrase</string>
+    <string name="hdm_hot_seed_word_list">HDM Hot Phrase</string>
+
+    <!-- hdm check -->
+    <string name="hdm_keychain_check_title_cold">HDM Cold</string>
+    <string name="hdm_keychain_check_title_hot">HDM Hot</string>
+
+    <!-- hdm hot add -->
+    <string name="hdm_keychain_add_hot">HDM Hot</string>
+    <string name="hdm_keychain_add_cold">HDM Cold</string>
+    <string name="hdm_keychain_add_server">HDM Server</string>
+    <string name="hdm_keychain_add_hot_confirm">Generate HDM Hot account</string>
+    <string name="hdm_keychain_add_scan_cold">Scan HDM Cold Account QR Code</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_title">Choose HDM Server QR Code on Bither Cold</string>
+    <string name="hdm_keychain_add_scan_signed_server_qr_code_action">Scan Signed Server QR Code</string>
+    <string name="hdm_keychain_add_signed_server_qr_code_title">Signed Server QR Code</string>
+    <string name="hdm_keychain_add_sign_server_qr_code_error">Signing server QR code is wrong</string>
+    <string name="hdm_exception_bid_already_exists">HDM Cold account is already bound to another Hot account</string>
+    <string name="hdm_keychain_add_unsigned_server_qr_code_dismiss_confirm">Give up signing?</string>
+
+    <!-- show hdm address -->
+    <string name="address_group_hdm_hot">HDM Hot</string>
+    <string name="hdm_address_trash_at_least_one_warn">You can\'t trash all the addresses in an HDM account</string>
+    <string name="hdm_address_sign_tx_server_error">HDM server signing went wrong</string>
+
+    <!-- hdm hot address add -->
+    <string name="hdm_address_count_limit">Reached HDM address count limit</string>
+    <string name="activity_name_add_hdm_address">Add HDM Address</string>
+    <string name="hdm_address_add_count_label">How many HDM addresses to add?</string>
+    <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
+    <string name="hdm_address_add_button">Add</string>
+    <string name="hdm_address_add_cold_pub_not_match">HDM Cold account is not same as before</string>
 </resources>

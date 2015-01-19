@@ -44,9 +44,8 @@ import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseActivity;
@@ -54,8 +53,8 @@ import net.bither.ui.base.ColdWalletInitCheckView;
 import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogUpgrade;
 import net.bither.ui.base.dialog.ProgressDialog;
-import net.bither.util.BlockUtil;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
@@ -83,7 +82,7 @@ public class ChooseModeActivity extends BaseActivity {
     private boolean receiverRegistered = false;
 
     private ColdWalletInitCheckView vColdWalletInitCheck;
-    private ProgressDialog progressDialog;
+    private DialogUpgrade dialogUpgrade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,27 +122,14 @@ public class ChooseModeActivity extends BaseActivity {
     }
 
     private void upgrade() {
-        Runnable cancelRunnable = new Runnable() {
+        new Thread(new Runnable() {
             @Override
-            public void run() {
-                ChooseModeActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
-            }
-        };
-        Runnable confirmRunnable = new Runnable() {
             public void run() {
                 AppSharedPreference.getInstance().setDownloadSpvFinish(false);
                 UpgradeUtil.upgradeNewVerion(upgradeHandler);
             }
-        };
-        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this,
-                getUpgradeString(), confirmRunnable, cancelRunnable);
-        dialogConfirmTask.setCancelable(false);
-        dialogConfirmTask.show();
+        }).start();
+
 
     }
 
@@ -151,15 +137,14 @@ public class ChooseModeActivity extends BaseActivity {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case HandlerMessage.MSG_PREPARE:
-                    progressDialog = new ProgressDialog(ChooseModeActivity.this,
-                            getString(R.string.upgrading), null);
-                    progressDialog.setCancelable(false);
-
-                    progressDialog.show();
+                    dialogUpgrade = new DialogUpgrade(ChooseModeActivity.this);
+                    dialogUpgrade.setMessage(getUpgradeString());
+                    dialogUpgrade.setCancelable(false);
+                    dialogUpgrade.show();
                     break;
                 case HandlerMessage.MSG_SUCCESS:
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    if (dialogUpgrade != null) {
+                        dialogUpgrade.dismiss();
                     }
                     setVersionCode();
                     initActivity();
@@ -168,8 +153,8 @@ public class ChooseModeActivity extends BaseActivity {
                     }
                     break;
                 case HandlerMessage.MSG_FAILURE:
-                    if (progressDialog != null) {
-                        progressDialog.dismiss();
+                    if (dialogUpgrade != null) {
+                        dialogUpgrade.dismiss();
                     }
                     break;
                 default:

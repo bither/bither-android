@@ -19,7 +19,8 @@ package net.bither.util;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
@@ -101,6 +102,19 @@ public class KeyUtil {
         }
         if (service != null) {
             service.startAndRegister();
+        }
+
+    }
+
+    public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password) {
+        AddressManager.getInstance().setHDMKeychain(keyChain);
+        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+            AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
+        }
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+            BackupUtil.backupColdKey(false);
+        } else {
+            BackupUtil.backupHotKey();
         }
 
     }

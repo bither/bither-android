@@ -17,18 +17,15 @@
 package net.bither.ui.base.dialog;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
-import net.bither.http.BitherUrl;
-import net.bither.ui.base.DropdownMessage;
+import net.bither.bitherj.api.http.BitherUrl;
+import net.bither.util.UIUtil;
 
 import java.util.Locale;
 
@@ -77,7 +74,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            BitherUrl.gotoBrower(activity,
+            UIUtil.gotoBrower(activity,
                     BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address.getAddress());
 
         }
@@ -86,7 +83,7 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
         @Override
         public void onClick(View v) {
             dismiss();
-            BitherUrl.gotoBrower(activity,
+            UIUtil.gotoBrower(activity,
                     BitherUrl.BLOCKMETA_ADDRESS_URL + address.getAddress());
 
         }

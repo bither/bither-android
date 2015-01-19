@@ -31,7 +31,7 @@ import net.bither.SignMessageActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.BitherjSettings;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.cold.ColdAddressFragment;
@@ -66,7 +66,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
-        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             llSignMessage.setVisibility(View.VISIBLE);
             llSignMessage.setOnClickListener(this);
         } else {
@@ -74,7 +74,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         }
         findViewById(R.id.tv_close).setOnClickListener(this);
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
-        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getEncryptPrivKey(),
+        dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getFullEncryptPrivKey(),
                 address.getAddress());
     }
 
@@ -138,7 +138,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getFullEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
@@ -170,7 +170,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getEncryptPrivKey(), password);
+                        final SecureCharSequence str = PrivateKeyUtil.getDecryptPrivateKeyString(address.getFullEncryptPrivKey(), password);
                         password.wipe();
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
