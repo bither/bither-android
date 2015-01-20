@@ -520,4 +520,8 @@
     <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
     <string name="hdm_address_add_button">Add</string>
     <string name="hdm_address_add_cold_pub_not_match">HDM Cold account is not same as before</string>
+
+    <!-- hdm send -->
+    <string name="hdm_send_with_cold">Sign with HDM Cold</string>
+    <string name="hdm_send_with_server">Sign with HDM Server</string>
 </resources>

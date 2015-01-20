@@ -52,7 +52,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
-import net.bither.bitherj.qrcode.QRCodeTxTransport;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
@@ -104,7 +104,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private View vKeyboardContainer;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
-    private boolean signWithCold = true;
+    private boolean signWithCold = false;
     private boolean isDonate = false;
 
     @Override
@@ -173,6 +173,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
                 (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
         findViewById(R.id.ll_balance).setOnClickListener(balanceClick);
+        configureForOtherSignPart();
     }
 
     private OnClickListener balanceClick = new OnClickListener() {
@@ -240,7 +241,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    if (msg.obj != null) {
+                    if(msg.obj != null) {
                         String msgError = getString(R.string.send_failed);
                         if (msg.obj instanceof String) {
                             msgError = (String) msg.obj;
@@ -268,11 +269,15 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity
-                                        .this, tx, dialogSelectChangeAddress.getChangeAddress()
-                                        .equals(address) ? null : dialogSelectChangeAddress
-                                        .getChangeAddress().getAddress(), sendConfirmListener);
-                                dialog.show();
+                                if (signWithCold) {
+                                    sendConfirmListener.onConfirm(tx);
+                                } else {
+                                    DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity
+                                            .this, tx, dialogSelectChangeAddress.getChangeAddress
+                                            ().equals(address) ? null : dialogSelectChangeAddress
+                                            .getChangeAddress().getAddress(), sendConfirmListener);
+                                    dialog.show();
+                                }
                                 dp.setWait();
                             }
                         }, 800);
@@ -511,15 +516,43 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
             actions.add(new DialogWithActions.Action(R.string.select_change_address_option_name,
                     new Runnable() {
-                        @Override
-                        public void run() {
-                            dialogSelectChangeAddress.show();
-                        }
-                    }));
+                @Override
+                public void run() {
+                    dialogSelectChangeAddress.show();
+                }
+            }));
+            if (signWithCold) {
+                actions.add(new DialogWithActions.Action(R.string.hdm_send_with_server,
+                        new Runnable() {
+                    @Override
+                    public void run() {
+                        signWithCold = false;
+                        configureForOtherSignPart();
+                    }
+                }));
+            } else {
+                actions.add(new DialogWithActions.Action(R.string.hdm_send_with_cold,
+                        new Runnable() {
+                    @Override
+                    public void run() {
+                        signWithCold = true;
+                        configureForOtherSignPart();
+                    }
+                }));
+            }
             return actions;
         }
     };
 
+    private void configureForOtherSignPart() {
+        if (signWithCold) {
+            btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
+                    .unsigned_transaction_button_icon_mirror_transparent, 0,
+                    R.drawable.unsigned_transaction_button_icon, 0);
+        } else {
+            btnSend.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -608,7 +641,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity.this, tx,
                             dialogSelectChangeAddress.getChangeAddress().equals(address) ? null :
                                     dialogSelectChangeAddress.getChangeAddress().getAddress(),
-                            sendConfirmListener);
+                            preConfirmListener);
                     dialog.show();
                 }
             });
@@ -627,7 +660,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             return sigs;
         }
 
-        private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
+        private SendConfirmListener preConfirmListener = new SendConfirmListener() {
 
             @Override
             public void onConfirm(Tx tx) {
@@ -638,10 +671,10 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         .getAddress();
                 intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
                         QRCodeEnodeUtil.getPresignTxString(tx, changeAddress,
-                                addressCannotBtParsed, QRCodeTxTransport.NO_HDM_INDEX));
+                                addressCannotBtParsed));
                 if (Utils.isEmpty(changeAddress)) {
                     intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                            QRCodeTxTransport.oldGetPreSignString(tx, addressCannotBtParsed));
+                            QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
                 } else {
                     intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING,
                             true);
@@ -666,14 +699,39 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         };
 
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-            sigs = new ArrayList<TransactionSignature>();
-            try {
-                lock.lock();
-                fetchedCondition.signal();
-            } finally {
-                lock.unlock();
+            if (requestCode == RequestCode) {
+                if (resultCode == RESULT_OK) {
+                    final String qr = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                    try {
+                        String[] stringArray = QRCodeUtil.splitString(qr);
+                        sigs = new ArrayList<TransactionSignature>();
+                        for (String str : stringArray) {
+                            if (!Utils.isEmpty(str)) {
+                                TransactionSignature transactionSignature = new
+                                        TransactionSignature(ECKey.ECDSASignature.decodeFromDER
+                                        (Utils.hexStringToByteArray(str)),
+                                        TransactionSignature.SigHash.ALL, false);
+                                sigs.add(transactionSignature);
+                            }
+                        }
+                    } catch (Exception e) {
+                        sigs = null;
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(HdmSendActivity.this,
+                                R.string.send_failed);
+                    }
+                } else {
+                    sigs = null;
+                }
+                try {
+                    lock.lock();
+                    fetchedCondition.signal();
+                } finally {
+                    lock.unlock();
+                }
+                return true;
             }
-            return true;
+            return false;
         }
     }
 
