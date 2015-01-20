@@ -42,6 +42,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.UnSignTransaction;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
@@ -199,10 +200,10 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     .getChangeAddress().equals(address) ? null :
                     dialogSelectChangeAddress.getChangeAddress().getAddress();
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeEnodeUtil.getPresignTxString(tx, changeAddress, addressCannotBtParsed));
+                    QRCodeEnodeUtil.getPresignTxString(tx, changeAddress, addressCannotBtParsed,QRCodeTxTransport.NO_HDM_INDEX));
             if (Utils.isEmpty(changeAddress)) {
                 intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                        QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
+                        QRCodeTxTransport.oldGetPreSignString(tx, addressCannotBtParsed));
             } else {
                 intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING
                         , true);

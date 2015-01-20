@@ -52,6 +52,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
@@ -239,7 +240,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    if(msg.obj != null) {
+                    if (msg.obj != null) {
                         String msgError = getString(R.string.send_failed);
                         if (msg.obj instanceof String) {
                             msgError = (String) msg.obj;
@@ -510,11 +511,11 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
             actions.add(new DialogWithActions.Action(R.string.select_change_address_option_name,
                     new Runnable() {
-                @Override
-                public void run() {
-                    dialogSelectChangeAddress.show();
-                }
-            }));
+                        @Override
+                        public void run() {
+                            dialogSelectChangeAddress.show();
+                        }
+                    }));
             return actions;
         }
     };
@@ -637,10 +638,10 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         .getAddress();
                 intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
                         QRCodeEnodeUtil.getPresignTxString(tx, changeAddress,
-                                addressCannotBtParsed));
+                                addressCannotBtParsed, QRCodeTxTransport.NO_HDM_INDEX));
                 if (Utils.isEmpty(changeAddress)) {
                     intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                            QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
+                            QRCodeTxTransport.oldGetPreSignString(tx, addressCannotBtParsed));
                 } else {
                     intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING,
                             true);

@@ -102,7 +102,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(
                     ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeTransport = QRCodeEnodeUtil.formatQRCodeTransport(str);
+            qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
             if (qrCodeTransport != null) {
                 showTransaction();
             } else {
