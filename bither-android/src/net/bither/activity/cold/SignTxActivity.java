@@ -135,7 +135,8 @@ public class SignTxActivity extends SwipeRightActivity implements
         }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
-        if (address == null) {
+        if (address == null || (qrCodeTransport.getHdmIndex() >= 0 && !AddressManager.getInstance
+                ().hasHDMKeychain())) {
             btnSign.setEnabled(false);
             tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
         } else {

@@ -751,7 +751,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             List<TransactionSignature> transactionSignatureList = new
                     ArrayList<TransactionSignature>();
             try {
-
                 HDMBId hdmbId = HDMBId.getHDMBidFromDb();
                 byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
                 SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb()
