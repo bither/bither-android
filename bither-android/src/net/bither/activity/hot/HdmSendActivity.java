@@ -104,7 +104,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private View vKeyboardContainer;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
-    private boolean signWithCold = true;
+    private boolean signWithCold = false;
     private boolean isDonate = false;
 
     @Override
@@ -173,6 +173,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
                 (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
         findViewById(R.id.ll_balance).setOnClickListener(balanceClick);
+        configureForOtherSignPart();
     }
 
     private OnClickListener balanceClick = new OnClickListener() {
@@ -520,10 +521,38 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     dialogSelectChangeAddress.show();
                 }
             }));
+            if (signWithCold) {
+                actions.add(new DialogWithActions.Action(R.string.hdm_send_with_server,
+                        new Runnable() {
+                    @Override
+                    public void run() {
+                        signWithCold = false;
+                        configureForOtherSignPart();
+                    }
+                }));
+            } else {
+                actions.add(new DialogWithActions.Action(R.string.hdm_send_with_cold,
+                        new Runnable() {
+                    @Override
+                    public void run() {
+                        signWithCold = true;
+                        configureForOtherSignPart();
+                    }
+                }));
+            }
             return actions;
         }
     };
 
+    private void configureForOtherSignPart() {
+        if (signWithCold) {
+            btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
+                    .unsigned_transaction_button_icon_mirror_transparent, 0,
+                    R.drawable.unsigned_transaction_button_icon, 0);
+        } else {
+            btnSend.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+    }
 
     @Override
     protected void onResume() {
@@ -612,7 +641,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity.this, tx,
                             dialogSelectChangeAddress.getChangeAddress().equals(address) ? null :
                                     dialogSelectChangeAddress.getChangeAddress().getAddress(),
-                            sendConfirmListener);
+                            preConfirmListener);
                     dialog.show();
                 }
             });
@@ -631,7 +660,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             return sigs;
         }
 
-        private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
+        private SendConfirmListener preConfirmListener = new SendConfirmListener() {
 
             @Override
             public void onConfirm(Tx tx) {

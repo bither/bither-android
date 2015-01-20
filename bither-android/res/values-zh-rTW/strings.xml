@@ -503,4 +503,8 @@
     <string name="hdm_address_add_need_cold_pub">需要 HDM 冷帳號二維碼才能繼續</string>
     <string name="hdm_address_add_button">增加</string>
     <string name="hdm_address_add_cold_pub_not_match">HDM 冷帳號和之前不同</string>
+
+    <!-- hdm send -->
+    <string name="hdm_send_with_cold">與 HDM 冷共同簽名</string>
+    <string name="hdm_send_with_server">與 HDM 服務器共同簽名</string>
 </resources>
