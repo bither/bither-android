@@ -18,23 +18,15 @@ package net.bither.runnable;
 
 import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.api.SignatureHDMApi;
-import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
-import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.LogUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CompleteTransactionRunnable extends BaseRunnable {
@@ -45,6 +37,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     private String toAddress;
     private String changeAddress;
     private boolean toSign = false;
+    private HDMAddress.HDMFetchOtherSignatureDelegate sigFetcher1;
+    private HDMAddress.HDMFetchOtherSignatureDelegate sigFetcher2;
+
 
     static {
         for (TxBuilderException.TxBuilderErrorType type : TxBuilderException.TxBuilderErrorType
@@ -68,16 +63,35 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         }
     }
 
-    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress, boolean isHDM, SecureCharSequence password) throws Exception {
-        this(addressPosition, amount, toAddress, toAddress, isHDM, password);
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       SecureCharSequence password) throws Exception {
+        this(addressPosition, amount, toAddress, toAddress, password, null);
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       String changeAddress, boolean isHDM,
-                                       SecureCharSequence password) throws Exception {
+                                       String changeAddress, SecureCharSequence password) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, null);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher1) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher1,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher2) throws Exception {
+        boolean isHDM = otherSigFetcher1 != null || otherSigFetcher2 != null;
         this.amount = amount;
         this.toAddress = toAddress;
         this.password = password;
+        sigFetcher1 = otherSigFetcher1;
+        sigFetcher2 = otherSigFetcher2;
         if (isHDM) {
             Address a = AddressManager.getInstance().getHdmKeychain().getAddresses().get
                     (addressPosition);
@@ -115,35 +129,14 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             if (toSign) {
                 if (wallet.isHDM()) {
-                    ((HDMAddress) wallet).signTx(tx, password,
-                            new HDMAddress.HDMFetchOtherSignatureDelegate() {
-
-                                @Override
-                                public List<TransactionSignature> getOtherSignature(int addressIndex, CharSequence password, List<byte[]> unsignHash, Tx tx) {
-                                    List<TransactionSignature> transactionSignatureList = new ArrayList<TransactionSignature>();
-                                    try {
-
-                                        HDMBId hdmbId = HDMBId.getHDMBidFromDb();
-                                        byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
-                                        SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb().getAddress(), addressIndex, decryptedPassword, unsignHash);
-                                        signatureHDMApi.handleHttpPost();
-                                        List<byte[]> bytesList = signatureHDMApi.getResult();
-                                        for (byte[] bytes : bytesList) {
-                                            TransactionSignature transactionSignature = new TransactionSignature(ECKey.ECDSASignature.decodeFromDER(bytes), TransactionSignature.SigHash.ALL, false);
-                                            transactionSignatureList.add(transactionSignature);
-                                        }
-                                    } catch (Exception e) {
-                                        if (e instanceof Http400Exception) {
-                                            throw new HDMServerSignException(R.string
-                                                    .hdm_address_sign_tx_server_error);
-                                        } else {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-
-                                    return transactionSignatureList;
-                                }
-                            });
+                    if (sigFetcher1 != null && sigFetcher2 != null) {
+                        ((HDMAddress) wallet).signTx(tx, password, sigFetcher1, sigFetcher2);
+                    } else if (sigFetcher1 != null || sigFetcher2 != null) {
+                        ((HDMAddress) wallet).signTx(tx, password,
+                                sigFetcher1 != null ? sigFetcher1 : sigFetcher2);
+                    } else {
+                        throw new RuntimeException("need sig fetcher to sign hdm tx");
+                    }
                 } else {
                     wallet.signTx(tx, password);
                 }
@@ -160,6 +153,11 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
         } catch (Exception e) {
+            password.wipe();
+            if(e instanceof HDMSignUserCancelExcetion){
+                obtainMessage(HandlerMessage.MSG_FAILURE);
+                return;
+            }
             e.printStackTrace();
             String msg = getMessageFromException(e);
             obtainMessage(HandlerMessage.MSG_FAILURE, msg);
@@ -178,13 +176,17 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         }
     }
 
-    private static final class HDMServerSignException extends RuntimeException {
-        HDMServerSignException(int msg) {
+    public static final class HDMServerSignException extends RuntimeException {
+        public HDMServerSignException(int msg) {
             this(BitherApplication.mContext.getString(msg));
         }
 
         HDMServerSignException(String msg) {
             super(msg);
         }
+    }
+
+    public static final class HDMSignUserCancelExcetion extends RuntimeException {
+
     }
 }

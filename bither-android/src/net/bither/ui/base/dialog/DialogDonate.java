@@ -38,6 +38,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.HdmSendActivity;
 import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
@@ -206,7 +207,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             if (address.address.isHDM()) {
                 position = AddressManager.getInstance().getHdmKeychain().getAddresses().indexOf
                         (address.address);
-                target = SendActivity.class;
+                target = HdmSendActivity.class;
             } else if (address.address.hasPrivKey()) {
                 position = AddressManager.getInstance().getPrivKeyAddresses().indexOf(address.address);
                 target = SendActivity.class;

@@ -27,24 +27,27 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
+import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
-import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
-import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SignTxActivity extends SwipeRightActivity implements
@@ -102,7 +105,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(
                     ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeTransport = QRCodeEnodeUtil.formatQRCodeTransport(str);
+            qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
             if (qrCodeTransport != null) {
                 showTransaction();
             } else {
@@ -132,7 +135,8 @@ public class SignTxActivity extends SwipeRightActivity implements
         }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
-        if (address == null) {
+        if ((qrCodeTransport.getHdmIndex() < 0 && address == null) || (qrCodeTransport
+                .getHdmIndex() >= 0 && !AddressManager.getInstance().hasHDMKeychain())) {
             btnSign.setEnabled(false);
             tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
         } else {
@@ -155,8 +159,52 @@ public class SignTxActivity extends SwipeRightActivity implements
     public void onPasswordEntered(final SecureCharSequence password) {
         Thread thread = new Thread() {
             public void run() {
-                Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());
-                List<String> strings = address.signStrHashes(qrCodeTransport.getHashList(), password);
+                List<String> strings = null;
+                if (qrCodeTransport.getHdmIndex() >= 0) {
+                    if (!AddressManager.getInstance().hasHDMKeychain()) {
+                        dp.setThread(null);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                DropdownMessage.showDropdownMessage(SignTxActivity.this,
+                                        R.string.hdm_send_with_cold_no_requested_seed);
+                            }
+                        });
+                        password.wipe();
+                        return;
+                    }
+                    try {
+                        DeterministicKey key = AddressManager.getInstance().getHdmKeychain()
+                                .getExternalKey(qrCodeTransport.getHdmIndex(), password);
+
+                        List<String> hashes = qrCodeTransport.getHashList();
+                        strings = new ArrayList<String>();
+                        for (String hash : hashes) {
+                            ECKey.ECDSASignature signed = key.sign(Utils.hexStringToByteArray
+                                    (hash));
+                            strings.add(Utils.bytesToHexString(signed.encodeToDER()));
+                        }
+                        key.wipe();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        dp.setThread(null);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                DropdownMessage.showDropdownMessage(SignTxActivity.this,
+                                        R.string.hdm_send_with_cold_no_requested_seed);
+                            }
+                        });
+                        password.wipe();
+                        return;
+                    }
+                } else {
+                    Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());
+                    strings = address.signStrHashes(qrCodeTransport.getHashList(), password);
+                }
+
                 password.wipe();
                 String result = "";
                 for (int i = 0;
