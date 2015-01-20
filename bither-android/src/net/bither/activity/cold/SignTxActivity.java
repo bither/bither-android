@@ -185,6 +185,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                                     (hash));
                             strings.add(Utils.bytesToHexString(signed.encodeToDER()));
                         }
+                        key.wipe();
                     } catch (Exception e) {
                         e.printStackTrace();
                         dp.setThread(null);
