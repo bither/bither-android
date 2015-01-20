@@ -37,6 +37,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -45,6 +46,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.HandlerMessage;
 import net.bither.service.BlockchainService;
@@ -78,6 +80,7 @@ public class ChooseModeActivity extends BaseActivity {
     private View llWarmExtraWaiting;
     private View llWarmExtraError;
     private View btnWarmExtraRetry;
+    private Button btnChangeToCold;
 
     private boolean receiverRegistered = false;
 
@@ -125,7 +128,9 @@ public class ChooseModeActivity extends BaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AppSharedPreference.getInstance().setDownloadSpvFinish(false);
+                if (AppSharedPreference.getInstance().getVerionCode() < UpgradeUtil.BITHERJ_VERSION_CODE) {
+                    AppSharedPreference.getInstance().setDownloadSpvFinish(false);
+                }
                 UpgradeUtil.upgradeNewVerion(upgradeHandler);
             }
         }).start();
@@ -224,7 +229,12 @@ public class ChooseModeActivity extends BaseActivity {
         llWarmExtraError = findViewById(R.id.ll_warm_extra_error);
         btnWarmExtraRetry = findViewById(R.id.btn_warm_extra_retry);
         btnWarmExtraRetry.setOnClickListener(warmRetryClick);
-        findViewById(R.id.btn_change_to_cold).setOnClickListener(changeToColdClick);
+        btnChangeToCold = (Button) findViewById(R.id.btn_change_to_cold);
+        btnChangeToCold.setOnClickListener(changeToColdClick);
+        if (AddressManager.getInstance().getAllAddresses().size() > 0
+                || AddressManager.getInstance().hasHDMKeychain()) {
+            btnChangeToCold.setVisibility(View.GONE);
+        }
     }
 
     private OnClickListener changeToColdClick = new OnClickListener() {
