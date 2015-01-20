@@ -268,11 +268,15 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity
-                                        .this, tx, dialogSelectChangeAddress.getChangeAddress()
-                                        .equals(address) ? null : dialogSelectChangeAddress
-                                        .getChangeAddress().getAddress(), sendConfirmListener);
-                                dialog.show();
+                                if (signWithCold) {
+                                    sendConfirmListener.onConfirm(tx);
+                                } else {
+                                    DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity
+                                            .this, tx, dialogSelectChangeAddress.getChangeAddress
+                                            ().equals(address) ? null : dialogSelectChangeAddress
+                                            .getChangeAddress().getAddress(), sendConfirmListener);
+                                    dialog.show();
+                                }
                                 dp.setWait();
                             }
                         }, 800);
