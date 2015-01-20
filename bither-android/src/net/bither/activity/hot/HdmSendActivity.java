@@ -51,6 +51,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
@@ -81,6 +82,8 @@ import net.bither.util.UnitUtilWrapper;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
@@ -100,7 +103,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private View vKeyboardContainer;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
-    private boolean signWithCold = false;
+    private boolean signWithCold = true;
     private boolean isDonate = false;
 
     @Override
@@ -236,11 +239,13 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    String msgError = getString(R.string.send_failed);
-                    if (msg.obj instanceof String) {
-                        msgError = (String) msg.obj;
+                    if(msg.obj != null) {
+                        String msgError = getString(R.string.send_failed);
+                        if (msg.obj instanceof String) {
+                            msgError = (String) msg.obj;
+                        }
+                        DropdownMessage.showDropdownMessage(HdmSendActivity.this, msgError);
                     }
-                    DropdownMessage.showDropdownMessage(HdmSendActivity.this, msgError);
                     break;
                 default:
                     break;
@@ -374,9 +379,9 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             R.string.scan_watch_only_address_error);
                 }
             }.parse();
-
+        } else if (!coldSignatureFetcher.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-
     }
 
     @Override
@@ -515,77 +520,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     };
 
 
-    private HDMAddress.HDMFetchOtherSignatureDelegate coldSignatureFetcher = new HDMAddress.HDMFetchOtherSignatureDelegate() {
-
-        @Override
-        public List<TransactionSignature> getOtherSignature(int addressIndex,
-                                                            CharSequence password,
-                                                            List<byte[]> unsignHash, Tx tx) {
-            List<TransactionSignature> transactionSignatureList = new
-                    ArrayList<TransactionSignature>();
-            try {
-
-                HDMBId hdmbId = HDMBId.getHDMBidFromDb();
-                byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
-                SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb()
-                        .getAddress(), addressIndex, decryptedPassword, unsignHash);
-                signatureHDMApi.handleHttpPost();
-                List<byte[]> bytesList = signatureHDMApi.getResult();
-                for (byte[] bytes : bytesList) {
-                    TransactionSignature transactionSignature = new TransactionSignature(ECKey
-                            .ECDSASignature.decodeFromDER(bytes), TransactionSignature.SigHash
-                            .ALL, false);
-                    transactionSignatureList.add(transactionSignature);
-                }
-            } catch (Exception e) {
-                if (e instanceof Http400Exception) {
-                    throw new CompleteTransactionRunnable.HDMServerSignException(R.string
-                            .hdm_address_sign_tx_server_error);
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            return transactionSignatureList;
-        }
-    };
-
-    private HDMAddress.HDMFetchOtherSignatureDelegate remoteSignatureFetcher = new HDMAddress
-            .HDMFetchOtherSignatureDelegate() {
-
-        @Override
-        public List<TransactionSignature> getOtherSignature(int addressIndex,
-                                                            CharSequence password,
-                                                            List<byte[]> unsignHash, Tx tx) {
-            List<TransactionSignature> transactionSignatureList = new
-                    ArrayList<TransactionSignature>();
-            try {
-
-                HDMBId hdmbId = HDMBId.getHDMBidFromDb();
-                byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
-                SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb()
-                        .getAddress(), addressIndex, decryptedPassword, unsignHash);
-                signatureHDMApi.handleHttpPost();
-                List<byte[]> bytesList = signatureHDMApi.getResult();
-                for (byte[] bytes : bytesList) {
-                    TransactionSignature transactionSignature = new TransactionSignature(ECKey
-                            .ECDSASignature.decodeFromDER(bytes), TransactionSignature.SigHash
-                            .ALL, false);
-                    transactionSignatureList.add(transactionSignature);
-                }
-            } catch (Exception e) {
-                if (e instanceof Http400Exception) {
-                    throw new CompleteTransactionRunnable.HDMServerSignException(R.string
-                            .hdm_address_sign_tx_server_error);
-                } else {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            return transactionSignatureList;
-        }
-    };
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -655,4 +589,128 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             ibtnScan.setVisibility(View.VISIBLE);
         }
     }
+
+    private class ColdSignatureFetcher implements HDMAddress.HDMFetchOtherSignatureDelegate {
+        private static final int RequestCode = 1251;
+
+        private ReentrantLock lock = new ReentrantLock();
+        private Condition fetchedCondition = lock.newCondition();
+        private List<TransactionSignature> sigs;
+
+        @Override
+        public List<TransactionSignature> getOtherSignature(int addressIndex,
+                                                            CharSequence password,
+                                                            List<byte[]> unsignHash, final Tx tx) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity.this, tx,
+                            dialogSelectChangeAddress.getChangeAddress().equals(address) ? null :
+                                    dialogSelectChangeAddress.getChangeAddress().getAddress(),
+                            sendConfirmListener);
+                    dialog.show();
+                }
+            });
+            sigs = null;
+            try {
+                lock.lockInterruptibly();
+                fetchedCondition.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                lock.unlock();
+            }
+            if (sigs == null) {
+                throw new CompleteTransactionRunnable.HDMSignUserCancelExcetion();
+            }
+            return sigs;
+        }
+
+        private SendConfirmListener sendConfirmListener = new SendConfirmListener() {
+
+            @Override
+            public void onConfirm(Tx tx) {
+                String addressCannotBtParsed = getString(R.string.address_cannot_be_parsed);
+                Intent intent = new Intent(HdmSendActivity.this, UnsignedTxQrCodeActivity.class);
+                String changeAddress = dialogSelectChangeAddress.getChangeAddress().equals
+                        (address) ? null : dialogSelectChangeAddress.getChangeAddress()
+                        .getAddress();
+                intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
+                        QRCodeEnodeUtil.getPresignTxString(tx, changeAddress,
+                                addressCannotBtParsed));
+                if (Utils.isEmpty(changeAddress)) {
+                    intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
+                            QRCodeEnodeUtil.oldGetPreSignString(tx, addressCannotBtParsed));
+                } else {
+                    intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING,
+                            true);
+                }
+
+                intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                        getString(R.string.unsigned_transaction_qr_code_title));
+                startActivityForResult(intent, RequestCode);
+                sigs = null;
+            }
+
+            @Override
+            public void onCancel() {
+                sigs = null;
+                try {
+                    lock.lock();
+                    fetchedCondition.signal();
+                } finally {
+                    lock.unlock();
+                }
+            }
+        };
+
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+            sigs = new ArrayList<TransactionSignature>();
+            try {
+                lock.lock();
+                fetchedCondition.signal();
+            } finally {
+                lock.unlock();
+            }
+            return true;
+        }
+    }
+
+    private ColdSignatureFetcher coldSignatureFetcher = new ColdSignatureFetcher();
+
+    private HDMAddress.HDMFetchOtherSignatureDelegate remoteSignatureFetcher = new HDMAddress
+            .HDMFetchOtherSignatureDelegate() {
+
+        @Override
+        public List<TransactionSignature> getOtherSignature(int addressIndex,
+                                                            CharSequence password,
+                                                            List<byte[]> unsignHash, Tx tx) {
+            List<TransactionSignature> transactionSignatureList = new
+                    ArrayList<TransactionSignature>();
+            try {
+
+                HDMBId hdmbId = HDMBId.getHDMBidFromDb();
+                byte[] decryptedPassword = hdmbId.decryptHDMBIdPassword(password);
+                SignatureHDMApi signatureHDMApi = new SignatureHDMApi(HDMBId.getHDMBidFromDb()
+                        .getAddress(), addressIndex, decryptedPassword, unsignHash);
+                signatureHDMApi.handleHttpPost();
+                List<byte[]> bytesList = signatureHDMApi.getResult();
+                for (byte[] bytes : bytesList) {
+                    TransactionSignature transactionSignature = new TransactionSignature(ECKey
+                            .ECDSASignature.decodeFromDER(bytes), TransactionSignature.SigHash
+                            .ALL, false);
+                    transactionSignatureList.add(transactionSignature);
+                }
+            } catch (Exception e) {
+                if (e instanceof Http400Exception) {
+                    throw new CompleteTransactionRunnable.HDMServerSignException(R.string
+                            .hdm_address_sign_tx_server_error);
+                } else {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            return transactionSignatureList;
+        }
+    };
 }

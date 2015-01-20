@@ -153,6 +153,11 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
         } catch (Exception e) {
+            password.wipe();
+            if(e instanceof HDMSignUserCancelExcetion){
+                obtainMessage(HandlerMessage.MSG_FAILURE);
+                return;
+            }
             e.printStackTrace();
             String msg = getMessageFromException(e);
             obtainMessage(HandlerMessage.MSG_FAILURE, msg);
@@ -179,5 +184,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         HDMServerSignException(String msg) {
             super(msg);
         }
+    }
+
+    public static final class HDMSignUserCancelExcetion extends RuntimeException {
+
     }
 }
