@@ -242,7 +242,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    if(msg.obj != null) {
+                    if (msg.obj != null) {
                         String msgError = getString(R.string.send_failed);
                         if (msg.obj instanceof String) {
                             msgError = (String) msg.obj;
@@ -517,29 +517,29 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
             actions.add(new DialogWithActions.Action(R.string.select_change_address_option_name,
                     new Runnable() {
-                @Override
-                public void run() {
-                    dialogSelectChangeAddress.show();
-                }
-            }));
+                        @Override
+                        public void run() {
+                            dialogSelectChangeAddress.show();
+                        }
+                    }));
             if (signWithCold) {
                 actions.add(new DialogWithActions.Action(R.string.hdm_send_with_server,
                         new Runnable() {
-                    @Override
-                    public void run() {
-                        signWithCold = false;
-                        configureForOtherSignPart();
-                    }
-                }));
+                            @Override
+                            public void run() {
+                                signWithCold = false;
+                                configureForOtherSignPart();
+                            }
+                        }));
             } else {
                 actions.add(new DialogWithActions.Action(R.string.hdm_send_with_cold,
                         new Runnable() {
-                    @Override
-                    public void run() {
-                        signWithCold = true;
-                        configureForOtherSignPart();
-                    }
-                }));
+                            @Override
+                            public void run() {
+                                signWithCold = true;
+                                configureForOtherSignPart();
+                            }
+                        }));
             }
             return actions;
         }
@@ -548,7 +548,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private void configureForOtherSignPart() {
         if (signWithCold) {
             btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
-                    .unsigned_transaction_button_icon_mirror_transparent, 0,
+                            .unsigned_transaction_button_icon_mirror_transparent, 0,
                     R.drawable.unsigned_transaction_button_icon, 0);
         } else {
             btnSend.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -674,7 +674,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         (address) ? null : dialogSelectChangeAddress.getChangeAddress()
                         .getAddress();
                 intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                        QRCodeEnodeUtil.getPresignTxString(tx, changeAddress,
+                        QRCodeTxTransport.getPresignTxString(tx, changeAddress,
                                 addressCannotBtParsed, signingIndex));
                 if (Utils.isEmpty(changeAddress)) {
                     intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,

@@ -200,7 +200,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     .getChangeAddress().equals(address) ? null :
                     dialogSelectChangeAddress.getChangeAddress().getAddress();
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeEnodeUtil.getPresignTxString(tx, changeAddress, addressCannotBtParsed,QRCodeTxTransport.NO_HDM_INDEX));
+                    QRCodeTxTransport.getPresignTxString(tx, changeAddress, addressCannotBtParsed,QRCodeTxTransport.NO_HDM_INDEX));
             if (Utils.isEmpty(changeAddress)) {
                 intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
                         QRCodeTxTransport.oldGetPreSignString(tx, addressCannotBtParsed));
