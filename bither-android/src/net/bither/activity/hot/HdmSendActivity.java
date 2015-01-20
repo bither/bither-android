@@ -52,6 +52,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
@@ -665,14 +666,39 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         };
 
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-            sigs = new ArrayList<TransactionSignature>();
-            try {
-                lock.lock();
-                fetchedCondition.signal();
-            } finally {
-                lock.unlock();
+            if (requestCode == RequestCode) {
+                if (resultCode == RESULT_OK) {
+                    final String qr = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                    try {
+                        String[] stringArray = QRCodeUtil.splitString(qr);
+                        sigs = new ArrayList<TransactionSignature>();
+                        for (String str : stringArray) {
+                            if (!Utils.isEmpty(str)) {
+                                TransactionSignature transactionSignature = new
+                                        TransactionSignature(ECKey.ECDSASignature.decodeFromDER
+                                        (Utils.hexStringToByteArray(str)),
+                                        TransactionSignature.SigHash.ALL, false);
+                                sigs.add(transactionSignature);
+                            }
+                        }
+                    } catch (Exception e) {
+                        sigs = null;
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(HdmSendActivity.this,
+                                R.string.send_failed);
+                    }
+                } else {
+                    sigs = null;
+                }
+                try {
+                    lock.lock();
+                    fetchedCondition.signal();
+                } finally {
+                    lock.unlock();
+                }
+                return true;
             }
-            return true;
+            return false;
         }
     }
 
