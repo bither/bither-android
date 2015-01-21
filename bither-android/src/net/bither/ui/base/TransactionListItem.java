@@ -37,7 +37,6 @@ import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogTransactionConfidence;
 import net.bither.util.DateTimeUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.Calendar;
@@ -159,7 +158,7 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
         public void onClick(View v) {
             if (transaction != null) {
                 DialogTransactionConfidence dialog = new DialogTransactionConfidence(getContext()
-                        , transaction.getConfirmationCount());
+                        , transaction, address);
                 dialog.show(v);
             }
         }
