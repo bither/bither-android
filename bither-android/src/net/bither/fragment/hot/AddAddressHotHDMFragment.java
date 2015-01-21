@@ -105,7 +105,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private boolean hdmKeychainLimit;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_address_hot_hdm, container, false);
         initView(v);
         hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
@@ -200,17 +201,17 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
                     new Runnable() {
 
+                @Override
+                public void run() {
+                    ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Intent intent = new Intent(getActivity(), ScanActivity.class);
-                                    startActivityForResult(intent, ScanColdRequestCode);
-                                }
-                            });
+                            Intent intent = new Intent(getActivity(), ScanActivity.class);
+                            startActivityForResult(intent, ScanColdRequestCode);
                         }
-                    }).show();
+                    });
+                }
+            }).show();
         }
     };
 
@@ -305,7 +306,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 public void runWithService(BlockchainService service) {
                     try {
                         SecureCharSequence password = passwordGetter.getPassword();
-                        if(password == null){
+                        if (password == null) {
                             return;
                         }
                         hdmBid.setSignature(result, password);
@@ -313,36 +314,36 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             service.stopAndUnregister();
                         }
                         final HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
-                        final List<HDMAddress> as = keychain
-                                .completeAddresses(1, password,
-                                        new HDMKeychain.HDMFetchRemotePublicKeys() {
-                                            @Override
-                                            public void completeRemotePublicKeys(CharSequence
-                                                                                         password, List<HDMAddress.Pubs> partialPubs) {
-                                                try {
-                                                    HDMKeychain.getRemotePublicKeys(hdmBid, password, partialPubs);
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                    int msg = R.string.network_or_connection_error;
-                                                    if (e instanceof Http400Exception) {
-                                                        msg = ExceptionUtil
-                                                                .getHDMHttpExceptionMessage((
-                                                                        (Http400Exception) e)
-                                                                        .getErrorCode());
-                                                    }
-                                                    final int m = msg;
-                                                    ThreadUtil.runOnMainThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (dp != null && dp.isShowing()) {
-                                                                dp.dismiss();
-                                                            }
-                                                            DropdownMessage.showDropdownMessage(getActivity(), m);
-                                                        }
-                                                    });
-                                                }
+                        final List<HDMAddress> as = keychain.completeAddresses(1, password,
+                                new HDMKeychain.HDMFetchRemotePublicKeys() {
+                                    @Override
+                                    public void completeRemotePublicKeys(CharSequence password,
+                                                                         List<HDMAddress.Pubs>
+                                                                                 partialPubs) {
+                                        try {
+                                            HDMKeychain.getRemotePublicKeys(hdmBid, password,
+                                                    partialPubs);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            int msg = R.string.network_or_connection_error;
+                                            if (e instanceof Http400Exception) {
+                                                msg = ExceptionUtil.getHDMHttpExceptionMessage((
+                                                        (Http400Exception) e).getErrorCode());
                                             }
-                                        });
+                                            final int m = msg;
+                                            ThreadUtil.runOnMainThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (dp != null && dp.isShowing()) {
+                                                        dp.dismiss();
+                                                    }
+                                                    DropdownMessage.showDropdownMessage
+                                                            (getActivity(), m);
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
 
                         if (service != null) {
                             service.startAndRegister();
@@ -394,7 +395,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                     clicked = false;
                 }
             }, 800);
-            
+
             if (hdmKeychainLimit) {
                 return;
             }
@@ -424,12 +425,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 new DialogHDMServerUnsignedQRCode(getActivity(), preSign,
                                         new DialogHDMServerUnsignedQRCode
                                                 .DialogHDMServerUnsignedQRCodeListener() {
-                                            @Override
-                                            public void scanSignedHDMServerQRCode() {
-                                                startActivityForResult(new Intent(getActivity(),
-                                                        ScanActivity.class), ServerQRCodeRequestCode);
-                                            }
-                                        }).show();
+                                    @Override
+                                    public void scanSignedHDMServerQRCode() {
+                                        startActivityForResult(new Intent(getActivity(),
+                                                ScanActivity.class), ServerQRCodeRequestCode);
+                                    }
+                                }).show();
                             }
                         });
                     } catch (Exception e) {
@@ -567,18 +568,16 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     private void initHDMBidFromColdRoot() {
-        if (hdmBid == null) {
-            if (hdmBid != null) {
-                return;
-            }
-            DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
-                    (coldRoot, coldRoot.length));
-            DeterministicKey key = root.deriveSoftened(0);
-            String address = Utils.toAddress(key.getPubKeyHash());
-            root.wipe();
-            key.wipe();
-            hdmBid = new HDMBId(address);
+        if (hdmBid != null) {
+            return;
         }
+        DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
+                (coldRoot, coldRoot.length));
+        DeterministicKey key = root.deriveSoftened(0);
+        String address = Utils.toAddress(key.getPubKeyHash());
+        root.wipe();
+        key.wipe();
+        hdmBid = new HDMBId(address);
     }
 
     private void finalAnimation() {
@@ -614,7 +613,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 flContainer.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.hdm_keychain_add_spin);
+                        Animation anim = AnimationUtils.loadAnimation(getActivity(),
+                                R.anim.hdm_keychain_add_spin);
                         anim.setFillAfter(true);
                         flContainer.startAnimation(anim);
                         flContainer.postDelayed(new Runnable() {

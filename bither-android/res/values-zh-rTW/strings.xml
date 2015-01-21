@@ -508,4 +508,7 @@
     <string name="hdm_send_with_cold">與 HDM 冷共同簽名</string>
     <string name="hdm_send_with_server">與 HDM 服務器共同簽名</string>
     <string name="hdm_send_with_cold_no_requested_seed">您沒有簽名所需的 HDM 冷帳號</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_warn">HDM 賬號正在恢復中</string>
 </resources>

@@ -525,4 +525,7 @@
     <string name="hdm_send_with_cold">Sign with HDM Cold</string>
     <string name="hdm_send_with_server">Sign with HDM Server</string>
     <string name="hdm_send_with_cold_no_requested_seed">You don\'t have the requested HDM Cold account</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_warn">HDM Account is in recovery</string>
 </resources>

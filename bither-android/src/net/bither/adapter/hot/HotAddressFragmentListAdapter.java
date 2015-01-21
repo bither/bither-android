@@ -230,6 +230,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         private void hdmAdd() {
+            if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
+                return;
+            }
             if (WalletUtils.isHDMAddressLimit()) {
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
                 return;
@@ -240,6 +244,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         private void hdmSeed() {
+            if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
+                return;
+            }
             DialogProgress dp = new DialogProgress(flHDMSeed.getContext(), R.string.please_wait);
             dp.setCancelable(false);
             new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()
