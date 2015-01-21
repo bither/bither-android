@@ -511,4 +511,6 @@
 
     <!-- hdm recovery -->
     <string name="hdm_keychain_recovery_warn">HDM 賬號正在恢復中</string>
+    <string name="hdm_keychain_recovery_no_addresses">沒有需要恢復的 HDM 地址</string>
+    <string name="hdm_keychain_recovery_message">請盡快轉移走HDM 恢復帳號中的比特幣</string>
 </resources>
