@@ -32,6 +32,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.ImageFileUtil;
 import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class TxProvider implements ITxProvider {
             if (txsStrBuilder.length() > 1) {
                 String txs = txsStrBuilder.substring(0, txsStrBuilder.length() - 1);
                 sql = Utils.format("select b.* from ins b where b.tx_hash in (%s)" +
-                        " order by b.tx_hash ,b.in_sn", txs) ;
+                        " order by b.tx_hash ,b.in_sn", txs);
                 c = db.rawQuery(sql, null);
                 while (c.moveToNext()) {
                     In inItem = applyCursorIn(c);
@@ -223,6 +224,26 @@ public class TxProvider implements ITxProvider {
             c.close();
         }
         return txItem;
+    }
+
+    @Override
+    public long sentFromAddress(byte[] txHash, String address) {
+        String sql = "select  sum(o.out_value) out_value from ins i,outs o where" +
+                " i.tx_hash=? and o.tx_hash=i.prev_tx_hash and i.prev_out_sn=o.out_sn and o.out_address=?";
+        long sum = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor;
+
+        cursor = db.rawQuery(sql, new String[]{Base58.encode(txHash),
+                address});
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.OutsColumns.OUT_VALUE);
+            if (idColumn != -1) {
+                sum = cursor.getLong(idColumn);
+            }
+        }
+
+        return sum;
     }
 
     private void addInsAndOuts(SQLiteDatabase db, Tx txItem) throws AddressFormatException {
