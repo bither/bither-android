@@ -242,6 +242,7 @@ public class TxProvider implements ITxProvider {
                 sum = cursor.getLong(idColumn);
             }
         }
+        cursor.close();
 
         return sum;
     }
