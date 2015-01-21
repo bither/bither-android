@@ -18,6 +18,7 @@ package net.bither.ui.base.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,6 +28,9 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
+import net.bither.util.LogUtil;
 import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
@@ -105,8 +109,12 @@ public class DialogTransactionConfidence extends DialogWithArrow implements Dial
                 @Override
                 public void run() {
                     HDMAddress hdm = (HDMAddress) address;
-                    List<byte[]> signingPubs = new ArrayList<byte[]>();
-                    //TODO get signing pubs here
+//                    for (byte[]  bytes: hdm.getPubs()){
+//                        LogUtil.d("publist", Utils.bytesToHexString(bytes));
+//                    }
+//                    LogUtil.d("pubkey",Utils.bytesToHexString(hdm.getPubKey()));
+                    List<byte[]> signingPubs = tx.getSignPubs(hdm.getPubs(), hdm.getPubKey());
+
 
                     boolean isHot = false;
                     boolean isCold = false;
