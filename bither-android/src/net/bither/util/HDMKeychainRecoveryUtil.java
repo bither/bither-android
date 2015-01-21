@@ -73,6 +73,10 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
         this.context = context;
     }
 
+    public boolean canRecover(){
+        return AddressManager.getInstance().getHdmKeychain() == null;
+    }
+
     public int recovery() {
         if (AddressManager.getInstance().getHdmKeychain() != null) {
             throw new RuntimeException("Already has hdm keychain can not recover");

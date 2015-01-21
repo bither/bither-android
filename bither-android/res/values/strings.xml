@@ -527,6 +527,7 @@
     <string name="hdm_send_with_cold_no_requested_seed">You don\'t have the requested HDM Cold account</string>
 
     <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM Account Recovery</string>
     <string name="hdm_keychain_recovery_warn">HDM Account is in recovery</string>
     <string name="hdm_keychain_recovery_no_addresses">No HDM address to recover</string>
     <string name="hdm_keychain_recovery_message">Send bitcoins from HDM recovery account to other addresses ASAP</string>

@@ -509,6 +509,7 @@
     <string name="hdm_send_with_cold_no_requested_seed">您没有签名所需的 HDM 冷帐号</string>
 
     <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM 帐号恢复</string>
     <string name="hdm_keychain_recovery_warn">HDM 账号正在恢复中</string>
     <string name="hdm_keychain_recovery_no_addresses">没有需要恢复的 HDM 地址</string>
     <string name="hdm_keychain_recovery_message">请尽快转移走 HDM 恢复帐号中的比特币</string>
