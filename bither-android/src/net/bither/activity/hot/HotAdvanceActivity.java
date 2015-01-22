@@ -142,7 +142,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     protected void onResume() {
         super.onResume();
         ssvPinCode.loadData();
-
+        configureHDMRecovery();
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
