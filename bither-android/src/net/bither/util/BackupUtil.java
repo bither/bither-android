@@ -235,10 +235,12 @@ public class BackupUtil {
             if (AddressManager.getInstance().getHdmKeychain() != null) {
                 try {
                     HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
-                    String address = keychain.getFirstAddressFromDb();
-                    backupString += QRCodeUtil.HDM_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
-                            + QRCodeUtil.QR_CODE_SPLIT
-                            + keychain.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
+                    if (!keychain.isInRecovery()) {
+                        String address = keychain.getFirstAddressFromDb();
+                        backupString += QRCodeUtil.HDM_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
+                                + QRCodeUtil.QR_CODE_SPLIT
+                                + keychain.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
+                    }
                 } catch (AddressFormatException e) {
                     e.printStackTrace();
                 }

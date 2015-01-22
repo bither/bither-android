@@ -116,9 +116,10 @@ public class KeyUtil {
                 AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
             } else {
                 byte[] bytes = new EncryptedData(encryptedString).decrypt(password);
-                ECKey ecKey = new ECKey(new BigInteger(bytes));
+                ECKey ecKey = new ECKey(new BigInteger(1, bytes));
                 Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedString, false);
-                AppSharedPreference.getInstance().setPasswordSeed(new PasswordSeed(address));
+                PasswordSeed passwordSeed = new PasswordSeed(address);
+                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
             }
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
