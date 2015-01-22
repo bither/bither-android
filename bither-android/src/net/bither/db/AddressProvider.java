@@ -63,7 +63,7 @@ public class AddressProvider implements IAddressProvider {
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
             String sql = "select encrypt_seed from hd_seeds where hd_seed_id=?";
-            c = db.rawQuery(sql, new String[] {Integer.toString(hdSeedId)});
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
                 encryptSeed = c.getString(0);
             }
@@ -83,7 +83,7 @@ public class AddressProvider implements IAddressProvider {
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
             String sql = "select encrypt_hd_seed from hd_seeds where hd_seed_id=?";
-            c = db.rawQuery(sql, new String[] {Integer.toString(hdSeedId)});
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
                 encryptHDSeed = c.getString(0);
             }
@@ -288,7 +288,7 @@ public class AddressProvider implements IAddressProvider {
             db.beginTransaction();
             for (int i = 0; i < pubsList.size(); i++) {
                 HDMAddress.Pubs pubs = pubsList.get(i);
-                ContentValues cv = applyHDMAddressContentValues(hdSeedId, pubs.index, pubs.hot, pubs.cold);
+                ContentValues cv = applyHDMAddressContentValues(null, hdSeedId, pubs.index, pubs.hot, pubs.cold, null, false);
                 db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
             }
             db.setTransactionSuccessful();
@@ -396,16 +396,40 @@ public class AddressProvider implements IAddressProvider {
         }
     }
 
+    @Override
+    public void recoverHDMAddresses(int hdSeedId, List<HDMAddress> addresses) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        for (int i = 0; i < addresses.size(); i++) {
+            HDMAddress address = addresses.get(i);
+            ContentValues cv = applyHDMAddressContentValues(address.getAddress(), hdSeedId,
+                    address.getIndex(), address.getPubHot(), address.getPubCold(), address.getPubRemote(), false);
+            db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
 
-    private ContentValues applyHDMAddressContentValues(int hdSeedId, int index, byte[] pubKeysHot, byte[] pubKeysCold) {
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+    }
+
+    private ContentValues applyHDMAddressContentValues(String address, int hdSeedId, int index, byte[] pubKeysHot,
+                                                       byte[] pubKeysCold, byte[] pubKeysRemote, boolean isSynced) {
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDMAddressesColumns.HD_SEED_ID, hdSeedId);
         cv.put(AbstractDb.HDMAddressesColumns.HD_SEED_INDEX, index);
         cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_HOT, Base58.encode(pubKeysHot));
         cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_COLD, Base58.encode(pubKeysCold));
-        cv.putNull(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE);
-        cv.putNull(AbstractDb.HDMAddressesColumns.ADDRESS);
-        cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, 0);
+        if (Utils.isEmpty(address)) {
+            cv.putNull(AbstractDb.HDMAddressesColumns.ADDRESS);
+        } else {
+            cv.put(AbstractDb.HDMAddressesColumns.ADDRESS, address);
+        }
+        if (pubKeysRemote == null) {
+            cv.putNull(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE);
+        } else {
+            cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(pubKeysRemote));
+        }
+        cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, isSynced ? 1 : 0);
         return cv;
     }
 
