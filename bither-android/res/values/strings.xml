@@ -535,5 +535,6 @@
     <string name="hdm_keychain_recovery_warn">HDM Account is in recovery</string>
     <string name="hdm_keychain_recovery_no_addresses">No HDM address to recover</string>
     <string name="hdm_keychain_recovery_message">Send bitcoins from HDM recovery account to other addresses ASAP</string>
+    <string name="address_group_hdm_recovery">HDM Recovery</string>
 
 </resources>

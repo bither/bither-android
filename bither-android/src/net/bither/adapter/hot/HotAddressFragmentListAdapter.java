@@ -189,7 +189,11 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     ivType.setVisibility(View.VISIBLE);
                     return;
                 case HDMGroupTag:
-                    tvGroup.setText(R.string.address_group_hdm_hot);
+                    if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                        tvGroup.setText(R.string.address_group_hdm_recovery);
+                    } else {
+                        tvGroup.setText(R.string.address_group_hdm_hot);
+                    }
                     ivType.setVisibility(View.INVISIBLE);
                     llHDM.setVisibility(View.VISIBLE);
                     configureHDM(touch);
