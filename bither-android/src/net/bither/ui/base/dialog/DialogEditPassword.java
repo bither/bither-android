@@ -31,15 +31,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.EditPasswordThread;
+import net.bither.bitherj.runnable.EditPasswordThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
+import net.bither.util.BackupUtil;
 import net.bither.util.CheckUtil;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -218,14 +222,35 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
 
     @Override
     public void onSuccess() {
-        dismiss();
-        DropdownMessage.showDropdownMessage(activity, R.string.edit_password_success);
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                dismiss();
+                DropdownMessage.showDropdownMessage(activity, R.string.edit_password_success);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (AbstractApp.bitherjSetting.getAppMode() == BitherjSettings.AppMode.COLD) {
+                            BackupUtil.backupColdKey(false);
+                        } else {
+                            BackupUtil.backupHotKey();
+                        }
+                    }
+                }).start();
+            }
+        });
     }
 
     @Override
     public void onFailed() {
-        dismiss();
-        DropdownMessage.showDropdownMessage(activity, R.string.edit_password_fail);
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                dismiss();
+                DropdownMessage.showDropdownMessage(activity, R.string.edit_password_fail);
+            }
+        });
+
     }
 
     @Override

@@ -25,6 +25,7 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.preference.PersistentCookieStore;
@@ -104,6 +105,17 @@ public class AndroidImplAbstractApp extends AbstractApp {
             @Override
             public CookieStore getCookieStore() {
                 return PersistentCookieStore.getInstance();
+            }
+
+            @Override
+            public PasswordSeed getPasswordSeed() {
+                return AppSharedPreference.getInstance().getPasswordSeed();
+            }
+
+            @Override
+            public void setPasswordSeed(PasswordSeed passwordSeed) {
+                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
+
             }
         };
     }
