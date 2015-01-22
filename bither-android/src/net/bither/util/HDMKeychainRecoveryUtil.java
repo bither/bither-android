@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import net.bither.R;
+import net.bither.bitherj.api.RecoveryHDMApi;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.api.http.HttpException;
 import net.bither.bitherj.core.AddressManager;
@@ -73,7 +74,7 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
         this.context = context;
     }
 
-    public boolean canRecover(){
+    public boolean canRecover() {
         return AddressManager.getInstance().getHdmKeychain() == null;
     }
 
@@ -117,36 +118,21 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
             dismissDp();
             return 0;
         }
-        try {
-            hdmBid.setSignature(hdmBidSignature, password);
-        } catch (Exception e) {
-            password.wipe();
-            e.printStackTrace();
-            dismissDp();
-            if (e instanceof HttpException) {
-                int msg = R.string.network_or_connection_error;
-                if (e instanceof Http400Exception) {
-                    msg = ExceptionUtil.getHDMHttpExceptionMessage(((Http400Exception) e)
-                            .getErrorCode());
 
-                }
-                return msg;
-            } else {
-                return R.string.hdm_keychain_add_sign_server_qr_code_error;
-            }
-        }
         HDMKeychain.HDMKeychainRecover keychain;
         try {
             keychain = new HDMKeychain.HDMKeychainRecover(coldRoot, password,
                     new HDMKeychain.HDMFetchRemoteAddresses() {
-
-                @Override
-                public List<HDMAddress.Pubs> getRemoteExistsPublicKeys(CharSequence password) {
-
-                    // TODO fetch remote addresses for recover
-                    return null;
-                }
-            });
+                        @Override
+                        public List<HDMAddress.Pubs> getRemoteExistsPublicKeys(CharSequence password) {
+                            try {
+                                return hdmBid.recoverHDM(hdmBidSignature, password);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
             int msg = R.string.network_or_connection_error;
@@ -179,12 +165,12 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
                 }
                 new DialogHDMServerUnsignedQRCode(context, presign,
                         new DialogHDMServerUnsignedQRCode.DialogHDMServerUnsignedQRCodeListener() {
-                    @Override
-                    public void scanSignedHDMServerQRCode() {
-                        context.startActivityForResult(new Intent(context, ScanActivity.class),
-                                ServerQRCodeRequestCode);
-                    }
-                }).show();
+                            @Override
+                            public void scanSignedHDMServerQRCode() {
+                                context.startActivityForResult(new Intent(context, ScanActivity.class),
+                                        ServerQRCodeRequestCode);
+                            }
+                        }).show();
             }
         });
         try {
