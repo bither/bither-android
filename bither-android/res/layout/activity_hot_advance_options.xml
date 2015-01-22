@@ -104,10 +104,11 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
 
-                                <Button
+                                <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/ui_touchable_bg"
+                                    android:duplicateParentState="true"
                                     android:gravity="left"
                                     android:padding="10dp"
                                     android:text="@string/hdm_keychain_recovery_setting_name"
