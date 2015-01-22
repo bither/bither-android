@@ -142,6 +142,7 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
 
                 @Override
                 public List<HDMAddress.Pubs> getRemoteExistsPublicKeys(CharSequence password) {
+
                     // TODO fetch remote addresses for recover
                     return null;
                 }

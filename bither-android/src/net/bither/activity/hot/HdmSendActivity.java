@@ -201,6 +201,10 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             etPassword.setText("");
             try {
                 dp.setWait();
+                dp.setCancelable(false);
+                if(!dp.isShowing()){
+                    dp.show();
+                }
                 new CommitTransactionThread(dp, addressPosition, tx, true, true, HdmSendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
