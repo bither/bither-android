@@ -175,7 +175,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 return;
                             }
                             HDMKeychain keychain = new HDMKeychain(new SecureRandom(), password);
-                            KeyUtil.setHDKeyChain(keychain, password);
+                            KeyUtil.setHDKeyChain(keychain, password, null);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -201,17 +201,17 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
                     new Runnable() {
 
-                @Override
-                public void run() {
-                    ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(getActivity(), ScanActivity.class);
-                            startActivityForResult(intent, ScanColdRequestCode);
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(getActivity(), ScanActivity.class);
+                                    startActivityForResult(intent, ScanColdRequestCode);
+                                }
+                            });
                         }
-                    });
-                }
-            }).show();
+                    }).show();
         }
     };
 
@@ -425,12 +425,12 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 new DialogHDMServerUnsignedQRCode(getActivity(), preSign,
                                         new DialogHDMServerUnsignedQRCode
                                                 .DialogHDMServerUnsignedQRCodeListener() {
-                                    @Override
-                                    public void scanSignedHDMServerQRCode() {
-                                        startActivityForResult(new Intent(getActivity(),
-                                                ScanActivity.class), ServerQRCodeRequestCode);
-                                    }
-                                }).show();
+                                            @Override
+                                            public void scanSignedHDMServerQRCode() {
+                                                startActivityForResult(new Intent(getActivity(),
+                                                        ScanActivity.class), ServerQRCodeRequestCode);
+                                            }
+                                        }).show();
                             }
                         });
                     } catch (Exception e) {

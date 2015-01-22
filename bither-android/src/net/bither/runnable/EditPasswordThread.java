@@ -64,16 +64,9 @@ public class EditPasswordThread extends Thread {
     public boolean editPassword(SecureCharSequence oldPassword, SecureCharSequence newPassword) {
         try {
             AddressManager.getInstance().changePassword(oldPassword, newPassword);
-            if (AddressManager.getInstance().getPrivKeyAddresses().size() > 0) {
-                AppSharedPreference.getInstance().setPasswordSeed(
-                        new PasswordSeed(AddressManager.getInstance().getPrivKeyAddresses().get(0)));
-            } else if (AddressManager.getInstance().getTrashAddresses().size() > 0) {
-                AppSharedPreference.getInstance().setPasswordSeed(
-                        new PasswordSeed(AddressManager.getInstance().getTrashAddresses().get(0)));
-            } else if (AddressManager.getInstance().getHdmKeychain() != null){
-                AppSharedPreference.getInstance().setPasswordSeed(AddressManager.getInstance().getHdmKeychain().createPasswordSeed(newPassword));
-            }
-
+            PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
+            passwordSeed.changePassword(oldPassword, newPassword);
+            AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
                 BackupUtil.backupColdKey(false);
             } else {
