@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import net.bither.bitherj.db.AbstractDb;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -24,6 +24,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion == 1 && newVersion == 2) {
+            db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
+        }
     }
 }
