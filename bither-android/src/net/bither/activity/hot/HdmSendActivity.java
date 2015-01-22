@@ -43,7 +43,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.api.SignatureHDMApi;
 import net.bither.bitherj.api.http.Http400Exception;
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -51,7 +50,6 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
-import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
@@ -89,7 +87,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboardView.EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener {
     private int addressPosition;
-    private Address address;
+    private HDMAddress address;
     private TextView tvAddressLabel;
 
     private EditText etAddress;
@@ -106,6 +104,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private boolean signWithCold = false;
+    private boolean isInRecovery = false;
     private boolean isDonate = false;
 
     @Override
@@ -127,6 +126,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             finish();
             return;
         }
+        isInRecovery = address.isInRecovery();
         initView();
         processIntent();
         configureDonate();
@@ -201,6 +201,10 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             etPassword.setText("");
             try {
                 dp.setWait();
+                dp.setCancelable(false);
+                if(!dp.isShowing()){
+                    dp.show();
+                }
                 new CommitTransactionThread(dp, addressPosition, tx, true, true, HdmSendActivity.this).start();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -329,7 +333,22 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         return;
                     }
                     try {
-                        CompleteTransactionRunnable completeRunnable = new CompleteTransactionRunnable(addressPosition, amountCalculatorLink.getAmount(), etAddress.getText().toString().trim(), dialogSelectChangeAddress.getChangeAddress().getAddress(), new SecureCharSequence(etPassword.getText()), signWithCold ? coldSignatureFetcher : remoteSignatureFetcher);
+                        CompleteTransactionRunnable completeRunnable;
+                        if (!isInRecovery) {
+                            completeRunnable = new CompleteTransactionRunnable(addressPosition,
+                                    amountCalculatorLink.getAmount(),
+                                    etAddress.getText().toString().trim(),
+                                    dialogSelectChangeAddress.getChangeAddress().getAddress(),
+                                    new SecureCharSequence(etPassword.getText()),
+                                    signWithCold ? coldSignatureFetcher : remoteSignatureFetcher);
+                        } else {
+                            completeRunnable = new CompleteTransactionRunnable(addressPosition,
+                                    amountCalculatorLink.getAmount(),
+                                    etAddress.getText().toString().trim(),
+                                    dialogSelectChangeAddress.getChangeAddress().getAddress(),
+                                    new SecureCharSequence(etPassword.getText()),
+                                    coldSignatureFetcher, remoteSignatureFetcher);
+                        }
                         completeRunnable.setHandler(completeTransactionHandler);
                         Thread thread = new Thread(completeRunnable);
                         dp.setThread(thread);
@@ -522,6 +541,9 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             dialogSelectChangeAddress.show();
                         }
                     }));
+            if (isInRecovery) {
+                return actions;
+            }
             if (signWithCold) {
                 actions.add(new DialogWithActions.Action(R.string.hdm_send_with_server,
                         new Runnable() {

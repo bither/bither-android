@@ -184,6 +184,9 @@
     <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
     <string name="import_private_key_qr_code">From Bither Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="import_hdm_cold_seed_qr_code">From HDM Cold Seed QR Code</string>
+    <string name="import_hdm_cold_seed_phrase">From HDM Cold Phrase</string>
+
     <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
     <string name="import_bip38_key_text">From BIP38-private key text</string>
     <string name="enter_bip38_key_password">Enter password of BIP38-private key</string>
@@ -193,6 +196,7 @@
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_erro">Not match private key format</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_hdm_cold_seed_qr_code_scan_title">Scan HDM Cold Seed QR Code</string>
     <string name="import_bip38private_key_qr_code_scan_title">Scan BIP38-private key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
@@ -525,4 +529,11 @@
     <string name="hdm_send_with_cold">Sign with HDM Cold</string>
     <string name="hdm_send_with_server">Sign with HDM Server</string>
     <string name="hdm_send_with_cold_no_requested_seed">You don\'t have the requested HDM Cold account</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM Account Recovery</string>
+    <string name="hdm_keychain_recovery_warn">HDM Account is in recovery</string>
+    <string name="hdm_keychain_recovery_no_addresses">No HDM address to recover</string>
+    <string name="hdm_keychain_recovery_message">Send bitcoins from HDM recovery account to other addresses ASAP</string>
+
 </resources>

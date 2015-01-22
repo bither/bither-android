@@ -178,6 +178,8 @@
     <string name="setting_name_import_bip38_key">导入BIP38私钥</string>
     <string name="import_private_key_qr_code">来自比太私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
+    <string name="import_hdm_cold_seed_qr_code">来自HDM冷种子二维码</string>
+    <string name="import_hdm_cold_seed_phrase">来自HDM密语(冷)</string>
     <string name="import_bip38_key_qr_code">来自BIP38私钥二维码</string>
     <string name="import_bip38_key_text">来自BIP38私钥文本</string>
     <string name="enter_bip38_key_password">请输入BIP38私钥的密码</string>
@@ -188,6 +190,7 @@
     <string name="import_private_key_text_format_erro">不符合私钥格式</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
     <string name="import_bip38private_key_qr_code_scan_title">扫描BIP38私钥二维码</string>
+    <string name="import_hdm_cold_seed_qr_code_scan_title">扫描HDM冷种子二维码</string>
     <string name="import_private_key_qr_code_password">输入原密码</string>
     <string name="import_private_key_qr_code_success">导入成功</string>
     <string name="import_private_key_qr_code_failed">导入失败</string>
@@ -507,4 +510,10 @@
     <string name="hdm_send_with_cold">与 HDM 冷共同签名</string>
     <string name="hdm_send_with_server">与 HDM 服务器共同签名</string>
     <string name="hdm_send_with_cold_no_requested_seed">您没有签名所需的 HDM 冷帐号</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM 帐号恢复</string>
+    <string name="hdm_keychain_recovery_warn">HDM 账号正在恢复中</string>
+    <string name="hdm_keychain_recovery_no_addresses">没有需要恢复的 HDM 地址</string>
+    <string name="hdm_keychain_recovery_message">请尽快转移走 HDM 恢复帐号中的比特币</string>
 </resources>
