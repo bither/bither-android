@@ -62,8 +62,8 @@ public class AddressProvider implements IAddressProvider {
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select encrypt_seed from hd_seeds";
-            c = db.rawQuery(sql, null);
+            String sql = "select encrypt_seed from hd_seeds where hd_seed_id=?";
+            c = db.rawQuery(sql, new String[] {Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
                 encryptSeed = c.getString(0);
             }
@@ -77,13 +77,42 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void setEncryptSeed(int hdSeedId, String encryptedSeed) {
+    public String getEncryptHDSeed(int hdSeedId) {
+        String encryptHDSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_hd_seed from hd_seeds where hd_seed_id=?";
+            c = db.rawQuery(sql, new String[] {Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptHDSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptHDSeed;
+    }
+
+    @Override
+    public void updateEncryptHDSeed(int hdSeedId, String encryptHDSeed) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptedSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
         db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
                 , new String[]{Integer.toString(hdSeedId)});
+    }
 
+    @Override
+    public void setEncryptSeed(int hdSeedId, String encryptSeed, String encryptHDSeed) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
+        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
+                , new String[]{Integer.toString(hdSeedId)});
     }
 
     @Override
@@ -119,10 +148,11 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed, String firstAddress, boolean isXrandom) {
+    public int addHDKey(String encryptSeed, String encryptHDSeed, String firstAddress, boolean isXrandom) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
         return (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
