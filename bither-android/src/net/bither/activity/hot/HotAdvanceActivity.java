@@ -142,11 +142,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     protected void onResume() {
         super.onResume();
         ssvPinCode.loadData();
-        if (hdmRecoveryUtil.canRecover()) {
-            btnHDMRecovery.setVisibility(View.VISIBLE);
-        } else {
-            btnHDMRecovery.setVisibility(View.GONE);
-        }
+
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
@@ -245,15 +241,16 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                     try {
                         final int result = hdmRecoveryUtil.recovery();
-                        if (result > 0) {
-                            runOnUiThread(new Runnable() {
+                        runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                            result);
+                                    configureHDMRecovery();
+                                    if (result > 0) {
+                                        DropdownMessage.showDropdownMessage(HotAdvanceActivity
+                                                .this, result);
+                                    }
                                 }
                             });
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -802,12 +799,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if(hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)){
+            return;
+        }
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
-
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
@@ -865,6 +862,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }).show();
                 break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -907,6 +906,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+    private void configureHDMRecovery() {
+        if (hdmRecoveryUtil.canRecover()) {
+            btnHDMRecovery.setVisibility(View.VISIBLE);
+        } else {
+            btnHDMRecovery.setVisibility(View.GONE);
+        }
+    }
 
     private boolean hasAnyAction = false;
 
