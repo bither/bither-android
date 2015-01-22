@@ -20,12 +20,12 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
@@ -33,7 +33,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -75,6 +74,7 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
+import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
@@ -91,7 +91,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
+    private LinearLayout btnHDMRecovery;
     private DialogProgress dp;
+    private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private TextView tvVserion;
 
     @Override
@@ -109,6 +111,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnRCheck = (Button) findViewById(R.id.btn_r_check);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
+        btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -122,6 +125,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
+        btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
         dp = new DialogProgress(this, R.string.please_wait);
@@ -131,12 +135,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnResetTx.setOnClickListener(resetTxListener);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
+        hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ssvPinCode.loadData();
+
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
@@ -217,6 +223,42 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onClick(View v) {
             startActivity(new Intent(HotAdvanceActivity.this, TrashCanActivity.class));
+        }
+    };
+
+    private View.OnClickListener hdmRecoverClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!hdmRecoveryUtil.canRecover()) {
+                return;
+            }
+            new ThreadNeedService(null, HotAdvanceActivity.this) {
+
+                @Override
+                public void runWithService(BlockchainService service) {
+                    if (service != null) {
+                        service.stopAndUnregister();
+                    }
+                    try {
+                        final int result = hdmRecoveryUtil.recovery();
+                        runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    configureHDMRecovery();
+                                    if (result > 0) {
+                                        DropdownMessage.showDropdownMessage(HotAdvanceActivity
+                                                .this, result);
+                                    }
+                                }
+                            });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (service != null) {
+                        service.startAndRegister();
+                    }
+                }
+            }.start();
         }
     };
 
@@ -757,12 +799,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if(hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)){
+            return;
+        }
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
-
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
@@ -820,6 +862,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }).show();
                 break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -862,6 +906,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+    private void configureHDMRecovery() {
+        if (hdmRecoveryUtil.canRecover()) {
+            btnHDMRecovery.setVisibility(View.VISIBLE);
+        } else {
+            btnHDMRecovery.setVisibility(View.GONE);
+        }
+    }
 
     private boolean hasAnyAction = false;
 
