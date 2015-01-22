@@ -22,9 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 
 import net.bither.R;
-import net.bither.bitherj.api.RecoveryHDMApi;
 import net.bither.bitherj.api.http.Http400Exception;
-import net.bither.bitherj.api.http.HttpException;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -175,7 +173,7 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
         });
         try {
             lock.lockInterruptibly();
-            coldRootCondition.await();
+            hdmIdCondiction.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -212,6 +210,18 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
             try {
                 lock.lock();
                 coldRootCondition.signal();
+            } finally {
+                lock.unlock();
+            }
+            return true;
+        }
+        if (requestCode == ServerQRCodeRequestCode) {
+            if (resultCode == Activity.RESULT_OK) {
+                hdmBidSignature = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+            }
+            try {
+                lock.lock();
+                hdmIdCondiction.signal();
             } finally {
                 lock.unlock();
             }
