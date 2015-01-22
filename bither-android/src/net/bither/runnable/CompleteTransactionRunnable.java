@@ -141,9 +141,6 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                     wallet.signTx(tx, password);
                 }
                 password.wipe();
-                LogUtil.i("SignTransaction", "sign transaction hash: " + Utils.hashToString(tx
-                        .getTxHash()) + " , " +
-                        "content: " + Utils.bytesToHexString(tx.bitcoinSerialize()));
                 if (!tx.verifySignatures()) {
                     LogUtil.w("SignTransaction", "sign transaction failed");
                     obtainMessage(HandlerMessage.MSG_FAILURE, getMessageFromException(null));

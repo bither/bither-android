@@ -47,13 +47,13 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
-import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -68,7 +68,6 @@ import net.bither.util.BackupUtil.BackupListener;
 import net.bither.util.DateTimeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.util.Date;
@@ -141,8 +140,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            if (AddressManager.getInstance().getPrivKeyAddresses() == null
-                    || AddressManager.getInstance().getPrivKeyAddresses().size() == 0) {
+            if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager
+                    .getInstance().getPrivKeyAddresses().size() == 0) && !AddressManager
+                    .getInstance().hasHDMKeychain()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
