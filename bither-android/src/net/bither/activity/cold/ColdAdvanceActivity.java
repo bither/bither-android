@@ -32,6 +32,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -302,66 +303,82 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     };
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
-        @Override
-        public int getOptionCount() {
-            hasAnyAction = true;
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    hasAnyAction = true;
+                    if (AddressManager.getInstance().hasHDMKeychain()) {
+                        return 2;
+                    } else {
+                        return 4;
+                    }
+                }
 
-        @Override
-        public String getOptionName(int index) {
-            switch (index) {
-                case 0:
-                    return getString(R.string.import_private_key_qr_code);
-                case 1:
-                    return getString(R.string.import_private_key_text);
-                default:
-                    return "";
-            }
-        }
+                @Override
+                public String getOptionName(int index) {
+                    switch (index) {
+                        case 0:
+                            return getString(R.string.import_private_key_qr_code);
+                        case 1:
+                            return getString(R.string.import_private_key_text);
+                        case 2:
+                            return getString(R.string.import_hdm_cold_seed_qr_code);
+                        case 3:
+                            return getString(R.string.import_hdm_cold_seed_phrase);
+                        default:
+                            return "";
+                    }
+                }
 
-        @Override
-        public String getOptionNote(int index) {
-            return null;
-        }
-
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            switch (index) {
-                case 0:
-                    return getResources().getDrawable(R.drawable.scan_button_icon);
-                case 1:
-                    return getResources().getDrawable(R.drawable.import_private_key_text_icon);
-                default:
+                @Override
+                public String getOptionNote(int index) {
                     return null;
-            }
-        }
+                }
 
-        @Override
-        public String getSettingName() {
-            return getString(R.string.setting_name_import_private_key);
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    switch (index) {
+                        case 0:
+                        case 2:
+                            return getResources().getDrawable(R.drawable.scan_button_icon);
+                        case 1:
+                        case 3:
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
+                        default:
+                            return null;
+                    }
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return -1;
-        }
+                @Override
+                public String getSettingName() {
+                    return getString(R.string.setting_name_import_private_key);
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            hasAnyAction = true;
-            switch (index) {
-                case 0:
-                    importPrivateKeyFromQrCode();
-                    return;
-                case 1:
-                    importPrivateKeyFromText();
-                    return;
-                default:
-                    return;
-            }
-        }
-    };
+                @Override
+                public int getCurrentOptionIndex() {
+                    return -1;
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    hasAnyAction = true;
+                    switch (index) {
+                        case 0:
+                            importPrivateKeyFromQRCode();
+                            return;
+                        case 1:
+                            importPrivateKeyFromText();
+                            return;
+                        case 2:
+                            importHDMColdFromQRCode();
+                            return;
+                        case 3:
+                            importHDMColdFromPhrase();
+                            return;
+                        default:
+                            return;
+                    }
+                }
+            };
 
     private SettingSelectorView.SettingSelector importBip38KeySelector = new SettingSelectorView
             .SettingSelector() {
@@ -442,7 +459,20 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         }
     }
 
-    private void importPrivateKeyFromQrCode() {
+    private void importHDMColdFromQRCode() {
+        Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                getString(R.string.import_hdm_cold_seed_qr_code));
+        startActivityForResult(intent, BitherSetting.INTENT_REF
+                .IMPORT_HDM_COLD_SEED_REQUEST_CODE);
+
+    }
+
+    private void importHDMColdFromPhrase() {
+
+    }
+
+    private void importPrivateKeyFromQRCode() {
         Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                 getString(R.string.import_private_key_qr_code_scan_title));
@@ -515,6 +545,11 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                         importPrivateKey.importPrivateKey();
                     }
                 }).show();
+                break;
+            case BitherSetting.INTENT_REF.IMPORT_HDM_COLD_SEED_REQUEST_CODE:
+                final  String hdmSeed=data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+
+
                 break;
         }
     }

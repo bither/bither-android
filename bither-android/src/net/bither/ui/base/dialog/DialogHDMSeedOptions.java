@@ -24,6 +24,7 @@ import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
@@ -31,9 +32,6 @@ import net.bither.util.ThreadUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by songchenwen on 15/1/12.
- */
 public class DialogHDMSeedOptions extends DialogWithActions {
 
     private DialogProgress dp;
@@ -80,7 +78,7 @@ public class DialogHDMSeedOptions extends DialogWithActions {
 
     private void showHDMSeedQRCode(SecureCharSequence password) {
         password.wipe();
-        String content = keychain.getEncryptedSeed();
+        String content = QRCodeUtil.HDM_QR_CODE_FLAG + keychain.getFullEncryptPrivKey();
         new DialogSimpleQr(getContext(), content, isCold ? R.string.hdm_cold_seed_qr_code : R
                 .string.hdm_hot_seed_qr_code).show();
     }

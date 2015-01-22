@@ -178,6 +178,8 @@
     <string name="setting_name_import_bip38_key">導入BIP38私鑰</string>
     <string name="import_private_key_qr_code">來自比太私鑰二維碼</string>
     <string name="import_private_key_text">來自私鑰明文</string>
+    <string name="import_hdm_cold_seed_qr_code">來自HDM冷種子二維碼</string>
+    <string name="import_hdm_cold_seed_phrase">來自HDM密語(冷)</string>
     <string name="import_bip38_key_qr_code">來自BIP38私鑰二維碼</string>
     <string name="import_bip38_key_text">來自BIP38私鑰文本</string>
     <string name="private_key_text">私鑰明文</string>
@@ -187,6 +189,7 @@
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
+    <string name="import_hdm_cold_seed_qr_code_scan_title">掃描HDM冷種子二維碼</string>
     <string name="import_bip38private_key_qr_code_scan_title">掃描BIP38私鑰二維碼</string>
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
     <string name="import_private_key_qr_code_success">導入成功</string>
