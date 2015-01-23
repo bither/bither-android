@@ -518,4 +518,10 @@
     <string name="hdm_keychain_recovery_no_addresses">沒有需要恢復的 HDM 地址</string>
     <string name="hdm_keychain_recovery_message">請盡快轉移走HDM 恢復帳號中的比特幣</string>
     <string name="address_group_hdm_recovery">HDM 恢復</string>
+    <string name="activity_name_hdm_import_word_list">導入 HDM 密語</string>
+    <string name="hdm_import_word_list_input_hint">下一單詞</string>
+    <string name="hdm_import_word_list_empty_message">請輸入 HDM 密語</string>
+    <string name="hdm_import_word_list_wrong_word_warn">單詞無效</string>
+    <string name="hdm_import_word_list_delete">刪除</string>
+    <string name="hdm_import_word_list_replace">替換</string>
 </resources>

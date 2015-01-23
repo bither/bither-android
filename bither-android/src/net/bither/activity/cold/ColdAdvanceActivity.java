@@ -79,6 +79,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_cold_advance_options);
         initView();
     }

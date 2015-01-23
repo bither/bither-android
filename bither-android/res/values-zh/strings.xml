@@ -517,4 +517,10 @@
     <string name="hdm_keychain_recovery_no_addresses">没有需要恢复的 HDM 地址</string>
     <string name="hdm_keychain_recovery_message">请尽快转移走 HDM 恢复帐号中的比特币</string>
     <string name="address_group_hdm_recovery">HDM 恢复</string>
+    <string name="activity_name_hdm_import_word_list">导入 HDM 密语</string>
+    <string name="hdm_import_word_list_input_hint">下一单词</string>
+    <string name="hdm_import_word_list_empty_message">请输入 HDM 密语</string>
+    <string name="hdm_import_word_list_wrong_word_warn">单词无效</string>
+    <string name="hdm_import_word_list_delete">删除</string>
+    <string name="hdm_import_word_list_replace">替换</string>
 </resources>

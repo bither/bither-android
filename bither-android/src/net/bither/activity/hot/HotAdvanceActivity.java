@@ -99,6 +99,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hot_advance_options);
         initView();
     }

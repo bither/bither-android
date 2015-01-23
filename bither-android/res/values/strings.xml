@@ -536,5 +536,10 @@
     <string name="hdm_keychain_recovery_no_addresses">No HDM address to recover</string>
     <string name="hdm_keychain_recovery_message">Send bitcoins from HDM recovery account to other addresses ASAP</string>
     <string name="address_group_hdm_recovery">HDM Recovery</string>
-
+    <string name="activity_name_hdm_import_word_list">Import HDM Phrase</string>
+    <string name="hdm_import_word_list_input_hint">Next Word</string>
+    <string name="hdm_import_word_list_empty_message">Enter HDM Phrase</string>
+    <string name="hdm_import_word_list_wrong_word_warn">Invalid word</string>
+    <string name="hdm_import_word_list_delete">Delete</string>
+    <string name="hdm_import_word_list_replace">Replace</string>
 </resources>
