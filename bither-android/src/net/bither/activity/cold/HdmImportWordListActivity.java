@@ -19,6 +19,7 @@
 package net.bither.activity.cold;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +30,22 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Utils;
+import net.bither.factory.ImportHDSeedAndroid;
+import net.bither.fragment.Refreshable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogHdmImportWordListReplace;
+import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +66,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
     private MnemonicCode mnemonic = MnemonicCode.instance();
 
     private ArrayList<String> words = new ArrayList<String>();
+    private DialogProgress dp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +86,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         btnInput.setOnClickListener(inputClick);
         etInput.setOnEditorActionListener(this);
         gv.setAdapter(adapter);
+        dp = new DialogProgress(this, R.string.please_wait);
         refresh();
     }
 
@@ -116,7 +127,16 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
     };
 
     private void complete() {
-        //TODO import word list
+
+        new DialogPassword(this, new IDialogPasswordListener() {
+            @Override
+            public void onPasswordEntered(SecureCharSequence password) {
+                ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                        (HdmImportWordListActivity.this, dp, words, password);
+                importHDSeedAndroid.importColdSeed();
+            }
+        }).show();
+
     }
 
     @Override
@@ -143,20 +163,20 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
             actions.add(new DialogWithActions.Action(R.string.hdm_import_word_list_delete,
                     new Runnable() {
-                @Override
-                public void run() {
-                    words.remove(position);
-                    refresh();
-                }
-            }));
+                        @Override
+                        public void run() {
+                            words.remove(position);
+                            refresh();
+                        }
+                    }));
             actions.add(new DialogWithActions.Action(R.string.hdm_import_word_list_replace,
                     new Runnable() {
-                @Override
-                public void run() {
-                    new DialogHdmImportWordListReplace(HdmImportWordListActivity.this, position,
-                            HdmImportWordListActivity.this).show();
-                }
-            }));
+                        @Override
+                        public void run() {
+                            new DialogHdmImportWordListReplace(HdmImportWordListActivity.this, position,
+                                    HdmImportWordListActivity.this).show();
+                        }
+                    }));
             return actions;
         }
     }
@@ -211,4 +231,34 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             }
         }
     };
+    private boolean hasAnyAction = false;
+
+    public void showImportSuccess() {
+        hasAnyAction = false;
+        DropdownMessage.showDropdownMessage(HdmImportWordListActivity.this,
+                R.string.import_private_key_qr_code_success, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (BitherApplication.coldActivity != null) {
+                            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
+                            if (f != null && f instanceof Refreshable) {
+                                Refreshable r = (Refreshable) f;
+                                r.doRefresh();
+                            }
+                        }
+                        if (hasAnyAction) {
+                            return;
+                        }
+                        finish();
+                        if (BitherApplication.coldActivity != null) {
+                            ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BitherApplication.coldActivity.scrollToFragmentAt(1);
+                                }
+                            }, getFinishAnimationDuration());
+                        }
+                    }
+                });
+    }
 }

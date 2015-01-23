@@ -473,6 +473,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private void importHDMColdFromPhrase() {
+        Intent intent = new Intent(this, HdmImportWordListActivity.class);
+        startActivity(intent);
 
     }
 

@@ -20,6 +20,7 @@ import android.app.Activity;
 
 import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
+import net.bither.activity.cold.HdmImportWordListActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -68,6 +69,11 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     }
                     if (activity instanceof ColdAdvanceActivity) {
                         ((ColdAdvanceActivity) activity).showImportSuccess();
+                    }
+                    if (activity instanceof HdmImportWordListActivity) {
+                        HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
+                        hdmImportWordListActivity.showImportSuccess();
+                        hdmImportWordListActivity.finish();
                     }
                 }
             }
