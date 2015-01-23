@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.factory;
+package net.bither.util;
 
 import android.app.Activity;
 
@@ -23,6 +23,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
