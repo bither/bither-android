@@ -34,7 +34,7 @@ import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.bitherj.factory.ImportPrivateKey;
-import net.bither.util.ImportPrivateKeyAndroid;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;

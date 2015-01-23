@@ -47,7 +47,7 @@ import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.TxProvider;
 import net.bither.bitherj.factory.ImportPrivateKey;
-import net.bither.util.ImportPrivateKeyAndroid;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
@@ -851,7 +851,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 final String priv = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 if (!Utils.validBitcoinPrivateKey(priv)) {
                     DropdownMessage.showDropdownMessage(this,
-                            R.string.import_private_key_text_format_erro);
+                            R.string.import_private_key_text_format_error);
                     break;
                 }
                 new DialogPassword(this, new IDialogPasswordListener() {

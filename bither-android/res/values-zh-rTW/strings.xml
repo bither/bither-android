@@ -187,7 +187,8 @@
     <string name="enter_bip38_key_password">請輸入BIP38私鑰的密碼</string>
     <string name="import_bip38_key_text_format_erro">不符合BIP38私鑰格式</string>
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
-    <string name="import_private_key_text_format_erro">不符合私鑰格式</string>
+    <string name="import_private_key_text_format_error">不符合私鑰格式</string>
+    <string name="import_hdm_cold_seed_format_error">不是HDM冷種子</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">掃描HDM冷種子二維碼</string>
     <string name="import_bip38private_key_qr_code_scan_title">掃描BIP38私鑰二維碼</string>

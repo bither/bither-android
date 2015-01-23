@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.util;
+package net.bither.factory;
 
 import android.app.Activity;
 

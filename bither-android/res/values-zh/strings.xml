@@ -187,7 +187,8 @@
     <string name="import_bip38_key_text_hint">输入BIP38私钥明文</string>
     <string name="import_bip38_key_text_format_erro">不符合BIP38私钥格式</string>
     <string name="import_private_key_text_hint">输入私钥明文</string>
-    <string name="import_private_key_text_format_erro">不符合私钥格式</string>
+    <string name="import_private_key_text_format_error">不符合私钥格式</string>
+    <string name="import_hdm_cold_seed_format_error">不是HDM冷种子</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
     <string name="import_bip38private_key_qr_code_scan_title">扫描BIP38私钥二维码</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">扫描HDM冷种子二维码</string>

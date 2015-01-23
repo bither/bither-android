@@ -33,7 +33,7 @@ import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.bitherj.factory.ImportPrivateKey;
-import net.bither.util.ImportPrivateKeyAndroid;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
@@ -81,7 +81,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         clickedId = v.getId();
         if (v.getId() == R.id.btn_ok) {
             String s = et.getText().toString();
-            tvError.setText(R.string.import_private_key_text_format_erro);
+            tvError.setText(R.string.import_private_key_text_format_error);
             if (Utils.isEmpty(s)) {
                 tvError.setVisibility(View.VISIBLE);
                 shake();

@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/import_private_key_text_format_erro"
+        android:text="@string/import_private_key_text_format_error"
         android:textColor="@color/red"
         android:textSize="18sp"
         android:visibility="gone"/>

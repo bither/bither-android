@@ -37,11 +37,13 @@ import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.bitherj.factory.ImportPrivateKey;
-import net.bither.util.ImportPrivateKeyAndroid;
+import net.bither.factory.ImportHDSeedAndroid;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
@@ -535,7 +537,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 final String priv = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 if (!Utils.validBitcoinPrivateKey(priv)) {
                     DropdownMessage.showDropdownMessage(this,
-                            R.string.import_private_key_text_format_erro);
+                            R.string.import_private_key_text_format_error);
                     break;
                 }
                 new DialogPassword(this, new IDialogPasswordListener() {
@@ -551,7 +553,14 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             case BitherSetting.INTENT_REF.IMPORT_HDM_COLD_SEED_REQUEST_CODE:
                 final String hdmSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
 
-
+                new DialogPassword(this, new IDialogPasswordListener() {
+                    @Override
+                    public void onPasswordEntered(SecureCharSequence password) {
+                        ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                                (ColdAdvanceActivity.this, dp, hdmSeed, password);
+                        importHDSeedAndroid.importColdSeed();
+                    }
+                }).show();
                 break;
         }
     }
