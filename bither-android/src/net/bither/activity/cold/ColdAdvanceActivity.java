@@ -499,6 +499,10 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (content.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.can_not_import_hdm_cold_seed);
+                    return;
+                }
                 DialogPassword dialogPassword = new DialogPassword(this,
                         new ImportPrivateKeyPasswordListenerI(content, false));
                 dialogPassword.setCheckPre(false);
