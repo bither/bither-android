@@ -41,6 +41,7 @@ import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
@@ -540,7 +541,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 new DialogPassword(this, new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
-                        ImportPrivateKey importPrivateKey = new ImportPrivateKey
+                        ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid
                                 (ColdAdvanceActivity.this, ImportPrivateKey.ImportPrivateKeyType
                                         .Text, dp, priv, password);
                         importPrivateKey.importPrivateKey();
@@ -548,7 +549,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 }).show();
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HDM_COLD_SEED_REQUEST_CODE:
-                final  String hdmSeed=data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                final String hdmSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
 
 
                 break;
@@ -576,7 +577,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     dialogPassword.show();
 
                 } else {
-                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(ColdAdvanceActivity
+                    ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(ColdAdvanceActivity
                             .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp,
                             content, password);
                     importPrivateKey.importPrivateKey();
@@ -590,7 +591,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
-            ImportPrivateKey importPrivateKey = new ImportPrivateKey(ColdAdvanceActivity.this,
+            ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(ColdAdvanceActivity.this,
                     ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
             importPrivateKey.importPrivateKey();
         }

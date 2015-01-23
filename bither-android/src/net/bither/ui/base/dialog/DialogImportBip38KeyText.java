@@ -34,6 +34,7 @@ import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -159,7 +160,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
 
     @Override
     public void onPasswordEntered(final SecureCharSequence password) {
-        ImportPrivateKey importPrivateKey = new ImportPrivateKey(activity,
+        ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(activity,
                 ImportPrivateKey.ImportPrivateKeyType.Bip38, pd, decode, password);
         importPrivateKey.importPrivateKey();
     }

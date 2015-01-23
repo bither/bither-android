@@ -47,6 +47,7 @@ import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
@@ -243,15 +244,15 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     try {
                         final int result = hdmRecoveryUtil.recovery();
                         runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    configureHDMRecovery();
-                                    if (result > 0) {
-                                        DropdownMessage.showDropdownMessage(HotAdvanceActivity
-                                                .this, result);
-                                    }
+                            @Override
+                            public void run() {
+                                configureHDMRecovery();
+                                if (result > 0) {
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity
+                                            .this, result);
                                 }
-                            });
+                            }
+                        });
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -800,7 +801,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)){
+        if (hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)) {
             return;
         }
         if (resultCode != Activity.RESULT_OK) {
@@ -856,7 +857,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 new DialogPassword(this, new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
-                        ImportPrivateKey importPrivateKey = new ImportPrivateKey
+                        ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid
                                 (HotAdvanceActivity.this, ImportPrivateKey.ImportPrivateKeyType
                                         .Text, dp, priv, password);
                         importPrivateKey.importPrivateKey();
@@ -887,7 +888,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     dialogPassword.show();
 
                 } else {
-                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity
+                    ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity
                             .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp,
                             content, password);
                     importPrivateKey.importPrivateKey();
@@ -901,7 +902,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
-            ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
+            ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity.this,
                     ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
             importPrivateKey.importPrivateKey();
         }

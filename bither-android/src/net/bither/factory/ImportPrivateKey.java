@@ -16,127 +16,98 @@
 
 package net.bither.factory;
 
-import android.app.Activity;
-
-import net.bither.BitherSetting;
-import net.bither.R;
-import net.bither.activity.cold.ColdAdvanceActivity;
-import net.bither.activity.hot.HotAdvanceActivity;
+import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.BitherjSettings.AddressType;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.DumpedPrivateKey;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.crypto.PasswordSeed;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.util.KeyUtil;
-import net.bither.util.ThreadUtil;
+import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
-import net.bither.bitherj.BitherjSettings.AddressType;
+import net.bither.preference.AppSharedPreference;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportPrivateKey {
+public abstract class ImportPrivateKey {
+
+
     public enum ImportPrivateKeyType {
-        Text, BitherQrcode, Bip38
+        Text, BitherQrcode, Bip38, HDMColdSeedQRCode, HDMColdPhrase
     }
+
+    public static final int IMPORT_FAILED = 0;
+    public static final int PASSWORD_WRONG = 1;
+    public static final int NETWORK_FAILED = 2;
+    public static final int CAN_NOT_IMPORT_BITHER_COLD_PRIVATE_KEY = 3;
+    public static final int PRIVATE_KEY_ALREADY_EXISTS = 4;
+    public static final int PASSWORD_IS_DIFFEREND_LOCAL = 5;
+    public static final int CONTAIN_SPECIAL_ADDRESS = 6;
+    public static final int TX_TOO_MUCH = 7;
 
     private String content;
     private SecureCharSequence password;
-    private DialogProgress dp;
-    private Activity activity;
+
     private ImportPrivateKeyType importPrivateKeyType;
 
-    public ImportPrivateKey(Activity activity, ImportPrivateKeyType importPrivateKeyType
-            , DialogProgress dp, String content, SecureCharSequence password) {
+
+    public ImportPrivateKey(ImportPrivateKeyType importPrivateKeyType
+            , String content, SecureCharSequence password) {
         this.content = content;
         this.password = password;
-        this.activity = activity;
-        this.dp = dp;
         this.importPrivateKeyType = importPrivateKeyType;
     }
 
-    public void importPrivateKey() {
-        ThreadNeedService threadNeedService = new ThreadNeedService(dp, activity) {
-            @Override
-            public void runWithService(BlockchainService service) {
-                ECKey ecKey = getEckey();
-                try {
-                    if (ecKey == null) {
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dp != null && dp.isShowing()) {
-                                    dp.setThread(null);
-                                    dp.dismiss();
-                                }
-                                if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
-                                    DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
-                                } else {
-                                    DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
-                                }
-                            }
-                        });
-                    } else {
-                        List<String> addressList = new ArrayList<String>();
-                        addressList.add(ecKey.toAddress());
-                        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                            checkAddress(service, ecKey, addressList);
-                        } else {
-                            addECKey(service, ecKey);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ThreadUtil.runOnMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp != null && dp.isShowing()) {
-                                dp.setThread(null);
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
-                        }
-                    });
-                } finally {
-                    password.wipe();
-                    if (ecKey != null) {
-                        ecKey.clearPrivateKey();
-                    }
+
+    public abstract void importError(int errorCode);
+
+    public Address initPrivateKey() {
+        ECKey ecKey = getEckey();
+        try {
+            if (ecKey == null) {
+                if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
+                    importError(PASSWORD_WRONG);
+                } else {
+                    importError(IMPORT_FAILED);
+                }
+                return null;
+            } else {
+                List<String> addressList = new ArrayList<String>();
+                addressList.add(ecKey.toAddress());
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                    return checkAddress(ecKey, addressList);
+                } else {
+                    return addECKey(ecKey);
                 }
             }
-        };
-        threadNeedService.start();
-    }
-
-    private void checkAddress(BlockchainService service, ECKey ecKey, List<String> addressList) {
-        try {
-            AddressType addressType = TransactionsUtil.checkAddress(addressList);
-            handlerResult(service, ecKey, addressType);
         } catch (Exception e) {
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);
-                }
-            });
+            e.printStackTrace();
+            importError(IMPORT_FAILED);
+            return null;
+        } finally {
+            password.wipe();
+            if (ecKey != null) {
+                ecKey.clearPrivateKey();
+            }
         }
 
     }
 
-    private void addECKey(BlockchainService blockchainService, ECKey ecKey) {
+    private Address checkAddress(ECKey ecKey, List<String> addressList) {
+        try {
+            AddressType addressType = TransactionsUtil.checkAddress(addressList);
+            return handlerResult(ecKey, addressType);
+        } catch (Exception e) {
+            importError(NETWORK_FAILED);
+            return null;
+        }
+
+    }
+
+    private Address addECKey(ECKey ecKey) {
         String encryptedPrivateString;
         if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
             encryptedPrivateString = QRCodeUtil.getNewVersionEncryptPrivKey(content);
@@ -148,112 +119,46 @@ public class ImportPrivateKey {
                 , ecKey.isFromXRandom());
         if (AddressManager.getInstance().getWatchOnlyAddresses().contains(address)) {
             password.wipe();
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.import_private_key_qr_code_failed_monitored);
-                }
-            });
-            return;
+            importError(CAN_NOT_IMPORT_BITHER_COLD_PRIVATE_KEY);
+            return null;
         } else if (AddressManager.getInstance().getPrivKeyAddresses().contains(address)) {
             password.wipe();
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.import_private_key_qr_code_failed_duplicate);
-                }
-            });
-            return;
+            importError(PRIVATE_KEY_ALREADY_EXISTS);
+            return null;
 
         } else {
             if (importPrivateKeyType == ImportPrivateKeyType.BitherQrcode) {
                 PasswordSeed passwordSeed = AppSharedPreference.getInstance().getPasswordSeed();
                 if (passwordSeed != null && !passwordSeed.checkPassword(password)) {
                     password.wipe();
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp != null && dp.isShowing()) {
-                                dp.setThread(null);
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(activity,
-                                    R.string.import_private_key_qr_code_failed_different_password);
-                        }
-                    });
-                    return;
+                    importError(PASSWORD_IS_DIFFEREND_LOCAL);
+                    return null;
                 }
             } else {
                 password.wipe();
             }
-            List<Address> addressList = new ArrayList<Address>();
-            addressList.add(address);
-            KeyUtil.addAddressListByDesc(blockchainService, addressList);
-        }
+            return address;
 
-        ThreadUtil.runOnMainThread(new Runnable() {
-            @Override
-            public void run() {
-                if (dp != null && dp.isShowing()) {
-                    dp.setThread(null);
-                    dp.dismiss();
-                }
-                if (activity instanceof HotAdvanceActivity) {
-                    ((HotAdvanceActivity) activity).showImportSuccess();
-                }
-                if (activity instanceof ColdAdvanceActivity) {
-                    ((ColdAdvanceActivity) activity).showImportSuccess();
-                }
-            }
-        });
+
+        }
 
     }
 
-
-    private void handlerResult(BlockchainService blockchainService, ECKey ecKey
+    private Address handlerResult(ECKey ecKey
             , AddressType addressType) {
+        Address address = null;
         switch (addressType) {
             case Normal:
-                addECKey(blockchainService, ecKey);
+                address = addECKey(ecKey);
                 break;
             case SpecialAddress:
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(activity,
-                                R.string.import_private_key_failed_special_address);
-                    }
-                });
-
+                importError(CONTAIN_SPECIAL_ADDRESS);
                 break;
             case TxTooMuch:
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(activity,
-                                R.string.import_private_key_failed_tx_too_mush);
-                    }
-                });
+                importError(TX_TOO_MUCH);
                 break;
         }
+        return address;
     }
 
 

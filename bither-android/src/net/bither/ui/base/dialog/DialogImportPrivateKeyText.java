@@ -33,6 +33,7 @@ import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKey;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
@@ -143,7 +144,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     @Override
     public void onPasswordEntered(SecureCharSequence password) {
         pd = new DialogProgress(activity, R.string.please_wait);
-        ImportPrivateKey importPrivateKey = new ImportPrivateKey(activity,
+        ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(activity,
                 ImportPrivateKey.ImportPrivateKeyType.Text, pd, privateKeyString, password);
         importPrivateKey.importPrivateKey();
     }
