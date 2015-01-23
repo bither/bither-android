@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -364,14 +365,22 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
+                        final Exception finalE = e;
+
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (dd.isShowing()) {
                                     dd.dismiss();
                                 }
+                                int msg = R.string.hdm_keychain_add_sign_server_qr_code_error;
+                                if (finalE instanceof Http400Exception) {
+                                    msg = ExceptionUtil.getHDMHttpExceptionMessage((
+                                            (Http400Exception) finalE).getErrorCode());
+                                    
+                                }
                                 DropdownMessage.showDropdownMessage(getActivity(),
-                                        R.string.hdm_keychain_add_sign_server_qr_code_error);
+                                        msg);
                             }
                         });
                     }

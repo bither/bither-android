@@ -29,9 +29,9 @@ public class ExceptionUtil {
     public static final int getHDMHttpExceptionMessage(int code) {
         switch (code) {
             case HttpSetting.HDMBIdIsAlready:
-                return R.string.hdm_keychain_add_sign_server_qr_code_error;
-            case HttpSetting.MessageSignatureIsWrong:
                 return R.string.hdm_exception_bid_already_exists;
+            case HttpSetting.MessageSignatureIsWrong:
+                return R.string.hdm_keychain_add_sign_server_qr_code_error;
             default:
                 return R.string.network_or_connection_error;
         }
