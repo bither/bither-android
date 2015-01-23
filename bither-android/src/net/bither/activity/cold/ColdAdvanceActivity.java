@@ -35,6 +35,7 @@ import net.bither.VerifyMessageSignatureActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.factory.ImportHDSeed;
@@ -554,17 +555,59 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HDM_COLD_SEED_REQUEST_CODE:
                 final String hdmSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (hdmSeed.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+                    dialogPassword = new DialogPassword(this,
+                            new ImportHDSeedPasswordListener(hdmSeed));
+                    dialogPassword.setCheckPre(false);
+                    dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
+                        @Override
+                        public boolean checkPassword(SecureCharSequence password) {
+                            String keyString = hdmSeed.substring(1);
+                            String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                            String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
+                            EncryptedData encryptedData = new EncryptedData(encreyptString);
+                            byte[] result = null;
+                            try {
+                                result = encryptedData.decrypt(password);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return result != null;
+                        }
+                    });
+                    dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                    dialogPassword.show();
+                } else {
+                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this
+                            , R.string.import_hdm_cold_seed_format_error);
+                }
 
-                new DialogPassword(this, new IDialogPasswordListener() {
-                    @Override
-                    public void onPasswordEntered(SecureCharSequence password) {
-                        ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                                (ColdAdvanceActivity.this, dp, hdmSeed, password);
-                        importHDSeedAndroid.importColdSeed();
-                    }
-                }).show();
                 break;
         }
+    }
+
+    private class ImportHDSeedPasswordListener implements IDialogPasswordListener {
+        private String content;
+
+
+        public ImportHDSeedPasswordListener(String content) {
+            this.content = content;
+
+        }
+
+        @Override
+        public void onPasswordEntered(SecureCharSequence password) {
+            if (dp != null && !dp.isShowing()) {
+                dp.setMessage(R.string.import_private_key_qr_code_importing);
+
+                ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                        (ColdAdvanceActivity.this, dp, content, password);
+                importHDSeedAndroid.importColdSeed();
+
+            }
+
+        }
+
     }
 
     private String bip38DecodeString;
@@ -598,6 +641,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
             }
         }
     }
+
 
     private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
