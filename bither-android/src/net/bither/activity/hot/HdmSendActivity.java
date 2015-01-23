@@ -568,7 +568,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     };
 
     private void configureForOtherSignPart() {
-        if (signWithCold) {
+        if (signWithCold || isInRecovery) {
             btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
                             .unsigned_transaction_button_icon_mirror_transparent, 0,
                     R.drawable.unsigned_transaction_button_icon, 0);
