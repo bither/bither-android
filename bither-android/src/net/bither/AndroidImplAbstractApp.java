@@ -38,7 +38,7 @@ import java.util.List;
 public class AndroidImplAbstractApp extends AbstractApp {
 
     @Override
-    public TrustCert getTrustCert() {
+    public TrustCert initTrustCert() {
         return new TrustCert(BitherApplication.mContext.getResources().openRawResource(R.raw
                 .bithertruststore), "bither".toCharArray(), "BKS");
     }
