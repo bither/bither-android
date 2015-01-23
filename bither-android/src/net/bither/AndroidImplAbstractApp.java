@@ -21,10 +21,10 @@ import android.content.ComponentName;
 import android.content.Context;
 
 import net.bither.bitherj.AbstractApp;
-
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.NotificationService;
-import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.api.TrustCert;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
@@ -37,6 +37,11 @@ import java.util.List;
 
 public class AndroidImplAbstractApp extends AbstractApp {
 
+    @Override
+    public TrustCert getTrustCert() {
+        return new TrustCert(BitherApplication.mContext.getResources().openRawResource(R.raw
+                .bithertruststore), "bither".toCharArray(), "BKS");
+    }
 
     @Override
     public ISetting initSetting() {
