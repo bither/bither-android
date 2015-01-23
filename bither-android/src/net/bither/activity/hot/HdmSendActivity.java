@@ -274,7 +274,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                if (signWithCold) {
+                                if (signWithCold || isInRecovery) {
                                     sendConfirmListener.onConfirm(tx);
                                 } else {
                                     DialogSendConfirm dialog = new DialogSendConfirm(HdmSendActivity
