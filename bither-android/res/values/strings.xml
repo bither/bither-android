@@ -177,9 +177,11 @@
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
     <string name="export_log">Export Log</string>
+    <string name="export_address">Export Address</string>
     <string name="export_log_prompt">Confirm to export logs to sdcard ?</string>
     <string name="reload_tx">Reload Transactions data</string>
     <string name="export_success">The log exported to :</string>
+    <string name="export_address_success">The addresses exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
     <string name="import_private_key_qr_code">From Bither Private Key QR Code</string>

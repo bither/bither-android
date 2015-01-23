@@ -171,9 +171,11 @@
     <string name="set_avatar_gallery">來自圖庫</string>
     <string name="edit_password_button">修改密碼</string>
     <string name="export_log">導出日志</string>
+    <string name="export_address">導出地址</string>
     <string name="export_log_prompt">確認導出日志到sd卡？</string>
     <string name="reload_tx">重載交易數據</string>
     <string name="export_success">日志已導出到 :</string>
+    <string name="export_address_success">地址已導出到 :</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
     <string name="setting_name_import_bip38_key">導入BIP38私鑰</string>
     <string name="import_private_key_qr_code">來自比太私鑰二維碼</string>

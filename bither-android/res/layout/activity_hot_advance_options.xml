@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
@@ -41,12 +41,12 @@
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_wifi"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_sync_interval"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <Button
                                 android:id="@+id/btn_edit_password"
@@ -59,14 +59,14 @@
                                 android:padding="10dp"
                                 android:text="@string/edit_password_button"
                                 android:textColor="@color/text_field_text_color"
-                                android:textSize="18sp"/>
+                                android:textSize="18sp" />
 
-                            <include layout="@layout/layout_vertical_seperator"/>
+                            <include layout="@layout/layout_vertical_seperator" />
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_pin_code"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <Button
                                 android:id="@+id/btn_r_check"
@@ -79,24 +79,24 @@
                                 android:padding="10dp"
                                 android:text="@string/setting_name_rcheck"
                                 android:textColor="@color/text_field_text_color"
-                                android:textSize="18sp"/>
+                                android:textSize="18sp" />
 
-                            <include layout="@layout/layout_vertical_seperator"/>
+                            <include layout="@layout/layout_vertical_seperator" />
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_qr_code_quality"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_private_key"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_bip38_key"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <LinearLayout
                                 android:id="@+id/ll_hdm_recover"
@@ -113,15 +113,15 @@
                                     android:padding="10dp"
                                     android:text="@string/hdm_keychain_recovery_setting_name"
                                     android:textColor="@color/text_field_text_color"
-                                    android:textSize="18sp"/>
+                                    android:textSize="18sp" />
 
-                                <include layout="@layout/layout_vertical_seperator"/>
+                                <include layout="@layout/layout_vertical_seperator" />
                             </LinearLayout>
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_message_signing"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content" />
 
                             <Button
                                 android:id="@+id/btn_trash_can"
@@ -133,9 +133,9 @@
                                 android:text="@string/trash_can"
                                 android:textColor="@color/text_field_text_color"
                                 android:drawableRight="@drawable/trash_can_button_icon"
-                                android:textSize="18sp"/>
+                                android:textSize="18sp" />
 
-                            <include layout="@layout/layout_vertical_seperator"/>
+                            <include layout="@layout/layout_vertical_seperator" />
 
                             <Button
                                 android:id="@+id/btn_reset_tx"
@@ -146,9 +146,9 @@
                                 android:padding="10dp"
                                 android:text="@string/reload_tx"
                                 android:textColor="@color/text_field_text_color"
-                                android:textSize="18sp"/>
+                                android:textSize="18sp" />
 
-                            <include layout="@layout/layout_vertical_seperator"/>
+                            <include layout="@layout/layout_vertical_seperator" />
 
                             <Button
                                 android:id="@+id/btn_export_log"
@@ -159,10 +159,23 @@
                                 android:padding="10dp"
                                 android:text="@string/export_log"
                                 android:textColor="@color/text_field_text_color"
-                                android:textSize="18sp"/>
+                                android:textSize="18sp" />
+
+                            <include layout="@layout/layout_vertical_seperator" />
+
+                            <Button
+                                android:id="@+id/btn_export_address"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ui_touchable_bg"
+                                android:gravity="left"
+                                android:padding="10dp"
+                                android:text="@string/export_address"
+                                android:textColor="@color/text_field_text_color"
+                                android:textSize="18sp" />
                         </LinearLayout>
 
-                        <include layout="@layout/layout_card_foreground_single"/>
+                        <include layout="@layout/layout_card_foreground_single" />
 
                     </FrameLayout>
 
@@ -172,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:src="@drawable/setting_footer_logo"/>
+                        android:src="@drawable/setting_footer_logo" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -194,7 +207,7 @@
                                 android:text="@string/base_on_text"
                                 android:textColor="#ffc2c2c2"
                                 android:textSize="13sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/tv_version"
@@ -203,13 +216,13 @@
                                 android:layout_marginLeft="5dp"
                                 android:textColor="#ffc2c2c2"
                                 android:textSize="13sp"
-                                android:textStyle="bold"/>
+                                android:textStyle="bold" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
 
-            <include layout="@layout/layout_dropdown_message"/>
+            <include layout="@layout/layout_dropdown_message" />
 
         </FrameLayout>
 
@@ -233,12 +246,12 @@
                     android:layout_width="@dimen/title_bar_height"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back"/>
+                    android:src="@drawable/title_bar_back" />
 
                 <ImageView
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator"/>
+                    android:background="@drawable/title_bar_seperator" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -252,7 +265,7 @@
                     android:text="@string/activity_name_advance"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>

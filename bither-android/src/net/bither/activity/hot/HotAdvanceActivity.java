@@ -79,11 +79,13 @@ import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
     private Button btnRCheck;
+    private Button btnExportAddress;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvSyncInterval;
@@ -135,6 +137,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
+        btnExportAddress = (Button) findViewById(R.id.btn_export_address);
+        btnExportAddress.setOnClickListener(exportAddressClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
@@ -175,6 +179,42 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             hasAnyAction = true;
             DialogEditPassword dialog = new DialogEditPassword(HotAdvanceActivity.this);
             dialog.show();
+        }
+    };
+    private View.OnClickListener exportAddressClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            if (FileUtil.existSdCardMounted()) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
+
+                            String addressListString = "";
+                            for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                                addressListString = addressListString + address.getAddress() + "\n";
+                            }
+                            Utils.writeFile(addressListString, addressFile);
+                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                            getString(R.string.export_address_success) + "\n" + addressFile
+                                                    .getAbsolutePath());
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+            } else {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
+            }
+
         }
     };
 
