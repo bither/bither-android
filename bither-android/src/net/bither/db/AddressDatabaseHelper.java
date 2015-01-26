@@ -20,12 +20,14 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_HDM_BID_SQL);
         db.execSQL(AbstractDb.CREATE_HD_SEEDS_SQL);
         db.execSQL(AbstractDb.CREATE_HDM_ADDRESSES_SQL);
+        db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion == 1 && newVersion == 2) {
             db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
+            db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
         }
     }
 }
