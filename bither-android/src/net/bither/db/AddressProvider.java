@@ -37,12 +37,46 @@ public class AddressProvider implements IAddressProvider {
         this.mDb = db;
     }
 
+    @Override
     public boolean changePassword(String oldPassword, String newPassword){
         return false;
     }
 
-    public PasswordSeed getPasswordSeed(){
-        return null;
+    @Override
+    public PasswordSeed getPasswordSeed() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery("select address,encrypt_str from password_seed limit 1", null);
+        PasswordSeed passwordSeed = null;
+        if (c.moveToNext()) {
+            passwordSeed = applyPasswordSeed(c);
+        }
+        c.close();
+        return passwordSeed;
+    }
+
+
+    public boolean hasPasswordSeed(SQLiteDatabase db) {
+        Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
+                "address is not null and encrypt_str is not null", null);
+        int count = 0;
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                count = c.getInt(idColumn);
+            }
+        }
+        c.close();
+        return count > 0;
+    }
+
+    public void updatePasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
+        ContentValues cv = appluPasswordSeedCV(passwordSeed);
+        db.update(AbstractDb.Tables.PASSWORD_SEED, cv, null, null);
+    }
+
+    public void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
+        ContentValues cv = appluPasswordSeedCV(passwordSeed);
+        db.insert(AbstractDb.Tables.PASSWORD_SEED, null, cv);
     }
 
     @Override
@@ -573,50 +607,6 @@ public class AddressProvider implements IAddressProvider {
                     , new String[]{address.getAddress()});
         }
     }
-
-    @Override
-    public PasswordSeed getPasswordSeed() {
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select address,encrypt_str from password_seed limit 1", null);
-        PasswordSeed passwordSeed = null;
-        if (c.moveToNext()) {
-            passwordSeed = applyPasswordSeed(c);
-
-        }
-        c.close();
-        return passwordSeed;
-    }
-
-
-    public boolean hasPasswordSeed(SQLiteDatabase db) {
-
-        Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
-                "address is not null and encrypt_str is not null", null);
-
-        int count = 0;
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("cnt");
-            if (idColumn != -1) {
-                count = c.getInt(idColumn);
-            }
-        }
-        c.close();
-        return count > 0;
-    }
-
-    public void updatePasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
-        ContentValues cv = appluPasswordSeedCV(passwordSeed);
-        db.update(AbstractDb.Tables.PASSWORD_SEED, cv, null, null);
-
-    }
-
-    public void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
-        ContentValues cv = appluPasswordSeedCV(passwordSeed);
-        db.insert(AbstractDb.Tables.PASSWORD_SEED, null, cv);
-
-
-    }
-
 
     private ContentValues appluPasswordSeedCV(PasswordSeed passwordSeed) {
         ContentValues cv = new ContentValues();
