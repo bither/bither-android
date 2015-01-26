@@ -38,7 +38,13 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public boolean changePassword(String oldPassword, String newPassword){
+    public boolean changePassword(String oldPassword, String newPassword) {
+
+        //privKeyAddresses
+        //trashAddresses
+        //HDMBId setEncryptedData
+        //HDMKeychain
+        //passwordSeed
         return false;
     }
 
