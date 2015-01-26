@@ -357,6 +357,36 @@ public class AddressProvider implements IAddressProvider {
 
     }
 
+    public void setHDMPubsRemote(int hdSeedId, int index, byte[] remote) {
+
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        boolean isExist = true;
+        Cursor c = null;
+        try {
+            String sql = "select count(0) from hdm_addresses " +
+                    "where hd_seed_id=? and hd_seed_index=? and pub_key_remote is null";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId), Integer.toString(index)});
+            if (c.moveToNext()) {
+                isExist &= c.getInt(0) > 0;
+            }
+            c.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            isExist = false;
+        } finally {
+            if (c != null && !c.isClosed())
+                c.close();
+        }
+        if (isExist) {
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(remote));
+            db.update(AbstractDb.Tables.HDMAddresses, cv, " hd_seed_id=? and hd_seed_index=? "
+                    , new String[]{Integer.toString(hdSeedId), Integer.toString(index)});
+
+        }
+
+    }
 
     @Override
     public void completeHDMAddresses(int hdSeedId, List<HDMAddress> addresses) {
@@ -367,7 +397,7 @@ public class AddressProvider implements IAddressProvider {
             for (HDMAddress address : addresses) {
 
                 String sql = "select count(0) from hdm_addresses " +
-                        "where hd_seed_id=? and hd_seed_index=? and address is null";
+                        "where hd_seed_id=? and hd_seed_index=? and pub_key_remote is null";
                 c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId), Integer.toString(address.getIndex())});
                 if (c.moveToNext()) {
                     isExist &= c.getInt(0) > 0;
