@@ -10,6 +10,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
@@ -34,6 +35,14 @@ public class AddressProvider implements IAddressProvider {
 
     private AddressProvider(SQLiteOpenHelper db) {
         this.mDb = db;
+    }
+
+    public boolean changePassword(String oldPassword, String newPassword){
+        return false;
+    }
+
+    public PasswordSeed getPasswordSeed(){
+        return null;
     }
 
     @Override
