@@ -282,14 +282,23 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed, String encryptHDSeed, String firstAddress, boolean isXrandom) {
+    public int addHDKey(String encryptSeed, String encryptHDSeed,
+                        String firstAddress, boolean isXrandom, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
-        return (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        int seedId = (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptHDSeed));
+        }
+        db.endTransaction();
+        db.endTransaction();
+
+        return seedId;
     }
 
     @Override
@@ -329,7 +338,7 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public void addHDMBId(HDMBId hdmId) {
+    public void addHDMBId(HDMBId hdmId, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         boolean isExist = true;
         Cursor c = null;
@@ -346,10 +355,18 @@ public class AddressProvider implements IAddressProvider {
                 c.close();
         }
         if (!isExist) {
+            String getEncryptedBitherPasswordString = hdmId.getEncryptedBitherPasswordString();
+            db.beginTransaction();
             ContentValues cv = new ContentValues();
             cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmId.getAddress());
-            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmId.getEncryptedBitherPasswordString());
+            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, getEncryptedBitherPasswordString);
             db.insert(AbstractDb.Tables.HDM_BID, null, cv);
+            if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+                addPasswordSeed(db, new PasswordSeed(addressOfPS, getEncryptedBitherPasswordString));
+
+            }
+            db.endTransaction();
+            db.setTransactionSuccessful();
         }
     }
 
