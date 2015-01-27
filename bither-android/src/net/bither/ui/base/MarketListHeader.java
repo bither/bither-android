@@ -251,7 +251,7 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
 
     @Override
     public void onGlobalLayout() {
-        if (parent.getLayoutParams().height <= 0) {
+        if (parent.getLayoutParams().height <= 0 && parent.getHeight() > 0) {
             parent.getLayoutParams().height = parent.getHeight();
             vContainer.getLayoutParams().height = vContainer.getHeight();
             flContainer.getLayoutParams().height = flContainer.getHeight();
