@@ -42,7 +42,7 @@ public class AddressProvider implements IAddressProvider {
     public boolean changePassword(CharSequence oldPassword, CharSequence newPassword) {
         SQLiteDatabase readDb = this.mDb.getReadableDatabase();
         HashMap<String, String> addressesPrivKeyHashMap = new HashMap<String, String>();
-        String sql = "select address,encrypt_private_key from address where encrypt_private_key is not null";
+        String sql = "select address,encrypt_private_key from addresses where encrypt_private_key is not null";
         Cursor c = readDb.rawQuery(sql, null);
         while (c.moveToNext()) {
             addressesPrivKeyHashMap.put(c.getString(0), c.getString(1));
@@ -150,7 +150,7 @@ public class AddressProvider implements IAddressProvider {
 
     private boolean hasPasswordSeed(SQLiteDatabase db) {
         Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
-                "address is not null and encrypt_str is not null", null);
+                "password_seed is not null ", null);
         int count = 0;
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex("cnt");
