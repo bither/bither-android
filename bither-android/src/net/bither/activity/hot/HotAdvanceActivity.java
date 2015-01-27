@@ -313,8 +313,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         BitherApplication.reloadTxTime = System.currentTimeMillis();
-                        PasswordSeed passwordSeed = AppSharedPreference.getInstance()
-                                .getPasswordSeed();
+                        PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
                         if (passwordSeed == null) {
                             resetTx();
                         } else {
@@ -341,7 +340,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
+                if (PasswordSeed.hasPasswordSeed()) {
                     DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
                             new IDialogPasswordListener() {
                                 @Override

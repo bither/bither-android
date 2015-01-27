@@ -76,7 +76,7 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     }
 
     private PasswordSeed getPasswordSeed() {
-        return AppSharedPreference.getInstance().getPasswordSeed();
+        return PasswordSeed.getPasswordSeed();
     }
 
     private void initView() {

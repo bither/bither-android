@@ -58,10 +58,7 @@ public class KeyUtil {
             ecKey.clearPrivateKey();
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
-            if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                PasswordSeed passwordSeed = new PasswordSeed(address);
-                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-            }
+
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
@@ -90,10 +87,7 @@ public class KeyUtil {
             if (!addressManager.getPrivKeyAddresses().contains(address) &&
                     !addressManager.getWatchOnlyAddresses().contains(address)) {
                 addressManager.addAddress(address);
-                if (address.hasPrivKey() && AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                    PasswordSeed passwordSeed = new PasswordSeed(address);
-                    AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-                }
+
             }
         }
         if (hasPrivateKey) {
@@ -111,17 +105,17 @@ public class KeyUtil {
 
     public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password, String encryptedString) {
         AddressManager.getInstance().setHDMKeychain(keyChain);
-        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-            if (Utils.isEmpty(encryptedString)) {
-                AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
-            } else {
-                byte[] bytes = new EncryptedData(encryptedString).decrypt(password);
-                ECKey ecKey = new ECKey(new BigInteger(1, bytes));
-                Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedString, false);
-                PasswordSeed passwordSeed = new PasswordSeed(address);
-                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-            }
-        }
+//        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+//            if (Utils.isEmpty(encryptedString)) {
+//                AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
+//            } else {
+//                byte[] bytes = new EncryptedData(encryptedString).decrypt(password);
+//                ECKey ecKey = new ECKey(new BigInteger(1, bytes));
+//                Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedString, false);
+//                PasswordSeed passwordSeed = new PasswordSeed(address);
+//                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
+//            }
+//        }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {

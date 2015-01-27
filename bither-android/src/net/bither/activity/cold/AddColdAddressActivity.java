@@ -30,6 +30,7 @@ import android.widget.ToggleButton;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
 import net.bither.preference.AppSharedPreference;
@@ -55,7 +56,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_add_cold_address);
-        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+        if (!PasswordSeed.hasPasswordSeed()) {
             shouldSuggestCheck = true;
         } else {
             shouldSuggestCheck = false;
