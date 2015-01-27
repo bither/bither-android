@@ -260,12 +260,12 @@ public class AppSharedPreference {
         this.mPreferences.edit().putBoolean(DOWNLOAD_SPV_FINISH, finish).commit();
     }
 
-    public PasswordSeed getPasswordSeed() {
+    public String getPasswordSeedString() {
         String str = this.mPreferences.getString(PASSWORD_SEED, "");
         if (Utils.isEmpty(str)) {
             return null;
         }
-        return new PasswordSeed(str);
+        return str;
     }
 
 

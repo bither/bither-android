@@ -716,14 +716,13 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void updatePrivateKey(Address address) {
-        if (address.hasPrivKey()) {
-            SQLiteDatabase db = this.mDb.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKeyOfDb());
-            db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
-                    , new String[]{address.getAddress()});
-        }
+    public void updatePrivateKey(String address, String encryptPriv) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, encryptPriv);
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address});
+
     }
 
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {

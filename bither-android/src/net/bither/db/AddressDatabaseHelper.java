@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.bitherj.db.AbstractDb;
+import net.bither.preference.AppSharedPreference;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
     public static final int DB_VERSION = 2;
@@ -28,6 +29,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion == 1 && newVersion == 2) {
             db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
             db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
+            String passwordSeedStr = AppSharedPreference.getInstance().getPasswordSeedString();
+            db.execSQL("insert into password_seed (password_seed) values (?) ", new String[]{passwordSeedStr});
         }
     }
 }
