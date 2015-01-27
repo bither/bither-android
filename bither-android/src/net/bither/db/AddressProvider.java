@@ -284,12 +284,20 @@ public class AddressProvider implements IAddressProvider {
     @Override
     public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHdSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
-        return (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        int seedId = (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptHDSeed));
+        }
+        db.endTransaction();
+        db.endTransaction();
+
+        return seedId;
     }
 
     @Override
@@ -346,10 +354,20 @@ public class AddressProvider implements IAddressProvider {
                 c.close();
         }
         if (!isExist) {
+            String getEncryptedBitherPasswordString = hdmId.getEncryptedBitherPasswordString();
+            db.beginTransaction();
             ContentValues cv = new ContentValues();
             cv.put(AbstractDb.HDMBIdColumns.HDM_BID, bitherId.getAddress());
             cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, bitherId.getEncryptedBitherPasswordString());
+            cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmId.getAddress());
+            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, getEncryptedBitherPasswordString);
             db.insert(AbstractDb.Tables.HDM_BID, null, cv);
+            if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+                addPasswordSeed(db, new PasswordSeed(addressOfPS, getEncryptedBitherPasswordString));
+
+            }
+            db.endTransaction();
+            db.setTransactionSuccessful();
         }
     }
 
@@ -701,8 +719,11 @@ public class AddressProvider implements IAddressProvider {
 
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
         ContentValues cv = new ContentValues();
-        if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {
-            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
+        if (!Utils.isEmpty(passwordSeed.getAddress())) {
+            cv.put(AbstractDb.PasswordSeedColumns.ADDRESS, passwordSeed.getAddress());
+        }
+        if (!Utils.isEmpty(passwordSeed.getKeyStr())) {
+            cv.put(AbstractDb.PasswordSeedColumns.ENCRYPT_STR, passwordSeed.getKeyStr());
         }
         return cv;
     }
@@ -745,16 +766,25 @@ public class AddressProvider implements IAddressProvider {
     }
 
     public PasswordSeed applyPasswordSeed(Cursor c) {
-        int idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.PASSWORD_SEED);
-        String passwordSeed = null;
+        int idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.ADDRESS);
+        String address = null;
+        String encryptSeed = null;
+
         if (idColumn != -1) {
-            passwordSeed = c.getString(idColumn);
+            address = c.getString(idColumn);
 
         }
-        if (Utils.isEmpty(passwordSeed)) {
+        idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.ENCRYPT_STR);
+        if (idColumn != -1) {
+            encryptSeed = c.getString(idColumn);
+
+        }
+        if (Utils.isEmpty(address) || Utils.isEmpty(encryptSeed)) {
             return null;
         }
-        return new PasswordSeed(passwordSeed);
+        return new PasswordSeed(address, encryptSeed);
+
+
     }
 
     private HDMAddress.Pubs applyPubs(Cursor c) throws AddressFormatException {
