@@ -119,7 +119,7 @@ public class AddressProvider implements IAddressProvider {
         }
         if (encryptStr != null) {
             cv = new ContentValues();
-            cv.put(AbstractDb.PasswordSeedColumns.ENCRYPT_STR, encryptStr);
+            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, encryptStr);
             writeDb.update(AbstractDb.Tables.PASSWORD_SEED, cv, null, null);
         }
 
@@ -136,7 +136,7 @@ public class AddressProvider implements IAddressProvider {
     @Override
     public PasswordSeed getPasswordSeed() {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select address,encrypt_str from password_seed limit 1", null);
+        Cursor c = db.rawQuery("select password_seed from password_seed limit 1", null);
         PasswordSeed passwordSeed = null;
         if (c.moveToNext()) {
             passwordSeed = applyPasswordSeed(c);
@@ -283,22 +283,20 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed, String encryptHDSeed,
-                        String firstAddress, boolean isXrandom, String addressOfPS) {
+    public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHdSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
         int seedId = (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
         if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
-            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptHDSeed));
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptHdSeed));
         }
+        db.setTransactionSuccessful();
         db.endTransaction();
-        db.endTransaction();
-
         return seedId;
     }
 
@@ -339,7 +337,7 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public void addHDMBId(HDMBId hdmId, String addressOfPS) {
+    public void addHDMBId(HDMBId hdmBid, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         boolean isExist = true;
         Cursor c = null;
@@ -356,10 +354,10 @@ public class AddressProvider implements IAddressProvider {
                 c.close();
         }
         if (!isExist) {
-            String getEncryptedBitherPasswordString = hdmId.getEncryptedBitherPasswordString();
+            String getEncryptedBitherPasswordString = hdmBid.getEncryptedBitherPasswordString();
             db.beginTransaction();
             ContentValues cv = new ContentValues();
-            cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmId.getAddress());
+            cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmBid.getAddress());
             cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, getEncryptedBitherPasswordString);
             db.insert(AbstractDb.Tables.HDM_BID, null, cv);
             if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
@@ -733,11 +731,8 @@ public class AddressProvider implements IAddressProvider {
 
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
         ContentValues cv = new ContentValues();
-        if (!Utils.isEmpty(passwordSeed.getAddress())) {
-            cv.put(AbstractDb.PasswordSeedColumns.ADDRESS, passwordSeed.getAddress());
-        }
-        if (!Utils.isEmpty(passwordSeed.getKeyStr())) {
-            cv.put(AbstractDb.PasswordSeedColumns.ENCRYPT_STR, passwordSeed.getKeyStr());
+        if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {
+            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
         }
         return cv;
     }
@@ -780,25 +775,15 @@ public class AddressProvider implements IAddressProvider {
     }
 
     public PasswordSeed applyPasswordSeed(Cursor c) {
-        int idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.ADDRESS);
-        String address = null;
-        String encryptSeed = null;
-
+        int idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.PASSWORD_SEED);
+        String passwordSeed = null;
         if (idColumn != -1) {
-            address = c.getString(idColumn);
-
+            passwordSeed = c.getString(idColumn);
         }
-        idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.ENCRYPT_STR);
-        if (idColumn != -1) {
-            encryptSeed = c.getString(idColumn);
-
-        }
-        if (Utils.isEmpty(address) || Utils.isEmpty(encryptSeed)) {
+        if (Utils.isEmpty(passwordSeed)) {
             return null;
         }
-        return new PasswordSeed(address, encryptSeed);
-
-
+        return new PasswordSeed(passwordSeed);
     }
 
     private HDMAddress.Pubs applyPubs(Cursor c) throws AddressFormatException {
