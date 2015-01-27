@@ -104,7 +104,7 @@ public class DialogPasswordWithOther extends Dialog implements OnDismissListener
     }
 
     private PasswordSeed getPasswordSeed() {
-        return AppSharedPreference.getInstance().getPasswordSeed();
+        return PasswordSeed.getPasswordSeed();
     }
 
     private void configureCheckPre() {

@@ -26,6 +26,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
@@ -79,7 +80,7 @@ public class PrivateKeyUEntropyActivity extends UEntropyActivity {
                 public void onDismiss(DialogInterface dialog) {
                     Intent intent = new Intent();
                     intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                            AppSharedPreference.getInstance().getPasswordSeed() == null);
+                            !PasswordSeed.hasPasswordSeed());
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
                             addresses);
                     setResult(RESULT_OK, intent);

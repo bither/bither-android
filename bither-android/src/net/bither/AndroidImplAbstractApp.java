@@ -112,16 +112,7 @@ public class AndroidImplAbstractApp extends AbstractApp {
                 return PersistentCookieStore.getInstance();
             }
 
-            @Override
-            public PasswordSeed getPasswordSeed() {
-                return AppSharedPreference.getInstance().getPasswordSeed();
-            }
-
-            @Override
-            public void setPasswordSeed(PasswordSeed passwordSeed) {
-                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-
-            }
+            
         };
     }
 

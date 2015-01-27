@@ -208,10 +208,7 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
                         PrivateKeyUtil.getEncryptedString(key), false);
                 key.clearPrivateKey();
                 AddressManager.getInstance().addAddress(address);
-                if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                    PasswordSeed passwordSeed = new PasswordSeed(address);
-                    AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-                }
+
                 if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
                         .COLD) {
                     BackupUtil.backupColdKey(false);

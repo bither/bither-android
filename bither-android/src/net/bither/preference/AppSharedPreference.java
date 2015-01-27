@@ -268,11 +268,6 @@ public class AppSharedPreference {
         return new PasswordSeed(str);
     }
 
-    public void setPasswordSeed(PasswordSeed passwordSeed) {
-        this.mPreferences.edit().putString(PASSWORD_SEED, passwordSeed.toPasswordSeedString()).commit();
-
-    }
-
 
     public boolean hasUserAvatar() {
         return !Utils.isEmpty(getUserAvatar());
