@@ -146,7 +146,7 @@ public class AddressProvider implements IAddressProvider {
     }
 
 
-    public boolean hasPasswordSeed(SQLiteDatabase db) {
+    private boolean hasPasswordSeed(SQLiteDatabase db) {
         Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
                 "address is not null and encrypt_str is not null", null);
         int count = 0;
@@ -160,10 +160,11 @@ public class AddressProvider implements IAddressProvider {
         return count > 0;
     }
 
-    public void updatePasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
-        ContentValues cv = applyPasswordSeedCV(passwordSeed);
-        db.update(AbstractDb.Tables.PASSWORD_SEED, cv, null, null);
+    public boolean hasPasswordSeed() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        return hasPasswordSeed(db);
     }
+
 
     public void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
         ContentValues cv = applyPasswordSeedCV(passwordSeed);
@@ -644,6 +645,20 @@ public class AddressProvider implements IAddressProvider {
         }
         c.close();
         return addressList;
+    }
+
+    public String getEncryptPrivateKey(String address) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery("select encrypt_private_key from addresses  where address=?", new String[]{address});
+        String encryptPrivateKey = null;
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY);
+            if (idColumn != -1) {
+                encryptPrivateKey = c.getString(idColumn);
+            }
+        }
+        return encryptPrivateKey;
+
     }
 
     @Override

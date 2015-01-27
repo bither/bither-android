@@ -148,8 +148,8 @@ public class CheckUtil {
                             String encryptPrivateKey = PrivateKeyUtil.getEncryptedString(eckeyFromBackup);
                             eckeyFromBackup.clearPrivateKey();
                             if (!Utils.isEmpty(encryptPrivateKey)) {
-                                address.setEncryptPrivKey(encryptPrivateKey);
-                                address.updatePrivateKey();
+//                                address.setEncryptPrivKey(encryptPrivateKey);
+//                                address.updatePrivateKey();
                                 result = true;
                             }
 
