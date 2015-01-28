@@ -148,8 +148,7 @@ public class CheckUtil {
                             String encryptPrivateKey = PrivateKeyUtil.getEncryptedString(eckeyFromBackup);
                             eckeyFromBackup.clearPrivateKey();
                             if (!Utils.isEmpty(encryptPrivateKey)) {
-                                address.setEncryptPrivKey(encryptPrivateKey);
-                                address.updatePrivateKey();
+                                address.recoverFromBackup(encryptPrivateKey);
                                 result = true;
                             }
 
@@ -165,9 +164,9 @@ public class CheckUtil {
         return check;
     }
 
-    public static Check initCheckForHDMKeychain(final HDMKeychain keychain, final SecureCharSequence password){
+    public static Check initCheckForHDMKeychain(final HDMKeychain keychain, final SecureCharSequence password) {
         int titleResource = R.string.hdm_keychain_check_title_cold;
-        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT){
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
             titleResource = R.string.hdm_keychain_check_title_hot;
         }
         String title = BitherApplication.mContext.getString(titleResource);
@@ -175,10 +174,10 @@ public class CheckUtil {
             @Override
             public boolean check() {
                 boolean result = false;
-                try{
+                try {
                     result = keychain.checkWithPassword(password);
                     //TODO need to check backup here?
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 password.wipe();

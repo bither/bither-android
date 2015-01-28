@@ -20,12 +20,12 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
@@ -33,7 +33,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -47,7 +46,8 @@ import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.TxProvider;
-import net.bither.factory.ImportPrivateKey;
+import net.bither.bitherj.factory.ImportPrivateKey;
+import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
@@ -75,14 +75,17 @@ import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
+import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
     private Button btnRCheck;
+    private Button btnExportAddress;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvSyncInterval;
@@ -91,12 +94,15 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
+    private LinearLayout btnHDMRecovery;
     private DialogProgress dp;
+    private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private TextView tvVserion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hot_advance_options);
         initView();
     }
@@ -109,6 +115,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnRCheck = (Button) findViewById(R.id.btn_r_check);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
+        btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -122,6 +129,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword.setOnClickListener(editPasswordClick);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
+        btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
         dp = new DialogProgress(this, R.string.please_wait);
@@ -129,14 +137,18 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
         btnResetTx.setOnClickListener(resetTxListener);
+        btnExportAddress = (Button) findViewById(R.id.btn_export_address);
+        btnExportAddress.setOnClickListener(exportAddressClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
+        hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ssvPinCode.loadData();
+        configureHDMRecovery();
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
@@ -167,6 +179,42 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             hasAnyAction = true;
             DialogEditPassword dialog = new DialogEditPassword(HotAdvanceActivity.this);
             dialog.show();
+        }
+    };
+    private View.OnClickListener exportAddressClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            if (FileUtil.existSdCardMounted()) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
+
+                            String addressListString = "";
+                            for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                                addressListString = addressListString + address.getAddress() + "\n";
+                            }
+                            Utils.writeFile(addressListString, addressFile);
+                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                            getString(R.string.export_address_success) + "\n" + addressFile
+                                                    .getAbsolutePath());
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+            } else {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
+            }
+
         }
     };
 
@@ -220,6 +268,42 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+    private View.OnClickListener hdmRecoverClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!hdmRecoveryUtil.canRecover()) {
+                return;
+            }
+            new ThreadNeedService(null, HotAdvanceActivity.this) {
+
+                @Override
+                public void runWithService(BlockchainService service) {
+                    if (service != null) {
+                        service.stopAndUnregister();
+                    }
+                    try {
+                        final int result = hdmRecoveryUtil.recovery();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                configureHDMRecovery();
+                                if (result > 0) {
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity
+                                            .this, result);
+                                }
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (service != null) {
+                        service.startAndRegister();
+                    }
+                }
+            }.start();
+        }
+    };
+
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -229,8 +313,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         BitherApplication.reloadTxTime = System.currentTimeMillis();
-                        PasswordSeed passwordSeed = AppSharedPreference.getInstance()
-                                .getPasswordSeed();
+                        PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
                         if (passwordSeed == null) {
                             resetTx();
                         } else {
@@ -257,7 +340,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (AppSharedPreference.getInstance().getPasswordSeed() != null) {
+                if (PasswordSeed.hasPasswordSeed()) {
                     DialogPassword dialogPassword = new DialogPassword(HotAdvanceActivity.this,
                             new IDialogPasswordListener() {
                                 @Override
@@ -757,15 +840,19 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        if (hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-
-
         switch (requestCode) {
             case BitherSetting.INTENT_REF.IMPORT_PRIVATE_KEY_REQUEST_CODE:
                 final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (content.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.can_not_import_hdm_cold_seed);
+                    return;
+                }
                 DialogPassword dialogPassword = new DialogPassword(this,
                         new ImportPrivateKeyPasswordListenerI(content, false));
                 dialogPassword.setCheckPre(false);
@@ -807,19 +894,21 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 final String priv = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                 if (!Utils.validBitcoinPrivateKey(priv)) {
                     DropdownMessage.showDropdownMessage(this,
-                            R.string.import_private_key_text_format_erro);
+                            R.string.import_private_key_text_format_error);
                     break;
                 }
                 new DialogPassword(this, new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
-                        ImportPrivateKey importPrivateKey = new ImportPrivateKey
+                        ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid
                                 (HotAdvanceActivity.this, ImportPrivateKey.ImportPrivateKeyType
                                         .Text, dp, priv, password);
                         importPrivateKey.importPrivateKey();
                     }
                 }).show();
                 break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -842,7 +931,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     dialogPassword.show();
 
                 } else {
-                    ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity
+                    ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity
                             .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp,
                             content, password);
                     importPrivateKey.importPrivateKey();
@@ -856,12 +945,19 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
-            ImportPrivateKey importPrivateKey = new ImportPrivateKey(HotAdvanceActivity.this,
+            ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity.this,
                     ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
             importPrivateKey.importPrivateKey();
         }
     };
 
+    private void configureHDMRecovery() {
+        if (hdmRecoveryUtil.canRecover()) {
+            btnHDMRecovery.setVisibility(View.VISIBLE);
+        } else {
+            btnHDMRecovery.setVisibility(View.GONE);
+        }
+    }
 
     private boolean hasAnyAction = false;
 

@@ -10,16 +10,18 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.EncryptedData;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
-import net.bither.util.LogUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressProvider implements IAddressProvider {
 
@@ -34,6 +36,141 @@ public class AddressProvider implements IAddressProvider {
 
     private AddressProvider(SQLiteOpenHelper db) {
         this.mDb = db;
+    }
+
+    @Override
+    public boolean changePassword(CharSequence oldPassword, CharSequence newPassword) {
+        SQLiteDatabase readDb = this.mDb.getReadableDatabase();
+        HashMap<String, String> addressesPrivKeyHashMap = new HashMap<String, String>();
+        String sql = "select address,encrypt_private_key from addresses where encrypt_private_key is not null";
+        Cursor c = readDb.rawQuery(sql, null);
+        while (c.moveToNext()) {
+            addressesPrivKeyHashMap.put(c.getString(0), c.getString(1));
+        }
+        c.close();
+
+        String hdmEncryptPassword = null;
+        sql = "select encrypt_bither_password from hdm_bid limit 1";
+        c = readDb.rawQuery(sql, null);
+        if (c.moveToNext()) {
+            hdmEncryptPassword = c.getString(0);
+        }
+        c.close();
+
+        HashMap<Integer, String> encryptSeedHashMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> encryptHDSeedHashMap = new HashMap<Integer, String>();
+        sql = "select hd_seed_id,encrypt_seed,encrypt_hd_seed from hd_seeds where encrypt_seed!='RECOVER'";
+        c = readDb.rawQuery(sql, null);
+        while (c.moveToNext()) {
+            Integer hdSeedId = c.getInt(0);
+            String encryptSeed = c.getString(1);
+            if (!c.isNull(2)) {
+                String encryptHDSeed = c.getString(2);
+                encryptHDSeedHashMap.put(hdSeedId, encryptHDSeed);
+            }
+            encryptSeedHashMap.put(hdSeedId, encryptSeed);
+        }
+        c.close();
+
+        PasswordSeed passwordSeed = null;
+        sql = "select password_seed from password_seed limit 1";
+        c = readDb.rawQuery(sql, null);
+        if (c.moveToNext()) {
+            passwordSeed = new PasswordSeed(c.getString(0));
+        }
+        c.close();
+
+        for (Map.Entry<String, String> kv : addressesPrivKeyHashMap.entrySet()) {
+            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        if (hdmEncryptPassword != null) {
+            hdmEncryptPassword = this.changePwd(hdmEncryptPassword, oldPassword, newPassword);
+        }
+        for (Map.Entry<Integer, String> kv : encryptSeedHashMap.entrySet()) {
+            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        for (Map.Entry<Integer, String> kv : encryptHDSeedHashMap.entrySet()) {
+            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        if (passwordSeed != null) {
+            boolean result = passwordSeed.changePassword(oldPassword, newPassword);
+            if (!result) {
+                return false;
+            }
+        }
+
+        SQLiteDatabase writeDb = this.mDb.getWritableDatabase();
+        writeDb.beginTransaction();
+        ContentValues cv;
+        for (Map.Entry<String, String> kv : addressesPrivKeyHashMap.entrySet()) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, kv.getValue());
+            writeDb.update(AbstractDb.Tables.Addresses, cv, "address=?", new String[]{kv.getKey()});
+        }
+        if (hdmEncryptPassword != null) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmEncryptPassword);
+            writeDb.update(AbstractDb.Tables.HDM_BID, cv, null, null);
+        }
+        for (Map.Entry<Integer, String> kv : encryptSeedHashMap.entrySet()) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, kv.getValue());
+            if (encryptHDSeedHashMap.containsKey(kv.getKey())) {
+                cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeedHashMap.get(kv.getKey()));
+            }
+            writeDb.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?", new String[]{kv.getKey().toString()});
+        }
+        if (passwordSeed != null) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
+            writeDb.update(AbstractDb.Tables.PASSWORD_SEED, cv, null, null);
+        }
+
+        writeDb.setTransactionSuccessful();
+        writeDb.endTransaction();
+        return true;
+    }
+
+    private String changePwd(String encryptStr, CharSequence oldPassword, CharSequence newPassword) {
+        EncryptedData encrypted = new EncryptedData(encryptStr);
+        return new EncryptedData(encrypted.decrypt(oldPassword), newPassword).toEncryptedString();
+    }
+
+    @Override
+    public PasswordSeed getPasswordSeed() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery("select password_seed from password_seed limit 1", null);
+        PasswordSeed passwordSeed = null;
+        if (c.moveToNext()) {
+            passwordSeed = applyPasswordSeed(c);
+        }
+        c.close();
+        return passwordSeed;
+    }
+
+    private boolean hasPasswordSeed(SQLiteDatabase db) {
+        Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
+                "password_seed is not null ", null);
+        int count = 0;
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                count = c.getInt(idColumn);
+            }
+        }
+        c.close();
+        return count > 0;
+    }
+
+    public boolean hasPasswordSeed() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        return hasPasswordSeed(db);
+    }
+
+
+    public void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
+        ContentValues cv = applyPasswordSeedCV(passwordSeed);
+        db.insert(AbstractDb.Tables.PASSWORD_SEED, null, cv);
     }
 
     @Override
@@ -62,8 +199,8 @@ public class AddressProvider implements IAddressProvider {
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select encrypt_seed from hd_seeds";
-            c = db.rawQuery(sql, null);
+            String sql = "select encrypt_seed from hd_seeds where hd_seed_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
                 encryptSeed = c.getString(0);
             }
@@ -77,13 +214,42 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void setEncryptSeed(int hdSeedId, String encryptedSeed) {
+    public String getEncryptHDSeed(int hdSeedId) {
+        String encryptHDSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_hd_seed from hd_seeds where hd_seed_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptHDSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptHDSeed;
+    }
+
+    @Override
+    public void updateEncryptHDSeed(int hdSeedId, String encryptHDSeed) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptedSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
         db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
                 , new String[]{Integer.toString(hdSeedId)});
+    }
 
+    @Override
+    public void setEncryptSeed(int hdSeedId, String encryptSeed, String encryptHDSeed) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
+        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
+                , new String[]{Integer.toString(hdSeedId)});
     }
 
     @Override
@@ -119,13 +285,21 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addHDKey(String encryptSeed, String firstAddress, boolean isXrandom) {
+    public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
+        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHdSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
-        return (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        int seedId = (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptSeed));
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        return seedId;
     }
 
     @Override
@@ -165,7 +339,7 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public void addHDMBId(HDMBId hdmId) {
+    public void addHDMBId(HDMBId hdmBid, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         boolean isExist = true;
         Cursor c = null;
@@ -182,10 +356,17 @@ public class AddressProvider implements IAddressProvider {
                 c.close();
         }
         if (!isExist) {
+            String encryptedBitherPasswordString = hdmBid.getEncryptedBitherPasswordString();
+            db.beginTransaction();
             ContentValues cv = new ContentValues();
-            cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmId.getAddress());
-            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmId.getEncryptedBitherPasswordString());
+            cv.put(AbstractDb.HDMBIdColumns.HDM_BID, hdmBid.getAddress());
+            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, encryptedBitherPasswordString);
             db.insert(AbstractDb.Tables.HDM_BID, null, cv);
+            if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+                addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedBitherPasswordString));
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
     }
 
@@ -258,7 +439,7 @@ public class AddressProvider implements IAddressProvider {
             db.beginTransaction();
             for (int i = 0; i < pubsList.size(); i++) {
                 HDMAddress.Pubs pubs = pubsList.get(i);
-                ContentValues cv = applyHDMAddressContentValues(hdSeedId, pubs.index, pubs.hot, pubs.cold);
+                ContentValues cv = applyHDMAddressContentValues(null, hdSeedId, pubs.index, pubs.hot, pubs.cold, null, false);
                 db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
             }
             db.setTransactionSuccessful();
@@ -327,6 +508,36 @@ public class AddressProvider implements IAddressProvider {
 
     }
 
+    public void setHDMPubsRemote(int hdSeedId, int index, byte[] remote) {
+
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        boolean isExist = true;
+        Cursor c = null;
+        try {
+            String sql = "select count(0) from hdm_addresses " +
+                    "where hd_seed_id=? and hd_seed_index=? and pub_key_remote is null";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId), Integer.toString(index)});
+            if (c.moveToNext()) {
+                isExist = c.getInt(0) > 0;
+            }
+            c.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            isExist = false;
+        } finally {
+            if (c != null && !c.isClosed())
+                c.close();
+        }
+        if (isExist) {
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(remote));
+            db.update(AbstractDb.Tables.HDMAddresses, cv, " hd_seed_id=? and hd_seed_index=? "
+                    , new String[]{Integer.toString(hdSeedId), Integer.toString(index)});
+
+        }
+
+    }
 
     @Override
     public void completeHDMAddresses(int hdSeedId, List<HDMAddress> addresses) {
@@ -337,7 +548,7 @@ public class AddressProvider implements IAddressProvider {
             for (HDMAddress address : addresses) {
 
                 String sql = "select count(0) from hdm_addresses " +
-                        "where hd_seed_id=? and hd_seed_index=? and address is null";
+                        "where hd_seed_id=? and hd_seed_index=? and pub_key_remote is null";
                 c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId), Integer.toString(address.getIndex())});
                 if (c.moveToNext()) {
                     isExist &= c.getInt(0) > 0;
@@ -366,16 +577,40 @@ public class AddressProvider implements IAddressProvider {
         }
     }
 
+    @Override
+    public void recoverHDMAddresses(int hdSeedId, List<HDMAddress> addresses) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        for (int i = 0; i < addresses.size(); i++) {
+            HDMAddress address = addresses.get(i);
+            ContentValues cv = applyHDMAddressContentValues(address.getAddress(), hdSeedId,
+                    address.getIndex(), address.getPubHot(), address.getPubCold(), address.getPubRemote(), false);
+            db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
 
-    private ContentValues applyHDMAddressContentValues(int hdSeedId, int index, byte[] pubKeysHot, byte[] pubKeysCold) {
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+
+    }
+
+    private ContentValues applyHDMAddressContentValues(String address, int hdSeedId, int index, byte[] pubKeysHot,
+                                                       byte[] pubKeysCold, byte[] pubKeysRemote, boolean isSynced) {
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDMAddressesColumns.HD_SEED_ID, hdSeedId);
         cv.put(AbstractDb.HDMAddressesColumns.HD_SEED_INDEX, index);
         cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_HOT, Base58.encode(pubKeysHot));
         cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_COLD, Base58.encode(pubKeysCold));
-        cv.putNull(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE);
-        cv.putNull(AbstractDb.HDMAddressesColumns.ADDRESS);
-        cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, 0);
+        if (Utils.isEmpty(address)) {
+            cv.putNull(AbstractDb.HDMAddressesColumns.ADDRESS);
+        } else {
+            cv.put(AbstractDb.HDMAddressesColumns.ADDRESS, address);
+        }
+        if (pubKeysRemote == null) {
+            cv.putNull(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE);
+        } else {
+            cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(pubKeysRemote));
+        }
+        cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, isSynced ? 1 : 0);
         return cv;
     }
 
@@ -411,12 +646,34 @@ public class AddressProvider implements IAddressProvider {
         return addressList;
     }
 
+    public String getEncryptPrivateKey(String address) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor c = db.rawQuery("select encrypt_private_key from addresses  where address=?", new String[]{address});
+        String encryptPrivateKey = null;
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY);
+            if (idColumn != -1) {
+                encryptPrivateKey = c.getString(idColumn);
+            }
+        }
+        return encryptPrivateKey;
+
+    }
+
     @Override
     public void addAddress(Address address) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
         ContentValues cv = applyContentValues(address);
         db.insert(AbstractDb.Tables.Addresses, null, cv);
-
+        if (address.hasPrivKey()) {
+            if (!hasPasswordSeed(db)) {
+                PasswordSeed passwordSeed = new PasswordSeed(address);
+                addPasswordSeed(db, passwordSeed);
+            }
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     @Override
@@ -426,7 +683,6 @@ public class AddressProvider implements IAddressProvider {
                 + AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY + " is null", new String[]{
                 address.getAddress()
         });
-
     }
 
 
@@ -437,7 +693,6 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.AddressesColumns.IS_TRASH, 1);
         db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
                 , new String[]{address.getAddress()});
-
     }
 
     @Override
@@ -461,16 +716,22 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public void updatePrivateKey(Address address) {
-        if (address.hasPrivKey()) {
-            SQLiteDatabase db = this.mDb.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, address.getEncryptPrivKeyOfDb());
-            db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
-                    , new String[]{address.getAddress()});
-        }
+    public void updatePrivateKey(String address, String encryptPriv) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, encryptPriv);
+        db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
+                , new String[]{address});
+
     }
 
+    private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
+        ContentValues cv = new ContentValues();
+        if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {
+            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
+        }
+        return cv;
+    }
 
     private ContentValues applyContentValues(Address address) {
         ContentValues cv = new ContentValues();
@@ -487,9 +748,7 @@ public class AddressProvider implements IAddressProvider {
 
     }
 
-    private HDMAddress applyHDMAddress(Cursor c, HDMKeychain keychain) throws AddressFormatException
-
-    {
+    private HDMAddress applyHDMAddress(Cursor c, HDMKeychain keychain) throws AddressFormatException {
         HDMAddress hdmAddress;
 
         String address = null;
@@ -507,6 +766,18 @@ public class AddressProvider implements IAddressProvider {
         hdmAddress = new HDMAddress(pubs, address, isSynced, keychain);
         return hdmAddress;
 
+    }
+
+    public PasswordSeed applyPasswordSeed(Cursor c) {
+        int idColumn = c.getColumnIndex(AbstractDb.PasswordSeedColumns.PASSWORD_SEED);
+        String passwordSeed = null;
+        if (idColumn != -1) {
+            passwordSeed = c.getString(idColumn);
+        }
+        if (Utils.isEmpty(passwordSeed)) {
+            return null;
+        }
+        return new PasswordSeed(passwordSeed);
     }
 
     private HDMAddress.Pubs applyPubs(Cursor c) throws AddressFormatException {
@@ -530,8 +801,7 @@ public class AddressProvider implements IAddressProvider {
         if (idColumn != -1 && !c.isNull(idColumn)) {
             remote = Base58.decode(c.getString(idColumn));
         }
-        HDMAddress.Pubs pubs = new HDMAddress.Pubs(hot, cold, remote, hdSeedIndex);
-        return pubs;
+        return new HDMAddress.Pubs(hot, cold, remote, hdSeedIndex);
 
     }
 

@@ -171,13 +171,17 @@
     <string name="set_avatar_gallery">来自图库</string>
     <string name="edit_password_button">修改密码</string>
     <string name="export_log">导出日志</string>
+    <string name="export_address">导出地址</string>
     <string name="export_log_prompt">确认导出日志到sd卡？</string>
     <string name="reload_tx">重载交易数据</string>
     <string name="export_success">日志已导出到 :</string>
+    <string name="export_address_success">地址已导出到 :</string>
     <string name="setting_name_import_private_key">导入私钥</string>
     <string name="setting_name_import_bip38_key">导入BIP38私钥</string>
     <string name="import_private_key_qr_code">来自比太私钥二维码</string>
     <string name="import_private_key_text">来自私钥明文</string>
+    <string name="import_hdm_cold_seed_qr_code">来自HDM冷种子二维码</string>
+    <string name="import_hdm_cold_seed_phrase">来自HDM密语(冷)</string>
     <string name="import_bip38_key_qr_code">来自BIP38私钥二维码</string>
     <string name="import_bip38_key_text">来自BIP38私钥文本</string>
     <string name="enter_bip38_key_password">请输入BIP38私钥的密码</string>
@@ -185,9 +189,12 @@
     <string name="import_bip38_key_text_hint">输入BIP38私钥明文</string>
     <string name="import_bip38_key_text_format_erro">不符合BIP38私钥格式</string>
     <string name="import_private_key_text_hint">输入私钥明文</string>
-    <string name="import_private_key_text_format_erro">不符合私钥格式</string>
+    <string name="import_private_key_text_format_error">不符合私钥格式</string>
+    <string name="can_not_import_hdm_cold_seed">不能导入HDM冷种子</string>
+    <string name="import_hdm_cold_seed_format_error">不是HDM冷种子</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
     <string name="import_bip38private_key_qr_code_scan_title">扫描BIP38私钥二维码</string>
+    <string name="import_hdm_cold_seed_qr_code_scan_title">扫描HDM冷种子二维码</string>
     <string name="import_private_key_qr_code_password">输入原密码</string>
     <string name="import_private_key_qr_code_success">导入成功</string>
     <string name="import_private_key_qr_code_failed">导入失败</string>
@@ -502,4 +509,22 @@
     <string name="hdm_address_add_need_cold_pub">需要 HDM 冷帐号二维码才能继续</string>
     <string name="hdm_address_add_button">增加</string>
     <string name="hdm_address_add_cold_pub_not_match">HDM 冷帐号和之前不同</string>
+
+    <!-- hdm send -->
+    <string name="hdm_send_with_cold">与 HDM 冷共同签名</string>
+    <string name="hdm_send_with_server">与 HDM 服务器共同签名</string>
+    <string name="hdm_send_with_cold_no_requested_seed">您没有签名所需的 HDM 冷帐号</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM 帐号恢复</string>
+    <string name="hdm_keychain_recovery_warn">HDM 账号正在恢复中</string>
+    <string name="hdm_keychain_recovery_no_addresses">没有需要恢复的 HDM 地址</string>
+    <string name="hdm_keychain_recovery_message">请尽快转移走 HDM 恢复帐号中的比特币</string>
+    <string name="address_group_hdm_recovery">HDM 恢复</string>
+    <string name="activity_name_hdm_import_word_list">导入 HDM 密语</string>
+    <string name="hdm_import_word_list_input_hint">下一单词</string>
+    <string name="hdm_import_word_list_empty_message">请输入 HDM 密语</string>
+    <string name="hdm_import_word_list_wrong_word_warn">单词无效</string>
+    <string name="hdm_import_word_list_delete">删除</string>
+    <string name="hdm_import_word_list_replace">替换</string>
 </resources>

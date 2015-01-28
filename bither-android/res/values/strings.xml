@@ -177,13 +177,18 @@
     <string name="set_avatar_gallery">From Gallery</string>
     <string name="edit_password_button">Change Password</string>
     <string name="export_log">Export Log</string>
+    <string name="export_address">Export Address</string>
     <string name="export_log_prompt">Confirm to export logs to sdcard ?</string>
     <string name="reload_tx">Reload Transactions data</string>
     <string name="export_success">The log exported to :</string>
+    <string name="export_address_success">The addresses exported to :</string>
     <string name="setting_name_import_private_key">Import Private Key</string>
     <string name="setting_name_import_bip38_key">Import BIP38-private key</string>
     <string name="import_private_key_qr_code">From Bither Private Key QR Code</string>
     <string name="import_private_key_text">From Private Key Text</string>
+    <string name="import_hdm_cold_seed_qr_code">From HDM Cold Seed QR Code</string>
+    <string name="import_hdm_cold_seed_phrase">From HDM Cold Phrase</string>
+
     <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
     <string name="import_bip38_key_text">From BIP38-private key text</string>
     <string name="enter_bip38_key_password">Enter password of BIP38-private key</string>
@@ -191,8 +196,11 @@
     <string name="import_bip38_key_text_hint">Enter your BIP38-private key </string>
     <string name="import_bip38_key_text_format_erro">Not match BIP38-private key format</string>
     <string name="import_private_key_text_hint">Enter your private key text</string>
-    <string name="import_private_key_text_format_erro">Not match private key format</string>
+    <string name="import_private_key_text_format_error">Not match private key format</string>
+    <string name="import_hdm_cold_seed_format_error">Not match HDM cod seed format</string>
+    <string name="can_not_import_hdm_cold_seed">Can not import HDM Cold Seed</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
+    <string name="import_hdm_cold_seed_qr_code_scan_title">Scan HDM Cold Seed QR Code</string>
     <string name="import_bip38private_key_qr_code_scan_title">Scan BIP38-private key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
@@ -520,4 +528,22 @@
     <string name="hdm_address_add_need_cold_pub">Need HDM Cold account QR code to continue.</string>
     <string name="hdm_address_add_button">Add</string>
     <string name="hdm_address_add_cold_pub_not_match">HDM Cold account is not same as before</string>
+
+    <!-- hdm send -->
+    <string name="hdm_send_with_cold">Sign with HDM Cold</string>
+    <string name="hdm_send_with_server">Sign with HDM Server</string>
+    <string name="hdm_send_with_cold_no_requested_seed">You don\'t have the requested HDM Cold account</string>
+
+    <!-- hdm recovery -->
+    <string name="hdm_keychain_recovery_setting_name">HDM Account Recovery</string>
+    <string name="hdm_keychain_recovery_warn">HDM Account is in recovery</string>
+    <string name="hdm_keychain_recovery_no_addresses">No HDM address to recover</string>
+    <string name="hdm_keychain_recovery_message">Send bitcoins from HDM recovery account to other addresses ASAP</string>
+    <string name="address_group_hdm_recovery">HDM Recovery</string>
+    <string name="activity_name_hdm_import_word_list">Import HDM Phrase</string>
+    <string name="hdm_import_word_list_input_hint">Next Word</string>
+    <string name="hdm_import_word_list_empty_message">Enter HDM Phrase</string>
+    <string name="hdm_import_word_list_wrong_word_warn">Invalid word</string>
+    <string name="hdm_import_word_list_delete">Delete</string>
+    <string name="hdm_import_word_list_replace">Replace</string>
 </resources>

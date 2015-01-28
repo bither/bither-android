@@ -5,39 +5,24 @@
               android:layout_width="wrap_content"
               android:layout_height="match_parent">
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/et"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/et"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:background="@drawable/text_field_holo_dark_background"
-            android:hint="@string/import_private_key_text_hint"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="textNoSuggestions|textMultiLine"
-            android:textColor="@color/white"
-            android:textSize="18sp"/>
-
-        <ImageButton
-            android:id="@+id/ibtn_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_gravity="top"
-            android:background="@drawable/scan_button_selector"/>
-    </LinearLayout>
+        android:minHeight="40dp"
+        android:background="@drawable/text_field_holo_dark_background"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textNoSuggestions"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
 
     <TextView
         android:id="@+id/tv_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="@string/import_private_key_text_format_error"
+        android:text="@string/hdm_import_word_list_wrong_word_warn"
         android:textColor="@color/red"
         android:textSize="18sp"
         android:visibility="gone"/>

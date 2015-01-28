@@ -189,7 +189,11 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     ivType.setVisibility(View.VISIBLE);
                     return;
                 case HDMGroupTag:
-                    tvGroup.setText(R.string.address_group_hdm_hot);
+                    if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                        tvGroup.setText(R.string.address_group_hdm_recovery);
+                    } else {
+                        tvGroup.setText(R.string.address_group_hdm_hot);
+                    }
                     ivType.setVisibility(View.INVISIBLE);
                     llHDM.setVisibility(View.VISIBLE);
                     configureHDM(touch);
@@ -230,6 +234,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         private void hdmAdd() {
+            if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
+                return;
+            }
             if (WalletUtils.isHDMAddressLimit()) {
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
                 return;
@@ -240,6 +248,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
 
         private void hdmSeed() {
+            if (AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
+                return;
+            }
             DialogProgress dp = new DialogProgress(flHDMSeed.getContext(), R.string.please_wait);
             dp.setCancelable(false);
             new DialogHDMSeedOptions(flHDMSeed.getContext(), AddressManager.getInstance()

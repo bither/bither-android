@@ -1,22 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/address_detail_transaction_confidence_dialog_prefix"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tv_confirmation"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address_detail_transaction_confidence_dialog_prefix"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/tv_confirmation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_icon_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="3dp"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:layout_marginTop="4dp"
+        android:layout_gravity="left"
+        android:minWidth="48dp"
+        android:visibility="gone"
+        android:layout_marginLeft="-3dp"
+        android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/iv_hot"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"
+            android:src="@drawable/hdm_keychain_hot_small"/>
+
+        <ImageView
+            android:id="@+id/iv_cold"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"
+            android:src="@drawable/hdm_keychain_cold_small"/>
+
+        <ImageView
+            android:id="@+id/iv_server"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"
+            android:src="@drawable/hdm_keychain_server_small"/>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="left"
+        android:indeterminateDrawable="@drawable/check_progress_bar"
+        android:indeterminateDuration="600"
+        android:indeterminateOnly="true"
+        android:visibility="gone"/>
 </LinearLayout>

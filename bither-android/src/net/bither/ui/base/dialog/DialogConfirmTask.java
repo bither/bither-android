@@ -17,23 +17,27 @@
 package net.bither.ui.base.dialog;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.utils.Utils;
 
-public class DialogConfirmTask extends CenterDialog {
+public class DialogConfirmTask extends CenterDialog implements View.OnClickListener,
+        DialogInterface.OnDismissListener {
 
-	private TextView tvOk;
-	private TextView tvCancel;
-	private TextView tvMessage;
-	private Object mTask;
-	private Object mCancel;
+    private TextView tvOk;
+    private TextView tvCancel;
+    private TextView tvMessage;
+    private Object mTask;
+    private Object mCancel;
 
-	public DialogConfirmTask(Context context, CharSequence message, Object task) {
-		this(context, message, task, null);
-	}
+    private View clickedView;
+
+    public DialogConfirmTask(Context context, CharSequence message, Object task) {
+        this(context, message, task, null);
+    }
 
 	public DialogConfirmTask(Context context, CharSequence message,
 			Object task, Object cancelTask) {
@@ -59,33 +63,41 @@ public class DialogConfirmTask extends CenterDialog {
 		if (!Utils.isEmpty(cancelText)) {
 			tvCancel.setText(cancelText);
 		}
-	}
+        setOnDismissListener(this);
+    }
 
 	private void initView() {
 		tvOk = (TextView) findViewById(R.id.tv_ok);
 		tvCancel = (TextView) findViewById(R.id.tv_cancel);
 		tvMessage = (TextView) findViewById(R.id.tv_confirm_message);
-		tvOk.setOnClickListener(okClick);
-		tvCancel.setOnClickListener(cancelClick);
-	}
+        tvOk.setOnClickListener(this);
+        tvCancel.setOnClickListener(this);
+    }
 
-	private android.view.View.OnClickListener cancelClick = new View.OnClickListener() {
-		public void onClick(View v) {
-			DialogConfirmTask.this.dismiss();
-			if (mCancel != null) {
-				if (Runnable.class.isInstance(mCancel)) {
-					new Thread((Runnable) mCancel).start();
-				}
-			}
-		}
-	};
+    @Override
+    public void show() {
+        clickedView = null;
+        super.show();
+    }
 
-	private android.view.View.OnClickListener okClick = new View.OnClickListener() {
-		public void onClick(View v) {
-			DialogConfirmTask.this.dismiss();
-			if (Runnable.class.isInstance(mTask)) {
-				new Thread((Runnable) mTask).start();
-			}
-		}
-	};
+    @Override
+    public void onClick(View v) {
+        clickedView = v;
+        dismiss();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (clickedView == tvOk) {
+            if (Runnable.class.isInstance(mTask)) {
+                new Thread((Runnable) mTask).start();
+            }
+        } else {
+            if (mCancel != null) {
+                if (Runnable.class.isInstance(mCancel)) {
+                    new Thread((Runnable) mCancel).start();
+                }
+            }
+        }
+    }
 }

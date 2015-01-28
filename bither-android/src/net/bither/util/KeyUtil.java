@@ -23,13 +23,16 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.IUEntropy;
 import net.bither.xrandom.XRandom;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,10 +58,7 @@ public class KeyUtil {
             ecKey.clearPrivateKey();
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
-            if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                PasswordSeed passwordSeed = new PasswordSeed(address);
-                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-            }
+
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
@@ -87,10 +87,7 @@ public class KeyUtil {
             if (!addressManager.getPrivKeyAddresses().contains(address) &&
                     !addressManager.getWatchOnlyAddresses().contains(address)) {
                 addressManager.addAddress(address);
-                if (address.hasPrivKey() && AppSharedPreference.getInstance().getPasswordSeed() == null) {
-                    PasswordSeed passwordSeed = new PasswordSeed(address);
-                    AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-                }
+
             }
         }
         if (hasPrivateKey) {
@@ -106,11 +103,19 @@ public class KeyUtil {
 
     }
 
-    public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password) {
+    public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password, String encryptedString) {
         AddressManager.getInstance().setHDMKeychain(keyChain);
-        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-            AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
-        }
+//        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
+//            if (Utils.isEmpty(encryptedString)) {
+//                AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
+//            } else {
+//                byte[] bytes = new EncryptedData(encryptedString).decrypt(password);
+//                ECKey ecKey = new ECKey(new BigInteger(1, bytes));
+//                Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedString, false);
+//                PasswordSeed passwordSeed = new PasswordSeed(address);
+//                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
+//            }
+//        }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {

@@ -28,6 +28,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.preference.AppSharedPreference;
@@ -65,7 +66,7 @@ public class HDMKeychainColdUEntropyActivity extends UEntropyActivity {
             public void onDismiss(DialogInterface dialog) {
                 Intent intent = new Intent();
                 intent.putExtra(BitherSetting.INTENT_REF.ADD_PRIVATE_KEY_SUGGEST_CHECK_TAG,
-                        AppSharedPreference.getInstance().getPasswordSeed() == null);
+                        !PasswordSeed.hasPasswordSeed());
                 ArrayList<String> addresses = new ArrayList<String>();
                 addresses.add(AddAddressColdHDMFragment.HDMSeedAddressPlaceHolder);
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
@@ -151,7 +152,7 @@ public class HDMKeychainColdUEntropyActivity extends UEntropyActivity {
                     runOnUiThread(cancelRunnable);
                     return;
                 }
-                KeyUtil.setHDKeyChain(chain, password);
+                KeyUtil.setHDKeyChain(chain, password, null);
                 progress += itemProgress * progressEntryptRate;
                 onProgress(progress);
 
