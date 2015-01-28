@@ -668,7 +668,7 @@ public class AddressProvider implements IAddressProvider {
         db.insert(AbstractDb.Tables.Addresses, null, cv);
         if (address.hasPrivKey()) {
             if (!hasPasswordSeed(db)) {
-                PasswordSeed passwordSeed = new PasswordSeed(address);
+                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(),address.getFullEncryptPrivKeyOfDb());
                 addPasswordSeed(db, passwordSeed);
             }
         }

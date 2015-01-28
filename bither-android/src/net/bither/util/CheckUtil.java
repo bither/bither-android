@@ -139,7 +139,8 @@ public class CheckUtil {
 
             @Override
             public boolean check() {
-                boolean result = new PasswordSeed(address).checkPassword(password);
+                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKey());
+                boolean result = passwordSeed.checkPassword(password);
                 if (!result) {
                     try {
                         ECKey eckeyFromBackup = BackupUtil.getEckeyFromBackup(

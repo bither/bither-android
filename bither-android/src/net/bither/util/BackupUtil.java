@@ -225,7 +225,7 @@ public class BackupUtil {
             }
             for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
                 if (address != null) {
-                    PasswordSeed passwordSeed = new PasswordSeed(address);
+                    PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKey());
                     backupString = backupString
                             + passwordSeed.toPasswordSeedString()
                             + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
