@@ -81,16 +81,16 @@ public class AddressProvider implements IAddressProvider {
         c.close();
 
         for (Map.Entry<String, String> kv : addressesPrivKeyHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         if (hdmEncryptPassword != null) {
-            hdmEncryptPassword = this.changePwd(hdmEncryptPassword, oldPassword, newPassword);
+            hdmEncryptPassword = EncryptedData.changePwd(hdmEncryptPassword, oldPassword, newPassword);
         }
         for (Map.Entry<Integer, String> kv : encryptSeedHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         for (Map.Entry<Integer, String> kv : encryptHDSeedHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         if (passwordSeed != null) {
             boolean result = passwordSeed.changePassword(oldPassword, newPassword);
@@ -131,10 +131,6 @@ public class AddressProvider implements IAddressProvider {
         return true;
     }
 
-    private String changePwd(String encryptStr, CharSequence oldPassword, CharSequence newPassword) {
-        EncryptedData encrypted = new EncryptedData(encryptStr);
-        return new EncryptedData(encrypted.decrypt(oldPassword), newPassword).toEncryptedString();
-    }
 
     @Override
     public PasswordSeed getPasswordSeed() {
@@ -668,7 +664,7 @@ public class AddressProvider implements IAddressProvider {
         db.insert(AbstractDb.Tables.Addresses, null, cv);
         if (address.hasPrivKey()) {
             if (!hasPasswordSeed(db)) {
-                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(),address.getFullEncryptPrivKeyOfDb());
+                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKeyOfDb());
                 addPasswordSeed(db, passwordSeed);
             }
         }
