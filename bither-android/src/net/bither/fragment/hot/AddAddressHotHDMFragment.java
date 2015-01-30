@@ -176,7 +176,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 return;
                             }
                             HDMKeychain keychain = new HDMKeychain(new SecureRandom(), password);
-                            KeyUtil.setHDKeyChain(keychain, password, null);
+                            KeyUtil.setHDKeyChain(keychain);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {

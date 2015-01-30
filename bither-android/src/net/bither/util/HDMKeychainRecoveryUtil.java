@@ -144,7 +144,7 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
 
 
         if (keychain.getAllCompletedAddresses().size() > 0) {
-            KeyUtil.setHDKeyChain(keychain, password, hdmBid.getEncryptedBitherPasswordString());
+            KeyUtil.setHDKeyChain(keychain);
         } else {
             dismissDp();
             return R.string.hdm_keychain_recovery_no_addresses;

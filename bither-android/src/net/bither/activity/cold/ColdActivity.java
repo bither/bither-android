@@ -433,7 +433,7 @@ public class ColdActivity extends BaseFragmentActivity {
 
                         KeyUtil.addAddressListByDesc(null, addressList);
                         if (hdmKeychain != null) {
-                            KeyUtil.setHDKeyChain(hdmKeychain, password, null);
+                            KeyUtil.setHDKeyChain(hdmKeychain);
                         }
                         password.wipe();
                         recoverBackupSuccess();

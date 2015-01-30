@@ -481,7 +481,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
             KeyUtil.addAddressListByDesc(null, addressList);
             if (hdmKeychain != null) {
-                KeyUtil.setHDKeyChain(hdmKeychain, password, null);
+                KeyUtil.setHDKeyChain(hdmKeychain);
             }
             password.wipe();
 
