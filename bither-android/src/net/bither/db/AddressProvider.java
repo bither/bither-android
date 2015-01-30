@@ -238,15 +238,6 @@ public class AddressProvider implements IAddressProvider {
                 , new String[]{Integer.toString(hdSeedId)});
     }
 
-    @Override
-    public void setEncryptSeed(int hdSeedId, String encryptSeed, String encryptHDSeed) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
-        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
-                , new String[]{Integer.toString(hdSeedId)});
-    }
 
     @Override
     public boolean isHDSeedFromXRandom(int hdSeedId) {
@@ -364,24 +355,6 @@ public class AddressProvider implements IAddressProvider {
             db.setTransactionSuccessful();
             db.endTransaction();
         }
-    }
-
-    @Override
-    public void changeHDBIdPassword(HDMBId hdmbId) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmbId.getEncryptedBitherPasswordString());
-        db.update(AbstractDb.Tables.HDM_BID, cv
-                , AbstractDb.HDMBIdColumns.HDM_BID + "=?", new String[]{hdmbId.getAddress()});
-
-    }
-
-    @Override
-    public void changeHDMBIdPassword(String encryptBitherPassword) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, encryptBitherPassword);
-        db.update(AbstractDb.Tables.HDM_BID, cv, null, null);
     }
 
     @Override
