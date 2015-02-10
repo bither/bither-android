@@ -17,6 +17,7 @@
 package net.bither.ui.base.dialog;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.ImageView;
@@ -99,42 +100,47 @@ public class DialogAddressWatchOnlyOption extends CenterDialog {
     private View.OnClickListener deleteClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            new DialogConfirmTask(getContext(), getContext().getString(R.string
-                    .address_delete_confirmation), new Runnable() {
+            setOnDismissListener(new OnDismissListener() {
                 @Override
-                public void run() {
-                    activity.runOnUiThread(new Runnable() {
+                public void onDismiss(DialogInterface dialog) {
+                    new DialogConfirmTask(getContext(), getContext().getString(R.string
+                            .address_delete_confirmation), new Runnable() {
                         @Override
                         public void run() {
-                            DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
-                            dp.show();
-                            ThreadNeedService threadNeedService = new ThreadNeedService(dp,
-                                    activity) {
+                            activity.runOnUiThread(new Runnable() {
                                 @Override
-                                public void runWithService(BlockchainService service) {
-                                    KeyUtil.stopMonitor(service, address);
-                                    activity.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
+                                    dp.show();
+                                    ThreadNeedService threadNeedService = new ThreadNeedService(dp,
+                                            activity) {
                                         @Override
-                                        public void run() {
-                                            dp.dismiss();
-                                            afterDelete.run();
-                                            Fragment f = BitherApplication.hotActivity
-                                                    .getFragmentAtIndex(1);
-                                            if (f instanceof HotAddressFragment) {
-                                                HotAddressFragment hotAddressFragment =
-                                                        (HotAddressFragment) f;
-                                                hotAddressFragment.refresh();
-                                            }
+                                        public void runWithService(BlockchainService service) {
+                                            KeyUtil.stopMonitor(service, address);
+                                            activity.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    dp.dismiss();
+                                                    afterDelete.run();
+                                                    Fragment f = BitherApplication.hotActivity
+                                                            .getFragmentAtIndex(1);
+                                                    if (f instanceof HotAddressFragment) {
+                                                        HotAddressFragment hotAddressFragment =
+                                                                (HotAddressFragment) f;
+                                                        hotAddressFragment.refresh();
+                                                    }
+                                                }
+                                            });
                                         }
-                                    });
+                                    };
+                                    threadNeedService.start();
                                 }
-                            };
-                            threadNeedService.start();
+                            });
                         }
-                    });
+                    }).show();
                 }
-            }).show();
+            });
+            dismiss();
         }
     };
 
