@@ -277,7 +277,6 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         }
     };
 
-
     private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
 
         @Override

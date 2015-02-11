@@ -48,8 +48,10 @@ import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.KeyCrypterException;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.TransactionSignature;
+import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
@@ -789,6 +791,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                 if (e instanceof Http400Exception) {
                     throw new CompleteTransactionRunnable.HDMServerSignException(R.string
                             .hdm_address_sign_tx_server_error);
+                } else if(e instanceof KeyCrypterException) {
+                    throw new PasswordException("hdm password decrypting error");
                 } else {
                     throw new RuntimeException(e);
                 }
