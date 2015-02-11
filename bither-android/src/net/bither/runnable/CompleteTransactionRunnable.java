@@ -140,7 +140,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                 } else {
                     wallet.signTx(tx, password);
                 }
-                password.wipe();
+                if (password != null) {
+                    password.wipe();
+                }
                 if (!tx.verifySignatures()) {
                     LogUtil.w("SignTransaction", "sign transaction failed");
                     obtainMessage(HandlerMessage.MSG_FAILURE, getMessageFromException(null));
@@ -150,8 +152,10 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
         } catch (Exception e) {
-            password.wipe();
-            if(e instanceof HDMSignUserCancelExcetion){
+            if (password != null) {
+                password.wipe();
+            }
+            if (e instanceof HDMSignUserCancelExcetion) {
                 obtainMessage(HandlerMessage.MSG_FAILURE);
                 return;
             }
