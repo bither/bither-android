@@ -439,6 +439,11 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                                 startActivityForResult(new Intent(getActivity(),
                                                         ScanActivity.class), ServerQRCodeRequestCode);
                                             }
+
+                                            @Override
+                                            public void scanSignedHDMServerQRCodeCancel() {
+
+                                            }
                                         }).show();
                             }
                         });

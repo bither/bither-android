@@ -43,6 +43,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.api.SignatureHDMApi;
 import net.bither.bitherj.api.http.Http400Exception;
+import net.bither.bitherj.api.http.HttpSetting;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -67,6 +68,7 @@ import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSelectChangeAddress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
@@ -77,6 +79,7 @@ import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.UnitUtilWrapper;
@@ -104,6 +107,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
+
+    private HDMResetServerPasswordUtil resetServerPasswordUtil;
 
     private boolean signWithCold = false;
     private boolean isInRecovery = false;
@@ -176,6 +181,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         kvAmount.registerEditText((EditText) findViewById(R.id.send_coins_amount_btc_edittext),
                 (EditText) findViewById(R.id.send_coins_amount_local_edittext)).setListener(this);
         findViewById(R.id.ll_balance).setOnClickListener(balanceClick);
+        resetServerPasswordUtil = new HDMResetServerPasswordUtil(this, dp);
         configureForOtherSignPart();
     }
 
@@ -407,7 +413,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                             R.string.scan_watch_only_address_error);
                 }
             }.parse();
-        } else if (!coldSignatureFetcher.onActivityResult(requestCode, resultCode, data)) {
+        } else if (!coldSignatureFetcher.onActivityResult(requestCode, resultCode, data) && !resetServerPasswordUtil.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -767,6 +773,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
 
     private HDMAddress.HDMFetchOtherSignatureDelegate remoteSignatureFetcher = new HDMAddress
             .HDMFetchOtherSignatureDelegate() {
+        private boolean toChangePassword = false;
 
         @Override
         public List<TransactionSignature> getOtherSignature(int addressIndex,
@@ -789,8 +796,60 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                 }
             } catch (Exception e) {
                 if (e instanceof Http400Exception) {
-                    throw new CompleteTransactionRunnable.HDMServerSignException(R.string
-                            .hdm_address_sign_tx_server_error);
+                    if (((Http400Exception) e).getErrorCode() == HttpSetting.PasswordWrong) {
+                        toChangePassword = false;
+                        final ReentrantLock lock = new ReentrantLock();
+                        final Condition changePasswordCondition = lock.newCondition();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(dp.isShowing()){
+                                    dp.dismiss();
+                                }
+                                new DialogConfirmTask(HdmSendActivity.this, getString(R.string.hdm_reset_server_password_password_wrong_confirm),
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toChangePassword = true;
+                                                try {
+                                                    lock.lock();
+                                                    changePasswordCondition.signal();
+                                                }finally {
+                                                    lock.unlock();
+                                                }
+                                            }
+                                        }, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                toChangePassword = false;
+                                                try {
+                                                    lock.lock();
+                                                    changePasswordCondition.signal();
+                                                }finally {
+                                                    lock.unlock();
+                                                }
+                                            }
+                                        }).show();
+                            }
+                        });
+                        try {
+                            lock.lock();
+                            changePasswordCondition.awaitUninterruptibly();
+                        } finally {
+                            lock.unlock();
+                        }
+                        if(!toChangePassword){
+                            throw new CompleteTransactionRunnable.HDMSignUserCancelExcetion();
+                        }
+                        resetServerPasswordUtil.setPassword(password);
+                        if(!resetServerPasswordUtil.changePassword()){
+                            throw new CompleteTransactionRunnable.HDMSignUserCancelExcetion();
+                        }
+                        return getOtherSignature(addressIndex, password, unsignHash, tx);
+                    } else {
+                        throw new CompleteTransactionRunnable.HDMServerSignException(R.string
+                                .hdm_address_sign_tx_server_error);
+                    }
                 } else if(e instanceof KeyCrypterException) {
                     throw new PasswordException("hdm password decrypting error");
                 } else {

@@ -35,6 +35,8 @@ public class DialogHDMServerUnsignedQRCode extends DialogSimpleQr implements Vie
         .OnClickListener, DialogInterface.OnDismissListener {
     public static interface DialogHDMServerUnsignedQRCodeListener {
         public void scanSignedHDMServerQRCode();
+
+        public void scanSignedHDMServerQRCodeCancel();
     }
 
     private DialogHDMServerUnsignedQRCodeListener listener;
@@ -85,8 +87,12 @@ public class DialogHDMServerUnsignedQRCode extends DialogSimpleQr implements Vie
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (clickedView == btn && listener != null) {
-            listener.scanSignedHDMServerQRCode();
+        if(listener != null) {
+            if (clickedView == btn) {
+                listener.scanSignedHDMServerQRCode();
+            } else {
+                listener.scanSignedHDMServerQRCodeCancel();
+            }
         }
     }
 }

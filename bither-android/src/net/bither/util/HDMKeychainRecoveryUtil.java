@@ -168,6 +168,16 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
                                 context.startActivityForResult(new Intent(context, ScanActivity.class),
                                         ServerQRCodeRequestCode);
                             }
+
+                            @Override
+                            public void scanSignedHDMServerQRCodeCancel() {
+                                try {
+                                    lock.lock();
+                                    hdmIdCondiction.signal();
+                                } finally {
+                                    lock.unlock();
+                                }
+                            }
                         }).show();
             }
         });
