@@ -549,4 +549,7 @@
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM Server authentication failed.\nUse HDM Cold to reauthorize?</string>
+    <string name="hdm_reset_server_password_confirm">Reset HDM Server authentication?</string>
+    <string name="hdm_reset_server_password_setting_name">Reset HDM Server Authentication</string>
+    <string name="hdm_reset_server_password_success">HDM Server Authentication is reset.</string>
 </resources>

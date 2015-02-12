@@ -35,18 +35,19 @@ import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.TxProvider;
-import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
@@ -76,6 +77,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
+import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
@@ -95,8 +97,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnResetTx;
     private Button btnTrashCan;
     private LinearLayout btnHDMRecovery;
+    private LinearLayout btnHDMServerPasswordReset;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
+    private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
 
     @Override
@@ -116,6 +120,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnRCheck = (Button) findViewById(R.id.btn_r_check);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
+        btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
@@ -130,6 +135,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
+        btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
         dp = new DialogProgress(this, R.string.please_wait);
@@ -142,6 +148,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
+        configureHDMServerPasswordReset();
     }
 
     @Override
@@ -149,6 +156,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         super.onResume();
         ssvPinCode.loadData();
         configureHDMRecovery();
+        configureHDMServerPasswordReset();
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
@@ -301,6 +309,43 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }
             }.start();
+        }
+    };
+
+    private View.OnClickListener hdmServerPasswordResetClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogConfirmTask(v.getContext(),
+                    getString(R.string.hdm_reset_server_password_confirm), new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!dp.isShowing()) {
+                                dp.show();
+                            }
+                        }
+                    });
+                    hdmResetServerPasswordUtil = new HDMResetServerPasswordUtil(HotAdvanceActivity
+                            .this, dp);
+                    final boolean result = hdmResetServerPasswordUtil.changePassword();
+                    hdmResetServerPasswordUtil = null;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            if (result) {
+                                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                        R.string.hdm_reset_server_password_success);
+                            }
+                        }
+                    });
+                }
+            }).show();
         }
     };
 
@@ -843,6 +888,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         if (hdmRecoveryUtil.onActivityResult(requestCode, resultCode, data)) {
             return;
         }
+        if (hdmResetServerPasswordUtil != null && hdmResetServerPasswordUtil.onActivityResult
+                (requestCode, resultCode, data)) {
+            return;
+        }
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
@@ -956,6 +1005,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             btnHDMRecovery.setVisibility(View.VISIBLE);
         } else {
             btnHDMRecovery.setVisibility(View.GONE);
+        }
+    }
+
+    private void configureHDMServerPasswordReset() {
+        if (HDMBId.getHDMBidFromDb() == null) {
+            btnHDMServerPasswordReset.setVisibility(View.GONE);
+        } else {
+            btnHDMServerPasswordReset.setVisibility(View.VISIBLE);
         }
     }
 

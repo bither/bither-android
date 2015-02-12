@@ -530,4 +530,7 @@
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM 服务器授权失效.\n使用 HDM 冷重新授权?</string>
+    <string name="hdm_reset_server_password_confirm">确认重置 HDM 服务器授权?</string>
+    <string name="hdm_reset_server_password_setting_name">重置 HDM 服务器授权</string>
+    <string name="hdm_reset_server_password_success">HDM 服务器授权已重置</string>
 </resources>

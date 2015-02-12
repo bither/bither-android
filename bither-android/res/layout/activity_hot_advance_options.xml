@@ -118,6 +118,26 @@
                                 <include layout="@layout/layout_vertical_seperator" />
                             </LinearLayout>
 
+                            <LinearLayout
+                                android:id="@+id/ll_hdm_server_auth_reset"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/ui_touchable_bg"
+                                    android:duplicateParentState="true"
+                                    android:gravity="left"
+                                    android:padding="10dp"
+                                    android:text="@string/hdm_reset_server_password_setting_name"
+                                    android:textColor="@color/text_field_text_color"
+                                    android:textSize="18sp"/>
+
+                                <include layout="@layout/layout_vertical_seperator"/>
+                            </LinearLayout>
+
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_message_signing"
                                 android:layout_width="match_parent"
