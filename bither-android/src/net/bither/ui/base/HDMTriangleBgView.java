@@ -103,6 +103,11 @@ public class HDMTriangleBgView extends View {
         causeDraw();
     }
 
+    public void removeAllLines(){
+        lines.clear();
+        causeDraw();
+    }
+
     private float[] getViewPosition(View v) {
         int[] myLocation = new int[2];
         int[] vLocation = new int[2];
