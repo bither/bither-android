@@ -555,4 +555,8 @@
 
     <!-- hdm singular mode -->
     <string name="hdm_singular_check_title">Singular Mode</string>
+    <string name="hdm_singular_cold_seed_remember_warn">Your HDM Cold seed will be removed.\nYou must save it by yourself.</string>
+    <string name="hdm_singular_cold_seed_remember_button">I have saved my HDM Cold seed.</string>
+    <string name="hdm_singular_cold_seed_tab_words">Seed Phrase</string>
+    <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
 </resources>

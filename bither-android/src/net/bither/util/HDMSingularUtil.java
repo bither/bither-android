@@ -98,9 +98,14 @@ public class HDMSingularUtil {
     }
 
     public void runningWithoutSingularMode() {
-        delegate.setSingularModeAvailable(false);
         isSingularMode = false;
         running = true;
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                delegate.setSingularModeAvailable(false);
+            }
+        });
     }
 
     public boolean isInSingularMode() {

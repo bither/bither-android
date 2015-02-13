@@ -52,6 +52,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
@@ -77,9 +78,7 @@ import java.util.List;
 /**
  * Created by songchenwen on 15/1/9.
  */
-public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity
-        .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate,
-        HDMSingularUtil.HDMSingularUtilDelegate {
+public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity.AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate, HDMSingularUtil.HDMSingularUtilDelegate, DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
     private static final int ServerQRCodeRequestCode = 1135;
@@ -751,15 +750,16 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         vBg.addLineAnimated(llServer, llHot, new Runnable() {
             @Override
             public void run() {
-                DropdownMessage.showDropdownMessage(getActivity(), "backup cold");
-                vBg.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finalAnimation();
-                    }
-                }, 2000);
+                DialogFragmentHDMSingularColdSeed.newInstance(words, qr, AddAddressHotHDMFragment
+                        .this).show(getActivity().getSupportFragmentManager(),
+                        DialogFragmentHDMSingularColdSeed.FragmentTag);
             }
         });
+    }
+
+    @Override
+    public void HDMSingularColdSeedRemembered() {
+        finalAnimation();
     }
 
     @Override
