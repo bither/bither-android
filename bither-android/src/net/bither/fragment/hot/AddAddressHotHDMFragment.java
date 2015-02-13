@@ -22,13 +22,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +62,7 @@ import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ExceptionUtil;
+import net.bither.util.HDMSingularUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -77,7 +78,8 @@ import java.util.List;
  * Created by songchenwen on 15/1/9.
  */
 public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity
-        .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate {
+        .AddAddress, DialogPassword.PasswordGetter.PasswordGetterDelegate,
+        HDMSingularUtil.HDMSingularUtilDelegate {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
     private static final int ServerQRCodeRequestCode = 1135;
@@ -94,6 +96,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private TextView tvHot;
     private TextView tvCold;
     private TextView tvServer;
+    private CheckBox cbxSingular;
+    private View llSingularRunning;
     private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
 
@@ -104,6 +108,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private byte[] coldRoot;
 
     private boolean hdmKeychainLimit;
+
+    private HDMSingularUtil singularUtil;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -133,6 +139,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         tvHot = (TextView) v.findViewById(R.id.tv_hot);
         tvCold = (TextView) v.findViewById(R.id.tv_cold);
         tvServer = (TextView) v.findViewById(R.id.tv_server);
+        cbxSingular = (CheckBox) v.findViewById(R.id.cbx_singular);
+        llSingularRunning = v.findViewById(R.id.ll_singular_running);
         v.findViewById(R.id.ibtn_info).setOnClickListener(DialogHDMInfo.ShowClick);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
         lpContainer.width = UIUtil.getScreenWidth();
@@ -147,6 +155,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         dp.setCancelable(false);
         passwordGetter = new DialogPassword.PasswordGetter(getActivity(), this);
+        singularUtil = new HDMSingularUtil(getActivity(), this);
     }
 
     private View.OnClickListener hotClick = new View.OnClickListener() {
@@ -156,14 +165,23 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             if (hdmKeychainLimit) {
                 return;
             }
+            if (singularUtil.isInSingularMode()) {
+                return;
+            }
             new DialogHdmKeychainAddHot(getActivity(), new DialogHdmKeychainAddHot
                     .DialogHdmKeychainAddHotDelegate() {
 
                 @Override
                 public void addWithXRandom() {
                     HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
+                    if (singularUtil.shouldGoSingularMode()) {
+                        HDMKeychainHotUEntropyActivity.singularUtil = singularUtil;
+                    } else {
+                        singularUtil.runningWithoutSingularMode();
+                    }
                     startActivityForResult(new Intent(getActivity(),
                             HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
+
                 }
 
                 @Override
@@ -175,17 +193,25 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                             if (password == null) {
                                 return;
                             }
-                            HDMKeychain keychain = new HDMKeychain(new SecureRandom(), password);
-                            KeyUtil.setHDKeyChain(keychain);
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
+                            if (singularUtil.shouldGoSingularMode()) {
+                                singularUtil.setPassword(password);
+                                singularUtil.generateEntropy();
+                            } else {
+                                singularUtil.runningWithoutSingularMode();
+                                HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
+                                        password);
+
+                                KeyUtil.setHDKeyChain(keychain);
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (dp.isShowing()) {
+                                            dp.dismiss();
+                                        }
+                                        moveToCold(true);
                                     }
-                                    moveToCold(true);
-                                }
-                            });
+                                });
+                            }
                         }
                     }.start();
                 }
@@ -197,6 +223,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         @Override
         public void onClick(View v) {
             if (hdmKeychainLimit) {
+                return;
+            }
+            if (singularUtil.isInSingularMode()) {
                 return;
             }
             new DialogConfirmTask(getActivity(), getString(R.string.hdm_keychain_add_scan_cold),
@@ -218,12 +247,15 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (XRandomRequestCode == requestCode && resultCode == Activity.RESULT_OK &&
-                AddressManager.getInstance().getHdmKeychain() != null) {
+        if (XRandomRequestCode == requestCode && resultCode == Activity.RESULT_OK) {
             llCold.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    moveToCold(true);
+                    if (singularUtil.isInSingularMode()) {
+                        singularUtil.xrandomFinished();
+                    } else if(AddressManager.getInstance().getHdmKeychain() != null){
+                        moveToCold(true);
+                    }
                 }
             }, 500);
         }
@@ -408,6 +440,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
             if (hdmKeychainLimit) {
                 return;
             }
+            if (singularUtil.isInSingularMode()) {
+                return;
+            }
             if (coldRoot == null && hdmBid == null) {
                 isServerClicked = true;
                 coldClick.onClick(llCold);
@@ -505,6 +540,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 public void run() {
                     showFlash(ivColdLight);
                     llCold.setEnabled(true);
+                    if (singularUtil.isInSingularMode()) {
+                        singularUtil.cold();
+                    }
                 }
             });
         }
@@ -530,6 +568,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 public void run() {
                     showFlash(ivServerLight);
                     llServer.setEnabled(true);
+                    if (singularUtil.isInSingularMode()) {
+                        singularUtil.server();
+                    }
                 }
             });
         }
@@ -605,6 +646,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         tvHot.startAnimation(fadeOut);
         tvCold.startAnimation(fadeOut);
         tvServer.startAnimation(fadeOut);
+        llSingularRunning.startAnimation(fadeOut);
         flContainer.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -662,6 +704,70 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     @Override
+    public void setSingularModeAvailable(boolean available) {
+        if (available) {
+            cbxSingular.setVisibility(View.VISIBLE);
+        } else {
+            cbxSingular.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onSingularModeBegin() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                cbxSingular.setVisibility(View.GONE);
+                llSingularRunning.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public boolean shouldGoSingularMode() {
+        return cbxSingular.isChecked();
+    }
+
+    @Override
+    public void singularHotFinish() {
+        moveToCold(true);
+    }
+
+    @Override
+    public void singularColdFinish() {
+        moveToServer(true);
+    }
+
+    @Override
+    public void singularServerFinish() {
+        hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
+        llHot.setEnabled(false);
+        llHot.setSelected(true);
+        llCold.setEnabled(false);
+        llCold.setSelected(true);
+        llServer.setEnabled(false);
+        llServer.setSelected(true);
+        stopAllFlash();
+        vBg.addLineAnimated(llServer, llHot, new Runnable() {
+            @Override
+            public void run() {
+                DropdownMessage.showDropdownMessage(getActivity(), "backup cold");
+                vBg.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finalAnimation();
+                    }
+                }, 2000);
+            }
+        });
+    }
+
+    @Override
+    public void singularShowNetworkFailure() {
+        DropdownMessage.showDropdownMessage(getActivity(), R.string.network_or_connection_error);
+    }
+
+    @Override
     public void onDestroyView() {
         if (passwordGetter != null) {
             passwordGetter.wipe();
@@ -682,6 +788,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     @Override
     public void afterPasswordDialogDismiss() {
+        if(singularUtil.shouldGoSingularMode() || singularUtil.isInSingularMode()){
+            return;
+        }
         if (dp != null && !dp.isShowing()) {
             dp.show();
         }

@@ -204,4 +204,46 @@
             </LinearLayout>
         </FrameLayout>
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <CheckBox
+            android:id="@+id/cbx_singular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/text_field_text_color"
+            android:textSize="16sp"
+            android:button="@drawable/btn_checkbox_holo_light"
+            android:text="@string/hdm_singular_check_title"/>
+
+        <LinearLayout
+            android:id="@+id/ll_singular_running"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            android:orientation="horizontal">
+
+            <ProgressBar
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:indeterminateDrawable="@drawable/check_progress_bar"
+                android:indeterminateDuration="600"
+                android:indeterminateOnly="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/text_field_text_color"
+                android:textSize="16sp"
+                android:layout_marginLeft="5dp"
+                android:text="@string/hdm_singular_check_title"/>
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

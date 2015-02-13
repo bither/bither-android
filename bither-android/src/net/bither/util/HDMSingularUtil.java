@@ -21,7 +21,6 @@ package net.bither.util;
 import android.content.Context;
 
 import net.bither.BitherSetting;
-import net.bither.bitherj.api.http.HttpException;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -144,7 +143,7 @@ public class HDMSingularUtil {
 
     private void setEntropyInterval(byte[] entropy) {
         hotMnemonicSeed = Arrays.copyOf(entropy, 32);
-        coldMnemonicSeed = Arrays.copyOfRange(entropy, 33, 64);
+        coldMnemonicSeed = Arrays.copyOfRange(entropy, 32, 64);
         Utils.wipeBytes(entropy);
         initHotFirst();
     }
@@ -166,7 +165,7 @@ public class HDMSingularUtil {
         }.start();
     }
 
-    public void server() throws HttpException {
+    public void server() {
         new ThreadNeedService(null, context){
             @Override
             public void runWithService(BlockchainService service) {

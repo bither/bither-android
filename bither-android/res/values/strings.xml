@@ -552,4 +552,7 @@
     <string name="hdm_reset_server_password_confirm">Reset HDM Server authentication?</string>
     <string name="hdm_reset_server_password_setting_name">Reset HDM Server Authentication</string>
     <string name="hdm_reset_server_password_success">HDM Server Authentication is reset.</string>
+
+    <!-- hdm singular mode -->
+    <string name="hdm_singular_check_title">Singular Mode</string>
 </resources>

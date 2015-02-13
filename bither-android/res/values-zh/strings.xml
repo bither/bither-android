@@ -533,4 +533,7 @@
     <string name="hdm_reset_server_password_confirm">确认重置 HDM 服务器授权?</string>
     <string name="hdm_reset_server_password_setting_name">重置 HDM 服务器授权</string>
     <string name="hdm_reset_server_password_success">HDM 服务器授权已重置</string>
+
+    <!-- hdm singular mode-->
+    <string name="hdm_singular_check_title">单机模式</string>
 </resources>
