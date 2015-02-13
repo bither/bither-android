@@ -25,10 +25,14 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
+import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -54,7 +58,7 @@ public class HDMSingularUtil {
 
         public void singularColdFinish();
 
-        public void singularServerFinish();
+        public void singularServerFinish(List<String> words, String qr);
 
         public void singularShowNetworkFailure();
     }
@@ -75,6 +79,9 @@ public class HDMSingularUtil {
     private DeterministicKey coldFirst;
 
     private HDMBId hdmBid;
+
+    private List<String> coldWords;
+    private String coldQr;
 
     public HDMSingularUtil(@Nonnull Context context, @Nonnull HDMSingularUtilDelegate delegate) {
         this.delegate = delegate;
@@ -109,7 +116,7 @@ public class HDMSingularUtil {
         delegate.onSingularModeBegin();
         running = true;
         isSingularMode = true;
-        setEntropyInterval(entropy);
+        setEntropyInterval(entropy, true);
     }
 
     public void xrandomFinished() {
@@ -126,7 +133,7 @@ public class HDMSingularUtil {
             public void run() {
                 byte[] entropy = new byte[64];
                 new SecureRandom().nextBytes(entropy);
-                setEntropyInterval(entropy);
+                setEntropyInterval(entropy, false);
                 ThreadUtil.runOnMainThread(new Runnable() {
                     @Override
                     public void run() {
@@ -141,11 +148,15 @@ public class HDMSingularUtil {
         this.password = new SecureCharSequence(password);
     }
 
-    private void setEntropyInterval(byte[] entropy) {
+    private void setEntropyInterval(byte[] entropy, boolean xrandom) {
         hotMnemonicSeed = Arrays.copyOf(entropy, 32);
         coldMnemonicSeed = Arrays.copyOfRange(entropy, 32, 64);
         Utils.wipeBytes(entropy);
         initHotFirst();
+        EncryptedData coldEncryptedMnemonicSeed = new EncryptedData(coldMnemonicSeed, password,
+                xrandom);
+        coldQr = QRCodeUtil.HDM_QR_CODE_FLAG + PrivateKeyUtil.getFullencryptHDMKeyChain(xrandom,
+                coldEncryptedMnemonicSeed.toEncryptedString());
     }
 
     public void cold() {
@@ -153,6 +164,11 @@ public class HDMSingularUtil {
         new Thread() {
             @Override
             public void run() {
+                try {
+                    coldWords = MnemonicCode.instance().toMnemonic(coldMnemonicSeed);
+                } catch (MnemonicException.MnemonicLengthException e) {
+                    throw new RuntimeException(e);
+                }
                 initColdFirst();
                 hdmBid = new HDMBId(coldFirst.toAddress());
                 ThreadUtil.runOnMainThread(new Runnable() {
@@ -241,15 +257,11 @@ public class HDMSingularUtil {
                 ThreadUtil.runOnMainThread(new Runnable() {
                     @Override
                     public void run() {
-                        delegate.singularServerFinish();
+                        delegate.singularServerFinish(coldWords, coldQr);
                     }
                 });
             }
         }.start();
-    }
-
-    public byte[] getColdMnemonicSeed(){
-        return coldMnemonicSeed;
     }
 
     private void initHotFirst() {

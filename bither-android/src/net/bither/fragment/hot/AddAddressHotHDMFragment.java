@@ -739,7 +739,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     @Override
-    public void singularServerFinish() {
+    public void singularServerFinish(final List<String> words, final String qr) {
         hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
         llHot.setEnabled(false);
         llHot.setSelected(true);
