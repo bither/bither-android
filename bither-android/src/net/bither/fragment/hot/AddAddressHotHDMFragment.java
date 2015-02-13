@@ -645,7 +645,9 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         tvHot.startAnimation(fadeOut);
         tvCold.startAnimation(fadeOut);
         tvServer.startAnimation(fadeOut);
-        llSingularRunning.startAnimation(fadeOut);
+        if(llSingularRunning.getVisibility() == View.VISIBLE) {
+            llSingularRunning.startAnimation(fadeOut);
+        }
         flContainer.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -765,6 +767,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     @Override
     public void singularShowNetworkFailure() {
         DropdownMessage.showDropdownMessage(getActivity(), R.string.network_or_connection_error);
+        vBg.removeAllLines();
+        findCurrentStep();
     }
 
     @Override
