@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/hdm_singular_cold_seed_remember_warn"
+                android:textColor="@color/white"
+                android:textSize="15sp"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="220dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <ToggleButton
+                android:id="@+id/tbtn_words"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/action_bar_toggle_button_left"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:textOff="@string/hdm_singular_cold_seed_tab_words"
+                android:textOn="@string/hdm_singular_cold_seed_tab_words"
+                android:textSize="14sp"/>
+
+            <ToggleButton
+                android:id="@+id/tbtn_qr"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/action_bar_toggle_button_right"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:textColor="@color/white"
+                android:textOff="@string/hdm_singular_cold_seed_tab_qr"
+                android:textOn="@string/hdm_singular_cold_seed_tab_qr"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <net.bither.ui.base.OverScrollableViewPager
+        android:id="@+id/pager"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/dialog_btn_bg_selector"
+            android:text="@string/hdm_singular_cold_seed_remember_button"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+    </FrameLayout>
+
+</LinearLayout>

@@ -552,4 +552,11 @@
     <string name="hdm_reset_server_password_confirm">Reset HDM Server authentication?</string>
     <string name="hdm_reset_server_password_setting_name">Reset HDM Server Authentication</string>
     <string name="hdm_reset_server_password_success">HDM Server Authentication is reset.</string>
+
+    <!-- hdm singular mode -->
+    <string name="hdm_singular_check_title">Singular Mode</string>
+    <string name="hdm_singular_cold_seed_remember_warn">Your HDM Cold seed will be removed.\nYou must save it by yourself.</string>
+    <string name="hdm_singular_cold_seed_remember_button">I have saved my HDM Cold seed.</string>
+    <string name="hdm_singular_cold_seed_tab_words">Seed Phrase</string>
+    <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
 </resources>

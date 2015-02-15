@@ -534,4 +534,11 @@
     <string name="hdm_reset_server_password_confirm">確認重置 HDM 服務器授權?</string>
     <string name="hdm_reset_server_password_setting_name">重置 HDM 服務器授權</string>
     <string name="hdm_reset_server_password_success">HDM 服務器授權已重置</string>
+
+    <!-- hdm singular mode-->
+    <string name="hdm_singular_check_title">單機模式</string>
+    <string name="hdm_singular_cold_seed_remember_warn">您的 HDM 冷種子將從這部手機移除.\n您必須自己妥善保存它.</string>
+    <string name="hdm_singular_cold_seed_remember_button">我已保存好 HDM 冷種子</string>
+    <string name="hdm_singular_cold_seed_tab_words">密語</string>
+    <string name="hdm_singular_cold_seed_tab_qr">二維碼</string>
 </resources>
