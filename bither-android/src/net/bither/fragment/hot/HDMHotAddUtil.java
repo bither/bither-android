@@ -42,6 +42,7 @@ import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ExceptionUtil;
+import net.bither.util.HDMSingularUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
@@ -51,7 +52,7 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
-public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.PasswordGetterDelegate {
+public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGetterDelegate {
 
     public static final int XRandomRequestCode = 1552;
     public static final int ScanColdRequestCode = 1623;
@@ -68,25 +69,28 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
 
     }
 
-    private HDMBId hdmBid;
-    private byte[] coldRoot;
-    private DialogPassword.PasswordGetter passwordGetter;
     private Activity activity;
-
-    private DialogProgress dp;
-
-    private boolean hdmKeychainLimit;
     private IHDMHotAddDelegate delegate;
-
+    private DialogPassword.PasswordGetter passwordGetter;
+    private DialogProgress dp;
     private boolean isServerClicked = false;
 
-    public HDMHotAddWithAndroid(Activity activity, IHDMHotAddDelegate delegate) {
+    private HDMBId hdmBid;
+
+    private byte[] coldRoot;
+
+    public boolean hdmKeychainLimit;
+
+    public HDMSingularUtil singularUtil;
+
+    public HDMHotAddUtil(Activity activity, IHDMHotAddDelegate delegate, HDMSingularUtil.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
         this.activity = activity;
         this.delegate = delegate;
         passwordGetter = new DialogPassword.PasswordGetter(activity, this);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
         hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
+        singularUtil = new HDMSingularUtil(activity, hdmSingularUtilDelegate);
     }
 
 
@@ -94,12 +98,20 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
         if (hdmKeychainLimit) {
             return;
         }
-        new DialogHdmKeychainAddHot(this.activity, new DialogHdmKeychainAddHot
+        if (singularUtil.isInSingularMode()) {
+            return;
+        }
+        new DialogHdmKeychainAddHot(activity, new DialogHdmKeychainAddHot
                 .DialogHdmKeychainAddHotDelegate() {
 
             @Override
             public void addWithXRandom() {
                 HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
+                if (singularUtil.shouldGoSingularMode()) {
+                    HDMKeychainHotUEntropyActivity.singularUtil = singularUtil;
+                } else {
+                    singularUtil.runningWithoutSingularMode();
+                }
                 if (delegate != null) {
                     delegate.callActivityForResult(new Intent(activity,
                             HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
@@ -115,19 +127,27 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
                         if (password == null) {
                             return;
                         }
-                        HDMKeychain keychain = new HDMKeychain(new SecureRandom(), password);
-                        KeyUtil.setHDKeyChain(keychain);
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dp.isShowing()) {
-                                    dp.dismiss();
+                        if (singularUtil.shouldGoSingularMode()) {
+                            singularUtil.setPassword(password);
+                            singularUtil.generateEntropy();
+                        } else {
+                            singularUtil.runningWithoutSingularMode();
+                            HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
+                                    password);
+
+                            KeyUtil.setHDKeyChain(keychain);
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    if (delegate != null) {
+                                        delegate.moveToCold(true);
+                                    }
                                 }
-                                if (delegate != null) {
-                                    delegate.moveToCold(true);
-                                }
-                            }
-                        });
+                            });
+                        }
                     }
                 }.start();
             }
@@ -138,25 +158,37 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
         if (hdmKeychainLimit) {
             return;
         }
+        if (singularUtil.isInSingularMode()) {
+            return;
+        }
         new DialogConfirmTask(activity, activity.getString(R.string.hdm_keychain_add_scan_cold),
                 new Runnable() {
+
                     @Override
                     public void run() {
-                        Intent intent = new Intent(activity, ScanActivity.class);
-                        if (delegate != null) {
-                            delegate.callActivityForResult(intent, ScanColdRequestCode);
-                        }
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(activity, ScanActivity.class);
+                                if (delegate != null) {
+                                    delegate.callActivityForResult(intent, ScanColdRequestCode);
+                                }
+                            }
+                        });
                     }
                 }).show();
+
     }
 
     public void serviceClick() {
         if (hdmKeychainLimit) {
             return;
         }
+        if (singularUtil.isInSingularMode()) {
+            return;
+        }
         if (coldRoot == null && hdmBid == null) {
             isServerClicked = true;
-            //coldClick.onClick(llCold);
             coldClick();
             return;
         }
@@ -212,6 +244,7 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
                 }
             }
         }.start();
+
     }
 
     private void initHDMBidFromColdRoot() {
@@ -231,9 +264,14 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (delegate != null) {
-                    delegate.moveToCold(true);
+                if (singularUtil.isInSingularMode()) {
+                    singularUtil.xrandomFinished();
+                } else if (AddressManager.getInstance().getHdmKeychain() != null) {
+                    if (delegate != null) {
+                        delegate.moveToCold(true);
+                    }
                 }
+
             }
         }, 500);
 
@@ -375,7 +413,6 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
                                     if (delegate != null) {
                                         delegate.moveToFinal(true);
                                     }
-
                                 }
                             }
                         }
@@ -383,6 +420,7 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
                 } catch (Exception e) {
                     e.printStackTrace();
                     final Exception finalE = e;
+
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -402,12 +440,8 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
                 }
             }
         }.start();
-
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-    }
 
     public void wipe() {
         if (passwordGetter != null) {
@@ -418,13 +452,6 @@ public class HDMHotAddWithAndroid implements DialogPassword.PasswordGetter.Passw
         }
     }
 
-    public boolean getHdmKeychainLimit() {
-        return hdmKeychainLimit;
-    }
-
-    public void setHdmKeychainLimit(Boolean hdmKeychainLimit) {
-        this.hdmKeychainLimit = hdmKeychainLimit;
-    }
 
     @Override
     public void beforePasswordDialogShow() {
