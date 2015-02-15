@@ -448,6 +448,8 @@
     <string name="raw_private_key_address">Address</string>
     <string name="raw_private_key_add">Add This Private Key</string>
     <string name="raw_private_key_not_safe">This private key is not safe</string>
+    <string name="raw_private_key_tab_binary">Binary</string>
+    <string name="raw_private_key_tab_dice">Dice</string>
 
     <!-- QR Code Quality -->
     <string name="qr_code_quality_setting_name">QR Code Precision</string>

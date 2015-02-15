@@ -20,52 +20,24 @@ package net.bither.rawprivatekey;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ToggleButton;
 
-import net.bither.BitherApplication;
 import net.bither.R;
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.crypto.DumpedPrivateKey;
-import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.PasswordSeed;
-import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.Utils;
-import net.bither.fragment.cold.ColdAddressFragment;
-import net.bither.fragment.hot.HotAddressFragment;
-import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.DropdownMessage;
-import net.bither.ui.base.SwipeRightActivity;
-import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.OverScrollableViewPager;
 import net.bither.ui.base.listener.IBackClickListener;
-import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.BackupUtil;
-import net.bither.util.ThreadUtil;
-import net.bither.util.UIUtil;
-import net.bither.util.WalletUtils;
-
-import java.math.BigInteger;
 
 /**
  * Created by songchenwen on 14/12/4.
  */
-public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialogPasswordListener {
-    private RawDataView vData;
-    private Button btnZero;
-    private Button btnOne;
-    private Button btnAdd;
-    private TextView tvPrivateKey;
-    private TextView tvAddress;
-    private LinearLayout llShow;
-    private LinearLayout llInput;
+public class RawPrivateKeyActivity extends FragmentActivity implements View.OnClickListener,
+        ViewPager.OnPageChangeListener {
+    private ToggleButton tbtnDice;
+    private ToggleButton tbtnBinary;
+    private OverScrollableViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,106 +49,31 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
 
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
-        vData = (RawDataView) findViewById(R.id.v_data);
-        btnZero = (Button) findViewById(R.id.btn_zero);
-        btnZero.setOnClickListener(addDataClick);
-        btnOne = (Button) findViewById(R.id.btn_one);
-        btnOne.setOnClickListener(addDataClick);
-        llShow = (LinearLayout) findViewById(R.id.ll_show);
-        llInput = (LinearLayout) findViewById(R.id.ll_input);
-        tvPrivateKey = (TextView) findViewById(R.id.tv_private_key);
-        tvAddress = (TextView) findViewById(R.id.tv_address);
-        btnAdd = (Button) findViewById(R.id.btn_add);
-        btnAdd.setOnClickListener(addKeyClick);
-        vData.setRestrictedSize(getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix
-                (16), (int) (getResources().getDisplayMetrics().heightPixels * 0.47f));
-        vData.setDataSize(16, 16);
-        llShow.setVisibility(View.GONE);
-        llInput.setVisibility(View.VISIBLE);
+        pager = (OverScrollableViewPager) findViewById(R.id.pager);
+        tbtnDice = (ToggleButton) findViewById(R.id.tbtn_dice);
+        tbtnBinary = (ToggleButton) findViewById(R.id.tbtn_binary);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(0);
+        tbtnDice.setChecked(true);
+        tbtnBinary.setChecked(false);
+        tbtnDice.setOnClickListener(this);
+        tbtnBinary.setOnClickListener(this);
+        pager.setOnPageChangeListener(this);
     }
 
-    private void handleData() {
-        final DialogProgress dp = new DialogProgress(this, R.string.please_wait);
-        dp.show();
-        new Thread() {
-            @Override
-            public void run() {
-                final byte[] data = vData.getData();
-                if (data == null) {
-                    return;
-                }
-                if (!checkValue(data)) {
-                    ThreadUtil.runOnMainThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dp.dismiss();
-                            DropdownMessage.showDropdownMessage(RawPrivateKeyActivity.this,
-                                    R.string.raw_private_key_not_safe, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            vData.setDataSize(16, 16);
-                                        }
-                                    });
-                        }
-                    });
-                    return;
-                }
-                BigInteger value = new BigInteger(1, data);
-                value = value.mod(ECKey.CURVE.getN());
-
-                ECKey key = new ECKey(value, null, true);
-                final String address = Utils.toAddress(key.getPubKeyHash());
-                final SecureCharSequence privateKey = new DumpedPrivateKey(key.getPrivKeyBytes(),
-                        true).toSecureCharSequence();
-                Utils.wipeBytes(data);
-                key.clearPrivateKey();
-                ThreadUtil.runOnMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dp.dismiss();
-                        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey,
-                                4, 16));
-                        tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
-                        llInput.setVisibility(View.GONE);
-                        llShow.setVisibility(View.VISIBLE);
-                        privateKey.wipe();
-                    }
-                });
-            }
-        }.start();
-    }
-
-    private boolean checkValue(byte[] data) {
-        BigInteger value = new BigInteger(1, data);
-        if (value.compareTo(BigInteger.ZERO) == 0 || value.compareTo(ECKey.CURVE.getN()) == 0) {
-            return false;
-        }
-        return true;
-    }
-
-    private View.OnClickListener addDataClick = new View.OnClickListener() {
+    private FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
         @Override
-        public void onClick(View v) {
-            if (vData.dataLength() > 0 && vData.filledDataLength() < vData.dataLength()) {
-                vData.addData(v == btnOne);
-                if (vData.filledDataLength() == vData.dataLength()) {
-                    handleData();
-                    return;
-                }
-//                if (vData.testNextOneValue().compareTo(max) >= 0) {
-//                    btnOne.setVisibility(View.GONE);
-//                }
-//                if (vData.testNextZeroValue().compareTo(min) <= 0) {
-//                    btnZero.setVisibility(View.GONE);
-//                }
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                return new RawPrivateKeyBinaryFragment();
+            } else {
+                return new RawPrivateKeyBinaryFragment();
             }
         }
-    };
 
-    private View.OnClickListener addKeyClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            new DialogPassword(RawPrivateKeyActivity.this, RawPrivateKeyActivity.this).show();
+        public int getCount() {
+            return 2;
         }
     };
 
@@ -187,58 +84,43 @@ public class RawPrivateKeyActivity extends SwipeRightActivity implements IDialog
     }
 
     @Override
-    public void onPasswordEntered(final SecureCharSequence password) {
-        DialogProgress dp = new DialogProgress(this, R.string.please_wait);
-        dp.show();
-        new ThreadNeedService(dp, this) {
-            @Override
-            public void runWithService(BlockchainService service) {
-                if (service != null) {
-                    service.stopAndUnregister();
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tbtn_dice:
+                if (pager.getCurrentItem() != 0) {
+                    pager.setCurrentItem(0, true);
+                    tbtnDice.setChecked(true);
+                    tbtnBinary.setChecked(false);
                 }
-                byte[] data = vData.getData();
-                vData.clearData();
-                BigInteger value = new BigInteger(1, data);
-                value = value.mod(ECKey.CURVE.getN());
-                ECKey key = new ECKey(value, null, true);
-                key = PrivateKeyUtil.encrypt(key, password);
-                Utils.wipeBytes(data);
-                password.wipe();
-                Address address = new Address(key.toAddress(), key.getPubKey(),
-                        PrivateKeyUtil.getEncryptedString(key), false);
-                key.clearPrivateKey();
-                AddressManager.getInstance().addAddress(address);
+                break;
+            case R.id.tbtn_binary:
+                if (pager.getCurrentItem() != 1) {
+                    pager.setCurrentItem(1, true);
+                    tbtnDice.setChecked(false);
+                    tbtnBinary.setChecked(true);
+                }
+                break;
+        }
+    }
 
-                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
-                        .COLD) {
-                    BackupUtil.backupColdKey(false);
-                } else {
-                    BackupUtil.backupHotKey();
-                }
-                if (service != null) {
-                    service.startAndRegister();
-                }
-                ThreadUtil.runOnMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings
-                                .AppMode.HOT) {
-                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
-                            if (f instanceof HotAddressFragment) {
-                                HotAddressFragment hotAddressFragment = (HotAddressFragment) f;
-                                hotAddressFragment.refresh();
-                            }
-                        } else {
-                            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
-                            if (f instanceof ColdAddressFragment) {
-                                ColdAddressFragment coldAddressFragment = (ColdAddressFragment) f;
-                                coldAddressFragment.refresh();
-                            }
-                        }
-                    }
-                });
-            }
-        }.start();
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position == 0) {
+            tbtnDice.setChecked(true);
+            tbtnBinary.setChecked(false);
+        } else {
+            tbtnDice.setChecked(false);
+            tbtnBinary.setChecked(true);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
