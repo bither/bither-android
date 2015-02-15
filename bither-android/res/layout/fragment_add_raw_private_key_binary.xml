@@ -28,31 +28,67 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1">
 
-            <Button
-                android:id="@+id/btn_zero"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/entry_keyboard_key_btn_bg"
-                android:textSize="40sp"
-                android:text="0"
-                android:layout_weight="1"/>
+                android:layout_weight="2"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_one"
+                <Button
+                    android:id="@+id/btn_zero"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/entry_keyboard_key_btn_bg"
+                    android:textSize="40sp"
+                    android:text="0"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btn_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/entry_keyboard_key_btn_bg"
+                    android:textSize="40sp"
+                    android:text="1"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/entry_keyboard_key_btn_bg"
-                android:textSize="40sp"
-                android:text="1"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/ibtn_delete"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/entry_keyboard_action_key_btn_bg"
+                    android:src="@drawable/sym_keyboard_delete_holo_dark"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btn_clear"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/entry_keyboard_action_key_btn_bg"
+                    android:textSize="32sp"
+                    android:textColor="@color/white"
+                    android:text="C"
+                    android:layout_weight="1"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

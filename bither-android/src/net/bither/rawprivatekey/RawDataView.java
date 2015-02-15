@@ -141,6 +141,46 @@ public class RawDataView extends FrameLayout {
         Collections.fill(data, Boolean.FALSE);
     }
 
+    public void removeAllData(){
+        int size = data.size();
+        data.clear();
+        for(int i = 0; i < size; i++){
+            final ImageView iv = (ImageView) ((FrameLayout) getChildAt(i)).getChildAt(0);
+            if(iv.getVisibility() == View.VISIBLE){
+                ScaleAnimation anim = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF,
+                        0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                anim.setDuration(300);
+                anim.setFillAfter(true);
+                iv.startAnimation(anim);
+                iv.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        iv.setVisibility(View.INVISIBLE);
+                    }
+                }, 300);
+            }
+        }
+    }
+
+    public void deleteLast(){
+        int size = data.size();
+        data.remove(size - 1);
+        final ImageView iv = (ImageView) ((FrameLayout) getChildAt(size - 1)).getChildAt(0);
+        if(iv.getVisibility() == View.VISIBLE){
+            ScaleAnimation anim = new ScaleAnimation(1, 0, 1, 0, Animation.RELATIVE_TO_SELF,
+                    0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.setDuration(300);
+            anim.setFillAfter(true);
+            iv.startAnimation(anim);
+            iv.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    iv.setVisibility(View.INVISIBLE);
+                }
+            }, 300);
+        }
+    }
+
     public BigInteger testNextZeroValue() {
         int byteCount = dataLength() / 8;
         byte[] bytes = new byte[byteCount];

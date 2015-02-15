@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -61,6 +62,8 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
     private Button btnZero;
     private Button btnOne;
     private Button btnAdd;
+    private Button btnClear;
+    private ImageButton ibtnDelete;
     private TextView tvPrivateKey;
     private TextView tvAddress;
     private LinearLayout llShow;
@@ -75,6 +78,8 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
         btnZero.setOnClickListener(addDataClick);
         btnOne = (Button) v.findViewById(R.id.btn_one);
         btnOne.setOnClickListener(addDataClick);
+        v.findViewById(R.id.ibtn_delete).setOnClickListener(deleteClick);
+        v.findViewById(R.id.btn_clear).setOnClickListener(clearClick);
         llShow = (LinearLayout) v.findViewById(R.id.ll_show);
         llInput = (LinearLayout) v.findViewById(R.id.ll_input);
         tvPrivateKey = (TextView) v.findViewById(R.id.tv_private_key);
@@ -165,6 +170,20 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
 //                    btnZero.setVisibility(View.GONE);
 //                }
             }
+        }
+    };
+
+    private View.OnClickListener deleteClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            vData.deleteLast();
+        }
+    };
+
+    private View.OnClickListener clearClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            vData.removeAllData();
         }
     };
 
