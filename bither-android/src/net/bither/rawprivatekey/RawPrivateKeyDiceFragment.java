@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -57,10 +56,8 @@ import java.math.BigInteger;
 /**
  * Created by songchenwen on 15/2/15.
  */
-public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPasswordListener {
-    private RawDataBinaryView vData;
-    private Button btnZero;
-    private Button btnOne;
+public class RawPrivateKeyDiceFragment extends Fragment implements IDialogPasswordListener {
+    private RawDataDiceView vData;
     private Button btnAdd;
     private TextView tvPrivateKey;
     private TextView tvAddress;
@@ -70,12 +67,14 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_add_raw_private_key_binary, null);
-        vData = (RawDataBinaryView) v.findViewById(R.id.v_data);
-        btnZero = (Button) v.findViewById(R.id.btn_zero);
-        btnZero.setOnClickListener(addDataClick);
-        btnOne = (Button) v.findViewById(R.id.btn_one);
-        btnOne.setOnClickListener(addDataClick);
+        View v = inflater.inflate(R.layout.fragment_add_raw_private_key_dice, null);
+        vData = (RawDataDiceView) v.findViewById(R.id.v_data);
+        v.findViewById(R.id.btn_one).setOnClickListener(addDataClick);
+        v.findViewById(R.id.btn_two).setOnClickListener(addDataClick);
+        v.findViewById(R.id.btn_three).setOnClickListener(addDataClick);
+        v.findViewById(R.id.btn_four).setOnClickListener(addDataClick);
+        v.findViewById(R.id.btn_five).setOnClickListener(addDataClick);
+        v.findViewById(R.id.btn_six).setOnClickListener(addDataClick);
         v.findViewById(R.id.ibtn_delete).setOnClickListener(deleteClick);
         v.findViewById(R.id.btn_clear).setOnClickListener(clearClick);
         llShow = (LinearLayout) v.findViewById(R.id.ll_show);
@@ -85,8 +84,8 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
         btnAdd = (Button) v.findViewById(R.id.btn_add);
         btnAdd.setOnClickListener(addKeyClick);
         vData.setRestrictedSize(getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix
-                (16), (int) (getResources().getDisplayMetrics().heightPixels * 0.47f));
-        vData.setDataSize(16, 16);
+                (16), getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix(16));
+        vData.setDataSize(10, 10);
         llShow.setVisibility(View.GONE);
         llInput.setVisibility(View.VISIBLE);
         return v;
@@ -112,7 +111,7 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
                                     R.string.raw_private_key_not_safe, new Runnable() {
                                         @Override
                                         public void run() {
-                                            vData.setDataSize(16, 16);
+                                            vData.setDataSize(10, 10);
                                         }
                                     });
                         }
@@ -145,8 +144,8 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
     }
 
     private boolean checkValue(byte[] data) {
-        BigInteger value = new BigInteger(1, data);
-        if (value.compareTo(BigInteger.ZERO) == 0 || value.compareTo(ECKey.CURVE.getN()) == 0) {
+        BigInteger value = new BigInteger(1, data).mod(ECKey.CURVE.getN());
+        if (value.compareTo(BigInteger.ZERO) == 0) {
             return false;
         }
         return true;
@@ -156,17 +155,35 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
         @Override
         public void onClick(View v) {
             if (vData.dataLength() > 0 && vData.filledDataLength() < vData.dataLength()) {
-                vData.addData(v == btnOne);
+                RawDataDiceView.Dice d = null;
+                switch (v.getId()) {
+                    case R.id.btn_one:
+                        d = RawDataDiceView.Dice.One;
+                        break;
+                    case R.id.btn_two:
+                        d = RawDataDiceView.Dice.Two;
+                        break;
+                    case R.id.btn_three:
+                        d = RawDataDiceView.Dice.Three;
+                        break;
+                    case R.id.btn_four:
+                        d = RawDataDiceView.Dice.Four;
+                        break;
+                    case R.id.btn_five:
+                        d = RawDataDiceView.Dice.Five;
+                        break;
+                    case R.id.btn_six:
+                        d = RawDataDiceView.Dice.Six;
+                        break;
+                }
+                if (d == null) {
+                    return;
+                }
+                vData.addData(d);
                 if (vData.filledDataLength() == vData.dataLength()) {
                     handleData();
                     return;
                 }
-//                if (vData.testNextOneValue().compareTo(max) >= 0) {
-//                    btnOne.setVisibility(View.GONE);
-//                }
-//                if (vData.testNextZeroValue().compareTo(min) <= 0) {
-//                    btnZero.setVisibility(View.GONE);
-//                }
             }
         }
     };
@@ -188,7 +205,7 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
     private View.OnClickListener addKeyClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new DialogPassword(getActivity(), RawPrivateKeyBinaryFragment.this).show();
+            new DialogPassword(getActivity(), RawPrivateKeyDiceFragment.this).show();
         }
     };
 

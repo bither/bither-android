@@ -9,5 +9,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/btn_keyboard_key_white_normal"
+        android:visibility="invisible"
+        android:padding="3dp"
         android:scaleType="centerInside"/>
 </FrameLayout>

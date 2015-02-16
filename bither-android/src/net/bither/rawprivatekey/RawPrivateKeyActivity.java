@@ -65,7 +65,7 @@ public class RawPrivateKeyActivity extends FragmentActivity implements View.OnCl
         @Override
         public Fragment getItem(int position) {
             if (position == 0) {
-                return new RawPrivateKeyBinaryFragment();
+                return new RawPrivateKeyDiceFragment();
             } else {
                 return new RawPrivateKeyBinaryFragment();
             }

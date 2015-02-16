@@ -38,7 +38,7 @@ import java.util.Collections;
 /**
  * Created by songchenwen on 14/12/4.
  */
-public class RawDataView extends FrameLayout {
+public class RawDataBinaryView extends FrameLayout {
     private int restrictedWidth;
     private int restrictedHeight;
     private int column;
@@ -46,15 +46,15 @@ public class RawDataView extends FrameLayout {
 
     private ArrayList<Boolean> data;
 
-    public RawDataView(Context context) {
+    public RawDataBinaryView(Context context) {
         super(context);
     }
 
-    public RawDataView(Context context, AttributeSet attrs) {
+    public RawDataBinaryView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public RawDataView(Context context, AttributeSet attrs, int defStyle) {
+    public RawDataBinaryView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
@@ -164,6 +164,9 @@ public class RawDataView extends FrameLayout {
 
     public void deleteLast(){
         int size = data.size();
+        if(size <= 0){
+            return;
+        }
         data.remove(size - 1);
         final ImageView iv = (ImageView) ((FrameLayout) getChildAt(size - 1)).getChildAt(0);
         if(iv.getVisibility() == View.VISIBLE){
