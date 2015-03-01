@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.http.Http400Exception;
@@ -43,10 +42,9 @@ import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.ExceptionUtil;
-import net.bither.util.HDMSingularUtil;
+import net.bither.util.HDMSingularAndroid;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
-import net.bither.util.WalletUtils;
 import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.security.SecureRandom;
@@ -82,16 +80,16 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
 
     public boolean hdmKeychainLimit;
 
-    public HDMSingularUtil singularUtil;
+    public HDMSingularAndroid singularUtil;
 
-    public HDMHotAddUtil(Activity activity, IHDMHotAddDelegate delegate, HDMSingularUtil.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
+    public HDMHotAddUtil(Activity activity, IHDMHotAddDelegate delegate, HDMSingularAndroid.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
         this.activity = activity;
         this.delegate = delegate;
         passwordGetter = new DialogPassword.PasswordGetter(activity, this);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
         hdmKeychainLimit = AddressManager.isHDMKeychainLimit();
-        singularUtil = new HDMSingularUtil(activity, hdmSingularUtilDelegate);
+        singularUtil = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
     }
 
 

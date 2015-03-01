@@ -30,7 +30,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.util.HDMSingularUtil;
+import net.bither.util.HDMSingularAndroid;
 import net.bither.util.KeyUtil;
 
 /**
@@ -40,7 +40,7 @@ public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
     private static final int MinGeneratingTime = 5000;
     private GenerateThread generateThread;
     public static DialogPassword.PasswordGetter passwordGetter;
-    public static HDMSingularUtil singularUtil;
+    public static HDMSingularAndroid singularUtil;
 
     @Override
     Thread getGeneratingThreadWithXRandom(UEntropyCollector collector,
