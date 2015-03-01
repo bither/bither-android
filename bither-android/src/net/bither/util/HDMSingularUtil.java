@@ -21,6 +21,7 @@ package net.bither.util;
 import android.content.Context;
 
 import net.bither.BitherSetting;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
@@ -187,7 +188,7 @@ public class HDMSingularUtil {
     }
 
     public void server() {
-        new ThreadNeedService(null, context){
+        new ThreadNeedService(null, context) {
             @Override
             public void runWithService(BlockchainService service) {
                 String preSign;
@@ -222,13 +223,13 @@ public class HDMSingularUtil {
                     HDMKeychain keychain = new HDMKeychain(hotMnemonicSeed, password);
                     hdmBid.save();
                     KeyUtil.setHDKeyChain(keychain);
-                    final int count = BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT - keychain
+                    final int count = BitherjSettings.HDM_ADDRESS_PER_SEED_PREPARE_COUNT - keychain
                             .uncompletedAddressCount();
                     if (count > 0) {
                         keychain.prepareAddresses(count, password, Arrays.copyOf(coldRoot,
                                 coldRoot.length));
                     }
-                    if(service != null){
+                    if (service != null) {
                         service.stopAndUnregister();
                     }
                     keychain.completeAddresses(1, password,
@@ -251,7 +252,7 @@ public class HDMSingularUtil {
                                     }
                                 }
                             });
-                    if(service != null){
+                    if (service != null) {
                         service.startAndRegister();
                     }
                 } catch (MnemonicException.MnemonicLengthException e) {

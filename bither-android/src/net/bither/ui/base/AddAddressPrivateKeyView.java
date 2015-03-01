@@ -173,10 +173,10 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         private int getMaxCount() {
             int max = 0;
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-                max = BitherSetting.WATCH_ONLY_ADDRESS_COUNT_LIMIT - AddressManager.getInstance()
+                max = BitherjSettings.WATCH_ONLY_ADDRESS_COUNT_LIMIT - AddressManager.getInstance()
                         .getAllAddresses().size();
             } else {
-                max = BitherSetting.PRIVATE_KEY_OF_HOT_COUNT_LIMIT - AddressManager.getInstance()
+                max = BitherjSettings.PRIVATE_KEY_OF_HOT_COUNT_LIMIT - AddressManager.getInstance()
                         .getPrivKeyAddresses().size();
             }
             return max;

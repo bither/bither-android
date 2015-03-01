@@ -30,6 +30,8 @@ import android.widget.ToggleButton;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
@@ -78,7 +80,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
         if (adapter.getCount() > 1) {
             tbtnPrivateKey.setChecked(true);
         } else {
-            if (WalletUtils.isPrivateLimit()) {
+            if (AddressManager.isPrivateLimit()) {
                 tbtnHDM.setChecked(true);
             } else {
                 tbtnPrivateKey.setChecked(true);
@@ -140,7 +142,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
     private void initPosition(int position) {
         if (position == 1) {
-            if (WalletUtils.isHDMKeychainLimit()) {
+            if (AddressManager.isHDMKeychainLimit()) {
                 DropdownMessage.showDropdownMessage(AddColdAddressActivity.this,
                         R.string.hdm_cold_seed_count_limit);
                 tbtnHDM.setChecked(false);
@@ -153,7 +155,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
                 tbtnPrivateKey.setChecked(false);
             }
         } else {
-            if (WalletUtils.isPrivateLimit()) {
+            if (AddressManager.isPrivateLimit()) {
                 DropdownMessage.showDropdownMessage(AddColdAddressActivity.this,
                         R.string.private_key_count_limit);
                 tbtnHDM.setChecked(true);
@@ -173,10 +175,10 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
         @Override
         public int getCount() {
             int count = 0;
-            if (!WalletUtils.isPrivateLimit()) {
+            if (!AddressManager.isPrivateLimit()) {
                 count++;
             }
-            if (!WalletUtils.isHDMKeychainLimit()) {
+            if (!AddressManager.isHDMKeychainLimit()) {
                 count++;
             }
             return count;
@@ -195,9 +197,9 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
                 }
             } else if (getCount() == 1) {
                 if (index == 0) {
-                    if (!WalletUtils.isPrivateLimit()) {
+                    if (!AddressManager.isPrivateLimit()) {
                         return getPrivateKeyView();
-                    } else if (!WalletUtils.isHDMKeychainLimit()) {
+                    } else if (!AddressManager.isHDMKeychainLimit()) {
                         return getHDMView();
                     } else {
                         return null;

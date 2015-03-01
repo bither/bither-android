@@ -41,6 +41,7 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.DropdownMessage;
@@ -254,7 +255,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     public void moveToFinal(boolean animToFinish) {
-        hdmHotAddWithAndroid.hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
+        hdmHotAddWithAndroid.hdmKeychainLimit = AddressManager.isHDMKeychainLimit();
         llHot.setEnabled(false);
         llHot.setSelected(true);
         llCold.setEnabled(false);
@@ -407,7 +408,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     @Override
     public void singularServerFinish(final List<String> words, final String qr) {
-        hdmHotAddWithAndroid.hdmKeychainLimit = WalletUtils.isHDMKeychainLimit();
+        hdmHotAddWithAndroid.hdmKeychainLimit = AddressManager.isHDMKeychainLimit();
         llHot.setEnabled(false);
         llHot.setSelected(true);
         llCold.setEnabled(false);

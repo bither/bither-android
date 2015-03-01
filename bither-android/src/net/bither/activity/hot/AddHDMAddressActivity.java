@@ -27,6 +27,7 @@ import android.view.View;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
@@ -119,10 +120,10 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
             final String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             try {
                 final byte[] pub = Utils.hexStringToByteArray(result);
-                final int count = Math.min(BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT -
-                        keychain.getAllCompletedAddresses().size() - keychain
-                        .uncompletedAddressCount(),
-                        BitherSetting.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
+                final int count = Math.min(BitherjSettings.HDM_ADDRESS_PER_SEED_COUNT_LIMIT -
+                                keychain.getAllCompletedAddresses().size() - keychain
+                                .uncompletedAddressCount(),
+                        BitherjSettings.HDM_ADDRESS_PER_SEED_PREPARE_COUNT);
                 new Thread() {
                     @Override
                     public void run() {
@@ -240,7 +241,7 @@ public class AddHDMAddressActivity extends FragmentActivity implements DialogPas
 
         @Override
         public int getItemsCount() {
-            int max = BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT - AddressManager.getInstance
+            int max = BitherjSettings.HDM_ADDRESS_PER_SEED_COUNT_LIMIT - AddressManager.getInstance
                     ().getHdmKeychain().getAllCompletedAddresses().size();
             return max;
         }

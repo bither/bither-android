@@ -61,15 +61,15 @@ public class WalletUtils {
     }
 
     // remeber to wipe #address
-    public static SecureCharSequence formatHashFromCharSequence(@Nonnull final SecureCharSequence address, final int groupSize, final int lineSize){
+    public static SecureCharSequence formatHashFromCharSequence(@Nonnull final SecureCharSequence address, final int groupSize, final int lineSize) {
         int length = address.length();
         length = length + length / groupSize - 1;
         char[] chars = new char[length];
-        for(int i = 0; i < length; i++){
-            if(i % (groupSize + 1) == groupSize){
-                if((i + 1) % (lineSize + lineSize / groupSize) == 0){
+        for (int i = 0; i < length; i++) {
+            if (i % (groupSize + 1) == groupSize) {
+                if ((i + 1) % (lineSize + lineSize / groupSize) == 0) {
                     chars[i] = '\n';
-                }else{
+                } else {
                     chars[i] = ' ';
                 }
             } else {
@@ -169,38 +169,5 @@ public class WalletUtils {
     }
 
 
-    public static boolean isPrivateLimit() {
-        int maxPrivateKey = AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD ?
-                BitherSetting.WATCH_ONLY_ADDRESS_COUNT_LIMIT
-                : BitherSetting.PRIVATE_KEY_OF_HOT_COUNT_LIMIT;
-        return AddressManager.getInstance().getPrivKeyAddresses() != null
-                && AddressManager.getInstance().getPrivKeyAddresses().size() >= maxPrivateKey;
-    }
 
-    public static boolean isWatchOnlyLimit() {
-        return AddressManager.getInstance().getWatchOnlyAddresses() != null
-                && AddressManager.getInstance().getWatchOnlyAddresses().size() >= BitherSetting
-                .WATCH_ONLY_ADDRESS_COUNT_LIMIT;
-    }
-
-    public static boolean isHDMKeychainLimit() {
-        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
-            return AddressManager.getInstance().getHdmKeychain() != null;
-        } else {
-            if(AddressManager.getInstance().getHdmKeychain() == null){
-                return false;
-            }
-            return AddressManager.getInstance().getHdmKeychain().getAllCompletedAddresses().size() > 0;
-        }
-    }
-
-    public static boolean isHDMAddressLimit(){
-        if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD){
-            return true;
-        }
-        if(AddressManager.getInstance().getHdmKeychain() == null){
-            return false;
-        }
-        return AddressManager.getInstance().getHdmKeychain().getAllCompletedAddresses().size() >= BitherSetting.HDM_ADDRESS_PER_SEED_COUNT_LIMIT;
-    }
 }
