@@ -50,6 +50,7 @@ import net.bither.ui.base.dialog.DialogHDMInfo;
 import net.bither.util.HDMSingularAndroid;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
+import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ import java.util.List;
  * Created by songchenwen on 15/1/9.
  */
 public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity.AddAddress,
-        HDMHotAddUtil.IHDMHotAddDelegate, HDMSingularAndroid.HDMSingularUtilDelegate,
+        HDMHotAddAndroid.IHDMHotAddDelegate, HDMSingularAndroid.HDMSingularUtilDelegate,
         DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
@@ -78,7 +79,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private TextView tvServer;
     private CheckBox cbxSingular;
     private View llSingularRunning;
-    private HDMHotAddUtil hdmHotAddWithAndroid;
+    private HDMHotAddAndroid hdmHotAddWithAndroid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,7 +121,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         llHot.setOnClickListener(hotClick);
         llCold.setOnClickListener(coldClick);
         llServer.setOnClickListener(serverClick);
-        hdmHotAddWithAndroid = new HDMHotAddUtil(getActivity(), this, this);
+        hdmHotAddWithAndroid = new HDMHotAddAndroid(getActivity(), this, this);
 
     }
 
@@ -437,9 +438,33 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     @Override
-    public void callActivityForResult(Intent intent, int requestCode) {
-        startActivityForResult(intent, requestCode);
+    public void callKeychainHotUEntropy() {
+        startActivityForResult(new Intent(getActivity(),
+                HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
     }
+
+    @Override
+    public void callServerQRCode() {
+
+        startActivityForResult(new Intent(getActivity(),
+                ScanActivity.class), ServerQRCodeRequestCode);
+
+
+    }
+
+    @Override
+    public void callScanCold() {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getActivity(), ScanActivity.class);
+                startActivityForResult(intent, ScanColdRequestCode);
+
+            }
+        });
+
+    }
+
 
     @Override
     public void onDestroyView() {

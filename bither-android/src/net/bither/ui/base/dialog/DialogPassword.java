@@ -35,6 +35,8 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.delegate.IPasswordGetter;
+import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
@@ -358,29 +360,25 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     }
 
     //This class should not be used on main thread
-    public static final class PasswordGetter implements IDialogPasswordListener {
-        public static interface PasswordGetterDelegate {
-            public void beforePasswordDialogShow();
+    public static final class PasswordGetter implements IDialogPasswordListener, IPasswordGetter {
 
-            public void afterPasswordDialogDismiss();
-        }
 
         private ReentrantLock getPasswordLock = new ReentrantLock();
         private Condition withPasswordCondition = getPasswordLock.newCondition();
         private Context context;
         private SecureCharSequence password;
-        private PasswordGetterDelegate delegate;
+        private IPasswordGetterDelegate delegate;
 
         public PasswordGetter(Context context) {
             this(context, null);
         }
 
-        public PasswordGetter(Context context, PasswordGetterDelegate delegate) {
+        public PasswordGetter(Context context, IPasswordGetterDelegate delegate) {
             this.context = context;
             this.delegate = delegate;
         }
 
-        public void setPassword(SecureCharSequence password){
+        public void setPassword(SecureCharSequence password) {
             this.password = password;
         }
 

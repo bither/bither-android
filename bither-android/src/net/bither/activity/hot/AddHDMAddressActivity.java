@@ -34,6 +34,7 @@ import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
@@ -56,8 +57,7 @@ import kankan.wheel.widget.adapters.AbstractWheelTextAdapter;
 /**
  * Created by songchenwen on 15/1/12.
  */
-public class AddHDMAddressActivity extends FragmentActivity implements DialogPassword
-        .PasswordGetter.PasswordGetterDelegate {
+public class AddHDMAddressActivity extends FragmentActivity implements IPasswordGetterDelegate {
     private static final int ColdPubRequestCode = 1609;
 
     private WheelView wvCount;

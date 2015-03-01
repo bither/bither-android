@@ -31,6 +31,10 @@ import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
+import net.bither.bitherj.delegate.HDMHotAdd;
+import net.bither.bitherj.delegate.HDMSingular;
+import net.bither.bitherj.delegate.IPasswordGetter;
+import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
@@ -51,48 +55,27 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
-public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGetterDelegate {
-
-    public static final int XRandomRequestCode = 1552;
-    public static final int ScanColdRequestCode = 1623;
-    public static final int ServerQRCodeRequestCode = 1135;
-
-    public interface IHDMHotAddDelegate {
-        public void moveToCold(boolean anim);
-
-        public void moveToServer(boolean anim);
-
-        public void moveToFinal(boolean isFinal);
-
-        public void callActivityForResult(final Intent intent, final int requestCode);
-
-    }
-
+public class HDMHotAddAndroid extends HDMHotAdd {
     private Activity activity;
-    private IHDMHotAddDelegate delegate;
-    private DialogPassword.PasswordGetter passwordGetter;
     private DialogProgress dp;
-    private boolean isServerClicked = false;
 
-    private HDMBId hdmBid;
-
-    private byte[] coldRoot;
-
-    public boolean hdmKeychainLimit;
-
-    public HDMSingularAndroid singularUtil;
-
-    public HDMHotAddUtil(Activity activity, IHDMHotAddDelegate delegate, HDMSingularAndroid.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
+    public HDMHotAddAndroid(Activity activity, IHDMHotAddDelegate delegate, HDMSingular.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
+        super(delegate, hdmSingularUtilDelegate);
         this.activity = activity;
         this.delegate = delegate;
-        passwordGetter = new DialogPassword.PasswordGetter(activity, this);
+        this.passwordGetter = new DialogPassword.PasswordGetter(activity, this);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
         hdmKeychainLimit = AddressManager.isHDMKeychainLimit();
+
+    }
+
+    @Override
+    public void setHDMSingular(HDMSingular.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
         singularUtil = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
     }
 
-
+    @Override
     public void hotClick() {
         if (hdmKeychainLimit) {
             return;
@@ -112,8 +95,7 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
                     singularUtil.runningWithoutSingularMode();
                 }
                 if (delegate != null) {
-                    delegate.callActivityForResult(new Intent(activity,
-                            HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
+                    delegate.callKeychainHotUEntropy();
                 }
             }
 
@@ -153,6 +135,7 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
         }).show();
     }
 
+    @Override
     public void coldClick() {
         if (hdmKeychainLimit) {
             return;
@@ -165,20 +148,15 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
 
                     @Override
                     public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(activity, ScanActivity.class);
-                                if (delegate != null) {
-                                    delegate.callActivityForResult(intent, ScanColdRequestCode);
-                                }
-                            }
-                        });
+                        if (delegate != null) {
+                            delegate.callScanCold();
+                        }
                     }
                 }).show();
 
     }
 
+    @Override
     public void serviceClick() {
         if (hdmKeychainLimit) {
             return;
@@ -214,9 +192,9 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
                                             .DialogHDMServerUnsignedQRCodeListener() {
                                         @Override
                                         public void scanSignedHDMServerQRCode() {
+
                                             if (delegate != null) {
-                                                delegate.callActivityForResult(new Intent(activity,
-                                                        ScanActivity.class), ServerQRCodeRequestCode);
+                                                delegate.callServerQRCode();
                                             }
 
                                         }
@@ -246,18 +224,6 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
 
     }
 
-    private void initHDMBidFromColdRoot() {
-        if (hdmBid != null) {
-            return;
-        }
-        DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(Arrays.copyOf
-                (coldRoot, coldRoot.length));
-        DeterministicKey key = root.deriveSoftened(0);
-        String address = Utils.toAddress(key.getPubKeyHash());
-        root.wipe();
-        key.wipe();
-        hdmBid = new HDMBId(address);
-    }
 
     public void xrandomResult() {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -276,6 +242,7 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
 
     }
 
+    @Override
     public void scanColdResult(String result) {
         try {
             coldRoot = Utils.hexStringToByteArray(result);
@@ -345,6 +312,7 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
 
     }
 
+    @Override
     public void serverQRCode(final String result) {
         if (hdmBid == null) {
             return;
@@ -440,17 +408,6 @@ public class HDMHotAddUtil implements DialogPassword.PasswordGetter.PasswordGett
             }
         }.start();
     }
-
-
-    public void wipe() {
-        if (passwordGetter != null) {
-            passwordGetter.wipe();
-        }
-        if (coldRoot != null) {
-            Utils.wipeBytes(coldRoot);
-        }
-    }
-
 
     @Override
     public void beforePasswordDialogShow() {

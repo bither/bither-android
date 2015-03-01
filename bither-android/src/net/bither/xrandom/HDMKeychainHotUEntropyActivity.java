@@ -25,6 +25,8 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.delegate.HDMSingular;
+import net.bither.bitherj.delegate.IPasswordGetter;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -39,8 +41,8 @@ import net.bither.util.KeyUtil;
 public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
     private static final int MinGeneratingTime = 5000;
     private GenerateThread generateThread;
-    public static DialogPassword.PasswordGetter passwordGetter;
-    public static HDMSingularAndroid singularUtil;
+    public static IPasswordGetter passwordGetter;
+    public static HDMSingular singularUtil;
 
     @Override
     Thread getGeneratingThreadWithXRandom(UEntropyCollector collector,
