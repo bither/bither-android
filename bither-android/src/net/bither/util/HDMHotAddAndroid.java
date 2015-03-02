@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.bither.fragment.hot;
+package net.bither.util;
 
 import android.app.Activity;
 import android.os.Handler;

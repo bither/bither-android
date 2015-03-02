@@ -47,6 +47,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogHDMInfo;
+import net.bither.util.HDMHotAddAndroid;
 import net.bither.util.HDMSingularAndroid;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
