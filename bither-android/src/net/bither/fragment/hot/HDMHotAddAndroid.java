@@ -17,7 +17,6 @@
 package net.bither.fragment.hot;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -26,17 +25,11 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
-import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.crypto.hd.DeterministicKey;
-import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.delegate.HDMHotAdd;
 import net.bither.bitherj.delegate.HDMSingular;
-import net.bither.bitherj.delegate.IPasswordGetter;
-import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.bitherj.utils.Utils;
-import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -60,9 +53,10 @@ public class HDMHotAddAndroid extends HDMHotAdd {
     private DialogProgress dp;
 
     public HDMHotAddAndroid(Activity activity, IHDMHotAddDelegate delegate, HDMSingular.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
-        super(delegate, hdmSingularUtilDelegate);
+        super(delegate);
         this.activity = activity;
         this.delegate = delegate;
+        singularUtil = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
         this.passwordGetter = new DialogPassword.PasswordGetter(activity, this);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
@@ -70,10 +64,6 @@ public class HDMHotAddAndroid extends HDMHotAdd {
 
     }
 
-    @Override
-    public void setHDMSingular(HDMSingular.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
-        singularUtil = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
-    }
 
     @Override
     public void hotClick() {
@@ -418,8 +408,8 @@ public class HDMHotAddAndroid extends HDMHotAdd {
 
     @Override
     public void afterPasswordDialogDismiss() {
-        if (dp != null && !dp.isShowing()) {
-            dp.show();
+        if (dp != null && dp.isShowing()) {
+            dp.dismiss();
         }
     }
 

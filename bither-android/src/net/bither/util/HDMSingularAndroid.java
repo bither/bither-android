@@ -20,34 +20,17 @@ package net.bither.util;
 
 import android.content.Context;
 
-import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
-import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.HDMKeychain;
-import net.bither.bitherj.crypto.EncryptedData;
-import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.crypto.hd.DeterministicKey;
-import net.bither.bitherj.crypto.hd.HDKeyDerivation;
-import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
-import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.delegate.AbstratHDMHotAdd;
 import net.bither.bitherj.delegate.HDMSingular;
-import net.bither.bitherj.qrcode.QRCodeUtil;
-import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
-/**
- * Created by songchenwen on 15/2/12.
- */
 public class HDMSingularAndroid extends HDMSingular {
 
 
@@ -90,7 +73,7 @@ public class HDMSingularAndroid extends HDMSingular {
                         }
                     }
 
-                   
+
                 });
             }
         }.start();
