@@ -44,7 +44,7 @@ public class PasswordEntryKeyboardView extends EntryKeyboardView {
 
     @Override
     protected int getSymKeyboard() {
-        return 0;
+        return R.xml.password_keyboard_symbol;
     }
 
     @Override

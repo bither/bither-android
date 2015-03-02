@@ -305,26 +305,26 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         final Keyboard current = getKeyboard();
         Keyboard next = null;
         if (current == mQwertyKeyboard || current == mQwertyKeyboardShifted) {
-            next = mNumericKeyboard;
-            if (next != null) {
-                mKeyboardMode = KEYBOARD_MODE_NUMERIC;
-            }
-        } else if (current == mNumericKeyboard) {
             if (mSymKeyboard != null) {
                 next = mSymKeyboard;
                 if (next != null) {
                     mKeyboardMode = KEYBOARD_MODE_SYM;
                 }
             } else {
-                next = mQwertyKeyboard;
+                next = mNumericKeyboard;
                 if (next != null) {
-                    mKeyboardMode = KEYBOARD_MODE_ALPHA;
+                    mKeyboardMode = KEYBOARD_MODE_NUMERIC;
                 }
             }
-        } else if (current == mSymKeyboard) {
+        } else if (current == mNumericKeyboard) {
             next = mQwertyKeyboard;
             if (next != null) {
                 mKeyboardMode = KEYBOARD_MODE_ALPHA;
+            }
+        } else if (current == mSymKeyboard) {
+            next = mNumericKeyboard;
+            if (next != null) {
+                mKeyboardMode = KEYBOARD_MODE_NUMERIC;
             }
         }
         if (next != null) {
@@ -572,6 +572,9 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         }
         if (mQwertyKeyboardShifted != null) {
             mQwertyKeyboardShifted.setEnterKeyText(text);
+        }
+        if (mSymKeyboard != null) {
+            mSymKeyboard.setEnterKeyText(text);
         }
     }
 
