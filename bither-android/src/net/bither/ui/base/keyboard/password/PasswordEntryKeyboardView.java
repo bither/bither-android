@@ -43,6 +43,11 @@ public class PasswordEntryKeyboardView extends EntryKeyboardView {
     }
 
     @Override
+    protected int getSymKeyboard() {
+        return 0;
+    }
+
+    @Override
     protected int getDefaultKeyboardMode() {
         return EntryKeyboardView.KEYBOARD_MODE_NUMERIC;
     }
