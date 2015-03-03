@@ -23,6 +23,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_HD_SEEDS_SQL);
         db.execSQL(AbstractDb.CREATE_HDM_ADDRESSES_SQL);
         db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
+        db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
     }
 
     @Override

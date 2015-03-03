@@ -712,7 +712,7 @@ public class AddressProvider implements IAddressProvider {
     public Map<String, String> getAliases() {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Map<String, String> aliasList = new HashMap<String, String>();
-        Cursor cursor = db.rawQuery("select address,alias from aliases", null);
+        Cursor cursor = db.rawQuery("select * from aliases", null);
 
         while (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.AliasColumns.ADDRESS);
@@ -738,7 +738,7 @@ public class AddressProvider implements IAddressProvider {
         if (alias == null) {
             db.delete(AbstractDb.Tables.Aliases, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
         } else {
-            db.execSQL("insert or replace aliases(address,alias), values(?,?)", new String[]{address, alias});
+            db.execSQL("insert or replace into aliases(address,alias) values(?,?)", new String[]{address, alias});
         }
     }
 
