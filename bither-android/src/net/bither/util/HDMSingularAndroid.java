@@ -22,7 +22,7 @@ import android.content.Context;
 
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.HDMKeychain;
-import net.bither.bitherj.delegate.AbstratHDMHotAdd;
+import net.bither.bitherj.delegate.HDMHotAdd;
 import net.bither.bitherj.delegate.HDMSingular;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -52,7 +52,7 @@ public class HDMSingularAndroid extends HDMSingular {
         new ThreadNeedService(null, context) {
             @Override
             public void runWithService(final BlockchainService service) {
-                callInServer(new AbstratHDMHotAdd.IGenerateHDMKeyChain() {
+                callInServer(new HDMHotAdd.IGenerateHDMKeyChain() {
                     @Override
                     public void generateHDMKeyChain(HDMKeychain hdmKeychain) {
                         KeyUtil.setHDKeyChain(hdmKeychain);
