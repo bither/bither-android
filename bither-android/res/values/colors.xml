@@ -85,4 +85,7 @@
     <!-- raw private key -->
     <color name="raw_private_key_one">#ff9329</color>
     <color name="raw_private_key_zero">#3bbf59</color>
+
+    <!-- address alias -->
+    <color name="address_alias_color">#ff666666</color>
 </resources>

@@ -196,7 +196,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         public void onClick(View v) {
             try {
                 DialogBalanceDetail dialog = new DialogBalanceDetail(activity,
-                        balanceDetailFuture.get());
+                        balanceDetailFuture.get(), address.getAlias());
                 dialog.show(v);
             } catch (Exception e) {
                 e.printStackTrace();

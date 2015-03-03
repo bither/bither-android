@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,13 +30,16 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
-public class ColdAddressFragmentListItemView extends FrameLayout {
+public class ColdAddressFragmentListItemView extends FrameLayout implements DialogAddressAlias
+        .DialogAddressAliasDelegate {
     private Activity activity;
     private Address address;
     private FrameLayout flAddress;
@@ -43,6 +47,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
     private QrCodeImageView ivQr;
     private ImageView ivType;
     private ImageButton ibtnXRandomLabel;
+    private Button btnAlias;
 
     public ColdAddressFragmentListItemView(Activity context) {
         super(context);
@@ -58,11 +63,13 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         ivQr = (QrCodeImageView) findViewById(R.id.iv_qrcode);
         tvAddress = (TextView) findViewById(R.id.tv_address);
         ivType = (ImageView) findViewById(R.id.iv_type);
+        btnAlias = (Button) findViewById(R.id.btn_address_alias);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
         ivType.setOnLongClickListener(typeClick);
+        btnAlias.setOnClickListener(aliasClick);
     }
 
     public void showAddress(final Address address) {
@@ -74,13 +81,19 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         } else {
             ibtnXRandomLabel.setVisibility(View.GONE);
         }
+        if (!Utils.isEmpty(address.getAlias())) {
+            btnAlias.setVisibility(View.VISIBLE);
+            btnAlias.setText(address.getAlias());
+        } else {
+            btnAlias.setText("");
+            btnAlias.setVisibility(View.INVISIBLE);
+        }
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey
-                    (activity, address);
+            DialogAddressWithShowPrivateKey dialog = new DialogAddressWithShowPrivateKey(activity, address, ColdAddressFragmentListItemView.this);
             dialog.show();
             return true;
         }
@@ -124,4 +137,22 @@ public class ColdAddressFragmentListItemView extends FrameLayout {
         }
     };
 
+    private OnClickListener aliasClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogAddressAlias(getContext(), address, ColdAddressFragmentListItemView.this)
+                    .show();
+        }
+    };
+
+    @Override
+    public void onAddressAliasChanged(Address address, String alias) {
+        if (!Utils.isEmpty(alias)) {
+            btnAlias.setText(alias);
+            btnAlias.setVisibility(View.VISIBLE);
+        } else {
+            btnAlias.setText("");
+            btnAlias.setVisibility(View.INVISIBLE);
+        }
+    }
 }

@@ -29,9 +29,9 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.SignMessageActivity;
 import net.bither.activity.hot.AddressDetailActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.fragment.cold.ColdAddressFragment;
@@ -49,13 +49,16 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
     private LinearLayout llOriginQRCode;
     private LinearLayout llSignMessage;
     private Activity activity;
+    private DialogAddressAlias.DialogAddressAliasDelegate aliasDelegate;
     private int clickedView;
 
-    public DialogAddressWithShowPrivateKey(Activity context,
-                                           Address address) {
+    public DialogAddressWithShowPrivateKey(Activity context, Address address,
+                                           DialogAddressAlias.DialogAddressAliasDelegate
+                                                   aliasDelegate) {
         super(context);
         this.activity = context;
         this.address = address;
+        this.aliasDelegate = aliasDelegate;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_show_private_key);
         llOriginQRCode = (LinearLayout) findViewById(R.id.ll_origin_qr_code);
@@ -64,6 +67,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
         findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
+        findViewById(R.id.ll_address_alias).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
@@ -76,6 +80,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
         dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getFullEncryptPrivKey(),
                 address.getAddress());
+        if (aliasDelegate == null) {
+            findViewById(R.id.ll_address_alias).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -111,6 +118,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 Intent intent = new Intent(activity, SignMessageActivity.class);
                 intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
                 activity.startActivity(intent);
+                break;
+            case R.id.tv_address_alias:
+                new DialogAddressAlias(getContext(), address, aliasDelegate).show();
                 break;
             default:
                 return;

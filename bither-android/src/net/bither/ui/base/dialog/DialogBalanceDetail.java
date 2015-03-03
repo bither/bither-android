@@ -17,30 +17,37 @@
 package net.bither.ui.base.dialog;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.UIUtil;
 import net.bither.util.UnitUtilWrapper;
-
-import java.util.List;
 
 public class DialogBalanceDetail extends DialogWithArrow {
     private TextView tvTransactionCount;
     private TextView tvReceived;
     private TextView tvSent;
+    private TextView tvAlias;
 
-    public DialogBalanceDetail(Context context, Info info) {
+    public DialogBalanceDetail(Context context, Info info, String alias) {
         super(context);
         setContentView(R.layout.dialog_balance_detail);
         tvTransactionCount = (TextView) findViewById(R.id.tv_transaction_count);
         tvReceived = (TextView) findViewById(R.id.tv_received);
         tvSent = (TextView) findViewById(R.id.tv_sent);
+        tvAlias = (TextView) findViewById(R.id.tv_address_alias);
         tvTransactionCount.setText(Integer.toString(info.txCount));
         tvReceived.setText(UnitUtilWrapper.formatValueWithBold(info.totalReceived));
         tvSent.setText(UnitUtilWrapper.formatValueWithBold(info.totalSent));
+        if (!Utils.isEmpty(alias)) {
+            tvAlias.setText(alias);
+            tvAlias.setVisibility(View.VISIBLE);
+        } else {
+            tvAlias.setVisibility(View.GONE);
+        }
     }
 
     @Override

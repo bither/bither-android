@@ -68,6 +68,18 @@
             android:paddingBottom="7dp"
             android:paddingLeft="@dimen/card_padding">
 
+            <Button
+                android:id="@+id/btn_address_alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="2dp"
+                android:textColor="@color/address_alias_color"
+                android:background="@drawable/address_alias_bg_selector"
+                android:gravity="center"
+                android:visibility="invisible"
+                android:textSize="12sp"/>
+
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="1dp"

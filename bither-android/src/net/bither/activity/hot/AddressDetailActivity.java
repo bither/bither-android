@@ -232,8 +232,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
             Dialog dialog = null;
             if (address.isHDM()) {
-                new DialogHDMAddressOptions(AddressDetailActivity.this,
-                        (HDMAddress) address).show();
+                new DialogHDMAddressOptions(AddressDetailActivity.this, (HDMAddress) address,
+                        true).show();
             } else if (address.hasPrivKey()) {
                 dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
             } else {

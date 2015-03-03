@@ -376,7 +376,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             if (address.isHDM()) {
                 new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
             } else if (address.hasPrivKey()) {
-                new DialogAddressWithShowPrivateKey(activity, address).show();
+                new DialogAddressWithShowPrivateKey(activity, address, null).show();
             } else {
                 new DialogAddressWatchOnlyLongClick(activity, address).show();
             }
