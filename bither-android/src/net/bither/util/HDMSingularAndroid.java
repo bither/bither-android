@@ -37,7 +37,7 @@ public class HDMSingularAndroid extends HDMSingular {
     private Context context;
 
 
-    public HDMSingularAndroid(@Nonnull Context context, @Nonnull HDMSingularUtilDelegate delegate) {
+    public HDMSingularAndroid(@Nonnull Context context, @Nonnull HDMSingularDelegate delegate) {
         super(delegate);
         this.context = context;
 

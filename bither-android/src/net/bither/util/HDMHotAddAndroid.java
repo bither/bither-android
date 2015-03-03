@@ -38,10 +38,6 @@ import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
 import net.bither.ui.base.dialog.DialogHdmKeychainAddHot;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.util.ExceptionUtil;
-import net.bither.util.HDMSingularAndroid;
-import net.bither.util.KeyUtil;
-import net.bither.util.ThreadUtil;
 import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
 
 import java.security.SecureRandom;
@@ -52,7 +48,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
     private Activity activity;
     private DialogProgress dp;
 
-    public HDMHotAddAndroid(Activity activity, IHDMHotAddDelegate delegate, HDMSingular.HDMSingularUtilDelegate hdmSingularUtilDelegate) {
+    public HDMHotAddAndroid(Activity activity, IHDMHotAddDelegate delegate, HDMSingular.HDMSingularDelegate hdmSingularUtilDelegate) {
         super(delegate);
         this.activity = activity;
         this.delegate = delegate;

@@ -41,6 +41,7 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.delegate.HDMSingular;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.DropdownMessage;
@@ -48,7 +49,6 @@ import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogHDMInfo;
 import net.bither.util.HDMHotAddAndroid;
-import net.bither.util.HDMSingularAndroid;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.xrandom.HDMKeychainHotUEntropyActivity;
@@ -60,7 +60,7 @@ import java.util.List;
  * Created by songchenwen on 15/1/9.
  */
 public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity.AddAddress,
-        HDMHotAddAndroid.IHDMHotAddDelegate, HDMSingularAndroid.HDMSingularUtilDelegate,
+        HDMHotAddAndroid.IHDMHotAddDelegate, HDMSingular.HDMSingularDelegate,
         DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
