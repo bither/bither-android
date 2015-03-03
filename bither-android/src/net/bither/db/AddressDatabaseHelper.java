@@ -9,7 +9,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 3;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -34,6 +34,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
             if (!Utils.isEmpty(passwordSeedStr)) {
                 db.execSQL("insert into password_seed (password_seed) values (?) ", new String[]{passwordSeedStr});
             }
+        } else if (oldVersion == 2 && newVersion == 3) {
+            db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
         }
     }
 }

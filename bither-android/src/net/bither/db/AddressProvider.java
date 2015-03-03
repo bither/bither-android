@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 public class AddressProvider implements IAddressProvider {
 
     private static AddressProvider addressProvider = new AddressProvider(BitherApplication.mAddressDbHelper);
@@ -691,7 +693,29 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, encryptPriv);
         db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
                 , new String[]{address});
+    }
 
+    @Override
+    public String getAlias(String address) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String alias = null;
+        Cursor cursor = db.rawQuery("select alias from aliases where address=?", new String[]{address});
+
+        if (cursor.moveToNext()) {
+            alias = cursor.getString(0);
+        }
+        cursor.close();
+        return alias;
+    }
+
+    @Override
+    public void updateAlias(String address, @Nullable String alias) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        if (alias == null) {
+            db.delete(AbstractDb.Tables.Aliases, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
+        } else {
+            db.execSQL("insert or replace aliases(address,alias), values(?,?)", new String[]{address, alias});
+        }
     }
 
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
