@@ -25,6 +25,7 @@ import net.bither.R;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHDMServerUnsignedQRCode;
@@ -37,8 +38,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by songchenwen on 15/2/11.
  */
-public class HDMResetServerPasswordUtil implements DialogPassword.PasswordGetter
-        .PasswordGetterDelegate {
+public class HDMResetServerPasswordUtil implements IPasswordGetterDelegate {
     private int ServerQRCodeRequestCode = 1651;
 
     private DialogPassword.PasswordGetter passwordGetter;
@@ -117,23 +117,23 @@ public class HDMResetServerPasswordUtil implements DialogPassword.PasswordGetter
                 new DialogHDMServerUnsignedQRCode(context, preSign,
                         new DialogHDMServerUnsignedQRCode.DialogHDMServerUnsignedQRCodeListener() {
 
-                    @Override
-                    public void scanSignedHDMServerQRCode() {
-                        context.startActivityForResult(new Intent(context, ScanActivity.class),
-                                ServerQRCodeRequestCode);
-                    }
+                            @Override
+                            public void scanSignedHDMServerQRCode() {
+                                context.startActivityForResult(new Intent(context, ScanActivity.class),
+                                        ServerQRCodeRequestCode);
+                            }
 
-                    @Override
-                    public void scanSignedHDMServerQRCodeCancel() {
-                        serverSignature = null;
-                        try {
-                            lock.lock();
-                            hdmIdCondiction.signal();
-                        } finally {
-                            lock.unlock();
-                        }
-                    }
-                }).show();
+                            @Override
+                            public void scanSignedHDMServerQRCodeCancel() {
+                                serverSignature = null;
+                                try {
+                                    lock.lock();
+                                    hdmIdCondiction.signal();
+                                } finally {
+                                    lock.unlock();
+                                }
+                            }
+                        }).show();
             }
         });
         try {
@@ -154,7 +154,7 @@ public class HDMResetServerPasswordUtil implements DialogPassword.PasswordGetter
         context.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!dp.isShowing()){
+                if (!dp.isShowing()) {
                     dp.show();
                 }
             }

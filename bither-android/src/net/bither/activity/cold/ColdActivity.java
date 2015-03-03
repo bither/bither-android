@@ -176,7 +176,7 @@ public class ColdActivity extends BaseFragmentActivity {
 
             @Override
             public void onClick(View v) {
-                if (WalletUtils.isPrivateLimit()) {
+                if (AddressManager.isPrivateLimit()) {
                     DropdownMessage.showDropdownMessage(ColdActivity.this,
                             R.string.private_key_count_limit);
                     return;

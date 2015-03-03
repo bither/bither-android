@@ -238,7 +238,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
                 return;
             }
-            if (WalletUtils.isHDMAddressLimit()) {
+            if (AddressManager.isHDMAddressLimit()) {
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
                 return;
             }

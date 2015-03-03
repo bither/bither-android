@@ -30,6 +30,7 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.hot.AddAddressHotHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
@@ -68,8 +69,8 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         } else {
             shouldSuggestCheck = false;
         }
-        privateLimit = WalletUtils.isPrivateLimit();
-        watchOnlyLimit = WalletUtils.isWatchOnlyLimit();
+        privateLimit = AddressManager.isPrivateLimit();
+        watchOnlyLimit = AddressManager.isWatchOnlyLimit();
         hdmLimit = false;
         initView();
     }
