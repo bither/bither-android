@@ -561,4 +561,13 @@
     <string name="hdm_singular_cold_seed_remember_button">I have saved my HDM Cold seed.</string>
     <string name="hdm_singular_cold_seed_tab_words">Seed Phrase</string>
     <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
+
+    <!-- address alias -->
+    <string name="address_alias_manage">Address Alias</string>
+    <string name="address_alias_add">Set Address Alias</string>
+    <string name="address_alias_remove">Remove Address Alias</string>
+    <string name="address_alias_edit">Edit Address Alias</string>
+    <string name="address_alias_input_label">Enter alias for this address</string>
+    <string name="address_alias_input_hint">Alias</string>
+    <string name="address_alias_remove_confirm">Remove alias for this address?</string>
 </resources>
