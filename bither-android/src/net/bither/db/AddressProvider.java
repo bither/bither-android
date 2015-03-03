@@ -709,6 +709,30 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public Map<String, String> getAliases() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Map<String, String> aliasList = new HashMap<String, String>();
+        Cursor cursor = db.rawQuery("select address,alias from aliases", null);
+
+        while (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.AliasColumns.ADDRESS);
+            String address = null;
+            String alias = null;
+            if (idColumn > -1) {
+                address = cursor.getString(idColumn);
+            }
+            idColumn = cursor.getColumnIndex(AbstractDb.AliasColumns.ALIAS);
+            if (idColumn > -1) {
+                alias = cursor.getString(idColumn);
+            }
+            aliasList.put(address, alias);
+
+        }
+        cursor.close();
+        return aliasList;
+    }
+
+    @Override
     public void updateAlias(String address, @Nullable String alias) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         if (alias == null) {
