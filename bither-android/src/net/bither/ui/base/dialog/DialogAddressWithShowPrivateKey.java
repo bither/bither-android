@@ -67,7 +67,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
         findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
-        findViewById(R.id.tv_address_alias).setOnClickListener(this);
+        findViewById(R.id.ll_address_alias).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
         llOriginQRCode.setVisibility(View.GONE);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
@@ -80,6 +80,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
         dialogPrivateKey = new DialogPrivateKeyQrCode(context, address.getFullEncryptPrivKey(),
                 address.getAddress());
+        if (aliasDelegate == null) {
+            findViewById(R.id.ll_address_alias).setVisibility(View.GONE);
+        }
     }
 
     @Override

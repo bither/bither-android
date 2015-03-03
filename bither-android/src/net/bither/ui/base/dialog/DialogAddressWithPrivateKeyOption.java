@@ -64,7 +64,7 @@ public class DialogAddressWithPrivateKeyOption extends DialogWithActions {
         actions.add(new Action(R.string.private_key_management, new Runnable() {
             @Override
             public void run() {
-                new DialogAddressWithShowPrivateKey(activity, address).show();
+                new DialogAddressWithShowPrivateKey(activity, address, null).show();
             }
         }));
         actions.add(new Action(R.string.sign_message_activity_name, new Runnable() {
