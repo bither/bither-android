@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,6 +32,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.util.UnitUtilWrapper;
@@ -39,13 +41,13 @@ import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class AddressFragmentListItemView extends FrameLayout implements
-        AddressInfoChangedObserver, MarketTickerChangedObserver {
+public class AddressFragmentListItemView extends FrameLayout implements AddressInfoChangedObserver, MarketTickerChangedObserver, DialogAddressAlias.DialogAddressAliasDelegate {
 
     private FragmentActivity activity;
     private TextView tvAddress;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
+    private Button btnAlias;
     private BtcToMoneyTextView tvBalanceMoney;
     public ImageView ivType;
     private ImageButton ibtnXRandomLabel;
@@ -66,6 +68,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
 
     private void initView() {
         tvAddress = (TextView) findViewById(R.id.tv_address);
+        btnAlias = (Button) findViewById(R.id.btn_address_alias);
         tvBalance = (TextView) findViewById(R.id.tv_balance);
         ivBalanceSymbol = (ImageView) findViewById(R.id.iv_balance_symbol);
         tvTransactionCount = (TextView) findViewById(R.id.tv_transaction_count);
@@ -76,6 +79,7 @@ public class AddressFragmentListItemView extends FrameLayout implements
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
+        btnAlias.setOnClickListener(aliasClick);
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
                 .v_transaction_immuture);
         vTransactionImmuture.setActivity(activity);
@@ -147,6 +151,14 @@ public class AddressFragmentListItemView extends FrameLayout implements
         } else {
             ibtnXRandomLabel.setVisibility(View.GONE);
         }
+
+        if (!Utils.isEmpty(address.getAlias())) {
+            btnAlias.setVisibility(View.VISIBLE);
+            btnAlias.setText(address.getAlias());
+        } else {
+            btnAlias.setText("");
+            btnAlias.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -169,6 +181,24 @@ public class AddressFragmentListItemView extends FrameLayout implements
             map.put(address.getAddress(), 0L);
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);
+        }
+    };
+
+    @Override
+    public void onAddressAliasChanged(Address address, String alias) {
+        if (!Utils.isEmpty(alias)) {
+            btnAlias.setText(alias);
+            btnAlias.setVisibility(View.VISIBLE);
+        } else {
+            btnAlias.setText("");
+            btnAlias.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private OnClickListener aliasClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogAddressAlias(getContext(), address, AddressFragmentListItemView.this).show();
         }
     };
 

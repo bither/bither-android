@@ -17,86 +17,70 @@
 package net.bither.ui.base.dialog;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.SignMessageActivity;
+import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
-import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.util.UIUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class DialogAddressWithPrivateKeyOption extends CenterDialog implements View
-        .OnClickListener, DialogInterface.OnDismissListener {
-    private DialogFancyQrCode dialogQr;
+public class DialogAddressWithPrivateKeyOption extends DialogWithActions {
     private Address address;
     private Activity activity;
-    private int clickedView;
-    private TextView tvBlockMeta;
-    private ImageView ivBlockMeta;
 
     public DialogAddressWithPrivateKeyOption(Activity context, Address address) {
         super(context);
         this.activity = context;
         this.address = address;
-        setOnDismissListener(this);
-        setContentView(R.layout.dialog_address_with_private_key_option);
-        tvBlockMeta = (TextView) findViewById(R.id.tv_view_on_blockmeta);
-        ivBlockMeta = (ImageView) findViewById(R.id.iv_blockmeta);
-        findViewById(R.id.tv_view_on_blockchaininfo).setOnClickListener(this);
-        findViewById(R.id.tv_private_key_management).setOnClickListener(this);
-        findViewById(R.id.tv_sign_message).setOnClickListener(this);
-        findViewById(R.id.tv_close).setOnClickListener(this);
-        tvBlockMeta.setOnClickListener(this);
-        dialogQr = new DialogFancyQrCode(context, address.getAddress(), false, true);
+    }
+
+    @Override
+    protected List<Action> getActions() {
+        ArrayList<Action> actions = new ArrayList<Action>();
+        actions.add(new Action(R.string.address_option_view_on_blockchain_info, new Runnable() {
+            @Override
+            public void run() {
+                UIUtil.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
+                        .getAddress());
+            }
+        }));
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString(defaultCountry,
                 "cn")) {
-        } else {
-            tvBlockMeta.setVisibility(View.GONE);
-            ivBlockMeta.setVisibility(View.GONE);
+            actions.add(new Action(R.string.address_option_view_on_blockmeta, new Runnable() {
+                @Override
+                public void run() {
+                    UIUtil.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
+                            .getAddress());
+                }
+            }));
         }
-    }
-
-    @Override
-    public void show() {
-        clickedView = 0;
-        super.show();
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        switch (clickedView) {
-            case R.id.tv_view_on_blockchaininfo:
-                UIUtil.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
-                        .getAddress());
-                break;
-            case R.id.tv_view_on_blockmeta:
-                UIUtil.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
-                        .getAddress());
-                break;
-            case R.id.tv_private_key_management:
+        actions.add(new Action(R.string.private_key_management, new Runnable() {
+            @Override
+            public void run() {
                 new DialogAddressWithShowPrivateKey(activity, address).show();
-                break;
-            case R.id.tv_sign_message:
+            }
+        }));
+        actions.add(new Action(R.string.sign_message_activity_name, new Runnable() {
+            @Override
+            public void run() {
                 Intent intent = new Intent(activity, SignMessageActivity.class);
                 intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
                 activity.startActivity(intent);
-                break;
-            default:
-                return;
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        clickedView = v.getId();
-        dismiss();
+            }
+        }));
+        actions.add(new Action(R.string.address_alias_manage, new Runnable() {
+            @Override
+            public void run() {
+                new DialogAddressAlias(activity, address, null).show();
+            }
+        }));
+        return actions;
     }
 }

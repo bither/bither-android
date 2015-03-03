@@ -47,11 +47,17 @@ import java.util.Locale;
 public class DialogHDMAddressOptions extends DialogWithActions {
     private HDMAddress address;
     private Activity activity;
+    private boolean withAlias;
 
     public DialogHDMAddressOptions(Activity activity, HDMAddress address) {
+        this(activity, address, false);
+    }
+
+    public DialogHDMAddressOptions(Activity activity, HDMAddress address, boolean withAlias) {
         super(activity);
         this.address = address;
         this.activity = activity;
+        this.withAlias = withAlias;
     }
 
     @Override
@@ -131,6 +137,14 @@ public class DialogHDMAddressOptions extends DialogWithActions {
                 }).show();
             }
         });
+        if (withAlias) {
+            acitons.add(new Action(R.string.address_alias_manage, new Runnable() {
+                @Override
+                public void run() {
+                    new DialogAddressAlias(getContext(), address, null).show();
+                }
+            }));
+        }
         // Not support move hdm address to trash now
         // acitons.add(moveToTrashAction);
         return acitons;
