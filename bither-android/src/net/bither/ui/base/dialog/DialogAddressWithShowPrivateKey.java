@@ -119,7 +119,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
                 activity.startActivity(intent);
                 break;
-            case R.id.tv_address_alias:
+            case R.id.ll_address_alias:
                 new DialogAddressAlias(getContext(), address, aliasDelegate).show();
                 break;
             default:
