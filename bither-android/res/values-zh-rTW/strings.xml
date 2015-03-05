@@ -72,6 +72,7 @@
     <string name="address_detail_private_key_qr_code">私鑰二維碼</string>
     <string name="address_detail_private_key_qr_code_encrypted">私鑰二維碼 (加密)</string>
     <string name="address_detail_private_key_qr_code_decrypted">私鑰二維碼 (解密)</string>
+    <string name="address_detail_private_Key_qr_code_bip38">BIP38 私鑰二維碼</string>
     <string name="address_detail_private_key_qr_code_backup">備份私鑰</string>
 
     <!-- add address -->

@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.runnable.FancyQrCodeThread;
@@ -50,13 +51,22 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
     private Bitmap qrCode;
     private int clickedView = 0;
 
-    public DialogPrivateKeyQrCode(Activity context, String keyString, String address) {
+    public DialogPrivateKeyQrCode(Activity context, String keyString, String address){
+        this(context, keyString, BitherSetting.QRCodeType.Bither, address);
+    }
+
+    public DialogPrivateKeyQrCode(Activity context, String keyString,
+                                  BitherSetting.QRCodeType type, String address) {
         super(context, R.style.tipsDialog);
         this.activity = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
         setCanceledOnTouchOutside(true);
-        this.content = QRCodeUtil.encodeQrCodeString(keyString);
+        if (type == BitherSetting.QRCodeType.Bither) {
+            this.content = QRCodeUtil.encodeQrCodeString(keyString);
+        } else {
+            this.content = keyString;
+        }
         this.address = address;
         setContentView(R.layout.dialog_private_key_qr_code);
         setOnDismissListener(this);

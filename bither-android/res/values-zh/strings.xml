@@ -72,6 +72,7 @@
     <string name="address_detail_private_key_qr_code">私钥二维码</string>
     <string name="address_detail_private_key_qr_code_encrypted">私钥二维码 (加密)</string>
     <string name="address_detail_private_key_qr_code_decrypted">私钥二维码 (解密)</string>
+    <string name="address_detail_private_Key_qr_code_bip38">BIP38 私钥二维码</string>
 
     <string name="address_detail_private_key_qr_code_backup">备份私钥</string>
 

@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SignMessageActivity;
 import net.bither.activity.hot.AddressDetailActivity;
@@ -66,6 +67,7 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
         findViewById(R.id.tv_view_show_private_key).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_decrypted).setOnClickListener(this);
         findViewById(R.id.tv_private_key_qr_code_encrypted).setOnClickListener(this);
+        findViewById(R.id.tv_private_key_qr_code_bip38).setOnClickListener(this);
         findViewById(R.id.tv_trash_private_key).setOnClickListener(this);
         findViewById(R.id.ll_address_alias).setOnClickListener(this);
         llOriginQRCode.setOnClickListener(this);
@@ -104,6 +106,9 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                 new DialogPassword(activity, this).show();
                 break;
             case R.id.tv_private_key_qr_code_decrypted:
+                new DialogPassword(activity, this).show();
+                break;
+            case R.id.tv_private_key_qr_code_bip38:
                 new DialogPassword(activity, this).show();
                 break;
             case R.id.tv_trash_private_key:
@@ -202,6 +207,32 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                         });
                     }
                 }).start();
+                break;
+            case R.id.tv_private_key_qr_code_bip38:
+                dialogProgress = new DialogProgress(this.activity, R.string.please_wait);
+                dialogProgress.show();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            final String BIP38 = PrivateKeyUtil.getBIP38PrivateKeyString(address,
+                                    password);
+                            password.wipe();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialogProgress.dismiss();
+                                    new DialogPrivateKeyQrCode(activity, BIP38,
+                                            BitherSetting.QRCodeType.Bip38,
+                                            address.getAddress()).show();
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            dialogProgress.dismiss();
+                        }
+                    }
+                }.start();
                 break;
             case R.id.tv_trash_private_key:
                 final DialogProgress dp = new DialogProgress(getContext(),

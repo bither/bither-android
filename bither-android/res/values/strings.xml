@@ -78,6 +78,7 @@
     <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
     <string name="address_detail_private_key_qr_code_encrypted">Private Key QR Code (Encrypted)</string>
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
+    <string name="address_detail_private_Key_qr_code_bip38">BIP38 Private Key QR Code</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
