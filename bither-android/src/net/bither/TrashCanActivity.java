@@ -89,7 +89,6 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
         lv = (OverScrollableListView) findViewById(R.id.lv);
         tvEmpty = (TextView) findViewById(R.id.tv_empty);
         lv.setAdapter(adapter);
-
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
@@ -266,28 +265,28 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                         getString(R.string.trash_address_restore), new Runnable() {
                     @Override
                     public void run() {
-                        new ThreadNeedService(dp, TrashCanActivity.this){
+                        new ThreadNeedService(dp, TrashCanActivity.this) {
                             @Override
                             public void runWithService(BlockchainService service) {
                                 if (service != null) {
                                     service.stopAndUnregister();
                                 }
                                 AddressManager.getInstance().restorePrivKey(address);
-                                if(service != null) {
+                                if (service != null) {
                                     service.startAndRegister();
                                 }
                                 ThreadUtil.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(dp.isShowing()) {
+                                        if (dp.isShowing()) {
                                             dp.dismiss();
                                         }
                                         refresh();
                                         notifyDataSetChanged();
                                         if (AppSharedPreference.getInstance().getAppMode() ==
                                                 BitherjSettings.AppMode.HOT) {
-                                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
-                                                    (1);
+                                            Fragment f = BitherApplication.hotActivity
+                                                    .getFragmentAtIndex(1);
                                             if (f instanceof HotAddressFragment) {
                                                 HotAddressFragment hotAddressFragment =
                                                         (HotAddressFragment) f;

@@ -78,6 +78,7 @@
                 android:background="@drawable/address_alias_bg_selector"
                 android:gravity="center"
                 android:visibility="invisible"
+                android:singleLine="true"
                 android:textSize="12sp"/>
 
             <ImageView

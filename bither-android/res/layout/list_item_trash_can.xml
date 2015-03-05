@@ -43,7 +43,8 @@
             android:background="@drawable/address_alias_bg_selector"
             android:gravity="center"
             android:visibility="gone"
-            android:textSize="12sp"/>
+            android:textSize="12sp"
+            android:singleLine="true"/>
     </FrameLayout>
 
     <LinearLayout
