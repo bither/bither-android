@@ -539,7 +539,7 @@
 
     <!-- hdm singular mode-->
     <string name="hdm_singular_check_title">单机模式</string>
-    <string name="hdm_singular_cold_seed_remember_warn">您的 HDM 冷种子将从这部手机移除.\n您必须自己妥善保存它.</string>
+    <string name="hdm_singular_cold_seed_remember_warn">HDM 冷种子非常重要.\n您必须自己妥善保存它.</string>
     <string name="hdm_singular_cold_seed_remember_button">我已保存好 HDM 冷种子</string>
     <string name="hdm_singular_cold_seed_tab_words">密语</string>
     <string name="hdm_singular_cold_seed_tab_qr">二维码</string>
