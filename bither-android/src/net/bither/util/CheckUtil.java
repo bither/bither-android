@@ -178,6 +178,9 @@ public class CheckUtil {
                 try {
                     result = keychain.checkWithPassword(password);
                     //TODO need to check backup here?
+                    if(result){
+                        result = keychain.checkSingularBackupWithPassword(password);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
