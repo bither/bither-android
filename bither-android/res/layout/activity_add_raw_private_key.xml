@@ -5,10 +5,10 @@
              android:background="@color/bg">
 
     <FrameLayout
-            android:id="@+id/fl_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/title_bar_below_margin">
+        android:id="@+id/fl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/title_bar_below_margin">
 
         <net.bither.ui.base.OverScrollableViewPager
             android:id="@+id/pager"
@@ -16,91 +16,91 @@
             android:layout_height="match_parent"/>
 
         <include layout="@layout/layout_dropdown_message"/>
-        </FrameLayout>
+    </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/fl_title_bar"
+    <FrameLayout
+        android:id="@+id/fl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        android:layout_gravity="top"
+        android:background="@drawable/title_bar_bg"
+        android:paddingBottom="3dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/title_bar_height"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/title_bar_bg"
-            android:paddingBottom="3dp">
+            android:layout_height="match_parent"
+            android:background="@drawable/tab_button_background"
+            android:duplicateParentState="true"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/ibtn_back"
+                android:layout_width="@dimen/title_bar_height"
                 android:layout_height="match_parent"
                 android:background="@drawable/tab_button_background"
-                android:duplicateParentState="true"
-                android:orientation="horizontal">
+                android:src="@drawable/title_bar_back"/>
 
-                <ImageButton
-                    android:id="@+id/ibtn_back"
-                    android:layout_width="@dimen/title_bar_height"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back"/>
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/title_bar_seperator"/>
 
-                <ImageView
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="26dp"
+                android:layout_marginRight="26dp">
 
-                <LinearLayout
+                <ToggleButton
+                    android:id="@+id/tbtn_dice"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="26dp"
-                    android:layout_marginRight="26dp">
+                    android:background="@drawable/action_bar_toggle_button_left"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/raw_private_key_tab_dice"
+                    android:textOn="@string/raw_private_key_tab_dice"
+                    android:textSize="14sp"/>
 
-                    <ToggleButton
-                        android:id="@+id/tbtn_dice"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/action_bar_toggle_button_left"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingTop="5dp"
-                        android:textColor="@color/white"
-                        android:textOff="@string/raw_private_key_tab_dice"
-                        android:textOn="@string/raw_private_key_tab_dice"
-                        android:textSize="14sp"/>
-
-                    <ToggleButton
-                        android:id="@+id/tbtn_binary"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/action_bar_toggle_button_right"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:paddingTop="5dp"
-                        android:textColor="@color/white"
-                        android:textOff="@string/raw_private_key_tab_binary"
-                        android:textOn="@string/raw_private_key_tab_binary"
-                        android:textSize="14sp"/>
-                </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="@dimen/title_bar_height"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/tab_button_background"
-                    android:visibility="invisible"
-                    android:src="@drawable/title_bar_back"/>
-
-                <ImageView
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:visibility="invisible"
-                    android:background="@drawable/title_bar_seperator"/>
-
+                <ToggleButton
+                    android:id="@+id/tbtn_binary"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/action_bar_toggle_button_right"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/raw_private_key_tab_binary"
+                    android:textOn="@string/raw_private_key_tab_binary"
+                    android:textSize="14sp"/>
             </LinearLayout>
-        </FrameLayout>
+
+            <ImageButton
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:visibility="invisible"
+                android:src="@drawable/title_bar_back"/>
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                android:background="@drawable/title_bar_seperator"/>
+
+        </LinearLayout>
+    </FrameLayout>
 
 </FrameLayout>
