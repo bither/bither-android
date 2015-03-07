@@ -109,7 +109,7 @@ public class DialogTransactionConfidence extends DialogWithArrow implements Dial
                 @Override
                 public void run() {
                     HDMAddress hdm = (HDMAddress) address;
-                    List<byte[]> signingPubs = tx.getSignPubs(hdm.getPubs(), hdm.getPubKey());
+                    List<byte[]> signingPubs = tx.getIns().get(0).getP2SHPubKeys();
                     boolean isHot = false;
                     boolean isCold = false;
                     boolean isServer = false;
