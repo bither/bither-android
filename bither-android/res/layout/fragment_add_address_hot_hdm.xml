@@ -210,23 +210,38 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp">
 
-        <CheckBox
-            android:id="@+id/cbx_singular"
+        <LinearLayout
+            android:id="@+id/ll_singular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_gravity="center"
-            android:textColor="@color/text_field_text_color"
-            android:textSize="16sp"
-            android:button="@drawable/btn_checkbox_holo_light"
-            android:text="@string/hdm_singular_check_title"/>
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbx_singular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/text_field_text_color"
+                android:textSize="16sp"
+                android:button="@drawable/btn_checkbox_holo_light"
+                android:text="@string/hdm_singular_check_title"/>
+
+            <ImageButton
+                android:id="@+id/ibtn_singular_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent"
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/xrandom_info_icon_selector"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_singular_running"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginRight="10dp"
             android:visibility="invisible"
             android:orientation="horizontal">
 
@@ -246,6 +261,14 @@
                 android:textSize="16sp"
                 android:layout_marginLeft="5dp"
                 android:text="@string/hdm_singular_check_title"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent"
+                android:layout_marginLeft="5dp"
+                android:visibility="invisible"
+                android:src="@drawable/xrandom_info_icon_selector"/>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>

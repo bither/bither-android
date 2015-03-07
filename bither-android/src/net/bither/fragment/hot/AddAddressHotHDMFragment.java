@@ -48,6 +48,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogHDMInfo;
+import net.bither.ui.base.dialog.DialogWithArrow;
 import net.bither.util.HDMHotAddAndroid;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -59,9 +60,8 @@ import java.util.List;
 /**
  * Created by songchenwen on 15/1/9.
  */
-public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity.AddAddress,
-        HDMHotAddAndroid.IHDMHotAddDelegate, HDMSingular.HDMSingularDelegate,
-        DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener {
+public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressActivity
+        .AddAddress, HDMHotAddAndroid.IHDMHotAddDelegate, HDMSingular.HDMSingularDelegate, DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener {
     private static final int XRandomRequestCode = 1552;
     private static final int ScanColdRequestCode = 1623;
     private static final int ServerQRCodeRequestCode = 1135;
@@ -78,6 +78,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     private TextView tvHot;
     private TextView tvCold;
     private TextView tvServer;
+    private LinearLayout llSingular;
     private CheckBox cbxSingular;
     private View llSingularRunning;
     private HDMHotAddAndroid hdmHotAddWithAndroid;
@@ -109,9 +110,11 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         tvHot = (TextView) v.findViewById(R.id.tv_hot);
         tvCold = (TextView) v.findViewById(R.id.tv_cold);
         tvServer = (TextView) v.findViewById(R.id.tv_server);
+        llSingular = (LinearLayout) v.findViewById(R.id.ll_singular);
         cbxSingular = (CheckBox) v.findViewById(R.id.cbx_singular);
         llSingularRunning = v.findViewById(R.id.ll_singular_running);
         v.findViewById(R.id.ibtn_info).setOnClickListener(DialogHDMInfo.ShowClick);
+        v.findViewById(R.id.ibtn_singular_info).setOnClickListener(singularInfoClick);
         ViewGroup.LayoutParams lpContainer = flContainer.getLayoutParams();
         lpContainer.width = UIUtil.getScreenWidth();
         lpContainer.height = lpContainer.width - flContainer.getPaddingLeft() - flContainer
@@ -371,12 +374,22 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         return s;
     }
 
+    private View.OnClickListener singularInfoClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            DialogWithArrow d = new DialogWithArrow(v.getContext());
+            d.setContentView(R.layout.dialog_hdm_singular_mode_info);
+            d.show(v);
+        }
+    };
+
     @Override
     public void setSingularModeAvailable(boolean available) {
         if (available) {
-            cbxSingular.setVisibility(View.VISIBLE);
+            llSingular.setVisibility(View.VISIBLE);
         } else {
-            cbxSingular.setVisibility(View.GONE);
+            llSingular.setVisibility(View.GONE);
         }
     }
 
@@ -385,7 +398,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
-                cbxSingular.setVisibility(View.GONE);
+                llSingular.setVisibility(View.GONE);
                 llSingularRunning.setVisibility(View.VISIBLE);
             }
         });
@@ -440,15 +453,15 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
     @Override
     public void callKeychainHotUEntropy() {
-        startActivityForResult(new Intent(getActivity(),
-                HDMKeychainHotUEntropyActivity.class), XRandomRequestCode);
+        startActivityForResult(new Intent(getActivity(), HDMKeychainHotUEntropyActivity.class),
+                XRandomRequestCode);
     }
 
     @Override
     public void callServerQRCode() {
 
-        startActivityForResult(new Intent(getActivity(),
-                ScanActivity.class), ServerQRCodeRequestCode);
+        startActivityForResult(new Intent(getActivity(), ScanActivity.class),
+                ServerQRCodeRequestCode);
 
 
     }

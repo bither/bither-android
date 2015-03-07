@@ -543,6 +543,7 @@
     <string name="hdm_singular_cold_seed_remember_button">我已保存好 HDM 冷种子</string>
     <string name="hdm_singular_cold_seed_tab_words">密语</string>
     <string name="hdm_singular_cold_seed_tab_qr">二维码</string>
+    <string name="hdm_singular_mode_info">单机模式只需要一部设备即可运行 HDM.\n不需要额外的冷钱包设备.\n但是您需要妥善保管好冷种子.\n冷种子是恢复 HDM 账户的唯一方法.</string>
 
     <!-- address alias -->
     <string name="address_alias_manage">地址标签</string>
