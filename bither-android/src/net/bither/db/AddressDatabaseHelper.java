@@ -37,6 +37,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
             }
         } else if (oldVersion == 2 && newVersion == 3) {
             db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
+            db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
         }
     }
 }
