@@ -564,13 +564,13 @@
     <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
 
     <!-- address alias -->
-    <string name="address_alias_manage">Address Alias</string>
-    <string name="address_alias_add">Set Address Alias</string>
-    <string name="address_alias_remove">Remove Address Alias</string>
-    <string name="address_alias_edit">Edit Address Alias</string>
-    <string name="address_alias_input_label">Enter alias for this address</string>
-    <string name="address_alias_input_hint">Alias</string>
-    <string name="address_alias_remove_confirm">Remove alias for this address?</string>
+    <string name="address_alias_manage">Address Tag</string>
+    <string name="address_alias_add">Set Address Tag</string>
+    <string name="address_alias_remove">Remove Address Tag</string>
+    <string name="address_alias_edit">Edit Address Tag</string>
+    <string name="address_alias_input_label">Enter tag for this address</string>
+    <string name="address_alias_input_hint">Tag</string>
+    <string name="address_alias_remove_confirm">Remove tag for this address?</string>
 
     <!-- bither team address -->
     <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
