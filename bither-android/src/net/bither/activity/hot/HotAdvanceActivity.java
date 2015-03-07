@@ -71,6 +71,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
+import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -78,6 +79,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
@@ -145,6 +147,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnResetTx.setOnClickListener(resetTxListener);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
+        findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressClick);
+        findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
@@ -1047,5 +1051,23 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 });
     }
 
+    private View.OnClickListener bitherAddressClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            StringUtil.copyString(BitherSetting.DONATE_ADDRESS);
+            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                    R.string.bither_team_address_copied);
+        }
+    };
+
+    private View.OnClickListener bitherAddressQrClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogSimpleQr(v.getContext(), BitherSetting.DONATE_ADDRESS,
+                    R.string.bither_team_address).show();
+        }
+    };
 
 }

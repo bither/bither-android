@@ -571,4 +571,9 @@
     <string name="address_alias_input_label">Enter alias for this address</string>
     <string name="address_alias_input_hint">Alias</string>
     <string name="address_alias_remove_confirm">Remove alias for this address?</string>
+
+    <!-- bither team address -->
+    <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
+    <string name="bither_team_address">Developer\'s Address</string>
+    <string name="bither_team_address_copied">Developer\'s address Copied</string>
 </resources>

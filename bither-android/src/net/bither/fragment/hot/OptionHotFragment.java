@@ -92,7 +92,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private Button btnSwitchToCold;
     private Button btnAvatar;
     private Button btnCheck;
-    private Button btnDonate;
     private Button btnAdvance;
     private TextView tvWebsite;
     private TextView tvVersion;
@@ -497,7 +496,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         llSwitchToCold = view.findViewById(R.id.ll_switch_to_cold);
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
-        btnDonate = (Button) view.findViewById(R.id.btn_donate);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
@@ -520,7 +518,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
         btnSwitchToCold.setOnClickListener(switchToColdClick);
         btnCheck.setOnClickListener(checkClick);
-        btnDonate.setOnClickListener(donateClick);
         btnAvatar.setOnClickListener(avatarClick);
         btnAdvance.setOnClickListener(advanceClick);
         tvWebsite.setOnClickListener(websiteClick);

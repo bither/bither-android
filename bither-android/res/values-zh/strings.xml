@@ -552,4 +552,8 @@
     <string name="address_alias_input_label">输入此地址的标签</string>
     <string name="address_alias_input_hint">标签</string>
     <string name="address_alias_remove_confirm">删除此地址标签?</string>
+
+    <!-- bither team address -->
+    <string name="bither_team_address">开发者地址</string>
+    <string name="bither_team_address_copied">开发者地址已复制</string>
 </resources>
