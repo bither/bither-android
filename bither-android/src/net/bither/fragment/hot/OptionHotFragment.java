@@ -69,12 +69,14 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogDonate;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSetAvatar;
+import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UnitUtilWrapper;
@@ -405,6 +407,23 @@ public class OptionHotFragment extends Fragment implements Selectable,
             }
         }
     };
+    private View.OnClickListener bitherAddressClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            StringUtil.copyString(BitherSetting.DONATE_ADDRESS);
+            DropdownMessage.showDropdownMessage(getActivity(), R.string.bither_team_address_copied);
+        }
+    };
+
+    private View.OnClickListener bitherAddressQrClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogSimpleQr(v.getContext(), BitherSetting.DONATE_ADDRESS,
+                    R.string.bither_team_address).show();
+        }
+    };
 
 
     @Override
@@ -520,6 +539,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnCheck.setOnClickListener(checkClick);
         btnAvatar.setOnClickListener(avatarClick);
         btnAdvance.setOnClickListener(advanceClick);
+        view.findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressClick);
+        view.findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
