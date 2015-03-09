@@ -564,6 +564,7 @@
     <string name="hdm_singular_cold_seed_tab_words">Seed Phrase</string>
     <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
     <string name="hdm_singular_mode_info">Singular Mode runs on one device.\nDo not need Bither Cold.\nBut you need to keep Cold seed safely.\nCold seed is the only way to recover.</string>
+    <string name="hdm_singular_mode_cancel_warn">HDM singular mode can not be interrupted.</string>
 
     <!-- address alias -->
     <string name="address_alias_manage">Address Tag</string>

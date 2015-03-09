@@ -408,6 +408,4 @@ public class HDMHotAddAndroid extends HDMHotAdd {
             dp.dismiss();
         }
     }
-
-
 }

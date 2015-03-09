@@ -547,6 +547,7 @@
     <string name="hdm_singular_cold_seed_tab_words">密語</string>
     <string name="hdm_singular_cold_seed_tab_qr">二維碼</string>
     <string name="hdm_singular_mode_info">單機模式只需要一部設備即可運行 HDM.\n不需要額外的冷錢包設備.\n但是您需要妥善保管好冷種子.\n冷種子是恢復 HDM 賬戶的唯一方法.</string>
+    <string name="hdm_singular_mode_cancel_warn">HDM 單機模式正在運行, 不能中斷</string>
 
     <!-- address alias -->
     <string name="address_alias_manage">地址標籤</string>

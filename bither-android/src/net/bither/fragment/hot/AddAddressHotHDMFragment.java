@@ -476,7 +476,13 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
 
             }
         });
+    }
 
+    public boolean canCancel() {
+        if (hdmHotAddWithAndroid.singularUtil != null) {
+            return !hdmHotAddWithAndroid.singularUtil.isInSingularMode();
+        }
+        return true;
     }
 
 

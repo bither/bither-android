@@ -35,11 +35,9 @@ import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.hot.AddAddressHotHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
 import net.bither.fragment.hot.AddAddressWatchOnlyFragment;
-import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 
@@ -319,6 +317,10 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     public void finish() {
+        if (vHDM != null && !vHDM.canCancel()) {
+            DropdownMessage.showDropdownMessage(this, R.string.hdm_singular_mode_cancel_warn);
+            return;
+        }
         super.finish();
         overridePendingTransition(0, R.anim.slide_out_bottom);
     }
