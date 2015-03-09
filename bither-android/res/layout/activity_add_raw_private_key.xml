@@ -8,7 +8,7 @@
         android:id="@+id/fl_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/title_bar_below_margin">
+        android:paddingTop="@dimen/title_bar_below_margin">
 
         <net.bither.ui.base.OverScrollableViewPager
             android:id="@+id/pager"

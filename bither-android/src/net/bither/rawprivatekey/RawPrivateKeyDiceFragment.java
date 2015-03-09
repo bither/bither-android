@@ -83,8 +83,9 @@ public class RawPrivateKeyDiceFragment extends Fragment implements IDialogPasswo
         tvAddress = (TextView) v.findViewById(R.id.tv_address);
         btnAdd = (Button) v.findViewById(R.id.btn_add);
         btnAdd.setOnClickListener(addKeyClick);
-        vData.setRestrictedSize(getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix
-                (16), getResources().getDisplayMetrics().widthPixels - UIUtil.dip2pix(16));
+        int maxSize = Math.min(UIUtil.getScreenWidth() - UIUtil.dip2pix(16),
+                UIUtil.getScreenHeight() - UIUtil.dip2pix(241));
+        vData.setRestrictedSize(maxSize, maxSize);
         vData.setDataSize(10, 10);
         llShow.setVisibility(View.GONE);
         llInput.setVisibility(View.VISIBLE);
