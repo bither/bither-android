@@ -21,6 +21,7 @@ import android.support.v4.app.Fragment;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
@@ -72,7 +73,9 @@ public class DialogAddressWatchOnlyOption extends DialogWithActions {
         actions.add(new Action(R.string.address_alias_manage, new Runnable() {
             @Override
             public void run() {
-                new DialogAddressAlias(activity, address, null).show();
+                new DialogAddressAlias(activity, address,
+                        activity instanceof AddressDetailActivity ? (AddressDetailActivity)
+                                activity : null).show();
             }
         }));
         actions.add(new Action(R.string.address_option_delete, new Runnable() {

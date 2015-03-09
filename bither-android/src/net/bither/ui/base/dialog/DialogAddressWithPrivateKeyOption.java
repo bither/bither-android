@@ -21,6 +21,7 @@ import android.content.Intent;
 
 import net.bither.R;
 import net.bither.SignMessageActivity;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
@@ -78,7 +79,9 @@ public class DialogAddressWithPrivateKeyOption extends DialogWithActions {
         actions.add(new Action(R.string.address_alias_manage, new Runnable() {
             @Override
             public void run() {
-                new DialogAddressAlias(activity, address, null).show();
+                new DialogAddressAlias(activity, address,
+                        activity instanceof AddressDetailActivity ? (AddressDetailActivity)
+                                activity : null).show();
             }
         }));
         return actions;

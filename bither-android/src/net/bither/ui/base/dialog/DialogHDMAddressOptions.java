@@ -141,7 +141,9 @@ public class DialogHDMAddressOptions extends DialogWithActions {
             acitons.add(new Action(R.string.address_alias_manage, new Runnable() {
                 @Override
                 public void run() {
-                    new DialogAddressAlias(getContext(), address, null).show();
+                    new DialogAddressAlias(getContext(), address,
+                            activity instanceof AddressDetailActivity ? (AddressDetailActivity)
+                                    activity : null).show();
                 }
             }));
         }
