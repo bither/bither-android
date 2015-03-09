@@ -71,6 +71,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
+import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -78,6 +79,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
+import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
@@ -145,6 +147,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnResetTx.setOnClickListener(resetTxListener);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
+        findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressClick);
+        findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
@@ -198,8 +202,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         try {
-                            final File addressFile = new File(FileUtil.getDiskDir("", true),
-                                    "address.txt");
+                            final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
 
                             String addressListString = "";
                             for (Address address : AddressManager.getInstance().getAllAddresses()) {
@@ -210,8 +213,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                                 @Override
                                 public void run() {
                                     DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                            getString(R.string.export_address_success) + "\n" +
-                                            addressFile.getAbsolutePath());
+                                            getString(R.string.export_address_success) + "\n" + addressFile
+                                                    .getAbsolutePath());
                                 }
                             });
                         } catch (IOException e) {
@@ -240,15 +243,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
 //                            if (BitherjSettings.DEV_DEBUG) {
-//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper
-// .getReadableDatabase();
-//                                FileUtil.copyFile(new File(addressDB.getPath()),
-// new File(logTagDir, "address.db"));
+//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
 //
-//                                SQLiteDatabase txDb = BitherApplication.mDbHelper
-// .getReadableDatabase();
-//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir,
-// "tx.db"));
+//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
 //                            }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -658,8 +657,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         case 0:
                             return getResources().getDrawable(R.drawable.scan_button_icon);
                         case 1:
-                            return getResources().getDrawable(R.drawable
-                                    .import_private_key_text_icon);
+                            return getResources().getDrawable(R.drawable.import_private_key_text_icon);
                         default:
                             return null;
                     }
@@ -986,9 +984,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     dialogPassword.show();
 
                 } else {
-                    ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid
-                            (HotAdvanceActivity
-                            .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp, content, password);
+                    ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity
+                            .this, ImportPrivateKey.ImportPrivateKeyType.BitherQrcode, dp,
+                            content, password);
                     importPrivateKey.importPrivateKey();
 
                 }
@@ -1000,8 +998,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private IDialogPasswordListener walletIDialogPasswordListener = new IDialogPasswordListener() {
         @Override
         public void onPasswordEntered(SecureCharSequence password) {
-            ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid
-                    (HotAdvanceActivity.this, ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
+            ImportPrivateKeyAndroid importPrivateKey = new ImportPrivateKeyAndroid(HotAdvanceActivity.this,
+                    ImportPrivateKey.ImportPrivateKeyType.Bip38, dp, bip38DecodeString, password);
             importPrivateKey.importPrivateKey();
         }
     };
@@ -1052,5 +1050,24 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 });
     }
+
+    private View.OnClickListener bitherAddressClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            StringUtil.copyString(BitherSetting.DONATE_ADDRESS);
+            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                    R.string.bither_team_address_copied);
+        }
+    };
+
+    private View.OnClickListener bitherAddressQrClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            new DialogSimpleQr(v.getContext(), BitherSetting.DONATE_ADDRESS,
+                    R.string.bither_team_address).show();
+        }
+    };
 
 }

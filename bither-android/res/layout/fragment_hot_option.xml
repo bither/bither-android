@@ -94,50 +94,6 @@
 
                 <include layout="@layout/layout_vertical_seperator"/>
 
-                <LinearLayout
-                    android:id="@+id/ll_bither_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@drawable/ui_touchable_bg"
-                    android:paddingLeft="10dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingTop="10dp"
-                        android:paddingBottom="10dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_field_text_color"
-                            android:textSize="18sp"
-                            android:text="@string/bither_team_address"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#666"
-                            android:textSize="12sp"
-                            android:text="@string/donate_address"/>
-                    </LinearLayout>
-
-                    <ImageButton
-                        android:id="@+id/ibtn_bither_address_qr"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:paddingLeft="10dp"
-                        android:paddingRight="10dp"
-                        android:background="@drawable/ui_touchable_bg"
-                        android:src="@drawable/qr_code_button_icon"/>
-                </LinearLayout>
-
-                <include layout="@layout/layout_vertical_seperator"/>
-
                 <Button
                     android:id="@+id/btn_advance"
                     android:layout_width="match_parent"
