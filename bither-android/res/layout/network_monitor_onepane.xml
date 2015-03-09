@@ -71,6 +71,18 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/title_bar_seperator"/>
+
+            <ImageButton
+                android:id="@+id/ibtn_option"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:src="@drawable/title_bar_option_icon"/>
         </LinearLayout>
     </FrameLayout>
 

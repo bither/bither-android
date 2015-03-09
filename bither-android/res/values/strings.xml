@@ -335,6 +335,7 @@
     <string name="network_monitor_peer_list_title">Peers</string>
     <string name="network_monitor_block_list_title">Blocks</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
+    <string name="network_monitor_clear_peer">Clear Peers</string>
 
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">Share</string>

@@ -22,14 +22,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 
 import net.bither.R;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.fragment.hot.BlockListFragment;
 import net.bither.fragment.hot.PeerListFragment;
+import net.bither.runnable.ThreadNeedService;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.ViewPagerTabs;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class NetworkMonitorActivity extends BaseFragmentActivity {
     private PeerListFragment peerListFragment;
@@ -73,35 +81,70 @@ public final class NetworkMonitorActivity extends BaseFragmentActivity {
 		// flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);
 		ibtnBack = (ImageButton) findViewById(R.id.ibtn_back);
 		ibtnBack.setOnClickListener(new IBackClickListener());
-	}
+        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			finish();
-			return true;
-		}
+    private View.OnClickListener optionClick = new View.OnClickListener() {
 
-		return super.onOptionsItemSelected(item);
-	}
+        @Override
+        public void onClick(View v) {
+            new DialogWithActions(v.getContext()) {
 
-	private class PagerAdapter extends FragmentStatePagerAdapter {
-		public PagerAdapter(final FragmentManager fm) {
-			super(fm);
-		}
+                @Override
+                protected List<Action> getActions() {
+                    ArrayList<Action> actions = new ArrayList<Action>();
+                    actions.add(new Action(R.string.network_monitor_clear_peer, new Runnable() {
+                        @Override
+                        public void run() {
+                            new ThreadNeedService(null, NetworkMonitorActivity.this) {
 
-		@Override
-		public int getCount() {
-			return 2;
-		}
+                                @Override
+                                public void runWithService(BlockchainService service) {
+                                    if (service != null) {
+                                        service.stopAndUnregister();
+                                    }
+                                    AbstractDb.peerProvider.recreate();
+                                    if (service != null) {
+                                        service.startAndRegister();
+                                    }
+                                }
+                            }.start();
+                        }
+                    }));
+                    return actions;
+                }
+            }.show();
+        }
+    };
 
-		@Override
-		public Fragment getItem(final int position) {
-			if (position == 0)
-				return peerListFragment;
-			else
-				return blockListFragment;
-		}
-	}
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class PagerAdapter extends FragmentStatePagerAdapter {
+        public PagerAdapter(final FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public Fragment getItem(final int position) {
+            if (position == 0) {
+                return peerListFragment;
+            } else {
+                return blockListFragment;
+            }
+        }
+    }
 }
