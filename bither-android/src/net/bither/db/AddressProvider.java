@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 public class AddressProvider implements IAddressProvider {
 
     private static AddressProvider addressProvider = new AddressProvider(BitherApplication.mAddressDbHelper);
@@ -59,7 +61,8 @@ public class AddressProvider implements IAddressProvider {
 
         HashMap<Integer, String> encryptSeedHashMap = new HashMap<Integer, String>();
         HashMap<Integer, String> encryptHDSeedHashMap = new HashMap<Integer, String>();
-        sql = "select hd_seed_id,encrypt_seed,encrypt_hd_seed from hd_seeds where encrypt_seed!='RECOVER'";
+        HashMap<Integer, String> singularModeBackupHashMap = new HashMap<Integer, String>();
+        sql = "select hd_seed_id,encrypt_seed,encrypt_hd_seed,singular_mode_backup from hd_seeds where encrypt_seed!='RECOVER'";
         c = readDb.rawQuery(sql, null);
         while (c.moveToNext()) {
             Integer hdSeedId = c.getInt(0);
@@ -67,6 +70,10 @@ public class AddressProvider implements IAddressProvider {
             if (!c.isNull(2)) {
                 String encryptHDSeed = c.getString(2);
                 encryptHDSeedHashMap.put(hdSeedId, encryptHDSeed);
+            }
+            if (!c.isNull(3)) {
+                String singularModeBackup = c.getString(3);
+                singularModeBackupHashMap.put(hdSeedId, singularModeBackup);
             }
             encryptSeedHashMap.put(hdSeedId, encryptSeed);
         }
@@ -81,16 +88,19 @@ public class AddressProvider implements IAddressProvider {
         c.close();
 
         for (Map.Entry<String, String> kv : addressesPrivKeyHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         if (hdmEncryptPassword != null) {
-            hdmEncryptPassword = this.changePwd(hdmEncryptPassword, oldPassword, newPassword);
+            hdmEncryptPassword = EncryptedData.changePwd(hdmEncryptPassword, oldPassword, newPassword);
         }
         for (Map.Entry<Integer, String> kv : encryptSeedHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         for (Map.Entry<Integer, String> kv : encryptHDSeedHashMap.entrySet()) {
-            kv.setValue(this.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        for (Map.Entry<Integer, String> kv : singularModeBackupHashMap.entrySet()) {
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         if (passwordSeed != null) {
             boolean result = passwordSeed.changePassword(oldPassword, newPassword);
@@ -118,6 +128,9 @@ public class AddressProvider implements IAddressProvider {
             if (encryptHDSeedHashMap.containsKey(kv.getKey())) {
                 cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeedHashMap.get(kv.getKey()));
             }
+            if (singularModeBackupHashMap.containsKey(kv.getKey())) {
+                cv.put(AbstractDb.HDSeedsColumns.SINGULAR_MODE_BACKUP, singularModeBackupHashMap.get(kv.getKey()));
+            }
             writeDb.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?", new String[]{kv.getKey().toString()});
         }
         if (passwordSeed != null) {
@@ -131,10 +144,6 @@ public class AddressProvider implements IAddressProvider {
         return true;
     }
 
-    private String changePwd(String encryptStr, CharSequence oldPassword, CharSequence newPassword) {
-        EncryptedData encrypted = new EncryptedData(encryptStr);
-        return new EncryptedData(encrypted.decrypt(oldPassword), newPassword).toEncryptedString();
-    }
 
     @Override
     public PasswordSeed getPasswordSeed() {
@@ -242,15 +251,6 @@ public class AddressProvider implements IAddressProvider {
                 , new String[]{Integer.toString(hdSeedId)});
     }
 
-    @Override
-    public void setEncryptSeed(int hdSeedId, String encryptSeed, String encryptHDSeed) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_SEED, encryptSeed);
-        cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
-        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
-                , new String[]{Integer.toString(hdSeedId)});
-    }
 
     @Override
     public boolean isHDSeedFromXRandom(int hdSeedId) {
@@ -282,6 +282,27 @@ public class AddressProvider implements IAddressProvider {
         }
         cursor.close();
         return address;
+    }
+
+    @Override
+    public String getSingularModeBackup(int hdSeedId) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select singular_mode_backup from hd_seeds where hd_seed_id=?"
+                , new String[]{Integer.toString(hdSeedId)});
+        String singularModeBackup = null;
+        if (cursor.moveToNext()) {
+            singularModeBackup = cursor.getString(0);
+        }
+        cursor.close();
+        return singularModeBackup;
+    }
+
+    @Override
+    public void setSingularModeBackup(int hdSeedId, String singularModeBackup) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDSeedsColumns.SINGULAR_MODE_BACKUP, singularModeBackup);
+        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?", new String[]{Integer.toString(hdSeedId)});
     }
 
     @Override
@@ -368,24 +389,6 @@ public class AddressProvider implements IAddressProvider {
             db.setTransactionSuccessful();
             db.endTransaction();
         }
-    }
-
-    @Override
-    public void changeHDBIdPassword(HDMBId hdmbId) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, hdmbId.getEncryptedBitherPasswordString());
-        db.update(AbstractDb.Tables.HDM_BID, cv
-                , AbstractDb.HDMBIdColumns.HDM_BID + "=?", new String[]{hdmbId.getAddress()});
-
-    }
-
-    @Override
-    public void changeHDMBIdPassword(String encryptBitherPassword) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, encryptBitherPassword);
-        db.update(AbstractDb.Tables.HDM_BID, cv, null, null);
     }
 
     @Override
@@ -668,7 +671,7 @@ public class AddressProvider implements IAddressProvider {
         db.insert(AbstractDb.Tables.Addresses, null, cv);
         if (address.hasPrivKey()) {
             if (!hasPasswordSeed(db)) {
-                PasswordSeed passwordSeed = new PasswordSeed(address);
+                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKeyOfDb());
                 addPasswordSeed(db, passwordSeed);
             }
         }
@@ -722,7 +725,53 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.AddressesColumns.ENCRYPT_PRIVATE_KEY, encryptPriv);
         db.update(AbstractDb.Tables.Addresses, cv, AbstractDb.AddressesColumns.ADDRESS + "=?"
                 , new String[]{address});
+    }
 
+    @Override
+    public String getAlias(String address) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String alias = null;
+        Cursor cursor = db.rawQuery("select alias from aliases where address=?", new String[]{address});
+
+        if (cursor.moveToNext()) {
+            alias = cursor.getString(0);
+        }
+        cursor.close();
+        return alias;
+    }
+
+    @Override
+    public Map<String, String> getAliases() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Map<String, String> aliasList = new HashMap<String, String>();
+        Cursor cursor = db.rawQuery("select * from aliases", null);
+
+        while (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.AliasColumns.ADDRESS);
+            String address = null;
+            String alias = null;
+            if (idColumn > -1) {
+                address = cursor.getString(idColumn);
+            }
+            idColumn = cursor.getColumnIndex(AbstractDb.AliasColumns.ALIAS);
+            if (idColumn > -1) {
+                alias = cursor.getString(idColumn);
+            }
+            aliasList.put(address, alias);
+
+        }
+        cursor.close();
+        return aliasList;
+    }
+
+    @Override
+    public void updateAlias(String address, @Nullable String alias) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        if (alias == null) {
+            db.delete(AbstractDb.Tables.Aliases, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
+        } else {
+            db.execSQL("insert or replace into aliases(address,alias) values(?,?)", new String[]{address, alias});
+        }
     }
 
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {

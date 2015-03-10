@@ -43,6 +43,11 @@ public class PasswordEntryKeyboardView extends EntryKeyboardView {
     }
 
     @Override
+    protected int getSymKeyboard() {
+        return R.xml.password_keyboard_symbol;
+    }
+
+    @Override
     protected int getDefaultKeyboardMode() {
         return EntryKeyboardView.KEYBOARD_MODE_NUMERIC;
     }

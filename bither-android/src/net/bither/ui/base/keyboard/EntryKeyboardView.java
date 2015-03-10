@@ -61,6 +61,8 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
 
     public static final int KEYBOARD_MODE_ALPHA = 0;
     public static final int KEYBOARD_MODE_NUMERIC = 1;
+    public static final int KEYBOARD_MODE_SYM = 2;
+
     private static final int KEYBOARD_STATE_NORMAL = 0;
     private static final int KEYBOARD_STATE_SHIFTED = 1;
     private static final int KEYBOARD_STATE_CAPSLOCK = 2;
@@ -94,6 +96,7 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
     private EntryKeyboard mQwertyKeyboard;
     private EntryKeyboard mQwertyKeyboardShifted;
     private EntryKeyboard mNumericKeyboard;
+    private EntryKeyboard mSymKeyboard;
 
     private InputMethodManager imm;
 
@@ -133,6 +136,10 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             mNumericKeyboard = new EntryKeyboard(getContext(), getNumericKeyboard());
             mNumericKeyboard.setDrawKeyListener(this);
         }
+        if (getSymKeyboard() != 0) {
+            mSymKeyboard = new EntryKeyboard(getContext(), getSymKeyboard());
+            mSymKeyboard.setDrawKeyListener(this);
+        }
         if (getAlphaKeyboard() != 0) {
             mQwertyKeyboard = new EntryKeyboard(getContext(), getAlphaKeyboard(), 0);
             mQwertyKeyboard.enableShiftLock();
@@ -150,19 +157,23 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
 
     protected abstract int getNumericKeyboard();
 
+    protected abstract int getSymKeyboard();
+
     protected abstract int getDefaultKeyboardMode();
 
     public void setKeyboardMode(int mode) {
         switch (mode) {
             case KEYBOARD_MODE_ALPHA:
                 setKeyboard(mQwertyKeyboard);
-                mKeyboardState = KEYBOARD_STATE_NORMAL;
                 break;
             case KEYBOARD_MODE_NUMERIC:
                 setKeyboard(mNumericKeyboard);
-                mKeyboardState = KEYBOARD_STATE_NORMAL;
+                break;
+            case KEYBOARD_MODE_SYM:
+                setKeyboard(mSymKeyboard);
                 break;
         }
+        mKeyboardState = KEYBOARD_STATE_NORMAL;
         mKeyboardMode = mode;
     }
 
@@ -294,14 +305,26 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         final Keyboard current = getKeyboard();
         Keyboard next = null;
         if (current == mQwertyKeyboard || current == mQwertyKeyboardShifted) {
-            next = mNumericKeyboard;
-            if (next != null) {
-                mKeyboardMode = KEYBOARD_MODE_NUMERIC;
+            if (mSymKeyboard != null) {
+                next = mSymKeyboard;
+                if (next != null) {
+                    mKeyboardMode = KEYBOARD_MODE_SYM;
+                }
+            } else {
+                next = mNumericKeyboard;
+                if (next != null) {
+                    mKeyboardMode = KEYBOARD_MODE_NUMERIC;
+                }
             }
         } else if (current == mNumericKeyboard) {
             next = mQwertyKeyboard;
             if (next != null) {
                 mKeyboardMode = KEYBOARD_MODE_ALPHA;
+            }
+        } else if (current == mSymKeyboard) {
+            next = mNumericKeyboard;
+            if (next != null) {
+                mKeyboardMode = KEYBOARD_MODE_NUMERIC;
             }
         }
         if (next != null) {
@@ -549,6 +572,9 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
         }
         if (mQwertyKeyboardShifted != null) {
             mQwertyKeyboardShifted.setEnterKeyText(text);
+        }
+        if (mSymKeyboard != null) {
+            mSymKeyboard.setEnterKeyText(text);
         }
     }
 

@@ -238,7 +238,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_keychain_recovery_warn);
                 return;
             }
-            if (WalletUtils.isHDMAddressLimit()) {
+            if (AddressManager.isHDMAddressLimit()) {
                 DropdownMessage.showDropdownMessage(activity, R.string.hdm_address_count_limit);
                 return;
             }
@@ -376,7 +376,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             if (address.isHDM()) {
                 new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
             } else if (address.hasPrivKey()) {
-                new DialogAddressWithShowPrivateKey(activity, address).show();
+                new DialogAddressWithShowPrivateKey(activity, address, null).show();
             } else {
                 new DialogAddressWatchOnlyLongClick(activity, address).show();
             }

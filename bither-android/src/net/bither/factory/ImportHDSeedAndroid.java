@@ -59,7 +59,7 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                 HDMKeychain result = importHDSeed();
                 if (result != null) {
 
-                    KeyUtil.setHDKeyChain(result, password, null);
+                    KeyUtil.setHDKeyChain(result);
                     if (dp != null && dp.isShowing()) {
                         dp.setThread(null);
                         dp.dismiss();

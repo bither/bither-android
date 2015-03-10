@@ -26,7 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.HashMap;
 
@@ -107,6 +106,17 @@ public class ExchangeUtil {
         return mCurrenciesRate;
     }
 
+    private static double getCurrenciesRate(Currency currency) {
+        double rate = 1.0;
+        if (getCurrenciesRate() != null) {
+            if (getCurrenciesRate().containsKey(currency)) {
+                return getCurrenciesRate().get(currency);
+            }
+
+        }
+        return rate;
+    }
+
     private static AbstractMap<Currency, Double> parseCurrenciesRate(JSONObject json) throws JSONException {
         HashMap<Currency, Double> currencyDoubleHashMap = new HashMap<Currency, Double>();
         currencyDoubleHashMap.put(Currency.USD, 1.0);
@@ -123,8 +133,8 @@ public class ExchangeUtil {
                 .getDefaultExchangeType();
         double rate = 1;
         if (currency != null && getCurrenciesRate() != null && currency != defaultCurrency) {
-            double preRate = getCurrenciesRate().get(currency);
-            double defaultRate = getCurrenciesRate().get(defaultCurrency);
+            double preRate = getCurrenciesRate(currency);
+            double defaultRate = getCurrenciesRate(defaultCurrency);
             rate = defaultRate / preRate;
         }
         return rate;
@@ -136,8 +146,8 @@ public class ExchangeUtil {
         Currency currency = getExchangeType(marketType);
         double rate = 1;
         if (currency != null && getCurrenciesRate() != null && currency != defaultCurrency) {
-            double preRate = getCurrenciesRate().get(currency);
-            double defaultRate = getCurrenciesRate().get(defaultCurrency);
+            double preRate = getCurrenciesRate(currency);
+            double defaultRate = getCurrenciesRate(defaultCurrency);
             rate = defaultRate / preRate;
         }
         return rate;
@@ -149,7 +159,7 @@ public class ExchangeUtil {
         } else {
             Currency defaultCurrency = AppSharedPreference.getInstance()
                     .getDefaultExchangeType();
-            return getCurrenciesRate().get(defaultCurrency);
+            return getCurrenciesRate(defaultCurrency);
         }
     }
 

@@ -176,7 +176,7 @@ public class ColdActivity extends BaseFragmentActivity {
 
             @Override
             public void onClick(View v) {
-                if (WalletUtils.isPrivateLimit()) {
+                if (AddressManager.isPrivateLimit()) {
                     DropdownMessage.showDropdownMessage(ColdActivity.this,
                             R.string.private_key_count_limit);
                     return;
@@ -433,7 +433,7 @@ public class ColdActivity extends BaseFragmentActivity {
 
                         KeyUtil.addAddressListByDesc(null, addressList);
                         if (hdmKeychain != null) {
-                            KeyUtil.setHDKeyChain(hdmKeychain, password, null);
+                            KeyUtil.setHDKeyChain(hdmKeychain);
                         }
                         password.wipe();
                         recoverBackupSuccess();

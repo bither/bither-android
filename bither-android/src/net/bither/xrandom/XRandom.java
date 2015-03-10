@@ -21,7 +21,7 @@ import net.bither.util.LogUtil;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-public class XRandom extends SecureRandom  {
+public class XRandom extends SecureRandom {
 
     private IUEntropy uEntropy;
 
@@ -45,25 +45,11 @@ public class XRandom extends SecureRandom  {
     }
 
     private byte[] getURandomBytes(int length) {
-        BigInteger d;
-        byte[] uRandomBytes;
-        do {
-            uRandomBytes = URandom.nextBytes(length);
-
-            d = new BigInteger(uRandomBytes);
-
-        } while (d.equals(BigInteger.ZERO));
-        return uRandomBytes;
+        return URandom.nextBytes(length);
     }
 
     private byte[] getUEntropyBytes(int length) {
-        BigInteger d;
-        byte[] uEntropyBytes;
-        do {
-            uEntropyBytes = this.uEntropy.nextBytes(length);
-            d = new BigInteger(uEntropyBytes);
-        } while (d.equals(BigInteger.ZERO));
-        return uEntropyBytes;
+        return uEntropy.nextBytes(length);
     }
 
     @Override

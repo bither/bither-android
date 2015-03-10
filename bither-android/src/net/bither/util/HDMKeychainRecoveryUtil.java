@@ -30,6 +30,7 @@ import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
+import net.bither.bitherj.delegate.IPasswordGetterDelegate;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
@@ -45,8 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by songchenwen on 15/1/21.
  */
-public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
-        .PasswordGetterDelegate {
+public class HDMKeychainRecoveryUtil implements IPasswordGetterDelegate {
     private static final int ColdRootRequestCode = 1306;
     private static final int ServerQRCodeRequestCode = 1731;
     private DialogProgress dp;
@@ -144,7 +144,7 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
 
 
         if (keychain.getAllCompletedAddresses().size() > 0) {
-            KeyUtil.setHDKeyChain(keychain, password, hdmBid.getEncryptedBitherPasswordString());
+            KeyUtil.setHDKeyChain(keychain);
         } else {
             dismissDp();
             return R.string.hdm_keychain_recovery_no_addresses;
@@ -167,6 +167,16 @@ public class HDMKeychainRecoveryUtil implements DialogPassword.PasswordGetter
                             public void scanSignedHDMServerQRCode() {
                                 context.startActivityForResult(new Intent(context, ScanActivity.class),
                                         ServerQRCodeRequestCode);
+                            }
+
+                            @Override
+                            public void scanSignedHDMServerQRCodeCancel() {
+                                try {
+                                    lock.lock();
+                                    hdmIdCondiction.signal();
+                                } finally {
+                                    lock.unlock();
+                                }
                             }
                         }).show();
             }

@@ -103,19 +103,8 @@ public class KeyUtil {
 
     }
 
-    public static void setHDKeyChain(HDMKeychain keyChain, CharSequence password, String encryptedString) {
+    public static void setHDKeyChain(HDMKeychain keyChain) {
         AddressManager.getInstance().setHDMKeychain(keyChain);
-//        if (AppSharedPreference.getInstance().getPasswordSeed() == null) {
-//            if (Utils.isEmpty(encryptedString)) {
-//                AppSharedPreference.getInstance().setPasswordSeed(keyChain.createPasswordSeed(password));
-//            } else {
-//                byte[] bytes = new EncryptedData(encryptedString).decrypt(password);
-//                ECKey ecKey = new ECKey(new BigInteger(1, bytes));
-//                Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(), encryptedString, false);
-//                PasswordSeed passwordSeed = new PasswordSeed(address);
-//                AppSharedPreference.getInstance().setPasswordSeed(passwordSeed);
-//            }
-//        }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {

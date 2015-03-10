@@ -152,7 +152,7 @@ public class HDMKeychainColdUEntropyActivity extends UEntropyActivity {
                     runOnUiThread(cancelRunnable);
                     return;
                 }
-                KeyUtil.setHDKeyChain(chain, password, null);
+                KeyUtil.setHDKeyChain(chain);
                 progress += itemProgress * progressEntryptRate;
                 onProgress(progress);
 

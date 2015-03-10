@@ -70,14 +70,39 @@
                         android:textSize="20sp" />
                 </LinearLayout>
 
-                <net.bither.ui.base.BtcToMoneyTextView
-                    android:id="@+id/tv_balance_money"
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/text_field_light_text_color"
-                    android:textSize="16sp" />
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_address_alias"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="2dp"
+                        android:textColor="@color/address_alias_color"
+                        android:background="@drawable/address_alias_bg_selector"
+                        android:gravity="center"
+                        android:visibility="invisible"
+                        android:singleLine="true"
+                        android:textSize="12sp"/>
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"/>
+
+                    <net.bither.ui.base.BtcToMoneyTextView
+                        android:id="@+id/tv_balance_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|center_vertical"
+                        android:textColor="@color/text_field_light_text_color"
+                        android:textSize="16sp"/>
+                </LinearLayout>
             </LinearLayout>
 
             <ImageView

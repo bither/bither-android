@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/fl_container"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
+        android:orientation="vertical">
+
+        <net.bither.rawprivatekey.RawDataDiceView
+            android:id="@+id/v_data"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_one"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_1"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_two"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_2"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_three"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_3"/>
+
+                    <ImageButton
+                        android:id="@+id/ibtn_delete"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_action_key_btn_bg"
+                        android:src="@drawable/sym_keyboard_delete_holo_dark"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_four"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_4"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_five"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_5"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_six"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/dice_large_6"/>
+
+                    <Button
+                        android:id="@+id/btn_clear"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_action_key_btn_bg"
+                        android:textSize="28sp"
+                        android:textColor="@color/white"
+                        android:text="C"/>
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_show"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/card_list_padding"
+            android:paddingRight="@dimen/card_list_padding">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_field_light_text_color"
+                    android:text="@string/raw_private_key_private_key"/>
+
+                <TextView
+                    android:id="@+id/tv_private_key"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ui_touchable_foreground"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/text_field_text_color"
+                    android:fontFamily="monospace"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_field_light_text_color"
+                    android:text="@string/raw_private_key_address"/>
+
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ui_touchable_foreground"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/text_field_text_color"
+                    android:fontFamily="monospace"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <include layout="@layout/layout_card_foreground_single"/>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:padding="16dp"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:background="@drawable/entry_keyboard_key_btn_bg"
+            android:text="@string/raw_private_key_add"/>
+    </LinearLayout>
+
+    <include layout="@layout/layout_dropdown_message"/>
+</FrameLayout>

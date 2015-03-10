@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
@@ -17,7 +17,7 @@
             android:layout_weight="1"
             android:text="@string/address_detail_balance_detail_transaction_count"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_transaction_count"
@@ -25,14 +25,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:text="@string/address_total_incoming"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_received"
@@ -49,15 +49,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:layout_marginTop="20dp"
-        android:orientation="horizontal" >
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
@@ -66,7 +66,7 @@
             android:layout_weight="1"
             android:text="@string/address_total_outgoing"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_sent"
@@ -74,7 +74,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"/>
     </LinearLayout>
-
 </LinearLayout>

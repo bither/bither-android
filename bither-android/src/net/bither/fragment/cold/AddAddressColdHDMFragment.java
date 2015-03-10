@@ -121,7 +121,7 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
             @Override
             public void runWithService(BlockchainService service) {
                 chain = new HDMKeychain(new SecureRandom(), password);
-                KeyUtil.setHDKeyChain(chain, password, null);
+                KeyUtil.setHDKeyChain(chain);
                 password.wipe();
                 activity.runOnUiThread(new Runnable() {
                     @Override

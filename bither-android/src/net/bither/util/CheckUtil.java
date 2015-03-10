@@ -139,7 +139,8 @@ public class CheckUtil {
 
             @Override
             public boolean check() {
-                boolean result = new PasswordSeed(address).checkPassword(password);
+                PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKey());
+                boolean result = passwordSeed.checkPassword(password);
                 if (!result) {
                     try {
                         ECKey eckeyFromBackup = BackupUtil.getEckeyFromBackup(
@@ -177,6 +178,9 @@ public class CheckUtil {
                 try {
                     result = keychain.checkWithPassword(password);
                     //TODO need to check backup here?
+                    if(result){
+                        result = keychain.checkSingularBackupWithPassword(password);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

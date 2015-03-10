@@ -68,6 +68,25 @@
         android:background="#22ffffff"/>
 
     <TextView
+        android:id="@+id/tv_private_key_qr_code_bip38"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minWidth="180dp"
+        android:background="@drawable/ui_touchable_foreground"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/address_detail_private_Key_qr_code_bip38"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="15sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff"/>
+
+    <TextView
         android:id="@+id/tv_view_show_private_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,6 +121,31 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="@string/sign_message_activity_name"
+            android:textColor="@color/dialog_text_color_selector"
+            android:textSize="15sp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#22ffffff"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_address_alias"
+        android:orientation="vertical"
+        android:background="@drawable/ui_touchable_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/address_alias_manage"
             android:textColor="@color/dialog_text_color_selector"
             android:textSize="15sp"/>
 

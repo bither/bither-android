@@ -23,15 +23,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.delegate.HDMSingular;
+import net.bither.bitherj.delegate.IPasswordGetter;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
-import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;
 import net.bither.ui.base.dialog.DialogPassword;
+import net.bither.util.HDMSingularAndroid;
 import net.bither.util.KeyUtil;
 
 /**
@@ -40,7 +41,8 @@ import net.bither.util.KeyUtil;
 public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
     private static final int MinGeneratingTime = 5000;
     private GenerateThread generateThread;
-    public static DialogPassword.PasswordGetter passwordGetter;
+    public static IPasswordGetter passwordGetter;
+    public static HDMSingular singularUtil;
 
     @Override
     Thread getGeneratingThreadWithXRandom(UEntropyCollector collector,
@@ -115,18 +117,34 @@ public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                HDMKeychain chain = new HDMKeychain(xRandom, password);
+                if (singularUtil != null && singularUtil.shouldGoSingularMode()) {
+                    byte[] entropy = new byte[64];
+                    xRandom.nextBytes(entropy);
+                    progress += itemProgress * progressKeyRate;
+                    onProgress(progress);
+                    if (cancelRunnable != null) {
+                        finishGenerate(service);
+                        runOnUiThread(cancelRunnable);
+                        return;
+                    }
+                    singularUtil.setPassword(password);
+                    singularUtil.setEntropy(entropy);
+                    progress += itemProgress * progressEntryptRate;
+                    onProgress(progress);
+                } else {
+                    HDMKeychain chain = new HDMKeychain(xRandom, password);
 
-                progress += itemProgress * progressKeyRate;
-                onProgress(progress);
-                if (cancelRunnable != null) {
-                    finishGenerate(service);
-                    runOnUiThread(cancelRunnable);
-                    return;
+                    progress += itemProgress * progressKeyRate;
+                    onProgress(progress);
+                    if (cancelRunnable != null) {
+                        finishGenerate(service);
+                        runOnUiThread(cancelRunnable);
+                        return;
+                    }
+                    KeyUtil.setHDKeyChain(chain);
+                    progress += itemProgress * progressEntryptRate;
+                    onProgress(progress);
                 }
-                KeyUtil.setHDKeyChain(chain, password, null);
-                progress += itemProgress * progressEntryptRate;
-                onProgress(progress);
 
                 entropyCollector.stop();
                 passwordGetter.setPassword(password);
@@ -176,5 +194,6 @@ public class HDMKeychainHotUEntropyActivity extends UEntropyActivity {
     protected void onDestroy() {
         super.onDestroy();
         passwordGetter = null;
+        singularUtil = null;
     }
 }

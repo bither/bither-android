@@ -18,21 +18,22 @@
 
 package net.bither;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.preference.AppSharedPreference;
@@ -41,14 +42,19 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.OverScrollableListView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by songchenwen on 14-11-3.
@@ -83,7 +89,6 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
         lv = (OverScrollableListView) findViewById(R.id.lv);
         tvEmpty = (TextView) findViewById(R.id.tv_empty);
         lv.setAdapter(adapter);
-
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
@@ -120,28 +125,59 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
             Address address = getItem(position);
             h.tv.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
             h.flAddress.setOnClickListener(new CopyClick(address.getAddress()));
-            h.ibtnViewOnNet.setOnClickListener(new ViewOnNetClick(address.getAddress()));
+            h.ibtnViewOnNet.setOnClickListener(new ViewOnNetClick(address, h));
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
                 h.ibtnViewOnNet.setVisibility(View.VISIBLE);
             } else {
                 h.ibtnViewOnNet.setVisibility(View.GONE);
             }
             h.ibtnRestore.setOnClickListener(new RestoreClick(address));
+            h.btnAlias.setOnClickListener(new AliasClick(address, h));
+            h.onAddressAliasChanged(address, address.getAlias());
             return convertView;
         }
 
-        class ViewHolder {
+        class ViewHolder implements DialogAddressAlias.DialogAddressAliasDelegate {
             TextView tv;
             FrameLayout flAddress;
             ImageButton ibtnViewOnNet;
             ImageButton ibtnRestore;
+            Button btnAlias;
 
             public ViewHolder(View v) {
                 tv = (TextView) v.findViewById(R.id.tv_address);
                 flAddress = (FrameLayout) v.findViewById(R.id.fl_address);
                 ibtnViewOnNet = (ImageButton) v.findViewById(R.id.ibtn_view_on_net);
                 ibtnRestore = (ImageButton) v.findViewById(R.id.ibtn_restore);
+                btnAlias = (Button) v.findViewById(R.id.btn_address_alias);
                 v.setTag(this);
+            }
+
+            @Override
+            public void onAddressAliasChanged(Address address, String alias) {
+                if (!Utils.isEmpty(alias)) {
+                    btnAlias.setText(alias);
+                    btnAlias.setVisibility(View.VISIBLE);
+                } else {
+                    btnAlias.setText("");
+                    btnAlias.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        class AliasClick implements View.OnClickListener {
+            private Address address;
+            private DialogAddressAlias.DialogAddressAliasDelegate delegate;
+
+            public AliasClick(Address address, DialogAddressAlias.DialogAddressAliasDelegate
+                    delegate) {
+                this.address = address;
+                this.delegate = delegate;
+            }
+
+            @Override
+            public void onClick(View v) {
+                new DialogAddressAlias(v.getContext(), address, delegate).show();
             }
         }
 
@@ -161,36 +197,55 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
         }
 
         class ViewOnNetClick implements View.OnClickListener {
-            private String address;
+            private Address address;
+            private DialogAddressAlias.DialogAddressAliasDelegate delegate;
 
-            ViewOnNetClick(String address) {
+            ViewOnNetClick(Address address, DialogAddressAlias.DialogAddressAliasDelegate
+                    delegate) {
                 this.address = address;
+                this.delegate = delegate;
             }
 
             @Override
             public void onClick(View v) {
-                DialogConfirmTask dialog = new DialogConfirmTask(v.getContext(),
-                        getString(R.string.address_option_view_on_blockchain_info), new Runnable() {
+                new DialogWithActions(v.getContext()) {
+
                     @Override
-                    public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
+                    protected List<Action> getActions() {
+                        ArrayList<Action> actions = new ArrayList<Action>();
+                        actions.add(new Action(R.string.address_option_view_on_blockchain_info,
+                                new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http" +
-                                        "://blockchain.info/address/" + address)).addFlags(Intent
-                                        .FLAG_ACTIVITY_NEW_TASK);
-                                try {
-                                    startActivity(intent);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    DropdownMessage.showDropdownMessage(TrashCanActivity.this,
-                                            R.string.find_browser_error);
-                                }
+                                UIUtil.gotoBrower(TrashCanActivity.this,
+                                        BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
+                                                .getAddress());
                             }
-                        });
+                        }));
+
+                        String defaultCountry = Locale.getDefault().getCountry();
+                        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
+                                (defaultCountry, "cn")) {
+                            actions.add(new Action(R.string.address_option_view_on_blockmeta,
+                                    new Runnable() {
+                                @Override
+                                public void run() {
+                                    UIUtil.gotoBrower(TrashCanActivity.this,
+                                            BitherUrl.BLOCKMETA_ADDRESS_URL + address.getAddress());
+                                }
+                            }));
+                        }
+
+                        actions.add(new Action(R.string.address_alias_manage, new Runnable() {
+                            @Override
+                            public void run() {
+                                new DialogAddressAlias(TrashCanActivity.this, address,
+                                        delegate).show();
+                            }
+                        }));
+                        return actions;
                     }
-                });
-                dialog.show();
+                }.show();
             }
         }
 
@@ -210,28 +265,28 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                         getString(R.string.trash_address_restore), new Runnable() {
                     @Override
                     public void run() {
-                        new ThreadNeedService(dp, TrashCanActivity.this){
+                        new ThreadNeedService(dp, TrashCanActivity.this) {
                             @Override
                             public void runWithService(BlockchainService service) {
                                 if (service != null) {
                                     service.stopAndUnregister();
                                 }
                                 AddressManager.getInstance().restorePrivKey(address);
-                                if(service != null) {
+                                if (service != null) {
                                     service.startAndRegister();
                                 }
                                 ThreadUtil.runOnMainThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(dp.isShowing()) {
+                                        if (dp.isShowing()) {
                                             dp.dismiss();
                                         }
                                         refresh();
                                         notifyDataSetChanged();
                                         if (AppSharedPreference.getInstance().getAppMode() ==
                                                 BitherjSettings.AppMode.HOT) {
-                                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
-                                                    (1);
+                                            Fragment f = BitherApplication.hotActivity
+                                                    .getFragmentAtIndex(1);
                                             if (f instanceof HotAddressFragment) {
                                                 HotAddressFragment hotAddressFragment =
                                                         (HotAddressFragment) f;

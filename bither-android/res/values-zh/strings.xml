@@ -72,6 +72,7 @@
     <string name="address_detail_private_key_qr_code">私钥二维码</string>
     <string name="address_detail_private_key_qr_code_encrypted">私钥二维码 (加密)</string>
     <string name="address_detail_private_key_qr_code_decrypted">私钥二维码 (解密)</string>
+    <string name="address_detail_private_Key_qr_code_bip38">BIP38 私钥二维码</string>
 
     <string name="address_detail_private_key_qr_code_backup">备份私钥</string>
 
@@ -317,6 +318,8 @@
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">捐赠</string>
 
+    <string name="network_monitor_clear_peer">清空节点</string>
+
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">分享</string>
     <string name="fancy_qr_code_save">保存</string>
@@ -430,6 +433,8 @@
     <string name="raw_private_key_address">地址</string>
     <string name="raw_private_key_add">添加此私钥</string>
     <string name="raw_private_key_not_safe">这个私钥不安全</string>
+    <string name="raw_private_key_tab_binary">二进制</string>
+    <string name="raw_private_key_tab_dice">骰子</string>
 
     <!-- QR Code Quality -->
     <string name="qr_code_quality_setting_name">二维码精度</string>
@@ -527,4 +532,32 @@
     <string name="hdm_import_word_list_wrong_word_warn">单词无效</string>
     <string name="hdm_import_word_list_delete">删除</string>
     <string name="hdm_import_word_list_replace">替换</string>
+
+    <!-- hdm reset server password -->
+    <string name="hdm_reset_server_password_password_wrong_confirm">HDM 服务器授权失效.\n使用 HDM 冷重新授权?</string>
+    <string name="hdm_reset_server_password_confirm">确认重置 HDM 服务器授权?</string>
+    <string name="hdm_reset_server_password_setting_name">重置 HDM 服务器授权</string>
+    <string name="hdm_reset_server_password_success">HDM 服务器授权已重置</string>
+
+    <!-- hdm singular mode-->
+    <string name="hdm_singular_check_title">单机模式</string>
+    <string name="hdm_singular_cold_seed_remember_warn">HDM 冷种子非常重要.\n您必须自己妥善保存它.</string>
+    <string name="hdm_singular_cold_seed_remember_button">我已保存好 HDM 冷种子</string>
+    <string name="hdm_singular_cold_seed_tab_words">密语</string>
+    <string name="hdm_singular_cold_seed_tab_qr">二维码</string>
+    <string name="hdm_singular_mode_info">单机模式只需要一部设备即可运行 HDM.\n不需要额外的冷钱包设备.\n但是您需要妥善保管好冷种子.\n冷种子是恢复 HDM 账户的唯一方法.</string>
+    <string name="hdm_singular_mode_cancel_warn">HDM 单机模式正在运行, 不能中断</string>
+
+    <!-- address alias -->
+    <string name="address_alias_manage">地址标签</string>
+    <string name="address_alias_add">设置地址标签</string>
+    <string name="address_alias_remove">删除地址标签</string>
+    <string name="address_alias_edit">编辑地址标签</string>
+    <string name="address_alias_input_label">输入此地址的标签</string>
+    <string name="address_alias_input_hint">标签</string>
+    <string name="address_alias_remove_confirm">删除此地址标签?</string>
+
+    <!-- bither team address -->
+    <string name="bither_team_address">开发者地址</string>
+    <string name="bither_team_address_copied">开发者地址已复制</string>
 </resources>

@@ -78,6 +78,7 @@
     <string name="address_detail_private_key_qr_code">Private Key QR Code</string>
     <string name="address_detail_private_key_qr_code_encrypted">Private Key QR Code (Encrypted)</string>
     <string name="address_detail_private_key_qr_code_decrypted">Private Key QR Code (Decrypted)</string>
+    <string name="address_detail_private_Key_qr_code_bip38">BIP38 Private Key QR Code</string>
     <string name="address_detail_private_key_qr_code_backup">Back Up Private Key</string>
 
     <!-- add address -->
@@ -334,6 +335,7 @@
     <string name="network_monitor_peer_list_title">Peers</string>
     <string name="network_monitor_block_list_title">Blocks</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
+    <string name="network_monitor_clear_peer">Clear Peers</string>
 
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">Share</string>
@@ -448,6 +450,8 @@
     <string name="raw_private_key_address">Address</string>
     <string name="raw_private_key_add">Add This Private Key</string>
     <string name="raw_private_key_not_safe">This private key is not safe</string>
+    <string name="raw_private_key_tab_binary">Binary</string>
+    <string name="raw_private_key_tab_dice">Dice</string>
 
     <!-- QR Code Quality -->
     <string name="qr_code_quality_setting_name">QR Code Precision</string>
@@ -546,4 +550,33 @@
     <string name="hdm_import_word_list_wrong_word_warn">Invalid word</string>
     <string name="hdm_import_word_list_delete">Delete</string>
     <string name="hdm_import_word_list_replace">Replace</string>
+
+    <!-- hdm reset server password -->
+    <string name="hdm_reset_server_password_password_wrong_confirm">HDM Server authentication failed.\nUse HDM Cold to reauthorize?</string>
+    <string name="hdm_reset_server_password_confirm">Reset HDM Server authentication?</string>
+    <string name="hdm_reset_server_password_setting_name">Reset HDM Server Authentication</string>
+    <string name="hdm_reset_server_password_success">HDM Server Authentication is reset.</string>
+
+    <!-- hdm singular mode -->
+    <string name="hdm_singular_check_title">Singular Mode</string>
+    <string name="hdm_singular_cold_seed_remember_warn">HDM Cold seed is very important.\nYou must save it by yourself.</string>
+    <string name="hdm_singular_cold_seed_remember_button">I have saved my HDM Cold seed.</string>
+    <string name="hdm_singular_cold_seed_tab_words">Seed Phrase</string>
+    <string name="hdm_singular_cold_seed_tab_qr">QR Code</string>
+    <string name="hdm_singular_mode_info">Singular Mode runs on one device.\nDo not need Bither Cold.\nBut you need to keep Cold seed safely.\nCold seed is the only way to recover.</string>
+    <string name="hdm_singular_mode_cancel_warn">HDM singular mode can not be interrupted.</string>
+
+    <!-- address alias -->
+    <string name="address_alias_manage">Address Tag</string>
+    <string name="address_alias_add">Set Address Tag</string>
+    <string name="address_alias_remove">Remove Address Tag</string>
+    <string name="address_alias_edit">Edit Address Tag</string>
+    <string name="address_alias_input_label">Enter tag for this address</string>
+    <string name="address_alias_input_hint">Tag</string>
+    <string name="address_alias_remove_confirm">Remove tag for this address?</string>
+
+    <!-- bither team address -->
+    <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
+    <string name="bither_team_address">Developer\'s Address</string>
+    <string name="bither_team_address_copied">Developer\'s address Copied</string>
 </resources>

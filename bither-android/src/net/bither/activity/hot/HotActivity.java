@@ -209,8 +209,8 @@ public class HotActivity extends BaseFragmentActivity {
 
             @Override
             public void onClick(View v) {
-                boolean isPrivateKeyLimit = WalletUtils.isPrivateLimit();
-                boolean isWatchOnlyLimit = WalletUtils.isWatchOnlyLimit();
+                boolean isPrivateKeyLimit = AddressManager.isPrivateLimit();
+                boolean isWatchOnlyLimit = AddressManager.isWatchOnlyLimit();
                 if (isPrivateKeyLimit && isWatchOnlyLimit) {
                     DropdownMessage.showDropdownMessage(HotActivity.this,
                             R.string.private_key_count_limit);
