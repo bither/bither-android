@@ -40,17 +40,10 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 //            db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
 //            db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
 //        }
-        if (oldVersion == 1 && newVersion == 4) {
-            this.v1ToV2(db);
-            this.v2ToV3(db);
-            this.v3ToV4(db);
-        }
-        if (oldVersion == 2 && newVersion == 4) {
-            this.v2ToV3(db);
-            this.v3ToV4(db);
-        }
-        if (oldVersion == 3 && newVersion == 4) {
-            this.v3ToV4(db);
+        switch (oldVersion) {
+            case 1:v1ToV2(db);
+            case 2:v2ToV3(db);
+            case 3:v3ToV4(db);
         }
     }
 
@@ -71,7 +64,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void v3ToV4(SQLiteDatabase db) {
-        // v1.3.3 ensure v3 's script executed.
+        // v1.3.3 ensure v2 & v3 's script executed.
         Cursor cursor = db.rawQuery("select count(0) from sqlite_master where name='aliases'", null);
         int cnt = 0;
         if (cursor.moveToNext()) {
@@ -79,8 +72,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         if (cnt == 0) {
-            db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
-            db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
+            v1ToV2(db);
+            v2ToV3(db);
         }
     }
 }
