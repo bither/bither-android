@@ -52,7 +52,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
         super(delegate);
         this.activity = activity;
         this.delegate = delegate;
-        singularUtil = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
+        singular = new HDMSingularAndroid(activity, hdmSingularUtilDelegate);
         this.passwordGetter = new DialogPassword.PasswordGetter(activity, this);
         dp = new DialogProgress(activity, R.string.please_wait);
         dp.setCancelable(false);
@@ -66,7 +66,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
         if (hdmKeychainLimit) {
             return;
         }
-        if (singularUtil.isInSingularMode()) {
+        if (singular.isInSingularMode()) {
             return;
         }
         new DialogHdmKeychainAddHot(activity, new DialogHdmKeychainAddHot
@@ -75,10 +75,10 @@ public class HDMHotAddAndroid extends HDMHotAdd {
             @Override
             public void addWithXRandom() {
                 HDMKeychainHotUEntropyActivity.passwordGetter = passwordGetter;
-                if (singularUtil.shouldGoSingularMode()) {
-                    HDMKeychainHotUEntropyActivity.singularUtil = singularUtil;
+                if (singular.shouldGoSingularMode()) {
+                    HDMKeychainHotUEntropyActivity.singularUtil = singular;
                 } else {
-                    singularUtil.runningWithoutSingularMode();
+                    singular.runningWithoutSingularMode();
                 }
                 if (delegate != null) {
                     delegate.callKeychainHotUEntropy();
@@ -94,11 +94,11 @@ public class HDMHotAddAndroid extends HDMHotAdd {
                         if (password == null) {
                             return;
                         }
-                        if (singularUtil.shouldGoSingularMode()) {
-                            singularUtil.setPassword(password);
-                            singularUtil.generateEntropy();
+                        if (singular.shouldGoSingularMode()) {
+                            singular.setPassword(password);
+                            singular.generateEntropy();
                         } else {
-                            singularUtil.runningWithoutSingularMode();
+                            singular.runningWithoutSingularMode();
                             HDMKeychain keychain = new HDMKeychain(new SecureRandom(),
                                     password);
 
@@ -126,7 +126,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
         if (hdmKeychainLimit) {
             return;
         }
-        if (singularUtil.isInSingularMode()) {
+        if (singular.isInSingularMode()) {
             return;
         }
         new DialogConfirmTask(activity, activity.getString(R.string.hdm_keychain_add_scan_cold),
@@ -147,7 +147,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
         if (hdmKeychainLimit) {
             return;
         }
-        if (singularUtil.isInSingularMode()) {
+        if (singular.isInSingularMode()) {
             return;
         }
         if (coldRoot == null && hdmBid == null) {
@@ -215,8 +215,8 @@ public class HDMHotAddAndroid extends HDMHotAdd {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (singularUtil.isInSingularMode()) {
-                    singularUtil.xrandomFinished();
+                if (singular.isInSingularMode()) {
+                    singular.xrandomFinished();
                 } else if (AddressManager.getInstance().getHdmKeychain() != null) {
                     if (delegate != null) {
                         delegate.moveToCold(true);

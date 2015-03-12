@@ -221,8 +221,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 public void run() {
                     showFlash(ivColdLight);
                     llCold.setEnabled(true);
-                    if (hdmHotAddWithAndroid.singularUtil.isInSingularMode()) {
-                        hdmHotAddWithAndroid.singularUtil.cold();
+                    if (hdmHotAddWithAndroid.singular.isInSingularMode()) {
+                        hdmHotAddWithAndroid.singular.cold();
                     }
                 }
             });
@@ -249,8 +249,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                 public void run() {
                     showFlash(ivServerLight);
                     llServer.setEnabled(true);
-                    if (hdmHotAddWithAndroid.singularUtil.isInSingularMode()) {
-                        hdmHotAddWithAndroid.singularUtil.server();
+                    if (hdmHotAddWithAndroid.singular.isInSingularMode()) {
+                        hdmHotAddWithAndroid.singular.server();
                     }
                 }
             });
@@ -479,8 +479,8 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     public boolean canCancel() {
-        if (hdmHotAddWithAndroid.singularUtil != null) {
-            return !hdmHotAddWithAndroid.singularUtil.isInSingularMode();
+        if (hdmHotAddWithAndroid.singular != null) {
+            return !hdmHotAddWithAndroid.singular.isInSingularMode();
         }
         return true;
     }
