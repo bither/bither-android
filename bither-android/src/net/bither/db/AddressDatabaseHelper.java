@@ -1,6 +1,7 @@
 package net.bither.db;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -9,7 +10,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 3;
+    public static final int DB_VERSION = 4;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -28,16 +29,51 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 1 && newVersion == 2) {
-            db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
-            db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
-            String passwordSeedStr = AppSharedPreference.getInstance().getPasswordSeedString();
-            if (!Utils.isEmpty(passwordSeedStr)) {
-                db.execSQL("insert into password_seed (password_seed) values (?) ", new String[]{passwordSeedStr});
-            }
-        } else if (oldVersion == 2 && newVersion == 3) {
-            db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
-            db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
+//        if (oldVersion == 1 && newVersion == 2) {
+//            db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
+//            db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
+//            String passwordSeedStr = AppSharedPreference.getInstance().getPasswordSeedString();
+//            if (!Utils.isEmpty(passwordSeedStr)) {
+//                db.execSQL("insert into password_seed (password_seed) values (?) ", new String[]{passwordSeedStr});
+//            }
+//        } else if (oldVersion == 2 && newVersion == 3) {
+//            db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
+//            db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
+//        }
+        switch (oldVersion) {
+            case 1:v1ToV2(db);
+            case 2:v2ToV3(db);
+            case 3:v3ToV4(db);
+        }
+    }
+
+    private void v1ToV2(SQLiteDatabase db) {
+        // v1.3.1
+        db.execSQL("alter table hd_seeds add column encrypt_hd_seed text;");
+        db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
+        String passwordSeedStr = AppSharedPreference.getInstance().getPasswordSeedString();
+        if (!Utils.isEmpty(passwordSeedStr)) {
+            db.execSQL("insert into password_seed (password_seed) values (?) ", new String[]{passwordSeedStr});
+        }
+    }
+
+    private void v2ToV3(SQLiteDatabase db) {
+        // v1.3.2
+        db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
+        db.execSQL("alter table hd_seeds add column singular_mode_backup text;");
+    }
+
+    private void v3ToV4(SQLiteDatabase db) {
+        // v1.3.3 ensure v2 & v3 's script executed.
+        Cursor cursor = db.rawQuery("select count(0) from sqlite_master where name='aliases'", null);
+        int cnt = 0;
+        if (cursor.moveToNext()) {
+            cnt = cursor.getInt(0);
+        }
+        cursor.close();
+        if (cnt == 0) {
+            v1ToV2(db);
+            v2ToV3(db);
         }
     }
 }
