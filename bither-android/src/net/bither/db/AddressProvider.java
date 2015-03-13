@@ -388,6 +388,19 @@ public class AddressProvider implements IAddressProvider {
             }
             db.setTransactionSuccessful();
             db.endTransaction();
+        } else {
+            String encryptedBitherPasswordString = hdmBid.getEncryptedBitherPasswordString();
+            db.beginTransaction();
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.HDMBIdColumns.ENCRYPT_BITHER_PASSWORD, encryptedBitherPasswordString);
+            db.update(AbstractDb.Tables.HDM_BID, cv, AbstractDb.HDMBIdColumns.HDM_BID + "=?", new String[]{
+                    hdmBid.getAddress()
+            });
+            if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+                addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedBitherPasswordString));
+            }
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
     }
 
