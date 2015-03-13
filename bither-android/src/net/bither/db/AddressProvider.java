@@ -360,7 +360,7 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public void addHDMBId(HDMBId hdmBid, String addressOfPS) {
+    public void addAndUpdateHDMBId(HDMBId hdmBid, String addressOfPS) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         boolean isExist = true;
         Cursor c = null;
