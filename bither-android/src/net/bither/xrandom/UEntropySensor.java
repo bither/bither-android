@@ -57,8 +57,13 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
         }
         ArrayList<Sensor> unregisteredSensors = new ArrayList<Sensor>();
         for (Sensor sensor : sensors) {
-            boolean registered = sensorManager.registerListener(this, sensor,
-                    SensorManager.SENSOR_DELAY_NORMAL);
+            boolean registered = false;
+            try {
+                registered = sensorManager.registerListener(this, sensor,
+                        SensorManager.SENSOR_DELAY_NORMAL);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (!registered) {
                 unregisteredSensors.add(sensor);
             }

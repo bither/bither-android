@@ -268,6 +268,9 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
     @Override
     public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
         if(buttonView.getId() == R.id.cbx_torch){
+            if(cameraHandler == null){
+                return;
+            }
             cameraHandler.post(new Runnable() {
                 @Override
                 public void run() {
