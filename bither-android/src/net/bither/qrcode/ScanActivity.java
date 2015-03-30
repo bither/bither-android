@@ -25,12 +25,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -40,10 +42,15 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.ResultPointCallback;
@@ -53,18 +60,25 @@ import com.google.zxing.qrcode.QRCodeReader;
 import net.bither.R;
 import net.bither.camera.CameraManager;
 import net.bither.ui.base.BaseActivity;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.ScannerView;
+import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.FileUtil;
+import net.bither.util.ImageManageUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback,
         CompoundButton.OnCheckedChangeListener {
     public static final String INTENT_EXTRA_RESULT = "result";
+    public static final int FromGalleryRequestCode = 1606;
 
     private static final long VIBRATE_DURATION = 50L;
 	private static final long AUTO_FOCUS_INTERVAL_MS = 2500L;
@@ -73,68 +87,71 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 	protected ScannerView scannerView;
 	private SurfaceHolder surfaceHolder;
 	protected FrameLayout flOverlayContainer;
-	private Vibrator vibrator;
-	private HandlerThread cameraThread;
-	private Handler cameraHandler;
+    protected ImageButton ibtnGallery;
+    private Vibrator vibrator;
+    private HandlerThread cameraThread;
+    private Handler cameraHandler;
 
-	private static boolean DISABLE_CONTINUOUS_AUTOFOCUS = Build.MODEL
-			.equals("GT-I9100") // Galaxy S2
-			|| Build.MODEL.equals("SGH-T989") // Galaxy S2
-			|| Build.MODEL.equals("SGH-T989D") // Galaxy S2 X
-			|| Build.MODEL.equals("SAMSUNG-SGH-I727") // Galaxy S2 Skyrocket
-			|| Build.MODEL.equals("GT-I9300") // Galaxy S3
-			|| Build.MODEL.equals("GT-N7000"); // Galaxy Note
+    private boolean fromGallery;
 
-	private static final Logger log = LoggerFactory
-			.getLogger(ScanActivity.class);
+    private static boolean DISABLE_CONTINUOUS_AUTOFOCUS = Build.MODEL.equals("GT-I9100") //
+            // Galaxy S2
+            || Build.MODEL.equals("SGH-T989") // Galaxy S2
+            || Build.MODEL.equals("SGH-T989D") // Galaxy S2 X
+            || Build.MODEL.equals("SAMSUNG-SGH-I727") // Galaxy S2 Skyrocket
+            || Build.MODEL.equals("GT-I9300") // Galaxy S3
+            || Build.MODEL.equals("GT-N7000"); // Galaxy Note
 
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		overridePendingTransition(0, R.anim.scanner_in_exit);
-		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    private static final Logger log = LoggerFactory.getLogger(ScanActivity.class);
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        overridePendingTransition(0, R.anim.scanner_in_exit);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 		setContentView(R.layout.scan_activity);
 		flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
 		scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
+        ibtnGallery = (ImageButton) findViewById(R.id.ibtn_gallery);
+        ibtnGallery.setOnClickListener(galleryClick);
         ((CheckBox) findViewById(R.id.cbx_torch)).setOnCheckedChangeListener(this);
-	}
+        fromGallery = false;
+    }
 
-	public void setOverlay(View v) {
-		flOverlayContainer.removeAllViews();
-		flOverlayContainer.addView(v, LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
-	}
+    public void setOverlay(View v) {
+        flOverlayContainer.removeAllViews();
+        flOverlayContainer.addView(v, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    }
 
-	public void setOverlay(int resource) {
-		setOverlay(LayoutInflater.from(this).inflate(resource, null));
-	}
+    public void setOverlay(int resource) {
+        setOverlay(LayoutInflater.from(this).inflate(resource, null));
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-		cameraThread = new HandlerThread("cameraThread",
-				Process.THREAD_PRIORITY_BACKGROUND);
-		cameraThread.start();
-		cameraHandler = new Handler(cameraThread.getLooper());
+        cameraThread = new HandlerThread("cameraThread", Process.THREAD_PRIORITY_BACKGROUND);
+        cameraThread.start();
+        cameraHandler = new Handler(cameraThread.getLooper());
 
-		final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.scan_activity_preview);
-		surfaceHolder = surfaceView.getHolder();
-		surfaceHolder.addCallback(this);
-		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-	}
+        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.scan_activity_preview);
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(this);
+        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
 
-	@Override
-	public void surfaceCreated(final SurfaceHolder holder) {
-		cameraHandler.post(openRunnable);
-	}
+    @Override
+    public void surfaceCreated(final SurfaceHolder holder) {
+        cameraHandler.post(openRunnable);
+    }
 
-	@Override
-	public void surfaceDestroyed(final SurfaceHolder holder) {
-	}
+    @Override
+    public void surfaceDestroyed(final SurfaceHolder holder) {
+    }
 
-	@Override
+    @Override
 	public void surfaceChanged(final SurfaceHolder holder, final int format,
 			final int width, final int height) {
 	}
@@ -302,29 +319,91 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 		}
 	}
 
-	private final Runnable fetchAndDecodeRunnable = new Runnable() {
-		private final QRCodeReader reader = new QRCodeReader();
-		private final Map<DecodeHintType, Object> hints = new EnumMap<DecodeHintType, Object>(
-				DecodeHintType.class);
+    private View.OnClickListener galleryClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            fromGallery = true;
+            Intent intent = new Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, FromGalleryRequestCode);
+            overridePendingTransition(0, R.anim.scanner_in_exit);
+        }
+    };
 
-		@Override
-		public void run() {
-			cameraManager.requestPreviewFrame(new PreviewCallback() {
-				@Override
-				public void onPreviewFrame(final byte[] data,
-						final Camera camera) {
-					decode(data);
-				}
-			});
-		}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        if (requestCode == FromGalleryRequestCode) {
+            overridePendingTransition(R.anim.scanner_out_enter, 0);
+            if (resultCode == RESULT_OK) {
+                fromGallery = true;
+                final DialogProgress dp = new DialogProgress(this, R.string.please_wait);
+                dp.show();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        String text = null;
+                        Uri uri = data.getData();
+                        if (uri != null) {
+                            File fromFile = FileUtil.convertUriToFile(ScanActivity.this, uri);
+                            if (fromFile != null && fromFile.exists()) {
+                                Bitmap bmp = ImageManageUtil.getBitmapNearestSize(fromFile,
+                                        ImageManageUtil.IMAGE_SIZE);
+                                if (bmp != null) {
+                                    text = decodeQrCodeFromBitmap(bmp);
+                                }
+                            }
+                        }
+                        final String r = text;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                if (r == null) {
+                                    fromGallery = false;
+                                    DropdownMessage.showDropdownMessage(ScanActivity.this,
+                                            R.string.scan_qr_code_from_photo_wrong);
+                                } else {
+                                    final Intent result = getIntent();
+                                    result.putExtra(INTENT_EXTRA_RESULT, r);
+                                    setResult(RESULT_OK, result);
+                                    finish();
+                                }
+                            }
+                        });
+                    }
+                }.start();
+            } else {
+                fromGallery = false;
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
-		private void decode(final byte[] data) {
-			final PlanarYUVLuminanceSource source = cameraManager
-					.buildLuminanceSource(data);
-			final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(
-					source));
+    private final Runnable fetchAndDecodeRunnable = new Runnable() {
+        private final QRCodeReader reader = new QRCodeReader();
+        private final Map<DecodeHintType, Object> hints = new EnumMap<DecodeHintType,
+                Object>(DecodeHintType.class);
 
-			try {
+        @Override
+        public void run() {
+            if (fromGallery) {
+                cameraHandler.postDelayed(fetchAndDecodeRunnable, 500);
+                return;
+            }
+            cameraManager.requestPreviewFrame(new PreviewCallback() {
+                @Override
+                public void onPreviewFrame(final byte[] data, final Camera camera) {
+                    decode(data);
+                }
+            });
+        }
+
+        private void decode(final byte[] data) {
+            final PlanarYUVLuminanceSource source = cameraManager.buildLuminanceSource(data);
+            final BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+            try {
 				hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK,
 						new ResultPointCallback() {
 							@Override
@@ -380,6 +459,29 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 	public void finish() {
 		super.finish();
 		overridePendingTransition(R.anim.scanner_out_enter, 0);
+    }
+
+    private String decodeQrCodeFromBitmap(Bitmap bmp) {
+        int width = bmp.getWidth();
+        int height = bmp.getHeight();
+        int[] pixels = new int[width * height];
+        bmp.getPixels(pixels, 0, width, 0, 0, width, height);
+        bmp.recycle();
+        bmp = null;
+        QRCodeReader reader = new QRCodeReader();
+        Hashtable hints = new Hashtable();
+        try {
+            Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(new
+                    RGBLuminanceSource(width, height, pixels))), hints);
+            return result.getText();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (ChecksumException e) {
+            e.printStackTrace();
+        } catch (FormatException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

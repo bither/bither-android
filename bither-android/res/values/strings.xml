@@ -318,6 +318,7 @@
     <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
     <string name="only_supports_the_compressed_private_key">Only supports the compressed format of private key</string>
     <string name="old_version_no_support_change_adress">old version QR Code does not support change address selection</string>
+    <string name="scan_qr_code_from_photo_wrong">No QR Code Found</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>

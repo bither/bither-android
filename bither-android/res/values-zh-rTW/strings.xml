@@ -307,6 +307,7 @@
     <string name="time_is_wrong">系統時間錯誤, 請重新設置</string>
     <string name="only_supports_the_compressed_private_key">只支持壓縮格式的私鑰</string>
     <string name="old_version_no_support_change_adress">舊版本二維碼不支持選擇找零地址</string>
+    <string name="scan_qr_code_from_photo_wrong">沒有找到二維碼</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">請選擇從哪個地址發送</string>
