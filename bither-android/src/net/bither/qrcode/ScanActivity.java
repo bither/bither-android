@@ -469,7 +469,8 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
         bmp.recycle();
         bmp = null;
         QRCodeReader reader = new QRCodeReader();
-        Hashtable hints = new Hashtable();
+        Map<DecodeHintType, Object> hints = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+        hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
         try {
             Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(new
                     RGBLuminanceSource(width, height, pixels))), hints);
