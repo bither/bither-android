@@ -80,7 +80,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private Button btnGetSign;
     private Button btnCloneTo;
     private Button btnCloneFrom;
-    private Button btnBackupTime;
+    private TextView tvBackupTime;
+    private TextView tvBackupPath;
     private Button btnAdvance;
     private SettingSelectorView ssvBitcoinUnit;
     private FrameLayout flBackTime;
@@ -318,14 +319,14 @@ public class OptionColdFragment extends Fragment implements Selectable {
         llQrForAll.setOnClickListener(qrForAllClick);
         btnAdvance.setOnClickListener(advanceClick);
         ssvBitcoinUnit.setSelector(bitcoinUnitSelector);
-        btnBackupTime = (Button) view.findViewById(R.id.btn_backup_time);
-        btnBackupTime.setOnClickListener(backupTimeListener);
+        tvBackupTime = (TextView) view.findViewById(R.id.tv_backup_time);
+        tvBackupPath = (TextView) view.findViewById(R.id.tv_backup_path);
+        flBackTime.setOnClickListener(backupTimeListener);
         showBackupTime();
 
     }
 
     private void showBackupTime() {
-
         if (FileUtil.existSdCardMounted()) {
             Date date = AppSharedPreference.getInstance().getLastBackupkeyTime();
             if (date == null) {
@@ -333,14 +334,15 @@ public class OptionColdFragment extends Fragment implements Selectable {
             } else {
                 flBackTime.setVisibility(View.VISIBLE);
                 String relativeDate = DateTimeUtil.getRelativeDate(getActivity(), date).toString();
-                btnBackupTime.setText(Utils.format(getString(R.string.last_time_of_back_up)
+                tvBackupTime.setText(Utils.format(getString(R.string.last_time_of_back_up)
                         + " ", relativeDate));
+                tvBackupPath.setText(FileUtil.getBackupSdCardDir().getAbsolutePath());
             }
         } else {
             flBackTime.setVisibility(View.VISIBLE);
-            btnBackupTime.setText(R.string.no_sd_card_of_back_up);
+            tvBackupTime.setText(R.string.no_sd_card_of_back_up);
+            tvBackupPath.setVisibility(View.GONE);
         }
-
     }
 
     private void setPbBackTimeSize() {
@@ -355,8 +357,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     private void backupFinish() {
         pbBackTime.setVisibility(View.INVISIBLE);
-        btnBackupTime.setText(R.string.backup_finish);
-        AnimationUtil.fadeOut(btnBackupTime, new Animation.AnimationListener() {
+        tvBackupTime.setText(R.string.backup_finish);
+        AnimationUtil.fadeOut(tvBackupTime, new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
             }
@@ -374,7 +376,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void fadeinBackupTime() {
-        AnimationUtil.fadeIn(btnBackupTime, new Animation.AnimationListener() {
+        AnimationUtil.fadeIn(tvBackupTime, new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -382,9 +384,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                btnBackupTime.setVisibility(View.INVISIBLE);
+                tvBackupTime.setVisibility(View.INVISIBLE);
                 showBackupTime();
-                AnimationUtil.fadeOut(btnBackupTime);
+                AnimationUtil.fadeOut(tvBackupTime);
 
             }
 
