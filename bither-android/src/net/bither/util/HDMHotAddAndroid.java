@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import net.bither.R;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
@@ -232,7 +233,7 @@ public class HDMHotAddAndroid extends HDMHotAdd {
     public void scanColdResult(String result) {
         try {
             coldRoot = Utils.hexStringToByteArray(result);
-            final int count = BitherjSettings.HDM_ADDRESS_PER_SEED_PREPARE_COUNT -
+            final int count = AbstractApp.bitherjSetting.hdmAddressPerSeedPrepareCount() -
                     AddressManager.getInstance().getHdmKeychain().uncompletedAddressCount();
             if (!dp.isShowing() && passwordGetter.hasPassword() && count > 0) {
                 dp.show();

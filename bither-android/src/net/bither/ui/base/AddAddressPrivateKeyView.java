@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
@@ -173,10 +174,10 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
         private int getMaxCount() {
             int max = 0;
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-                max = BitherjSettings.WATCH_ONLY_ADDRESS_COUNT_LIMIT - AddressManager.getInstance()
+                max = AbstractApp.bitherjSetting.watchOnlyAddressCountLimit() - AddressManager.getInstance()
                         .getAllAddresses().size();
             } else {
-                max = BitherjSettings.PRIVATE_KEY_OF_HOT_COUNT_LIMIT - AddressManager.getInstance()
+                max = AbstractApp.bitherjSetting.privateKeyOfHotCountLimit() - AddressManager.getInstance()
                         .getPrivKeyAddresses().size();
             }
             return max;
