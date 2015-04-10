@@ -159,7 +159,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
     }
 
     private AbstractWheelTextAdapter countAdapter = new AbstractWheelTextAdapter(getContext()) {
-        private int max = getMaxCount();
+        private int max = AddressManager.canAddPrivateKeyCount();
 
         @Override
         public int getItemsCount() {
@@ -171,17 +171,7 @@ public class AddAddressPrivateKeyView extends FrameLayout implements IDialogPass
             return String.valueOf(index + 1);
         }
 
-        private int getMaxCount() {
-            int max = 0;
-            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-                max = AbstractApp.bitherjSetting.watchOnlyAddressCountLimit() - AddressManager.getInstance()
-                        .getAllAddresses().size();
-            } else {
-                max = AbstractApp.bitherjSetting.privateKeyOfHotCountLimit() - AddressManager.getInstance()
-                        .getPrivKeyAddresses().size();
-            }
-            return max;
-        }
+
     };
 
     private CompoundButton.OnCheckedChangeListener xRandomCheck = new CompoundButton
