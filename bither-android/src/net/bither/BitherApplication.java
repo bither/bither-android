@@ -34,6 +34,7 @@ import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
+import net.bither.db.HDAccountDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.qrcode.Qr;
@@ -69,6 +70,7 @@ public class BitherApplication extends Application {
     public static Context mContext;
     public static SQLiteOpenHelper mDbHelper;
     public static SQLiteOpenHelper mAddressDbHelper;
+    public static SQLiteOpenHelper mHDDbHelper;
 
 
     @Override
@@ -78,6 +80,7 @@ public class BitherApplication extends Application {
         mContext = getApplicationContext();
         mDbHelper = new BitherDatabaseHelper(mContext);
         mAddressDbHelper = new AddressDatabaseHelper(mContext);
+        mHDDbHelper = new HDAccountDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
         AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();

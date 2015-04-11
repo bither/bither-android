@@ -131,7 +131,7 @@ public class AddressProvider implements IAddressProvider {
             if (singularModeBackupHashMap.containsKey(kv.getKey())) {
                 cv.put(AbstractDb.HDSeedsColumns.SINGULAR_MODE_BACKUP, singularModeBackupHashMap.get(kv.getKey()));
             }
-            writeDb.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?", new String[]{kv.getKey().toString()});
+            writeDb.update(AbstractDb.Tables.HDSEEDS, cv, "hd_seed_id=?", new String[]{kv.getKey().toString()});
         }
         if (passwordSeed != null) {
             cv = new ContentValues();
@@ -247,7 +247,7 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHDSeed);
-        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?"
+        db.update(AbstractDb.Tables.HDSEEDS, cv, "hd_seed_id=?"
                 , new String[]{Integer.toString(hdSeedId)});
     }
 
@@ -302,7 +302,7 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDSeedsColumns.SINGULAR_MODE_BACKUP, singularModeBackup);
-        db.update(AbstractDb.Tables.HDSeeds, cv, "hd_seed_id=?", new String[]{Integer.toString(hdSeedId)});
+        db.update(AbstractDb.Tables.HDSEEDS, cv, "hd_seed_id=?", new String[]{Integer.toString(hdSeedId)});
     }
 
     @Override
@@ -314,7 +314,7 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.HDSeedsColumns.ENCRYPT_HD_SEED, encryptHdSeed);
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
-        int seedId = (int) db.insert(AbstractDb.Tables.HDSeeds, null, cv);
+        int seedId = (int) db.insert(AbstractDb.Tables.HDSEEDS, null, cv);
         if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
             addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptSeed));
         }
@@ -456,7 +456,7 @@ public class AddressProvider implements IAddressProvider {
             for (int i = 0; i < pubsList.size(); i++) {
                 HDMAddress.Pubs pubs = pubsList.get(i);
                 ContentValues cv = applyHDMAddressContentValues(null, hdSeedId, pubs.index, pubs.hot, pubs.cold, null, false);
-                db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
+                db.insert(AbstractDb.Tables.HDMADDRESSES, null, cv);
             }
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -548,7 +548,7 @@ public class AddressProvider implements IAddressProvider {
         if (isExist) {
             ContentValues cv = new ContentValues();
             cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(remote));
-            db.update(AbstractDb.Tables.HDMAddresses, cv, " hd_seed_id=? and hd_seed_index=? "
+            db.update(AbstractDb.Tables.HDMADDRESSES, cv, " hd_seed_id=? and hd_seed_index=? "
                     , new String[]{Integer.toString(hdSeedId), Integer.toString(index)});
 
         }
@@ -585,7 +585,7 @@ public class AddressProvider implements IAddressProvider {
                 ContentValues cv = new ContentValues();
                 cv.put(AbstractDb.HDMAddressesColumns.PUB_KEY_REMOTE, Base58.encode(address.getPubRemote()));
                 cv.put(AbstractDb.HDMAddressesColumns.ADDRESS, address.getAddress());
-                db.update(AbstractDb.Tables.HDMAddresses, cv, " hd_seed_id=? and hd_seed_index=? "
+                db.update(AbstractDb.Tables.HDMADDRESSES, cv, " hd_seed_id=? and hd_seed_index=? "
                         , new String[]{Integer.toString(hdSeedId), Integer.toString(address.getIndex())});
             }
             db.setTransactionSuccessful();
@@ -601,7 +601,7 @@ public class AddressProvider implements IAddressProvider {
             HDMAddress address = addresses.get(i);
             ContentValues cv = applyHDMAddressContentValues(address.getAddress(), hdSeedId,
                     address.getIndex(), address.getPubHot(), address.getPubCold(), address.getPubRemote(), false);
-            db.insert(AbstractDb.Tables.HDMAddresses, null, cv);
+            db.insert(AbstractDb.Tables.HDMADDRESSES, null, cv);
 
         }
         db.setTransactionSuccessful();
@@ -636,7 +636,7 @@ public class AddressProvider implements IAddressProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDMAddressesColumns.IS_SYNCED, 1);
-        db.update(AbstractDb.Tables.HDMAddresses, cv, " hd_seed_id=? and hd_seed_index=? "
+        db.update(AbstractDb.Tables.HDMADDRESSES, cv, " hd_seed_id=? and hd_seed_index=? "
                 , new String[]{Integer.toString(hdSeedId), Integer.toString(hdSeedIndex)});
     }
 
@@ -781,7 +781,7 @@ public class AddressProvider implements IAddressProvider {
     public void updateAlias(String address, @Nullable String alias) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         if (alias == null) {
-            db.delete(AbstractDb.Tables.Aliases, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
+            db.delete(AbstractDb.Tables.ALIASES, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
         } else {
             db.execSQL("insert or replace into aliases(address,alias) values(?,?)", new String[]{address, alias});
         }
