@@ -49,6 +49,6 @@ public class PasswordEntryKeyboardView extends EntryKeyboardView {
 
     @Override
     protected int getDefaultKeyboardMode() {
-        return EntryKeyboardView.KEYBOARD_MODE_NUMERIC;
+        return EntryKeyboardView.KEYBOARD_MODE_ALPHA;
     }
 }

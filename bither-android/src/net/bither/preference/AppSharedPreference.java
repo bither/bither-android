@@ -23,9 +23,8 @@ import com.google.common.primitives.Ints;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
@@ -69,6 +68,7 @@ public class AppSharedPreference {
     private static final String PIN_CODE = "pin_code";
     private static final String BITCOIN_UNIT = "bitcoin_unit";
     private static final String XRANDOM_INSTRUCTION_AUTO_SHOW = "xrandom_instruction_auto_show";
+    private static final String PASSWORD_STRENGTH_CHECK = "password_strength_check";
 
     private static final String QR_QUALITY = "qr_quality";
 
@@ -395,7 +395,13 @@ public class AppSharedPreference {
             index = qrQuality.ordinal();
         }
         this.mPreferences.edit().putInt(QR_QUALITY, index).commit();
+    }
 
+    public void setPasswordStrengthCheck(boolean check) {
+        mPreferences.edit().putBoolean(PASSWORD_STRENGTH_CHECK, check).commit();
+    }
 
+    public boolean getPasswordStrengthCheck() {
+        return mPreferences.getBoolean(PASSWORD_STRENGTH_CHECK, true);
     }
 }
