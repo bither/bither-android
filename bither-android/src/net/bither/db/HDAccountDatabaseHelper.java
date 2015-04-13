@@ -33,7 +33,7 @@ public class HDAccountDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createHDAccount(db);
+
         createAccountAddress(db);
         createAccountTxs(db);
         createAccountIns(db);
@@ -46,10 +46,7 @@ public class HDAccountDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    private void createHDAccount(SQLiteDatabase db) {
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT);
 
-    }
 
     private void createAccountAddress(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESSES);

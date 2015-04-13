@@ -19,24 +19,85 @@ package net.bither.db;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.db.IHDAccountProvider;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class HDAccountProvider implements IHDAccountProvider {
-    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mHDDbHelper);
+    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mAddressDbHelper, BitherApplication.mHDDbHelper);
 
     public static HDAccountProvider getInstance() {
         return hdAccountProvider;
     }
 
-    private SQLiteOpenHelper mDb;
+    private SQLiteOpenHelper addressDB;
+    private SQLiteOpenHelper hdAccountDB;
 
 
-    private HDAccountProvider(SQLiteOpenHelper db) {
-        this.mDb = db;
+    private HDAccountProvider(SQLiteOpenHelper addressDB, SQLiteOpenHelper hdAccountDB) {
+        this.addressDB = addressDB;
+        this.hdAccountDB = hdAccountDB;
     }
 
     @Override
-    public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
+    public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS, byte[] externalPub, byte[] internalPub) {
         return 0;
+    }
+
+    @Override
+    public int externalIssuedIndex() {
+        return 0;
+    }
+
+    @Override
+    public int internalIssuedIndex() {
+        return 0;
+    }
+
+    @Override
+    public byte[] getExternalPub() {
+        return new byte[0];
+    }
+
+    @Override
+    public byte[] getInternalPub() {
+        return new byte[0];
+    }
+
+    @Override
+    public String externalAddress() {
+        return null;
+    }
+
+    @Override
+    public List<HashMap<String, byte[]>> getAddressPub() {
+        return null;
+    }
+
+    @Override
+    public List<Tx> getUnspentTxs() {
+        return null;
+    }
+
+    @Override
+    public void addTx(Tx tx) {
+
+    }
+
+    @Override
+    public void addTxs(List<Tx> txList) {
+
+    }
+
+    @Override
+    public String getEncryptSeed(int hdSeedId) {
+        return null;
+    }
+
+    @Override
+    public String getEncryptHDSeed(int hdSeedId) {
+        return null;
     }
 }
