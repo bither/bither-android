@@ -90,6 +90,7 @@
     <color name="address_alias_color">#ff666666</color>
 
     <!-- password strength -->
+    <color name="password_strength_bar_bg">#33ffffff</color>
     <color name="password_strength_weak">#ee5f5b</color>
     <color name="password_strength_normal">#ee5f5b</color>
     <color name="password_strength_medium">#fbb450</color>

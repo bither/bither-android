@@ -12,6 +12,7 @@ dependencies {
         // Work around for gradle 0.9 and 0.10
         transitive = true
     }
+    compile 'com.akexorcist:RoundCornerProgressBar:1.1.0'
     compile project(':bitherj')
     compile project(':wheel')
     compile project(':android-charts')

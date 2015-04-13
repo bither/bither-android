@@ -79,6 +79,10 @@ public class PasswordStrengthUtil {
             return value;
         }
 
+        public int getProgress() {
+            return value + 1;
+        }
+
         public boolean passed() {
             return getValue() >= PassingPasswordStrength.getValue();
         }

@@ -29,8 +29,11 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 
 import net.bither.R;
 import net.bither.bitherj.crypto.PasswordSeed;
@@ -41,11 +44,11 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
-import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.CheckUtil;
+import net.bither.util.PasswordStrengthUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -65,6 +68,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private EditText etPasswordConfirm;
     private Button btnOk;
     private Button btnCancel;
+    private TextView tvPasswordLength;
+    private TextView tvPasswordStrength;
+    private FrameLayout flPasswordStrength;
+    private RoundCornerProgressBar pbPasswordStrength;
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
     private IDialogPasswordListener listener;
@@ -94,6 +101,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         etPasswordConfirm = (EditText) findViewById(R.id.et_password_confirm);
         btnOk = (Button) findViewById(R.id.btn_ok);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
+        tvPasswordLength = (TextView) findViewById(R.id.tv_password_length);
+        tvPasswordStrength = (TextView) findViewById(R.id.tv_password_strength);
+        pbPasswordStrength = (RoundCornerProgressBar) findViewById(R.id.pb_password_strength);
+        flPasswordStrength = (FrameLayout) findViewById(R.id.fl_password_strength);
         kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         etPassword.addTextChangedListener(passwordWatcher);
         etPasswordConfirm.addTextChangedListener(passwordWatcher);
@@ -154,11 +165,33 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                 btnOk.setEnabled(true);
             }
         }
+        if (checkStrength()) {
+            if (passwordLength > 0) {
+                flPasswordStrength.setVisibility(View.VISIBLE);
+                tvPasswordLength.setVisibility(View.INVISIBLE);
+                PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
+                        .checkPassword(etPassword.getText());
+                pbPasswordStrength.setProgress(strength.getProgress());
+                pbPasswordStrength.setProgressColor(strength.getColor());
+                tvPasswordStrength.setText(strength.getNameRes());
+            } else {
+                flPasswordStrength.setVisibility(View.INVISIBLE);
+                tvPasswordLength.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private void shake() {
         Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.password_wrong_warning);
         container.startAnimation(shake);
+    }
+
+    private void shakeStrength() {
+        if (checkStrength()) {
+            Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim
+                    .password_wrong_warning);
+            flPasswordStrength.startAnimation(shake);
+        }
     }
 
     public void setCheckPre(boolean check) {
@@ -196,13 +229,42 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         public void onClick(View v) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
             SecureCharSequence passwordConfirm = new SecureCharSequence(etPasswordConfirm.getText());
-            if (passwordSeed == null && !password.equals(passwordConfirm) && checkPre) {
-                password.wipe();
-                passwordConfirm.wipe();
-                tvError.setText(R.string.add_address_generate_address_password_not_same);
-                tvError.setVisibility(View.VISIBLE);
-                etPasswordConfirm.requestFocus();
-                return;
+            if (passwordSeed == null && checkPre) {
+                if (!password.equals(passwordConfirm)) {
+                    password.wipe();
+                    passwordConfirm.wipe();
+                    tvError.setText(R.string.add_address_generate_address_password_not_same);
+                    tvError.setVisibility(View.VISIBLE);
+                    etPasswordConfirm.requestFocus();
+                    return;
+                } else {
+                    PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
+                            .checkPassword(password);
+                    password.wipe();
+                    passwordConfirm.wipe();
+                    if (!strength.passed()) {
+                        etPassword.requestFocus();
+                        shakeStrength();
+                        return;
+                    }
+                    if (strength.warning()) {
+                        new DialogConfirmTask(getContext(), String.format(getContext().getString
+                                (R.string.password_strength_warning), strength.getName()), new
+                                Runnable() {
+                            @Override
+                            public void run() {
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        passwordEntered = true;
+                                        dismiss();
+                                    }
+                                });
+                            }
+                        }).show();
+                        return;
+                    }
+                }
             }
             password.wipe();
             passwordConfirm.wipe();
@@ -291,6 +353,10 @@ public class DialogPassword extends Dialog implements OnDismissListener,
             passwordConfirm.wipe();
         }
     };
+
+    private boolean checkStrength() {
+        return passwordSeed == null && checkPre;
+    }
 
     @Override
     public void setCancelable(boolean flag) {
