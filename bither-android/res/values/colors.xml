@@ -93,7 +93,7 @@
     <color name="password_strength_bar_bg">#33ffffff</color>
     <color name="password_strength_weak">#ee5f5b</color>
     <color name="password_strength_normal">#ee5f5b</color>
-    <color name="password_strength_medium">#fbb450</color>
+    <color name="password_strength_medium">#ffa321</color>
     <color name="password_strength_strong">#62c462</color>
     <color name="password_strength_very_strong">#62c462</color>
 </resources>
