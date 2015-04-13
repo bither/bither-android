@@ -35,4 +35,8 @@ public class HDAccountProvider implements IHDAccountProvider {
         this.mDb = db;
     }
 
+    @Override
+    public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
+        return 0;
+    }
 }
