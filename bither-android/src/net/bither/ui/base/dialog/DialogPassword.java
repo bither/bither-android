@@ -44,6 +44,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckListener;
 import net.bither.model.Check.ICheckAction;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -237,7 +238,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                     tvError.setVisibility(View.VISIBLE);
                     etPasswordConfirm.requestFocus();
                     return;
-                } else {
+                } else if (AppSharedPreference.getInstance().getPasswordStrengthCheck()) {
                     PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
                             .checkPassword(password);
                     password.wipe();

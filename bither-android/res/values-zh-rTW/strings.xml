@@ -570,4 +570,8 @@
     <string name="password_strength_strong">強</string>
     <string name="password_strength_very_strong">很強</string>
     <string name="password_strength_warning">確定使用%s強度的密碼?</string>
+    <string name="password_strength_check">密碼強度檢查</string>
+    <string name="password_strength_check_on">開</string>
+    <string name="password_strength_check_off">關</string>
+    <string name="password_strength_check_off_warn">確認關閉密碼強度檢查?</string>
 </resources>

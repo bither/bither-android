@@ -38,11 +38,10 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
-import net.bither.bitherj.factory.ImportHDSeed;
+import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
@@ -57,6 +56,7 @@ import net.bither.rawprivatekey.RawPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
@@ -76,6 +76,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
     private SettingSelectorView ssvQrCodeQuality;
+    private SettingSelectorView ssvPasswordStrengthCheck;
     private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
@@ -102,6 +103,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality = (SettingSelectorView) findViewById(R.id.ssv_qr_code_quality);
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        ssvPasswordStrengthCheck = (SettingSelectorView) findViewById(R.id.ssv_password_strength_check);
+        ssvPasswordStrengthCheck.setSelector(passwordStrengthCheckSelector);
         btnTrashCan.setOnClickListener(trashCanClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -303,6 +306,64 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 }
             } else {
                 startActivity(new Intent(ColdAdvanceActivity.this, PinCodeEnableActivity.class));
+            }
+        }
+    };
+    private SettingSelectorView.SettingSelector passwordStrengthCheckSelector = new
+            SettingSelectorView.SettingSelector() {
+
+        @Override
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            if (index == 0) {
+                return getString(R.string.password_strength_check_on);
+            }
+            return getString(R.string.password_strength_check_off);
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.password_strength_check);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            boolean check = index == 0;
+            if (check) {
+                AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
+            } else {
+                new DialogConfirmTask(ColdAdvanceActivity.this, getString(R.string
+                        .password_strength_check_off_warn), new Runnable() {
+                    @Override
+                    public void run() {
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
+                                ssvPasswordStrengthCheck.loadData();
+                            }
+                        });
+                    }
+                }).show();
             }
         }
     };

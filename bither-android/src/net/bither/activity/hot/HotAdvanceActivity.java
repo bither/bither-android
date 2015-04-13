@@ -95,6 +95,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvSyncInterval;
     private SettingSelectorView ssvPinCode;
     private SettingSelectorView ssvQrCodeQuality;
+    private SettingSelectorView ssvPasswordStrengthCheck;
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
@@ -127,6 +128,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
         ssvQrCodeQuality = (SettingSelectorView) findViewById(R.id.ssv_qr_code_quality);
+        ssvPasswordStrengthCheck = (SettingSelectorView) findViewById(R.id.ssv_password_strength_check);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
@@ -134,6 +136,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvPinCode.setSelector(pinCodeSelector);
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
+        ssvPasswordStrengthCheck.setSelector(passwordStrengthCheckSelector);
         btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
@@ -865,6 +868,65 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     break;
             }
 
+        }
+    };
+
+    private SettingSelectorView.SettingSelector passwordStrengthCheckSelector = new
+            SettingSelectorView.SettingSelector() {
+
+        @Override
+        public int getOptionCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            if (index == 0) {
+                return getString(R.string.password_strength_check_on);
+            }
+            return getString(R.string.password_strength_check_off);
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.password_strength_check);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            boolean check = index == 0;
+            if (check) {
+                AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
+            } else {
+                new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string
+                        .password_strength_check_off_warn), new Runnable() {
+                    @Override
+                    public void run() {
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
+                                ssvPasswordStrengthCheck.loadData();
+                            }
+                        });
+                    }
+                }).show();
+            }
         }
     };
 
