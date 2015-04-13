@@ -19,6 +19,7 @@ package net.bither.db;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.db.IHDAccountProvider;
 
@@ -44,6 +45,16 @@ public class HDAccountProvider implements IHDAccountProvider {
     @Override
     public int addHDKey(String encryptSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS, byte[] externalPub, byte[] internalPub) {
         return 0;
+    }
+
+    @Override
+    public void addExternalAddress(List<HDAccount.HDAccountAddress> hdAccountAddresses) {
+
+    }
+
+    @Override
+    public void addInternalAddress(List<HDAccount.HDAccountAddress> hdAccountAddresses) {
+
     }
 
     @Override

@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
 
 public class BitherSetting {
 
-    public static final String DONATE_ADDRESS = "1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3";
+
     public static final long DONATE_AMOUNT = 100000;
 
     public static final int NOTIFICATION_ID_COINS_RECEIVED = 201451;

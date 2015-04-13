@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.activity.hot.SelectAddressToSendActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -535,7 +536,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (Utils.validBicoinAddress(address)) {
-                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherjSettings.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

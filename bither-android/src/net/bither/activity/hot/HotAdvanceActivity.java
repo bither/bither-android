@@ -33,6 +33,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
@@ -1055,7 +1056,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            StringUtil.copyString(BitherSetting.DONATE_ADDRESS);
+            StringUtil.copyString(BitherjSettings.DONATE_ADDRESS);
             DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                     R.string.bither_team_address_copied);
         }
@@ -1065,7 +1066,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            new DialogSimpleQr(v.getContext(), BitherSetting.DONATE_ADDRESS,
+            new DialogSimpleQr(v.getContext(), BitherjSettings.DONATE_ADDRESS,
                     R.string.bither_team_address).show();
         }
     };
