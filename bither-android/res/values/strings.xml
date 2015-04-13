@@ -580,4 +580,11 @@
     <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
     <string name="bither_team_address">Developer\'s Address</string>
     <string name="bither_team_address_copied">Developer\'s address Copied</string>
+
+    <!-- password strength -->
+    <string name="password_strength_weak">Weak</string>
+    <string name="password_strength_normal">Normal</string>
+    <string name="password_strength_medium">Medium</string>
+    <string name="password_strength_strong">Strong</string>
+    <string name="password_strength_very_strong">Very Strong</string>
 </resources>

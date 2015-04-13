@@ -562,4 +562,11 @@
     <!-- bither team address -->
     <string name="bither_team_address">开发者地址</string>
     <string name="bither_team_address_copied">开发者地址已复制</string>
+
+    <!-- password strength -->
+    <string name="password_strength_weak">弱</string>
+    <string name="password_strength_normal">一般</string>
+    <string name="password_strength_medium">中</string>
+    <string name="password_strength_strong">强</string>
+    <string name="password_strength_very_strong">很强</string>
 </resources>
