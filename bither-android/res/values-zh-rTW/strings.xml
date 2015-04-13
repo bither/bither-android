@@ -564,12 +564,12 @@
     <string name="bither_team_address_copied">開發者地址已復制</string>
 
     <!-- password strength -->
-    <string name="password_strength_weak">弱</string>
+    <string name="password_strength_weak">較弱</string>
     <string name="password_strength_normal">一般</string>
-    <string name="password_strength_medium">中</string>
-    <string name="password_strength_strong">強</string>
+    <string name="password_strength_medium">中等</string>
+    <string name="password_strength_strong">較強</string>
     <string name="password_strength_very_strong">很強</string>
-    <string name="password_strength_warning">確定使用%s強度的密碼?</string>
+    <string name="password_strength_warning">確定使用強度%s的密碼?</string>
     <string name="password_strength_check">密碼強度檢查</string>
     <string name="password_strength_check_on">開</string>
     <string name="password_strength_check_off">關</string>
