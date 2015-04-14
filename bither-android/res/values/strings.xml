@@ -577,7 +577,7 @@
     <string name="address_alias_remove_confirm">Remove tag for this address?</string>
 
     <!-- bither team address -->
-    <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
+    <string name="donate_address">1BitherUnNvB2NsfxMnbS35kS3DTPr7PW5</string>
     <string name="bither_team_address">Developer\'s Address</string>
     <string name="bither_team_address_copied">Developer\'s address Copied</string>
 
