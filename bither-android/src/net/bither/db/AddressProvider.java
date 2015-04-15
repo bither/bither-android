@@ -227,10 +227,13 @@ public class AddressProvider implements IAddressProvider {
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select hd_account_id from hd_seeds";
+            String sql = "select hd_account_id from " + AbstractDb.Tables.HD_ACCOUNT;
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
-                hdSeedIds.add(c.getInt(0));
+                int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.HD_ACCOUNT_ID);
+                if (idColumn != -1) {
+                    hdSeedIds.add(c.getInt(idColumn));
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -930,7 +933,7 @@ public class AddressProvider implements IAddressProvider {
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select hd_seed_id from hd_account";
+            String sql = "select " + AbstractDb.HDAccountColumns.HD_ACCOUNT_ID + " from " + AbstractDb.Tables.HD_ACCOUNT;
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 hdSeedIds.add(c.getInt(0));
@@ -943,6 +946,7 @@ public class AddressProvider implements IAddressProvider {
         }
         return hdSeedIds;
     }
+
     private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
         ContentValues cv = new ContentValues();
         if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {

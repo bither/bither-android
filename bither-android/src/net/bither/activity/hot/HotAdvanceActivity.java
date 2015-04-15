@@ -20,6 +20,7 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -246,13 +247,15 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
-//                            if (BitherjSettings.DEV_DEBUG) {
-//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
-//                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
-//
-//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
-//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
-//                            }
+                            if (BitherjSettings.DEV_DEBUG) {
+                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+
+                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
+                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
+                                SQLiteDatabase hdDb = BitherApplication.mHDDbHelper.getReadableDatabase();
+                                FileUtil.copyFile(new File(hdDb.getPath()), new File(logTagDir, "hd.db"));
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -875,61 +878,61 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView.SettingSelector passwordStrengthCheckSelector = new
             SettingSelectorView.SettingSelector() {
 
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    return 2;
+                }
 
-        @Override
-        public CharSequence getOptionName(int index) {
-            if (index == 0) {
-                return getString(R.string.password_strength_check_on);
-            }
-            return getString(R.string.password_strength_check_off);
-        }
+                @Override
+                public CharSequence getOptionName(int index) {
+                    if (index == 0) {
+                        return getString(R.string.password_strength_check_on);
+                    }
+                    return getString(R.string.password_strength_check_off);
+                }
 
-        @Override
-        public CharSequence getOptionNote(int index) {
-            return null;
-        }
+                @Override
+                public CharSequence getOptionNote(int index) {
+                    return null;
+                }
 
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            return null;
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    return null;
+                }
 
-        @Override
-        public CharSequence getSettingName() {
-            return getString(R.string.password_strength_check);
-        }
+                @Override
+                public CharSequence getSettingName() {
+                    return getString(R.string.password_strength_check);
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
-        }
+                @Override
+                public int getCurrentOptionIndex() {
+                    return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            boolean check = index == 0;
-            if (check) {
-                AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
-            } else {
-                new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string
-                        .password_strength_check_off_warn), new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    boolean check = index == 0;
+                    if (check) {
+                        AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
+                    } else {
+                        new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string
+                                .password_strength_check_off_warn), new Runnable() {
                             @Override
                             public void run() {
-                                AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
-                                ssvPasswordStrengthCheck.loadData();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
+                                        ssvPasswordStrengthCheck.loadData();
+                                    }
+                                });
                             }
-                        });
+                        }).show();
                     }
-                }).show();
-            }
-        }
-    };
+                }
+            };
 
     private void importPrivateKeyFromQrCode(boolean isFromBip38) {
         if (isFromBip38) {

@@ -40,8 +40,11 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.PeerManager;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -110,6 +113,13 @@ public class HotActivity extends BaseFragmentActivity {
             }
         }, 500);
         DialogFirstRunWarning.show(this);
+//        byte[] bytes=new byte[32];
+//        bytes[30]=1;
+//        try {
+//            HDAccount hdmKeychain = new HDAccount(bytes, "123456");
+//        }catch (MnemonicException e){
+//            e.printStackTrace();
+//        }
     }
 
     private void registerReceiver() {
