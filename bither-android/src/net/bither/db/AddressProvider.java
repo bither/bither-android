@@ -367,14 +367,14 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public int addHDAccount(String encryptSeed, String encryptHdSeed, String firstAddress
+    public int addHDAccount(String encryptSeed, String encryptedMnemonicSeed, String firstAddress
             , boolean isXrandom, String addressOfPS, byte[] externalPub
             , byte[] internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountColumns.ENCRYPT_SEED, encryptSeed);
-        cv.put(AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED, encryptHdSeed);
+        cv.put(AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED, encryptedMnemonicSeed);
         cv.put(AbstractDb.HDAccountColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDAccountColumns.HD_ADDRESS, firstAddress);
         cv.put(AbstractDb.HDAccountColumns.EXTERNAL_PUB, Base58.encode(externalPub));
@@ -437,7 +437,7 @@ public class AddressProvider implements IAddressProvider {
         String hdAccountEncryptSeed = null;
 
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select encrypt_seed from hd_account where hd_account_id=? "
+        Cursor c = db.rawQuery("select " + AbstractDb.HDAccountColumns.ENCRYPT_SEED + " from hd_account where hd_account_id=? "
                 , new String[]{Integer.toString(hdSeedId)});
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.ENCRYPT_SEED);
@@ -452,7 +452,7 @@ public class AddressProvider implements IAddressProvider {
     public String getHDAccountEncryptMnmonicSeed(int hdSeedId) {
         String hdAccountMnmonicEncryptSeed = null;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select encrypt_HD_seed from hd_account where hd_account_id=? "
+        Cursor c = db.rawQuery("select " + AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED + " from hd_account where hd_account_id=? "
                 , new String[]{Integer.toString(hdSeedId)});
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED);
