@@ -30,31 +30,22 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.PasswordSeed;
-import net.bither.fragment.hot.AddAddressHotHDMFragment;
+import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
-import net.bither.fragment.hot.AddAddressWatchOnlyFragment;
 import net.bither.ui.base.AddPrivateKeyActivity;
-import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 
 public class AddHotAddressActivity extends AddPrivateKeyActivity {
-    private ToggleButton tbtnWatchOnly;
-    private ToggleButton tbtnPrivateKey;
-    private ToggleButton tbtnHDM;
+    private ToggleButton tbtnHDAccount;
+    private ToggleButton tbtnOther;
     private ViewPager pager;
     private ImageButton ibtnCancel;
 
-    private AddAddressWatchOnlyFragment vWatchOnly;
+    private AddAddressHotHDAccountFragment hdAccountFragment;
     private AddAddressPrivateKeyFragment vPrivateKey;
-    private AddAddressHotHDMFragment vHDM;
-
-    private boolean privateLimit;
-    private boolean watchOnlyLimit;
-    private boolean hdmLimit;
 
     private boolean shouldSuggestCheck = false;
 
@@ -67,59 +58,36 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         } else {
             shouldSuggestCheck = false;
         }
-        privateLimit = AddressManager.isPrivateLimit();
-        watchOnlyLimit = AddressManager.isWatchOnlyLimit();
-        hdmLimit = false;
         initView();
     }
 
     private void initView() {
-        tbtnPrivateKey = (ToggleButton) findViewById(R.id.tbtn_private_key);
-        tbtnWatchOnly = (ToggleButton) findViewById(R.id.tbtn_watch_only);
-        tbtnHDM = (ToggleButton) findViewById(R.id.tbtn_hdm);
+        tbtnHDAccount = (ToggleButton) findViewById(R.id.tbtn_hd_account);
+        tbtnOther = (ToggleButton) findViewById(R.id.tbtn_other);
         pager = (ViewPager) findViewById(R.id.pager);
         ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
-        tbtnPrivateKey.setOnClickListener(new IndicatorClick(0));
-        tbtnWatchOnly.setOnClickListener(new IndicatorClick(1));
-        tbtnHDM.setOnClickListener(new IndicatorClick(2));
+        tbtnHDAccount.setOnClickListener(new IndicatorClick(0));
+        tbtnOther.setOnClickListener(new IndicatorClick(1));
         ibtnCancel.setOnClickListener(cancelClick);
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(pageChange);
         pager.setCurrentItem(0);
-        if (adapter.getCount() > 2) {
-            tbtnPrivateKey.setChecked(true);
-        } else {
-            if (privateLimit) {
-                if (!watchOnlyLimit) {
-                    tbtnWatchOnly.setChecked(true);
-                } else {
-                    tbtnHDM.setChecked(true);
-                }
-            } else {
-                tbtnPrivateKey.setChecked(true);
-            }
-        }
     }
 
-    private AddAddressWatchOnlyFragment getWatchOnlyView() {
-        if (vWatchOnly == null) {
-            vWatchOnly = new AddAddressWatchOnlyFragment();
+    private Fragment getHDAccountFragment() {
+        //TODO if already has hd account return a viewing view
+        if (hdAccountFragment == null) {
+            hdAccountFragment = new AddAddressHotHDAccountFragment();
         }
-        return vWatchOnly;
+        return hdAccountFragment;
     }
 
-    private AddAddressPrivateKeyFragment getPrivateKeyView() {
+    private Fragment getOtherFragment() {
+        //TODO need other fragment
         if (vPrivateKey == null) {
             vPrivateKey = new AddAddressPrivateKeyFragment();
         }
         return vPrivateKey;
-    }
-
-    private AddAddressHotHDMFragment getHDMView() {
-        if (vHDM == null) {
-            vHDM = new AddAddressHotHDMFragment();
-        }
-        return vHDM;
     }
 
     private OnClickListener cancelClick = new OnClickListener() {
@@ -162,44 +130,13 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
 
     private void initPosition(int position) {
         if (position == 0) {
-            if (privateLimit) {
-                DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
-                        R.string.private_key_count_limit);
-                tbtnPrivateKey.setChecked(false);
-            } else {
-                if (tbtnWatchOnly.isChecked() || tbtnHDM.isChecked()) {
-                    pager.setCurrentItem(0, true);
-                }
-                tbtnHDM.setChecked(false);
-                tbtnWatchOnly.setChecked(false);
-                tbtnPrivateKey.setChecked(true);
-            }
+            pager.setCurrentItem(0, true);
+            tbtnHDAccount.setChecked(true);
+            tbtnOther.setChecked(false);
         } else if (position == 1) {
-            if (watchOnlyLimit) {
-                DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
-                        R.string.watch_only_address_count_limit);
-                tbtnWatchOnly.setChecked(false);
-            } else {
-                if (tbtnPrivateKey.isChecked() || tbtnHDM.isChecked()) {
-                    pager.setCurrentItem(getWatchOnlyIndex(), true);
-                }
-                tbtnWatchOnly.setChecked(true);
-                tbtnPrivateKey.setChecked(false);
-                tbtnHDM.setChecked(false);
-            }
-        } else if (position == 2) {
-            if (hdmLimit) {
-                DropdownMessage.showDropdownMessage(AddHotAddressActivity.this,
-                        R.string.hdm_cold_seed_count_limit);
-                tbtnHDM.setChecked(false);
-            } else {
-                if (tbtnPrivateKey.isChecked() || tbtnWatchOnly.isChecked()) {
-                    pager.setCurrentItem(getHDMIndex(), true);
-                }
-                tbtnHDM.setChecked(true);
-                tbtnWatchOnly.setChecked(false);
-                tbtnPrivateKey.setChecked(false);
-            }
+            pager.setCurrentItem(1, true);
+            tbtnHDAccount.setChecked(false);
+            tbtnOther.setChecked(true);
         }
     }
 
@@ -207,87 +144,31 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
 
         @Override
         public int getCount() {
-            int count = 0;
-            if (!privateLimit) {
-                count++;
-            }
-            if (!watchOnlyLimit) {
-                count++;
-            }
-            if (!hdmLimit) {
-                count++;
-            }
-            return count;
+            return 2;
         }
 
         @Override
         public Fragment getItem(int index) {
-            if (index == getPrivateIndex()) {
-                return getPrivateKeyView();
+            if (index == 0) {
+                return getHDAccountFragment();
             }
-            if (index == getWatchOnlyIndex()) {
-                return getWatchOnlyView();
-            }
-            if (index == getHDMIndex()) {
-                return getHDMView();
+            if (index == 1) {
+                return getOtherFragment();
             }
             return null;
         }
     };
 
-    private int getPrivateIndex() {
-        if (privateLimit) {
-            return -1;
-        }
-        return 0;
-    }
-
-    private int getWatchOnlyIndex() {
-        if (watchOnlyLimit) {
-            return -1;
-        }
-        int index = 0;
-        if (!privateLimit) {
-            index++;
-        }
-        return index;
-    }
-
-    private int getHDMIndex() {
-        if (hdmLimit) {
-            return -1;
-        }
-        int index = 0;
-        if (!privateLimit) {
-            index++;
-        }
-        if (!watchOnlyLimit) {
-            index++;
-        }
-        return index;
-    }
-
     private OnPageChangeListener pageChange = new OnPageChangeListener() {
 
         @Override
         public void onPageSelected(int index) {
-            if (index == getPrivateIndex()) {
-                tbtnPrivateKey.setChecked(true);
-                tbtnWatchOnly.setChecked(false);
-                tbtnHDM.setChecked(false);
-                return;
-            }
-            if (index == getWatchOnlyIndex()) {
-                tbtnPrivateKey.setChecked(false);
-                tbtnWatchOnly.setChecked(true);
-                tbtnHDM.setChecked(false);
-                return;
-            }
-            if (index == getHDMIndex()) {
-                tbtnPrivateKey.setChecked(false);
-                tbtnWatchOnly.setChecked(false);
-                tbtnHDM.setChecked(true);
-                return;
+            if (index == 0) {
+                tbtnHDAccount.setChecked(true);
+                tbtnOther.setChecked(false);
+            } else {
+                tbtnHDAccount.setChecked(false);
+                tbtnOther.setChecked(true);
             }
         }
 
@@ -317,10 +198,6 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     public void finish() {
-        if (vHDM != null && !vHDM.canCancel()) {
-            DropdownMessage.showDropdownMessage(this, R.string.hdm_singular_mode_cancel_warn);
-            return;
-        }
         super.finish();
         overridePendingTransition(0, R.anim.slide_out_bottom);
     }

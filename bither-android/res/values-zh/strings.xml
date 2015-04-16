@@ -578,4 +578,6 @@
     <!-- add hd account -->
     <string name="add_hd_account_label">生成新的 HD 账户</string>
     <string name="add_hd_account_button">生成</string>
+    <string name="add_hd_account_tab_hd">HD 账户</string>
+    <string name="add_hd_account_tab_other">其它</string>
 </resources>
