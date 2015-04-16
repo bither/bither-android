@@ -120,8 +120,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
-        //TODO ivtype
-        ivType.setImageResource(R.drawable.address_type_private);
+        ivType.setImageResource(R.drawable.address_type_hd);
 
         if (hdAccount.isSyncComplete()) {
             tvBalance.setText(UnitUtilWrapper.formatValueWithBold(hdAccount.getBalance()));
@@ -227,8 +226,13 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
 
     @Override
     public void onAddressInfoChanged(String address) {
-        if (Utils.compareString(address, this.address.getAddress())) {
-            showAddressInfo();
+        if (this.address != null) {
+            if (Utils.compareString(address, this.address.getAddress())) {
+                showAddressInfo();
+            }
+        }
+        if (this.hdAccount != null) {
+            //TODO
         }
     }
 

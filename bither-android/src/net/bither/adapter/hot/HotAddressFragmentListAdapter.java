@@ -210,7 +210,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     return;
                 case HDAccountGroupTag:
                     tvGroup.setText(R.string.address_group_hd);
-                    ivType.setImageResource(R.drawable.address_type_private);
+                    ivType.setImageResource(R.drawable.address_type_hd);
                     llHDM.setVisibility(View.INVISIBLE);
                     ivType.setVisibility(View.VISIBLE);
                     return;
