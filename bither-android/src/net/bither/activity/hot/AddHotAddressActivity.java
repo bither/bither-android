@@ -72,6 +72,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(pageChange);
         pager.setCurrentItem(0);
+        tbtnHDAccount.setChecked(true);
     }
 
     private Fragment getHDAccountFragment() {

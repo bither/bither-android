@@ -68,7 +68,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/action_bar_toggle_button_middle"
+                    android:background="@drawable/action_bar_toggle_button_right"
                     android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"

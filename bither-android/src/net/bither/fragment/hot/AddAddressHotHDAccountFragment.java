@@ -18,6 +18,8 @@
 
 package net.bither.fragment.hot;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,6 +32,7 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.AddPrivateKeyActivity;
@@ -37,7 +40,9 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
+import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.xrandom.HDAccountHotUEntropyActivity;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -69,7 +74,28 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
         @Override
         public void onClick(final View v) {
             if (cbxXRandom.isChecked()) {
-
+                final Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent intent = new Intent(getActivity(), HDAccountHotUEntropyActivity
+                                .class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+                        getActivity().startActivity(intent);
+                        getActivity().finish();
+                    }
+                };
+                if (AppSharedPreference.getInstance().shouldAutoShowXRandomInstruction()) {
+                    DialogXRandomInfo dialog = new DialogXRandomInfo(getActivity(), true, true);
+                    dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            run.run();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    run.run();
+                }
             } else {
                 final DialogPassword.PasswordGetter passwordGetter = new DialogPassword
                         .PasswordGetter(getActivity());
@@ -88,8 +114,8 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                             }
                         });
                         hdAccount = new HDAccount(new SecureRandom(), password);
-                        //TODO add this account to address manager
                         password.wipe();
+                        KeyUtil.setHDAccount(service, hdAccount);
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
