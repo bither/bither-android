@@ -592,4 +592,8 @@
     <string name="password_strength_check_on">On</string>
     <string name="password_strength_check_off">Off</string>
     <string name="password_strength_check_off_warn">Sure to turn off password strength check?</string>
+
+    <!-- add hd account -->
+    <string name="add_hd_account_label">Generate New HD Account</string>
+    <string name="add_hd_account_button">Generate</string>
 </resources>
