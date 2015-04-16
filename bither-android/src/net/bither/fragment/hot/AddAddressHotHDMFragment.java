@@ -43,6 +43,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.delegate.HDMSingular;
 import net.bither.qrcode.ScanActivity;
+import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
@@ -347,7 +348,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                         flContainer.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ((AddHotAddressActivity) getActivity()).save();
+                                ((AddPrivateKeyActivity) getActivity()).save();
                             }
                         }, anim.getDuration());
                     }
