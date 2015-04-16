@@ -64,12 +64,19 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
     }
 
     private void showQr() {
-        HDAccount account = AddressManager.getInstance().getHdAccount();
+        final HDAccount account = AddressManager.getInstance().getHdAccount();
         if (account == null) {
             return;
         }
-        String content = account.getFullEncryptPrivKey();
-        new DialogSimpleQr(getActivity(), content, R.string.add_hd_account_seed_qr_code).show();
+        new DialogPassword(getActivity(), new IDialogPasswordListener() {
+            @Override
+            public void onPasswordEntered(final SecureCharSequence password) {
+                password.wipe();
+                String content = account.getFullEncryptPrivKey();
+                new DialogSimpleQr(getActivity(), content, R.string.add_hd_account_seed_qr_code)
+                        .show();
+            }
+        }).show();
     }
 
     private void showPhrase() {
