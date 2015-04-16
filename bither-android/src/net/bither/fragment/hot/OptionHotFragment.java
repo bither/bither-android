@@ -51,6 +51,7 @@ import net.bither.BitherSetting;
 import net.bither.ChooseModeActivity;
 import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
+import net.bither.activity.hot.HotActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
@@ -75,11 +76,13 @@ import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
+import net.bither.util.MonitorBitherColdUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable,
@@ -97,6 +100,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private TextView tvVersion;
     private ImageView ivLogo;
     private View llSwitchToCold;
+
+    private MonitorBitherColdUtil monitorUtil;
 
 
     private DialogProgress dp;
@@ -406,6 +411,28 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener monitorClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            monitorUtil = new MonitorBitherColdUtil(OptionHotFragment.this, new
+                    MonitorBitherColdUtil.MonitorBitherColdUtilDelegate() {
+                @Override
+                public void onAddressMonitored(ArrayList<String> addresses) {
+                    monitorUtil = null;
+                    if (getActivity() instanceof HotActivity) {
+                        HotActivity hot = (HotActivity) getActivity();
+                        Intent intent = new Intent();
+                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                                addresses);
+                        hot.onActivityResult(BitherSetting.INTENT_REF.SCAN_REQUEST_CODE, Activity
+                                .RESULT_OK, intent);
+                    }
+                }
+            });
+            monitorUtil.scan();
+        }
+    };
+
 
     @Override
     public void avatarFromCamera() {
@@ -431,6 +458,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (monitorUtil != null && monitorUtil.onActivityResult(requestCode, resultCode, data)) {
             return;
         }
         switch (requestCode) {
@@ -497,6 +527,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
+        view.findViewById(R.id.btn_monitor).setOnClickListener(monitorClick);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
         ssvTransactionFee.setSelector(transactionFeeModeSelector);

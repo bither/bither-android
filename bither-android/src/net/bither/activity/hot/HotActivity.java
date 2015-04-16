@@ -40,11 +40,8 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
-import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.PeerManager;
-import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -68,7 +65,6 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,7 +228,7 @@ public class HotActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
@@ -246,6 +242,7 @@ public class HotActivity extends BaseFragmentActivity {
 
                 Fragment f = getFragmentAtIndex(1);
                 if (f != null && f instanceof HotAddressFragment) {
+                    mPager.setCurrentItem(1, true);
                     HotAddressFragment af = (HotAddressFragment) f;
                     af.showAddressesAdded(addresses);
                 }

@@ -600,4 +600,5 @@
     <string name="add_hd_account_tab_other">Others</string>
     <string name="add_hd_account_other_hdm">Generate HDM Account</string>
     <string name="add_hd_account_other_private">Generate Private Keys</string>
+    <string name="add_hd_account_monitor">Monitor Bither Cold</string>
 </resources>

@@ -23,6 +23,20 @@
                 android:paddingBottom="6dp"
                 android:paddingTop="10dp">
 
+                <Button
+                    android:id="@+id/btn_monitor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/ui_touchable_bg"
+                    android:gravity="left"
+                    android:padding="10dp"
+                    android:text="@string/scan_for_all_addresses_in_bither_cold"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="18sp"/>
+
+                <include layout="@layout/layout_vertical_seperator"/>
+
                 <net.bither.ui.base.SettingSelectorView
                     android:id="@+id/ssv_bitcoin_unit"
                     android:layout_width="match_parent"
