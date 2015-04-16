@@ -320,7 +320,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public int txCount() {
         int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(0) cnt from account_txs ";
+        String sql = "select count(0) cnt from txs ";
         Cursor c = db.rawQuery(sql, null);
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex("cnt");
