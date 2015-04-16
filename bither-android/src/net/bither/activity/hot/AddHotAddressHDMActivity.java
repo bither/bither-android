@@ -18,14 +18,50 @@
 
 package net.bither.activity.hot;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+
+import net.bither.BitherSetting;
+import net.bither.R;
+import net.bither.fragment.hot.AddAddressHotHDMFragment;
 import net.bither.ui.base.AddPrivateKeyActivity;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.listener.IBackClickListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by songchenwen on 15/4/16.
  */
 public class AddHotAddressHDMActivity extends AddPrivateKeyActivity {
+    private AddAddressHotHDMFragment fragment;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_hot_address_hdm);
+        fragment = (AddAddressHotHDMFragment) getSupportFragmentManager().findFragmentById(R.id
+                .fragment);
+        findViewById(R.id.ibtn_cancel).setOnClickListener(new IBackClickListener());
+    }
+
     @Override
     public void save() {
+        ArrayList<String> addresses = fragment.getAddresses();
+        Intent intent = new Intent();
+        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
 
+
+    @Override
+    public void finish() {
+        if (fragment.canCancel()) {
+            super.finish();
+            overridePendingTransition(0, R.anim.slide_out_bottom);
+        } else {
+            DropdownMessage.showDropdownMessage(this, R.string.hdm_singular_mode_cancel_warn);
+        }
     }
 }
