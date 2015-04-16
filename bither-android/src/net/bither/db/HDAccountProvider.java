@@ -62,7 +62,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         db.beginTransaction();
         for (HDAccount.HDAccountAddress hdAccountAddress : hdAccountAddresses) {
             ContentValues cv = getHDMAddressCV(hdAccountAddress);
-            db.insert(AbstractDb.Tables.HD_ACCOUNT, null, cv);
+            db.insert(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, null, cv);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -73,7 +73,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public int issuedIndex(AbstractHD.PathType pathType) {
         int issuedIndex = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select ifnull(max(address_index),0) address_index from account_addresses where path_type=? and is_issued=?  ",
+        Cursor cursor = db.rawQuery("select ifnull(max(address_index),0) address_index from " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS + " where path_type=? and is_issued=?  ",
                 new String[]{Integer.toString(pathType.getValue()), "1"});
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS_INDEX);
@@ -89,7 +89,8 @@ public class HDAccountProvider implements IHDAccountProvider {
     public int allGeneratedAddressCount(AbstractHD.PathType pathType) {
         int count = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select ifnull(count(address),0) count from account_addresses where path_type=? ",
+        Cursor cursor = db.rawQuery("select ifnull(count(address),0) count from "
+                        + AbstractDb.Tables.HD_ACCOUNT_ADDRESS + " where path_type=? ",
                 new String[]{Integer.toString(pathType.getValue())});
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex("count");
@@ -104,7 +105,8 @@ public class HDAccountProvider implements IHDAccountProvider {
     public String externalAddress() {
         String address = null;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select address from account_addresses where path_type=? and is_issued=? order by address_index asc limit 1 ",
+        Cursor cursor = db.rawQuery("select address from " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS
+                        + " where path_type=? and is_issued=? order by address_index asc limit 1 ",
                 new String[]{Integer.toString(AbstractHD.PathType.EXTERNAL_ROOT_PATH.getValue()), "0"});
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS);
@@ -119,7 +121,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public HashSet<String> getAllAddress() {
         HashSet<String> addressSet = new HashSet<String>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select address from account_addresses ",
+        Cursor cursor = db.rawQuery("select address from  " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS,
                 null);
         while (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS);
@@ -134,7 +136,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public List<byte[]> getPubs(AbstractHD.PathType pathType) {
         List<byte[]> adressPubList = new ArrayList<byte[]>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select pub from account_addresses ",
+        Cursor cursor = db.rawQuery("select pub from  " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS,
                 null);
         while (cursor.moveToNext()) {
             try {
@@ -152,7 +154,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public List<HDAccount.HDAccountAddress> getAllHDAddress() {
         List<HDAccount.HDAccountAddress> adressPubList = new ArrayList<HDAccount.HDAccountAddress>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select address,pub,path_type,address_index,is_issued from account_addresses ",
+        Cursor cursor = db.rawQuery("select address,pub,path_type,address_index,is_issued,is_synced from  " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS,
                 null);
         while (cursor.moveToNext()) {
             HDAccount.HDAccountAddress hdAccountAddress = formatAddress(cursor);
@@ -252,7 +254,8 @@ public class HDAccountProvider implements IHDAccountProvider {
     public HDAccount.HDAccountAddress addressForPath(AbstractHD.PathType type, int index) {
 
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select address,pub,path_type,address_index,is_issued from account_addresses where path_type=? and address_index=? ",
+        Cursor cursor = db.rawQuery("select address,pub,path_type,address_index,is_issued,is_synced from " +
+                        AbstractDb.Tables.HD_ACCOUNT_ADDRESS + " where path_type=? and address_index=? ",
                 new String[]{Integer.toString(type.getValue()), Integer.toString(index)});
         HDAccount.HDAccountAddress accountAddress = null;
         if (cursor.moveToNext()) {
@@ -267,7 +270,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, 1);
-        db.update(AbstractDb.Tables.ACCOUNT_ADDRESS, cv, " path_type=? and address_index=? ", new String[]{
+        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, " path_type=? and address_index=? ", new String[]{
                 Integer.toString(pathType.getValue()), Integer.toString(index)
         });
 
@@ -295,7 +298,8 @@ public class HDAccountProvider implements IHDAccountProvider {
     @Override
     public List<HDAccount.HDAccountAddress> belongAccount(List<String> addresses) {
         List<HDAccount.HDAccountAddress> hdAccountAddressList = new ArrayList<HDAccount.HDAccountAddress>();
-        String sql = "select address,pub,path_type,address_index,is_issued from account_addresses where address in (?)";
+        String sql = "select address,pub,path_type,address_index,is_issued,is_synced from " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS
+                + " where address in (?)";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, new String[]{Utils.joinString(addresses, ",")});
         while (cursor.moveToNext()) {
@@ -423,8 +427,8 @@ public class HDAccountProvider implements IHDAccountProvider {
                 new ArrayList<HDAccount.HDAccountAddress>();
         Cursor c;
         for (In in : inList) {
-            String sql = "select a.address,a.path_type,a.address_index " +
-                    "from account_addresses a ,outs b" +
+            String sql = "select a.address,a.path_type,a.address_index,a.is_synced" +
+                    " from hd_account_addresses a ,outs b" +
                     " where a.address=b.out_address" +
                     " and b.tx_hash=? and b.out_sn=?  ";
             OutPoint outPoint = in.getOutpoint();
@@ -504,6 +508,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         AbstractHD.PathType ternalRootType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
         int index = 0;
         boolean isIssued = false;
+        boolean isSynced = true;
         HDAccount.HDAccountAddress hdAccountAddress = null;
         try {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS);
@@ -527,7 +532,12 @@ public class HDAccountProvider implements IHDAccountProvider {
             if (idColumn != -1) {
                 isIssued = c.getInt(idColumn) == 1;
             }
-            hdAccountAddress = new HDAccount.HDAccountAddress(address, pubs, ternalRootType, index, isIssued);
+            idColumn = c.getColumnIndex(AbstractDb.HDAccountAddressesColumns.IS_SYNCED);
+            if (idColumn != -1) {
+                isSynced = c.getInt(idColumn) == 1;
+            }
+            hdAccountAddress = new HDAccount.HDAccountAddress(address, pubs,
+                    ternalRootType, index, isIssued, isSynced);
         } catch (AddressFormatException e) {
             e.printStackTrace();
         }
@@ -541,6 +551,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         cv.put(AbstractDb.HDAccountAddressesColumns.PATH_TYPE, hdAccountAddress.getPathType().getValue());
         cv.put(AbstractDb.HDAccountAddressesColumns.ADDRESS_INDEX, hdAccountAddress.getIndex());
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, hdAccountAddress.isIssued() ? 1 : 0);
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, hdAccountAddress.isSynced() ? 1 : 0);
         return cv;
     }
 }

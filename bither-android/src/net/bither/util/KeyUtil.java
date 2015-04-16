@@ -20,6 +20,7 @@ package net.bither.util;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
@@ -109,6 +110,22 @@ public class KeyUtil {
             BackupUtil.backupColdKey(false);
         } else {
             BackupUtil.backupHotKey();
+        }
+
+    }
+
+    public static void setHDAccount(BlockchainService service, HDAccount hdAccount) {
+        if (service != null) {
+            service.stopAndUnregister();
+        }
+        AddressManager.getInstance().setHdAccount(hdAccount);
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+            BackupUtil.backupColdKey(false);
+        } else {
+            BackupUtil.backupHotKey();
+        }
+        if (service != null) {
+            service.startAndRegister();
         }
 
     }

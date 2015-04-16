@@ -68,6 +68,7 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,13 +114,6 @@ public class HotActivity extends BaseFragmentActivity {
             }
         }, 500);
         DialogFirstRunWarning.show(this);
-//        byte[] bytes=new byte[32];
-//        bytes[30]=1;
-//        try {
-//            HDAccount hdmKeychain = new HDAccount(bytes, "123456");
-//        }catch (MnemonicException e){
-//            e.printStackTrace();
-//        }
     }
 
     private void registerReceiver() {
