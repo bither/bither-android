@@ -52,7 +52,6 @@ import java.util.ArrayList;
  */
 public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAddressActivity
         .AddAddress {
-    public static final String HDAccountPlaceHolder = "HDAccount";
     private CheckBox cbxXRandom;
     private DialogProgress dp;
     private HDAccount hdAccount;
@@ -141,7 +140,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
     public ArrayList<String> getAddresses() {
         ArrayList<String> addresses = new ArrayList<String>();
         if (hdAccount != null) {
-            addresses.add(HDAccountPlaceHolder);
+            addresses.add(HDAccount.HDAccountPlaceHolder);
         }
         return addresses;
     }

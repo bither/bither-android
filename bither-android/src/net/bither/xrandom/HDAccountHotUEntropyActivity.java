@@ -54,7 +54,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
     void didSuccess(Object obj) {
         Intent intent = new Intent();
         ArrayList<String> addresses = new ArrayList<String>();
-        addresses.add(AddAddressHotHDAccountFragment.HDAccountPlaceHolder);
+        addresses.add(HDAccount.HDAccountPlaceHolder);
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
         setResult(RESULT_OK, intent);
         finish();
@@ -150,7 +150,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
 
                 }
                 onProgress(1);
-                onSuccess(AddAddressHotHDAccountFragment.HDAccountPlaceHolder);
+                onSuccess(HDAccount.HDAccountPlaceHolder);
             } else {
                 onFailed();
             }
