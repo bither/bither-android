@@ -580,6 +580,9 @@
     <string name="add_hd_account_button">生成</string>
     <string name="add_hd_account_tab_hd">HD 賬戶</string>
     <string name="add_hd_account_tab_other">其它</string>
-    <string name="add_hd_account_other_hdm">生成 HDM 帳戶</string>
+    <string name="add_hd_account_other_hdm">生成 HDM 賬戶</string>
     <string name="add_hd_account_other_private">生成私鑰</string>
+    <string name="add_hd_account_view_label">已有 HD 賬戶</string>
+    <string name="add_hd_account_seed_qr_code">HD 賬戶種子二維碼</string>
+    <string name="add_hd_account_seed_qr_phrase">HD 賬戶密語</string>
 </resources>
