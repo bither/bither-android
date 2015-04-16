@@ -352,8 +352,8 @@ public class HDAccountProvider implements IHDAccountProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select * txs where  block_no is null " +
-                    "order by b.block_no desc";
+            String sql = "select * from txs where  block_no is null " +
+                    "order by block_no desc";
             Cursor c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 Tx txItem = TxHelper.applyCursor(c);
