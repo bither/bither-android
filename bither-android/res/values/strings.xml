@@ -604,4 +604,7 @@
     <string name="add_hd_account_view_label">You already have an HD account.</string>
     <string name="add_hd_account_seed_qr_code">HD Account Seed QR Code</string>
     <string name="add_hd_account_seed_qr_phrase">HD Account Seed Phrase</string>
+
+    <!-- show hd account -->
+    <string name="address_group_hd">HD Account</string>
 </resources>

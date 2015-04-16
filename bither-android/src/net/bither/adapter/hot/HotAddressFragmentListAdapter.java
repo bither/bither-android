@@ -37,6 +37,7 @@ import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.DropdownMessage;
@@ -47,7 +48,6 @@ import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.dialog.DialogHDMSeedOptions;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.util.WalletUtils;
 
 import java.util.List;
 
@@ -56,8 +56,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private static final int HDMGroupTag = 0;
     private static final int PrivateGroupTag = 1;
     private static final int WatchOnlyGroupTag = 2;
+    private static final int HDAccountGroupTag = 3;
 
     private FragmentActivity activity;
+    private HDAccount hdAccount;
     private List<Address> watchOnlys;
     private List<Address> privates;
     private List<HDMAddress> hdms;
@@ -72,12 +74,14 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         this.watchOnlys = watchOnlys;
         this.privates = privates;
         this.hdms = hdms;
+        hdAccount = AddressManager.getInstance().getHdAccount();
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
 
     @Override
     public void notifyDataSetChanged() {
+        hdAccount = AddressManager.getInstance().getHdAccount();
         super.notifyDataSetChanged();
         this.notifyHeaderChange();
     }
@@ -107,6 +111,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     @Override
     public int getGroupCount() {
         int count = 0;
+        if (hdAccount != null) {
+            count++;
+        }
         if (privates != null && privates.size() > 0) {
             count++;
         }
@@ -129,6 +136,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         if (groupPosition == getHDMGroupIndex()) {
             return HDMGroupTag;
+        }
+        if (groupPosition == getHDAccountGroupIndex()) {
+            return HDAccountGroupTag;
         }
         return -1;
     }
@@ -197,6 +207,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     ivType.setVisibility(View.INVISIBLE);
                     llHDM.setVisibility(View.VISIBLE);
                     configureHDM(touch);
+                    return;
+                case HDAccountGroupTag:
+                    tvGroup.setText(R.string.address_group_hd);
+                    ivType.setImageResource(R.drawable.address_type_private);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
                     return;
             }
         }
@@ -326,6 +342,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 return watchOnlys.get(childPosition);
             case HDMGroupTag:
                 return hdms.get(childPosition);
+            case HDAccountGroupTag:
+                return null;
             default:
                 return null;
         }
@@ -333,6 +351,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
     public long getChildId(int groupPosition, int childPosition) {
         Address a = getChild(groupPosition, childPosition);
+        if (a == null) {
+            return 0;
+        }
         return a.getAddress().hashCode();
     }
 
@@ -344,6 +365,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 return watchOnlys == null ? 0 : watchOnlys.size();
             case HDMGroupTag:
                 return hdms == null ? 0 : hdms.size();
+            case HDAccountGroupTag:
+                return 1;
             default:
                 return -1;
         }
@@ -358,9 +381,16 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
-        view.ivType.setOnLongClickListener(new AddressLongClick(a));
-        view.setAddress(a);
-        view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
+        if (a == null && groupPosition == getHDAccountGroupIndex()) {
+            //TODO need to finish this
+            view.ivType.setOnLongClickListener(null);
+            view.setOnClickListener(null);
+            view.setHDAccount(hdAccount);
+        } else {
+            view.ivType.setOnLongClickListener(new AddressLongClick(a));
+            view.setAddress(a);
+            view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
+        }
         return convertView;
     }
 
@@ -455,11 +485,22 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
     }
 
+    public int getHDAccountGroupIndex() {
+        if (hdAccount == null) {
+            return -1;
+        }
+        return 0;
+    }
+
     public int getHDMGroupIndex() {
         if (hdms == null || hdms.size() == 0) {
             return -1;
         }
-        return 0;
+        int index = 0;
+        if (hdAccount != null) {
+            index++;
+        }
+        return index;
     }
 
     public int getPrivateGroupIndex() {
@@ -467,6 +508,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             return -1;
         }
         int index = 0;
+        if (hdAccount != null) {
+            index++;
+        }
         if (hdms != null && hdms.size() > 0) {
             index++;
         }
@@ -475,6 +519,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
     public int getWatchOnlyGroupIndex() {
         int index = 0;
+        if (hdAccount != null) {
+            index++;
+        }
         if (hdms != null && hdms.size() > 0) {
             index++;
         }

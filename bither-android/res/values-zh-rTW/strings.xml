@@ -585,4 +585,7 @@
     <string name="add_hd_account_view_label">已有 HD 賬戶</string>
     <string name="add_hd_account_seed_qr_code">HD 賬戶種子二維碼</string>
     <string name="add_hd_account_seed_qr_phrase">HD 賬戶密語</string>
+
+    <!-- show hd account -->
+    <string name="address_group_hd">HD 賬戶</string>
 </resources>

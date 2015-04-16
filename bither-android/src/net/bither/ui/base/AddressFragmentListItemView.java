@@ -30,6 +30,7 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressAlias;
@@ -56,6 +57,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     private TextView tvTransactionCount;
     private View llMonitorFailed;
     private Address address;
+    private HDAccount hdAccount;
 
     public AddressFragmentListItemView(FragmentActivity activity) {
         super(activity);
@@ -95,10 +97,66 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
 
     public void setAddress(Address address) {
         this.address = address;
-
+        hdAccount = null;
         if (address != null) {
             showAddressInfo();
         }
+    }
+
+    public void setHDAccount(HDAccount account) {
+        address = null;
+        this.hdAccount = account;
+        showHDAccount();
+    }
+
+    public void showHDAccount() {
+        if (hdAccount == null) {
+            return;
+        }
+        tvAddress.setText(hdAccount.getShortReceivingAddress());
+        tvBalanceMoney.setVisibility(View.VISIBLE);
+        ivBalanceSymbol.setVisibility(View.VISIBLE);
+        llExtra.setVisibility(View.VISIBLE);
+        llMonitorFailed.setVisibility(View.GONE);
+        tvTransactionCount.setVisibility(View.GONE);
+        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
+        //TODO ivtype
+        ivType.setImageResource(R.drawable.address_type_private);
+
+        if (hdAccount.isSyncComplete()) {
+            tvBalance.setText(UnitUtilWrapper.formatValueWithBold(hdAccount.getBalance()));
+            tvBalanceMoney.setBigInteger(BigInteger.valueOf(hdAccount.getBalance()));
+            tvTransactionCount.setText(Integer.toString(hdAccount.txCount()));
+
+            Tx lastTransaction = null;
+            if (hdAccount.txCount() > 0) {
+                List<Tx> txList = hdAccount.getRecentlyTxsWithConfirmationCntLessThan(6, 1);
+                if (txList.size() > 0) {
+                    lastTransaction = txList.get(0);
+                }
+            }
+            if (lastTransaction != null && lastTransaction.getConfirmationCount() < 6) {
+                vTransactionImmuture.setVisibility(View.VISIBLE);
+                vTransactionImmuture.setTransaction(lastTransaction, address);
+            } else {
+                vTransactionImmuture.setVisibility(View.GONE);
+            }
+            if (vTransactionImmuture.getVisibility() == View.GONE) {
+                tvTransactionCount.setVisibility(View.VISIBLE);
+            }
+        } else {
+            ivBalanceSymbol.setVisibility(View.GONE);
+            tvBalance.setText(BitherSetting.UNKONW_ADDRESS_STRING);
+            tvBalanceMoney.setBigInteger(null);
+            vTransactionImmuture.setVisibility(View.GONE);
+        }
+        if (hdAccount.isFromXRandom()) {
+            ibtnXRandomLabel.setVisibility(View.VISIBLE);
+        } else {
+            ibtnXRandomLabel.setVisibility(View.GONE);
+        }
+        btnAlias.setText("");
+        btnAlias.setVisibility(View.INVISIBLE);
     }
 
     private void showAddressInfo() {
@@ -177,8 +235,15 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     private OnClickListener addressFullClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (hdAccount == null && address == null) {
+                return;
+            }
             LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
-            map.put(address.getAddress(), 0L);
+            if (hdAccount != null) {
+                map.put(hdAccount.getReceivingAddress(), 0L);
+            } else if (address != null) {
+                map.put(address.getAddress(), 0L);
+            }
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);
         }
@@ -198,6 +263,9 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     private OnClickListener aliasClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (address == null) {
+                return;
+            }
             new DialogAddressAlias(getContext(), address, AddressFragmentListItemView.this).show();
         }
     };
@@ -207,7 +275,11 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     }
 
     public void onResume() {
-        showAddressInfo();
+        if (hdAccount != null) {
+            showHDAccount();
+        } else if (address != null) {
+            showAddressInfo();
+        }
         vTransactionImmuture.onResume();
     }
 }
