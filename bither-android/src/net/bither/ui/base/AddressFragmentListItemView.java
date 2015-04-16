@@ -231,8 +231,9 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
                 showAddressInfo();
             }
         }
-        if (this.hdAccount != null) {
-            //TODO
+        if (this.hdAccount != null && Utils.compareString(address, HDAccount
+                .HDAccountPlaceHolder)) {
+            showHDAccount();
         }
     }
 

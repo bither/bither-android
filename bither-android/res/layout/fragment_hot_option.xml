@@ -29,6 +29,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:background="@drawable/ui_touchable_bg"
+                    android:drawableRight="@drawable/scan_button_icon"
                     android:gravity="left"
                     android:padding="10dp"
                     android:text="@string/scan_for_all_addresses_in_bither_cold"
