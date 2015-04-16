@@ -67,6 +67,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
         v.findViewById(R.id.ibtn_xrandom_info).setOnClickListener(DialogXRandomInfo.GuideClick);
         v.findViewById(R.id.btn_add).setOnClickListener(addClick);
         dp = new DialogProgress(v.getContext(), R.string.please_wait);
+        dp.setCancelable(false);
         return v;
     }
 

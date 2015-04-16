@@ -30,8 +30,11 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
+import net.bither.fragment.hot.AddAddressHotHDAccountViewFragment;
+import net.bither.fragment.hot.AddAddressHotOtherFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.util.StringUtil;
@@ -45,7 +48,8 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     private ImageButton ibtnCancel;
 
     private AddAddressHotHDAccountFragment hdAccountFragment;
-    private AddAddressPrivateKeyFragment vPrivateKey;
+    private AddAddressHotHDAccountViewFragment hdAccountViewFragment;
+    private AddAddressHotOtherFragment otherFragment;
 
     private boolean shouldSuggestCheck = false;
 
@@ -76,7 +80,12 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     private Fragment getHDAccountFragment() {
-        //TODO if already has hd account return a viewing view
+        if (AddressManager.getInstance().hasHDAccount()) {
+            if (hdAccountViewFragment == null) {
+                hdAccountViewFragment = new AddAddressHotHDAccountViewFragment();
+            }
+            return hdAccountViewFragment;
+        }
         if (hdAccountFragment == null) {
             hdAccountFragment = new AddAddressHotHDAccountFragment();
         }
@@ -84,11 +93,10 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     private Fragment getOtherFragment() {
-        //TODO need other fragment
-        if (vPrivateKey == null) {
-            vPrivateKey = new AddAddressPrivateKeyFragment();
+        if (otherFragment == null) {
+            otherFragment = new AddAddressHotOtherFragment();
         }
-        return vPrivateKey;
+        return otherFragment;
     }
 
     private OnClickListener cancelClick = new OnClickListener() {
