@@ -211,14 +211,14 @@ public class TxProvider implements ITxProvider {
             if (c.moveToNext()) {
                 txItem = TxHelper.applyCursor(c);
             }
-
+            c.close();
             if (txItem != null) {
                 TxHelper.addInsAndOuts(db, txItem);
             }
         } catch (AddressFormatException e) {
             e.printStackTrace();
         } finally {
-            c.close();
+            
         }
         return txItem;
     }
