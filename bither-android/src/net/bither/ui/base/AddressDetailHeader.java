@@ -231,6 +231,10 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                             R.string.address_detail_send_balance_zero);
                     return;
                 }
+                if(address.isHDAccount()){
+                    //TODO hd account send
+                    return;
+                }
                 if (address.isHDM() || address.hasPrivKey()) {
                     Intent intent = new Intent(activity, address.isHDM() ? HdmSendActivity.class
                             : SendActivity.class);

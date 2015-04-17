@@ -35,6 +35,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
+import net.bither.activity.hot.HDAccountDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
@@ -385,7 +386,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (a.isHDAccount()) {
             //TODO need to finish this
             view.ivType.setOnLongClickListener(null);
-            view.setOnClickListener(null);
+            view.setOnClickListener(hdAccountDetailClick);
         } else {
             view.ivType.setOnLongClickListener(new AddressLongClick(a));
             view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
@@ -412,6 +413,24 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             return true;
         }
     }
+
+    private View.OnClickListener hdAccountDetailClick = new View.OnClickListener() {
+        private boolean clicked = false;
+
+        @Override
+        public void onClick(View v) {
+            if (!clicked) {
+                clicked = true;
+                activity.startActivity(new Intent(activity, HDAccountDetailActivity.class));
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        clicked = false;
+                    }
+                }, 500);
+            }
+        }
+    };
 
     private class AddressDetailClick implements OnClickListener {
         private int position;
