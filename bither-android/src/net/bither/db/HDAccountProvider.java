@@ -492,6 +492,47 @@ public class HDAccountProvider implements IHDAccountProvider {
         return txItemList;
     }
 
+    @Override
+    public int unSyncedAddressCount() {
+        String sql = "select count(address) cnt from hd_account_addresses where is_synced=? ";
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, new String[]{"0"});
+        int cnt = 0;
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                cnt = cursor.getInt(idColumn);
+            }
+        }
+        return cnt;
+    }
+
+    @Override
+    public List<Tx> getRecentlyTxsByAddress(int greateThanBlockNo, int limit) {
+        List<Tx> txItemList = new ArrayList<Tx>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select * from txs  where  " +
+                "and ((block_no is null) or (block_no is not null and block_no>%d)) " +
+                "order by ifnull(block_no,4294967295) desc, tx_time desc " +
+                "limit %d ";
+        sql = Utils.format(sql, greateThanBlockNo, limit);
+        Cursor c = db.rawQuery(sql, null);
+        try {
+            while (c.moveToNext()) {
+                Tx txItem = TxHelper.applyCursor(c);
+                txItemList.add(txItem);
+            }
+
+            for (Tx item : txItemList) {
+                TxHelper.addInsAndOuts(db, item);
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        } finally {
+            c.close();
+        }
+        return txItemList;
+    }
 
     private List<TxHelper.AddressTx> addTxToDb(SQLiteDatabase db, Tx txItem) {
         TxHelper.insertTx(db, txItem);
