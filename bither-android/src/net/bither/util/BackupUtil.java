@@ -23,6 +23,7 @@ import android.os.Looper;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.exception.AddressFormatException;
@@ -232,9 +233,9 @@ public class BackupUtil {
 
                 }
             }
-            if (AddressManager.getInstance().getHdmKeychain() != null) {
+            HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
+            if (keychain != null) {
                 try {
-                    HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
                     if (!keychain.isInRecovery()) {
                         String address = keychain.getFirstAddressFromDb();
                         backupString += QRCodeUtil.HDM_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
@@ -245,8 +246,18 @@ public class BackupUtil {
                     e.printStackTrace();
                 }
             }
+            HDAccount hdAccount = AddressManager.getInstance().getHdAccount();
+            if (hdAccount != null) {
+                try {
+                    String address = hdAccount.getFirstAddressFromDb();
+                    backupString += QRCodeUtil.HD_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
+                            + QRCodeUtil.QR_CODE_SPLIT
+                            + hdAccount.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
+                } catch (AddressFormatException e) {
+                    e.printStackTrace();
+                }
+            }
             if (!Utils.isEmpty(backupString)) {
-
                 try {
                     Utils.writeFile(backupString.getBytes(), file);
                     AppSharedPreference.getInstance().setLastBackupKeyTime(

@@ -72,7 +72,7 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
             @Override
             public void onPasswordEntered(final SecureCharSequence password) {
                 password.wipe();
-                String content = account.getFullEncryptPrivKey();
+                String content = account.getQRCodeFullEncryptPrivKey();
                 new DialogSimpleQr(getActivity(), content, R.string.add_hd_account_seed_qr_code)
                         .show();
             }

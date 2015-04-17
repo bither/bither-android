@@ -327,6 +327,22 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public String getHDFristAddress(int hdSeedId) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select hd_address from hd_account where hd_account_id=?"
+                , new String[]{Integer.toString(hdSeedId)});
+        String address = null;
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountColumns.HD_ADDRESS);
+            if (idColumn != -1) {
+                address = cursor.getString(idColumn);
+            }
+        }
+        cursor.close();
+        return address;
+    }
+
+    @Override
     public String getSingularModeBackup(int hdSeedId) {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor cursor = db.rawQuery("select singular_mode_backup from hd_seeds where hd_seed_id=?"
@@ -367,7 +383,7 @@ public class AddressProvider implements IAddressProvider {
 
 
     @Override
-    public int addHDAccount(String encryptSeed, String encryptedMnemonicSeed, String firstAddress
+    public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String firstAddress
             , boolean isXrandom, String addressOfPS, byte[] externalPub
             , byte[] internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
@@ -381,7 +397,7 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.HDAccountColumns.INTERNAL_PUB, Base58.encode(internalPub));
         int seedId = (int) db.insert(AbstractDb.Tables.HD_ACCOUNT, null, cv);
         if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
-            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptSeed));
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
         }
         db.setTransactionSuccessful();
         db.endTransaction();

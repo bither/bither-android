@@ -78,7 +78,7 @@ public class DialogHDMSeedOptions extends DialogWithActions {
 
     private void showHDMSeedQRCode(SecureCharSequence password) {
         password.wipe();
-        String content = QRCodeUtil.HDM_QR_CODE_FLAG + keychain.getFullEncryptPrivKey();
+        String content = keychain.getQRCodeFullEncryptPrivKey();
         new DialogSimpleQr(getContext(), content, isCold ? R.string.hdm_cold_seed_qr_code : R
                 .string.hdm_hot_seed_qr_code).show();
     }
