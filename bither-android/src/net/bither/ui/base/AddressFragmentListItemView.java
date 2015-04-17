@@ -57,7 +57,6 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     private TextView tvTransactionCount;
     private View llMonitorFailed;
     private Address address;
-    private HDAccount hdAccount;
 
     public AddressFragmentListItemView(FragmentActivity activity) {
         super(activity);
@@ -97,65 +96,9 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
 
     public void setAddress(Address address) {
         this.address = address;
-        hdAccount = null;
         if (address != null) {
             showAddressInfo();
         }
-    }
-
-    public void setHDAccount(HDAccount account) {
-        address = null;
-        this.hdAccount = account;
-        showHDAccount();
-    }
-
-    public void showHDAccount() {
-        if (hdAccount == null) {
-            return;
-        }
-        tvAddress.setText(hdAccount.getShortAddress());
-        tvBalanceMoney.setVisibility(View.VISIBLE);
-        ivBalanceSymbol.setVisibility(View.VISIBLE);
-        llExtra.setVisibility(View.VISIBLE);
-        llMonitorFailed.setVisibility(View.GONE);
-        tvTransactionCount.setVisibility(View.GONE);
-        ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
-        ivType.setImageResource(R.drawable.address_type_hd);
-
-        if (hdAccount.isSyncComplete()) {
-            tvBalance.setText(UnitUtilWrapper.formatValueWithBold(hdAccount.getBalance()));
-            tvBalanceMoney.setBigInteger(BigInteger.valueOf(hdAccount.getBalance()));
-            tvTransactionCount.setText(Integer.toString(hdAccount.txCount()));
-
-            Tx lastTransaction = null;
-            if (hdAccount.txCount() > 0) {
-                List<Tx> txList = hdAccount.getRecentlyTxsWithConfirmationCntLessThan(6, 1);
-                if (txList.size() > 0) {
-                    lastTransaction = txList.get(0);
-                }
-            }
-            if (lastTransaction != null && lastTransaction.getConfirmationCount() < 6) {
-                vTransactionImmuture.setVisibility(View.VISIBLE);
-                vTransactionImmuture.setTransaction(lastTransaction, address);
-            } else {
-                vTransactionImmuture.setVisibility(View.GONE);
-            }
-            if (vTransactionImmuture.getVisibility() == View.GONE) {
-                tvTransactionCount.setVisibility(View.VISIBLE);
-            }
-        } else {
-            ivBalanceSymbol.setVisibility(View.GONE);
-            tvBalance.setText(BitherSetting.UNKONW_ADDRESS_STRING);
-            tvBalanceMoney.setBigInteger(null);
-            vTransactionImmuture.setVisibility(View.GONE);
-        }
-        if (hdAccount.isFromXRandom()) {
-            ibtnXRandomLabel.setVisibility(View.VISIBLE);
-        } else {
-            ibtnXRandomLabel.setVisibility(View.GONE);
-        }
-        btnAlias.setText("");
-        btnAlias.setVisibility(View.INVISIBLE);
     }
 
     private void showAddressInfo() {
@@ -169,7 +112,9 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
-        if(address.isHDM()){
+        if (address.isHDAccount()) {
+            ivType.setImageResource(R.drawable.address_type_hd_selector);
+        } else if (address.isHDM()) {
             ivType.setImageResource(R.drawable.address_type_hdm_selector);
         }else if (address.hasPrivKey()) {
             ivType.setImageResource(R.drawable.address_type_private_selector);
@@ -209,7 +154,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
             ibtnXRandomLabel.setVisibility(View.GONE);
         }
 
-        if (!Utils.isEmpty(address.getAlias())) {
+        if (!(address instanceof HDAccount) && !Utils.isEmpty(address.getAlias())) {
             btnAlias.setVisibility(View.VISIBLE);
             btnAlias.setText(address.getAlias());
         } else {
@@ -227,28 +172,19 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     @Override
     public void onAddressInfoChanged(String address) {
         if (this.address != null) {
-            if (Utils.compareString(address, this.address.getAddress())) {
+            if (Utils.compareString(address, this.address.getAddress()) || (this.address
+                    .isHDAccount() && Utils.compareString(address, HDAccount
+                    .HDAccountPlaceHolder))) {
                 showAddressInfo();
             }
-        }
-        if (this.hdAccount != null && Utils.compareString(address, HDAccount
-                .HDAccountPlaceHolder)) {
-            showHDAccount();
         }
     }
 
     private OnClickListener addressFullClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (hdAccount == null && address == null) {
-                return;
-            }
             LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
-            if (hdAccount != null) {
-                map.put(hdAccount.getAddress(), 0L);
-            } else if (address != null) {
                 map.put(address.getAddress(), 0L);
-            }
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);
         }
@@ -280,9 +216,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     }
 
     public void onResume() {
-        if (hdAccount != null) {
-            showHDAccount();
-        } else if (address != null) {
+        if (address != null) {
             showAddressInfo();
         }
         vTransactionImmuture.onResume();

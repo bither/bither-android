@@ -343,17 +343,17 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             case HDMGroupTag:
                 return hdms.get(childPosition);
             case HDAccountGroupTag:
-                return null;
+                return hdAccount;
             default:
                 return null;
         }
     }
 
     public long getChildId(int groupPosition, int childPosition) {
-        Address a = getChild(groupPosition, childPosition);
-        if (a == null) {
+        if (groupPosition == getHDAccountGroupIndex()) {
             return 0;
         }
+        Address a = getChild(groupPosition, childPosition);
         return a.getAddress().hashCode();
     }
 
@@ -381,14 +381,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
-        if (a == null && groupPosition == getHDAccountGroupIndex()) {
+        view.setAddress(a);
+        if (a.isHDAccount()) {
             //TODO need to finish this
             view.ivType.setOnLongClickListener(null);
             view.setOnClickListener(null);
-            view.setHDAccount(hdAccount);
         } else {
             view.ivType.setOnLongClickListener(new AddressLongClick(a));
-            view.setAddress(a);
             view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
         }
         return convertView;
