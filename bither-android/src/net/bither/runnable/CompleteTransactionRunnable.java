@@ -42,25 +42,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
 
     static {
-        for (TxBuilderException.TxBuilderErrorType type : TxBuilderException.TxBuilderErrorType
-                .values()) {
-            int format = R.string.send_failed;
-            switch (type) {
-                case TxNotEnoughMoney:
-                    format = R.string.send_failed_missing_btc;
-                    break;
-                case TxDustOut:
-                    format = R.string.send_failed_dust_out_put;
-                    break;
-                case TxWaitConfirm:
-                    format = R.string.send_failed_pendding;
-                    break;
-                case TxMaxSize:
-                    format = R.string.send_failed_max_tx_size;
-                    break;
-            }
-            type.registerFormatString(BitherApplication.mContext.getString(format));
-        }
+        registerTxBuilderExceptionMessages();
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
@@ -174,6 +156,28 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             return e.getMessage();
         } else {
             return BitherApplication.mContext.getString(R.string.send_failed);
+        }
+    }
+
+    public static void registerTxBuilderExceptionMessages() {
+        for (TxBuilderException.TxBuilderErrorType type : TxBuilderException.TxBuilderErrorType
+                .values()) {
+            int format = R.string.send_failed;
+            switch (type) {
+                case TxNotEnoughMoney:
+                    format = R.string.send_failed_missing_btc;
+                    break;
+                case TxDustOut:
+                    format = R.string.send_failed_dust_out_put;
+                    break;
+                case TxWaitConfirm:
+                    format = R.string.send_failed_pendding;
+                    break;
+                case TxMaxSize:
+                    format = R.string.send_failed_max_tx_size;
+                    break;
+            }
+            type.registerFormatString(BitherApplication.mContext.getString(format));
         }
     }
 

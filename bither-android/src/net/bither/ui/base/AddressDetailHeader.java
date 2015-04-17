@@ -35,6 +35,7 @@ import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.fragment.Refreshable;
@@ -232,7 +233,9 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                     return;
                 }
                 if(address.isHDAccount()){
-                    //TODO hd account send
+                    Intent intent = new Intent(activity, HDAccountSendActivity.class);
+                    activity.startActivityForResult(intent, BitherSetting.INTENT_REF
+                            .SEND_REQUEST_CODE);
                     return;
                 }
                 if (address.isHDM() || address.hasPrivKey()) {

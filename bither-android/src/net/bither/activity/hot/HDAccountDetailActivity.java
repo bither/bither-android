@@ -34,7 +34,7 @@ public class HDAccountDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void optionClicked() {
-        //TODO hd account option
+
     }
 
     @Override
