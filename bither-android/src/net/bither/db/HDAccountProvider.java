@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.In;
@@ -493,6 +494,17 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
+    public void updateSyncdComplete(HDAccount.HDAccountAddress address) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, address.isSynced() ? 1 : 0);
+        db.update(AbstractDb.Tables.HDMADDRESSES, cv, "address=?"
+                , new String[]{address.getAddress()});
+
+
+    }
+
+    @Override
     public int unSyncedAddressCount() {
         String sql = "select count(address) cnt from hd_account_addresses where is_synced=? ";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
@@ -530,6 +542,80 @@ public class HDAccountProvider implements IHDAccountProvider {
             e.printStackTrace();
         } finally {
             c.close();
+        }
+        return txItemList;
+    }
+
+    @Override
+    public long sentFromAddress(byte[] txHash) {
+        String sql = "select  sum(o.out_value) out_value from ins i,outs o where" +
+                " i.tx_hash=? and o.tx_hash=i.prev_tx_hash and i.prev_out_sn=o.out_sn and o.belong_account=?";
+        long sum = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor;
+        cursor = db.rawQuery(sql, new String[]{Base58.encode(txHash),
+                "1"});
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.OutsColumns.OUT_VALUE);
+            if (idColumn != -1) {
+                sum = cursor.getLong(idColumn);
+            }
+        }
+        cursor.close();
+
+        return sum;
+    }
+
+    @Override
+    public List<Tx> getTxAndDetailByAddress(int page) {
+        List<Tx> txItemList = new ArrayList<Tx>();
+
+        HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        try {
+            String sql = "select txs" +
+                    " where order by ifnull(b.block_no,4294967295) desc limit ?,? ";
+            Cursor c = db.rawQuery(sql, new String[]{
+                    Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
+            });
+            StringBuilder txsStrBuilder = new StringBuilder();
+            while (c.moveToNext()) {
+                Tx txItem = TxHelper.applyCursor(c);
+                txItem.setIns(new ArrayList<In>());
+                txItem.setOuts(new ArrayList<Out>());
+                txItemList.add(txItem);
+                txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
+                txsStrBuilder.append("'").append(Base58.encode(txItem.getTxHash())).append("'").append(",");
+            }
+            c.close();
+
+            if (txsStrBuilder.length() > 1) {
+                String txs = txsStrBuilder.substring(0, txsStrBuilder.length() - 1);
+                sql = Utils.format("select b.* from ins b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash ,b.in_sn", txs);
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    In inItem = TxHelper.applyCursorIn(c);
+                    Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+                    if (tx != null) {
+                        tx.getIns().add(inItem);
+                    }
+                }
+                c.close();
+                sql = Utils.format("select b.* from outs b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash,b.out_sn", txs);
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    Out out = TxHelper.applyCursorOut(c);
+                    Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+                    if (tx != null) {
+                        tx.getOuts().add(out);
+                    }
+                }
+                c.close();
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
         }
         return txItemList;
     }

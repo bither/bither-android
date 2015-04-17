@@ -75,16 +75,16 @@ public class NotificationAndroidImpl implements NotificationService {
     }
 
     @Override
-    public void notificatTx(Address address, Tx tx, Tx.TxNotificationType txNotificationType, long deltaBalance) {
+    public void notificatTx(String address, Tx tx, Tx.TxNotificationType txNotificationType, long deltaBalance) {
         final Intent broadcast = new Intent(ACTION_ADDRESS_BALANCE);
-        broadcast.putExtra(MESSAGE_ADDRESS, address.getAddress());
+        broadcast.putExtra(MESSAGE_ADDRESS, address);
         broadcast.putExtra(MESSAGE_DELTA_BALANCE, deltaBalance);
         if (tx != null) {
             broadcast.putExtra(MESSAGE_TX, tx.getTxHash());
         }
         broadcast.putExtra(MESSAGE_TX_NOTIFICATION_TYPE, txNotificationType.getValue());
         BitherApplication.mContext.sendBroadcast(broadcast);
-        log.debug("address " + address.getAddress()
+        log.debug("address " + address
                 + " balance updated " + deltaBalance
                 + (tx != null ? " tx " + Utils.hashToString(tx.getTxHash()) : "")
                 + " type:" + txNotificationType.getValue());
