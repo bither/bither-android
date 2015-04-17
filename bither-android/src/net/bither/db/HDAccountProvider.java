@@ -573,8 +573,8 @@ public class HDAccountProvider implements IHDAccountProvider {
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select txs" +
-                    " where order by ifnull(b.block_no,4294967295) desc limit ?,? ";
+            String sql = "select * from txs order by" +
+                    " ifnull(b.block_no,4294967295) desc limit ?,? ";
             Cursor c = db.rawQuery(sql, new String[]{
                     Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
             });
