@@ -81,7 +81,7 @@ public class AddressProvider implements IAddressProvider {
 
         HashMap<Integer, String> hdEncryptSeedHashMap = new HashMap<Integer, String>();
         HashMap<Integer, String> hdEncryptHDSeedHashMap = new HashMap<Integer, String>();
-        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_HD_seed from hd_account  ", null);
+        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from hd_account  ", null);
         while (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.HD_ACCOUNT_ID);
             Integer hdAccountId = 0;
@@ -170,7 +170,7 @@ public class AddressProvider implements IAddressProvider {
                         , hdEncryptHDSeedHashMap.get(kv.getValue()));
             }
             writeDb.update(AbstractDb.Tables.HD_ACCOUNT,
-                    cv, "hd_account_id", new String[]{kv.getKey().toString()});
+                    cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
         }
         if (passwordSeed != null) {
             cv = new ContentValues();

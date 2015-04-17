@@ -47,20 +47,23 @@ public class HDAccountDatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
     private void createAccountAddress(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESSES);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESS_INDEX);
     }
 
     private void createAccountTxs(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX_BLOCK_NO_INDEX);
     }
 
     private void createAccountOuts(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT_OUT_ADDRESS_INDEX);
     }
 
     private void createAccountIns(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN_PREV_TX_HASH_INDEX);
     }
 }

@@ -498,10 +498,51 @@ public class HDAccountProvider implements IHDAccountProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, address.isSynced() ? 1 : 0);
-        db.update(AbstractDb.Tables.HDMADDRESSES, cv, "address=?"
+        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, "address=?"
                 , new String[]{address.getAddress()});
 
 
+    }
+
+    @Override
+    public void updateSyncdForIndex(AbstractHD.PathType pathType, int index) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, 1);
+        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, "path_type=? and address_index>?"
+                , new String[]{Integer.toString(pathType.getValue()), Integer.toString(index)});
+
+    }
+
+    @Override
+    public void setSyncdNotComplete() {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, 0);
+        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, null
+                , null);
+
+
+    }
+
+    @Override
+    public void clearAllTx() {
+        SQLiteDatabase db = mDb.getWritableDatabase();
+        db.beginTransaction();
+        db.execSQL("drop table " + AbstractDb.Tables.TXS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.OUTS + ";");
+        db.execSQL("drop table " + AbstractDb.Tables.INS + ";");
+
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX_BLOCK_NO_INDEX);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT_OUT_ADDRESS_INDEX);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN_PREV_TX_HASH_INDEX);
+
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     @Override
@@ -621,6 +662,14 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     private List<TxHelper.AddressTx> addTxToDb(SQLiteDatabase db, Tx txItem) {
+        HashSet<String> addressSet = getAllAddress();
+        for (Out out : txItem.getOuts()) {
+            if (addressSet.contains(out.getOutAddress())) {
+                out.setOutType(Out.OutType.BELONG_HD_ACCOUNT);
+            } else {
+                out.setOutType(Out.OutType.NO_BELONG_HD_ACCOUNT);
+            }
+        }
         TxHelper.insertTx(db, txItem);
         List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
         List<TxHelper.AddressTx> temp = TxHelper.insertIn(db, txItem);
@@ -678,6 +727,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         }
         return hdAccountAddress;
     }
+
 
     private ContentValues getHDMAddressCV(HDAccount.HDAccountAddress hdAccountAddress) {
         ContentValues cv = new ContentValues();

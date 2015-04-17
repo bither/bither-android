@@ -49,6 +49,7 @@ import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.db.HDAccountProvider;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
@@ -430,8 +431,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.setSyncComplete(false);
                     address.updateSyncComplete();
-
                 }
+                HDAccountProvider.getInstance().setSyncdNotComplete();
+                HDAccountProvider.getInstance().clearAllTx();
                 TxProvider.getInstance().clearAllTx();
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.notificatTx(null, Tx.TxNotificationType.txFromApi);
