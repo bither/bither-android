@@ -410,7 +410,7 @@ public class AddressProvider implements IAddressProvider {
         byte[] pub = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            Cursor c = db.rawQuery("select encrypt_seed from hd_account where hd_account_id=? "
+            Cursor c = db.rawQuery("select internal_pub from hd_account where hd_account_id=? "
                     , new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.ENCRYPT_SEED);

@@ -337,10 +337,10 @@ public class HDAccountProvider implements IHDAccountProvider {
     public long getConfirmedBanlance() {
         long sum = 0;
         String unspendOutSql = "select ifnull(sum(a.out_value),0) sum from outs a,txs b where a.tx_hash=b.tx_hash " +
-                "  and a.out_status=? and b.block_no is not null";
+                "  and a.out_status=? and a.belong_account=? and b.block_no is not null";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery(unspendOutSql,
-                new String[]{Integer.toString(Out.OutStatus.unspent.getValue())});
+                new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
 
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex("sum");
