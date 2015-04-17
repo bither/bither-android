@@ -524,7 +524,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select * from txs  where  " +
-                "and ((block_no is null) or (block_no is not null and block_no>%d)) " +
+                "((block_no is null) or (block_no is not null and block_no>%d)) " +
                 "order by ifnull(block_no,4294967295) desc, tx_time desc " +
                 "limit %d ";
         sql = Utils.format(sql, greateThanBlockNo, limit);
