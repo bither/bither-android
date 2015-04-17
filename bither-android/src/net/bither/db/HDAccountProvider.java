@@ -574,7 +574,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
             String sql = "select * from txs order by" +
-                    " ifnull(b.block_no,4294967295) desc limit ?,? ";
+                    " ifnull(block_no,4294967295) desc limit ?,? ";
             Cursor c = db.rawQuery(sql, new String[]{
                     Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
             });
@@ -624,9 +624,11 @@ public class HDAccountProvider implements IHDAccountProvider {
         TxHelper.insertTx(db, txItem);
         List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
         List<TxHelper.AddressTx> temp = TxHelper.insertIn(db, txItem);
+
         if (temp != null && temp.size() > 0) {
             addressesTxsRels.addAll(temp);
         }
+
         temp = TxHelper.insertOut(db, txItem);
         if (temp != null && temp.size() > 0) {
             addressesTxsRels.addAll(temp);
