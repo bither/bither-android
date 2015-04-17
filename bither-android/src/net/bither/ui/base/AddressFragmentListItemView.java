@@ -113,7 +113,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         if (hdAccount == null) {
             return;
         }
-        tvAddress.setText(hdAccount.getShortReceivingAddress());
+        tvAddress.setText(hdAccount.getShortAddress());
         tvBalanceMoney.setVisibility(View.VISIBLE);
         ivBalanceSymbol.setVisibility(View.VISIBLE);
         llExtra.setVisibility(View.VISIBLE);
@@ -245,7 +245,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
             }
             LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
             if (hdAccount != null) {
-                map.put(hdAccount.getReceivingAddress(), 0L);
+                map.put(hdAccount.getAddress(), 0L);
             } else if (address != null) {
                 map.put(address.getAddress(), 0L);
             }
