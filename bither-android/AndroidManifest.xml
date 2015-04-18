@@ -232,10 +232,6 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="net.bither.activity.hot.RCheckActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BitherTransparentBgTheme" />
-        <activity
             android:name=".pin.PinCodeActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"

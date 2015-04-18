@@ -138,7 +138,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         initView();
         processIntent();
         configureDonate();
-        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     private void initView() {

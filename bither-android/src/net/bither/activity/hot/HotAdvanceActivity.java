@@ -92,7 +92,6 @@ import java.io.IOException;
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
     private Button btnEditPassword;
-    private Button btnRCheck;
     private Button btnExportAddress;
     private SettingSelectorView ssvImportPrivateKey;
     private SettingSelectorView ssvImprotBip38Key;
@@ -124,7 +123,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         ssvPinCode = (SettingSelectorView) findViewById(R.id.ssv_pin_code);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
-        btnRCheck = (Button) findViewById(R.id.btn_r_check);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
@@ -141,7 +139,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         ssvPasswordStrengthCheck.setSelector(passwordStrengthCheckSelector);
-        btnRCheck.setOnClickListener(rCheckClick);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
@@ -174,21 +171,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         @Override
         public void onClick(View v) {
             startActivity(new Intent(HotAdvanceActivity.this, RawPrivateKeyActivity.class));
-        }
-    };
-
-    private View.OnClickListener rCheckClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (AddressManager.getInstance().getAllAddresses() == null || AddressManager
-                    .getInstance().getAllAddresses().size() == 0) {
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                        R.string.rcheck_no_address);
-                return;
-            }
-            Intent intent = new Intent(HotAdvanceActivity.this, RCheckActivity.class);
-            startActivity(intent);
         }
     };
 

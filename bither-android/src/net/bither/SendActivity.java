@@ -107,7 +107,6 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         initView();
         processIntent();
         configureDonate();
-        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     protected void initAddress(){

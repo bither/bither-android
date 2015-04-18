@@ -118,21 +118,6 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
         } finally {
             password.wipe();
         }
-        if (!account.checkRValuesForTx(tx)) {
-            btcAmount = 0;
-            tx = null;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (dp.isShowing()) {
-                        dp.dismiss();
-                    }
-                    DropdownMessage.showDropdownMessage(HDAccountSendActivity.this, R.string
-                            .send_failed);
-                }
-            });
-            return;
-        }
         if (tx != null) {
             runOnUiThread(new Runnable() {
                 @Override
