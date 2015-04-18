@@ -76,9 +76,9 @@ public class HDAccountProvider implements IHDAccountProvider {
 
     @Override
     public int issuedIndex(AbstractHD.PathType pathType) {
-        int issuedIndex = 0;
+        int issuedIndex = -1;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select ifnull(max(address_index),0) address_index from " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS + " where path_type=? and is_issued=?  ",
+        Cursor cursor = db.rawQuery("select ifnull(max(address_index),-1) address_index from " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS + " where path_type=? and is_issued=?  ",
                 new String[]{Integer.toString(pathType.getValue()), "1"});
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS_INDEX);
