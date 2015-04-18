@@ -39,8 +39,8 @@ public class PieChartView extends View {
         public void onRotationChanged(float rotation);
     }
 
-    public static final int[] Colors = new int[]{Color.rgb(38, 230, 91), Color.rgb(254, 35, 93),
-            Color.rgb(36, 182, 212), Color.rgb(194, 253, 70), Color.rgb(237, 193, 155),
+    public static final int[] Colors = new int[]{Color.rgb(194, 253, 70), Color.rgb(38, 230, 91),
+            Color.rgb(254, 35, 93), Color.rgb(36, 182, 212), Color.rgb(237, 193, 155),
             Color.rgb(100, 114, 253), Color.rgb(117, 140, 129), Color.rgb(200, 47, 217),
             Color.rgb(239, 204, 41), Color.rgb(253, 38, 38), Color.rgb(253, 160, 38),
             Color.rgb(144, 183, 177)};
