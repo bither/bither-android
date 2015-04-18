@@ -147,7 +147,7 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, btcAmount, tx.getFee(), this).show();
+        new DialogHdSendConfirm(this, toAddress, tx, this).show();
     }
 
     @Override
@@ -176,6 +176,9 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
                             Intent intent = getIntent();
                             if (tx != null) {
                                 intent.putExtra(SelectAddressToSendActivity

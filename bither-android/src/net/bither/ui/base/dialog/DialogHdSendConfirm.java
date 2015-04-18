@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.core.Tx;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
@@ -42,7 +43,7 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
     private boolean confirmed = false;
     private SendConfirmListener listener;
 
-    public DialogHdSendConfirm(Context context, String toAddress, long toAmount, long fee,
+    public DialogHdSendConfirm(Context context, String toAddress, Tx tx,
                                SendConfirmListener listener) {
         super(context);
         this.listener = listener;
@@ -63,8 +64,8 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
         findViewById(R.id.btn_ok).setOnClickListener(this);
         llChange.setVisibility(View.GONE);
         tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
-        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(toAmount));
-        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee));
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(toAddress)));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
 
     }
 
