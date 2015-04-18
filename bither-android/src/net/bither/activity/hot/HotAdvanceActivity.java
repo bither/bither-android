@@ -954,7 +954,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                 getString(R.string.import_hd_account_seed_qr_code));
         startActivityForResult(intent, BitherSetting.INTENT_REF
-                .IMPORT_HDM_COLD_SEED_REQUEST_CODE);
+                .IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE);
 
     }
 
@@ -1018,6 +1018,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 });
                 dialogPassword.show();
+                break;
+            case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
+                final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+               
+
                 break;
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
                 final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);

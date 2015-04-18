@@ -56,7 +56,7 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
         new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
-                HDMKeychain result = importHDSeed();
+                HDMKeychain result = importHDMKeychain();
                 if (result != null) {
 
                     KeyUtil.setHDKeyChain(result);

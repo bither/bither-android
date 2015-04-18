@@ -86,6 +86,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 issuedIndex = cursor.getInt(idColumn);
             }
         }
+        cursor.close();
         return issuedIndex;
     }
 
@@ -103,6 +104,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 count = cursor.getInt(idColumn);
             }
         }
+        cursor.close();
         return count;
     }
 
@@ -119,6 +121,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 address = cursor.getString(idColumn);
             }
         }
+        cursor.close();
         return address;
     }
 
@@ -134,6 +137,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 addressSet.add(cursor.getString(idColumn));
             }
         }
+        cursor.close();
         return addressSet;
     }
 
@@ -153,6 +157,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 e.printStackTrace();
             }
         }
+        cursor.close();
         return adressPubList;
     }
 
@@ -167,6 +172,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 adressPubList.add(hdAccountAddress);
             }
         }
+        cursor.close();
         return adressPubList;
     }
 
@@ -228,7 +234,6 @@ public class HDAccountProvider implements IHDAccountProvider {
                 + " where address in (" + Utils.joinString(temp, ",") + ")";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
-
         while (cursor.moveToNext()) {
             hdAccountAddressList.add(formatAddress(cursor));
 
@@ -383,6 +388,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                 cnt = cursor.getInt(idColumn);
             }
         }
+        cursor.close();
         return cnt;
     }
 
