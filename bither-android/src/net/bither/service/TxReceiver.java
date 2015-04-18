@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
@@ -50,6 +52,9 @@ public class TxReceiver extends BroadcastReceiver {
     private void notifyCoins(String address, final long amount,
                              boolean isReceived) {
         String contentText = address;
+        if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
+            contentText = BitherApplication.mContext.getString(R.string.address_group_hd);
+        }
         String title = UnitUtilWrapper.formatValue(amount) + " " + AppSharedPreference.getInstance().getBitcoinUnit().name();
         if (isReceived) {
             title = blockchainService.getString(R.string.feed_received_btc) + " " + title;
