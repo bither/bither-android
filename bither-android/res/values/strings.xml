@@ -189,6 +189,9 @@
     <string name="import_private_key_text">From Private Key Text</string>
     <string name="import_hdm_cold_seed_qr_code">From HDM Cold Seed QR Code</string>
     <string name="import_hdm_cold_seed_phrase">From HDM Cold Phrase</string>
+    <string name="import_hd_account_seed_qr_code">From HD Account Seed QR Code</string>
+    <string name="import_hd_account_seed_phrase">From HD Account Phrase</string>
+
 
     <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
     <string name="import_bip38_key_text">From BIP38-private key text</string>

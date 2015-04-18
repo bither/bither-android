@@ -34,6 +34,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.activity.cold.HdmImportWordListActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
@@ -638,7 +639,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 @Override
                 public int getOptionCount() {
                     hasAnyAction = true;
-                    return 2;
+                    if (AddressManager.getInstance().getHdAccount() != null) {
+                        return 2;
+                    } else {
+                        return 4;
+                    }
                 }
 
                 @Override
@@ -648,6 +653,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             return getString(R.string.import_private_key_qr_code);
                         case 1:
                             return getString(R.string.import_private_key_text);
+                        case 2:
+                            return getString(R.string.import_hd_account_seed_qr_code);
+                        case 3:
+                            return getString(R.string.import_hd_account_seed_phrase);
                         default:
                             return "";
                     }
@@ -662,8 +671,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 public Drawable getOptionDrawable(int index) {
                     switch (index) {
                         case 0:
+                        case 2:
                             return getResources().getDrawable(R.drawable.scan_button_icon);
                         case 1:
+                        case 3:
                             return getResources().getDrawable(R.drawable.import_private_key_text_icon);
                         default:
                             return null;
@@ -690,6 +701,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         case 1:
                             new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
                             return;
+                        case 2:
+                            importHDFromQRCode();
+                        case 3:
+                            importHDFromPhrase();
                         default:
                             return;
                     }
@@ -933,6 +948,21 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }
             };
+
+    private void importHDFromQRCode() {
+        Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
+                getString(R.string.import_hd_account_seed_qr_code));
+        startActivityForResult(intent, BitherSetting.INTENT_REF
+                .IMPORT_HDM_COLD_SEED_REQUEST_CODE);
+
+    }
+
+    private void importHDFromPhrase() {
+        Intent intent = new Intent(this, HdmImportWordListActivity.class);
+        startActivity(intent);
+
+    }
 
     private void importPrivateKeyFromQrCode(boolean isFromBip38) {
         if (isFromBip38) {

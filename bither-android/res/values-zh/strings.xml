@@ -183,6 +183,9 @@
     <string name="import_private_key_text">来自私钥明文</string>
     <string name="import_hdm_cold_seed_qr_code">来自HDM冷种子二维码</string>
     <string name="import_hdm_cold_seed_phrase">来自HDM密语(冷)</string>
+    <string name="import_hd_account_seed_qr_code">来自HD种子二维码</string>
+    <string name="import_hd_account_seed_phrase">来自HD密语</string>
+
     <string name="import_bip38_key_qr_code">来自BIP38私钥二维码</string>
     <string name="import_bip38_key_text">来自BIP38私钥文本</string>
     <string name="enter_bip38_key_password">请输入BIP38私钥的密码</string>
