@@ -211,10 +211,9 @@ public class HDAccountProvider implements IHDAccountProvider {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, 1);
-        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, " path_type=? and address_index=? ", new String[]{
+        db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, " path_type=? and address_index<=? ", new String[]{
                 Integer.toString(pathType.getValue()), Integer.toString(index)
         });
-
     }
 
 
