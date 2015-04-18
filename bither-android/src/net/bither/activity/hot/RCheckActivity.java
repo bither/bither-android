@@ -40,6 +40,7 @@ import com.nineoldandroids.animation.ObjectAnimator;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.ui.base.RCheckHeaderView;
@@ -93,6 +94,12 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
         final List<Address> addresses = AddressManager.getInstance().getAllAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
+        if (AddressManager.getInstance().hasHDAccount()) {
+            HDAccount account = AddressManager.getInstance().getHdAccount();
+            CheckPoint point = new CheckPoint(HDAccount.HDAccountPlaceHolder);
+            checkPoints.add(point);
+            checks.add(CheckUtil.initCheckForRValueOfHD(account).setCheckListener(point));
+        }
         for (int i = 0;
              i < addresses.size();
              i++) {
@@ -228,6 +235,11 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
             h.tv.setTextColor(titleNormalColor);
             h.tv.setText(getSpannableStringFromAddress(point.getAddress(), true));
             h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
+            if (Utils.compareString(point.getAddress(), HDAccount.HDAccountPlaceHolder)) {
+                h.ibtnFull.setVisibility(View.GONE);
+            } else {
+                h.ibtnFull.setVisibility(View.VISIBLE);
+            }
             if (point.isWaiting()) {
                 h.pb.setVisibility(View.GONE);
                 h.iv.setVisibility(View.GONE);
@@ -252,18 +264,28 @@ public class RCheckActivity extends SwipeRightFragmentActivity implements RCheck
         }
 
         private SpannableString getSpannableStringFromAddress(String address, boolean safe) {
-            address = Utils.shortenAddress(address);
-            String a = address.substring(0, 4);
-            int resource = R.string.rcheck_address_title;
-            if (!safe) {
-                resource = R.string.rcheck_address_danger_title;
+            if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
+                int resource = R.string.rcheck_address_title;
+                if (!safe) {
+                    resource = R.string.rcheck_address_danger_title;
+                }
+                String str = String.format(getString(resource), getString(R.string
+                        .address_group_hd));
+                return new SpannableString(str);
+            } else {
+                address = Utils.shortenAddress(address);
+                String a = address.substring(0, 4);
+                int resource = R.string.rcheck_address_title;
+                if (!safe) {
+                    resource = R.string.rcheck_address_danger_title;
+                }
+                String str = String.format(getString(resource), address);
+                int indexOfAddress = str.indexOf(a);
+                SpannableString spannable = new SpannableString(str);
+                spannable.setSpan(new TypefaceSpan("monospace"), indexOfAddress, indexOfAddress +
+                        4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                return spannable;
             }
-            String str = String.format(getString(resource), address);
-            int indexOfAddress = str.indexOf(a);
-            SpannableString spannable = new SpannableString(str);
-            spannable.setSpan(new TypefaceSpan("monospace"), indexOfAddress, indexOfAddress + 4,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return spannable;
         }
 
         @Override

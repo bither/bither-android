@@ -223,4 +223,16 @@ public class CheckUtil {
         });
         return check;
     }
+
+    public static Check initCheckForRValueOfHD(final HDAccount hdAccount) {
+        String title = String.format(BitherApplication.mContext.getString(R.string
+                .rcheck_address_title), BitherApplication.mContext.getString(R.string
+                .address_group_hd));
+        return new Check(title, new ICheckAction() {
+            @Override
+            public boolean check() {
+                return hdAccount.checkRValues();
+            }
+        });
+    }
 }
