@@ -48,6 +48,7 @@ import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
 import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.dialog.DialogHDMSeedOptions;
+import net.bither.ui.base.dialog.DialogHdAccountOptions;
 import net.bither.ui.base.dialog.DialogProgress;
 
 import java.util.List;
@@ -384,8 +385,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         Address a = getChild(groupPosition, childPosition);
         view.setAddress(a);
         if (a.isHDAccount()) {
-            //TODO need to finish this
-            view.ivType.setOnLongClickListener(null);
+            view.ivType.setOnLongClickListener(hdAccountLongClick);
             view.setOnClickListener(hdAccountDetailClick);
         } else {
             view.ivType.setOnLongClickListener(new AddressLongClick(a));
@@ -429,6 +429,14 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     }
                 }, 500);
             }
+        }
+    };
+
+    private OnLongClickListener hdAccountLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            new DialogHdAccountOptions(activity, hdAccount).show();
+            return true;
         }
     };
 

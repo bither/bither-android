@@ -21,6 +21,7 @@ package net.bither.activity.hot;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogHdAccountOptions;
 
 /**
  * Created by songchenwen on 15/4/17.
@@ -34,7 +35,7 @@ public class HDAccountDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void optionClicked() {
-
+        new DialogHdAccountOptions(this, (HDAccount) address).show();
     }
 
     @Override
