@@ -610,7 +610,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
             public void run() {
                 if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager
                         .getInstance().getTrashAddresses().size() > 0 || AddressManager
-                        .getInstance().getHdmKeychain() != null) {
+                        .getInstance().getHdmKeychain() != null || AddressManager.getInstance()
+                        .hasHDAccount()) {
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);
