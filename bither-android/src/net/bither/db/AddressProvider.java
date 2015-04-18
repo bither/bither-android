@@ -410,10 +410,10 @@ public class AddressProvider implements IAddressProvider {
         byte[] pub = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            Cursor c = db.rawQuery("select internal_pub from hd_account where hd_account_id=? "
+            Cursor c = db.rawQuery("select external_pub from hd_account where hd_account_id=? "
                     , new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
-                int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.ENCRYPT_SEED);
+                int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.EXTERNAL_PUB);
                 if (idColumn != -1) {
                     String pubStr = c.getString(idColumn);
                     pub = Base58.decode(pubStr);
@@ -431,10 +431,10 @@ public class AddressProvider implements IAddressProvider {
         byte[] pub = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            Cursor c = db.rawQuery("select external_pub from hd_account where hd_account_id=? "
+            Cursor c = db.rawQuery("select internal_pub from hd_account where hd_account_id=? "
                     , new String[]{Integer.toString(hdSeedId)});
             if (c.moveToNext()) {
-                int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.EXTERNAL_PUB);
+                int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.INTERNAL_PUB);
                 if (idColumn != -1) {
                     String pubStr = c.getString(idColumn);
                     pub = Base58.decode(pubStr);

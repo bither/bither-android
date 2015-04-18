@@ -439,7 +439,7 @@ public class HDAccountProvider implements IHDAccountProvider {
                     " where a.address=b.out_address" +
                     " and b.tx_hash=? and b.out_sn=?  ";
             OutPoint outPoint = in.getOutpoint();
-            c = db.rawQuery(sql, new String[]{Base58.encode(outPoint.getTxHash()), Integer.toString(in.getInSn())});
+            c = db.rawQuery(sql, new String[]{Base58.encode(in.getPrevTxHash()), Integer.toString(outPoint.getOutSn())});
             if (c.moveToNext()) {
                 hdAccountAddressList.add(formatAddress(c));
             }
