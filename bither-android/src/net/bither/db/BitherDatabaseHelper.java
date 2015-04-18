@@ -24,7 +24,7 @@ import net.bither.bitherj.db.AbstractDb;
 
 public class BitherDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
     private static final String DB_NAME = "bitherj.db";
 
     public BitherDatabaseHelper(Context context) {
@@ -39,12 +39,17 @@ public class BitherDatabaseHelper extends SQLiteOpenHelper {
         createInsTable(db);
         createOutsTable(db);
         createPeersTable(db);
+        createHDAccountAddress(db);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        switch (oldVersion) {
+            case 1:
+                v1Tov2(db);
 
+        }
     }
 
 
@@ -76,4 +81,17 @@ public class BitherDatabaseHelper extends SQLiteOpenHelper {
     private void createPeersTable(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_PEER_SQL);
     }
+
+    private void createHDAccountAddress(SQLiteDatabase db) {
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESSES);
+        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESS_INDEX);
+    }
+
+
+    private void v1Tov2(SQLiteDatabase db) {
+        //v1.34
+        db.execSQL("alter table outs add column hd_account_id integer;");
+        createHDAccountAddress(db);
+    }
+
 }

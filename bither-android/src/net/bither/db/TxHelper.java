@@ -93,9 +93,11 @@ public class TxHelper {
             cv.putNull(AbstractDb.OutsColumns.OUT_ADDRESS);
         }
         //support hd
-        if (outItem.getOutType() != Out.OutType.NORMAL) {
-            cv.put(AbstractDb.OutsColumns.BELONG_ACCOUNT,
-                    outItem.getOutType() == Out.OutType.BELONG_HD_ACCOUNT ? 1 : 0);
+        if (outItem.getHDAccountId() != -1) {
+            cv.put(AbstractDb.OutsColumns.HD_ACCOUNT_ID,
+                    outItem.getHDAccountId());
+        } else {
+            cv.putNull(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
         }
     }
 
@@ -283,16 +285,9 @@ public class TxHelper {
         if (idColumn != -1) {
             outItem.setOutAddress(c.getString(idColumn));
         }
-        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.BELONG_ACCOUNT);
-        if (idColumn == -1) {
-            outItem.setOutType(Out.OutType.NORMAL);
-        } else {
-            int outType = c.getInt(idColumn);
-            if (outType == 1) {
-                outItem.setOutType(Out.OutType.BELONG_HD_ACCOUNT);
-            } else {
-                outItem.setOutType(Out.OutType.NO_BELONG_HD_ACCOUNT);
-            }
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
+        if (idColumn != -1 && !c.isNull(idColumn)) {
+            outItem.setHDAccountId(c.getInt(idColumn));
         }
         return outItem;
     }
