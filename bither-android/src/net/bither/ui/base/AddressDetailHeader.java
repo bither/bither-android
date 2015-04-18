@@ -38,6 +38,7 @@ import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
@@ -71,6 +72,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private int addressPosition;
     private DialogProgress dp;
     private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
+    private String strAddress;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -113,7 +115,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             return;
         }
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
-        if (this.address != address) {
+        if (!Utils.compareString(strAddress, address.getAddress())) {
             Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
             ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
         }
@@ -125,7 +127,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             tvNoTransactions.setVisibility(View.GONE);
         }
         btnBalance.setAmount(address.getBalance());
-        if (address.isHDM() || address.hasPrivKey()) {
+        if (address.isHDM() || address.hasPrivKey() || address.isHDAccount()) {
             btnSend.setCompoundDrawables(null, null, null, null);
         } else {
             Drawable d = getContext().getResources().getDrawable(R.drawable
@@ -145,6 +147,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 //            llMonitorFailed.setVisibility(View.VISIBLE);
 //        }
         this.address = address;
+        strAddress = address.getAddress();
         if(balanceDetailFuture != null){
             balanceDetailFuture.cancel(true);
         }

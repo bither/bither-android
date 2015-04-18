@@ -162,7 +162,6 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
                 try {
                     PeerManager.instance().publishTransaction(tx);
                     success = true;
-                    TransactionsUtil.removeSignTx(new UnSignTransaction(tx, address.getAddress()));
                     tx = null;
                     toAddress = null;
                     btcAmount = 0;
