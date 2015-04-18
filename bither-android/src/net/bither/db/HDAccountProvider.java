@@ -686,6 +686,127 @@ public class HDAccountProvider implements IHDAccountProvider {
 
     }
 
+    public void confirmTx(int blockNo, List<byte[]> txHashes) {
+        if (blockNo == Tx.TX_UNCONFIRMED || txHashes == null) {
+            return;
+        }
+        String sql = "update txs set block_no=%d where tx_hash='%s'";
+        String existSql = "select count(0) from txs where block_no=? and tx_hash=?";
+        String doubleSpendSql = "select a.tx_hash from ins a, ins b where a.prev_tx_hash=b.prev_tx_hash " +
+                "and a.prev_out_sn=b.prev_out_sn and a.tx_hash<>b.tx_hash and b.tx_hash=?";
+        String blockTimeSql = "select block_time from blocks where block_no=?";
+        String updateTxTimeThatMoreThanBlockTime = "update txs set tx_time=%d where block_no=%d and tx_time>%d";
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        Cursor c;
+        for (byte[] txHash : txHashes) {
+            c = db.rawQuery(existSql, new String[]{Integer.toString(blockNo), Base58.encode(txHash)});
+            if (c.moveToNext()) {
+                int cnt = c.getInt(0);
+                c.close();
+                if (cnt > 0) {
+                    continue;
+                }
+            } else {
+                c.close();
+            }
+            String updateSql = Utils.format(sql, blockNo, Base58.encode(txHash));
+            db.execSQL(updateSql);
+            c = db.rawQuery(doubleSpendSql, new String[]{Base58.encode(txHash)});
+            List<String> txHashes1 = new ArrayList<String>();
+            while (c.moveToNext()) {
+                int idColumn = c.getColumnIndex("tx_hash");
+                if (idColumn != -1) {
+                    txHashes1.add(c.getString(idColumn));
+                }
+            }
+            c.close();
+            List<String> needRemoveTxHashes = new ArrayList<String>();
+            while (txHashes1.size() > 0) {
+                String thisHash = txHashes1.get(0);
+                txHashes1.remove(0);
+                needRemoveTxHashes.add(thisHash);
+                List<String> temp = getRelayTx(thisHash);
+                txHashes1.addAll(temp);
+            }
+            for (String each : needRemoveTxHashes) {
+                removeSingleTx(db, each);
+            }
+
+        }
+        c = db.rawQuery(blockTimeSql, new String[]{Integer.toString(blockNo)});
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("block_time");
+            if (idColumn != -1) {
+                int blockTime = c.getInt(idColumn);
+                c.close();
+                String sqlTemp = Utils.format(updateTxTimeThatMoreThanBlockTime, blockTime, blockNo, blockTime);
+                db.execSQL(sqlTemp);
+            }
+        } else {
+            c.close();
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
+
+    private List<String> getRelayTx(String txHash) {
+        List<String> relayTxHashes = new ArrayList<String>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String relayTx = "select distinct tx_hash from ins where prev_tx_hash=?";
+        Cursor c = db.rawQuery(relayTx, new String[]{txHash});
+        while (c.moveToNext()) {
+            relayTxHashes.add(c.getString(0));
+        }
+        c.close();
+        return relayTxHashes;
+    }
+
+    private void removeSingleTx(SQLiteDatabase db, String tx) {
+        String deleteTx = "delete from txs where tx_hash='" + tx + "'";
+        String deleteIn = "delete from ins where tx_hash='" + tx + "'";
+        String deleteOut = "delete from outs where tx_hash='" + tx + "'";
+
+        String inSql = "select prev_tx_hash,prev_out_sn from ins where tx_hash='" + tx + "'";
+        String existOtherIn = "select count(0) cnt from ins where prev_tx_hash=? and prev_out_sn=?";
+        String updatePrevOut = "update outs set out_status=%d where tx_hash=%s and out_sn=%d";
+        Cursor c = db.rawQuery(inSql, new String[]{tx});
+        List<Object[]> needUpdateOuts = new ArrayList<Object[]>();
+        while (c.moveToNext()) {
+            int idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_TX_HASH);
+            String prevTxHash = null;
+            int prevOutSn = 0;
+            if (idColumn != -1) {
+                prevTxHash = c.getString(idColumn);
+            }
+            idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_OUT_SN);
+            if (idColumn != -1) {
+                prevOutSn = c.getInt(idColumn);
+            }
+            needUpdateOuts.add(new Object[]{prevTxHash, prevOutSn});
+
+        }
+        c.close();
+
+        db.execSQL(deleteOut);
+        db.execSQL(deleteIn);
+        db.execSQL(deleteTx);
+        for (Object[] array : needUpdateOuts) {
+            c = db.rawQuery(existOtherIn, new String[]{array[0].toString(), array[1].toString()});
+            while (c.moveToNext()) {
+                if (c.getInt(0) == 0) {
+                    String updateSql = Utils.format(updatePrevOut,
+                            Out.OutStatus.unspent.getValue(), array[0].toString(), Integer.valueOf(array[1].toString()));
+                    db.execSQL(updateSql);
+                }
+
+            }
+            c.close();
+
+        }
+    }
+
+
     private HDAccount.HDAccountAddress formatAddress(Cursor c) {
         String address = null;
         byte[] pubs = null;
