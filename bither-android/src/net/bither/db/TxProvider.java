@@ -22,6 +22,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
@@ -34,6 +35,7 @@ import net.bither.bitherj.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class TxProvider implements ITxProvider {
@@ -218,7 +220,7 @@ public class TxProvider implements ITxProvider {
         } catch (AddressFormatException e) {
             e.printStackTrace();
         } finally {
-            
+
         }
         return txItem;
     }
@@ -278,6 +280,12 @@ public class TxProvider implements ITxProvider {
     }
 
     private static void addTxToDb(SQLiteDatabase db, Tx txItem) {
+        HashSet<String> addressSet = AbstractDb.hdAccountProvider.getAllAddress();
+        for (Out out : txItem.getOuts()) {
+            if (addressSet.contains(out.getOutAddress())) {
+                out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
+            }
+        }
         TxHelper.insertTx(db, txItem);
         List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
         List<TxHelper.AddressTx> temp = TxHelper.insertIn(db, txItem);

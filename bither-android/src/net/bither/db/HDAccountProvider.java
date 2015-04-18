@@ -35,7 +35,6 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,11 @@ import java.util.HashSet;
 import java.util.List;
 
 public class HDAccountProvider implements IHDAccountProvider {
-    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mHDDbHelper);
+
+    private final static String queryTxHashOfHDAccount = " select  distinct txs.tx_hash from addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address";
+    private final static String inQueryTxHashOfHDAccount = " (" + queryTxHashOfHDAccount + ")";
+
+    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mDbHelper);
 
     public static HDAccountProvider getInstance() {
         return hdAccountProvider;
@@ -169,44 +172,13 @@ public class HDAccountProvider implements IHDAccountProvider {
 
 
     @Override
-    public List<Tx> getUnspentTxs() {
-        String unspendOutSql =
-                "select a.*,b.tx_ver,b.tx_locktime,b.tx_time,b.block_no,b.source,ifnull(b.block_no,0)*a.out_value coin_depth " +
-                        "from outs a,txs b where a.tx_hash=b.tx_hash" +
-                        " and  a.out_status=? and a.belong_account=?";
-        List<Tx> txItemList = new ArrayList<Tx>();
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery(unspendOutSql, new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
-        try {
-            while (c.moveToNext()) {
-                int idColumn = c.getColumnIndex("coin_depth");
-
-                Tx txItem = TxHelper.applyCursor(c);
-                Out outItem = TxHelper.applyCursorOut(c);
-                if (idColumn != -1) {
-                    outItem.setCoinDepth(c.getLong(idColumn));
-                }
-                outItem.setTx(txItem);
-                txItem.setOuts(new ArrayList<Out>());
-                txItem.getOuts().add(outItem);
-                txItemList.add(txItem);
-
-            }
-            c.close();
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        }
-        return txItemList;
-    }
-
-    @Override
-    public List<Out> getUnspendOut() {
+    public List<Out> getUnspendOutByHDAccount(int hdAccountId) {
         List<Out> outItems = new ArrayList<Out>();
         String unspendOutSql = "select a.* from outs a,txs b where a.tx_hash=b.tx_hash " +
-                " and a.out_status=? and a.belong_account=?";
+                " and a.out_status=? and a.hd_account_id=?";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery(unspendOutSql,
-                new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
+                new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), Integer.toString(hdAccountId)});
         try {
             while (c.moveToNext()) {
                 outItems.add(TxHelper.applyCursorOut(c));
@@ -216,39 +188,6 @@ public class HDAccountProvider implements IHDAccountProvider {
             e.printStackTrace();
         }
         return outItems;
-    }
-
-    @Override
-    public List<HDAccount.HDAccountAddress> addTx(Tx tx) {
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.beginTransaction();
-        List<TxHelper.AddressTx> addressTxes = addTxToDb(db, tx);
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        List<HDAccount.HDAccountAddress> hdAccountAddressList = new ArrayList<HDAccount.HDAccountAddress>();
-        List<HDAccount.HDAccountAddress> hdAccountAddressAllList = getAllHDAddress();
-        for (HDAccount.HDAccountAddress hdAccountAddress : hdAccountAddressAllList) {
-            for (TxHelper.AddressTx addressTx : addressTxes) {
-                if (Utils.compareString(hdAccountAddress.getAddress(), addressTx.getAddress())) {
-                    hdAccountAddressList.add(hdAccountAddress);
-                }
-            }
-        }
-        return hdAccountAddressList;
-
-    }
-
-    @Override
-    public void addTxs(List<Tx> txList) {
-        if (txList.size() > 0) {
-            SQLiteDatabase db = this.mDb.getWritableDatabase();
-            db.beginTransaction();
-            for (Tx txItem : txList) {
-                addTxToDb(db, txItem);
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
-        }
     }
 
 
@@ -278,24 +217,6 @@ public class HDAccountProvider implements IHDAccountProvider {
 
     }
 
-    @Override
-    public List<String> getInAddresses(Tx tx) {
-        List<String> result = new ArrayList<String>();
-        String sql = "select out_address from outs where tx_hash=? and out_sn=?";
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c;
-        for (In inItem : tx.getIns()) {
-            c = db.rawQuery(sql, new String[]{Base58.encode(inItem.getPrevTxHash())
-                    , Integer.toString(inItem.getPrevOutSn())});
-            if (c.moveToNext()) {
-                if (!c.isNull(0)) {
-                    result.add(c.getString(0));
-                }
-            }
-            c.close();
-        }
-        return result;
-    }
 
     @Override
     public List<HDAccount.HDAccountAddress> belongAccount(List<String> addresses) {
@@ -317,30 +238,15 @@ public class HDAccountProvider implements IHDAccountProvider {
         return hdAccountAddressList;
     }
 
-    @Override
-    public int txCount() {
-        int result = 0;
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(0) cnt from txs ";
-        Cursor c = db.rawQuery(sql, null);
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("cnt");
-            if (idColumn != -1) {
-                result = c.getInt(idColumn);
-            }
-        }
-        c.close();
-        return result;
-    }
 
     @Override
-    public long getConfirmedBanlance() {
+    public long getHDAccountConfirmedBanlance(int hdAccountId) {
         long sum = 0;
         String unspendOutSql = "select ifnull(sum(a.out_value),0) sum from outs a,txs b where a.tx_hash=b.tx_hash " +
-                "  and a.out_status=? and a.belong_account=? and b.block_no is not null";
+                "  and a.out_status=? and a.hd_account_id=? and b.block_no is not null";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery(unspendOutSql,
-                new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), "1"});
+                new String[]{Integer.toString(Out.OutStatus.unspent.getValue()), Integer.toString(hdAccountId)});
 
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex("sum");
@@ -352,15 +258,18 @@ public class HDAccountProvider implements IHDAccountProvider {
         return sum;
     }
 
+
     @Override
-    public List<Tx> getUnconfirmedTx() {
+    public List<Tx> getHDAccountUnconfirmedTx() {
         List<Tx> txList = new ArrayList<Tx>();
 
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select * from txs where  block_no is null " +
-                    "order by block_no desc";
+            String sql = "select * from txs where tx_hash in" +
+                    inQueryTxHashOfHDAccount +
+                    " and  block_no is null " +
+                    " order by block_no desc";
             Cursor c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 Tx txItem = TxHelper.applyCursor(c);
@@ -371,9 +280,11 @@ public class HDAccountProvider implements IHDAccountProvider {
             }
             c.close();
             sql = "select b.tx_hash,b.in_sn,b.prev_tx_hash,b.prev_out_sn " +
-                    "from ins b, txs c " +
-                    "where  b.tx_hash=c.tx_hash and c.block_no is null  "
-                    + "order by b.tx_hash ,b.in_sn";
+                    " from ins b, txs c " +
+                    " where c.tx_hash in " +
+                    inQueryTxHashOfHDAccount +
+                    " and b.tx_hash=c.tx_hash and c.block_no is null  " +
+                    " order by b.tx_hash ,b.in_sn";
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 In inItem = TxHelper.applyCursorIn(c);
@@ -385,9 +296,11 @@ public class HDAccountProvider implements IHDAccountProvider {
             c.close();
 
             sql = "select b.tx_hash,b.out_sn,b.out_value,b.out_address " +
-                    "from  outs b, txs c " +
-                    "where  b.tx_hash=c.tx_hash and c.block_no is null  "
-                    + "order by b.tx_hash,b.out_sn";
+                    " from  outs b, txs c " +
+                    " where c.tx_hash in" +
+                    inQueryTxHashOfHDAccount +
+                    " and b.tx_hash=c.tx_hash and c.block_no is null  " +
+                    " order by b.tx_hash,b.out_sn";
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 Out out = TxHelper.applyCursorOut(c);
@@ -404,28 +317,6 @@ public class HDAccountProvider implements IHDAccountProvider {
         return txList;
     }
 
-    @Override
-    public Tx getTxDetailByTxHash(byte[] txHash) {
-        Tx txItem = null;
-        String txHashStr = Base58.encode(txHash);
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from txs where tx_hash=?";
-        Cursor c = db.rawQuery(sql, new String[]{txHashStr});
-        try {
-            if (c.moveToNext()) {
-                txItem = TxHelper.applyCursor(c);
-            }
-
-            if (txItem != null) {
-                TxHelper.addInsAndOuts(db, txItem);
-            }
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        } finally {
-            c.close();
-        }
-        return txItem;
-    }
 
     @Override
     public List<HDAccount.HDAccountAddress> getSigningAddressesForInputs(List<In> inList) {
@@ -448,50 +339,6 @@ public class HDAccountProvider implements IHDAccountProvider {
         return hdAccountAddressList;
     }
 
-    @Override
-    public List<Tx> getPublishedTxs() {
-        List<Tx> txItemList = new ArrayList<Tx>();
-        HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from txs where block_no is null";
-        try {
-            Cursor c = db.rawQuery(sql, null);
-            while (c.moveToNext()) {
-                Tx txItem = TxHelper.applyCursor(c);
-                txItem.setIns(new ArrayList<In>());
-                txItem.setOuts(new ArrayList<Out>());
-                txItemList.add(txItem);
-                txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
-            }
-            c.close();
-
-            sql = "select b.* from txs a, ins b  where a.tx_hash=b.tx_hash  and a.block_no is null "
-                    + "order by b.tx_hash ,b.in_sn";
-            c = db.rawQuery(sql, null);
-            while (c.moveToNext()) {
-                In inItem = TxHelper.applyCursorIn(c);
-                Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
-                tx.getIns().add(inItem);
-            }
-            c.close();
-
-            sql = "select b.* from txs a, outs b where a.tx_hash=b.tx_hash and a.block_no is null "
-                    + "order by b.tx_hash,b.out_sn";
-            c = db.rawQuery(sql, null);
-            while (c.moveToNext()) {
-                Out out = TxHelper.applyCursorOut(c);
-                Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
-                tx.getOuts().add(out);
-            }
-            c.close();
-
-        } catch (AddressFormatException e) {
-            e.printStackTrace();
-        } finally {
-
-        }
-        return txItemList;
-    }
 
     @Override
     public void updateSyncdComplete(HDAccount.HDAccountAddress address) {
@@ -526,26 +373,6 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public void clearAllTx() {
-        SQLiteDatabase db = mDb.getWritableDatabase();
-        db.beginTransaction();
-        db.execSQL("drop table " + AbstractDb.Tables.TXS + ";");
-        db.execSQL("drop table " + AbstractDb.Tables.OUTS + ";");
-        db.execSQL("drop table " + AbstractDb.Tables.INS + ";");
-
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX);
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_TX_BLOCK_NO_INDEX);
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT);
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_OUT_OUT_ADDRESS_INDEX);
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN);
-        db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_IN_PREV_TX_HASH_INDEX);
-
-
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
-    @Override
     public int unSyncedAddressCount() {
         String sql = "select count(address) cnt from hd_account_addresses where is_synced=? ";
         SQLiteDatabase db = this.mDb.getReadableDatabase();
@@ -561,15 +388,15 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public List<Tx> getRecentlyTxsByAddress(int greateThanBlockNo, int limit) {
+    public List<Tx> getRecentlyTxsByAccount(int greateThanBlockNo, int limit) {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select * from txs  where  " +
-                "((block_no is null) or (block_no is not null and block_no>%d)) " +
-                "order by ifnull(block_no,4294967295) desc, tx_time desc " +
-                "limit %d ";
-        sql = Utils.format(sql, greateThanBlockNo, limit);
-        Cursor c = db.rawQuery(sql, null);
+        String sql = "select * from txs  where  tx_hash in " +
+                inQueryTxHashOfHDAccount +
+                " and ((block_no is null) or (block_no is not null and block_no>?)) " +
+                " order by ifnull(block_no,4294967295) desc, tx_time desc " +
+                " limit ? ";
+        Cursor c = db.rawQuery(sql, new String[]{Integer.toString(greateThanBlockNo), Integer.toString(limit)});
         try {
             while (c.moveToNext()) {
                 Tx txItem = TxHelper.applyCursor(c);
@@ -588,14 +415,14 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public long sentFromAddress(byte[] txHash) {
+    public long sentFromAccount(int hdAccountId, byte[] txHash) {
         String sql = "select  sum(o.out_value) out_value from ins i,outs o where" +
-                " i.tx_hash=? and o.tx_hash=i.prev_tx_hash and i.prev_out_sn=o.out_sn and o.belong_account=?";
+                " i.tx_hash=? and o.tx_hash=i.prev_tx_hash and i.prev_out_sn=o.out_sn and o.hd_account_id=?";
         long sum = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor cursor;
         cursor = db.rawQuery(sql, new String[]{Base58.encode(txHash),
-                "1"});
+                Integer.toString(hdAccountId)});
         if (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.OutsColumns.OUT_VALUE);
             if (idColumn != -1) {
@@ -608,13 +435,15 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public List<Tx> getTxAndDetailByAddress(int page) {
+    public List<Tx> getTxAndDetailByHDAccount(int page) {
         List<Tx> txItemList = new ArrayList<Tx>();
 
         HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         try {
-            String sql = "select * from txs order by" +
+            String sql = "select * from txs where tx_hash in " +
+                    inQueryTxHashOfHDAccount +
+                    " order by" +
                     " ifnull(block_no,4294967295) desc limit ?,? ";
             Cursor c = db.rawQuery(sql, new String[]{
                     Integer.toString((page - 1) * BitherjSettings.TX_PAGE_SIZE), Integer.toString(BitherjSettings.TX_PAGE_SIZE)
@@ -661,149 +490,21 @@ public class HDAccountProvider implements IHDAccountProvider {
         return txItemList;
     }
 
-    private List<TxHelper.AddressTx> addTxToDb(SQLiteDatabase db, Tx txItem) {
-        HashSet<String> addressSet = getAllAddress();
-        for (Out out : txItem.getOuts()) {
-            if (addressSet.contains(out.getOutAddress())) {
-                out.setOutType(Out.OutType.BELONG_HD_ACCOUNT);
-            } else {
-                out.setOutType(Out.OutType.NO_BELONG_HD_ACCOUNT);
-            }
-        }
-        TxHelper.insertTx(db, txItem);
-        List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
-        List<TxHelper.AddressTx> temp = TxHelper.insertIn(db, txItem);
 
-        if (temp != null && temp.size() > 0) {
-            addressesTxsRels.addAll(temp);
-        }
-
-        temp = TxHelper.insertOut(db, txItem);
-        if (temp != null && temp.size() > 0) {
-            addressesTxsRels.addAll(temp);
-        }
-        return temp;
-
-    }
-
-    public void confirmTx(int blockNo, List<byte[]> txHashes) {
-        if (blockNo == Tx.TX_UNCONFIRMED || txHashes == null) {
-            return;
-        }
-        String sql = "update txs set block_no=%d where tx_hash='%s'";
-        String existSql = "select count(0) from txs where block_no=? and tx_hash=?";
-        String doubleSpendSql = "select a.tx_hash from ins a, ins b where a.prev_tx_hash=b.prev_tx_hash " +
-                "and a.prev_out_sn=b.prev_out_sn and a.tx_hash<>b.tx_hash and b.tx_hash=?";
-        String blockTimeSql = "select block_time from blocks where block_no=?";
-        String updateTxTimeThatMoreThanBlockTime = "update txs set tx_time=%d where block_no=%d and tx_time>%d";
-        SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.beginTransaction();
-        Cursor c;
-        for (byte[] txHash : txHashes) {
-            c = db.rawQuery(existSql, new String[]{Integer.toString(blockNo), Base58.encode(txHash)});
-            if (c.moveToNext()) {
-                int cnt = c.getInt(0);
-                c.close();
-                if (cnt > 0) {
-                    continue;
-                }
-            } else {
-                c.close();
-            }
-            String updateSql = Utils.format(sql, blockNo, Base58.encode(txHash));
-            db.execSQL(updateSql);
-            c = db.rawQuery(doubleSpendSql, new String[]{Base58.encode(txHash)});
-            List<String> txHashes1 = new ArrayList<String>();
-            while (c.moveToNext()) {
-                int idColumn = c.getColumnIndex("tx_hash");
-                if (idColumn != -1) {
-                    txHashes1.add(c.getString(idColumn));
-                }
-            }
-            c.close();
-            List<String> needRemoveTxHashes = new ArrayList<String>();
-            while (txHashes1.size() > 0) {
-                String thisHash = txHashes1.get(0);
-                txHashes1.remove(0);
-                needRemoveTxHashes.add(thisHash);
-                List<String> temp = getRelayTx(thisHash);
-                txHashes1.addAll(temp);
-            }
-            for (String each : needRemoveTxHashes) {
-                removeSingleTx(db, each);
-            }
-
-        }
-        c = db.rawQuery(blockTimeSql, new String[]{Integer.toString(blockNo)});
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("block_time");
-            if (idColumn != -1) {
-                int blockTime = c.getInt(idColumn);
-                c.close();
-                String sqlTemp = Utils.format(updateTxTimeThatMoreThanBlockTime, blockTime, blockNo, blockTime);
-                db.execSQL(sqlTemp);
-            }
-        } else {
-            c.close();
-        }
-        db.setTransactionSuccessful();
-        db.endTransaction();
-    }
-
-    private List<String> getRelayTx(String txHash) {
-        List<String> relayTxHashes = new ArrayList<String>();
+    @Override
+    public int hdAccountTxCount() {
+        int result = 0;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String relayTx = "select distinct tx_hash from ins where prev_tx_hash=?";
-        Cursor c = db.rawQuery(relayTx, new String[]{txHash});
-        while (c.moveToNext()) {
-            relayTxHashes.add(c.getString(0));
+        String sql = "select count( distinct a.tx_hash) cnt from addresses_txs a ,hd_account_addresses b where a.address=b.address  ";
+        Cursor c = db.rawQuery(sql, null);
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                result = c.getInt(idColumn);
+            }
         }
         c.close();
-        return relayTxHashes;
-    }
-
-    private void removeSingleTx(SQLiteDatabase db, String tx) {
-        String deleteTx = "delete from txs where tx_hash='" + tx + "'";
-        String deleteIn = "delete from ins where tx_hash='" + tx + "'";
-        String deleteOut = "delete from outs where tx_hash='" + tx + "'";
-
-        String inSql = "select prev_tx_hash,prev_out_sn from ins where tx_hash='" + tx + "'";
-        String existOtherIn = "select count(0) cnt from ins where prev_tx_hash=? and prev_out_sn=?";
-        String updatePrevOut = "update outs set out_status=%d where tx_hash=%s and out_sn=%d";
-        Cursor c = db.rawQuery(inSql, new String[]{tx});
-        List<Object[]> needUpdateOuts = new ArrayList<Object[]>();
-        while (c.moveToNext()) {
-            int idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_TX_HASH);
-            String prevTxHash = null;
-            int prevOutSn = 0;
-            if (idColumn != -1) {
-                prevTxHash = c.getString(idColumn);
-            }
-            idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_OUT_SN);
-            if (idColumn != -1) {
-                prevOutSn = c.getInt(idColumn);
-            }
-            needUpdateOuts.add(new Object[]{prevTxHash, prevOutSn});
-
-        }
-        c.close();
-
-        db.execSQL(deleteOut);
-        db.execSQL(deleteIn);
-        db.execSQL(deleteTx);
-        for (Object[] array : needUpdateOuts) {
-            c = db.rawQuery(existOtherIn, new String[]{array[0].toString(), array[1].toString()});
-            while (c.moveToNext()) {
-                if (c.getInt(0) == 0) {
-                    String updateSql = Utils.format(updatePrevOut,
-                            Out.OutStatus.unspent.getValue(), array[0].toString(), Integer.valueOf(array[1].toString()));
-                    db.execSQL(updateSql);
-                }
-
-            }
-            c.close();
-
-        }
+        return result;
     }
 
 

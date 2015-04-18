@@ -254,8 +254,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
                                 SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
                                 FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
-                                SQLiteDatabase hdDb = BitherApplication.mHDDbHelper.getReadableDatabase();
-                                FileUtil.copyFile(new File(hdDb.getPath()), new File(logTagDir, "hd.db"));
+
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -433,7 +432,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     address.updateSyncComplete();
                 }
                 HDAccountProvider.getInstance().setSyncdNotComplete();
-                HDAccountProvider.getInstance().clearAllTx();
                 TxProvider.getInstance().clearAllTx();
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.notificatTx(null, Tx.TxNotificationType.txFromApi);
