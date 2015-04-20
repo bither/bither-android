@@ -667,7 +667,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
                 ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
                         (ColdAdvanceActivity.this, dp, content, password);
-                importHDSeedAndroid.importColdSeed();
+                importHDSeedAndroid.importHDMColdSeed();
 
             }
 

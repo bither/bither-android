@@ -87,6 +87,7 @@ public class BitherSetting {
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
         public static final String INTENT_FROM_NOTIF = "from_notif";
+        public static final String IMPORT_HD_SEED_TYPE = "import_hd_seed_type";
     }
 
 

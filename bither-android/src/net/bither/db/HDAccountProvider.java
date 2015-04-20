@@ -348,7 +348,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     public void updateSyncdComplete(HDAccount.HDAccountAddress address) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, address.isSynced() ? 1 : 0);
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, address.isSyncedComplete() ? 1 : 0);
         db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, "address=?"
                 , new String[]{address.getAddress()});
 
@@ -563,7 +563,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         cv.put(AbstractDb.HDAccountAddressesColumns.PATH_TYPE, hdAccountAddress.getPathType().getValue());
         cv.put(AbstractDb.HDAccountAddressesColumns.ADDRESS_INDEX, hdAccountAddress.getIndex());
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, hdAccountAddress.isIssued() ? 1 : 0);
-        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, hdAccountAddress.isSynced() ? 1 : 0);
+        cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, hdAccountAddress.isSyncedComplete() ? 1 : 0);
         return cv;
     }
 }

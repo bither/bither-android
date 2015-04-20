@@ -31,9 +31,11 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.fragment.Refreshable;
@@ -56,7 +58,7 @@ import java.util.List;
 public class HdmImportWordListActivity extends SwipeRightFragmentActivity implements TextView
         .OnEditorActionListener, DialogHdmImportWordListReplace
         .DialogHdmImportWordListReplaceListener {
-    private static final int WordCount = 24;
+    private static int WordCount = 24;
 
     private GridView gv;
     private TextView tvEmpty;
@@ -67,6 +69,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
 
     private ArrayList<String> words = new ArrayList<String>();
     private DialogProgress dp;
+    private ImportHDSeed.ImportHDSeedType importHDSeedType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,12 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hdm_import_word_list);
         initView();
+        Bundle extra = getIntent().getExtras();
+        if (extra != null && extra.containsKey(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE)) {
+            importHDSeedType = (ImportHDSeed.ImportHDSeedType) extra.getSerializable(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE);
+        }
+
+
         etInput.requestFocus();
     }
 
@@ -120,7 +129,8 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             etInput.setText("");
             refresh();
             gv.smoothScrollToPosition(words.size() - 1);
-            if (words.size() >= WordCount) {
+            if (words.size() >= WordCount ||
+                    (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase && words.size() >= WordCount / 2)) {
                 complete();
             }
         }
@@ -133,7 +143,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             public void onPasswordEntered(SecureCharSequence password) {
                 ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
                         (HdmImportWordListActivity.this, dp, words, password);
-                importHDSeedAndroid.importColdSeed();
+                importHDSeedAndroid.importHDMColdSeed();
             }
         }).show();
 

@@ -202,6 +202,7 @@
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_error">Not match private key format</string>
     <string name="import_hdm_cold_seed_format_error">Not match HDM cod seed format</string>
+    <string name="import_hd_account_seed_format_error">Not match HD Account seed format</string>
     <string name="can_not_import_hdm_cold_seed">Can not import HDM Cold Seed</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">Scan HDM Cold Seed QR Code</string>

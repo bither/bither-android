@@ -42,9 +42,11 @@ import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
@@ -52,6 +54,7 @@ import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.HDAccountProvider;
 import net.bither.db.TxProvider;
+import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
 import net.bither.pin.PinCodeChangeActivity;
@@ -83,6 +86,7 @@ import net.bither.util.BroadcastUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
@@ -679,14 +683,16 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     switch (index) {
                         case 0:
                             importPrivateKeyFromQrCode(false);
-                            return;
+                            break;
                         case 1:
                             new DialogImportPrivateKeyText(HotAdvanceActivity.this).show();
-                            return;
+                            break;
                         case 2:
                             importHDFromQRCode();
+                            break;
                         case 3:
                             importHDFromPhrase();
+                            break;
                         default:
                             return;
                     }
@@ -942,6 +948,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     private void importHDFromPhrase() {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE, ImportHDSeed.ImportHDSeedType.HDSeedPhrase);
         startActivity(intent);
 
     }
@@ -1003,8 +1010,32 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
                 final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-               
-
+                if (hdAccountSeed.indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
+                    dialogPassword = new DialogPassword(this,
+                            new ImportHDAccountPasswordListener(hdAccountSeed));
+                    dialogPassword.setCheckPre(false);
+                    dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
+                        @Override
+                        public boolean checkPassword(SecureCharSequence password) {
+                            String keyString = hdAccountSeed.substring(1);
+                            String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                            String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
+                            EncryptedData encryptedData = new EncryptedData(encreyptString);
+                            byte[] result = null;
+                            try {
+                                result = encryptedData.decrypt(password);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return result != null;
+                        }
+                    });
+                    dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                    dialogPassword.show();
+                } else {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this
+                            , R.string.import_hd_account_seed_format_error);
+                }
                 break;
             case BitherSetting.INTENT_REF.IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE:
                 final String bip38Content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
@@ -1047,6 +1078,31 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    private class ImportHDAccountPasswordListener implements IDialogPasswordListener {
+        private String content;
+
+
+        public ImportHDAccountPasswordListener(String content) {
+            this.content = content;
+
+        }
+
+        @Override
+        public void onPasswordEntered(SecureCharSequence password) {
+            if (dp != null && !dp.isShowing()) {
+                dp.setMessage(R.string.import_private_key_qr_code_importing);
+                LogUtil.d("importhdseed", "onPasswordEntered");
+                ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                        (HotAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password);
+                importHDSeedAndroid.importHDSeed();
+
+            }
+
+        }
+
+    }
+
 
     private class ImportPrivateKeyPasswordListenerI implements IDialogPasswordListener {
         private String content;
