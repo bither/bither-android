@@ -584,7 +584,7 @@
     <string name="add_hd_account_tab_hd">HD 账户</string>
     <string name="add_hd_account_tab_other">其它</string>
     <string name="add_hd_account_other_hdm">生成 HDM 账户</string>
-    <string name="add_hd_account_other_private">生成私钥</string>
+    <string name="add_hd_account_other_private">生成普通私钥</string>
     <string name="add_hd_account_view_label">已有 HD 账户</string>
     <string name="add_hd_account_seed_qr_code">HD 账户种子二维码</string>
     <string name="add_hd_account_seed_qr_phrase">HD 账户密语</string>

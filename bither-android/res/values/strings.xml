@@ -602,7 +602,7 @@
     <string name="add_hd_account_tab_hd">HD Account</string>
     <string name="add_hd_account_tab_other">Others</string>
     <string name="add_hd_account_other_hdm">Generate HDM Account</string>
-    <string name="add_hd_account_other_private">Generate Private Keys</string>
+    <string name="add_hd_account_other_private">Generate Normal Private Keys</string>
     <string name="add_hd_account_monitor">Monitor Bither Cold</string>
     <string name="add_hd_account_view_label">You already have an HD account.</string>
     <string name="add_hd_account_seed_qr_code">HD Account Seed QR Code</string>

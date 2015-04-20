@@ -9,7 +9,7 @@
               android:paddingTop="25dp">
 
     <Button
-        android:id="@+id/btn_hdm"
+        android:id="@+id/btn_private_key"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -18,12 +18,12 @@
         android:background="@drawable/btn_small_send_selector"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:text="@string/add_hd_account_other_hdm"
+        android:text="@string/add_hd_account_other_private"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/btn_private_key"
+        android:id="@+id/btn_hdm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -32,7 +32,7 @@
         android:background="@drawable/btn_small_send_selector"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
-        android:text="@string/add_hd_account_other_private"
+        android:text="@string/add_hd_account_other_hdm"
         android:textColor="@color/white"
         android:textSize="18sp"/>
 </LinearLayout>
