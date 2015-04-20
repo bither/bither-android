@@ -203,6 +203,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
         header.showAddress(address, addressPosition);
         onAddressAliasChanged(address, address.getAlias());
         page = 1;
+        hasMore = true;
         loadTx();
     }
 
