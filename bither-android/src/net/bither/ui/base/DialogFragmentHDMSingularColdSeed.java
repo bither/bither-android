@@ -30,6 +30,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import net.bither.R;
@@ -50,6 +52,8 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
     public static final String FragmentTag = "DialogFragmentHDMSingularColdSeed";
     public static final String WordsKey = "Content";
     public static final String QrCodeKey = "QRCode";
+    public static final String LabelKey = "Label";
+    public static final String ButtonKey = "Button";
 
     private String qr;
     private List<String> words;
@@ -59,6 +63,9 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
     private PagerAdapter adapter;
     private DialogFragmentHDMSingularColdSeedListener listener;
     private Activity activity;
+
+    private int labelStr;
+    private int buttonStr;
 
     public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words, String qr,
                                                                 DialogFragmentHDMSingularColdSeedListener listener) {
@@ -71,12 +78,28 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
         return dialog;
     }
 
+    public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words, String qr,
+                                                                int label, int button,
+                                                                DialogFragmentHDMSingularColdSeedListener listener) {
+        DialogFragmentHDMSingularColdSeed dialog = new DialogFragmentHDMSingularColdSeed();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(WordsKey, new ArrayList<String>(words));
+        bundle.putString(QrCodeKey, qr);
+        bundle.putInt(LabelKey, label);
+        bundle.putInt(ButtonKey, button);
+        dialog.setArguments(bundle);
+        dialog.listener = listener;
+        return dialog;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NORMAL, R.style.QrCodePager);
         qr = getArguments().getString(QrCodeKey);
         words = (List<String>) getArguments().getSerializable(WordsKey);
+        labelStr = getArguments().getInt(LabelKey, 0);
+        buttonStr = getArguments().getInt(ButtonKey, 0);
         adapter = new PagerAdapter();
     }
 
@@ -99,6 +122,14 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
         tbtnQr.setChecked(false);
         tbtnWords.setOnClickListener(new IndicatorClick(0));
         tbtnQr.setOnClickListener(new IndicatorClick(1));
+        if (labelStr != 0) {
+            TextView tvLabel = (TextView) vContainer.findViewById(R.id.tv_label);
+            tvLabel.setText(labelStr);
+        }
+        if (buttonStr != 0) {
+            Button tvLabel = (Button) vContainer.findViewById(R.id.btn_confirm);
+            tvLabel.setText(buttonStr);
+        }
         return vContainer;
     }
 

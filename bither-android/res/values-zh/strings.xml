@@ -588,6 +588,8 @@
     <string name="add_hd_account_view_label">已有 HD 账户</string>
     <string name="add_hd_account_seed_qr_code">HD 账户种子二维码</string>
     <string name="add_hd_account_seed_qr_phrase">HD 账户密语</string>
+    <string name="add_hd_account_show_seed_label">HD 种子能够用来恢复 HD 账户,\n请安全地保管它.</string>
+    <string name="add_hd_account_show_seed_button">我已经保管好了 HD 种子</string>
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 账户</string>

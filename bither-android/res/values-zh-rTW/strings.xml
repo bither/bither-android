@@ -588,6 +588,8 @@
     <string name="add_hd_account_view_label">已有 HD 賬戶</string>
     <string name="add_hd_account_seed_qr_code">HD 賬戶種子二維碼</string>
     <string name="add_hd_account_seed_qr_phrase">HD 賬戶密語</string>
+    <string name="add_hd_account_show_seed_label">HD 種子能夠用來恢復 HD 賬戶,\n請安全地保管它.</string>
+    <string name="add_hd_account_show_seed_button">我已經保管好了 HD 種子</string>
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 賬戶</string>

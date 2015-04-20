@@ -22,14 +22,16 @@ import android.content.Intent;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
+import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.util.KeyUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/4/16.
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 public class HDAccountHotUEntropyActivity extends UEntropyActivity {
     private static final int MinGeneratingTime = 5000;
     private GenerateThread generateThread;
+    private List<String> words;
 
     @Override
     Thread getGeneratingThreadWithXRandom(UEntropyCollector collector, SecureCharSequence
@@ -52,13 +55,21 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
 
     @Override
     void didSuccess(Object obj) {
-        Intent intent = new Intent();
+        final Intent intent = new Intent();
         ArrayList<String> addresses = new ArrayList<String>();
         addresses.add(HDAccount.HDAccountPlaceHolder);
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
-        setResult(RESULT_OK, intent);
-        finish();
-        overridePendingTransition(0, R.anim.slide_out_bottom);
+        DialogFragmentHDMSingularColdSeed.newInstance(words, AddressManager.getInstance()
+                .getHdAccount().getQRCodeFullEncryptPrivKey(), R.string
+                .add_hd_account_show_seed_label, R.string.add_hd_account_show_seed_button, new
+                DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
+            @Override
+            public void HDMSingularColdSeedRemembered() {
+                setResult(RESULT_OK, intent);
+                finish();
+                overridePendingTransition(0, R.anim.slide_out_bottom);
+            }
+        }).show(getSupportFragmentManager(), DialogFragmentHDMSingularColdSeed.FragmentTag);
     }
 
     private class GenerateThread extends ThreadNeedService {
@@ -133,6 +144,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                 }
 
                 HDAccount hdAccount = new HDAccount(entropy, password);
+                words = hdAccount.getSeedWords(password);
                 KeyUtil.setHDAccount(service, hdAccount);
 
                 progress += itemProgress * progressEntryptRate;

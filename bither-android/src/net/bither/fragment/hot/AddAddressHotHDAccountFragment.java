@@ -32,10 +32,12 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.AddPrivateKeyActivity;
+import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -114,6 +116,12 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                             }
                         });
                         hdAccount = new HDAccount(new SecureRandom(), password);
+                        final ArrayList<String> words = new ArrayList<String>();
+                        try {
+                            words.addAll(hdAccount.getSeedWords(password));
+                        } catch (MnemonicException.MnemonicLengthException e) {
+                            throw new RuntimeException(e);
+                        }
                         password.wipe();
                         KeyUtil.setHDAccount(service, hdAccount);
                         ThreadUtil.runOnMainThread(new Runnable() {
@@ -121,13 +129,24 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                             public void run() {
                                 v.setKeepScreenOn(false);
                                 AddAddressHotHDAccountFragment.this.dp.dismiss();
-                                if (getActivity() instanceof AddPrivateKeyActivity) {
-                                    AddPrivateKeyActivity activity = (AddPrivateKeyActivity)
-                                            getActivity();
-                                    activity.save();
-                                } else {
-                                    getActivity().finish();
-                                }
+                                DialogFragmentHDMSingularColdSeed.newInstance(words, hdAccount
+                                        .getQRCodeFullEncryptPrivKey(), R.string
+                                        .add_hd_account_show_seed_label, R.string
+                                        .add_hd_account_show_seed_button, new
+                                        DialogFragmentHDMSingularColdSeed
+                                                .DialogFragmentHDMSingularColdSeedListener() {
+                                    @Override
+                                    public void HDMSingularColdSeedRemembered() {
+                                        if (getActivity() instanceof AddPrivateKeyActivity) {
+                                            AddPrivateKeyActivity activity =
+                                                    (AddPrivateKeyActivity) getActivity();
+                                            activity.save();
+                                        } else {
+                                            getActivity().finish();
+                                        }
+                                    }
+                                }).show(getActivity().getSupportFragmentManager(),
+                                        DialogFragmentHDMSingularColdSeed.FragmentTag);
                             }
                         });
                     }
