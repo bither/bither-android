@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <net.bither.ui.base.SwipeRightTouchView
         android:id="@+id/swipe_right_touch_view"
@@ -23,7 +23,7 @@
                 android:stretchMode="columnWidth"
                 android:horizontalSpacing="0dp"
                 android:verticalSpacing="0dp"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/tv_empty"
@@ -32,9 +32,9 @@
                 android:layout_gravity="center"
                 android:text="@string/hdm_import_word_list_empty_message"
                 android:textSize="20sp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
-            <include layout="@layout/layout_dropdown_message"/>
+            <include layout="@layout/layout_dropdown_message" />
 
         </FrameLayout>
 
@@ -58,7 +58,7 @@
                 android:singleLine="true"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/text_field_text_color"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/btn_input"
@@ -69,7 +69,7 @@
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/btn_small_blue_selector"/>
+                android:background="@drawable/btn_small_blue_selector" />
         </LinearLayout>
 
         <FrameLayout
@@ -92,15 +92,16 @@
                     android:layout_width="@dimen/title_bar_height"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back"/>
+                    android:src="@drawable/title_bar_back" />
 
                 <ImageView
                     android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator"/>
+                    android:background="@drawable/title_bar_seperator" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:gravity="center"
@@ -111,7 +112,26 @@
                     android:text="@string/activity_name_hdm_import_word_list"
                     android:textColor="@color/white"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/icon_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/btn_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_marginRight="-2dp"
+                        android:background="@drawable/action_bar_dark_green_right_button"
+                        android:gravity="center"
+                        android:src="@drawable/action_bar_glyph_done" />
+                </LinearLayout>
+
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>

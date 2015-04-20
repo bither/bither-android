@@ -28,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
@@ -64,6 +65,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
     private TextView tvEmpty;
     private EditText etInput;
     private Button btnInput;
+    private ImageButton btnSave;
 
     private MnemonicCode mnemonic = MnemonicCode.instance();
 
@@ -96,6 +98,13 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         etInput.setOnEditorActionListener(this);
         gv.setAdapter(adapter);
         dp = new DialogProgress(this, R.string.please_wait);
+        btnSave = (ImageButton) findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                complete();
+            }
+        });
         refresh();
     }
 
@@ -108,6 +117,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             gv.setVisibility(View.INVISIBLE);
         }
         adapter.notifyDataSetChanged();
+        btnSave.setEnabled(words.size() % 3 == 0);
     }
 
     private View.OnClickListener inputClick = new View.OnClickListener() {
@@ -129,8 +139,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             etInput.setText("");
             refresh();
             gv.smoothScrollToPosition(words.size() - 1);
-            if (words.size() >= WordCount ||
-                    (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase && words.size() >= WordCount / 2)) {
+            if (words.size() >= WordCount) {
                 complete();
             }
         }
@@ -141,9 +150,15 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         new DialogPassword(this, new IDialogPasswordListener() {
             @Override
             public void onPasswordEntered(SecureCharSequence password) {
-                ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                        (HdmImportWordListActivity.this, dp, words, password);
-                importHDSeedAndroid.importHDMColdSeed();
+                if (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase) {
+                    ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password);
+                    importHDSeedAndroid.importHDSeed();
+                } else {
+                    ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                            (HdmImportWordListActivity.this, dp, words, password);
+                    importHDSeedAndroid.importHDMColdSeed();
+                }
             }
         }).show();
 
