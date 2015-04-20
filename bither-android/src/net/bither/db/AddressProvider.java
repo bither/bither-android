@@ -80,7 +80,7 @@ public class AddressProvider implements IAddressProvider {
         c.close();
 
         HashMap<Integer, String> hdEncryptSeedHashMap = new HashMap<Integer, String>();
-        HashMap<Integer, String> hdEncryptHDSeedHashMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> hdEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
         c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from hd_account  ", null);
         while (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.HD_ACCOUNT_ID);
@@ -96,7 +96,7 @@ public class AddressProvider implements IAddressProvider {
             idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED);
             if (idColumn != -1) {
                 String encryptHDSeed = c.getString(idColumn);
-                hdEncryptHDSeedHashMap.put(hdAccountId, encryptHDSeed);
+                hdEncryptMnemonicSeedHashMap.put(hdAccountId, encryptHDSeed);
             }
 
         }
@@ -125,7 +125,7 @@ public class AddressProvider implements IAddressProvider {
         for (Map.Entry<Integer, String> kv : hdEncryptSeedHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
-        for (Map.Entry<Integer, String> kv : hdEncryptHDSeedHashMap.entrySet()) {
+        for (Map.Entry<Integer, String> kv : hdEncryptMnemonicSeedHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
         for (Map.Entry<Integer, String> kv : singularModeBackupHashMap.entrySet()) {
@@ -165,9 +165,9 @@ public class AddressProvider implements IAddressProvider {
         for (Map.Entry<Integer, String> kv : hdEncryptSeedHashMap.entrySet()) {
             cv = new ContentValues();
             cv.put(AbstractDb.HDAccountColumns.ENCRYPT_SEED, kv.getValue());
-            if (hdEncryptHDSeedHashMap.containsKey(kv.getKey())) {
+            if (hdEncryptMnemonicSeedHashMap.containsKey(kv.getKey())) {
                 cv.put(AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED
-                        , hdEncryptHDSeedHashMap.get(kv.getValue()));
+                        , hdEncryptMnemonicSeedHashMap.get(kv.getKey()));
             }
             writeDb.update(AbstractDb.Tables.HD_ACCOUNT,
                     cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
