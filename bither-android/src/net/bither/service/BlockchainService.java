@@ -73,6 +73,8 @@ public class BlockchainService extends android.app.Service {
 
     private final IBinder mBinder = new LocalBinder(BlockchainService.this);
 
+    private boolean peerCanNotRun = false;
+
     @Override
     public void onCreate() {
         serviceCreatedAt = System.currentTimeMillis();
@@ -289,6 +291,7 @@ public class BlockchainService extends android.app.Service {
     };
 
     public void stopAndUnregister() {
+        peerCanNotRun = true;
         if (connectivityReceivered) {
             unregisterReceiver(connectivityReceiver);
             connectivityReceivered = false;
@@ -297,6 +300,7 @@ public class BlockchainService extends android.app.Service {
     }
 
     public void startAndRegister() {
+        peerCanNotRun = false;
         receiverConnectivity();
         new Thread(new Runnable() {
             @Override
@@ -325,6 +329,9 @@ public class BlockchainService extends android.app.Service {
 
     private synchronized void startPeer() {
         try {
+            if (peerCanNotRun) {
+                return;
+            }
             if (UpgradeUtil.needUpgrade()) {
                 return;
             }

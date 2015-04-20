@@ -114,19 +114,15 @@ public class KeyUtil {
 
     }
 
-    public static void setHDAccount(BlockchainService service, HDAccount hdAccount) {
-        if (service != null) {
-            service.stopAndUnregister();
-        }
+    public static void setHDAccount(HDAccount hdAccount) {
+
         AddressManager.getInstance().setHdAccount(hdAccount);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {
             BackupUtil.backupHotKey();
         }
-        if (service != null) {
-            service.startAndRegister();
-        }
+
 
     }
 

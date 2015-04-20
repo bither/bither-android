@@ -108,6 +108,9 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                         if (password == null) {
                             return;
                         }
+                        if (service != null) {
+                            service.stopAndUnregister();
+                        }
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
@@ -123,7 +126,10 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                             throw new RuntimeException(e);
                         }
                         password.wipe();
-                        KeyUtil.setHDAccount(service, hdAccount);
+                        KeyUtil.setHDAccount(hdAccount);
+                        if (service != null) {
+                            service.startAndRegister();
+                        }
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
@@ -135,17 +141,17 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                                         .add_hd_account_show_seed_button, new
                                         DialogFragmentHDMSingularColdSeed
                                                 .DialogFragmentHDMSingularColdSeedListener() {
-                                    @Override
-                                    public void HDMSingularColdSeedRemembered() {
-                                        if (getActivity() instanceof AddPrivateKeyActivity) {
-                                            AddPrivateKeyActivity activity =
-                                                    (AddPrivateKeyActivity) getActivity();
-                                            activity.save();
-                                        } else {
-                                            getActivity().finish();
-                                        }
-                                    }
-                                }).show(getActivity().getSupportFragmentManager(),
+                                            @Override
+                                            public void HDMSingularColdSeedRemembered() {
+                                                if (getActivity() instanceof AddPrivateKeyActivity) {
+                                                    AddPrivateKeyActivity activity =
+                                                            (AddPrivateKeyActivity) getActivity();
+                                                    activity.save();
+                                                } else {
+                                                    getActivity().finish();
+                                                }
+                                            }
+                                        }).show(getActivity().getSupportFragmentManager(),
                                         DialogFragmentHDMSingularColdSeed.FragmentTag);
                             }
                         });

@@ -63,13 +63,13 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                 .getHdAccount().getQRCodeFullEncryptPrivKey(), R.string
                 .add_hd_account_show_seed_label, R.string.add_hd_account_show_seed_button, new
                 DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
-            @Override
-            public void HDMSingularColdSeedRemembered() {
-                setResult(RESULT_OK, intent);
-                finish();
-                overridePendingTransition(0, R.anim.slide_out_bottom);
-            }
-        }).show(getSupportFragmentManager(), DialogFragmentHDMSingularColdSeed.FragmentTag);
+                    @Override
+                    public void HDMSingularColdSeedRemembered() {
+                        setResult(RESULT_OK, intent);
+                        finish();
+                        overridePendingTransition(0, R.anim.slide_out_bottom);
+                    }
+                }).show(getSupportFragmentManager(), DialogFragmentHDMSingularColdSeed.FragmentTag);
     }
 
     private class GenerateThread extends ThreadNeedService {
@@ -123,6 +123,9 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
             double itemProgress = (1.0 - startProgress - saveProgress);
 
             try {
+                if (service != null) {
+                    service.stopAndUnregister();
+                }
                 entropyCollector.start();
 
                 XRandom xRandom = new XRandom(entropyCollector);
@@ -145,7 +148,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
 
                 HDAccount hdAccount = new HDAccount(entropy, password);
                 words = hdAccount.getSeedWords(password);
-                KeyUtil.setHDAccount(service, hdAccount);
+                KeyUtil.setHDAccount(hdAccount);
 
                 progress += itemProgress * progressEntryptRate;
                 onProgress(progress);

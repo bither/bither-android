@@ -111,11 +111,12 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
         new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
+                if (service != null) {
+                    service.stopAndUnregister();
+                }
                 HDAccount result = importHDAccount();
-                LogUtil.d("importhdseed", "importHDAccount");
                 if (result != null) {
-                    LogUtil.d("importhdseed", "result!=null");
-                    KeyUtil.setHDAccount(service, result);
+                    KeyUtil.setHDAccount(result);
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -147,6 +148,9 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                             }
                         }
                     });
+                }
+                if (service != null) {
+                    service.startAndRegister();
                 }
             }
         }.start();
