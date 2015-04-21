@@ -21,7 +21,6 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,10 +35,10 @@ public class ExchangeUtil {
 
     public enum Currency {
         USD("USD", "$"),
-        CNY("CNY", StringEscapeUtils.unescapeHtml("&yen;")),
+        CNY("CNY", "\u00a5"),
         EUR("EUR", "€"),
         GBP("GBP", "£"),
-        JPY("JPY", StringEscapeUtils.unescapeHtml("&yen;")),
+        JPY("JPY", "\u00a5"),
         KRW("KRW", "₩"),
         CAD("CAD", "$"),
         AUD("AUD", "$");
