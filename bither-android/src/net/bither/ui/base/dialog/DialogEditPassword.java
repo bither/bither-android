@@ -18,6 +18,7 @@ package net.bither.ui.base.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -273,9 +274,13 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
             flPasswordStrength.setVisibility(View.VISIBLE);
             PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil.checkPassword
                     (etNewPassword.getText());
-            pbPasswordStrength.setProgress(strength.getProgress());
-            pbPasswordStrength.setProgressDrawable(strength.getDrawable());
-            tvPasswordStrength.setText(strength.getNameRes());
+            if (pbPasswordStrength.getProgress() != strength.getProgress()) {
+                Rect bounds = pbPasswordStrength.getProgressDrawable().getBounds();
+                pbPasswordStrength.setProgressDrawable(strength.getDrawable());
+                pbPasswordStrength.getProgressDrawable().setBounds(bounds);
+                pbPasswordStrength.setProgress(strength.getProgress());
+                tvPasswordStrength.setText(strength.getNameRes());
+            }
         } else {
             ViewGroup.LayoutParams lp = flPasswordStrengthContainer.getLayoutParams();
             if (lp.height > etNewPassword.getHeight() + UIUtil.dip2pix(5)) {

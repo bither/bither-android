@@ -20,6 +20,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
+import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -171,9 +172,13 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                 tvPasswordLength.setVisibility(View.INVISIBLE);
                 PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
                         .checkPassword(etPassword.getText());
-                pbPasswordStrength.setProgress(strength.getProgress());
-                pbPasswordStrength.setProgressDrawable(strength.getDrawable());
-                tvPasswordStrength.setText(strength.getNameRes());
+                if (pbPasswordStrength.getProgress() != strength.getProgress()) {
+                    Rect bounds = pbPasswordStrength.getProgressDrawable().getBounds();
+                    pbPasswordStrength.setProgressDrawable(strength.getDrawable());
+                    pbPasswordStrength.getProgressDrawable().setBounds(bounds);
+                    pbPasswordStrength.setProgress(strength.getProgress());
+                    tvPasswordStrength.setText(strength.getNameRes());
+                }
             } else {
                 flPasswordStrength.setVisibility(View.INVISIBLE);
                 tvPasswordLength.setVisibility(View.VISIBLE);
