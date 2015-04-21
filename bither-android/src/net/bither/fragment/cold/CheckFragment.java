@@ -41,6 +41,7 @@ import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
@@ -151,6 +152,10 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             return Utils.compareString(address, HDMKeychainAsAddressFaker);
         }
 
+        public boolean isHDAccount() {
+            return Utils.compareString(address, HDAccount.HDAccountPlaceHolder);
+        }
+
         public boolean isWaiting() {
             return waiting;
         }
@@ -173,6 +178,12 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
         final List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
+        if (AddressManager.getInstance().hasHDAccount()) {
+            CheckPoint point = new CheckPoint(HDAccount.HDAccountPlaceHolder);
+            checkPoints.add(point);
+            checks.add(CheckUtil.initCheckForHDAccount(AddressManager.getInstance().getHdAccount
+                    (), new SecureCharSequence(password)).setCheckListener(point));
+        }
         if (AddressManager.getInstance().hasHDMKeychain()) {
             CheckPoint point = new CheckPoint(HDMKeychainAsAddressFaker);
             checkPoints.add(point);
@@ -235,16 +246,18 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
                 h = (ViewHolder) convertView.getTag();
             }
             CheckPoint point = getItem(position);
-            if (!point.isHDM()) {
-                h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
-            } else {
+            if (point.isHDAccount()) {
+                h.tv.setText(R.string.address_group_hd);
+            } else if (point.isHDM()) {
                 int resourceId = R.string.hdm_keychain_check_title_cold;
-                if(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT){
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
                     resourceId = R.string.hdm_keychain_check_title_hot;
                 }
                 h.tv.setText(resourceId);
+            } else {
+                h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
             }
-            if (!point.isHDM()) {
+            if (!point.isHDM() && !point.isHDAccount()) {
                 h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
                 h.ibtnFull.setVisibility(View.VISIBLE);
             } else {

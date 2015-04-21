@@ -29,7 +29,6 @@ import android.widget.FrameLayout;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
-import net.bither.bitherj.BitherjSettings.AddressType;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -40,7 +39,6 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.bitherj.utils.TransactionsUtil;
 
 
 import java.util.ArrayList;
@@ -163,7 +161,7 @@ public class AddAddressWatchOnlyView extends FrameLayout {
                     addresses.add(address.getAddress());
                 }
             }
-            checkAddress(service, wallets);
+            addAddress(service, wallets);
             activity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -185,35 +183,17 @@ public class AddAddressWatchOnlyView extends FrameLayout {
         }
     }
 
-    private void checkAddress(final BlockchainService service,
-                              final List<Address> wallets) {
+    private void addAddress(final BlockchainService service,
+                            final List<Address> wallets) {
         try {
-            List<String> addressList = new ArrayList<String>();
-            for (Address bitherAddress : wallets) {
-                addressList.add(bitherAddress.getAddress());
-            }
-            AddressType addressType = TransactionsUtil.checkAddress(addressList);
-            switch (addressType) {
-                case Normal:
-                    KeyUtil.addAddressListByDesc(service, wallets);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            activity.save();
-                        }
-                    });
-                    break;
-                case SpecialAddress:
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.address_detail_monitor_failed_special_address);
+            KeyUtil.addAddressListByDesc(service, wallets);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.save();
+                }
+            });
 
-                    break;
-                case TxTooMuch:
-                    DropdownMessage.showDropdownMessage(activity,
-                            R.string.address_detail_monitor_failed_tx_toomuch);
-
-                    break;
-            }
         } catch (Exception e) {
             e.printStackTrace();
             DropdownMessage.showDropdownMessage(activity, R.string.network_or_connection_error);

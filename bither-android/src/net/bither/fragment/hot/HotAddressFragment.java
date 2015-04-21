@@ -35,6 +35,7 @@ import net.bither.adapter.hot.HotAddressFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
@@ -94,7 +95,8 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 hdms.addAll(hs);
             }
             mAdapter.notifyDataSetChanged();
-            if (watchOnlys.size() + privates.size() + hdms.size() == 0) {
+            if (watchOnlys.size() + privates.size() + hdms.size() + (AddressManager.getInstance()
+                    .hasHDAccount() ? 1 : 0) == 0) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lv.setVisibility(View.GONE);
             } else {
@@ -253,11 +255,16 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             }
             boolean isHDM = false;
             boolean isPrivate = false;
+            boolean isHD = false;
             int position = 0;
-            if (addressesToShowAdded.get(0).startsWith("3")) {
+            if (Utils.compareString(addressesToShowAdded.get(0), HDAccount.HDAccountPlaceHolder)) {
+                isHD = true;
+            } else if (addressesToShowAdded.get(0).startsWith("3")) {
                 isHDM = true;
             }
-            if (isHDM) {
+            if (isHD) {
+                position = 0;
+            } else if (isHDM) {
                 if (addressesToShowAdded.size() == 1) {
                     for (int i = 0;
                          i < hdms.size();
@@ -305,7 +312,9 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 }
             }
             int group = mAdapter.getWatchOnlyGroupIndex();
-            if (isHDM) {
+            if (isHD) {
+                group = mAdapter.getHDAccountGroupIndex();
+            } else if (isHDM) {
                 group = mAdapter.getHDMGroupIndex();
             } else if (isPrivate) {
                 group = mAdapter.getPrivateGroupIndex();

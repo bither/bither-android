@@ -23,8 +23,10 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
@@ -32,7 +34,6 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
 import net.bither.model.Check.CheckOperation;
 import net.bither.model.Check.ICheckAction;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.CheckRunnable;
 import net.bither.util.NetworkUtil.NetworkType;
@@ -132,9 +133,8 @@ public class CheckUtil {
 
     public static Check initCheckForPrivateKey(
             final Address address, final SecureCharSequence password) {
-        String title = String.format(BitherApplication.mContext
-                .getString(R.string.check_address_private_key_title), address
-                .getShortAddress());
+        String title = String.format(BitherApplication.mContext.getString(R.string
+                .check_address_private_key_title), address.getShortAddress());
         Check check = new Check(title, new ICheckAction() {
 
             @Override
@@ -191,15 +191,20 @@ public class CheckUtil {
         return check;
     }
 
-    public static Check initCheckForRValue(final Address address) {
-        String title = String.format(BitherApplication.mContext.getString(R.string
-                .rcheck_address_title), address.getShortAddress());
+    public static Check initCheckForHDAccount(final HDAccount account, final SecureCharSequence
+            password) {
+        String title = BitherApplication.mContext.getString(R.string.address_group_hd);
         Check check = new Check(title, new ICheckAction() {
-
             @Override
             public boolean check() {
-                TransactionsUtil.completeInputsForAddress(address);
-                return address.checkRValues();
+                boolean result;
+                try {
+                    result = account.checkWithPassword(password);
+                } catch (Exception e) {
+                    result = false;
+                }
+                password.wipe();
+                return result;
             }
         });
         return check;

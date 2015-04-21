@@ -149,9 +149,11 @@ public class PeerProvider implements IPeerProvider {
 
     public void removePeer(InetAddress address) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
-        db.delete(AbstractDb.Tables.PEERS, AbstractDb.PeersColumns
-                .PEER_ADDRESS + "=?", new String[]{Long.toString(Utils.parseLongFromAddress
-                (address))});
+        if (db.isOpen()) {
+            db.delete(AbstractDb.Tables.PEERS, AbstractDb.PeersColumns
+                    .PEER_ADDRESS + "=?", new String[]{Long.toString(Utils.parseLongFromAddress
+                    (address))});
+        }
     }
 
     public void conncetFail(InetAddress address) {

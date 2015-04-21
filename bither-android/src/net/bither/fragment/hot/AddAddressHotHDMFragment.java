@@ -37,12 +37,14 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.delegate.HDMSingular;
 import net.bither.qrcode.ScanActivity;
+import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.HDMTriangleBgView;
@@ -344,10 +346,19 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 R.anim.hdm_keychain_add_spin);
                         anim.setFillAfter(true);
                         flContainer.startAnimation(anim);
+
+                        ArrayList<String> addresses = getAddresses();
+                        Intent intent = new Intent();
+                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                                addresses);
+                        getActivity().setResult(Activity.RESULT_OK, intent);
+
                         flContainer.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ((AddHotAddressActivity) getActivity()).save();
+                                if (getActivity() != null) {
+                                    ((AddPrivateKeyActivity) getActivity()).save();
+                                }
                             }
                         }, anim.getDuration());
                     }

@@ -47,7 +47,7 @@
                 android:orientation="horizontal">
 
                 <ToggleButton
-                    android:id="@+id/tbtn_private_key"
+                    android:id="@+id/tbtn_hd_account"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -58,28 +58,12 @@
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
                     android:textColor="@color/white"
-                    android:textOff="@string/add_address_tab_private_key"
-                    android:textOn="@string/add_address_tab_private_key"
+                    android:textOff="@string/add_hd_account_tab_hd"
+                    android:textOn="@string/add_hd_account_tab_hd"
                     android:textSize="14sp"/>
 
                 <ToggleButton
-                    android:id="@+id/tbtn_watch_only"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/action_bar_toggle_button_middle"
-                    android:paddingBottom="5dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
-                    android:textColor="@color/white"
-                    android:textOff="@string/add_address_tab_watch_only"
-                    android:textOn="@string/add_address_tab_watch_only"
-                    android:textSize="14sp"/>
-
-                <ToggleButton
-                    android:id="@+id/tbtn_hdm"
+                    android:id="@+id/tbtn_other"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -90,8 +74,8 @@
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
                     android:textColor="@color/white"
-                    android:textOff="@string/add_address_tab_hdm"
-                    android:textOn="@string/add_address_tab_hdm"
+                    android:textOff="@string/add_hd_account_tab_other"
+                    android:textOn="@string/add_hd_account_tab_other"
                     android:textSize="14sp"/>
             </LinearLayout>
         </LinearLayout>

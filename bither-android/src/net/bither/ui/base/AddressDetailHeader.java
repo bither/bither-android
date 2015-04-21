@@ -35,8 +35,10 @@ import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
@@ -70,6 +72,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private int addressPosition;
     private DialogProgress dp;
     private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
+    private String strAddress;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -112,7 +115,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             return;
         }
         tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
-        if (this.address != address) {
+        if (!Utils.compareString(strAddress, address.getAddress())) {
             Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
             ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
         }
@@ -124,7 +127,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             tvNoTransactions.setVisibility(View.GONE);
         }
         btnBalance.setAmount(address.getBalance());
-        if (address.isHDM() || address.hasPrivKey()) {
+        if (address.isHDM() || address.hasPrivKey() || address.isHDAccount()) {
             btnSend.setCompoundDrawables(null, null, null, null);
         } else {
             Drawable d = getContext().getResources().getDrawable(R.drawable
@@ -144,6 +147,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 //            llMonitorFailed.setVisibility(View.VISIBLE);
 //        }
         this.address = address;
+        strAddress = address.getAddress();
         if(balanceDetailFuture != null){
             balanceDetailFuture.cancel(true);
         }
@@ -229,6 +233,12 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 if (address.getBalance() <= 0) {
                     DropdownMessage.showDropdownMessage(activity,
                             R.string.address_detail_send_balance_zero);
+                    return;
+                }
+                if(address.isHDAccount()){
+                    Intent intent = new Intent(activity, HDAccountSendActivity.class);
+                    activity.startActivityForResult(intent, BitherSetting.INTENT_REF
+                            .SEND_REQUEST_CODE);
                     return;
                 }
                 if (address.isHDM() || address.hasPrivKey()) {

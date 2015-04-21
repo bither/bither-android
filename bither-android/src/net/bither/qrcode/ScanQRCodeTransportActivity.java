@@ -19,6 +19,7 @@ package net.bither.qrcode;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -45,7 +46,8 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setOverlay(R.layout.layout_scan_qr_code_transport_overlay);
+        ibtnGallery.setVisibility(View.GONE);
+        setOverlay(R.layout.layout_scan_qr_code_transport_overlay);
 		tv = (TextView) findViewById(R.id.tv);
 		tvTitle = (TextView) findViewById(R.id.tv_title);
 		pages = new ArrayList<QRCodeTransportPage>();

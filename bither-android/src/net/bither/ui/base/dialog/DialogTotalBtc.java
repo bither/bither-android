@@ -55,14 +55,20 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
     private TextView tvHDM;
     private TextView tvHDMMoney;
     private ImageView ivHDMSymbol;
+    private ImageView ivHD;
+    private TextView tvHD;
+    private TextView tvHDMoney;
+    private ImageView ivHDSymbol;
     private LinearLayout llPrivate;
     private LinearLayout llWatchOnly;
     private LinearLayout llHDM;
+    private LinearLayout llHD;
     private RotatableFrameLayout flLogo;
 
     private BigInteger btcPrivate;
     private BigInteger btcWatchOnly;
     private BigInteger btcHdm;
+    private BigInteger btcHd;
 
     private double price = 0;
 
@@ -92,26 +98,33 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         tvHDM = (TextView) findViewById(R.id.tv_hdm);
         tvHDMMoney = (TextView) findViewById(R.id.tv_hdm_money);
         ivHDMSymbol = (ImageView) findViewById(R.id.iv_hdm_symbol);
+        ivHD = (ImageView) findViewById(R.id.iv_hd);
+        tvHD = (TextView) findViewById(R.id.tv_hd);
+        tvHDMoney = (TextView) findViewById(R.id.tv_hd_money);
+        ivHDSymbol = (ImageView) findViewById(R.id.iv_hd_symbol);
         llPrivate = (LinearLayout) findViewById(R.id.ll_private);
         llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
         llHDM = (LinearLayout) findViewById(R.id.ll_hdm);
+        llHD = (LinearLayout) findViewById(R.id.ll_hd);
         flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
         findViewById(R.id.ll_below_chart).setOnClickListener(dismissClick);
-        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
-        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
-        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
+        ivHD.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
+        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
+        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
+        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(3));
         flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
                 .getLayoutParams().width * LogoSizeRate);
         vPieChart.setRotateListener(this);
     }
 
-    public void setPrivateWatchOnlyAndHDM(BigInteger btcPrivate, BigInteger btcWatchOnly,
-                                          BigInteger btcHdm) {
+    public void setPrivateWatchOnlyHDMAndHD(BigInteger btcPrivate, BigInteger btcWatchOnly,
+                                            BigInteger btcHdm, BigInteger btcHd) {
 
         BigInteger total = BigInteger.ZERO;
         this.btcPrivate = btcPrivate;
         this.btcWatchOnly = btcWatchOnly;
         this.btcHdm = btcHdm;
+        this.btcHd = btcHd;
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             total = total.add(btcPrivate);
         }
@@ -121,11 +134,15 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         if (btcHdm != null && btcHdm.signum() > 0) {
             total = total.add(btcHdm);
         }
+        if (btcHd != null && btcHd.signum() > 0) {
+            total = total.add(btcHd);
+        }
         tvBtc.setText(UnitUtilWrapper.formatValue(total.longValue()));
         Bitmap btcSymbol = UnitUtilWrapper.getBtcSlimSymbol(tvPrivate);
         ivPrivateSymbol.setImageBitmap(btcSymbol);
         ivWatchOnlySymbol.setImageBitmap(btcSymbol);
         ivHDMSymbol.setImageBitmap(btcSymbol);
+        ivHDSymbol.setImageBitmap(btcSymbol);
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             tvPrivate.setText(UnitUtilWrapper.formatValue(btcPrivate.longValue()));
             llPrivate.setVisibility(View.VISIBLE);
@@ -143,6 +160,12 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
             llHDM.setVisibility(View.VISIBLE);
         } else {
             llHDM.setVisibility(View.GONE);
+        }
+        if (btcHd != null && btcHd.signum() > 0) {
+            tvHD.setText(UnitUtilWrapper.formatValue(btcHd.longValue()));
+            llHD.setVisibility(View.VISIBLE);
+        } else {
+            llHD.setVisibility(View.GONE);
         }
     }
 
@@ -179,11 +202,19 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         } else {
             tvHDMMoney.setVisibility(View.GONE);
         }
+        if (btcHd != null && btcHd.signum() > 0 && price > 0) {
+            tvHDMoney.setVisibility(View.VISIBLE);
+            tvHDMoney.setText(currencySymbol + " " + Utils.formatDoubleToMoneyString((double)
+                    btcHd.longValue() / 100000000.0 * price));
+        } else {
+            tvHDMoney.setVisibility(View.GONE);
+        }
         super.show();
         vPieChart.postDelayed(new Runnable() {
             @Override
             public void run() {
-                vPieChart.setAmounts(btcHdm == null ? BigInteger.ZERO : btcHdm,
+                vPieChart.setAmounts(btcHd == null ? BigInteger.ZERO : btcHd, btcHdm == null ?
+                                BigInteger.ZERO : btcHdm,
                         btcPrivate == null ? BigInteger.ZERO : btcPrivate,
                         btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
             }

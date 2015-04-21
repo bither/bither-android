@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.SignatureHDMApi;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.api.http.HttpSetting;
@@ -137,7 +138,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         initView();
         processIntent();
         configureDonate();
-        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     private void initView() {
@@ -619,7 +619,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (Utils.validBicoinAddress(address)) {
-                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherjSettings.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

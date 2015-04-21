@@ -18,34 +18,41 @@ package net.bither.ui.base.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Rect;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.runnable.EditPasswordThread;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
-import net.bither.bitherj.runnable.EditPasswordThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.util.BackupUtil;
 import net.bither.util.CheckUtil;
+import net.bither.util.PasswordStrengthUtil;
 import net.bither.util.ThreadUtil;
+import net.bither.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
 public class DialogEditPassword extends Dialog implements Check.CheckListener,
@@ -59,6 +66,10 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     private EditText etOldPassword;
     private EditText etNewPassword;
     private EditText etNewPasswordConfirm;
+    private TextView tvPasswordStrength;
+    private FrameLayout flPasswordStrength;
+    private FrameLayout flPasswordStrengthContainer;
+    private ProgressBar pbPasswordStrength;
     private Button btnOk;
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
@@ -88,6 +99,11 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
         etNewPassword = (EditText) findViewById(R.id.et_new_password);
         etNewPasswordConfirm = (EditText) findViewById(R.id.et_new_password_confirm);
         btnOk = (Button) findViewById(R.id.btn_ok);
+        tvPasswordStrength = (TextView) findViewById(R.id.tv_password_strength);
+        pbPasswordStrength = (ProgressBar) findViewById(R.id.pb_password_strength);
+        flPasswordStrength = (FrameLayout) findViewById(R.id.fl_password_strength);
+        flPasswordStrengthContainer = (FrameLayout) findViewById(R.id
+                .fl_password_strength_container);
         kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         PasswordWatcher watcher = new PasswordWatcher();
         etOldPassword.addTextChangedListener(watcher);
@@ -139,6 +155,30 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
                 newCP.wipe();
                 return;
             }
+            if (AppSharedPreference.getInstance().getPasswordStrengthCheck()) {
+                PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
+                        .checkPassword(newP);
+                oldP.wipe();
+                newP.wipe();
+                newCP.wipe();
+                if (!strength.passed()) {
+                    etNewPassword.requestFocus();
+                    shakeStrength();
+                    return;
+                }
+                if (strength.warning()) {
+                    new DialogConfirmTask(getContext(), String.format(getContext().getString(R
+                            .string.password_strength_warning), strength.getName()), new Runnable
+                            () {
+                        @Override
+                        public void run() {
+                            executor = CheckUtil.runChecks(Arrays.asList(new
+                                    Check[]{passwordCheck}), 1);
+                        }
+                    }).show();
+                    return;
+                }
+            }
             oldP.wipe();
             newP.wipe();
             newCP.wipe();
@@ -157,6 +197,11 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     private void shake() {
         Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.password_wrong_warning);
         container.startAnimation(shake);
+    }
+
+    private void shakeStrength() {
+        Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.password_wrong_warning);
+        flPasswordStrength.startAnimation(shake);
     }
 
     @Override
@@ -206,9 +251,9 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
     private void checkValid() {
         btnOk.setEnabled(false);
         int passwordOldLength = etOldPassword.length();
+        int passwordLength = etNewPassword.length();
         if (passwordOldLength >= 6 && passwordOldLength <= getContext().getResources().getInteger
                 (R.integer.password_length_max)) {
-            int passwordLength = etNewPassword.length();
             if (passwordLength >= 6 && passwordLength <= getContext().getResources().getInteger(R
                     .integer.password_length_max)) {
                 int passwordConfirmLength = etNewPasswordConfirm.length();
@@ -217,6 +262,32 @@ public class DialogEditPassword extends Dialog implements Check.CheckListener,
                     btnOk.setEnabled(true);
                 }
             }
+        }
+        if (passwordLength > 0) {
+            ViewGroup.LayoutParams lp = flPasswordStrengthContainer.getLayoutParams();
+            if (lp.height < etNewPassword.getHeight() + flPasswordStrength.getHeight() + UIUtil
+                    .dip2pix(5)) {
+                lp.height = etNewPassword.getHeight() + flPasswordStrength.getHeight() + UIUtil
+                        .dip2pix(5);
+                flPasswordStrengthContainer.requestLayout();
+            }
+            flPasswordStrength.setVisibility(View.VISIBLE);
+            PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil.checkPassword
+                    (etNewPassword.getText());
+            if (pbPasswordStrength.getProgress() != strength.getProgress()) {
+                Rect bounds = pbPasswordStrength.getProgressDrawable().getBounds();
+                pbPasswordStrength.setProgressDrawable(strength.getDrawable());
+                pbPasswordStrength.getProgressDrawable().setBounds(bounds);
+                pbPasswordStrength.setProgress(strength.getProgress());
+                tvPasswordStrength.setText(strength.getNameRes());
+            }
+        } else {
+            ViewGroup.LayoutParams lp = flPasswordStrengthContainer.getLayoutParams();
+            if (lp.height > etNewPassword.getHeight() + UIUtil.dip2pix(5)) {
+                lp.height = etNewPassword.getHeight() + UIUtil.dip2pix(5);
+                flPasswordStrengthContainer.requestLayout();
+            }
+            flPasswordStrength.setVisibility(View.INVISIBLE);
         }
     }
 

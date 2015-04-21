@@ -36,10 +36,6 @@ public class RCheckRunnable extends BaseRunnable {
     @Override
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
-        if (address.checkRValuesForTx(tx)) {
-            obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
-        } else {
-            obtainMessage(HandlerMessage.MSG_FAILURE);
-        }
+        obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
     }
 }

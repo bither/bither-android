@@ -28,12 +28,15 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.fragment.Refreshable;
@@ -56,17 +59,19 @@ import java.util.List;
 public class HdmImportWordListActivity extends SwipeRightFragmentActivity implements TextView
         .OnEditorActionListener, DialogHdmImportWordListReplace
         .DialogHdmImportWordListReplaceListener {
-    private static final int WordCount = 24;
+    private static int WordCount = 24;
 
     private GridView gv;
     private TextView tvEmpty;
     private EditText etInput;
     private Button btnInput;
+    private ImageButton btnSave;
 
     private MnemonicCode mnemonic = MnemonicCode.instance();
 
     private ArrayList<String> words = new ArrayList<String>();
     private DialogProgress dp;
+    private ImportHDSeed.ImportHDSeedType importHDSeedType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,12 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hdm_import_word_list);
         initView();
+        Bundle extra = getIntent().getExtras();
+        if (extra != null && extra.containsKey(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE)) {
+            importHDSeedType = (ImportHDSeed.ImportHDSeedType) extra.getSerializable(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE);
+        }
+
+
         etInput.requestFocus();
     }
 
@@ -87,6 +98,13 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         etInput.setOnEditorActionListener(this);
         gv.setAdapter(adapter);
         dp = new DialogProgress(this, R.string.please_wait);
+        btnSave = (ImageButton) findViewById(R.id.btn_save);
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                complete();
+            }
+        });
         refresh();
     }
 
@@ -99,6 +117,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             gv.setVisibility(View.INVISIBLE);
         }
         adapter.notifyDataSetChanged();
+        btnSave.setEnabled(words.size() % 3 == 0);
     }
 
     private View.OnClickListener inputClick = new View.OnClickListener() {
@@ -131,9 +150,15 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         new DialogPassword(this, new IDialogPasswordListener() {
             @Override
             public void onPasswordEntered(SecureCharSequence password) {
-                ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                        (HdmImportWordListActivity.this, dp, words, password);
-                importHDSeedAndroid.importColdSeed();
+                if (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase) {
+                    ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password);
+                    importHDSeedAndroid.importHDSeed();
+                } else {
+                    ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
+                            (HdmImportWordListActivity.this, dp, words, password);
+                    importHDSeedAndroid.importHDMColdSeed();
+                }
             }
         }).show();
 

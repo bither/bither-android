@@ -96,24 +96,44 @@
                     android:id="@+id/ll_back_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/ui_touchable_bg"
                     android:visibility="gone">
 
-                    <Button
-                        android:id="@+id/btn_backup_time"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@drawable/ui_touchable_bg"
-                        android:gravity="left"
-                        android:padding="10dp"
+                        android:orientation="vertical">
 
-                        android:textColor="@color/text_field_text_color"
-                        android:textSize="18sp" />
+                        <TextView
+                            android:id="@+id/tv_backup_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="left"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="10dp"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_backup_path"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="left"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingBottom="10dp"
+                            android:layout_marginTop="1dp"
+                            android:textColor="@color/text_unselected_color"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_gravity="right"
+                        android:layout_gravity="right|center_vertical"
                         android:padding="10dp">
 
                         <ProgressBar

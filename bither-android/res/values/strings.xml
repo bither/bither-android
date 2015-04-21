@@ -189,6 +189,9 @@
     <string name="import_private_key_text">From Private Key Text</string>
     <string name="import_hdm_cold_seed_qr_code">From HDM Cold Seed QR Code</string>
     <string name="import_hdm_cold_seed_phrase">From HDM Cold Phrase</string>
+    <string name="import_hd_account_seed_qr_code">From HD Account Seed QR Code</string>
+    <string name="import_hd_account_seed_phrase">From HD Account Phrase</string>
+
 
     <string name="import_bip38_key_qr_code">From BIP38-private key QR Code</string>
     <string name="import_bip38_key_text">From BIP38-private key text</string>
@@ -199,6 +202,7 @@
     <string name="import_private_key_text_hint">Enter your private key text</string>
     <string name="import_private_key_text_format_error">Not match private key format</string>
     <string name="import_hdm_cold_seed_format_error">Not match HDM cod seed format</string>
+    <string name="import_hd_account_seed_format_error">Not match HD Account seed format</string>
     <string name="can_not_import_hdm_cold_seed">Can not import HDM Cold Seed</string>
     <string name="import_private_key_qr_code_scan_title">Scan Private Key QR Code</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">Scan HDM Cold Seed QR Code</string>
@@ -318,6 +322,7 @@
     <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
     <string name="only_supports_the_compressed_private_key">Only supports the compressed format of private key</string>
     <string name="old_version_no_support_change_adress">old version QR Code does not support change address selection</string>
+    <string name="scan_qr_code_from_photo_wrong">No QR Code Found</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">Select an address to send</string>
@@ -576,7 +581,36 @@
     <string name="address_alias_remove_confirm">Remove tag for this address?</string>
 
     <!-- bither team address -->
-    <string name="donate_address">1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3</string>
+    <string name="donate_address">1BitherUnNvB2NsfxMnbS35kS3DTPr7PW5</string>
     <string name="bither_team_address">Developer\'s Address</string>
     <string name="bither_team_address_copied">Developer\'s address Copied</string>
+
+    <!-- password strength -->
+    <string name="password_strength_weak">Weak</string>
+    <string name="password_strength_normal">Normal</string>
+    <string name="password_strength_medium">Medium</string>
+    <string name="password_strength_strong">Strong</string>
+    <string name="password_strength_very_strong">Very Strong</string>
+    <string name="password_strength_warning">Sure to use %s strength password?</string>
+    <string name="password_strength_check">Password Strength Check</string>
+    <string name="password_strength_check_on">On</string>
+    <string name="password_strength_check_off">Off</string>
+    <string name="password_strength_check_off_warn">Sure to turn off password strength check?</string>
+
+    <!-- add hd account -->
+    <string name="add_hd_account_label">Generate New HD Account</string>
+    <string name="add_hd_account_button">Generate</string>
+    <string name="add_hd_account_tab_hd">HD Account</string>
+    <string name="add_hd_account_tab_other">Others</string>
+    <string name="add_hd_account_other_hdm">Generate HDM Account</string>
+    <string name="add_hd_account_other_private">Generate Normal Private Keys</string>
+    <string name="add_hd_account_monitor">Monitor Bither Cold</string>
+    <string name="add_hd_account_view_label">You already have an HD account.</string>
+    <string name="add_hd_account_seed_qr_code">HD Account Seed QR Code</string>
+    <string name="add_hd_account_seed_qr_phrase">HD Account Seed Phrase</string>
+    <string name="add_hd_account_show_seed_label">HD seed can be used to recover HD account.\nPlease keep it somewhere safe.</string>
+    <string name="add_hd_account_show_seed_button">I have kept it safely.</string>
+
+    <!-- show hd account -->
+    <string name="address_group_hd">HD Account</string>
 </resources>

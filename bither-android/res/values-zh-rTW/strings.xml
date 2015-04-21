@@ -183,6 +183,9 @@
     <string name="import_private_key_text">來自私鑰明文</string>
     <string name="import_hdm_cold_seed_qr_code">來自HDM冷種子二維碼</string>
     <string name="import_hdm_cold_seed_phrase">來自HDM密語(冷)</string>
+    <string name="import_hd_account_seed_qr_code">來自HD種子二維碼</string>
+    <string name="import_hd_account_seed_phrase">來自HD密語</string>
+
     <string name="import_bip38_key_qr_code">來自BIP38私鑰二維碼</string>
     <string name="import_bip38_key_text">來自BIP38私鑰文本</string>
     <string name="private_key_text">私鑰明文</string>
@@ -192,6 +195,7 @@
     <string name="import_private_key_text_hint">輸入私鑰明文</string>
     <string name="import_private_key_text_format_error">不符合私鑰格式</string>
     <string name="import_hdm_cold_seed_format_error">不是HDM冷種子</string>
+    <string name="import_hd_account_seed_format_error">不是HD賬戶種子</string>
     <string name="can_not_import_hdm_cold_seed">不能導入HDM冷種子</string>
     <string name="import_private_key_qr_code_scan_title">掃描私鑰二維碼</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">掃描HDM冷種子二維碼</string>
@@ -307,6 +311,7 @@
     <string name="time_is_wrong">系統時間錯誤, 請重新設置</string>
     <string name="only_supports_the_compressed_private_key">只支持壓縮格式的私鑰</string>
     <string name="old_version_no_support_change_adress">舊版本二維碼不支持選擇找零地址</string>
+    <string name="scan_qr_code_from_photo_wrong">沒有找到二維碼</string>
 
     <!-- select address to send -->
     <string name="select_address_to_send">請選擇從哪個地址發送</string>
@@ -561,4 +566,32 @@
     <!-- bither team address -->
     <string name="bither_team_address">開發者地址</string>
     <string name="bither_team_address_copied">開發者地址已復制</string>
+
+    <!-- password strength -->
+    <string name="password_strength_weak">較弱</string>
+    <string name="password_strength_normal">一般</string>
+    <string name="password_strength_medium">中等</string>
+    <string name="password_strength_strong">較強</string>
+    <string name="password_strength_very_strong">很強</string>
+    <string name="password_strength_warning">確定使用強度%s的密碼?</string>
+    <string name="password_strength_check">密碼強度檢查</string>
+    <string name="password_strength_check_on">開</string>
+    <string name="password_strength_check_off">關</string>
+    <string name="password_strength_check_off_warn">確認關閉密碼強度檢查?</string>
+
+    <!-- add hd account -->
+    <string name="add_hd_account_label">生成新的 HD 賬戶</string>
+    <string name="add_hd_account_button">生成</string>
+    <string name="add_hd_account_tab_hd">HD 賬戶</string>
+    <string name="add_hd_account_tab_other">其它</string>
+    <string name="add_hd_account_other_hdm">生成 HDM 賬戶</string>
+    <string name="add_hd_account_other_private">生成普通私鑰</string>
+    <string name="add_hd_account_view_label">已有 HD 賬戶</string>
+    <string name="add_hd_account_seed_qr_code">HD 賬戶種子二維碼</string>
+    <string name="add_hd_account_seed_qr_phrase">HD 賬戶密語</string>
+    <string name="add_hd_account_show_seed_label">HD 種子能夠用來恢復 HD 賬戶,\n請安全地保管它.</string>
+    <string name="add_hd_account_show_seed_button">我已經保管好了 HD 種子</string>
+
+    <!-- show hd account -->
+    <string name="address_group_hd">HD 賬戶</string>
 </resources>

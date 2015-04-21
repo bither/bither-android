@@ -34,6 +34,7 @@ import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.BitherDatabaseHelper;
+
 import net.bither.exception.UEHandler;
 import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.qrcode.Qr;

@@ -22,6 +22,7 @@ import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.HdmImportWordListActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.factory.ImportHDSeed;
@@ -30,6 +31,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
+import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.List;
@@ -51,30 +53,104 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
     }
 
 
-    public void importColdSeed() {
+    public ImportHDSeedAndroid(Activity activity, ImportHDSeedType importHDSeedType,
+                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password) {
+        super(importHDSeedType, content, worlds, password);
+        this.activity = activity;
+        this.dp = dp;
+    }
+
+
+    public void importHDMColdSeed() {
 
         new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
-                HDMKeychain result = importHDSeed();
+                HDMKeychain result = importHDMKeychain();
                 if (result != null) {
 
                     KeyUtil.setHDKeyChain(result);
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    if (activity instanceof HotAdvanceActivity) {
-                        ((HotAdvanceActivity) activity).showImportSuccess();
-                    }
-                    if (activity instanceof ColdAdvanceActivity) {
-                        ((ColdAdvanceActivity) activity).showImportSuccess();
-                    }
-                    if (activity instanceof HdmImportWordListActivity) {
-                        HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
-                        hdmImportWordListActivity.showImportSuccess();
-                        hdmImportWordListActivity.finish();
-                    }
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                            if (activity instanceof HotAdvanceActivity) {
+                                ((HotAdvanceActivity) activity).showImportSuccess();
+                            }
+                            if (activity instanceof ColdAdvanceActivity) {
+                                ((ColdAdvanceActivity) activity).showImportSuccess();
+                            }
+                            if (activity instanceof HdmImportWordListActivity) {
+                                HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
+                                hdmImportWordListActivity.showImportSuccess();
+                                hdmImportWordListActivity.finish();
+                            }
+
+                        }
+                    });
+                } else {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                        }
+                    });
+                }
+            }
+        }.start();
+
+    }
+
+    public void importHDSeed() {
+        new ThreadNeedService(dp, activity) {
+            @Override
+            public void runWithService(BlockchainService service) {
+                if (service != null) {
+                    service.stopAndUnregister();
+                }
+                HDAccount result = importHDAccount();
+                if (result != null) {
+                    KeyUtil.setHDAccount(result);
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                            if (activity instanceof HotAdvanceActivity) {
+                                ((HotAdvanceActivity) activity).showImportSuccess();
+                            }
+                            if (activity instanceof ColdAdvanceActivity) {
+                                ((ColdAdvanceActivity) activity).showImportSuccess();
+                            }
+                            if (activity instanceof HdmImportWordListActivity) {
+                                HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
+                                hdmImportWordListActivity.showImportSuccess();
+                                hdmImportWordListActivity.finish();
+                            }
+                        }
+                    });
+
+                } else {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                        }
+                    });
+                }
+                if (service != null) {
+                    service.startAndRegister();
                 }
             }
         }.start();
@@ -100,6 +176,9 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                         DropdownMessage.showDropdownMessage(activity,
                                 R.string.import_hdm_cold_seed_format_error);
                         break;
+                    case NOT_HD_ACCOUNT_SEED:
+                        DropdownMessage.showDropdownMessage(activity,
+                                R.string.import_hd_account_seed_format_error);
                     default:
                         DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         break;

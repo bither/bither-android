@@ -40,6 +40,7 @@ import net.bither.SendActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.activity.hot.SelectAddressToSendActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.util.UIUtil;
@@ -217,7 +218,7 @@ public class DialogDonate extends CenterDialog implements OnDismissListener, OnS
             }
             intent = new Intent(getContext(), target);
             intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
-            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS, BitherSetting.DONATE_ADDRESS);
+            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_ADDRESS, BitherjSettings.DONATE_ADDRESS);
             intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG,
                     address.address.isHDM());
             if (address.balance > BitherSetting.DONATE_AMOUNT) {

@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.bither.activity.hot.SelectAddressToSendActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -74,16 +75,16 @@ import java.math.BigInteger;
 public class SendActivity extends SwipeRightActivity implements EntryKeyboardView
         .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
         DialogSendOption.DialogSendOptionListener {
-    private int addressPosition;
-    private Address address;
+    protected int addressPosition;
+    protected Address address;
     private TextView tvAddressLabel;
 
-    private EditText etAddress;
-    private EditText etPassword;
+    protected EditText etAddress;
+    protected EditText etPassword;
     private ImageButton ibtnScan;
-    private CurrencyCalculatorLink amountCalculatorLink;
-    private Button btnSend;
-    private DialogRCheck dp;
+    protected CurrencyCalculatorLink amountCalculatorLink;
+    protected Button btnSend;
+    protected DialogRCheck dp;
     private TextView tvBalance;
     private ImageView ivBalanceSymbol;
     private PasswordEntryKeyboardView kvPassword;
@@ -98,6 +99,17 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_send);
+        initAddress();
+        if (address == null) {
+            finish();
+            return;
+        }
+        initView();
+        processIntent();
+        configureDonate();
+    }
+
+    protected void initAddress(){
         if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
                 .ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
@@ -107,14 +119,6 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                 address = AddressManager.getInstance().getPrivKeyAddresses().get(addressPosition);
             }
         }
-        if (address == null) {
-            finish();
-            return;
-        }
-        initView();
-        processIntent();
-        configureDonate();
-        TransactionsUtil.completeInputsForAddressInBackground(address);
     }
 
     private void initView() {
@@ -295,39 +299,43 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
 
         @Override
         public void onClick(View v) {
-            final long btc = amountCalculatorLink.getAmount();
-            if (btc > 0) {
-                if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
-                    if (Utils.compareString(etAddress.getText().toString().trim(),
-                            dialogSelectChangeAddress.getChangeAddress().getAddress())) {
-                        DropdownMessage.showDropdownMessage(SendActivity.this,
-                                R.string.select_change_address_change_to_same_warn);
-                        return;
-                    }
-                    try {
-                        CompleteTransactionRunnable completeRunnable = new
-                                CompleteTransactionRunnable(addressPosition,
-                                amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                                .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
-                                (), new SecureCharSequence(etPassword.getText()));
-                        completeRunnable.setHandler(completeTransactionHandler);
-                        Thread thread = new Thread(completeRunnable);
-                        dp.setThread(thread);
-                        if (!dp.isShowing()) {
-                            dp.show();
-                        }
-                        thread.start();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        DropdownMessage.showDropdownMessage(SendActivity.this,
-                                R.string.send_failed);
-                    }
-                } else {
-                    DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
-                }
-            }
+            sendClicked();
         }
     };
+
+    protected void sendClicked(){
+        final long btc = amountCalculatorLink.getAmount();
+        if (btc > 0) {
+            if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
+                if (Utils.compareString(etAddress.getText().toString().trim(),
+                        dialogSelectChangeAddress.getChangeAddress().getAddress())) {
+                    DropdownMessage.showDropdownMessage(SendActivity.this,
+                            R.string.select_change_address_change_to_same_warn);
+                    return;
+                }
+                try {
+                    CompleteTransactionRunnable completeRunnable = new
+                            CompleteTransactionRunnable(addressPosition,
+                            amountCalculatorLink.getAmount(), etAddress.getText().toString()
+                            .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                            (), new SecureCharSequence(etPassword.getText()));
+                    completeRunnable.setHandler(completeTransactionHandler);
+                    Thread thread = new Thread(completeRunnable);
+                    dp.setThread(thread);
+                    if (!dp.isShowing()) {
+                        dp.show();
+                    }
+                    thread.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DropdownMessage.showDropdownMessage(SendActivity.this,
+                            R.string.send_failed);
+                }
+            } else {
+                DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
+            }
+        }
+    }
 
     private TextView.OnEditorActionListener passwordAction = new TextView.OnEditorActionListener() {
         @Override
@@ -535,7 +543,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             String address = intent.getExtras().getString(SelectAddressToSendActivity
                     .INTENT_EXTRA_ADDRESS);
             if (Utils.validBicoinAddress(address)) {
-                if (Utils.compareString(address, BitherSetting.DONATE_ADDRESS)) {
+                if (Utils.compareString(address, BitherjSettings.DONATE_ADDRESS)) {
                     isDonate = true;
                 }
                 etAddress.setText(address);

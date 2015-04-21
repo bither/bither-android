@@ -23,6 +23,7 @@ import android.content.Intent;
 
 import net.bither.R;
 import net.bither.bitherj.api.http.Http400Exception;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.delegate.IPasswordGetterDelegate;
@@ -160,7 +161,11 @@ public class HDMResetServerPasswordUtil implements IPasswordGetterDelegate {
             }
         });
         try {
-            hdmBid.setSignature(serverSignature, password);
+            if (AddressManager.getInstance().getHdmKeychain() != null && AddressManager.getInstance().getHdmKeychain().isInRecovery()) {
+                hdmBid.recoverHDM(serverSignature, password);
+            } else {
+                hdmBid.setSignature(serverSignature, password);
+            }
         } catch (Http400Exception ex400) {
             ex400.printStackTrace();
             showMsg(ExceptionUtil.getHDMHttpExceptionMessage(ex400.getErrorCode()));

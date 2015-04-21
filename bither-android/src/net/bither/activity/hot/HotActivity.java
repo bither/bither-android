@@ -184,7 +184,7 @@ public class HotActivity extends BaseFragmentActivity {
 
         configureTopBarSize();
         configureTabMainIcons();
-        tbtnMain.setBigInteger(null, null, null);
+        tbtnMain.setBigInteger(null, null, null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
@@ -228,7 +228,7 @@ public class HotActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == RESULT_OK) {
             ArrayList<String> addresses = (ArrayList<String>) data.getExtras().getSerializable
@@ -242,6 +242,7 @@ public class HotActivity extends BaseFragmentActivity {
 
                 Fragment f = getFragmentAtIndex(1);
                 if (f != null && f instanceof HotAddressFragment) {
+                    mPager.setCurrentItem(1, true);
                     HotAddressFragment af = (HotAddressFragment) f;
                     af.showAddressesAdded(addresses);
                 }
@@ -396,12 +397,15 @@ public class HotActivity extends BaseFragmentActivity {
                 final long btcPrivate = totalPrivate;
                 final long btcWatchOnly = totalWatchOnly;
                 final long btcHdm = totalHdm;
+                final long btcHD = AddressManager.getInstance().hasHDAccount() ? AddressManager
+                        .getInstance().getHdAccount().getBalance() : 0;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         configureTabMainIcons();
-                        tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate),
-                                BigInteger.valueOf(btcWatchOnly), BigInteger.valueOf(btcHdm));
+                        tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf
+                                (btcWatchOnly), BigInteger.valueOf(btcHdm), BigInteger.valueOf
+                                (btcHD));
                     }
                 });
             }

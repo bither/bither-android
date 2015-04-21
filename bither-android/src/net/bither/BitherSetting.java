@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
 
 public class BitherSetting {
 
-    public static final String DONATE_ADDRESS = "1BsTwoMaX3aYx9Nc8GdgHZzzAGmG669bC3";
+
     public static final long DONATE_AMOUNT = 100000;
 
     public static final int NOTIFICATION_ID_COINS_RECEIVED = 201451;
@@ -67,6 +67,7 @@ public class BitherSetting {
         public static final int IMPORT_PRIVATE_KEY_REQUEST_CODE = 1356;
         public static final int IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE = 1357;
         public static final int IMPORT_HDM_COLD_SEED_REQUEST_CODE = 1358;
+        public static final int IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE = 1358;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
@@ -86,6 +87,7 @@ public class BitherSetting {
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
         public static final String INTENT_FROM_NOTIF = "from_notif";
+        public static final String IMPORT_HD_SEED_TYPE = "import_hd_seed_type";
     }
 
 

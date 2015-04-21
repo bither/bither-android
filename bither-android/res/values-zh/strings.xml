@@ -183,6 +183,9 @@
     <string name="import_private_key_text">来自私钥明文</string>
     <string name="import_hdm_cold_seed_qr_code">来自HDM冷种子二维码</string>
     <string name="import_hdm_cold_seed_phrase">来自HDM密语(冷)</string>
+    <string name="import_hd_account_seed_qr_code">来自HD种子二维码</string>
+    <string name="import_hd_account_seed_phrase">来自HD密语</string>
+
     <string name="import_bip38_key_qr_code">来自BIP38私钥二维码</string>
     <string name="import_bip38_key_text">来自BIP38私钥文本</string>
     <string name="enter_bip38_key_password">请输入BIP38私钥的密码</string>
@@ -193,6 +196,7 @@
     <string name="import_private_key_text_format_error">不符合私钥格式</string>
     <string name="can_not_import_hdm_cold_seed">不能导入HDM冷种子</string>
     <string name="import_hdm_cold_seed_format_error">不是HDM冷种子</string>
+    <string name="import_hd_account_seed_format_error">不是HD账户种子</string>
     <string name="import_private_key_qr_code_scan_title">扫描私钥二维码</string>
     <string name="import_bip38private_key_qr_code_scan_title">扫描BIP38私钥二维码</string>
     <string name="import_hdm_cold_seed_qr_code_scan_title">扫描HDM冷种子二维码</string>
@@ -307,6 +311,8 @@
     <string name="time_is_wrong">系统时间错误, 请重新设置</string>
     <string name="only_supports_the_compressed_private_key">只支持压缩格式的私钥</string>
     <string name="old_version_no_support_change_adress">旧版本二维码不支持选择找零地址</string>
+    <string name="scan_qr_code_from_photo_wrong">没有找到二维码</string>
+
     <!-- select address to send -->
     <string name="select_address_to_send">请选择从哪个地址发送</string>
     <string name="select_address_to_send_no_address_fount">您没有一个拥有足够余额的地址</string>
@@ -560,4 +566,32 @@
     <!-- bither team address -->
     <string name="bither_team_address">开发者地址</string>
     <string name="bither_team_address_copied">开发者地址已复制</string>
+
+    <!-- password strength -->
+    <string name="password_strength_weak">较弱</string>
+    <string name="password_strength_normal">一般</string>
+    <string name="password_strength_medium">中等</string>
+    <string name="password_strength_strong">较强</string>
+    <string name="password_strength_very_strong">很强</string>
+    <string name="password_strength_warning">确定使用强度%s的密码?</string>
+    <string name="password_strength_check">密码强度检查</string>
+    <string name="password_strength_check_on">开</string>
+    <string name="password_strength_check_off">关</string>
+    <string name="password_strength_check_off_warn">确认关闭密码强度检查?</string>
+
+    <!-- add hd account -->
+    <string name="add_hd_account_label">生成新的 HD 账户</string>
+    <string name="add_hd_account_button">生成</string>
+    <string name="add_hd_account_tab_hd">HD 账户</string>
+    <string name="add_hd_account_tab_other">其它</string>
+    <string name="add_hd_account_other_hdm">生成 HDM 账户</string>
+    <string name="add_hd_account_other_private">生成普通私钥</string>
+    <string name="add_hd_account_view_label">已有 HD 账户</string>
+    <string name="add_hd_account_seed_qr_code">HD 账户种子二维码</string>
+    <string name="add_hd_account_seed_qr_phrase">HD 账户密语</string>
+    <string name="add_hd_account_show_seed_label">HD 种子能够用来恢复 HD 账户,\n请安全地保管它.</string>
+    <string name="add_hd_account_show_seed_button">我已经保管好了 HD 种子</string>
+
+    <!-- show hd account -->
+    <string name="address_group_hd">HD 账户</string>
 </resources>

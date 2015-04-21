@@ -44,6 +44,7 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseActivity;
+import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -61,7 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class UEntropyActivity extends BaseActivity implements UEntropyCollector
+public abstract class UEntropyActivity extends BaseFragmentActivity implements UEntropyCollector
         .UEntropyCollectorListener, IDialogPasswordListener {
     private static final Logger log = LoggerFactory.getLogger(UEntropyActivity.class);
 

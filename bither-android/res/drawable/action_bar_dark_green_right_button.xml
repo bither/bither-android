@@ -2,6 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@drawable/action_bar_dark_right_green_button_enabled_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/gray" android:state_enabled="false"/>
     <item android:drawable="@drawable/action_bar_dark_right_green_button_enabled"/>
 
 </selector>

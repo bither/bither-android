@@ -61,8 +61,8 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
     private boolean hasMore = true;
     private boolean isLoding = false;
 
-    private int addressPosition;
-    private Address address;
+    protected int addressPosition;
+    protected Address address;
     private ArrayList<Tx> transactions = new ArrayList<Tx>();
     private ListView lv;
     private FrameLayout flTitleBar;
@@ -76,13 +76,21 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_address_detail);
-        if (getIntent().getExtras().containsKey(
-                BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG)) {
-            addressPosition = getIntent().getExtras().getInt(
-                    BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG);
-            boolean hasPrivateKey = getIntent().getExtras().getBoolean(
-                    BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
-                    false);
+        initAddress();
+        if (address == null) {
+            finish();
+            return;
+        }
+        initView();
+    }
+
+    protected void initAddress() {
+        if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
+                .ADDRESS_POSITION_PASS_VALUE_TAG)) {
+            addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
+                    .ADDRESS_POSITION_PASS_VALUE_TAG);
+            boolean hasPrivateKey = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
+                    .ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG, false);
             boolean isHDM = getIntent().getExtras().getBoolean(BitherSetting.INTENT_REF
                     .ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, false);
             if (isHDM) {
@@ -93,26 +101,21 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
                             (addressPosition);
                 }
             } else if (hasPrivateKey) {
-                if (addressPosition >= 0
-                        && AddressManager.getInstance().getPrivKeyAddresses() != null && addressPosition <
-                        AddressManager.getInstance().getPrivKeyAddresses().size()) {
-                    address = AddressManager.getInstance().getPrivKeyAddresses().get(
-                            addressPosition);
+                if (addressPosition >= 0 && AddressManager.getInstance().getPrivKeyAddresses() !=
+                        null && addressPosition < AddressManager.getInstance()
+                        .getPrivKeyAddresses().size()) {
+                    address = AddressManager.getInstance().getPrivKeyAddresses().get
+                            (addressPosition);
                 }
             } else {
-                if (addressPosition >= 0
-                        && AddressManager.getInstance().getWatchOnlyAddresses() != null && addressPosition <
-                        AddressManager.getInstance().getWatchOnlyAddresses().size()) {
-                    address = AddressManager.getInstance().getWatchOnlyAddresses().get(
-                            addressPosition);
+                if (addressPosition >= 0 && AddressManager.getInstance().getWatchOnlyAddresses()
+                        != null && addressPosition < AddressManager.getInstance()
+                        .getWatchOnlyAddresses().size()) {
+                    address = AddressManager.getInstance().getWatchOnlyAddresses().get
+                            (addressPosition);
                 }
             }
         }
-        if (address == null) {
-            finish();
-            return;
-        }
-        initView();
     }
 
     private void initView() {
@@ -200,6 +203,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
         header.showAddress(address, addressPosition);
         onAddressAliasChanged(address, address.getAlias());
         page = 1;
+        hasMore = true;
         loadTx();
     }
 
@@ -237,26 +241,33 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
 
         @Override
         public void onClick(View v) {
-            Dialog dialog = null;
-            if (address.isHDM()) {
-                new DialogHDMAddressOptions(AddressDetailActivity.this, (HDMAddress) address,
-                        true).show();
-            } else if (address.hasPrivKey()) {
-                dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
-            } else {
-                dialog = new DialogAddressWatchOnlyOption(AddressDetailActivity.this, address,
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        });
-            }
-            if (dialog != null) {
-                dialog.show();
-            }
+            optionClicked();
         }
     };
+
+    protected void optionClicked() {
+        Dialog dialog = null;
+        if (address.isHDAccount()) {
+            return;
+        }
+        if (address.isHDM()) {
+            new DialogHDMAddressOptions(AddressDetailActivity.this, (HDMAddress) address, true)
+                    .show();
+        } else if (address.hasPrivKey()) {
+            dialog = new DialogAddressWithPrivateKeyOption(AddressDetailActivity.this, address);
+        } else {
+            dialog = new DialogAddressWatchOnlyOption(AddressDetailActivity.this, address, new
+                    Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            });
+        }
+        if (dialog != null) {
+            dialog.show();
+        }
+    }
 
     private OnClickListener scrollToTopClick = new OnClickListener() {
 
@@ -302,6 +313,12 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
         }
     }
 
+    protected void notifyAddressBalanceChange(String address) {
+        if (Utils.compareString(address, this.address.getAddress())) {
+            loadData();
+        }
+    }
+
     private final class TxAndBlockBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -314,10 +331,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
             if (intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE)) {
                 String receiveAddressStr = intent.getStringExtra(NotificationAndroidImpl
                         .MESSAGE_ADDRESS);
-                if (Utils.compareString(receiveAddressStr, address.getAddress())) {
-                    loadData();
-                }
-
+                notifyAddressBalanceChange(receiveAddressStr);
             } else {
                 loadData();
             }
