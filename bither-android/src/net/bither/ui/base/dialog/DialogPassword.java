@@ -31,9 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 
 import net.bither.R;
 import net.bither.bitherj.crypto.PasswordSeed;
@@ -72,7 +71,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private TextView tvPasswordLength;
     private TextView tvPasswordStrength;
     private FrameLayout flPasswordStrength;
-    private RoundCornerProgressBar pbPasswordStrength;
+    private ProgressBar pbPasswordStrength;
     private PasswordEntryKeyboardView kv;
     private PasswordSeed passwordSeed;
     private IDialogPasswordListener listener;
@@ -104,7 +103,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         tvPasswordLength = (TextView) findViewById(R.id.tv_password_length);
         tvPasswordStrength = (TextView) findViewById(R.id.tv_password_strength);
-        pbPasswordStrength = (RoundCornerProgressBar) findViewById(R.id.pb_password_strength);
+        pbPasswordStrength = (ProgressBar) findViewById(R.id.pb_password_strength);
         flPasswordStrength = (FrameLayout) findViewById(R.id.fl_password_strength);
         kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         etPassword.addTextChangedListener(passwordWatcher);
@@ -173,7 +172,7 @@ public class DialogPassword extends Dialog implements OnDismissListener,
                 PasswordStrengthUtil.PasswordStrength strength = PasswordStrengthUtil
                         .checkPassword(etPassword.getText());
                 pbPasswordStrength.setProgress(strength.getProgress());
-                pbPasswordStrength.setProgressColor(strength.getColor());
+                pbPasswordStrength.setProgressDrawable(strength.getDrawable());
                 tvPasswordStrength.setText(strength.getNameRes());
             } else {
                 flPasswordStrength.setVisibility(View.INVISIBLE);

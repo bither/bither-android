@@ -18,6 +18,8 @@
 
 package net.bither.util;
 
+import android.graphics.drawable.Drawable;
+
 import net.bither.BitherApplication;
 import net.bither.R;
 
@@ -69,6 +71,25 @@ public class PasswordStrengthUtil {
                 default:
                     return R.color.password_strength_weak;
             }
+        }
+
+        public int getDrawableRes() {
+            switch (this) {
+                case Normal:
+                    return R.drawable.password_strength_normal;
+                case Medium:
+                    return R.drawable.password_strength_medium;
+                case Strong:
+                    return R.drawable.password_strength_strong;
+                case VeryStrong:
+                    return R.drawable.password_strength_very_strong;
+                default:
+                    return R.drawable.password_strength_weak;
+            }
+        }
+
+        public Drawable getDrawable() {
+            return BitherApplication.mContext.getResources().getDrawable(getDrawableRes());
         }
 
         public int getColor() {
