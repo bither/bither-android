@@ -37,6 +37,7 @@ import android.widget.TextView;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
@@ -345,10 +346,19 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
                                 R.anim.hdm_keychain_add_spin);
                         anim.setFillAfter(true);
                         flContainer.startAnimation(anim);
+
+                        ArrayList<String> addresses = getAddresses();
+                        Intent intent = new Intent();
+                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                                addresses);
+                        getActivity().setResult(Activity.RESULT_OK, intent);
+
                         flContainer.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                ((AddPrivateKeyActivity) getActivity()).save();
+                                if (getActivity() != null) {
+                                    ((AddPrivateKeyActivity) getActivity()).save();
+                                }
                             }
                         }, anim.getDuration());
                     }
