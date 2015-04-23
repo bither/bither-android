@@ -419,6 +419,7 @@ public class AddressProvider implements IAddressProvider {
                     pub = Base58.decode(pubStr);
                 }
             }
+            c.close();
         } catch (AddressFormatException e) {
             e.printStackTrace();
         }
@@ -440,9 +441,11 @@ public class AddressProvider implements IAddressProvider {
                     pub = Base58.decode(pubStr);
                 }
             }
+            c.close();
         } catch (AddressFormatException e) {
             e.printStackTrace();
         }
+
 
         return pub;
     }
@@ -461,6 +464,7 @@ public class AddressProvider implements IAddressProvider {
                 hdAccountEncryptSeed = c.getString(idColumn);
             }
         }
+        c.close();
         return hdAccountEncryptSeed;
     }
 
@@ -476,6 +480,7 @@ public class AddressProvider implements IAddressProvider {
                 hdAccountMnmonicEncryptSeed = c.getString(idColumn);
             }
         }
+        c.close();
         return hdAccountMnmonicEncryptSeed;
     }
 
