@@ -35,6 +35,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,10 +127,19 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public HashSet<String> getAllAddress() {
+    public HashSet<String> getBelongAccountAddresses(List<String> addressList) {
         HashSet<String> addressSet = new HashSet<String>();
+
+        List<String> temp = new ArrayList<String>();
+        if (addressList != null) {
+            for (String str : addressList) {
+                temp.add(Utils.format("'%s'", str));
+            }
+        }
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select address from  " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS,
+        String sql = Utils.format("select address from hd_account_addresses where address in (%s) "
+                , Utils.joinString(temp, ","));
+        Cursor cursor = db.rawQuery(sql,
                 null);
         while (cursor.moveToNext()) {
             int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.ADDRESS);
