@@ -145,8 +145,8 @@ public class HDAccountProvider implements IHDAccountProvider {
     public List<byte[]> getPubs(AbstractHD.PathType pathType) {
         List<byte[]> adressPubList = new ArrayList<byte[]>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select pub from  " + AbstractDb.Tables.HD_ACCOUNT_ADDRESS,
-                null);
+        Cursor cursor = db.rawQuery("select pub from hd_account_addresses where path_type=? ",
+                new String[]{Integer.toString(pathType.getValue())});
         while (cursor.moveToNext()) {
             try {
                 int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountAddressesColumns.PUB);
