@@ -22,10 +22,8 @@ import android.graphics.drawable.Drawable;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.utils.CharSequenceUtil;
 
-/**
- * Created by songchenwen on 2015/4/13.
- */
 public class PasswordStrengthUtil {
     public static final PasswordStrength PassingPasswordStrength = PasswordStrength.Normal;
     public static final PasswordStrength WarningPasswordStrength = PasswordStrength.Medium;
@@ -114,7 +112,7 @@ public class PasswordStrengthUtil {
     }
 
     public static PasswordStrength checkPassword(CharSequence password) {
-        switch (getRating(password)) {
+        switch (CharSequenceUtil.getRating(password)) {
             case 0:
                 return PasswordStrength.Weak;
             case 1:
@@ -128,83 +126,5 @@ public class PasswordStrengthUtil {
         }
     }
 
-    private static int getRating(CharSequence password) {
-        if (password == null || password.length() < 6) {
-            return 0;
-        }
-        int strength = 0;
-        if (password.length() > 9) {
-            strength++;
-        }
-        int digitCount = getDigitCount(password);
-        int symbolCount = getSymbolCount(password);
-        boolean upperAndLower = bothUpperAndLower(password);
-        if (digitCount > 0 && digitCount != password.length()) {
-            strength++;
-        }
-        if (symbolCount > 0 && symbolCount != password.length()) {
-            strength++;
-        }
-        if (upperAndLower) {
-            strength++;
-        }
-        return strength;
-    }
 
-    private static boolean bothUpperAndLower(CharSequence password) {
-        if (password == null || password.length() == 0) {
-            return false;
-        }
-        boolean upper = false;
-        boolean lower = false;
-        int length = password.length();
-        for (int i = 0;
-             i < length;
-             i++) {
-            char c = password.charAt(i);
-            if (!upper) {
-                upper = Character.isUpperCase(c);
-            }
-            if (!lower) {
-                lower = Character.isLowerCase(c);
-            }
-            if (upper && lower) {
-                break;
-            }
-        }
-        return upper && lower;
-    }
-
-    private static int getDigitCount(CharSequence password) {
-        if (password == null || password.length() == 0) {
-            return 0;
-        }
-        int numDigits = 0;
-        int length = password.length();
-        for (int i = 0;
-             i < length;
-             i++) {
-            if (Character.isDigit(password.charAt(i))) {
-                numDigits++;
-            }
-        }
-        return numDigits;
-    }
-
-    private static int getSymbolCount(CharSequence password) {
-        if (password == null || password.length() == 0) {
-            return 0;
-        }
-        int numSymbol = 0;
-        int length = password.length();
-        for (int i = 0;
-             i < length;
-             i++) {
-            char c = password.charAt(i);
-            if (!Character.isLetter(c) && !Character.isDigit(c)) {
-                numSymbol++;
-            }
-        }
-        return numSymbol;
-    }
 }
