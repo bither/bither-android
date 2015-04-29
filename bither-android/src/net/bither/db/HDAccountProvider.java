@@ -450,6 +450,60 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
+    public List<Tx> getTxAndDetailByHDAccount() {
+        List<Tx> txItemList = new ArrayList<Tx>();
+
+        HashMap<Sha256Hash, Tx> txDict = new HashMap<Sha256Hash, Tx>();
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        try {
+            String sql = "select * from txs where tx_hash in " +
+                    inQueryTxHashOfHDAccount +
+                    " order by" +
+                    " ifnull(block_no,4294967295) desc  ";
+            Cursor c = db.rawQuery(sql, null);
+            StringBuilder txsStrBuilder = new StringBuilder();
+            while (c.moveToNext()) {
+                Tx txItem = TxHelper.applyCursor(c);
+                txItem.setIns(new ArrayList<In>());
+                txItem.setOuts(new ArrayList<Out>());
+                txItemList.add(txItem);
+                txDict.put(new Sha256Hash(txItem.getTxHash()), txItem);
+                txsStrBuilder.append("'").append(Base58.encode(txItem.getTxHash())).append("'").append(",");
+            }
+            c.close();
+
+            if (txsStrBuilder.length() > 1) {
+                String txs = txsStrBuilder.substring(0, txsStrBuilder.length() - 1);
+                sql = Utils.format("select b.* from ins b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash ,b.in_sn", txs);
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    In inItem = TxHelper.applyCursorIn(c);
+                    Tx tx = txDict.get(new Sha256Hash(inItem.getTxHash()));
+                    if (tx != null) {
+                        tx.getIns().add(inItem);
+                    }
+                }
+                c.close();
+                sql = Utils.format("select b.* from outs b where b.tx_hash in (%s)" +
+                        " order by b.tx_hash,b.out_sn", txs);
+                c = db.rawQuery(sql, null);
+                while (c.moveToNext()) {
+                    Out out = TxHelper.applyCursorOut(c);
+                    Tx tx = txDict.get(new Sha256Hash(out.getTxHash()));
+                    if (tx != null) {
+                        tx.getOuts().add(out);
+                    }
+                }
+                c.close();
+            }
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        }
+        return txItemList;
+    }
+
+    @Override
     public List<Tx> getTxAndDetailByHDAccount(int page) {
         List<Tx> txItemList = new ArrayList<Tx>();
 
