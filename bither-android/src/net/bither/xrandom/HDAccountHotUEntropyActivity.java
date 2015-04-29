@@ -136,8 +136,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                byte[] entropy = new byte[16];
-                xRandom.nextBytes(entropy);
+                HDAccount hdAccount = new HDAccount(xRandom, password);
                 progress += itemProgress * progressKeyRate;
                 onProgress(progress);
                 if (cancelRunnable != null) {
@@ -146,7 +145,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                HDAccount hdAccount = new HDAccount(entropy, password);
+
                 words = hdAccount.getSeedWords(password);
                 KeyUtil.setHDAccount(hdAccount);
 

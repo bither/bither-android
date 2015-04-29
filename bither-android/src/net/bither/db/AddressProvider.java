@@ -914,6 +914,23 @@ public class AddressProvider implements IAddressProvider {
         return alias;
     }
 
+
+    @Override
+    public boolean hdAccountIsXRandom(int seedId) {
+        boolean result = false;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select is_xrandom from hd_account where hd_account_id=?";
+        Cursor cursor = db.rawQuery(sql, new String[]{Integer.toString(seedId)});
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.HDAccountColumns.IS_XRANDOM);
+            if (idColumn != -1) {
+                result = cursor.getInt(idColumn) == 1;
+            }
+        }
+        cursor.close();
+        return result;
+    }
+
     @Override
     public Map<String, String> getAliases() {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
@@ -1093,4 +1110,5 @@ public class AddressProvider implements IAddressProvider {
 
         return address;
     }
+
 }
