@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.WalletUtils;
 
 public class DialogPrivateKeyText extends CenterDialog implements View
@@ -37,7 +38,7 @@ public class DialogPrivateKeyText extends CenterDialog implements View
         setOnDismissListener(this);
         setContentView(R.layout.dialog_address_with_show_private_key_text);
         tvPrivateKeyText = (TextView) findViewById(R.id.tv_view_show_private_key_text);
-        mPrivateKeyText = WalletUtils.formatHashFromCharSequence(privateKeyText, 4, 16);
+        mPrivateKeyText = Utils.formatHashFromCharSequence(privateKeyText, 4, 16);
         tvPrivateKeyText.setText(mPrivateKeyText);
         privateKeyText.wipe();
         findViewById(R.id.tv_close).setOnClickListener(this);

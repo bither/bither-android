@@ -132,7 +132,7 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
                     @Override
                     public void run() {
                         dp.dismiss();
-                        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey,
+                        tvPrivateKey.setText(Utils.formatHashFromCharSequence(privateKey,
                                 4, 16));
                         tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
                         llInput.setVisibility(View.GONE);

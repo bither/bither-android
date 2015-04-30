@@ -60,24 +60,6 @@ public class WalletUtils {
                 BitherSetting.CHAR_THIN_SPACE);
     }
 
-    // remeber to wipe #address
-    public static SecureCharSequence formatHashFromCharSequence(@Nonnull final SecureCharSequence address, final int groupSize, final int lineSize) {
-        int length = address.length();
-        length = length + length / groupSize - 1;
-        char[] chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            if (i % (groupSize + 1) == groupSize) {
-                if ((i + 1) % (lineSize + lineSize / groupSize) == 0) {
-                    chars[i] = '\n';
-                } else {
-                    chars[i] = ' ';
-                }
-            } else {
-                chars[i] = address.charAt(i - i / (groupSize + 1));
-            }
-        }
-        return new SecureCharSequence(chars);
-    }
 
     public static boolean isInternal(@Nonnull final Tx tx) {
         if (tx.isCoinBase()) {
