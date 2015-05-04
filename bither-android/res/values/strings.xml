@@ -371,7 +371,7 @@
     <string name="password_keyboard_next">Next</string>
 
     <!-- advance -->
-    <string name="activity_name_advance">Advance Options</string>
+    <string name="activity_name_advance">Advanced Options</string>
 
     <!-- first run dialog -->
     <string name="first_run_dialog_title">To protect your bitcoin:</string>
