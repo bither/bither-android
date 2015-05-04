@@ -146,6 +146,11 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 //            tvNoTransactions.setVisibility(View.GONE);
 //            llMonitorFailed.setVisibility(View.VISIBLE);
 //        }
+        if (address.isHDAccount()) {
+            ibtnBalanceDetail.setVisibility(View.GONE);
+        } else {
+            ibtnBalanceDetail.setVisibility(View.VISIBLE);
+        }
         this.address = address;
         strAddress = address.getAddress();
         if(balanceDetailFuture != null){
