@@ -901,19 +901,6 @@ public class AddressProvider implements IAddressProvider {
                 , new String[]{address});
     }
 
-    @Override
-    public String getAlias(String address) {
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String alias = null;
-        Cursor cursor = db.rawQuery("select alias from aliases where address=?", new String[]{address});
-
-        if (cursor.moveToNext()) {
-            alias = cursor.getString(0);
-        }
-        cursor.close();
-        return alias;
-    }
-
 
     @Override
     public boolean hdAccountIsXRandom(int seedId) {
@@ -929,6 +916,19 @@ public class AddressProvider implements IAddressProvider {
         }
         cursor.close();
         return result;
+    }
+
+    @Override
+    public String getAlias(String address) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String alias = null;
+        Cursor cursor = db.rawQuery("select alias from aliases where address=?", new String[]{address});
+
+        if (cursor.moveToNext()) {
+            alias = cursor.getString(0);
+        }
+        cursor.close();
+        return alias;
     }
 
     @Override
@@ -963,6 +963,58 @@ public class AddressProvider implements IAddressProvider {
         } else {
             db.execSQL("insert or replace into aliases(address,alias) values(?,?)", new String[]{address, alias});
         }
+    }
+
+    @Override
+    public int getVanityLen(String address) {
+
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        int len = Address.VANITY_LEN_NO_EXSITS;
+        Cursor cursor = db.rawQuery("select vanity_len from vanity_address where address=?", new String[]{address});
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.VanityAddressColumns.VANITY_LEN);
+            if (idColumn != -1) {
+                len = cursor.getInt(idColumn);
+            }
+        }
+        cursor.close();
+        return len;
+    }
+
+    @Override
+    public Map<String, Integer> getVanitylens() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Map<String, Integer> vanityLenMap = new HashMap<String, Integer>();
+        Cursor cursor = db.rawQuery("select * from vanity_address", null);
+
+        while (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.VanityAddressColumns.ADDRESS);
+            String address = null;
+            int alias = Address.VANITY_LEN_NO_EXSITS;
+            if (idColumn > -1) {
+                address = cursor.getString(idColumn);
+            }
+            idColumn = cursor.getColumnIndex(AbstractDb.VanityAddressColumns.VANITY_LEN);
+            if (idColumn > -1) {
+                alias = cursor.getInt(idColumn);
+            }
+            vanityLenMap.put(address, alias);
+
+        }
+        cursor.close();
+        return vanityLenMap;
+    }
+
+    @Override
+    public void updateVaitylen(String address, int vanitylen) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        if (vanitylen == Address.VANITY_LEN_NO_EXSITS) {
+            db.delete(AbstractDb.Tables.VANITY_ADDRESS, AbstractDb.AliasColumns.ADDRESS + "=? ", new String[]{address});
+        } else {
+            db.execSQL("insert or replace into vanity_address(address,vanity_len) values(?,?)", new String[]{address
+                    , Integer.toString(vanitylen)});
+        }
+
     }
 
     @Override
