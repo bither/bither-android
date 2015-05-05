@@ -225,7 +225,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
+            DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
                     .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
                     .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
         }

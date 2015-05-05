@@ -96,4 +96,9 @@
     <color name="password_strength_medium">#ffa321</color>
     <color name="password_strength_strong">#62c462</color>
     <color name="password_strength_very_strong">#62c462</color>
+
+    <!-- vanity address -->
+    <color name="vanity_address_glow">#00bbff</color>
+    <color name="vanity_address_text">#d8f5ff</color>
+    <color name="vanity_address_qr_bg">#2b2f32</color>
 </resources>
