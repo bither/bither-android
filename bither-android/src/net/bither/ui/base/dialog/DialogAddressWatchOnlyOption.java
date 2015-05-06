@@ -78,6 +78,12 @@ public class DialogAddressWatchOnlyOption extends DialogWithActions {
                                 activity : null).show();
             }
         }));
+        actions.add(new Action(R.string.vanity_address_length, new Runnable() {
+            @Override
+            public void run() {
+                new DialogEditVanityLength(activity, address).show();
+            }
+        }));
         actions.add(new Action(R.string.address_option_delete, new Runnable() {
             @Override
             public void run() {

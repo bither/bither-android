@@ -84,6 +84,12 @@ public class DialogAddressWithPrivateKeyOption extends DialogWithActions {
                                 activity : null).show();
             }
         }));
+        actions.add(new Action(R.string.vanity_address_length, new Runnable() {
+            @Override
+            public void run() {
+                new DialogEditVanityLength(activity, address).show();
+            }
+        }));
         return actions;
     }
 }

@@ -594,4 +594,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 賬戶</string>
+
+    <!-- vanity address length -->
+    <string name="vanity_address_length">榮耀地址位數</string>
+    <string name="vanity_address_none">無</string>
 </resources>

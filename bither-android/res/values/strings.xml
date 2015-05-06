@@ -613,4 +613,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD Account</string>
+
+    <!-- vanity address length -->
+    <string name="vanity_address_length">Vanity Address Length</string>
+    <string name="vanity_address_none">None</string>
 </resources>
