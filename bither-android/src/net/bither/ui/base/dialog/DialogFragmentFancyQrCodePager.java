@@ -21,6 +21,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -31,7 +32,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -71,6 +71,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     private static final float VanityShareGapRate = 0.1f;
     private static final float VanityShareMarginRate = 0.1f;
     private static final float VanityShareQrSizeRate = 0.9f;
+    private static final float VanityShareWaterMarkHeightRate = 0.1f;
 
     private View vContainer;
     private TextView tvAddress;
@@ -294,20 +295,29 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             DialogFragmentFancyQrCodeSinglePage page = (DialogFragmentFancyQrCodeSinglePage) f;
             Bitmap qr = page.getQrCode();
             if (vanityLength > 0) {
+                Bitmap bmpWaterMark = BitmapFactory.decodeResource(getResources(), R.drawable
+                        .pin_code_water_mark);
                 int qrSize = (int) (qr.getHeight() * VanityShareQrSizeRate);
                 int tvWidth = tvAddress.getWidth();
                 int tvHeight = tvAddress.getHeight();
                 int width = Math.max(tvWidth, qrSize);
                 int margin = (int) (width * VanityShareMarginRate);
+                int waterMarkHeight = (int) (qrSize * VanityShareWaterMarkHeightRate);
+                int waterMarkWidth = waterMarkHeight * bmpWaterMark.getWidth() / bmpWaterMark
+                        .getHeight();
                 Bitmap bmp = Bitmap.createBitmap(width + margin * 2, qrSize + tvHeight +
-                        (int) (VanityShareGapRate * qrSize) + margin * 2, Bitmap.Config.ARGB_8888);
+                        waterMarkHeight + (int) (VanityShareGapRate * qrSize) +
+                        margin * 2, Bitmap.Config.ARGB_8888);
                 Bitmap tvBmp = ImageManageUtil.getBitmapFromView(tvAddress);
                 Canvas c = new Canvas(bmp);
                 c.drawColor(getResources().getColor(R.color.vanity_address_qr_bg));
                 c.drawBitmap(tvBmp, (bmp.getWidth() - tvBmp.getWidth()) / 2, margin, null);
                 c.drawBitmap(qr, null, new Rect((bmp.getWidth() - qrSize) / 2, bmp.getHeight() -
-                        margin - qrSize, (bmp.getWidth() - qrSize) / 2 + qrSize, bmp.getHeight()
-                        - margin), null);
+                        margin - waterMarkHeight - qrSize, (bmp.getWidth() - qrSize) / 2 +
+                        qrSize, bmp.getHeight() - margin - waterMarkHeight), null);
+                c.drawBitmap(bmpWaterMark, null, new Rect((bmp.getWidth() - waterMarkWidth) / 2,
+                        bmp.getHeight() - margin - waterMarkHeight, (bmp.getWidth() -
+                        waterMarkWidth) / 2 + waterMarkWidth, bmp.getHeight() - margin), null);
                 return bmp;
             } else {
                 return qr;
