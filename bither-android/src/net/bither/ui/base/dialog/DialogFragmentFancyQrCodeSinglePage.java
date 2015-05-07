@@ -236,7 +236,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
             lp.height = lp.width = qrSize;
 
             lp = (FrameLayout.LayoutParams) ivAvatar.getLayoutParams();
-            lp.width = lp.height = (int) (qrSize * FancyQrCodeThread.AvatarSizeRate * 0.9f);
+            lp.width = lp.height = (int) (qrSize * FancyQrCodeThread.AvatarSizeRate * 0.8f);
             ivQr.setBackgroundResource(R.drawable.vanity_qr_shadow);
         }
     }
