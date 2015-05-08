@@ -17,6 +17,8 @@
     <string name="market_name_btcchina">BTCChina</string>
     <string name="market_name_796">796</string>
     <string name="market_name_bitfinex">Bitfinex</string>
+    <string name="market_name_btctrade">BtcTrade</string>
+    <string name="market_name_coinbase">coinbase</string>
     <string name="activity_name_address_detail">Detail</string>
     <string name="activity_name_address_sign_tx">Sign Transaction</string>
     <string name="activity_name_qr_code">QR Code</string>
