@@ -32,9 +32,7 @@ public class MarketUtil {
         synchronized (markets) {
             if (markets.size() == 0) {
                 for (MarketType marketType : MarketType.values()) {
-                    if (marketType != MarketType.COINBASE) {
-                        markets.add(new Market(marketType));
-                    }
+                    markets.add(new Market(marketType));
                 }
             }
             return markets;

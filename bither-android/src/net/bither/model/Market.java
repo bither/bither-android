@@ -107,7 +107,7 @@ public class Market {
     }
 
     public String getUrl() {
-        return "http://" + getDomainName();
+        return "http://www." + getDomainName();
     }
 
     public String getDomainName() {
