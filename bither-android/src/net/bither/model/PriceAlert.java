@@ -1,11 +1,11 @@
 package net.bither.model;
 
-import net.bither.BitherSetting;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.LogUtil;
-import net.bither.bitherj.BitherjSettings.MarketType;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;

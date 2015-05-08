@@ -35,7 +35,6 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;

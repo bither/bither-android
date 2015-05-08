@@ -23,12 +23,12 @@ import android.content.Intent;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.MarketDetailActivity;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.api.GetExchangeTickerApi;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.PriceAlert;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.bitherj.BitherjSettings.MarketType;
 
 import org.json.JSONObject;
 

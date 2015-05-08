@@ -25,7 +25,6 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.MarketUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 
 import java.math.BigInteger;

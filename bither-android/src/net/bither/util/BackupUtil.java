@@ -20,23 +20,14 @@ package net.bither.util;
 import android.os.Handler;
 import android.os.Looper;
 
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.utils.Base58;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
-
-import org.spongycastle.crypto.agreement.srp.SRP6Client;
 
 import java.io.File;
 import java.io.IOException;

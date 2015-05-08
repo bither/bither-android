@@ -17,10 +17,11 @@
 package net.bither.util;
 
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.bitherj.BitherjSettings.MarketType;
+
 import java.util.ArrayList;
 import java.util.List;
 

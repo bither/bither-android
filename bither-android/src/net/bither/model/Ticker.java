@@ -16,6 +16,7 @@
 
 package net.bither.model;
 
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.util.ExchangeUtil;
 
@@ -28,200 +29,200 @@ import java.util.Date;
 import java.util.List;
 
 public class Ticker implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	// key of
-	private final static String VOLUME = "volume";
-	private final static String LAST = "last";
-	private final static String HIGH = "high";
-	private final static String LOW = "low";
-	private final static String ASK = "ask";
-	private final static String BID = "bid";
+    // key of
+    private final static String VOLUME = "volume";
+    private final static String LAST = "last";
+    private final static String HIGH = "high";
+    private final static String LOW = "low";
+    private final static String ASK = "ask";
+    private final static String BID = "bid";
 
-	/***
-	 * total of btc
-	 */
-	private double mAmount;
-	private double mLevel;
-	private double pHigh;
-	private double pLow;
-	private double pNew;
-	private double mAmp;
-	private double pOpen;
+    /**
+     * total of btc
+     */
+    private double mAmount;
+    private double mLevel;
+    private double pHigh;
+    private double pLow;
+    private double pNew;
+    private double mAmp;
+    private double pOpen;
 
-	private double pSell;
-	private double pBuy;
-	/***
-	 * total of money
-	 */
-	private double mTotal;
-	private Date mDate;
-	private MarketType marketType;
+    private double pSell;
+    private double pBuy;
+    /**
+     * total of money
+     */
+    private double mTotal;
+    private Date mDate;
+    private MarketType marketType;
 
-	public double getAmount() {
-		return mAmount;
-	}
+    public double getAmount() {
+        return mAmount;
+    }
 
-	public void setAmount(double mAmount) {
-		this.mAmount = mAmount;
-	}
+    public void setAmount(double mAmount) {
+        this.mAmount = mAmount;
+    }
 
-	public double getLevel() {
-		return mLevel;
-	}
+    public double getLevel() {
+        return mLevel;
+    }
 
-	public void setLevel(double mLevel) {
-		this.mLevel = mLevel;
-	}
+    public void setLevel(double mLevel) {
+        this.mLevel = mLevel;
+    }
 
-	public double getHigh() {
-		return pHigh;
-	}
+    public double getHigh() {
+        return pHigh;
+    }
 
-	public double getDefaultExchangeHigh() {
-		return pHigh * ExchangeUtil.getRate(getMarketType());
-	}
+    public double getDefaultExchangeHigh() {
+        return pHigh * ExchangeUtil.getRate(getMarketType());
+    }
 
-	public void setHigh(double pHigh) {
-		this.pHigh = pHigh;
-	}
+    public void setHigh(double pHigh) {
+        this.pHigh = pHigh;
+    }
 
-	public double getLow() {
-		return pLow;
-	}
+    public double getLow() {
+        return pLow;
+    }
 
-	public double getDefaultExchangeLow() {
-		return pLow * ExchangeUtil.getRate(getMarketType());
-	}
+    public double getDefaultExchangeLow() {
+        return pLow * ExchangeUtil.getRate(getMarketType());
+    }
 
-	public void setLow(double pLow) {
-		this.pLow = pLow;
-	}
+    public void setLow(double pLow) {
+        this.pLow = pLow;
+    }
 
-	public double getDefaultExchangePrice() {
-		return pNew * ExchangeUtil.getRate(getMarketType());
+    public double getDefaultExchangePrice() {
+        return pNew * ExchangeUtil.getRate(getMarketType());
 
-	}
+    }
 
-	public double getPrice() {
-		return pNew;
-	}
+    public double getPrice() {
+        return pNew;
+    }
 
-	public void setNew(double pNew) {
-		this.pNew = pNew;
-	}
+    public void setNew(double pNew) {
+        this.pNew = pNew;
+    }
 
-	public double getTotal() {
-		return mTotal;
-	}
+    public double getTotal() {
+        return mTotal;
+    }
 
-	public void setTotal(double mTotal) {
-		this.mTotal = mTotal;
-	}
+    public void setTotal(double mTotal) {
+        this.mTotal = mTotal;
+    }
 
-	public double getAmp() {
-		return mAmp;
-	}
+    public double getAmp() {
+        return mAmp;
+    }
 
-	public void setAmp(double mAmp) {
-		this.mAmp = mAmp;
-	}
+    public void setAmp(double mAmp) {
+        this.mAmp = mAmp;
+    }
 
-	public double getOpen() {
-		return pOpen;
-	}
+    public double getOpen() {
+        return pOpen;
+    }
 
-	public void setOpen(double pOpen) {
+    public void setOpen(double pOpen) {
 
-		this.pOpen = pOpen;
-	}
+        this.pOpen = pOpen;
+    }
 
 
-	public Date getDate() {
-		return mDate;
-	}
+    public Date getDate() {
+        return mDate;
+    }
 
-	public void setDate(Date mDate) {
-		this.mDate = mDate;
-	}
+    public void setDate(Date mDate) {
+        this.mDate = mDate;
+    }
 
-	public MarketType getMarketType() {
-		return marketType;
-	}
+    public MarketType getMarketType() {
+        return marketType;
+    }
 
-	public void setMarketType(MarketType marketType) {
-		this.marketType = marketType;
-	}
+    public void setMarketType(MarketType marketType) {
+        this.marketType = marketType;
+    }
 
-	public double getSell() {
-		return pSell;
-	}
+    public double getSell() {
+        return pSell;
+    }
 
-	public double getDefaultExchangeSell() {
-		return pSell * ExchangeUtil.getRate(getMarketType());
-	}
+    public double getDefaultExchangeSell() {
+        return pSell * ExchangeUtil.getRate(getMarketType());
+    }
 
-	public void setSell(double pSell) {
-		this.pSell = pSell;
-	}
+    public void setSell(double pSell) {
+        this.pSell = pSell;
+    }
 
-	public double getBuy() {
-		return pBuy;
-	}
+    public double getBuy() {
+        return pBuy;
+    }
 
-	public double getDefaultExchangeBuy() {
-		return pBuy * ExchangeUtil.getRate(getMarketType());
-	}
+    public double getDefaultExchangeBuy() {
+        return pBuy * ExchangeUtil.getRate(getMarketType());
+    }
 
-	public void setBuy(double pBuy) {
-		this.pBuy = pBuy;
-	}
+    public void setBuy(double pBuy) {
+        this.pBuy = pBuy;
+    }
 
-	private static Ticker formatTicker(JSONObject json, MarketType marketType)
-			throws JSONException {
-		Ticker ticker = new Ticker();
-		if (!json.isNull(VOLUME)) {
-			ticker.setAmount(json.getDouble(VOLUME) / Math.pow(10, 8));
-		}
-		if (!json.isNull(HIGH)) {
-			ticker.setHigh(json.getDouble(HIGH) / 100);
-		}
-		if (!json.isNull(LOW)) {
-			ticker.setLow(json.getDouble(LOW) / 100);
-		}
-		if (!json.isNull(LAST)) {
-			ticker.setNew(json.getDouble(LAST) / 100);
-		}
-		if (!json.isNull(BID)) {
-			ticker.setBuy(json.getDouble(BID) / 100);
-		}
-		if (!json.isNull(ASK)) {
-			ticker.setSell(json.getDouble(ASK) / 100);
-		}
+    private static Ticker formatTicker(JSONObject json, MarketType marketType)
+            throws JSONException {
+        Ticker ticker = new Ticker();
+        if (!json.isNull(VOLUME)) {
+            ticker.setAmount(json.getDouble(VOLUME) / Math.pow(10, 8));
+        }
+        if (!json.isNull(HIGH)) {
+            ticker.setHigh(json.getDouble(HIGH) / 100);
+        }
+        if (!json.isNull(LOW)) {
+            ticker.setLow(json.getDouble(LOW) / 100);
+        }
+        if (!json.isNull(LAST)) {
+            ticker.setNew(json.getDouble(LAST) / 100);
+        }
+        if (!json.isNull(BID)) {
+            ticker.setBuy(json.getDouble(BID) / 100);
+        }
+        if (!json.isNull(ASK)) {
+            ticker.setSell(json.getDouble(ASK) / 100);
+        }
 
-		ticker.setAmp(-1);
-		ticker.setTotal(-1);
-		ticker.setLevel(-1);
-		ticker.setOpen(-1);
-		ticker.setMarketType(marketType);
-		return ticker;
+        ticker.setAmp(-1);
+        ticker.setTotal(-1);
+        ticker.setLevel(-1);
+        ticker.setOpen(-1);
+        ticker.setMarketType(marketType);
+        return ticker;
 
-	}
+    }
 
-	public static List<Ticker> formatList(JSONObject json) throws JSONException {
-		List<Ticker> tickers = new ArrayList<Ticker>();
-		for (int i = 0; i < MarketType.values().length; i++) {
-			String key = Integer.toString(i + 1);
-			if (!json.isNull(key)) {
-				JSONObject tickerJson = json.getJSONObject(key);
-				Ticker ticker = formatTicker(tickerJson, MarketType.values()[i]);
-				tickers.add(ticker);
-			}
-		}
-		return tickers;
-	}
+    public static List<Ticker> formatList(JSONObject json) throws JSONException {
+        List<Ticker> tickers = new ArrayList<Ticker>();
+        for (MarketType marketType : MarketType.values()) {
+            String key = Integer.toString(BitherjSettings.getMarketValue(marketType));
+            if (!json.isNull(key)) {
+                JSONObject tickerJson = json.getJSONObject(key);
+                Ticker ticker = formatTicker(tickerJson, marketType);
+                tickers.add(ticker);
+            }
+        }
+        return tickers;
+    }
 
 }

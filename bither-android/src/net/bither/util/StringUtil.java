@@ -21,12 +21,7 @@ import android.content.ClipData;
 import android.content.Context;
 
 import net.bither.BitherApplication;
-import net.bither.bitherj.exception.ScriptException;
-import net.bither.bitherj.script.Script;
-import net.bither.bitherj.utils.Utils;
 
-import java.text.DecimalFormat;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

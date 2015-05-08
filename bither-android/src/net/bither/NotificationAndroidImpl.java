@@ -20,7 +20,6 @@ import android.content.Intent;
 
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.NotificationService;
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.util.BroadcastUtil;

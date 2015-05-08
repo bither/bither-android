@@ -24,7 +24,6 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.WalletUtils;
 
 public class DialogPrivateKeyText extends CenterDialog implements View
         .OnClickListener, DialogInterface.OnDismissListener {

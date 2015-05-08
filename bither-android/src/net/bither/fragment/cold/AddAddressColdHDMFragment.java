@@ -31,8 +31,6 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
-import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.preference.AppSharedPreference;
@@ -44,7 +42,6 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.BackupUtil;
 import net.bither.util.KeyUtil;
 import net.bither.xrandom.HDMKeychainColdUEntropyActivity;
 

@@ -33,7 +33,6 @@ import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
 import net.bither.db.TxDatabaseHelper;
-
 import net.bither.exception.UEHandler;
 import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.service.BlockchainService;

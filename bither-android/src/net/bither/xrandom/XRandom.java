@@ -18,7 +18,6 @@ package net.bither.xrandom;
 
 import net.bither.util.LogUtil;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
 
 public class XRandom extends SecureRandom {

@@ -19,7 +19,6 @@
 package net.bither.xrandom;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -31,35 +30,23 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ProgressBar;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.cold.AddColdAddressActivity;
 import net.bither.activity.hot.AddHotAddressActivity;
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.preference.AppSharedPreference;
-import net.bither.runnable.ThreadNeedService;
-import net.bither.service.BlockchainService;
-import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
-import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IDialogPasswordListener;
-import net.bither.util.KeyUtil;
 import net.bither.util.PlaySound;
 import net.bither.xrandom.audio.AudioVisualizerView;
 import net.bither.xrandom.sensor.SensorVisualizerView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public abstract class UEntropyActivity extends BaseFragmentActivity implements UEntropyCollector

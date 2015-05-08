@@ -31,15 +31,12 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
-import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
-import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 

@@ -91,7 +91,6 @@ public class BitherSetting {
     }
 
 
-
 //    public enum Currency {
 //        USD("USD"), CNY("CNY"), EUR("EUR"), GBP("GBP"), JPY("JPY"), KRW("KRW"), CAD("CAD"), AUD("AUD");
 //
@@ -161,6 +160,12 @@ public class BitherSetting {
             case MARKET796:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_796);
+                break;
+            case BTCTRADE:
+                name = BitherApplication.mContext.getString(R.string.market_name_btctrade);
+                break;
+            case COINBASE:
+                name = BitherApplication.mContext.getString(R.string.market_name_coinbase);
                 break;
             default:
                 name = BitherApplication.mContext

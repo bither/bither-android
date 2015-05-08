@@ -22,7 +22,6 @@ import android.os.Looper;
 
 import net.bither.R;
 import net.bither.bitherj.AbstractApp;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.http.Http400Exception;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;

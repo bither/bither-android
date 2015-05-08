@@ -168,11 +168,13 @@ public class ExchangeUtil {
             case OKCOIN:
             case BTCCHINA:
             case CHBTC:
+            case BTCTRADE:
                 return Currency.CNY;
             case MARKET796:
             case BTCE:
             case BITSTAMP:
             case BITFINEX:
+            case COINBASE:
                 return Currency.USD;
             default:
                 break;
