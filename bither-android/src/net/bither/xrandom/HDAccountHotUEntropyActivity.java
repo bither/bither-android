@@ -73,10 +73,8 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
     }
 
     private class GenerateThread extends ThreadNeedService {
-        private double saveProgress = 0.1;
-        private double startProgress = 0.01;
-        private double progressKeyRate = 0.5;
-        private double progressEntryptRate = 0.5;
+        final private double saveProgress = 0.02;
+        final private double startProgress = 0.02;
 
         private long startGeneratingTime;
 
@@ -119,8 +117,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
         @Override
         public void runWithService(BlockchainService service) {
             boolean success = false;
-            double progress = startProgress;
-            double itemProgress = (1.0 - startProgress - saveProgress);
+            onProgress(startProgress);
 
             try {
                 if (service != null) {
@@ -136,22 +133,26 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                byte[] entropy = new byte[16];
-                xRandom.nextBytes(entropy);
-                progress += itemProgress * progressKeyRate;
-                onProgress(progress);
+                HDAccount hdAccount = new HDAccount(xRandom, password, new HDAccount
+                        .HDAccountGenerationDelegate() {
+
+                    @Override
+                    public void onHDAccountGenerationProgress(double p) {
+                        onProgress(Math.min(1.0, p * (1.0 - startProgress - saveProgress) +
+                                startProgress));
+                    }
+                });
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);
                     return;
                 }
 
-                HDAccount hdAccount = new HDAccount(entropy, password);
+
                 words = hdAccount.getSeedWords(password);
                 KeyUtil.setHDAccount(hdAccount);
 
-                progress += itemProgress * progressEntryptRate;
-                onProgress(progress);
+                onProgress(1);
 
                 entropyCollector.stop();
                 success = true;

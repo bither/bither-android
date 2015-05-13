@@ -56,7 +56,6 @@ import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.exception.PasswordException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
-import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;

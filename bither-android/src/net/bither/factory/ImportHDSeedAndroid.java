@@ -31,7 +31,6 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.List;

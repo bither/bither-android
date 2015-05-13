@@ -40,6 +40,8 @@
     <color name="market_color_btce">#ff25bebc</color>
     <color name="market_color_796">#ffe31f21</color>
     <color name="market_color_bitfinex">#ffa3bd0b</color>
+    <color name="market_color_btctrade">#ffa85800</color>
+    <color name="market_color_coinbase">#ff1567b1</color>
 
     <!-- scanner -->
     <color name="scan_mask">#60000000</color>
@@ -96,4 +98,9 @@
     <color name="password_strength_medium">#ffa321</color>
     <color name="password_strength_strong">#62c462</color>
     <color name="password_strength_very_strong">#62c462</color>
+
+    <!-- vanity address -->
+    <color name="vanity_address_glow">#00bbff</color>
+    <color name="vanity_address_text">#d8f5ff</color>
+    <color name="vanity_address_qr_bg">#2b2f32</color>
 </resources>

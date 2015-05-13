@@ -31,8 +31,6 @@ import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;
-import net.bither.ui.base.dialog.DialogPassword;
-import net.bither.util.HDMSingularAndroid;
 import net.bither.util.KeyUtil;
 
 /**

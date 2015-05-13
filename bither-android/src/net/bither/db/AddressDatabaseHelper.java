@@ -10,7 +10,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 5;
+    public static final int DB_VERSION = 6;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -25,8 +25,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_HDM_ADDRESSES_SQL);
         db.execSQL(AbstractDb.CREATE_PASSWORD_SEED_SQL);
         db.execSQL(AbstractDb.CREATE_ALIASES_SQL);
-
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT);
+        db.execSQL(AbstractDb.CREATE_VANITY_ADDRESS_SQL);
 
 
     }
@@ -53,6 +53,9 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
                 v3ToV4(db);
             case 4:
                 v4Tov5(db);
+            case 5:
+                v5ToV6(db);
+
         }
     }
 
@@ -89,5 +92,11 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
     private void v4Tov5(SQLiteDatabase db) {
         //v1.3.4
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT);
+    }
+
+    private void v5ToV6(SQLiteDatabase db) {
+        //v1.3.5
+        db.execSQL(AbstractDb.CREATE_VANITY_ADDRESS_SQL);
+
     }
 }

@@ -26,12 +26,10 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
-import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.dialog.CenterDialog;

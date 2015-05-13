@@ -34,10 +34,9 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
-
+import net.bither.R;
 import net.bither.bitherj.BitherjSettings.KlineTimeType;
 import net.bither.bitherj.BitherjSettings.MarketType;
-import net.bither.R;
 import net.bither.bitherj.utils.Utils;
 import net.bither.charts.event.ITouchEventResponse;
 import net.bither.charts.view.MACandleStickChart;

@@ -21,8 +21,8 @@ import android.os.Handler;
 
 import com.google.bitcoin.store.WalletProtobufSerializer;
 
-import net.bither.bitherj.core.Address;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.UpgradeAddressUtil;

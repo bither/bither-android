@@ -22,12 +22,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.bitherj.db.AbstractDb;
 
-public class BitherDatabaseHelper extends SQLiteOpenHelper {
+public class TxDatabaseHelper extends SQLiteOpenHelper {
 
     public static final int DB_VERSION = 2;
     private static final String DB_NAME = "bitherj.db";
 
-    public BitherDatabaseHelper(Context context) {
+    public TxDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
@@ -90,7 +90,7 @@ public class BitherDatabaseHelper extends SQLiteOpenHelper {
 
     private void v1Tov2(SQLiteDatabase db) {
         //v1.34
-        db.execSQL("alter table outs add column hd_account_id integer;");
+        db.execSQL(AbstractDb.ADD_HD_ACCOUNT_ID_FOR_OUTS);
         createHDAccountAddress(db);
     }
 

@@ -16,8 +16,8 @@
 
 package net.bither.runnable;
 
-import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.api.GetKlineApi;
 import net.bither.charts.entity.IStickEntity;
 import net.bither.model.KLine;
@@ -51,7 +51,7 @@ public class GetKLineRunnable extends BaseRunnable {
                     this.mKlineTimeType);
             getKlineApi.handleHttpGet();
 
-        JSONArray jsonArray = new JSONArray(getKlineApi.getResult());
+            JSONArray jsonArray = new JSONArray(getKlineApi.getResult());
             List<IStickEntity> entityList = ChartsUtil.formatJsonArray(this.marketType,
                     this.mKlineTimeType, jsonArray);
 

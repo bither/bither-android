@@ -19,6 +19,7 @@ package net.bither.util;
 import android.os.Handler;
 import android.os.Looper;
 
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.api.GetExchangeTrendApi;
 import net.bither.model.TrendingGraphicData;
@@ -44,8 +45,7 @@ public class TrendingGraphicUtil {
             final MarketType marketType,
             final TrendingGraphicListener trendingGraphicListener) {
 
-        TrendingGraphicData trendingGraphicData = trendingDatas[marketType
-                .getValue()];
+        TrendingGraphicData trendingGraphicData = trendingDatas[BitherjSettings.getMarketValue(marketType)];
         if (trendingGraphicData != null && !trendingGraphicData.isExpired()) {
             return trendingGraphicData;
         }
@@ -61,7 +61,7 @@ public class TrendingGraphicUtil {
                     JSONArray jsonArray = new JSONArray(getExchangeTrendApi
                             .getResult());
                     final TrendingGraphicData trendingGraphicData = TrendingGraphicData.format(jsonArray);
-                    trendingDatas[marketType.getValue()] = trendingGraphicData;
+                    trendingDatas[BitherjSettings.getMarketValue(marketType)] = trendingGraphicData;
                     if (trendingGraphicListener != null) {
                         new Handler(Looper.getMainLooper())
                                 .post(new Runnable() {

@@ -146,6 +146,11 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 //            tvNoTransactions.setVisibility(View.GONE);
 //            llMonitorFailed.setVisibility(View.VISIBLE);
 //        }
+        if (address.isHDAccount()) {
+            ibtnBalanceDetail.setVisibility(View.GONE);
+        } else {
+            ibtnBalanceDetail.setVisibility(View.VISIBLE);
+        }
         this.address = address;
         strAddress = address.getAddress();
         if(balanceDetailFuture != null){
@@ -220,7 +225,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
+            DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
                     .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
                     .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
         }

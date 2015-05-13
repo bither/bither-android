@@ -20,7 +20,6 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -235,14 +234,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
-                            if (BitherjSettings.DEV_DEBUG) {
-                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
-                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
-
-                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
-                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
-
-                            }
+//                            if (BitherjSettings.DEV_DEBUG) {
+//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+//
+//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
+//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
+//
+//                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

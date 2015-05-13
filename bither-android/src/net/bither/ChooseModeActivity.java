@@ -56,7 +56,6 @@ import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogUpgrade;
-import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;

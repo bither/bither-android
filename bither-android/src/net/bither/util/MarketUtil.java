@@ -17,72 +17,73 @@
 package net.bither.util;
 
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
-import net.bither.bitherj.BitherjSettings.MarketType;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MarketUtil {
-	private static ArrayList<Market> markets = new ArrayList<Market>();
+    private static ArrayList<Market> markets = new ArrayList<Market>();
 
-	public static ArrayList<Market> getMarkets() {
-		synchronized (markets) {
-			if (markets.size() == 0) {
-				for (MarketType marketType : MarketType.values()) {
-					markets.add(new Market(marketType));
-				}
-			}
-			return markets;
-		}
-	}
+    public static ArrayList<Market> getMarkets() {
+        synchronized (markets) {
+            if (markets.size() == 0) {
+                for (MarketType marketType : MarketType.values()) {
+                    markets.add(new Market(marketType));
+                }
+            }
+            return markets;
+        }
+    }
 
-	public static Market getMarket(MarketType marketType) {
-		if (markets.size() == 0) {
-			getMarkets();
-		}
-		synchronized (markets) {
+    public static Market getMarket(MarketType marketType) {
+        if (markets.size() == 0) {
+            getMarkets();
+        }
+        synchronized (markets) {
 
-			if (markets.size() > 0) {
-				for (Market market : markets) {
-					if (market.getMarketType() == marketType) {
-						return market;
-					}
-				}
-			}
-			return null;
-		}
+            if (markets.size() > 0) {
+                for (Market market : markets) {
+                    if (market.getMarketType() == marketType) {
+                        return market;
+                    }
+                }
+            }
+            return null;
+        }
 
-	}
+    }
 
-	public static Market getDefaultMarket() {
-		BitherjSettings.MarketType marketType = AppSharedPreference.getInstance()
-				.getDefaultMarket();
-		Market market = getMarket(marketType);
-		return market;
-	}
+    public static Market getDefaultMarket() {
+        BitherjSettings.MarketType marketType = AppSharedPreference.getInstance()
+                .getDefaultMarket();
+        Market market = getMarket(marketType);
+        return market;
+    }
 
-	public static Ticker getTickerOfDefaultMarket() {
-		Market market = getDefaultMarket();
-		if (market != null) {
-			return market.getTicker();
-		}
-		return null;
+    public static Ticker getTickerOfDefaultMarket() {
+        Market market = getDefaultMarket();
+        if (market != null) {
+            return market.getTicker();
+        }
+        return null;
 
-	}
+    }
 
-	public static void setTickerList(List<Ticker> tickerList) {
-		if (tickerList != null && tickerList.size() > 0) {
-			synchronized (markets) {
-				for (Ticker ticker : tickerList) {
-					Market market = getMarket(ticker.getMarketType());
-					if (market != null) {
-						market.setTicker(ticker);
-					}
-				}
-			}
-		}
+    public static void setTickerList(List<Ticker> tickerList) {
+        if (tickerList != null && tickerList.size() > 0) {
+            synchronized (markets) {
+                for (Ticker ticker : tickerList) {
+                    Market market = getMarket(ticker.getMarketType());
+                    if (market != null) {
+                        market.setTicker(ticker);
+                    }
+                }
+            }
+        }
 
-	}
+    }
 }

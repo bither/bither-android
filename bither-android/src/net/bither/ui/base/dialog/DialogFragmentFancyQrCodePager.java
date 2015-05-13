@@ -21,6 +21,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -28,11 +31,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.style.CharacterStyle;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
@@ -40,6 +51,7 @@ import net.bither.qrcode.Qr;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
+import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -54,9 +66,17 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
 
     public static final String FragmentTag = "DialogFragmentFancyQrCodePager";
     public static final String ContentKey = "Content";
+    public static final String VanityLengthKey = "VanityLength";
+
+    private static final float VanityShareGapRate = 0.1f;
+    private static final float VanityShareMarginRate = 0.1f;
+    private static final float VanityShareQrSizeRate = 0.9f;
+    private static final float VanityShareWaterMarkHeightRate = 0.1f;
 
     private View vContainer;
+    private TextView tvAddress;
     private String content;
+    private int vanityLength;
     private ViewPager pager;
     private ImageButton tbtnShowAvatar;
     private View ivShowAvatarSeparator;
@@ -64,12 +84,17 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     private QrCodeThemeChangeListener listener;
     private Activity activity;
 
-    public static DialogFragmentFancyQrCodePager newInstance(String content) {
+    public static DialogFragmentFancyQrCodePager newInstance(String content, int vanityLength) {
         DialogFragmentFancyQrCodePager dialog = new DialogFragmentFancyQrCodePager();
         Bundle bundle = new Bundle();
         bundle.putString(ContentKey, content);
+        bundle.putInt(VanityLengthKey, vanityLength);
         dialog.setArguments(bundle);
         return dialog;
+    }
+
+    public static DialogFragmentFancyQrCodePager newInstance(String content) {
+        return newInstance(content, 0);
     }
 
     @Override
@@ -77,6 +102,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NORMAL, R.style.QrCodePager);
         content = getArguments().getString(ContentKey);
+        vanityLength = getArguments().getInt(VanityLengthKey, 0);
         adapter = new PagerAdapter();
     }
 
@@ -84,6 +110,7 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         vContainer = inflater.inflate(R.layout.dialog_fancy_qr_code_pager, container, false);
+        tvAddress = (TextView) vContainer.findViewById(R.id.tv_address);
         pager = (ViewPager) vContainer.findViewById(R.id.pager);
         tbtnShowAvatar = (ImageButton) vContainer.findViewById(R.id.cbx_show_avatar);
         ivShowAvatarSeparator = vContainer.findViewById(R.id.iv_show_avatar_separator);
@@ -92,10 +119,13 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         vContainer.findViewById(R.id.ibtn_save).setOnClickListener(this);
         pager.setOffscreenPageLimit(1);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
-        pager.getLayoutParams().width = pager.getLayoutParams().height = size;
+        pager.getLayoutParams().width = size;
+        pager.getLayoutParams().height = (int) (size * (vanityLength > 0 ?
+                DialogFragmentFancyQrCodeSinglePage.VanitySizeRate : 1));
         pager.setAdapter(adapter);
         pager.setCurrentItem(AppSharedPreference.getInstance().getFancyQrCodeTheme().ordinal());
         tbtnShowAvatar.setOnClickListener(showAvatarCheckedChange);
+        configureVanityAddress();
         return vContainer;
     }
 
@@ -189,7 +219,8 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             if (position >= 0 && position < Qr.QrCodeTheme.values().length) {
                 theme = Qr.QrCodeTheme.values()[position];
             }
-            return DialogFragmentFancyQrCodeSinglePage.newInstance(content, theme).setShowAvatar
+            return DialogFragmentFancyQrCodeSinglePage.newInstance(content, theme, vanityLength >
+                    0).setShowAvatar
                     (tbtnShowAvatar.isSelected()).setOnClickListener(DialogFragmentFancyQrCodePager.this);
         }
 
@@ -262,9 +293,64 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         }
         if (f != null && f instanceof DialogFragmentFancyQrCodeSinglePage) {
             DialogFragmentFancyQrCodeSinglePage page = (DialogFragmentFancyQrCodeSinglePage) f;
-            return page.getQrCode();
+            Bitmap qr = page.getQrCode();
+            if (vanityLength > 0) {
+                Bitmap bmpWaterMark = BitmapFactory.decodeResource(getResources(), R.drawable
+                        .pin_code_water_mark);
+                int qrSize = (int) (qr.getHeight() * VanityShareQrSizeRate);
+                int tvWidth = tvAddress.getWidth();
+                int tvHeight = tvAddress.getHeight();
+                int width = Math.max(tvWidth, qrSize);
+                int margin = (int) (width * VanityShareMarginRate);
+                int waterMarkHeight = (int) (qrSize * VanityShareWaterMarkHeightRate);
+                int waterMarkWidth = waterMarkHeight * bmpWaterMark.getWidth() / bmpWaterMark
+                        .getHeight();
+                Bitmap bmp = Bitmap.createBitmap(width + margin * 2, qrSize + tvHeight +
+                        waterMarkHeight + (int) (VanityShareGapRate * qrSize) +
+                        margin * 2, Bitmap.Config.ARGB_8888);
+                Bitmap tvBmp = ImageManageUtil.getBitmapFromView(tvAddress);
+                Canvas c = new Canvas(bmp);
+                c.drawColor(getResources().getColor(R.color.vanity_address_qr_bg));
+                c.drawBitmap(tvBmp, (bmp.getWidth() - tvBmp.getWidth()) / 2, margin, null);
+                c.drawBitmap(qr, null, new Rect((bmp.getWidth() - qrSize) / 2, bmp.getHeight() -
+                        margin - waterMarkHeight - qrSize, (bmp.getWidth() - qrSize) / 2 +
+                        qrSize, bmp.getHeight() - margin - waterMarkHeight), null);
+                c.drawBitmap(bmpWaterMark, null, new Rect((bmp.getWidth() - waterMarkWidth) / 2,
+                        bmp.getHeight() - margin - waterMarkHeight, (bmp.getWidth() -
+                        waterMarkWidth) / 2 + waterMarkWidth, bmp.getHeight() - margin), null);
+                return bmp;
+            } else {
+                return qr;
+            }
         }
         return null;
+    }
+
+    private void configureVanityAddress() {
+        if (vanityLength > 0) {
+            float radiusRate = 0.36f;
+            float dxRate = 0f;
+            float dyRate = 0f;
+            float size = tvAddress.getTextSize();
+            SpannableStringBuilder spannable = new SpannableStringBuilder(content);
+
+            ShadowSpan shadow = new ShadowSpan(size * radiusRate, size * dxRate, size * dyRate,
+                    getResources().getColor(R.color.vanity_address_glow));
+            RelativeSizeSpan bigger = new RelativeSizeSpan(1.3f);
+            ForegroundColorSpan color = new ForegroundColorSpan(getResources().getColor(R.color
+                    .vanity_address_text));
+            spannable.setSpan(shadow, 0, vanityLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(bigger, 0, vanityLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(color, 0, vanityLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            spannable.insert(vanityLength, " ");
+            RelativeSizeSpan smaller = new RelativeSizeSpan(0.6f);
+            spannable.setSpan(smaller, vanityLength, vanityLength + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            tvAddress.setText(spannable);
+        } else {
+            tvAddress.setText(content);
+        }
     }
 
     public Qr.QrCodeTheme getActiveTheme() {
@@ -296,4 +382,22 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
         return this;
     }
 
+    private class ShadowSpan extends CharacterStyle {
+        private float dx;
+        private float dy;
+        private float radius;
+        private int color;
+
+        public ShadowSpan(float radius, float dx, float dy, int color) {
+            this.radius = radius;
+            this.dx = dx;
+            this.dy = dy;
+            this.color = color;
+        }
+
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            tp.setShadowLayer(radius, dx, dy, color);
+        }
+    }
 }

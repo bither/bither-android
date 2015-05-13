@@ -145,23 +145,26 @@ public class AppSharedPreference {
     }
 
     private MarketType getMarketType() {
-        int type = this.mPreferences.getInt(DEFAULT_MARKET, -1);
-        if (type == -1) {
+        int orderValue = this.mPreferences.getInt(DEFAULT_MARKET, -1);
+        if (orderValue == -1) {
             return null;
         }
-        return MarketType.values()[type];
+        int type = orderValue + 1;
+        return BitherjSettings.getMarketType(type);
 
     }
 
+    //marketType  begin 0
     public void setMarketType(MarketType marketType) {
-        this.mPreferences.edit().putInt(DEFAULT_MARKET, marketType.ordinal()).commit();
+        int orderValue = BitherjSettings.getMarketValue(marketType) - 1;
+        this.mPreferences.edit().putInt(DEFAULT_MARKET, orderValue).commit();
     }
 
     private void setDefault() {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
-            setMarketType(MarketType.HUOBI);
+            setMarketType(MarketType.BTCCHINA);
         } else {
             setMarketType(MarketType.BITSTAMP);
         }

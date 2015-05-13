@@ -43,7 +43,6 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;

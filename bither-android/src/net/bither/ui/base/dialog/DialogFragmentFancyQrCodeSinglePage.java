@@ -18,6 +18,7 @@ package net.bither.ui.base.dialog;
 
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,21 +34,24 @@ import net.bither.qrcode.Qr;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.listener.IGetAvatarListener;
 import net.bither.util.ImageManageUtil;
-import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
 public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements FancyQrCodeThread
         .FancyQrCodeListener {
     public static final String ContentTag = "Content";
+    public static final String ShowVanityTag = "ShowVanity";
     public static final String ThemeTag = "Theme";
 
     private static final int QrCodeSize = Math.min(UIUtil.getScreenHeight(),
             UIUtil.getScreenWidth());
 
+    public static final float VanitySizeRate = 0.7f;
+
     private View.OnClickListener clickListener;
 
     private String content;
+    private boolean showVanity;
     private Qr.QrCodeTheme theme;
     private View vContainer;
     private FrameLayout flQrContainer;
@@ -59,16 +63,22 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
 
     private boolean isShowAvatar = true;
 
-    public static DialogFragmentFancyQrCodeSinglePage newInstance(String content,
-                                                                  Qr.QrCodeTheme theme) {
+    public static DialogFragmentFancyQrCodeSinglePage newInstance(String content, Qr.QrCodeTheme
+            theme, boolean showVanity) {
         DialogFragmentFancyQrCodeSinglePage page = new DialogFragmentFancyQrCodeSinglePage();
         Bundle bundle = new Bundle();
         bundle.putString(ContentTag, content);
         if (theme != null) {
             bundle.putInt(ThemeTag, theme.ordinal());
         }
+        bundle.putBoolean(ShowVanityTag, showVanity);
         page.setArguments(bundle);
         return page;
+    }
+
+    public static DialogFragmentFancyQrCodeSinglePage newInstance(String content, Qr.QrCodeTheme
+            theme) {
+        return newInstance(content, theme, false);
     }
 
     @Override
@@ -76,6 +86,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         content = bundle.getString(ContentTag);
+        showVanity = bundle.getBoolean(ShowVanityTag, false);
         int themeOrdinal = bundle.getInt(ThemeTag, 0);
         if (themeOrdinal >= 0 && themeOrdinal < Qr.QrCodeTheme.values().length) {
             theme = Qr.QrCodeTheme.values()[themeOrdinal];
@@ -98,7 +109,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
         ivAvatar = (ImageView) vContainer.findViewById(R.id.iv_avatar);
         pb = (ProgressBar) vContainer.findViewById(R.id.pb);
         ivQr.getLayoutParams().height = ivQr.getLayoutParams().width = QrCodeSize;
-        ivAvatar.getLayoutParams().height = ivAvatar.getLayoutParams().height = (int) (QrCodeSize
+        ivAvatar.getLayoutParams().height = ivAvatar.getLayoutParams().width = (int) (QrCodeSize
                 * FancyQrCodeThread.AvatarSizeRate);
         vContainer.setOnClickListener(clickListener);
         if (AppSharedPreference.getInstance().hasUserAvatar() && isShowAvatar) {
@@ -107,6 +118,7 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
             ivAvatar.setVisibility(View.GONE);
         }
         configureImages();
+        configureVanityAddress();
         return vContainer;
     }
 
@@ -124,11 +136,14 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
 
     public Bitmap getQrCode() {
         if (flQrContainer.getVisibility() == View.VISIBLE) {
-            if (ivAvatar.getVisibility() == View.VISIBLE) {
-                Bitmap bmp = ImageManageUtil.getBitmapFromView(flQrContainer);
-                if (bmp == null) {
-                    LogUtil.w("QR", "draw qr and avatar null");
+            if (ivAvatar.getVisibility() == View.VISIBLE || showVanity) {
+                Bitmap bmp = Bitmap.createBitmap(flQrContainer.getWidth(), flQrContainer
+                        .getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas c = new Canvas(bmp);
+                if (showVanity) {
+                    c.drawColor(getResources().getColor(R.color.vanity_address_qr_bg));
                 }
+                flQrContainer.draw(c);
                 return bmp;
             } else {
                 return qrCode;
@@ -183,7 +198,6 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
                     if (ivAvatar != null) {
                         configureImages();
                     }
-
                 }
 
                 @Override
@@ -210,5 +224,20 @@ public class DialogFragmentFancyQrCodeSinglePage extends Fragment implements Fan
             vContainer.setOnClickListener(clickListener);
         }
         return this;
+    }
+
+    private void configureVanityAddress() {
+        if (showVanity) {
+            int qrSize = (int) (QrCodeSize * VanitySizeRate);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) ivQr.getLayoutParams();
+            lp.height = lp.width = qrSize;
+
+            lp = (FrameLayout.LayoutParams) flQrContainer.getLayoutParams();
+            lp.height = lp.width = qrSize;
+
+            lp = (FrameLayout.LayoutParams) ivAvatar.getLayoutParams();
+            lp.width = lp.height = (int) (qrSize * FancyQrCodeThread.AvatarSizeRate * 0.8f);
+            ivQr.setBackgroundResource(R.drawable.vanity_qr_shadow);
+        }
     }
 }

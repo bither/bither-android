@@ -20,18 +20,11 @@ package net.bither.util;
 import android.os.Handler;
 import android.os.Looper;
 
-import net.bither.bitherj.core.Address;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.BitherjSettings;
-import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.exception.AddressFormatException;
-import net.bither.bitherj.utils.Base58;
-import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
@@ -53,7 +46,7 @@ public class BackupUtil {
     private static AppSharedPreference appSharedPreference = AppSharedPreference
             .getInstance();
     private static long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
-    public static String BACKUP_KEY_SPLIT_MUTILKEY_STRING = "\n";
+
 
     private BackupUtil() {
 
@@ -73,7 +66,7 @@ public class BackupUtil {
         File file = FileUtil.getBackupKeyOfHot();
         String str = Utils.readFile(file);
         if (str.contains(address)) {
-            String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
+            String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
             for (String backupStr : backupStrArray) {
                 if (backupStr.contains(address)) {
                     String[] strArray = QRCodeUtil.splitString(backupStr);
@@ -105,7 +98,7 @@ public class BackupUtil {
                 File file = files[i];
                 String str = Utils.readFile(file);
                 if (str.contains(address)) {
-                    String[] backupStrArray = str.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
+                    String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
                     for (String backupStr : backupStrArray) {
                         if (backupStr.contains(address)) {
                             String[] strArray = QRCodeUtil.splitString(backupStr);
@@ -179,7 +172,7 @@ public class BackupUtil {
         String keyStrs = Utils.readFile(file);
         String[] result = null;
         if (!Utils.isEmpty(keyStrs)) {
-            result = keyStrs.split(BACKUP_KEY_SPLIT_MUTILKEY_STRING);
+            result = keyStrs.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
         }
         return result;
     }
@@ -212,6 +205,7 @@ public class BackupUtil {
 
         }
 
+
         private void backupPrivateKey() {
             File file;
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
@@ -219,44 +213,8 @@ public class BackupUtil {
             } else {
                 file = FileUtil.getBackupFileOfCold();
             }
-            String backupString = "";
+            String backupString = PrivateKeyUtil.getBackupPrivateKeyStr();
 
-            if (AddressManager.getInstance().getPrivKeyAddresses() == null) {
-                return;
-            }
-            for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
-                if (address != null) {
-                    PasswordSeed passwordSeed = new PasswordSeed(address.getAddress(), address.getFullEncryptPrivKey());
-                    backupString = backupString
-                            + passwordSeed.toPasswordSeedString()
-                            + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
-
-                }
-            }
-            HDMKeychain keychain = AddressManager.getInstance().getHdmKeychain();
-            if (keychain != null) {
-                try {
-                    if (!keychain.isInRecovery()) {
-                        String address = keychain.getFirstAddressFromDb();
-                        backupString += QRCodeUtil.HDM_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
-                                + QRCodeUtil.QR_CODE_SPLIT
-                                + keychain.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
-                    }
-                } catch (AddressFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-            HDAccount hdAccount = AddressManager.getInstance().getHdAccount();
-            if (hdAccount != null) {
-                try {
-                    String address = hdAccount.getFirstAddressFromDb();
-                    backupString += QRCodeUtil.HD_QR_CODE_FLAG + Base58.bas58ToHexWithAddress(address)
-                            + QRCodeUtil.QR_CODE_SPLIT
-                            + hdAccount.getFullEncryptPrivKey() + BackupUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING;
-                } catch (AddressFormatException e) {
-                    e.printStackTrace();
-                }
-            }
             if (!Utils.isEmpty(backupString)) {
                 try {
                     Utils.writeFile(backupString.getBytes(), file);

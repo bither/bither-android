@@ -24,7 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -132,7 +131,7 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
                     @Override
                     public void run() {
                         dp.dismiss();
-                        tvPrivateKey.setText(WalletUtils.formatHashFromCharSequence(privateKey,
+                        tvPrivateKey.setText(Utils.formatHashFromCharSequence(privateKey,
                                 4, 16));
                         tvAddress.setText(WalletUtils.formatHash(address, 4, 12));
                         llInput.setVisibility(View.GONE);

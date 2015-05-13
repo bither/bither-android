@@ -72,7 +72,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback,

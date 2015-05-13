@@ -118,7 +118,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                                 AddAddressHotHDAccountFragment.this.dp.show();
                             }
                         });
-                        hdAccount = new HDAccount(new SecureRandom(), password);
+                        hdAccount = new HDAccount(new SecureRandom(), password, null);
                         final ArrayList<String> words = new ArrayList<String>();
                         try {
                             words.addAll(hdAccount.getSeedWords(password));

@@ -25,17 +25,14 @@ import android.text.style.StyleSpan;
 import android.text.style.TypefaceSpan;
 
 import net.bither.BitherSetting;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.script.Script;
 import net.bither.bitherj.utils.Utils;
-import net.bither.preference.AppSharedPreference;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -60,24 +57,6 @@ public class WalletUtils {
                 BitherSetting.CHAR_THIN_SPACE);
     }
 
-    // remeber to wipe #address
-    public static SecureCharSequence formatHashFromCharSequence(@Nonnull final SecureCharSequence address, final int groupSize, final int lineSize) {
-        int length = address.length();
-        length = length + length / groupSize - 1;
-        char[] chars = new char[length];
-        for (int i = 0; i < length; i++) {
-            if (i % (groupSize + 1) == groupSize) {
-                if ((i + 1) % (lineSize + lineSize / groupSize) == 0) {
-                    chars[i] = '\n';
-                } else {
-                    chars[i] = ' ';
-                }
-            } else {
-                chars[i] = address.charAt(i - i / (groupSize + 1));
-            }
-        }
-        return new SecureCharSequence(chars);
-    }
 
     public static boolean isInternal(@Nonnull final Tx tx) {
         if (tx.isCoinBase()) {

@@ -16,8 +16,8 @@
 
 package net.bither.util;
 
-import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.model.KLine;
 
 import java.io.File;

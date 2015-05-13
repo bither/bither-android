@@ -31,7 +31,6 @@ import net.bither.model.Market;
 import net.bither.model.Ticker;
 import net.bither.preference.AppSharedPreference;
 import net.bither.util.ExchangeUtil;
-import net.bither.util.StringUtil;
 
 public class MarketFragmentListItemView extends FrameLayout implements
         MarketTickerChangedObserver {

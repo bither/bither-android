@@ -22,7 +22,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.os.StrictMode;
 
 import net.bither.activity.cold.ColdActivity;
@@ -33,11 +32,9 @@ import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
-import net.bither.db.BitherDatabaseHelper;
-
+import net.bither.db.TxDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.mnemonic.MnemonicCodeAndroid;
-import net.bither.qrcode.Qr;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.LinuxSecureRandom;
 
@@ -77,7 +74,7 @@ public class BitherApplication extends Application {
         new LinuxSecureRandom();
         super.onCreate();
         mContext = getApplicationContext();
-        mDbHelper = new BitherDatabaseHelper(mContext);
+        mDbHelper = new TxDatabaseHelper(mContext);
         mAddressDbHelper = new AddressDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();

@@ -32,7 +32,6 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.CurrencyTextView;
-import net.bither.util.StringUtil;
 import net.bither.util.WalletUtils;
 
 import java.math.BigInteger;

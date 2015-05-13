@@ -31,8 +31,8 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
-import net.bither.bitherj.utils.Utils;
 import net.bither.bitherj.factory.ImportPrivateKey;
+import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.qrcode.ScanActivity;
 import net.bither.ui.base.listener.IDialogPasswordListener;

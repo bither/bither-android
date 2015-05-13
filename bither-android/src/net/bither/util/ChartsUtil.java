@@ -19,9 +19,9 @@ package net.bither.util;
 import android.graphics.Color;
 
 import net.bither.BitherApplication;
-import net.bither.bitherj.BitherjSettings.MarketType;
-import net.bither.bitherj.BitherjSettings.KlineTimeType;
 import net.bither.R;
+import net.bither.bitherj.BitherjSettings.KlineTimeType;
+import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.charts.entity.BitherOHLCEntity;
 import net.bither.charts.entity.DateValueEntity;
 import net.bither.charts.entity.IStickEntity;

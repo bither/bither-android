@@ -25,7 +25,6 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.ISetting;
 import net.bither.bitherj.NotificationService;
 import net.bither.bitherj.api.TrustCert;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.preference.AppSharedPreference;
 import net.bither.preference.PersistentCookieStore;

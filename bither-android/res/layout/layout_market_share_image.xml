@@ -32,31 +32,14 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_below_margin"
-        android:alpha="0.4" >
+        android:layout_height="@dimen/title_bar_below_margin">
 
-        <LinearLayout
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="16sp"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:src="@drawable/symbol_btc" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="ither"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-        </LinearLayout>
+            android:layout_margin="14dp"
+            android:src="@drawable/pin_code_water_mark"/>
     </FrameLayout>
 
 </LinearLayout>

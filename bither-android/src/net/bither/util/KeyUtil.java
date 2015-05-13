@@ -17,23 +17,19 @@
 
 package net.bither.util;
 
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.ECKey;
-import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.utils.PrivateKeyUtil;
-import net.bither.bitherj.crypto.PasswordSeed;
-import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.IUEntropy;
 import net.bither.xrandom.XRandom;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
