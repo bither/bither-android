@@ -31,7 +31,6 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
-import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -116,7 +115,8 @@ public class AddAddressWatchOnlyView extends FrameLayout {
             if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
                 final String content = data
                         .getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (Utils.isEmpty(content) || !checkQrCodeContent(content)) {
+                if (Utils.isEmpty(content) ||
+                        !QRCodeEnodeUtil.checkPubkeysQRCodeContent(content)) {
                     DropdownMessage
                             .showDropdownMessage(
                                     activity,
@@ -137,19 +137,6 @@ public class AddAddressWatchOnlyView extends FrameLayout {
         return false;
     }
 
-    private boolean checkQrCodeContent(String content) {
-        String[] strs = QRCodeUtil.splitString(content);
-        for (String str : strs) {
-            boolean checkCompressed = str.length() == 66 || ((str.length() == 67)
-                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
-            boolean checkUnCompressed = str.length() == 130 || ((str.length() == 131)
-                    && (str.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0));
-            if (!checkCompressed && !checkUnCompressed) {
-                return false;
-            }
-        }
-        return true;
-    }
 
     private void processQrCodeContent(String content, BlockchainService service) {
         try {
