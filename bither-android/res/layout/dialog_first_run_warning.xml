@@ -78,6 +78,28 @@
             android:text="@string/first_run_dialog_line_2"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:src="@drawable/first_run_dialog_dot"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/first_run_dialog_line_3"
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
     <Button
         android:id="@+id/btn_ok"
         android:layout_width="match_parent"
