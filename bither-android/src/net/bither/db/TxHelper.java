@@ -121,6 +121,17 @@ public class TxHelper {
                 cv = new ContentValues();
                 applyContentValues(outItem, cv);
                 db.insert(AbstractDb.Tables.OUTS, null, cv);
+            } else {
+                if (outItem.getHDAccountId() > -1) {
+                    cv = new ContentValues();
+                    cv.put(AbstractDb.OutsColumns.HD_ACCOUNT_ID,
+                            outItem.getHDAccountId());
+                    db.update(AbstractDb.Tables.OUTS, cv,
+                            " tx_hash=? and out_sn=? ", new String[]{
+                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                            });
+
+                }
             }
             if (!Utils.isEmpty(outItem.getOutAddress())) {
                 addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem.getTxHash())));
