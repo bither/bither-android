@@ -362,6 +362,7 @@
     <string name="first_run_dialog_title">為了保護您的比特幣:</string>
     <string name="first_run_dialog_line_1">請不要卸載比太錢包</string>
     <string name="first_run_dialog_line_2">請不要清除比太數據</string>
+    <string name="first_run_dialog_line_3">請牢記您的密碼</string>
 
     <!-- upgrade -->
     <string name="begin_upgrade">正在升級…\n1.請不要退出應用\n2.請不要關閉手機\n3.請不要關閉手機屏幕</string>
