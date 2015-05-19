@@ -519,7 +519,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         if (amount > 0) {
             isValidAmounts = true;
         }
-        boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
+        String address = etAddress.getText().toString().trim();
+        boolean isValidAddress = Utils.validBicoinAddress(address);
         btnSend.setEnabled(isValidAddress && isValidAmounts);
     }
 

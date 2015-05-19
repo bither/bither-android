@@ -68,8 +68,9 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
         if (btc > 0) {
             btcAmount = btc;
             tx = null;
-            if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
-                toAddress = etAddress.getText().toString().trim();
+            String address = etAddress.getText().toString().trim();
+            if (Utils.validBicoinAddress(address)) {
+                toAddress = address;
                 if (!dp.isShowing()) {
                     dp.show();
                 }

@@ -108,7 +108,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         configureDonate();
     }
 
-    protected void initAddress(){
+    protected void initAddress() {
         if (getIntent().getExtras().containsKey(BitherSetting.INTENT_REF
                 .ADDRESS_POSITION_PASS_VALUE_TAG)) {
             addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
@@ -302,11 +302,12 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         }
     };
 
-    protected void sendClicked(){
+    protected void sendClicked() {
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
-            if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
-                if (Utils.compareString(etAddress.getText().toString().trim(),
+            String address = etAddress.getText().toString().trim();
+            if (Utils.validBicoinAddress(address)) {
+                if (Utils.compareString(address,
                         dialogSelectChangeAddress.getChangeAddress().getAddress())) {
                     DropdownMessage.showDropdownMessage(SendActivity.this,
                             R.string.select_change_address_change_to_same_warn);
@@ -315,8 +316,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                 try {
                     CompleteTransactionRunnable completeRunnable = new
                             CompleteTransactionRunnable(addressPosition,
-                            amountCalculatorLink.getAmount(), etAddress.getText().toString()
-                            .trim(), dialogSelectChangeAddress.getChangeAddress().getAddress
+                            amountCalculatorLink.getAmount(), address
+                            , dialogSelectChangeAddress.getChangeAddress().getAddress
                             (), new SecureCharSequence(etPassword.getText()));
                     completeRunnable.setHandler(completeTransactionHandler);
                     Thread thread = new Thread(completeRunnable);
@@ -478,7 +479,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
             isValidAmounts = true;
         } else {
         }
-        boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
+        String address = etAddress.getText().toString().trim();
+        boolean isValidAddress = Utils.validBicoinAddress(address);
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);

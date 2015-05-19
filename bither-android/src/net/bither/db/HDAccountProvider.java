@@ -428,6 +428,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         return txItemList;
     }
 
+
     @Override
     public long sentFromAccount(int hdAccountId, byte[] txHash) {
         String sql = "select  sum(o.out_value) out_value from ins i,outs o where" +
@@ -573,6 +574,16 @@ public class HDAccountProvider implements IHDAccountProvider {
         }
         c.close();
         return result;
+    }
+
+    @Override
+    public int getUnspendOutCountByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+        return 0;
+    }
+
+    @Override
+    public List<Out> getUnspendOutByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+        return null;
     }
 
 
