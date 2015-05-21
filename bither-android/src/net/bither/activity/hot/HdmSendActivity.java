@@ -209,7 +209,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             try {
                 dp.setWait();
                 dp.setCancelable(false);
-                if(!dp.isShowing()){
+                if (!dp.isShowing()) {
                     dp.show();
                 }
                 new CommitTransactionThread(dp, addressPosition, tx, true, true, HdmSendActivity.this).start();
@@ -512,7 +512,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             isValidAmounts = true;
         } else {
         }
-        boolean isValidAddress = Utils.validBicoinAddress(etAddress.getText().toString());
+        String address = etAddress.getText().toString().trim();
+        boolean isValidAddress = Utils.validBicoinAddress(address);
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
@@ -802,7 +803,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if(dp.isShowing()){
+                                if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
                                 new DialogConfirmTask(HdmSendActivity.this, getString(R.string.hdm_reset_server_password_password_wrong_confirm),
@@ -813,22 +814,22 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                                                 try {
                                                     lock.lock();
                                                     changePasswordCondition.signal();
-                                                }finally {
+                                                } finally {
                                                     lock.unlock();
                                                 }
                                             }
                                         }, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                toChangePassword = false;
-                                                try {
-                                                    lock.lock();
-                                                    changePasswordCondition.signal();
-                                                }finally {
-                                                    lock.unlock();
-                                                }
-                                            }
-                                        }).show();
+                                    @Override
+                                    public void run() {
+                                        toChangePassword = false;
+                                        try {
+                                            lock.lock();
+                                            changePasswordCondition.signal();
+                                        } finally {
+                                            lock.unlock();
+                                        }
+                                    }
+                                }).show();
                             }
                         });
                         try {
@@ -837,11 +838,11 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         } finally {
                             lock.unlock();
                         }
-                        if(!toChangePassword){
+                        if (!toChangePassword) {
                             throw new CompleteTransactionRunnable.HDMSignUserCancelExcetion();
                         }
                         resetServerPasswordUtil.setPassword(password);
-                        if(!resetServerPasswordUtil.changePassword()){
+                        if (!resetServerPasswordUtil.changePassword()) {
                             throw new CompleteTransactionRunnable.HDMSignUserCancelExcetion();
                         }
                         return getOtherSignature(addressIndex, password, unsignHash, tx);
@@ -849,7 +850,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                         throw new CompleteTransactionRunnable.HDMServerSignException(R.string
                                 .hdm_address_sign_tx_server_error);
                     }
-                } else if(e instanceof KeyCrypterException) {
+                } else if (e instanceof KeyCrypterException) {
                     throw new PasswordException("hdm password decrypting error");
                 } else {
                     throw new RuntimeException(e);

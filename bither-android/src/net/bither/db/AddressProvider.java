@@ -44,10 +44,20 @@ public class AddressProvider implements IAddressProvider {
     public boolean changePassword(CharSequence oldPassword, CharSequence newPassword) {
         SQLiteDatabase readDb = this.mDb.getReadableDatabase();
         HashMap<String, String> addressesPrivKeyHashMap = new HashMap<String, String>();
-        String sql = "select address,encrypt_private_key from addresses where encrypt_private_key is not null";
+        String sql = "select address,encrypt_private_key,pub_key,is_xrandom from addresses where encrypt_private_key is not null";
         Cursor c = readDb.rawQuery(sql, null);
         while (c.moveToNext()) {
-            addressesPrivKeyHashMap.put(c.getString(0), c.getString(1));
+            String address = c.getString(0);
+            String encryptPrivateKey = c.getString(1);
+            boolean isCompress = true;
+            try {
+                byte[] pubKey = Base58.decode(c.getString(2));
+                isCompress = pubKey.length == 33;
+            } catch (AddressFormatException e) {
+                e.printStackTrace();
+            }
+            int isXRandom = c.getInt(3);
+            addressesPrivKeyHashMap.put(address, new EncryptedData(encryptPrivateKey).toEncryptedStringForQRCode(isCompress, isXRandom == 1));
         }
         c.close();
 
@@ -111,7 +121,7 @@ public class AddressProvider implements IAddressProvider {
         c.close();
 
         for (Map.Entry<String, String> kv : addressesPrivKeyHashMap.entrySet()) {
-            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+            kv.setValue(EncryptedData.changePwdKeepFlag(kv.getValue(), oldPassword, newPassword));
         }
         if (hdmEncryptPassword != null) {
             hdmEncryptPassword = EncryptedData.changePwd(hdmEncryptPassword, oldPassword, newPassword);

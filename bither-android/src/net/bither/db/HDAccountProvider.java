@@ -428,6 +428,7 @@ public class HDAccountProvider implements IHDAccountProvider {
         return txItemList;
     }
 
+
     @Override
     public long sentFromAccount(int hdAccountId, byte[] txHash) {
         String sql = "select  sum(o.out_value) out_value from ins i,outs o where" +
@@ -573,6 +574,49 @@ public class HDAccountProvider implements IHDAccountProvider {
         }
         c.close();
         return result;
+    }
+
+    @Override
+    public int getUnspendOutCountByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+        int result = 0;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select count(tx_hash) cnt from outs where out_address in " +
+                "(select address from hd_account_addresses where path_type =? and out_status=?) " +
+                "and hd_account_id=?";
+        Cursor c = db.rawQuery(sql, new String[]{Integer.toString(pathType.getValue())
+                , Integer.toString(Out.OutStatus.unspent.getValue())
+                , Integer.toString(hdAccountId)
+        });
+        if (c.moveToNext()) {
+            int idColumn = c.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                result = c.getInt(idColumn);
+            }
+        }
+        c.close();
+        return result;
+    }
+
+    @Override
+    public List<Out> getUnspendOutByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+        List<Out> outList = new ArrayList<Out>();
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select * from outs where out_address in " +
+                    "(select address from hd_account_addresses where path_type =? and out_status=?) " +
+                    "and hd_account_id=?";
+            Cursor c = db.rawQuery(sql, new String[]{Integer.toString(pathType.getValue())
+                    , Integer.toString(Out.OutStatus.unspent.getValue())
+                    , Integer.toString(hdAccountId)
+            });
+            while (c.moveToNext()) {
+                outList.add(TxHelper.applyCursorOut(c));
+            }
+            c.close();
+        } catch (AddressFormatException e) {
+            e.printStackTrace();
+        }
+        return outList;
     }
 
 

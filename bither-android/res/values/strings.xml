@@ -379,6 +379,7 @@
     <string name="first_run_dialog_title">To protect your bitcoin:</string>
     <string name="first_run_dialog_line_1">NEVER UNINSTALL Bither.</string>
     <string name="first_run_dialog_line_2">NEVER CLEAR Bither\'s data.</string>
+    <string name="first_run_dialog_line_3">NEVER FORGET your password.</string>
 
     <!-- upgrade -->
     <string name="begin_upgrade">Upgrading...\n1.Do not exit Bither.\n2.Do not turn off the phone.\n3.Do not turn off the screen.</string>
