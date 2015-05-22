@@ -421,7 +421,7 @@ public class ColdActivity extends BaseFragmentActivity {
                             ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
-                                        PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
+                                        PrivateKeyUtil.getEncryptedString(key), false, key.isFromXRandom());
                                 addressList.add(address);
                                 key.clearPrivateKey();
 

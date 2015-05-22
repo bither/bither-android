@@ -210,7 +210,7 @@ public class RawPrivateKeyBinaryFragment extends Fragment implements IDialogPass
                 Utils.wipeBytes(data);
                 password.wipe();
                 Address address = new Address(key.toAddress(), key.getPubKey(),
-                        PrivateKeyUtil.getEncryptedString(key), false);
+                        PrivateKeyUtil.getEncryptedString(key), false, false);
                 key.clearPrivateKey();
                 AddressManager.getInstance().addAddress(address);
 
