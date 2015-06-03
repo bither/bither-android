@@ -24,7 +24,7 @@ import net.bither.bitherj.db.AbstractDb;
 
 public class TxDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 3;
     private static final String DB_NAME = "bitherj.db";
 
     public TxDatabaseHelper(Context context) {
@@ -41,6 +41,7 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         createPeersTable(db);
         createHDAccountAddress(db);
 
+
     }
 
     @Override
@@ -48,6 +49,9 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         switch (oldVersion) {
             case 1:
                 v1Tov2(db);
+            case 2:
+                v2Tov3(db);
+
 
         }
     }
@@ -87,11 +91,21 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESS_INDEX);
     }
 
+    private void createEnterpriseHDM(SQLiteDatabase db) {
+        db.execSQL(AbstractDb.CREATE_ENTERPRISE_HDM_ADDRESSES_SQL);
+        db.execSQL(AbstractDb.CREATE_MULTI_SIGN_SET);
+    }
+
 
     private void v1Tov2(SQLiteDatabase db) {
         //v1.34
         db.execSQL(AbstractDb.ADD_HD_ACCOUNT_ID_FOR_OUTS);
         createHDAccountAddress(db);
+    }
+
+    private void v2Tov3(SQLiteDatabase db) {
+        //1.3.7
+        createEnterpriseHDM(db);
     }
 
 }
