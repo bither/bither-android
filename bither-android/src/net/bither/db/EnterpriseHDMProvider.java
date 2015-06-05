@@ -28,6 +28,7 @@ import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IEnterpriseHDMProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
+import net.bither.bitherj.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,11 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.HDM_INDEX, enterpriseHDMAddress.getIndex());
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.ADDRESS, enterpriseHDMAddress.getAddress());
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.IS_SYNCED, enterpriseHDMAddress.isSyncComplete() ? 1 : 0);
+        String pubKeyStr = "pub_key_d%";
+        for (int i = 0; i < enterpriseHDMAddress.pubCount(); i++) {
+            byte[] bytes = enterpriseHDMAddress.getPubkeys().get(i);
+            contentValues.put(Utils.format(pubKeyStr, i), Base58.encode(bytes));
+        }
 
         return contentValues;
 
