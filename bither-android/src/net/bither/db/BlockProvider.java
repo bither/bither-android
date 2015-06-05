@@ -222,31 +222,17 @@ public class BlockProvider implements IBlockProvider {
         return exists;
     }
 
-    public boolean isExist(byte[] blockHash) {
-        boolean result = false;
-        String sql = "select count(0) cnt from blocks where block_hash='" + Base58.encode(blockHash) + "'";
-        SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery(sql, null);
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("cnt");
-            result = c.getInt(idColumn) == 1;
-        }
-        c.close();
-        return result;
-    }
-
     public void addBlocks(List<Block> blockItemList) {
         List<Block> addBlockList = new ArrayList<Block>();
-        List<Block> allBlockList = getAllBlocks();
         for (Block item : blockItemList) {
-            if (!allBlockList.contains(item)) {
+            if (this.blockExists(item.getBlockHash())) {
                 addBlockList.add(item);
             }
         }
-        allBlockList.clear();
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         for (Block item : addBlockList) {
+
             ContentValues cv = new ContentValues();
             applyContentValues(item, cv);
             db.insert(AbstractDb.Tables.BLOCKS, null, cv);
