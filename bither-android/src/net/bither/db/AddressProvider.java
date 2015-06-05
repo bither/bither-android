@@ -295,6 +295,66 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
+    public String getEnterpriseEncryptMnemonicSeed(int hdSeedId) {
+        String encryptSeedMnemonicSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_mnemonic_seed from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptSeedMnemonicSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptSeedMnemonicSeed;
+    }
+
+    @Override
+    public String getEnterpriseEncryptHDSeed(int hdSeedId) {
+        String encryptSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_seed from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptSeed;
+    }
+
+    @Override
+    public String getEnterpriseHDFristAddress(int hdSeedId) {
+        String address = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select hd_address from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                address = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return address;
+    }
+
+    @Override
     public void updateEncrypttMnmonicSeed(int hdSeedId, String encryptMnmonicSeed) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -383,6 +443,24 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.HDSeedsColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
         int seedId = (int) db.insert(AbstractDb.Tables.HDSEEDS, null, cv);
+        if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        return seedId;
+    }
+
+    @Override
+    public int addEnterpriseHDKey(String encryptedMnemonicSeed, String encryptHdSeed, String firstAddress, boolean isXrandom, String addressOfPS) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_MNEMONIC_SEED, encryptedMnemonicSeed);
+        cv.put(AbstractDb.EnterpriseHDAccountColumns.HD_ADDRESS, encryptHdSeed);
+        cv.put(AbstractDb.EnterpriseHDAccountColumns.IS_XRANDOM, isXrandom ? 1 : 0);
+        cv.put(AbstractDb.EnterpriseHDAccountColumns.HD_ADDRESS, firstAddress);
+        int seedId = (int) db.insert(AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT, null, cv);
         if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
             addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
         }
