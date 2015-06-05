@@ -225,7 +225,7 @@ public class BlockProvider implements IBlockProvider {
     public void addBlocks(List<Block> blockItemList) {
         List<Block> addBlockList = new ArrayList<Block>();
         for (Block item : blockItemList) {
-            if (this.blockExists(item.getBlockHash())) {
+            if (!this.blockExists(item.getBlockHash())) {
                 addBlockList.add(item);
             }
         }
