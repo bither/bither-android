@@ -65,7 +65,7 @@ public class BitherApplication extends Application {
     public static boolean isFirstIn = false;
     public static long reloadTxTime = -1;
     public static Context mContext;
-    public static SQLiteOpenHelper mDbHelper;
+    public static SQLiteOpenHelper mTxDbHelper;
     public static SQLiteOpenHelper mAddressDbHelper;
 
 
@@ -74,7 +74,7 @@ public class BitherApplication extends Application {
         new LinuxSecureRandom();
         super.onCreate();
         mContext = getApplicationContext();
-        mDbHelper = new TxDatabaseHelper(mContext);
+        mTxDbHelper = new TxDatabaseHelper(mContext);
         mAddressDbHelper = new AddressDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
@@ -95,7 +95,7 @@ public class BitherApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        mDbHelper.close();
+        mTxDbHelper.close();
     }
 
     public static BitherApplication getBitherApplication() {

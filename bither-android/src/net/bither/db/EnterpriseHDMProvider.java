@@ -37,7 +37,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
     private SQLiteOpenHelper mDb;
 
     private static EnterpriseHDMProvider enterpriseHDMProvider = new EnterpriseHDMProvider(
-            BitherApplication.mDbHelper);
+            BitherApplication.mAddressDbHelper);
 
     public static EnterpriseHDMProvider getInstance() {
         return enterpriseHDMProvider;
@@ -89,12 +89,43 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
 
     @Override
     public List<Integer> getEnterpriseHDMKeychainIds() {
-        return null;
+        List<Integer> hdSeedIds = new ArrayList<Integer>();
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select " + AbstractDb.EnterpriseHDAccountColumns.HD_ACCOUNT_ID + " from " + AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT;
+            c = db.rawQuery(sql, null);
+            while (c.moveToNext()) {
+                hdSeedIds.add(c.getInt(0));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return hdSeedIds;
     }
 
     @Override
     public int getEnterpriseHDMSeedId() {
-        return 0;
+        int hdmSeeid = -1;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select ifnull(max(hd_account_id),-1) from " + AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT;
+            c = db.rawQuery(sql, null);
+            while (c.moveToNext()) {
+                hdmSeeid = c.getInt(0);
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return hdmSeeid;
     }
 
     @Override
@@ -135,6 +166,81 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         return enterpriseHDMAddressList;
 
 
+    }
+
+    @Override
+    public String getEnterpriseEncryptMnemonicSeed(int hdSeedId) {
+        String encryptSeedMnemonicSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_mnemonic_seed from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptSeedMnemonicSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptSeedMnemonicSeed;
+    }
+
+    @Override
+    public String getEnterpriseEncryptHDSeed(int hdSeedId) {
+        String encryptSeed = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select encrypt_seed from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                encryptSeed = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return encryptSeed;
+    }
+
+    @Override
+    public String getEnterpriseHDFristAddress(int hdSeedId) {
+        String address = null;
+        Cursor c = null;
+        try {
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = "select hd_address from enterprise_hd_account where hd_account_id=?";
+            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
+            if (c.moveToNext()) {
+                address = c.getString(0);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            if (c != null)
+                c.close();
+        }
+        return address;
+    }
+
+    @Override
+    public boolean isEnterpriseHDMSeedFromXRandom(int hdSeedId) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select is_xrandom from enterprise_hd_account where hd_account_id=?"
+                , new String[]{Integer.toString(hdSeedId)});
+        boolean isXRandom = false;
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex("is_xrandom");
+            if (idColumn != -1) {
+                isXRandom = cursor.getInt(idColumn) == 1;
+            }
+        }
+        return isXRandom;
     }
 
 

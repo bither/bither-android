@@ -238,7 +238,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 //                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
 //                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
 //
-//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
+                            // SQLiteDatabase txDb = BitherApplication.mTxDbHelper.getReadableDatabase();
 //                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
 //
 //                            }

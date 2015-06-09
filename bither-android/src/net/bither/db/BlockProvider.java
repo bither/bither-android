@@ -35,7 +35,7 @@ import java.util.List;
 
 public class BlockProvider implements IBlockProvider {
 
-    private static BlockProvider blockProvider = new BlockProvider(BitherApplication.mDbHelper);
+    private static BlockProvider blockProvider = new BlockProvider(BitherApplication.mTxDbHelper);
 
     public static BlockProvider getInstance() {
         return blockProvider;

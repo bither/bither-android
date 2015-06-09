@@ -40,7 +40,7 @@ import java.util.List;
 
 public class TxProvider implements ITxProvider {
 
-    private static TxProvider txProvider = new TxProvider(BitherApplication.mDbHelper);
+    private static TxProvider txProvider = new TxProvider(BitherApplication.mTxDbHelper);
 
     public static TxProvider getInstance() {
         return txProvider;

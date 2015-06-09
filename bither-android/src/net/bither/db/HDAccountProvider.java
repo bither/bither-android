@@ -46,7 +46,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     private final static String queryTxHashOfHDAccount = " select  distinct txs.tx_hash from addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address";
     private final static String inQueryTxHashOfHDAccount = " (" + queryTxHashOfHDAccount + ")";
 
-    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mDbHelper);
+    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication.mTxDbHelper);
 
     public static HDAccountProvider getInstance() {
         return hdAccountProvider;

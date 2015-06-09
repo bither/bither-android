@@ -112,6 +112,34 @@ public class AddressProvider implements IAddressProvider {
         }
         c.close();
 
+
+        HashMap<Integer, String> enterpriseHDEncryptSeedHashMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> enterpriseHDEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
+        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from enterprise_hd_account  ", null);
+        while (c.moveToNext()) {
+            int idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDAccountColumns.HD_ACCOUNT_ID);
+            Integer hdAccountId = 0;
+            if (idColumn != -1) {
+                hdAccountId = c.getInt(idColumn);
+            }
+            idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_SEED);
+            if (idColumn != -1) {
+                String encryptSeed = c.getString(idColumn);
+                if (!Utils.isEmpty(encryptSeed)) {
+                    enterpriseHDEncryptSeedHashMap.put(hdAccountId, encryptSeed);
+                }
+            }
+            idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_MNEMONIC_SEED);
+            if (idColumn != -1) {
+                String encryptHDMnemonicSeed = c.getString(idColumn);
+                if (Utils.isEmpty(encryptHDMnemonicSeed)) {
+                    enterpriseHDEncryptMnemonicSeedHashMap.put(hdAccountId, encryptHDMnemonicSeed);
+                }
+            }
+
+        }
+        c.close();
+
         PasswordSeed passwordSeed = null;
         sql = "select password_seed from password_seed limit 1";
         c = readDb.rawQuery(sql, null);
@@ -138,6 +166,15 @@ public class AddressProvider implements IAddressProvider {
         for (Map.Entry<Integer, String> kv : hdEncryptMnemonicSeedHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
+
+        for (Map.Entry<Integer, String> kv : enterpriseHDEncryptSeedHashMap.entrySet()) {
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        for (Map.Entry<Integer, String> kv : enterpriseHDEncryptMnemonicSeedHashMap.entrySet()) {
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+
+
         for (Map.Entry<Integer, String> kv : singularModeBackupHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
@@ -182,6 +219,18 @@ public class AddressProvider implements IAddressProvider {
             writeDb.update(AbstractDb.Tables.HD_ACCOUNT,
                     cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
         }
+
+        for (Map.Entry<Integer, String> kv : enterpriseHDEncryptSeedHashMap.entrySet()) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_SEED, kv.getValue());
+            if (hdEncryptMnemonicSeedHashMap.containsKey(kv.getKey())) {
+                cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_MNEMONIC_SEED
+                        , hdEncryptMnemonicSeedHashMap.get(kv.getKey()));
+            }
+            writeDb.update(AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT,
+                    cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
+        }
+
         if (passwordSeed != null) {
             cv = new ContentValues();
             cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
@@ -294,65 +343,6 @@ public class AddressProvider implements IAddressProvider {
         return encryptHDSeed;
     }
 
-    @Override
-    public String getEnterpriseEncryptMnemonicSeed(int hdSeedId) {
-        String encryptSeedMnemonicSeed = null;
-        Cursor c = null;
-        try {
-            SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select encrypt_mnemonic_seed from enterprise_hd_account where hd_account_id=?";
-            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
-            if (c.moveToNext()) {
-                encryptSeedMnemonicSeed = c.getString(0);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (c != null)
-                c.close();
-        }
-        return encryptSeedMnemonicSeed;
-    }
-
-    @Override
-    public String getEnterpriseEncryptHDSeed(int hdSeedId) {
-        String encryptSeed = null;
-        Cursor c = null;
-        try {
-            SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select encrypt_seed from enterprise_hd_account where hd_account_id=?";
-            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
-            if (c.moveToNext()) {
-                encryptSeed = c.getString(0);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (c != null)
-                c.close();
-        }
-        return encryptSeed;
-    }
-
-    @Override
-    public String getEnterpriseHDFristAddress(int hdSeedId) {
-        String address = null;
-        Cursor c = null;
-        try {
-            SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select hd_address from enterprise_hd_account where hd_account_id=?";
-            c = db.rawQuery(sql, new String[]{Integer.toString(hdSeedId)});
-            if (c.moveToNext()) {
-                address = c.getString(0);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (c != null)
-                c.close();
-        }
-        return address;
-    }
 
     @Override
     public void updateEncrypttMnmonicSeed(int hdSeedId, String encryptMnmonicSeed) {
