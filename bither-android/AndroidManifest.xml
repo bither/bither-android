@@ -278,6 +278,38 @@
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.AddEnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.cold.AddEnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.cold.EnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.EnterpriseHDMSeedUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"

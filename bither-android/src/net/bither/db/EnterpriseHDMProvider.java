@@ -88,6 +88,16 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
     }
 
     @Override
+    public List<Integer> getEnterpriseHDMKeychainIds() {
+        return null;
+    }
+
+    @Override
+    public int getEnterpriseHDMSeedId() {
+        return 0;
+    }
+
+    @Override
     public void addMultiSignSet(int n, int m) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();

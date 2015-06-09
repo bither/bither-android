@@ -620,4 +620,18 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">Vanity Address Length</string>
     <string name="vanity_address_none">None</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">Activate Enterprise Account?</string>
+    <string name="enterprise_hdm_keychain_add">Add Enterprise HDM Account</string>
+    <string name="enterprise_hdm_seed_add">Add Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_add_fail">Add enterprise HDM seed failed</string>
+    <string name="enterprise_hdm_seed">Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_add_note">Add a Seed to Make an Enterprise HDM Account</string>
+    <string name="enterprise_hdm_seed_qr_code">Enterprise HDM Seed QR Code</string>
+    <string name="enterprise_hdm_seed_cosign">Cosign</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">Backup QR Code</string>
+    <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
+    <string name="enterprise_hdm_keychain">Enterprise HDM Keychain</string>
 </resources>

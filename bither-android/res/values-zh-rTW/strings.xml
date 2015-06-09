@@ -600,4 +600,17 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">榮耀地址位數</string>
     <string name="vanity_address_none">無</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">啟用企業賬戶?</string>
+    <string name="enterprise_hdm_keychain_add">新增企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_seed_add">新增企業 HDM 種子</string>
+    <string name="enterprise_hdm_seed_add_fail">新增企業 HDM 種子失敗</string>
+    <string name="enterprise_hdm_seed">企業 HDM 種子</string>
+    <string name="enterprise_hdm_seed_add_note">新增一個種子用來創建企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_seed_qr_code">企業 HDM 種子二維碼</string>
+    <string name="enterprise_hdm_seed_cosign">聯合簽名</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">備份二維碼</string>
+    <string name="enterprise_hdm_seed_backup_phrase">備份密語</string>
+    <string name="enterprise_hdm_keychain">企業 HDM 賬戶</string>
 </resources>

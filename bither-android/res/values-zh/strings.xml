@@ -600,4 +600,17 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">荣耀地址位数</string>
     <string name="vanity_address_none">无</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">激活企业账户?</string>
+    <string name="enterprise_hdm_keychain_add">创建企业 HDM 账户</string>
+    <string name="enterprise_hdm_seed_add">添加企业 HDM 种子</string>
+    <string name="enterprise_hdm_seed_add_fail">添加企业 HDM 种子失败</string>
+    <string name="enterprise_hdm_seed">企业 HDM 种子</string>
+    <string name="enterprise_hdm_seed_add_note">添加一个种子用来创建企业 HDM 账户</string>
+    <string name="enterprise_hdm_seed_qr_code">企业 HDM 种子二维码</string>
+    <string name="enterprise_hdm_seed_cosign">联合签名</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">备份二维码</string>
+    <string name="enterprise_hdm_seed_backup_phrase">备份密语</string>
+    <string name="enterprise_hdm_keychain">企业 HDM 账户</string>
 </resources>
