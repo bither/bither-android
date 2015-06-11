@@ -120,10 +120,31 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     }
 
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
+        private int clickedTime;
+
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(ColdAdvanceActivity.this, RawPrivateKeyActivity.class));
+            v.removeCallbacks(delay);
+            clickedTime++;
+            if (clickedTime >= 7) {
+                startActivity(new Intent(ColdAdvanceActivity.this, EnterpriseHDMSeedActivity
+                        .class));
+                clickedTime = 0;
+                return;
+            }
+            v.postDelayed(delay, 400);
         }
+
+        private Runnable delay = new Runnable() {
+            @Override
+            public void run() {
+                if (clickedTime < 7) {
+                    startActivity(new Intent(ColdAdvanceActivity.this, RawPrivateKeyActivity
+                            .class));
+                }
+                clickedTime = 0;
+            }
+        };
     };
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
