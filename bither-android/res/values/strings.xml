@@ -633,5 +633,5 @@
     <string name="enterprise_hdm_seed_backup_qr_code">Backup QR Code</string>
     <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
-    <string name="enterprise_hdm_keychain">Enterprise HDM Keychain</string>
+    <string name="enterprise_hdm_keychain">Enterprise HDM Account</string>
 </resources>

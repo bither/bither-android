@@ -128,7 +128,6 @@ public class AddEnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                 final DialogPassword.PasswordGetter passwordGetter = new DialogPassword
                         .PasswordGetter(AddEnterpriseHDMSeedActivity.this);
                 final DialogProgress dp = new DialogProgress(v.getContext(), R.string.please_wait);
-                dp.show();
                 new Thread() {
                     @Override
                     public void run() {
@@ -139,6 +138,7 @@ public class AddEnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                         ThreadUtil.runOnMainThread(new Runnable() {
                             @Override
                             public void run() {
+                                dp.show();
                                 v.setKeepScreenOn(true);
                             }
                         });
@@ -160,7 +160,7 @@ public class AddEnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                             }
                         });
                     }
-                };
+                }.start();
 
             }
         }

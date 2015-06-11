@@ -18,10 +18,31 @@
 
 package net.bither.activity.hot;
 
+import android.os.Bundle;
+import android.widget.ListView;
+
+import net.bither.R;
+import net.bither.bitherj.core.EnterpriseHDMAddress;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+
+import java.util.ArrayList;
 
 /**
  * Created by songchenwen on 15/6/9.
  */
 public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
+    private ArrayList<EnterpriseHDMAddress> addresses = new ArrayList<EnterpriseHDMAddress>();
+
+    private ListView lv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_enterprise_hdm_keychain);
+        initView();
+    }
+
+    private void initView() {
+        lv = (ListView) findViewById(R.id.lv);
+    }
 }
