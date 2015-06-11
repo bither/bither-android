@@ -447,7 +447,7 @@ public class AddressProvider implements IAddressProvider {
         db.beginTransaction();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_MNEMONIC_SEED, encryptedMnemonicSeed);
-        cv.put(AbstractDb.EnterpriseHDAccountColumns.HD_ADDRESS, encryptHdSeed);
+        cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_SEED, encryptHdSeed);
         cv.put(AbstractDb.EnterpriseHDAccountColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.EnterpriseHDAccountColumns.HD_ADDRESS, firstAddress);
         int seedId = (int) db.insert(AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT, null, cv);
