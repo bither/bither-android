@@ -190,6 +190,7 @@ public class EnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                dp.dismiss();
                                 if (words != null) {
                                     new DialogHDMSeedWordList(v.getContext(), words).show();
                                 }

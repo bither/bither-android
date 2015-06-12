@@ -28,6 +28,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -52,7 +53,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
 
     private TextView tvText;
     private ImageView ivArrowDown;
-    private boolean ellipsized = false;
+    private boolean ellipsized = true;
 
     private DialogWithArrow dialog;
 
@@ -98,7 +99,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         tvText.setTypeface(null, Typeface.BOLD);
         tvText.setShadowLayer(0.5f, 1, -1, Color.argb(100, 0, 0, 0));
         tvText.setPadding(0, 0, 0, UIUtil.dip2pix(0.75f));
-        tvText.setSingleLine(true);
+        tvText.setLines(1);
         tvText.setEllipsize(TruncateAt.END);
         llIcon.addView(tvText);
         ivArrowDown = new ImageView(getContext());
@@ -136,6 +137,9 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         tvText.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
                                                                    @Override
                                                                    public void onGlobalLayout() {
+                                                                       if (!ellipsized) {
+                                                                           return;
+                                                                       }
                                                                        ellipsized = false;
                                                                        Layout l = tvText.getLayout();
                                                                        if (l != null) {
@@ -202,6 +206,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
                 btc = btc.add(btcHD);
             }
         }
+        ellipsized = true;
         if (btc == null) {
             tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
@@ -221,6 +226,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
     }
 
     public void setText(String text) {
+        ellipsized = true;
         tvText.setText(text);
         ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
     }
