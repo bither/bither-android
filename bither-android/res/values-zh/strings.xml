@@ -613,4 +613,10 @@
     <string name="enterprise_hdm_seed_backup_qr_code">备份二维码</string>
     <string name="enterprise_hdm_seed_backup_phrase">备份密语</string>
     <string name="enterprise_hdm_keychain">企业 HDM 账户</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">选择多重签名模式</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">收集种子二维码</string>
+    <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">添加种子失败</string>
+    <string name="enterprise_hdm_keychain_add_fail">创建企业 HDM 账户失败</string>
+    <string name="next_step">下一步</string>
 </resources>

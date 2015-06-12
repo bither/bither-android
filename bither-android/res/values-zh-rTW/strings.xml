@@ -613,4 +613,10 @@
     <string name="enterprise_hdm_seed_backup_qr_code">備份二維碼</string>
     <string name="enterprise_hdm_seed_backup_phrase">備份密語</string>
     <string name="enterprise_hdm_keychain">企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">選擇多重簽名模式</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">收集種子二維碼</string>
+    <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">新增種子失敗</string>
+    <string name="enterprise_hdm_keychain_add_fail">創建企業 HDM 賬戶失敗</string>
+    <string name="next_step">下一步</string>
 </resources>

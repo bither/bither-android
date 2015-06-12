@@ -634,4 +634,10 @@
     <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
     <string name="enterprise_hdm_keychain">Enterprise HDM Account</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">Choose Multisig Scheme</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">Collect Seed QR Codes</string>
+    <string name="enterprise_hdm_keychain_address_count">How many addresses to generate?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">Add seed wrong</string>
+    <string name="enterprise_hdm_keychain_add_fail">Add Enterprise HDM Account Failed</string>
+    <string name="next_step">Next</string>
 </resources>
