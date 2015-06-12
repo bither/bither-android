@@ -303,6 +303,11 @@
             android:theme="@style/BitherTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMAddressDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name=".xrandom.EnterpriseHDMSeedUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
