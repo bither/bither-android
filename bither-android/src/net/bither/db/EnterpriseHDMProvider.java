@@ -67,7 +67,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.HDM_INDEX, enterpriseHDMAddress.getIndex());
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.ADDRESS, enterpriseHDMAddress.getAddress());
         contentValues.put(AbstractDb.EnterpriseHDMAddressColumns.IS_SYNCED, enterpriseHDMAddress.isSyncComplete() ? 1 : 0);
-        String pubKeyStr = "pub_key_d%";
+        String pubKeyStr = "pub_key_%d";
         for (int i = 0; i < enterpriseHDMAddress.pubCount(); i++) {
             byte[] bytes = enterpriseHDMAddress.getPubkeys().get(i);
             contentValues.put(Utils.format(pubKeyStr, i), Base58.encode(bytes));
@@ -126,6 +126,37 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
                 c.close();
         }
         return hdmSeeid;
+    }
+
+    @Override
+    public int getPubCount() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        int pubCount = 0;
+        Cursor cursor = db.rawQuery("select multi_sign_m from enterprise_multi_sign_set", null);
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignM);
+            if (idColumn != -1) {
+                pubCount = cursor.getInt(idColumn);
+            }
+        }
+        cursor.close();
+        return pubCount;
+    }
+
+    @Override
+    public int getThreshold() {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        int threshold = 0;
+
+        Cursor cursor = db.rawQuery("select multi_sign_n from enterprise_multi_sign_set", null);
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignN);
+            if (idColumn != -1) {
+                threshold = cursor.getInt(idColumn);
+            }
+        }
+        cursor.close();
+        return threshold;
     }
 
     @Override
