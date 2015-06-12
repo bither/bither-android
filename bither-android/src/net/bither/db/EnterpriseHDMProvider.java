@@ -93,7 +93,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select " + AbstractDb.EnterpriseHDAccountColumns.HD_ACCOUNT_ID + " from " + AbstractDb.Tables.ENTERPRISE_HD_ACCOUNT;
+            String sql = "select " + AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_ID + " from " + AbstractDb.Tables.ENTERPRISE_MULTI_SIGN_SET;
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 hdSeedIds.add(c.getInt(0));
@@ -134,7 +134,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         int pubCount = 0;
         Cursor cursor = db.rawQuery("select multi_sign_m from enterprise_multi_sign_set", null);
         if (cursor.moveToNext()) {
-            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignM);
+            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_M);
             if (idColumn != -1) {
                 pubCount = cursor.getInt(idColumn);
             }
@@ -150,7 +150,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
 
         Cursor cursor = db.rawQuery("select multi_sign_n from enterprise_multi_sign_set", null);
         if (cursor.moveToNext()) {
-            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignN);
+            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_N);
             if (idColumn != -1) {
                 threshold = cursor.getInt(idColumn);
             }
@@ -163,8 +163,8 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
     public void addMultiSignSet(int n, int m) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignN, n);
-        cv.put(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignM, m);
+        cv.put(AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_N, n);
+        cv.put(AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_M, m);
         db.insert(AbstractDb.Tables.ENTERPRISE_MULTI_SIGN_SET, null, cv);
 
     }
@@ -177,7 +177,7 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
 
         Cursor cursor = db.rawQuery("select multi_sign_n from enterprise_multi_sign_set", null);
         if (cursor.moveToNext()) {
-            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MultiSignN);
+            int idColumn = cursor.getColumnIndex(AbstractDb.EnterpriseMultiSignSetColumns.MULTI_SIGN_N);
             if (idColumn != -1) {
                 threshold = cursor.getInt(idColumn);
             }
@@ -297,52 +297,72 @@ public class EnterpriseHDMProvider implements IEnterpriseHDMProvider {
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_0);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_1);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_2);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_3);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_4);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_5);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_6);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_7);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_8);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         idColumn = c.getColumnIndex(AbstractDb.EnterpriseHDMAddressColumns.PUB_KEY_9);
         if (idColumn != -1) {
             String pub = c.getString(idColumn);
-            bytes.add(Base58.decode(pub));
+            if (!Utils.isEmpty(pub)) {
+                bytes.add(Base58.decode(pub));
+            }
         }
         EnterpriseHDMAddress.Pubs pubs = new EnterpriseHDMAddress.Pubs(index, threshold, bytes);
         EnterpriseHDMAddress enterpriseHDMAddress = new EnterpriseHDMAddress

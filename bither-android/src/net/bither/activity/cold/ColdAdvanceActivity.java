@@ -20,6 +20,7 @@ package net.bither.activity.cold;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
@@ -57,7 +59,6 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
-import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -67,7 +68,10 @@ import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.FileUtil;
 import net.bither.util.ThreadUtil;
+
+import java.io.File;
 
 
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
@@ -150,9 +154,23 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            hasAnyAction = true;
-            DialogEditPassword dialog = new DialogEditPassword(ColdAdvanceActivity.this);
-            dialog.show();
+
+            if (BitherjSettings.DEV_DEBUG) {
+                try {
+                    final File logTagDir = FileUtil.getDiskDir("log", true);
+                    SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+                    FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+
+                    SQLiteDatabase txDb = BitherApplication.mTxDbHelper.getReadableDatabase();
+                    FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+//            hasAnyAction = true;
+//            DialogEditPassword dialog = new DialogEditPassword(ColdAdvanceActivity.this);
+//            dialog.show();
         }
     };
 
@@ -333,61 +351,61 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView.SettingSelector passwordStrengthCheckSelector = new
             SettingSelectorView.SettingSelector() {
 
-        @Override
-        public int getOptionCount() {
-            return 2;
-        }
+                @Override
+                public int getOptionCount() {
+                    return 2;
+                }
 
-        @Override
-        public CharSequence getOptionName(int index) {
-            if (index == 0) {
-                return getString(R.string.password_strength_check_on);
-            }
-            return getString(R.string.password_strength_check_off);
-        }
+                @Override
+                public CharSequence getOptionName(int index) {
+                    if (index == 0) {
+                        return getString(R.string.password_strength_check_on);
+                    }
+                    return getString(R.string.password_strength_check_off);
+                }
 
-        @Override
-        public CharSequence getOptionNote(int index) {
-            return null;
-        }
+                @Override
+                public CharSequence getOptionNote(int index) {
+                    return null;
+                }
 
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            return null;
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    return null;
+                }
 
-        @Override
-        public CharSequence getSettingName() {
-            return getString(R.string.password_strength_check);
-        }
+                @Override
+                public CharSequence getSettingName() {
+                    return getString(R.string.password_strength_check);
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
-        }
+                @Override
+                public int getCurrentOptionIndex() {
+                    return AppSharedPreference.getInstance().getPasswordStrengthCheck() ? 0 : 1;
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            boolean check = index == 0;
-            if (check) {
-                AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
-            } else {
-                new DialogConfirmTask(ColdAdvanceActivity.this, getString(R.string
-                        .password_strength_check_off_warn), new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadUtil.runOnMainThread(new Runnable() {
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    boolean check = index == 0;
+                    if (check) {
+                        AppSharedPreference.getInstance().setPasswordStrengthCheck(check);
+                    } else {
+                        new DialogConfirmTask(ColdAdvanceActivity.this, getString(R.string
+                                .password_strength_check_off_warn), new Runnable() {
                             @Override
                             public void run() {
-                                AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
-                                ssvPasswordStrengthCheck.loadData();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AppSharedPreference.getInstance().setPasswordStrengthCheck(false);
+                                        ssvPasswordStrengthCheck.loadData();
+                                    }
+                                });
                             }
-                        });
+                        }).show();
                     }
-                }).show();
-            }
-        }
-    };
+                }
+            };
     private SettingSelectorView.SettingSelector importPrivateKeySelector = new
             SettingSelectorView.SettingSelector() {
                 @Override
