@@ -125,6 +125,9 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
                     load();
                 }
             }
+            if (intent.hasExtra(NotificationAndroidImpl.MESSAGE_ADDRESS)) {
+                a = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
+            }
             int itemCount = lv.getChildCount();
             for (int i = 0;
                  i < itemCount;
