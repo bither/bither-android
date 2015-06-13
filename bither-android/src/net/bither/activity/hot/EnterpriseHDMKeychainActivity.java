@@ -18,16 +18,27 @@
 
 package net.bither.activity.hot;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.hot.EnterpriseHDMKeychainAdapter;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
 import net.bither.bitherj.core.EnterpriseHDMKeychain;
+import net.bither.runnable.HandlerMessage;
+import net.bither.ui.base.AddressInfoChangedObserver;
+import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
 
@@ -66,15 +77,70 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     protected void onResume() {
         super.onResume();
         load();
+        registerReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver();
     }
 
     private void load() {
-        if (keychain != null) {
-            addresses.clear();
-            addresses.addAll(keychain.getAddresses());
-            adapter.notifyDataSetChanged();
+        if (AbstractApp.addressIsReady) {
+            if (keychain != null) {
+                addresses.clear();
+                addresses.addAll(keychain.getAddresses());
+                adapter.notifyDataSetChanged();
+            }
         }
     }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BroadcastUtil.ACTION_MARKET);
+        filter.addAction(NotificationAndroidImpl.ACTION_SYNC_BLOCK_AND_WALLET_STATE);
+        filter.addAction(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE);
+        filter.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
+        filter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
+        registerReceiver(broadcastReceiver, filter);
+    }
+
+    private void unregisterReceiver() {
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String a = null;
+
+            if (intent.hasExtra(BroadcastUtil.ACTION_ADDRESS_ERROR)) {
+                int errorCode = intent.getExtras().getInt(BroadcastUtil.ACTION_ADDRESS_ERROR);
+
+                if (HandlerMessage.MSG_ADDRESS_NOT_MONITOR == errorCode) {
+                    int id = R.string.address_monitor_failed_multiple_address;
+                    DropdownMessage.showDropdownMessage(EnterpriseHDMKeychainActivity.this, id);
+                    load();
+                }
+            }
+            int itemCount = lv.getChildCount();
+            for (int i = 0;
+                 i < itemCount;
+                 i++) {
+                View v = lv.getChildAt(i);
+                if (v instanceof AddressInfoChangedObserver) {
+                    AddressInfoChangedObserver o = (AddressInfoChangedObserver) v;
+                    o.onAddressInfoChanged(a);
+                }
+                if (v instanceof MarketTickerChangedObserver) {
+                    MarketTickerChangedObserver o = (MarketTickerChangedObserver) v;
+                    o.onMarketTickerChanged();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
