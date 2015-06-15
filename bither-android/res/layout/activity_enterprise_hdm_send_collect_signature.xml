@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_signature_needed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="30dp"
+                    android:gravity="center"
+                    android:text="@string/enterprise_hdm_keychain_payment_proposal_signature_needed"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="50dp"
+                    android:gravity="left"
+                    android:text="@string/enterprise_hdm_keychain_payment_proposal_signature_collected"
+                    android:textColor="#ccc"
+                    android:textSize="14sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_gravity="center"
+                        android:background="@color/white"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="1px"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:background="@color/white"/>
+
+                        <LinearLayout
+                            android:id="@+id/ll_signatures"
+                            android:layout_width="match_parent"
+                            android:layout_height="16dp"
+                            android:background="@color/card_separator_color"
+                            android:orientation="horizontal">
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_gravity="center"
+                        android:background="@color/white"/>
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/btn_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_small_send_selector"
+                    android:drawableLeft="@drawable/unsigned_transaction_button_icon_mirror_transparent"
+                    android:drawableRight="@drawable/unsigned_transaction_button_icon"
+                    android:padding="10dp"
+                    android:text="@string/enterprise_hdm_keychain_payment_proposal_add_signaure"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/enterprise_hdm_keychain_payment_proposal"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

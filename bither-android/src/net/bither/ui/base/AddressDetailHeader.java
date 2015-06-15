@@ -129,7 +129,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             tvNoTransactions.setVisibility(View.GONE);
         }
         btnBalance.setAmount(address.getBalance());
-        if (address.isHDM() || address.hasPrivKey() || address.isHDAccount()) {
+        if ((address.isHDM() && !(address instanceof EnterpriseHDMAddress)) || address.hasPrivKey
+                () || address.isHDAccount()) {
             btnSend.setCompoundDrawables(null, null, null, null);
         } else {
             Drawable d = getContext().getResources().getDrawable(R.drawable
@@ -244,6 +245,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 }
                 if (address instanceof EnterpriseHDMAddress) {
                     Intent intent = new Intent(activity, EnterpriseHDMSendActivity.class);
+                    intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                            addressPosition);
                     activity.startActivityForResult(intent, BitherSetting.INTENT_REF
                             .SEND_REQUEST_CODE);
                     return;

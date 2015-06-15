@@ -619,4 +619,10 @@
     <string name="enterprise_hdm_keychain_collect_pub_error">添加种子失败</string>
     <string name="enterprise_hdm_keychain_add_fail">创建企业 HDM 账户失败</string>
     <string name="next_step">下一步</string>
+    <string name="enterprise_hdm_keychain_payment_proposal">付款申请</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 个签名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_add_signaure">添加签名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">签名交易失败</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_success">签名交易成功</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集签名</string>
 </resources>

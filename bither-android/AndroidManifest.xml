@@ -308,6 +308,11 @@
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMSendCollectSignatureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name=".xrandom.EnterpriseHDMSeedUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"

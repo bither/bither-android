@@ -28,6 +28,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
@@ -135,8 +136,10 @@ public class SignTxActivity extends SwipeRightActivity implements
         }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
-        if ((qrCodeTransport.getHdmIndex() < 0 && address == null) || (qrCodeTransport
-                .getHdmIndex() >= 0 && !AddressManager.getInstance().hasHDMKeychain())) {
+        if ((qrCodeTransport.getHdmIndex() < 0 && address == null) || (qrCodeTransport.getHdmIndex() >= 0 && !AddressManager.getInstance().hasHDMKeychain()) ||
+                (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() ==
+                        QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()
+                )) {
             btnSign.setEnabled(false);
             tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
         } else {
@@ -161,44 +164,87 @@ public class SignTxActivity extends SwipeRightActivity implements
             public void run() {
                 List<String> strings = null;
                 if (qrCodeTransport.getHdmIndex() >= 0) {
-                    if (!AddressManager.getInstance().hasHDMKeychain()) {
-                        dp.setThread(null);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dp.dismiss();
-                                DropdownMessage.showDropdownMessage(SignTxActivity.this,
-                                        R.string.hdm_send_with_cold_no_requested_seed);
-                            }
-                        });
-                        password.wipe();
-                        return;
-                    }
-                    try {
-                        DeterministicKey key = AddressManager.getInstance().getHdmKeychain()
-                                .getExternalKey(qrCodeTransport.getHdmIndex(), password);
-
-                        List<String> hashes = qrCodeTransport.getHashList();
-                        strings = new ArrayList<String>();
-                        for (String hash : hashes) {
-                            ECKey.ECDSASignature signed = key.sign(Utils.hexStringToByteArray
-                                    (hash));
-                            strings.add(Utils.bytesToHexString(signed.encodeToDER()));
+                    if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
+                            .ColdHDM) {
+                        if (!EnterpriseHDMSeed.hasSeed()) {
+                            dp.setThread(null);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(SignTxActivity.this, R
+                                            .string.hdm_send_with_cold_no_requested_seed);
+                                }
+                            });
+                            password.wipe();
+                            return;
                         }
-                        key.wipe();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        dp.setThread(null);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                dp.dismiss();
-                                DropdownMessage.showDropdownMessage(SignTxActivity.this,
-                                        R.string.hdm_send_with_cold_no_requested_seed);
+                        ArrayList<byte[]> unsigns = new ArrayList<byte[]>();
+                        for (String hash : qrCodeTransport.getHashList()) {
+                            unsigns.add(Utils.hexStringToByteArray(hash));
+                        }
+                        try {
+                            List<byte[]> sigs = EnterpriseHDMSeed.seed().signHashes
+                                    (qrCodeTransport.getHdmIndex(), unsigns, password);
+                            strings = new ArrayList<String>();
+                            for (byte[] sig : sigs) {
+                                strings.add(Utils.bytesToHexString(sig));
                             }
-                        });
-                        password.wipe();
-                        return;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            dp.setThread(null);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(SignTxActivity.this, R
+                                            .string.hdm_send_with_cold_no_requested_seed);
+                                }
+                            });
+                            password.wipe();
+                            return;
+                        }
+
+                    } else {
+                        if (!AddressManager.getInstance().hasHDMKeychain()) {
+                            dp.setThread(null);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(SignTxActivity.this, R
+                                            .string.hdm_send_with_cold_no_requested_seed);
+                                }
+                            });
+                            password.wipe();
+                            return;
+                        }
+                        try {
+                            DeterministicKey key = AddressManager.getInstance().getHdmKeychain()
+                                    .getExternalKey(qrCodeTransport.getHdmIndex(), password);
+
+                            List<String> hashes = qrCodeTransport.getHashList();
+                            strings = new ArrayList<String>();
+                            for (String hash : hashes) {
+                                ECKey.ECDSASignature signed = key.sign(Utils.hexStringToByteArray
+                                        (hash));
+                                strings.add(Utils.bytesToHexString(signed.encodeToDER()));
+                            }
+                            key.wipe();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            dp.setThread(null);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(SignTxActivity.this, R
+                                            .string.hdm_send_with_cold_no_requested_seed);
+                                }
+                            });
+                            password.wipe();
+                            return;
+                        }
                     }
                 } else {
                     Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());

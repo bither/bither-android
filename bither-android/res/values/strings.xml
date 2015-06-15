@@ -640,4 +640,10 @@
     <string name="enterprise_hdm_keychain_collect_pub_error">Add seed wrong</string>
     <string name="enterprise_hdm_keychain_add_fail">Add Enterprise HDM Account Failed</string>
     <string name="next_step">Next</string>
+    <string name="enterprise_hdm_keychain_payment_proposal">Payment Proposal</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">Need %1$d/%2$d Signatures</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_add_signaure">Add Signature</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">Sign transaction failed</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_success">Sign transaction success</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">Signatures Collected</string>
 </resources>
