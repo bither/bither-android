@@ -646,4 +646,6 @@
     <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">Sign transaction failed</string>
     <string name="enterprise_hdm_keychain_payment_proposal_sign_success">Sign transaction success</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">Signatures Collected</string>
+    <string name="enterprise_hdm_keychain_enable_hint">Enter Enterprise Code</string>
+    <string name="enterprise_hdm_keychain_enable_failed">Invalid Enterprise Code</string>
 </resources>

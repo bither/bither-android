@@ -625,4 +625,6 @@
     <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">簽名交易失敗</string>
     <string name="enterprise_hdm_keychain_payment_proposal_sign_success">簽名交易成功</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集簽名</string>
+    <string name="enterprise_hdm_keychain_enable_hint">輸入企業版密碼</string>
+    <string name="enterprise_hdm_keychain_enable_failed">無效的企業版密碼</string>
 </resources>
