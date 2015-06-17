@@ -32,6 +32,7 @@ import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.exception.TxBuilderException;
+import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;

@@ -200,15 +200,8 @@ public class EnterpriseHDMSendCollectSignatureActivity extends SwipeRightFragmen
                         dp.dismiss();
                         if (tx != null) {
                             findViewById(R.id.btn_add).setEnabled(false);
-                            DropdownMessage.showDropdownMessage
-                                    (EnterpriseHDMSendCollectSignatureActivity.this, R.string
-                                            .enterprise_hdm_keychain_payment_proposal_sign_success, new Runnable() {
-                                @Override
-                                public void run() {
-                                    setResult(RESULT_OK);
-                                    finish();
-                                }
-                            });
+                            setResult(RESULT_OK);
+                            finish();
                         } else {
                             pool.clearSignatures();
                             DropdownMessage.showDropdownMessage

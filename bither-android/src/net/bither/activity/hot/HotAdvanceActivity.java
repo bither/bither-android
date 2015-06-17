@@ -72,6 +72,7 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogEnterpriseHDMEnable;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -179,8 +180,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             v.removeCallbacks(delay);
             clickedTime++;
             if (clickedTime >= 7) {
-                startActivity(new Intent(HotAdvanceActivity.this, EnterpriseHDMKeychainActivity
-                        .class));
+                new DialogEnterpriseHDMEnable(HotAdvanceActivity.this).show();
                 clickedTime = 0;
                 return;
             }
