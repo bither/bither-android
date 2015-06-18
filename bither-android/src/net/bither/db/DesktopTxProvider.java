@@ -96,6 +96,16 @@ public class DesktopTxProvider implements IDesktopTxProvider {
     }
 
     @Override
+    public void updateSyncdForIndex(AbstractHD.PathType pathType, int index) {
+
+    }
+
+    @Override
+    public void updateSyncdComplete(DesktopHDMAddress address) {
+
+    }
+
+    @Override
     public List<Tx> getHDAccountUnconfirmedTx() {
         return new ArrayList<Tx>();
     }
