@@ -25,9 +25,12 @@ import android.view.View;
 import android.widget.EditText;
 
 import net.bither.R;
+import net.bither.activity.cold.EnterpriseHDMSeedActivity;
 import net.bither.activity.hot.EnterpriseHDMKeychainActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 
 import java.util.Arrays;
@@ -65,7 +68,12 @@ public class DialogEnterpriseHDMEnable extends CenterDialog implements DialogInt
         if (clickedId == R.id.btn_ok) {
             Sha256Hash hash = Sha256Hash.create(et.getText().toString().trim().getBytes());
             if (Arrays.equals(hash.getBytes(), Utils.hexStringToByteArray(CodeHash))) {
-                activity.startActivity(new Intent(activity, EnterpriseHDMKeychainActivity.class));
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                    activity.startActivity(new Intent(activity, EnterpriseHDMKeychainActivity
+                            .class));
+                } else {
+                    activity.startActivity(new Intent(activity, EnterpriseHDMSeedActivity.class));
+                }
             } else {
                 DropdownMessage.showDropdownMessage(activity, R.string
                         .enterprise_hdm_keychain_enable_failed);

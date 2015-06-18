@@ -38,6 +38,7 @@ import net.bither.ui.base.AddressInfoChangedObserver;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     }
 
     private void initView() {
+        findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         lv = (ListView) findViewById(R.id.lv);
         adapter = new EnterpriseHDMKeychainAdapter(this, addresses);
         lv.setAdapter(adapter);
