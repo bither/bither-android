@@ -18,7 +18,8 @@ import java.util.List;
 
 public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvider {
 
-    private static ColdHDAccountAddressProvider coldHDAccountAddressProvider = new ColdHDAccountAddressProvider(BitherApplication.mAddressDbHelper);
+    private static ColdHDAccountAddressProvider coldHDAccountAddressProvider = new
+            ColdHDAccountAddressProvider(BitherApplication.mAddressDbHelper);
 
     public static ColdHDAccountAddressProvider getInstance() {
         return coldHDAccountAddressProvider;
@@ -32,7 +33,7 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
     }
 
     @Override
-    public int addMonitoredHDAccount( boolean isXrandom,  byte[] externalPub, byte[] internalPub) {
+    public int addMonitoredHDAccount(boolean isXrandom, byte[] externalPub, byte[] internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
@@ -46,7 +47,9 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
     }
 
     @Override
-    public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String firstAddress, boolean isXrandom, String addressOfPS, byte[] externalPub, byte[] internalPub) {
+    public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String
+            firstAddress, boolean isXrandom, String addressOfPS, byte[] externalPub, byte[]
+            internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
@@ -132,7 +135,8 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
         String hdAccountEncryptSeed = null;
 
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select " + AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED + " from cold_hd_account where hd_account_id=? "
+        Cursor c = db.rawQuery("select " + AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED + " from " +
+                "cold_hd_account where hd_account_id=? "
                 , new String[]{Integer.toString(hdSeedId)});
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED);
@@ -148,7 +152,8 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
     public String getHDAccountEncryptMnmonicSeed(int hdSeedId) {
         String hdAccountMnmonicEncryptSeed = null;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        Cursor c = db.rawQuery("select " + AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED + " from cold_hd_account where hd_account_id=? "
+        Cursor c = db.rawQuery("select " + AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED +
+                " from cold_hd_account where hd_account_id=? "
                 , new String[]{Integer.toString(hdSeedId)});
         if (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED);
@@ -182,7 +187,8 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
         Cursor c = null;
         try {
             SQLiteDatabase db = this.mDb.getReadableDatabase();
-            String sql = "select " + AbstractDb.ColdHDAccountColumns.HD_ACCOUNT_ID + " from " + AbstractDb.Tables.COLD_HD_ACCOUNT;
+            String sql = "select " + AbstractDb.ColdHDAccountColumns.HD_ACCOUNT_ID + " from " +
+                    AbstractDb.Tables.COLD_HD_ACCOUNT;
             c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 hdSeedIds.add(c.getInt(0));
@@ -190,9 +196,28 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            if (c != null)
+            if (c != null) {
                 c.close();
+            }
         }
         return hdSeedIds;
+    }
+
+    @Override
+    public boolean hasHDAccountCold() {
+
+        boolean result = false;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select count(address) cnt from cold_hd_account where  encrypt_seed is not " +
+                "null and encrypt_mnemonic_seed is not null";
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                result = cursor.getInt(idColumn) > 0;
+            }
+        }
+        cursor.close();
+        return result;
     }
 }
