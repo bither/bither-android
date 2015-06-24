@@ -113,6 +113,31 @@ public class AddressProvider implements IAddressProvider {
         c.close();
 
 
+        HashMap<Integer, String> coldHDEncryptSeedHashMap = new HashMap<Integer, String>();
+        HashMap<Integer, String> coldHDEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
+        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from cold_hd_account  ", null);
+        while (c.moveToNext()) {
+            int idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.HD_ACCOUNT_ID);
+            Integer hdAccountId = 0;
+            if (idColumn != -1) {
+                hdAccountId = c.getInt(idColumn);
+            }
+            idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED);
+            if (idColumn != -1) {
+                String encryptSeed = c.getString(idColumn);
+                coldHDEncryptSeedHashMap.put(hdAccountId, encryptSeed);
+            }
+            idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED);
+            if (idColumn != -1) {
+                String encryptHDSeed = c.getString(idColumn);
+                coldHDEncryptMnemonicSeedHashMap.put(hdAccountId, encryptHDSeed);
+            }
+
+        }
+        c.close();
+
+
+
         HashMap<Integer, String> enterpriseHDEncryptSeedHashMap = new HashMap<Integer, String>();
         HashMap<Integer, String> enterpriseHDEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
         c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from enterprise_hd_account  ", null);
@@ -167,6 +192,15 @@ public class AddressProvider implements IAddressProvider {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
 
+
+        for (Map.Entry<Integer, String> kv : coldHDEncryptSeedHashMap.entrySet()) {
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+        for (Map.Entry<Integer, String> kv : coldHDEncryptMnemonicSeedHashMap.entrySet()) {
+            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
+        }
+
+
         for (Map.Entry<Integer, String> kv : enterpriseHDEncryptSeedHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
@@ -217,6 +251,17 @@ public class AddressProvider implements IAddressProvider {
                         , hdEncryptMnemonicSeedHashMap.get(kv.getKey()));
             }
             writeDb.update(AbstractDb.Tables.HD_ACCOUNT,
+                    cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
+        }
+
+        for (Map.Entry<Integer, String> kv : coldHDEncryptSeedHashMap.entrySet()) {
+            cv = new ContentValues();
+            cv.put(AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED, kv.getValue());
+            if (hdEncryptMnemonicSeedHashMap.containsKey(kv.getKey())) {
+                cv.put(AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED
+                        , hdEncryptMnemonicSeedHashMap.get(kv.getKey()));
+            }
+            writeDb.update(AbstractDb.Tables.COLD_HD_ACCOUNT,
                     cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
         }
 
