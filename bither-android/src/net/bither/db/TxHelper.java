@@ -99,6 +99,13 @@ public class TxHelper {
         } else {
             cv.putNull(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
         }
+
+        if (outItem.getColdHDAccountId() != -1) {
+            cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+                    outItem.getHDAccountId());
+        } else {
+            cv.putNull(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+        }
     }
 
     public static List<AddressTx> insertOut(SQLiteDatabase db, Tx txItem) {
@@ -108,7 +115,8 @@ public class TxHelper {
         List<AddressTx> addressTxes = new ArrayList<AddressTx>();
         for (Out outItem : txItem.getOuts()) {
             String existSql = "select count(0) cnt from outs where tx_hash=? and out_sn=?";
-            c = db.rawQuery(existSql, new String[]{Base58.encode(outItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            c = db.rawQuery(existSql, new String[]{Base58.encode(outItem.getTxHash()), Integer
+                    .toString(outItem.getOutSn())});
             int cnt = 0;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("cnt");
@@ -128,16 +136,30 @@ public class TxHelper {
                             outItem.getHDAccountId());
                     db.update(AbstractDb.Tables.OUTS, cv,
                             " tx_hash=? and out_sn=? ", new String[]{
-                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
+                                    .getOutSn())
+                            });
+
+                }
+                if (outItem.getColdHDAccountId() > -1) {
+                    cv = new ContentValues();
+                    cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+                            outItem.getHDAccountId());
+                    db.update(AbstractDb.Tables.OUTS, cv,
+                            " tx_hash=? and out_sn=? ", new String[]{
+                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
+                                    .getOutSn())
                             });
 
                 }
             }
             if (!Utils.isEmpty(outItem.getOutAddress())) {
-                addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem.getTxHash())));
+                addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem
+                        .getTxHash())));
             }
             sql = "select tx_hash from ins where prev_tx_hash=? and prev_out_sn=?";
-            c = db.rawQuery(sql, new String[]{Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            c = db.rawQuery(sql, new String[]{Base58.encode(txItem.getTxHash()), Integer.toString
+                    (outItem.getOutSn())});
             boolean isSpentByExistTx = false;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("tx_hash");
@@ -150,7 +172,8 @@ public class TxHelper {
             if (isSpentByExistTx) {
                 sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
                 db.execSQL(sql, new String[]{
-                        Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                        Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(txItem
+                        .getTxHash()), Integer.toString(outItem.getOutSn())
                 });
             }
 
@@ -165,7 +188,8 @@ public class TxHelper {
         List<AddressTx> addressTxes = new ArrayList<AddressTx>();
         for (In inItem : txItem.getIns()) {
             String existSql = "select count(0) cnt from ins where tx_hash=? and in_sn=?";
-            c = db.rawQuery(existSql, new String[]{Base58.encode(inItem.getTxHash()), Integer.toString(inItem.getInSn())});
+            c = db.rawQuery(existSql, new String[]{Base58.encode(inItem.getTxHash()), Integer
+                    .toString(inItem.getInSn())});
             int cnt = 0;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("cnt");
@@ -187,12 +211,14 @@ public class TxHelper {
             while (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("out_address");
                 if (idColumn != -1) {
-                    addressTxes.add(new AddressTx(c.getString(idColumn), Base58.encode(txItem.getTxHash())));
+                    addressTxes.add(new AddressTx(c.getString(idColumn), Base58.encode(txItem
+                            .getTxHash())));
                 }
             }
             c.close();
             sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
-            db.execSQL(sql, new String[]{Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
+            db.execSQL(sql, new String[]{Integer.toString(Out.OutStatus.spent.getValue()), Base58
+                    .encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
         }
         return addressTxes;
 
@@ -299,6 +325,10 @@ public class TxHelper {
         idColumn = c.getColumnIndex(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
         if (idColumn != -1 && !c.isNull(idColumn)) {
             outItem.setHDAccountId(c.getInt(idColumn));
+        }
+        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+        if (idColumn != -1 && !c.isNull(idColumn)) {
+            outItem.setColdHDAccountId(c.getInt(idColumn));
         }
         return outItem;
     }
