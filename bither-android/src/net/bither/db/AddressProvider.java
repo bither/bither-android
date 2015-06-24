@@ -255,7 +255,7 @@ public class AddressProvider implements IAddressProvider {
         return passwordSeed;
     }
 
-    private boolean hasPasswordSeed(SQLiteDatabase db) {
+    public boolean hasPasswordSeed(SQLiteDatabase db) {
         Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
                 "password_seed is not null ", null);
         int count = 0;

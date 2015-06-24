@@ -37,7 +37,8 @@ import java.util.List;
  */
 public class DesktopTxProvider implements IDesktopTxProvider {
 
-    private static DesktopTxProvider txProvider = new DesktopTxProvider(BitherApplication.mAddressDbHelper);
+    private static DesktopTxProvider txProvider = new DesktopTxProvider(BitherApplication
+            .mAddressDbHelper);
 
     public static DesktopTxProvider getInstance() {
         return txProvider;
@@ -116,27 +117,42 @@ public class DesktopTxProvider implements IDesktopTxProvider {
     }
 
     @Override
-    public int getUnspendOutCountByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+    public int getUnspendOutCountByHDAccountWithPath(int hdAccountId, AbstractHD.PathType
+            pathType) {
         return 0;
     }
 
     @Override
-    public List<Out> getUnspendOutByHDAccountWithPath(int hdAccountId, AbstractHD.PathType pathType) {
+    public List<Out> getUnspendOutByHDAccountWithPath(int hdAccountId, AbstractHD.PathType
+            pathType) {
         return new ArrayList<Out>();
     }
 
     @Override
-    public DesktopHDMAddress addressForPath(DesktopHDMKeychain keychain, AbstractHD.PathType type, int index) {
+    public DesktopHDMAddress addressForPath(DesktopHDMKeychain keychain, AbstractHD.PathType
+            type, int index) {
         return null;
     }
 
     @Override
-    public List<DesktopHDMAddress> getSigningAddressesForInputs(DesktopHDMKeychain keychain, List<In> inList) {
+    public List<DesktopHDMAddress> getSigningAddressesForInputs(DesktopHDMKeychain keychain,
+                                                                List<In> inList) {
         return new ArrayList<DesktopHDMAddress>();
     }
 
     @Override
-    public List<DesktopHDMAddress> belongAccount(DesktopHDMKeychain keychain, List<String> addresses) {
+    public List<DesktopHDMAddress> belongAccount(DesktopHDMKeychain keychain, List<String>
+            addresses) {
         return new ArrayList<DesktopHDMAddress>();
+    }
+
+    @Override
+    public List<Out> getUnspendOutByHDAccount(int hdAccountId) {
+        return new ArrayList<Out>();
+    }
+
+    @Override
+    public int unSyncedAddressCount() {
+        return 0;
     }
 }
