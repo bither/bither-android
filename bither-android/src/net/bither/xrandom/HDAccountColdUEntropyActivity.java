@@ -22,7 +22,6 @@ import android.content.Intent;
 
 import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -59,8 +58,8 @@ public class HDAccountColdUEntropyActivity extends UEntropyActivity {
         ArrayList<String> addresses = new ArrayList<String>();
         addresses.add(HDAccount.HDAccountPlaceHolder);
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
-        DialogFragmentHDMSingularColdSeed.newInstance(words, AddressManager.getInstance()
-                .getHdAccount().getQRCodeFullEncryptPrivKey(), R.string
+        DialogFragmentHDMSingularColdSeed.newInstance(words, HDAccountCold.hdAccountCold()
+                .getQRCodeFullEncryptPrivKey(), R.string
                 .add_hd_account_show_seed_label, R.string.add_hd_account_show_seed_button, new
                 DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
             @Override

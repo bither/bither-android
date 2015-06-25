@@ -27,8 +27,9 @@ import android.view.ViewGroup;
 
 import net.bither.R;
 import net.bither.activity.cold.AddColdAddressHDMActivity;
-import net.bither.activity.hot.AddHotAddressHDMActivity;
 import net.bither.activity.hot.AddHotAddressPrivateKeyActivity;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.ui.base.DropdownMessage;
 
 /**
  * Created by songchenwen on 15/4/16.
@@ -48,9 +49,19 @@ public class AddAddressColdOtherFragment extends Fragment implements View.OnClic
         Intent intent = null;
         switch (v.getId()) {
             case R.id.btn_hdm:
+                if (AddressManager.isHDMKeychainLimit()) {
+                    DropdownMessage.showDropdownMessage(getActivity(), R.string
+                            .hdm_cold_seed_count_limit);
+                    return;
+                }
                 intent = new Intent(getActivity(), AddColdAddressHDMActivity.class);
                 break;
             case R.id.btn_private_key:
+                if (AddressManager.isPrivateLimit()) {
+                    DropdownMessage.showDropdownMessage(getActivity(), R.string
+                            .private_key_count_limit);
+                    return;
+                }
                 intent = new Intent(getActivity(), AddHotAddressPrivateKeyActivity.class);
                 break;
         }
