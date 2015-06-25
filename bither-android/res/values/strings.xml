@@ -648,4 +648,13 @@
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">Signatures Collected</string>
     <string name="enterprise_hdm_keychain_enable_hint">Enter Enterprise Code</string>
     <string name="enterprise_hdm_keychain_enable_failed">Invalid Enterprise Code</string>
+
+    <!-- Cold HD -->
+    <string name="add_cold_hd_account_tab">HD Account</string>
+    <string name="add_cold_hd_account_other_tab">Others</string>
+    <string name="add_cold_hd_account_label">Generate New Cold HD Account</string>
+    <string name="add_cold_hd_account_button">Generate</string>
+    <string name="add_cold_hd_account_other_hdm">Generate HDM Account</string>
+    <string name="add_cold_hd_account_other_private">Generate Normal Private Keys</string>
+    <string name="add_cold_hd_account_monitor_qr">HD Account Monitor QR Code</string>
 </resources>
