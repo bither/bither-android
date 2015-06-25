@@ -49,7 +49,7 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
     @Override
     public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String
             firstAddress, boolean isXrandom, String addressOfPS, byte[] externalPub, byte[]
-            internalPub) {
+                                    internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
@@ -208,7 +208,7 @@ public class ColdHDAccountAddressProvider implements IColdHDAccountAddressProvid
 
         boolean result = false;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        String sql = "select count(address) cnt from cold_hd_account where  encrypt_seed is not " +
+        String sql = "select count(hd_address) cnt from cold_hd_account where  encrypt_seed is not " +
                 "null and encrypt_mnemonic_seed is not null";
         Cursor cursor = db.rawQuery(sql, null);
         if (cursor.moveToNext()) {
