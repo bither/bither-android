@@ -636,4 +636,5 @@
     <string name="add_cold_hd_account_other_hdm">生成 HDM 賬戶</string>
     <string name="add_cold_hd_account_other_private">生成普通私鑰</string>
     <string name="add_cold_hd_account_monitor_qr">HD 賬戶監控二維碼</string>
+    <string name="hd_account_cold_address_list_label">冷 HD 賬戶</string>
 </resources>

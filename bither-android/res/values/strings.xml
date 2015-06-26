@@ -657,4 +657,5 @@
     <string name="add_cold_hd_account_other_hdm">Generate HDM Account</string>
     <string name="add_cold_hd_account_other_private">Generate Normal Private Keys</string>
     <string name="add_cold_hd_account_monitor_qr">HD Account Monitor QR Code</string>
+    <string name="hd_account_cold_address_list_label">Cold HD Account</string>
 </resources>

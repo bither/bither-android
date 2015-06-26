@@ -31,6 +31,8 @@ import net.bither.adapter.cold.AddressOfColdFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
@@ -103,7 +105,8 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
                 privates.addAll(ps);
             }
             mAdapter.notifyDataSetChanged();
-            if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain()) {
+            if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain() &&
+                    !HDAccountCold.hasHDAccountCold()) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lvPrivate.setVisibility(View.GONE);
             } else {
@@ -154,6 +157,12 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
             if(AddressManager.getInstance().hasHDMKeychain()){
                 startIndex = 1;
                 if(addressesToShowAdded.contains(AddAddressColdHDMFragment.HDMSeedAddressPlaceHolder)){
+                    startIndex = 0;
+                }
+            }
+            if (HDAccountCold.hasHDAccountCold()) {
+                startIndex = 1;
+                if (addressesToShowAdded.contains(HDAccount.HDAccountPlaceHolder)) {
                     startIndex = 0;
                 }
             }
