@@ -280,7 +280,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             } else {
                 h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
             }
-            if (!point.isHDM() && !point.isHDAccount()) {
+            if (!point.isHDM() && !point.isHDAccount() && !point.isHDAccountCold()) {
                 h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
                 h.ibtnFull.setVisibility(View.VISIBLE);
             } else {
