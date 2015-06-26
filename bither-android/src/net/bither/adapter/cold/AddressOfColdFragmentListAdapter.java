@@ -159,7 +159,7 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             ItemTypeHDMKeychain = 1;
         }
         if (HDAccountCold.hasHDAccountCold()) {
-            ItemTypeHDAccountCold = ItemTypeHDMKeychain + 1;
+            ItemTypeHDAccountCold = ItemTypeHDMKeychain == 1 ? 2 : 1;
             hdAccountCold = HDAccountCold.hdAccountCold();
         } else {
             hdAccountCold = null;

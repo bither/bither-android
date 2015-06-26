@@ -57,12 +57,18 @@ import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccountMonitored;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.ScanActivity;
+import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
@@ -87,6 +93,8 @@ import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable,
         DialogSetAvatar.SetAvatarDelegate {
+    private static final int MonitorCodeHDRequestCode = 1605;
+
     private static Uri imageUri;
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
@@ -433,6 +441,19 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener monitorColdHDClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (AddressManager.getInstance().hasHDAccountMonitored()) {
+                DropdownMessage.showDropdownMessage(getActivity(), R.string
+                        .monitor_cold_hd_account_limit);
+                return;
+            }
+            startActivityForResult(new Intent(getActivity(), ScanActivity.class),
+                    MonitorCodeHDRequestCode);
+        }
+    };
 
     @Override
     public void avatarFromCamera() {
@@ -496,6 +517,61 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     }
                 }
                 break;
+            case MonitorCodeHDRequestCode:
+                if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
+                    final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                    try {
+                        final boolean isXRandom = content.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0;
+                        final byte[] bytes = Utils.hexStringToByteArray(isXRandom ? content
+                                .substring(1) : content);
+                        new ThreadNeedService(dp, getActivity()) {
+                            @Override
+                            public void runWithService(BlockchainService service) {
+                                if (service != null) {
+                                    service.stopAndUnregister();
+                                }
+                                try {
+                                    HDAccountMonitored account = new HDAccountMonitored(bytes,
+                                            isXRandom, false, null);
+                                    AddressManager.getInstance().setHdAccountMonitored(account);
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string.monitor_cold_hd_account_success);
+                                        }
+                                    });
+                                } catch (MnemonicException.MnemonicLengthException e) {
+                                    e.printStackTrace();
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string.monitor_cold_hd_account_failed);
+                                        }
+                                    });
+                                }
+                                if (service != null) {
+                                    service.startAndRegister();
+                                }
+                            }
+                        }.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(), R.string
+                                .monitor_cold_hd_account_failed);
+                    }
+                }
+                break;
         }
 
     }
@@ -527,6 +603,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
+        view.findViewById(R.id.btn_monitor_hd).setOnClickListener(monitorColdHDClick);
         view.findViewById(R.id.btn_monitor).setOnClickListener(monitorClick);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
