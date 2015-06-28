@@ -52,7 +52,7 @@ public class ColdHDAccountProvider implements IColdHDAccountProvider {
         db.beginTransaction();
         for (HDAccount.HDAccountAddress hdAccountAddress : hdAccountAddresses) {
             ContentValues cv = getHDMAddressCV(hdAccountAddress);
-            db.insert(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, null, cv);
+            db.insert(AbstractDb.Tables.COLD_HD_ACCOUNT_ADDRESS, null, cv);
         }
         db.setTransactionSuccessful();
         db.endTransaction();
