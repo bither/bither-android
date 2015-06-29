@@ -36,9 +36,11 @@ import net.bither.R;
 import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.HDAccountDetailActivity;
+import net.bither.activity.hot.HDAccountMonitoredDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.DropdownMessage;
@@ -59,9 +61,11 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private static final int PrivateGroupTag = 1;
     private static final int WatchOnlyGroupTag = 2;
     private static final int HDAccountGroupTag = 3;
+    private static final int HDAccountMonitoredGroupTag = 4;
 
     private FragmentActivity activity;
     private HDAccount hdAccount;
+    private HDAccountMonitored hdAccountMonitored;
     private List<Address> watchOnlys;
     private List<Address> privates;
     private List<HDMAddress> hdms;
@@ -77,6 +81,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         this.privates = privates;
         this.hdms = hdms;
         hdAccount = AddressManager.getInstance().getHdAccount();
+        hdAccountMonitored = AddressManager.getInstance().getHdAccountMonitored();
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
@@ -84,6 +89,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     @Override
     public void notifyDataSetChanged() {
         hdAccount = AddressManager.getInstance().getHdAccount();
+        hdAccountMonitored = AddressManager.getInstance().getHdAccountMonitored();
         super.notifyDataSetChanged();
         this.notifyHeaderChange();
     }
@@ -116,6 +122,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (hdAccount != null) {
             count++;
         }
+        if (hdAccountMonitored != null) {
+            count++;
+        }
         if (privates != null && privates.size() > 0) {
             count++;
         }
@@ -141,6 +150,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         if (groupPosition == getHDAccountGroupIndex()) {
             return HDAccountGroupTag;
+        }
+        if (groupPosition == getHDAccountMonitoredGroupIndex()) {
+            return HDAccountMonitoredGroupTag;
         }
         return -1;
     }
@@ -212,6 +224,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     return;
                 case HDAccountGroupTag:
                     tvGroup.setText(R.string.address_group_hd);
+                    ivType.setImageResource(R.drawable.address_type_hd);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
+                    return;
+                case HDAccountMonitoredGroupTag:
+                    tvGroup.setText(R.string.address_group_hd_monitored);
                     ivType.setImageResource(R.drawable.address_type_hd);
                     llHDM.setVisibility(View.INVISIBLE);
                     ivType.setVisibility(View.VISIBLE);
@@ -346,6 +364,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 return hdms.get(childPosition);
             case HDAccountGroupTag:
                 return hdAccount;
+            case HDAccountMonitoredGroupTag:
+                return hdAccountMonitored;
             default:
                 return null;
         }
@@ -354,6 +374,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     public long getChildId(int groupPosition, int childPosition) {
         if (groupPosition == getHDAccountGroupIndex()) {
             return 0;
+        }
+        if (groupPosition == getHDAccountMonitoredGroupIndex()) {
+            return 1;
         }
         Address a = getChild(groupPosition, childPosition);
         return a.getAddress().hashCode();
@@ -368,6 +391,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             case HDMGroupTag:
                 return hdms == null ? 0 : hdms.size();
             case HDAccountGroupTag:
+                return 1;
+            case HDAccountMonitoredGroupTag:
                 return 1;
             default:
                 return -1;
@@ -384,7 +409,10 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
         view.setAddress(a);
-        if (a.isHDAccount()) {
+        if (a instanceof HDAccountMonitored) {
+            view.ivType.setOnLongClickListener(null);
+            view.setOnClickListener(hdAccountMonitoredDetailClick);
+        } else if (a.isHDAccount()) {
             view.ivType.setOnLongClickListener(hdAccountLongClick);
             view.setOnClickListener(hdAccountDetailClick);
         } else {
@@ -422,6 +450,25 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             if (!clicked) {
                 clicked = true;
                 activity.startActivity(new Intent(activity, HDAccountDetailActivity.class));
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        clicked = false;
+                    }
+                }, 500);
+            }
+        }
+    };
+
+    private View.OnClickListener hdAccountMonitoredDetailClick = new View.OnClickListener() {
+        private boolean clicked = false;
+
+        @Override
+        public void onClick(View v) {
+            if (!clicked) {
+                clicked = true;
+                activity.startActivity(new Intent(activity, HDAccountMonitoredDetailActivity
+                        .class));
                 v.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -518,12 +565,26 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         return 0;
     }
 
+    public int getHDAccountMonitoredGroupIndex() {
+        if (hdAccountMonitored == null) {
+            return -1;
+        }
+        int index = 0;
+        if (hdAccount != null) {
+            index++;
+        }
+        return index;
+    }
+
     public int getHDMGroupIndex() {
         if (hdms == null || hdms.size() == 0) {
             return -1;
         }
         int index = 0;
         if (hdAccount != null) {
+            index++;
+        }
+        if (hdAccountMonitored != null) {
             index++;
         }
         return index;
@@ -537,6 +598,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (hdAccount != null) {
             index++;
         }
+        if (hdAccountMonitored != null) {
+            index++;
+        }
         if (hdms != null && hdms.size() > 0) {
             index++;
         }
@@ -546,6 +610,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     public int getWatchOnlyGroupIndex() {
         int index = 0;
         if (hdAccount != null) {
+            index++;
+        }
+        if (hdAccountMonitored != null) {
             index++;
         }
         if (hdms != null && hdms.size() > 0) {

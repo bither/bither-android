@@ -637,8 +637,11 @@
     <string name="add_cold_hd_account_other_private">生成普通私钥</string>
     <string name="add_cold_hd_account_monitor_qr">HD 账户监控二维码</string>
     <string name="hd_account_cold_address_list_label">冷 HD 账户</string>
+
+    <!-- Monitor HD -->
     <string name="monitor_cold_hd_account">监控冷 HD 账户</string>
     <string name="monitor_cold_hd_account_limit">只能监控 1 个冷 HD 账户</string>
     <string name="monitor_cold_hd_account_failed">监控冷 HD 账户失败</string>
     <string name="monitor_cold_hd_account_success">监控冷 HD 账户成功</string>
+    <string name="address_group_hd_monitored">冷 HD 账户</string>
 </resources>
