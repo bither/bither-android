@@ -144,6 +144,10 @@
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.HDAccountMonitoredSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
             android:name=".activity.hot.HdmSendActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
@@ -164,6 +168,10 @@
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.HDAccountDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name="net.bither.activity.hot.HDAccountMonitoredDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity

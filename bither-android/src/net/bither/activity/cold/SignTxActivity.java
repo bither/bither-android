@@ -24,11 +24,15 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
@@ -50,6 +54,8 @@ import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class SignTxActivity extends SwipeRightActivity implements
         IDialogPasswordListener {
@@ -124,7 +130,12 @@ public class SignTxActivity extends SwipeRightActivity implements
         tvSymbol.setText(symbol);
         tvFeeSymbol.setText(symbol);
         tvSymbolChange.setText(symbol);
-        tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4, qrCodeTransport.getMyAddress().length()));
+        if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHD) {
+            tvFrom.setText(R.string.address_group_hd_monitored);
+        } else {
+            tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4,
+                    qrCodeTransport.getMyAddress().length()));
+        }
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
         tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo()));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee()));
@@ -141,7 +152,8 @@ public class SignTxActivity extends SwipeRightActivity implements
                 .TxTransportType.ColdHDM && !AddressManager.getInstance().hasHDMKeychain()) ||
                 (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() ==
                         QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()
-                )) {
+                ) || (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
+                .ColdHD && !HDAccountCold.hasHDAccountCold())) {
             btnSign.setEnabled(false);
             tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
         } else {
@@ -165,7 +177,37 @@ public class SignTxActivity extends SwipeRightActivity implements
         Thread thread = new Thread() {
             public void run() {
                 List<String> strings = null;
-                if (qrCodeTransport.getHdmIndex() >= 0) {
+                if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
+                        .ColdHD) {
+                    HDAccountCold account = HDAccountCold.hdAccountCold();
+                    try {
+                        List<byte[]> bytes = account.signHashHexes(qrCodeTransport.getHashList(),
+                                qrCodeTransport.getPathTypeIndexes(), password);
+                        strings = new ArrayList<String>(Collections2.transform(bytes, new
+                                Function<byte[], String>() {
+                            @Nullable
+                            @Override
+                            public String apply(byte[] input) {
+                                return Utils.bytesToHexString(input);
+                            }
+                        }));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        dp.setThread(null);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                DropdownMessage.showDropdownMessage(SignTxActivity.this, R.string
+                                        .unsigned_transaction_sign_failed);
+                            }
+                        });
+                        password.wipe();
+                        return;
+                    }
+
+
+                } else if (qrCodeTransport.getHdmIndex() >= 0) {
                     if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
                             .ColdHDM) {
                         if (!EnterpriseHDMSeed.hasSeed()) {

@@ -18,29 +18,39 @@
 
 package net.bither.activity.hot;
 
+import android.os.Bundle;
+import android.view.View;
+
+import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
-import net.bither.ui.base.dialog.DialogHdAccountOptions;
 
 /**
  * Created by songchenwen on 15/4/17.
  */
 public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        findViewById(R.id.ibtn_option).setVisibility(View.GONE);
+    }
+
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccount();
+        address = AddressManager.getInstance().getHdAccountMonitored();
         addressPosition = 0;
     }
 
     @Override
     protected void optionClicked() {
-        new DialogHdAccountOptions(this, (HDAccount) address).show();
+
     }
 
     @Override
     protected void notifyAddressBalanceChange(String address) {
-        if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
+        if (Utils.compareString(address, HDAccountMonitored.HDAccountMonitoredPlaceHolder)) {
             loadData();
         }
     }

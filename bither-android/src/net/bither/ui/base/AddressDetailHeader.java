@@ -36,10 +36,12 @@ import net.bither.SendActivity;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.EnterpriseHDMSendActivity;
 import net.bither.activity.hot.GenerateUnsignedTxActivity;
+import net.bither.activity.hot.HDAccountMonitoredSendActivity;
 import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
+import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
@@ -241,6 +243,12 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 if (address.getBalance() <= 0) {
                     DropdownMessage.showDropdownMessage(activity,
                             R.string.address_detail_send_balance_zero);
+                    return;
+                }
+                if (address instanceof HDAccountMonitored) {
+                    Intent intent = new Intent(activity, HDAccountMonitoredSendActivity.class);
+                    activity.startActivityForResult(intent, BitherSetting.INTENT_REF
+                            .SEND_REQUEST_CODE);
                     return;
                 }
                 if (address instanceof EnterpriseHDMAddress) {

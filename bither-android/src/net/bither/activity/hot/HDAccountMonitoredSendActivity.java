@@ -22,20 +22,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.KeyCrypterException;
-import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.exception.TxBuilderException;
+import net.bither.bitherj.qrcode.QRCodeTxTransport;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
+
+import java.util.ArrayList;
 
 /**
  * Created by songchenwen on 15/4/17.
@@ -54,11 +61,16 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findViewById(R.id.ibtn_option).setVisibility(View.GONE);
+        etPassword.setVisibility(View.GONE);
+        findViewById(R.id.tv_password).setVisibility(View.GONE);
+        btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
+                .unsigned_transaction_button_icon_mirror_transparent, 0, R.drawable
+                .unsigned_transaction_button_icon, 0);
     }
 
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccount();
+        address = AddressManager.getInstance().getHdAccountMonitored();
         addressPosition = 0;
     }
 
@@ -89,10 +101,9 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
 
     private void send() {
         tx = null;
-        HDAccount account = (HDAccount) address;
-        SecureCharSequence password = new SecureCharSequence(etPassword.getText());
+        HDAccountMonitored account = (HDAccountMonitored) address;
         try {
-            tx = account.newTx(toAddress, btcAmount, password);
+            tx = account.newTx(toAddress, btcAmount);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
@@ -114,8 +125,6 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                     DropdownMessage.showDropdownMessage(HDAccountMonitoredSendActivity.this, m);
                 }
             });
-        } finally {
-            password.wipe();
         }
         if (tx != null) {
             runOnUiThread(new Runnable() {
@@ -136,6 +145,68 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
 
     @Override
     public void onConfirm() {
+        Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport
+                .getHDAccountMonitoredUnsignedTx(tx, toAddress, (HDAccountMonitored) address));
+        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
+                .unsigned_transaction_qr_code_title));
+        startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
+        btnSend.setEnabled(false);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                btnSend.setEnabled(false);
+                final String qr = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                if (!dp.isShowing()) {
+                    dp.show();
+                }
+                new Thread() {
+                    @Override
+                    public void run() {
+                        String[] array = QRCodeUtil.splitString(qr);
+                        ArrayList<byte[]> sigs = new ArrayList<byte[]>();
+                        for (String s : array) {
+                            ECKey.ECDSASignature sig = ECKey.ECDSASignature.decodeFromDER(Utils
+                                    .hexStringToByteArray(s));
+                            sigs.add(new TransactionSignature(sig, TransactionSignature.SigHash
+                                    .ALL, false).encodeToBitcoin());
+                        }
+                        tx.signWithSignatures(sigs);
+                        if (tx.verifySignatures()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sendTx();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    DropdownMessage.showDropdownMessage
+                                            (HDAccountMonitoredSendActivity.this, R.string
+                                                    .unsigned_transaction_sign_failed);
+                                    btnSend.setEnabled(true);
+                                }
+                            });
+                        }
+                    }
+                }.start();
+            } else {
+                btnSend.setEnabled(true);
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void sendTx() {
         if (!dp.isShowing()) {
             dp.show();
         }
@@ -178,8 +249,9 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(HDAccountMonitoredSendActivity.this, R
-                                    .string.send_failed);
+                            DropdownMessage.showDropdownMessage(HDAccountMonitoredSendActivity
+                                    .this, R.string.send_failed);
+                            btnSend.setEnabled(true);
                         }
                     });
                 }
