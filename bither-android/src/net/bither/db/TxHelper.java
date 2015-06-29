@@ -102,7 +102,7 @@ public class TxHelper {
 
         if (outItem.getColdHDAccountId() != -1) {
             cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
-                    outItem.getHDAccountId());
+                    outItem.getColdHDAccountId());
         } else {
             cv.putNull(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
         }
@@ -144,7 +144,7 @@ public class TxHelper {
                 if (outItem.getColdHDAccountId() > -1) {
                     cv = new ContentValues();
                     cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
-                            outItem.getHDAccountId());
+                            outItem.getColdHDAccountId());
                     db.update(AbstractDb.Tables.OUTS, cv,
                             " tx_hash=? and out_sn=? ", new String[]{
                                     Base58.encode(txItem.getTxHash()), Integer.toString(outItem
