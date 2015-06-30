@@ -169,10 +169,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                         String[] array = QRCodeUtil.splitString(qr);
                         ArrayList<byte[]> sigs = new ArrayList<byte[]>();
                         for (String s : array) {
-                            ECKey.ECDSASignature sig = ECKey.ECDSASignature.decodeFromDER(Utils
-                                    .hexStringToByteArray(s));
-                            sigs.add(new TransactionSignature(sig, TransactionSignature.SigHash
-                                    .ALL, false).encodeToBitcoin());
+                            sigs.add(Utils.hexStringToByteArray(s));
                         }
                         tx.signWithSignatures(sigs);
                         if (tx.verifySignatures()) {

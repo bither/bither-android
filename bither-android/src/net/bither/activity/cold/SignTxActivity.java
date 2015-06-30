@@ -147,7 +147,9 @@ public class SignTxActivity extends SwipeRightActivity implements
         }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());
-        if ((qrCodeTransport.getHdmIndex() < 0 && address == null) || (qrCodeTransport
+        if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport
+                .getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD) ||
+                (qrCodeTransport
                 .getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() != QRCodeTxTransport
                 .TxTransportType.ColdHDM && !AddressManager.getInstance().hasHDMKeychain()) ||
                 (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() ==
