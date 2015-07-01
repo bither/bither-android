@@ -74,8 +74,8 @@ public class BitherApplication extends Application {
         new LinuxSecureRandom();
         super.onCreate();
         mContext = getApplicationContext();
-        mTxDbHelper = new TxDatabaseHelper(mContext);
         mAddressDbHelper = new AddressDatabaseHelper(mContext);
+        mTxDbHelper = new TxDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
         androidDb.construct();
         AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();

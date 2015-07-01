@@ -9,6 +9,8 @@ import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
+import java.sql.SQLException;
+
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
     public static final int DB_VERSION = 7;
     private static final String DB_NAME = "address.db";
@@ -111,6 +113,33 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_ENTERPRISE_HD_ACCOUNT);
         db.execSQL(AbstractDb.CREATE_ENTERPRISE_HDM_ADDRESSES_SQL);
         db.execSQL(AbstractDb.CREATE_MULTI_SIGN_SET);
-//        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT);
+        // modify encrypt_seed null
+        db.execSQL("create table if not exists  hd_account2 " +
+                "( hd_account_id integer not null primary key autoincrement" +
+                ", encrypt_seed text" +
+                ", encrypt_mnemonic_seed text" +
+                ", hd_address text not null" +
+                ", external_pub text not null" +
+                ", internal_pub text not null" +
+                ", is_xrandom integer not null);");
+        db.execSQL("INSERT INTO hd_account2 SELECT * FROM hd_account;");
+        int oldCnt = 0;
+        int newCnt = 0;
+        Cursor c = db.rawQuery("select count(0) cnt from hd_account", null);
+        if (c.moveToNext()) {
+            oldCnt = c.getInt(0);
+        }
+        c.close();
+        c = db.rawQuery("select count(0) cnt from hd_account2", null);
+        if (c.moveToNext()) {
+            newCnt = c.getInt(0);
+        }
+        c.close();
+        if (oldCnt != newCnt) {
+            throw new RuntimeException("address db upgrade from 6 to 7 failed. new hd_account_addresses table record count not the same as old one");
+        } else {
+            db.execSQL("DROP TABLE hd_account;");
+            db.execSQL("ALTER TABLE hd_account2 RENAME TO hd_account;");
+        }
     }
 }
