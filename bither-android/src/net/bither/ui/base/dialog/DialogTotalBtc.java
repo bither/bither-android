@@ -59,16 +59,22 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
     private TextView tvHD;
     private TextView tvHDMoney;
     private ImageView ivHDSymbol;
+    private ImageView ivHdMonitored;
+    private TextView tvHdMonitored;
+    private TextView tvHdMonitoredMoney;
+    private ImageView ivHdMonitoredSymbol;
     private LinearLayout llPrivate;
     private LinearLayout llWatchOnly;
     private LinearLayout llHDM;
     private LinearLayout llHD;
+    private LinearLayout llHdMonitored;
     private RotatableFrameLayout flLogo;
 
     private BigInteger btcPrivate;
     private BigInteger btcWatchOnly;
     private BigInteger btcHdm;
     private BigInteger btcHd;
+    private BigInteger btcHdMonitored;
 
     private double price = 0;
 
@@ -102,29 +108,37 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         tvHD = (TextView) findViewById(R.id.tv_hd);
         tvHDMoney = (TextView) findViewById(R.id.tv_hd_money);
         ivHDSymbol = (ImageView) findViewById(R.id.iv_hd_symbol);
+        ivHdMonitored = (ImageView) findViewById(R.id.iv_hd_monitored);
+        tvHdMonitored = (TextView) findViewById(R.id.tv_hd_monitored);
+        tvHdMonitoredMoney = (TextView) findViewById(R.id.tv_hd_monitored_money);
+        ivHdMonitoredSymbol = (ImageView) findViewById(R.id.iv_hd_monitored_symbol);
         llPrivate = (LinearLayout) findViewById(R.id.ll_private);
         llWatchOnly = (LinearLayout) findViewById(R.id.ll_watchonly);
         llHDM = (LinearLayout) findViewById(R.id.ll_hdm);
         llHD = (LinearLayout) findViewById(R.id.ll_hd);
+        llHdMonitored = (LinearLayout) findViewById(R.id.ll_hd_monitored);
         flLogo = (RotatableFrameLayout) findViewById(R.id.fl_logo);
         findViewById(R.id.ll_below_chart).setOnClickListener(dismissClick);
         ivHD.setBackgroundDrawable(vPieChart.getSymbolForIndex(0));
-        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
-        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
-        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(3));
+        ivHdMonitored.setBackgroundDrawable(vPieChart.getSymbolForIndex(1));
+        ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
+        ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(3));
+        ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(4));
         flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
                 .getLayoutParams().width * LogoSizeRate);
         vPieChart.setRotateListener(this);
     }
 
     public void setPrivateWatchOnlyHDMAndHD(BigInteger btcPrivate, BigInteger btcWatchOnly,
-                                            BigInteger btcHdm, BigInteger btcHd) {
+                                            BigInteger btcHdm, BigInteger btcHd, BigInteger
+                                                    btcHdMonitored) {
 
         BigInteger total = BigInteger.ZERO;
         this.btcPrivate = btcPrivate;
         this.btcWatchOnly = btcWatchOnly;
         this.btcHdm = btcHdm;
         this.btcHd = btcHd;
+        this.btcHdMonitored = btcHdMonitored;
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             total = total.add(btcPrivate);
         }
@@ -137,12 +151,16 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         if (btcHd != null && btcHd.signum() > 0) {
             total = total.add(btcHd);
         }
+        if (btcHdMonitored != null && btcHdMonitored.signum() > 0) {
+            total = total.add(btcHdMonitored);
+        }
         tvBtc.setText(UnitUtilWrapper.formatValue(total.longValue()));
         Bitmap btcSymbol = UnitUtilWrapper.getBtcSlimSymbol(tvPrivate);
         ivPrivateSymbol.setImageBitmap(btcSymbol);
         ivWatchOnlySymbol.setImageBitmap(btcSymbol);
         ivHDMSymbol.setImageBitmap(btcSymbol);
         ivHDSymbol.setImageBitmap(btcSymbol);
+        ivHdMonitoredSymbol.setImageBitmap(btcSymbol);
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             tvPrivate.setText(UnitUtilWrapper.formatValue(btcPrivate.longValue()));
             llPrivate.setVisibility(View.VISIBLE);
@@ -166,6 +184,12 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
             llHD.setVisibility(View.VISIBLE);
         } else {
             llHD.setVisibility(View.GONE);
+        }
+        if (btcHdMonitored != null && btcHdMonitored.signum() > 0) {
+            tvHdMonitored.setText(UnitUtilWrapper.formatValue(btcHdMonitored.longValue()));
+            llHdMonitored.setVisibility(View.VISIBLE);
+        } else {
+            llHdMonitored.setVisibility(View.GONE);
         }
     }
 
@@ -209,14 +233,21 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         } else {
             tvHDMoney.setVisibility(View.GONE);
         }
+        if (btcHdMonitored != null && btcHdMonitored.signum() > 0 && price > 0) {
+            tvHdMonitoredMoney.setVisibility(View.VISIBLE);
+            tvHdMonitoredMoney.setText(currencySymbol + " " + Utils.formatDoubleToMoneyString(
+                    (double) btcHdMonitored.longValue() / 100000000.0 * price));
+        } else {
+            tvHdMonitoredMoney.setVisibility(View.GONE);
+        }
         super.show();
         vPieChart.postDelayed(new Runnable() {
             @Override
             public void run() {
-                vPieChart.setAmounts(btcHd == null ? BigInteger.ZERO : btcHd, btcHdm == null ?
-                                BigInteger.ZERO : btcHdm,
-                        btcPrivate == null ? BigInteger.ZERO : btcPrivate,
-                        btcWatchOnly == null ? BigInteger.ZERO : btcWatchOnly);
+                vPieChart.setAmounts(btcHd == null ? BigInteger.ZERO : btcHd, btcHdMonitored ==
+                        null ? BigInteger.ZERO : btcHdMonitored, btcHdm == null ? BigInteger.ZERO
+                        : btcHdm, btcPrivate == null ? BigInteger.ZERO : btcPrivate, btcWatchOnly
+                        == null ? BigInteger.ZERO : btcWatchOnly);
             }
         }, 100);
     }

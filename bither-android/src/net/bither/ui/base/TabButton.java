@@ -28,7 +28,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -187,9 +186,10 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
     }
 
     public void setBigInteger(BigInteger btcPrivate, BigInteger btcWatchOnly, BigInteger btcHdm,
-                              BigInteger btcHD) {
+                              BigInteger btcHD, BigInteger btcHdMonitored) {
         BigInteger btc;
-        if (btcPrivate == null && btcWatchOnly == null && btcHdm == null && btcHD == null) {
+        if (btcPrivate == null && btcWatchOnly == null && btcHdm == null && btcHD == null &&
+                btcHdMonitored == null) {
             btc = null;
         } else {
             btc = BigInteger.ZERO;
@@ -204,6 +204,9 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
             }
             if (btcHD != null) {
                 btc = btc.add(btcHD);
+            }
+            if (btcHdMonitored != null) {
+                btc = btc.add(btcHdMonitored);
             }
         }
         ellipsized = true;
@@ -220,7 +223,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         }
         if (dialog instanceof DialogTotalBtc) {
             DialogTotalBtc d = (DialogTotalBtc) dialog;
-            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD);
+            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD, btcHdMonitored);
         }
         updateArrow();
     }
