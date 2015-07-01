@@ -637,6 +637,8 @@
     <string name="add_cold_hd_account_other_private">生成普通私鑰</string>
     <string name="add_cold_hd_account_monitor_qr">HD 賬戶監控二維碼</string>
     <string name="hd_account_cold_address_list_label">冷 HD 賬戶</string>
+    <string name="import_cold_hd_account_seed_qr_code">來自HD種子二維碼</string>
+    <string name="import_cold_hd_account_seed_phrase">來自HD密語</string>
 
     <!-- Monitor HD -->
     <string name="monitor_cold_hd_account">監控冷 HD 賬戶</string>
