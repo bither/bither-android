@@ -40,7 +40,7 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         createOutsTable(db);
         createPeersTable(db);
         createHDAccountAddress(db);
-        createColdHDAccountAddress(db);
+//        createColdHDAccountAddress(db);
 
 
     }
@@ -91,10 +91,10 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_ADDRESS_INDEX);
     }
 
-    private void createColdHDAccountAddress(SQLiteDatabase db) {
-        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT_ADDRESSES);
-        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT_ADDRESS_INDEX);
-    }
+//    private void createColdHDAccountAddress(SQLiteDatabase db) {
+//        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT_ADDRESSES);
+//        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT_ADDRESS_INDEX);
+//    }
 
 
     private void v1Tov2(SQLiteDatabase db) {
@@ -105,8 +105,8 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
 
     private void v2Tov3(SQLiteDatabase db) {
         //v1.37
-        createColdHDAccountAddress(db);
-        db.execSQL(AbstractDb.ADD_COLD_HD_ACCOUNT_ID_FOR_OUTS);
+//        createColdHDAccountAddress(db);
+//        db.execSQL(AbstractDb.ADD_COLD_HD_ACCOUNT_ID_FOR_OUTS);
     }
 
 
