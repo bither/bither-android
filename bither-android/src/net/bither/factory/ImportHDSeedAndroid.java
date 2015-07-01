@@ -22,10 +22,13 @@ import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.HdmImportWordListActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.factory.ImportHDSeed;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
@@ -113,9 +116,21 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                 if (service != null) {
                     service.stopAndUnregister();
                 }
-                HDAccount result = importHDAccount();
-                if (result != null) {
-                    KeyUtil.setHDAccount(result);
+                boolean success = false;
+                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
+                        .COLD) {
+                    HDAccountCold result = importHDAccountCold();
+                    if (result != null) {
+                        success = true;
+                    }
+                } else {
+                    HDAccount result = importHDAccount();
+                    if (result != null) {
+                        KeyUtil.setHDAccount(result);
+                        success = true;
+                    }
+                }
+                if (success) {
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -153,7 +168,6 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                 }
             }
         }.start();
-
     }
 
     @Override
