@@ -325,6 +325,7 @@
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">捐赠</string>
 
+    <string name="network_monitor_activity_title">网络监控</string>
     <string name="network_monitor_clear_peer">清空节点</string>
 
     <!-- fancy qr code -->

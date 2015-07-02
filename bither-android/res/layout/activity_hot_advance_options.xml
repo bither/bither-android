@@ -185,6 +185,19 @@
                                 android:textColor="@color/text_field_text_color"
                                 android:textSize="18sp" />
 
+                            <include layout="@layout/layout_vertical_seperator" />
+
+                            <Button
+                                android:id="@+id/btn_network_monitor"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/ui_touchable_bg"
+                                android:gravity="left"
+                                android:padding="10dp"
+                                android:text="@string/network_monitor_activity_title"
+                                android:textColor="@color/text_field_text_color"
+                                android:textSize="18sp" />
+
                             <include layout="@layout/layout_vertical_seperator"/>
 
                             <LinearLayout
