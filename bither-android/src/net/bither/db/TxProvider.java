@@ -280,19 +280,19 @@ public class TxProvider implements ITxProvider {
     }
 
     private static void addTxToDb(SQLiteDatabase db, Tx txItem) {
-        // todo:
         HashSet<String> addressSet = AbstractDb.hdAccountProvider.
                 getBelongAccountAddresses(txItem.getOutAddressList());
-        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountProvider.
-                getBelongAccountAddresses(txItem.getOutAddressList());
+//        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountProvider.
+//                getBelongAccountAddresses(txItem.getOutAddressList());
         for (Out out : txItem.getOuts()) {
             if (addressSet.contains(out.getOutAddress())) {
+                // todo:
                 out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
             }
-            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
-                out.setColdHDAccountId(AddressManager.getInstance().getHdAccountMonitored()
-                        .getHdSeedId());
-            }
+//            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
+//                out.setColdHDAccountId(AddressManager.getInstance().getHdAccountMonitored()
+//                        .getHdSeedId());
+//            }
         }
 
         TxHelper.insertTx(db, txItem);
