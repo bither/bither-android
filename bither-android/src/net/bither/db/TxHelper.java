@@ -100,12 +100,12 @@ public class TxHelper {
             cv.putNull(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
         }
 
-        if (outItem.getColdHDAccountId() != -1) {
-            cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
-                    outItem.getColdHDAccountId());
-        } else {
-            cv.putNull(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
-        }
+//        if (outItem.getColdHDAccountId() != -1) {
+//            cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+//                    outItem.getColdHDAccountId());
+//        } else {
+//            cv.putNull(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+//        }
     }
 
     public static List<AddressTx> insertOut(SQLiteDatabase db, Tx txItem) {
@@ -141,17 +141,20 @@ public class TxHelper {
                             });
 
                 }
-                if (outItem.getColdHDAccountId() > -1) {
-                    cv = new ContentValues();
-                    cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
-                            outItem.getColdHDAccountId());
-                    db.update(AbstractDb.Tables.OUTS, cv,
-                            " tx_hash=? and out_sn=? ", new String[]{
-                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
-                                    .getOutSn())
-                            });
-
-                }
+//                if (outItem.getColdHDAccountId() > -1) {
+//                    cv = new ContentValues();
+//                    cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+//                            outItem.getColdHDAccountId());
+//                    db.update(AbstractDb.Tables.OUTS, cv,
+//                            " tx_hash=? and out_sn=? ", new String[]{
+//                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
+//                                    .getOutSn())
+//                            });
+//
+//                }
+            }
+            if (outItem.getHDAccountId() > -1) {
+                TxHelper.updateHDAddressIsIssued(db, outItem.getOutAddress());
             }
             if (!Utils.isEmpty(outItem.getOutAddress())) {
                 addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem
@@ -179,6 +182,26 @@ public class TxHelper {
 
         }
         return addressTxes;
+    }
+
+    private static void updateHDAddressIsIssued(SQLiteDatabase db, String address) {
+        Cursor c = db.rawQuery("select hd_account_id,path_type,address_index " +
+                " from hd_account_addresses where address=?", new String[] {address});
+        int hdAccountId = -1;
+        int pathType = 0;
+        int addressIndex = 0;
+        if (c.moveToNext()) {
+            hdAccountId = c.getInt(0);
+            pathType = c.getInt(1);
+            addressIndex = c.getInt(2);
+        }
+        c.close();
+        if (hdAccountId > 0) {
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, 1);
+            db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, " path_type=? and address_index<=? and hd_account_id=? ",
+                    new String[]{Integer.toString(pathType), Integer.toString(addressIndex), Integer.toString(hdAccountId)});
+        }
     }
 
     public static List<AddressTx> insertIn(SQLiteDatabase db, Tx txItem) {
@@ -326,10 +349,10 @@ public class TxHelper {
         if (idColumn != -1 && !c.isNull(idColumn)) {
             outItem.setHDAccountId(c.getInt(idColumn));
         }
-        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
-        if (idColumn != -1 && !c.isNull(idColumn)) {
-            outItem.setColdHDAccountId(c.getInt(idColumn));
-        }
+//        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+//        if (idColumn != -1 && !c.isNull(idColumn)) {
+//            outItem.setColdHDAccountId(c.getInt(idColumn));
+//        }
         return outItem;
     }
 

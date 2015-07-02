@@ -280,20 +280,19 @@ public class TxProvider implements ITxProvider {
     }
 
     private static void addTxToDb(SQLiteDatabase db, Tx txItem) {
-        HashSet<String> addressSet = AbstractDb.hdAccountProvider.
-                getBelongAccountAddresses(txItem.getOutAddressList());
-//        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountProvider.
+//        HashSet<String> addressSet = AbstractDb.hdAccountProvider.
 //                getBelongAccountAddresses(txItem.getOutAddressList());
-        for (Out out : txItem.getOuts()) {
-            if (addressSet.contains(out.getOutAddress())) {
-                // todo:
-                out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
-            }
-//            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
-//                out.setColdHDAccountId(AddressManager.getInstance().getHdAccountMonitored()
-//                        .getHdSeedId());
+////        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountProvider.
+////                getBelongAccountAddresses(txItem.getOutAddressList());
+//        for (Out out : txItem.getOuts()) {
+//            if (addressSet.contains(out.getOutAddress())) {
+//                out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
 //            }
-        }
+////            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
+////                out.setColdHDAccountId(AddressManager.getInstance().getHdAccountMonitored()
+////                        .getHdSeedId());
+////            }
+//        }
 
         TxHelper.insertTx(db, txItem);
         List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
@@ -404,7 +403,6 @@ public class TxProvider implements ITxProvider {
                 }
             }
             c.close();
-
         }
         sql = "select count(0) from addresses_txs where tx_hash=? and address=?";
         c = db.rawQuery(sql, new String[]{

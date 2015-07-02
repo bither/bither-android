@@ -36,6 +36,7 @@ import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
+import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -179,6 +180,90 @@ public class HDAccountProvider implements IHDAccountProvider {
         }
         cursor.close();
         return addressSet;
+    }
+
+    @Override
+    public Tx updateOutHDAccountId(Tx tx) {
+        List<String> addressList = tx.getOutAddressList();
+        if (addressList != null) {
+            HashSet<String> set = new HashSet<String>();
+            set.addAll(addressList);
+            StringBuilder strBuilder = new StringBuilder();
+            for (String str : set) {
+                strBuilder.append("'").append(str).append("',");
+            }
+            if (strBuilder.length() > 0) {
+                strBuilder.substring(0, strBuilder.length() - 1);
+            }
+
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = Utils.format("select address,hd_account_id from hd_account_addresses where address in (%s) "
+                    , strBuilder.toString());
+            Cursor c = db.rawQuery(sql, null);
+            while (c.moveToNext()) {
+                String address = c.getString(0);
+                int hdAccountId = c.getInt(1);
+                for (Out out: tx.getOuts()) {
+                    if (Utils.compareString(out.getOutAddress(), address)) {
+                        out.setHDAccountId(hdAccountId);
+                    }
+                }
+            }
+            c.close();
+        }
+        return tx;
+    }
+
+    @Override
+    public int getRelatedAddressCnt(List<String> addresses) {
+        int cnt = 0;
+        if (addresses != null) {
+            HashSet<String> set = new HashSet<String>();
+            set.addAll(addresses);
+            StringBuilder strBuilder = new StringBuilder();
+            for (String str : set) {
+                strBuilder.append("'").append(str).append("',");
+            }
+            if (strBuilder.length() > 0) {
+                strBuilder.substring(0, strBuilder.length() - 1);
+            }
+
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = Utils.format("select count(0) cnt from hd_account_addresses where address in (%s) "
+                    , strBuilder.toString());
+            Cursor c = db.rawQuery(sql, null);
+            if (c.moveToNext()) {
+                cnt = c.getInt(0);
+            }
+            c.close();
+        }
+        return cnt;
+    }
+
+    @Override
+    public List<Integer> getRelatedHDAccountIdList(List<String> addresses) {
+        List<Integer> hdAccountIdList = new ArrayList<Integer>();
+        if (addresses != null) {
+            HashSet<String> set = new HashSet<String>();
+            set.addAll(addresses);
+            StringBuilder strBuilder = new StringBuilder();
+            for (String str : set) {
+                strBuilder.append("'").append(str).append("',");
+            }
+            if (strBuilder.length() > 0) {
+                strBuilder.substring(0, strBuilder.length() - 1);
+            }
+
+            SQLiteDatabase db = this.mDb.getReadableDatabase();
+            String sql = Utils.format("select distinct hd_account_id from hd_account_addresses where address in (%s) "
+                    , strBuilder.toString());
+            Cursor c = db.rawQuery(sql, null);
+            while (c.moveToNext()) {
+                hdAccountIdList.add(c.getInt(0));
+            }
+            c.close();
+        }
+        return hdAccountIdList;
     }
 
     @Override
