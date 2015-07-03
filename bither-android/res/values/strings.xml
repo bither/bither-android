@@ -667,4 +667,11 @@
     <string name="monitor_cold_hd_account_failed">Monitor cold HD account failed</string>
     <string name="monitor_cold_hd_account_success">Monitor cold HD account success</string>
     <string name="address_group_hd_monitored">Cold HD Account</string>
+
+    <!-- Address Full For HD -->
+    <string name="address_full_for_hd_label_own">Own</string>
+    <string name="address_full_for_hd_label_foreign">Foreign</string>
+    <string name="address_full_for_hd_type_receiving">Receiving</string>
+    <string name="address_full_for_hd_type_sending">Sending</string>
+    <string name="address_full_for_hd_type_changing">Changing</string>
 </resources>

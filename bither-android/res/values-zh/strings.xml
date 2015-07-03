@@ -647,4 +647,11 @@
     <string name="monitor_cold_hd_account_failed">监控冷 HD 账户失败</string>
     <string name="monitor_cold_hd_account_success">监控冷 HD 账户成功</string>
     <string name="address_group_hd_monitored">冷 HD 账户</string>
+
+    <!-- Address Full For HD -->
+    <string name="address_full_for_hd_label_own">账户内地址</string>
+    <string name="address_full_for_hd_label_foreign">账户外地址</string>
+    <string name="address_full_for_hd_type_receiving">接收</string>
+    <string name="address_full_for_hd_type_sending">发送</string>
+    <string name="address_full_for_hd_type_changing">找零</string>
 </resources>
