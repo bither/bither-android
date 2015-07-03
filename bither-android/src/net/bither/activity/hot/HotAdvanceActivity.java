@@ -645,7 +645,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 @Override
                 public int getOptionCount() {
                     hasAnyAction = true;
-                    if (AddressManager.getInstance().getHdAccount() != null) {
+                    if (AddressManager.getInstance().getHDAccountHot() != null) {
                         return 2;
                     } else {
                         return 4;

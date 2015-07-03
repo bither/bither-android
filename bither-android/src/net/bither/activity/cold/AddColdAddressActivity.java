@@ -86,7 +86,7 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private Fragment getHDAccountFragment() {
-        if (HDAccountCold.hasHDAccountCold()) {
+        if (AddressManager.getInstance().hasHDAccountCold()) {
             if (hdAccountViewFragment == null) {
                 hdAccountViewFragment = new AddAddressColdHDAccountViewFragment();
             }

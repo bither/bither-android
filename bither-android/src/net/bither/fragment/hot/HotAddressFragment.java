@@ -97,7 +97,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             }
             mAdapter.notifyDataSetChanged();
             if (watchOnlys.size() + privates.size() + hdms.size() + (AddressManager.getInstance()
-                    .hasHDAccount() ? 1 : 0) + (AddressManager.getInstance()
+                    .hasHDAccountHot() ? 1 : 0) + (AddressManager.getInstance()
                     .hasHDAccountMonitored() ? 1 : 0) == 0) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lv.setVisibility(View.GONE);

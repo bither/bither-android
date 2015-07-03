@@ -533,7 +533,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                 try {
                                     HDAccountMonitored account = new HDAccountMonitored(bytes,
                                             isXRandom, false, null);
-                                    AddressManager.getInstance().setHdAccountMonitored(account);
+                                    AddressManager.getInstance().setHDAccountMonitored(account);
                                     ThreadUtil.runOnMainThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -688,7 +688,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager
                         .getInstance().getTrashAddresses().size() > 0 || AddressManager
                         .getInstance().getHdmKeychain() != null || AddressManager.getInstance()
-                        .hasHDAccount()) {
+                        .hasHDAccountHot()) {
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);

@@ -286,10 +286,10 @@ public class TxProvider implements ITxProvider {
 ////                getBelongAccountAddresses(txItem.getOutAddressList());
 //        for (Out out : txItem.getOuts()) {
 //            if (addressSet.contains(out.getOutAddress())) {
-//                out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
+//                out.setHDAccountId(AddressManager.getInstance().getHDAccountHot().getHdSeedId());
 //            }
 ////            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
-////                out.setColdHDAccountId(AddressManager.getInstance().getHdAccountMonitored()
+////                out.setColdHDAccountId(AddressManager.getInstance().getHDAccountMonitored()
 ////                        .getHdSeedId());
 ////            }
 //        }

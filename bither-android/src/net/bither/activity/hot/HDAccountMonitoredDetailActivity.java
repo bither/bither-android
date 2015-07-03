@@ -39,7 +39,7 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccountMonitored();
+        address = AddressManager.getInstance().getHDAccountMonitored();
         addressPosition = 0;
     }
 

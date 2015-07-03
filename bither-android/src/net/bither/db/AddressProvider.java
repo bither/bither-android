@@ -91,7 +91,7 @@ public class AddressProvider implements IAddressProvider {
 
         HashMap<Integer, String> hdEncryptSeedHashMap = new HashMap<Integer, String>();
         HashMap<Integer, String> hdEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
-        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from hd_account  ", null);
+        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from hd_account where encrypt_mnemonic_seed is not null", null);
         while (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.HDAccountColumns.HD_ACCOUNT_ID);
             Integer hdAccountId = 0;
@@ -111,32 +111,6 @@ public class AddressProvider implements IAddressProvider {
 
         }
         c.close();
-
-
-        HashMap<Integer, String> coldHDEncryptSeedHashMap = new HashMap<Integer, String>();
-        HashMap<Integer, String> coldHDEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
-        c = readDb.rawQuery("select hd_account_id,encrypt_seed,encrypt_mnemonic_seed from cold_hd_account  ", null);
-        while (c.moveToNext()) {
-            int idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.HD_ACCOUNT_ID);
-            Integer hdAccountId = 0;
-            if (idColumn != -1) {
-                hdAccountId = c.getInt(idColumn);
-            }
-            idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED);
-            if (idColumn != -1) {
-                String encryptSeed = c.getString(idColumn);
-                coldHDEncryptSeedHashMap.put(hdAccountId, encryptSeed);
-            }
-            idColumn = c.getColumnIndex(AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED);
-            if (idColumn != -1) {
-                String encryptHDSeed = c.getString(idColumn);
-                coldHDEncryptMnemonicSeedHashMap.put(hdAccountId, encryptHDSeed);
-            }
-
-        }
-        c.close();
-
-
 
         HashMap<Integer, String> enterpriseHDEncryptSeedHashMap = new HashMap<Integer, String>();
         HashMap<Integer, String> enterpriseHDEncryptMnemonicSeedHashMap = new HashMap<Integer, String>();
@@ -192,15 +166,6 @@ public class AddressProvider implements IAddressProvider {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
 
-
-        for (Map.Entry<Integer, String> kv : coldHDEncryptSeedHashMap.entrySet()) {
-            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
-        }
-        for (Map.Entry<Integer, String> kv : coldHDEncryptMnemonicSeedHashMap.entrySet()) {
-            kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
-        }
-
-
         for (Map.Entry<Integer, String> kv : enterpriseHDEncryptSeedHashMap.entrySet()) {
             kv.setValue(EncryptedData.changePwd(kv.getValue(), oldPassword, newPassword));
         }
@@ -254,17 +219,6 @@ public class AddressProvider implements IAddressProvider {
                     cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
         }
 
-        for (Map.Entry<Integer, String> kv : coldHDEncryptSeedHashMap.entrySet()) {
-            cv = new ContentValues();
-            cv.put(AbstractDb.ColdHDAccountColumns.ENCRYPT_SEED, kv.getValue());
-            if (hdEncryptMnemonicSeedHashMap.containsKey(kv.getKey())) {
-                cv.put(AbstractDb.ColdHDAccountColumns.ENCRYPT_MNMONIC_SEED
-                        , hdEncryptMnemonicSeedHashMap.get(kv.getKey()));
-            }
-            writeDb.update(AbstractDb.Tables.COLD_HD_ACCOUNT,
-                    cv, "hd_account_id=?", new String[]{kv.getKey().toString()});
-        }
-
         for (Map.Entry<Integer, String> kv : enterpriseHDEncryptSeedHashMap.entrySet()) {
             cv = new ContentValues();
             cv.put(AbstractDb.EnterpriseHDAccountColumns.ENCRYPT_SEED, kv.getValue());
@@ -286,7 +240,6 @@ public class AddressProvider implements IAddressProvider {
         writeDb.endTransaction();
         return true;
     }
-
 
     @Override
     public PasswordSeed getPasswordSeed() {
@@ -504,7 +457,6 @@ public class AddressProvider implements IAddressProvider {
         return seedId;
     }
 
-
     @Override
     public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String firstAddress
             , boolean isXrandom, String addressOfPS, byte[] externalPub
@@ -526,6 +478,53 @@ public class AddressProvider implements IAddressProvider {
         db.endTransaction();
         return seedId;
 
+    }
+
+    @Override
+    public int addMonitoredHDAccount(boolean isXrandom, byte[] externalPub, byte[] internalPub) {
+        SQLiteDatabase db = this.mDb.getWritableDatabase();
+        db.beginTransaction();
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountColumns.IS_XRANDOM, isXrandom ? 1 : 0);
+        cv.put(AbstractDb.HDAccountColumns.EXTERNAL_PUB, Base58.encode(externalPub));
+        cv.put(AbstractDb.HDAccountColumns.INTERNAL_PUB, Base58.encode(internalPub));
+        int seedId = (int) db.insert(AbstractDb.Tables.HD_ACCOUNT, null, cv);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        return seedId;
+    }
+
+//    @Override
+//    public boolean hasHDAccountCold() {
+//        boolean result = false;
+//        SQLiteDatabase db = this.mDb.getReadableDatabase();
+//        String sql = "select count(hd_address) cnt from hd_account where encrypt_seed is not " +
+//                "null and encrypt_mnemonic_seed is not null";
+//        Cursor cursor = db.rawQuery(sql, null);
+//        if (cursor.moveToNext()) {
+//            int idColumn = cursor.getColumnIndex("cnt");
+//            if (idColumn != -1) {
+//                result = cursor.getInt(idColumn) > 0;
+//            }
+//        }
+//        cursor.close();
+//        return result;
+//    }
+
+    @Override
+    public boolean hasMnemonicSeed(int hdAccountId) {
+        boolean result = false;
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select count(0) cnt from hd_account where encrypt_mnemonic_seed is not null and hd_account_id=?";
+        Cursor cursor = db.rawQuery(sql, new String[] {Integer.toString(hdAccountId)});
+        if (cursor.moveToNext()) {
+            int idColumn = cursor.getColumnIndex("cnt");
+            if (idColumn != -1) {
+                result = cursor.getInt(idColumn) > 0;
+            }
+        }
+        cursor.close();
+        return result;
     }
 
     @Override

@@ -106,7 +106,7 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
             }
             mAdapter.notifyDataSetChanged();
             if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain() &&
-                    !HDAccountCold.hasHDAccountCold()) {
+                    !AddressManager.getInstance().hasHDAccountCold()) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lvPrivate.setVisibility(View.GONE);
             } else {
@@ -160,7 +160,7 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
                     startIndex = 0;
                 }
             }
-            if (HDAccountCold.hasHDAccountCold()) {
+            if (AddressManager.getInstance().hasHDAccountCold()) {
                 startIndex = 1;
                 if (addressesToShowAdded.contains(HDAccount.HDAccountPlaceHolder)) {
                     startIndex = 0;

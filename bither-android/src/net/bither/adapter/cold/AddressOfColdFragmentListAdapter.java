@@ -46,8 +46,8 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         this.activity = activity;
         this.privates = privates;
         this.requestHDMServerQrCodeDelegate = requestHDMServerQrCodeDelegate;
-        if (HDAccountCold.hasHDAccountCold()) {
-            hdAccountCold = HDAccountCold.hdAccountCold();
+        if (AddressManager.getInstance().hasHDAccountCold()) {
+            hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         } else {
             hdAccountCold = null;
         }
@@ -158,9 +158,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         if (hasHDMKeychain()) {
             ItemTypeHDMKeychain = 1;
         }
-        if (HDAccountCold.hasHDAccountCold()) {
+        if (AddressManager.getInstance().hasHDAccountCold()) {
             ItemTypeHDAccountCold = ItemTypeHDMKeychain == 1 ? 2 : 1;
-            hdAccountCold = HDAccountCold.hdAccountCold();
+            hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         } else {
             hdAccountCold = null;
         }

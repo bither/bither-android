@@ -29,7 +29,7 @@ import net.bither.ui.base.dialog.DialogHdAccountOptions;
 public class HDAccountDetailActivity extends AddressDetailActivity {
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccount();
+        address = AddressManager.getInstance().getHDAccountHot();
         addressPosition = 0;
     }
 

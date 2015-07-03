@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
@@ -67,7 +68,7 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
     }
 
     private void init() {
-        hdAccountCold = HDAccountCold.hdAccountCold();
+        hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         View v = LayoutInflater.from(getContext()).inflate(R.layout
                 .list_item_address_fragment_hd_account_cold, null);
         addView(v, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);

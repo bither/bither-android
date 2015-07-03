@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import net.bither.R;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
@@ -66,7 +67,7 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
     }
 
     private void showMonitor() {
-        final HDAccountCold account = HDAccountCold.hdAccountCold();
+        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
         if (account == null) {
             return;
         }
@@ -104,7 +105,7 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
     }
 
     private void showQr() {
-        final HDAccountCold account = HDAccountCold.hdAccountCold();
+        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
         if (account == null) {
             return;
         }
@@ -120,7 +121,7 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
     }
 
     private void showPhrase() {
-        final HDAccountCold account = HDAccountCold.hdAccountCold();
+        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
         if (account == null) {
             return;
         }

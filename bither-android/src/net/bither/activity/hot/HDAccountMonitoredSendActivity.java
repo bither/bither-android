@@ -29,9 +29,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.KeyCrypterException;
-import net.bither.bitherj.crypto.TransactionSignature;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
@@ -70,7 +68,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
 
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccountMonitored();
+        address = AddressManager.getInstance().getHDAccountMonitored();
         addressPosition = 0;
     }
 

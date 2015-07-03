@@ -186,7 +186,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
         final List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
-        if (HDAccountCold.hasHDAccountCold() && AppSharedPreference.getInstance().getAppMode() ==
+        if (AddressManager.getInstance().hasHDAccountCold() && AppSharedPreference.getInstance().getAppMode() ==
                 BitherjSettings.AppMode.COLD) {
             CheckPoint point = new CheckPoint(HDAccountMonitored.HDAccountMonitoredPlaceHolder);
             checkPoints.add(point);
@@ -195,14 +195,14 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
                     .ICheckAction() {
                 @Override
                 public boolean check() {
-                    return HDAccountCold.hdAccountCold().checkWithPassword(p);
+                    return AddressManager.getInstance().getHDAccountCold().checkWithPassword(p);
                 }
             }).setCheckListener(point));
         }
-        if (AddressManager.getInstance().hasHDAccount()) {
+        if (AddressManager.getInstance().hasHDAccountHot()) {
             CheckPoint point = new CheckPoint(HDAccount.HDAccountPlaceHolder);
             checkPoints.add(point);
-            checks.add(CheckUtil.initCheckForHDAccount(AddressManager.getInstance().getHdAccount
+            checks.add(CheckUtil.initCheckForHDAccount(AddressManager.getInstance().getHDAccountHot
                     (), new SecureCharSequence(password)).setCheckListener(point));
         }
         if (AddressManager.getInstance().hasHDMKeychain()) {

@@ -60,7 +60,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
         addresses.add(HDAccount.HDAccountPlaceHolder);
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
         DialogFragmentHDMSingularColdSeed.newInstance(words, AddressManager.getInstance()
-                .getHdAccount().getQRCodeFullEncryptPrivKey(), R.string
+                .getHDAccountHot().getQRCodeFullEncryptPrivKey(), R.string
                 .add_hd_account_show_seed_label, R.string.add_hd_account_show_seed_button, new
                 DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
                     @Override

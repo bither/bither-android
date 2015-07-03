@@ -155,7 +155,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() ==
                         QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()
                 ) || (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
-                .ColdHD && !HDAccountCold.hasHDAccountCold())) {
+                .ColdHD && !AddressManager.getInstance().hasHDAccountCold())) {
             btnSign.setEnabled(false);
             tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
         } else {
@@ -181,7 +181,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 List<String> strings = null;
                 if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
                         .ColdHD) {
-                    HDAccountCold account = HDAccountCold.hdAccountCold();
+                    HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
                     try {
                         List<byte[]> bytes = account.signHashHexes(qrCodeTransport.getHashList(),
                                 qrCodeTransport.getPathTypeIndexes(), password);

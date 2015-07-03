@@ -491,7 +491,7 @@ public class ColdActivity extends BaseFragmentActivity {
             }
             if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager
                     .getInstance().getPrivKeyAddresses().size() == 0 && AddressManager
-                    .getInstance().getHdmKeychain() == null && !HDAccountCold.hasHDAccountCold()) {
+                    .getInstance().getHdmKeychain() == null && !AddressManager.getInstance().hasHDAccountCold()) {
                 checkBackup();
             }
         }

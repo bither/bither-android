@@ -419,7 +419,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     if (!AddressManager.getInstance().hasHDMKeychain()) {
                         count += 2;
                     }
-                    if (!HDAccountCold.hasHDAccountCold()) {
+                    if (!AddressManager.getInstance().hasHDAccountCold()) {
                         count += 2;
                     }
                     return count;
@@ -508,7 +508,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                         }
                         index -= 2;
                     }
-                    if (!HDAccountCold.hasHDAccountCold()) {
+                    if (!AddressManager.getInstance().hasHDAccountCold()) {
                         switch (index) {
                             case 2:
                                 return R.string.import_cold_hd_account_seed_qr_code;

@@ -80,7 +80,7 @@ public class AddHotAddressActivity extends AddPrivateKeyActivity {
     }
 
     private Fragment getHDAccountFragment() {
-        if (AddressManager.getInstance().hasHDAccount()) {
+        if (AddressManager.getInstance().hasHDAccountHot()) {
             if (hdAccountViewFragment == null) {
                 hdAccountViewFragment = new AddAddressHotHDAccountViewFragment();
             }

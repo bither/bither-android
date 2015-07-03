@@ -80,16 +80,16 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         this.watchOnlys = watchOnlys;
         this.privates = privates;
         this.hdms = hdms;
-        hdAccount = AddressManager.getInstance().getHdAccount();
-        hdAccountMonitored = AddressManager.getInstance().getHdAccountMonitored();
+        hdAccount = AddressManager.getInstance().getHDAccountHot();
+        hdAccountMonitored = AddressManager.getInstance().getHDAccountMonitored();
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
 
     @Override
     public void notifyDataSetChanged() {
-        hdAccount = AddressManager.getInstance().getHdAccount();
-        hdAccountMonitored = AddressManager.getInstance().getHdAccountMonitored();
+        hdAccount = AddressManager.getInstance().getHDAccountHot();
+        hdAccountMonitored = AddressManager.getInstance().getHDAccountMonitored();
         super.notifyDataSetChanged();
         this.notifyHeaderChange();
     }
