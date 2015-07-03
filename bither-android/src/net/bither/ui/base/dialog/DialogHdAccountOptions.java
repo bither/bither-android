@@ -18,11 +18,13 @@
 
 package net.bither.ui.base.dialog;
 
-import android.content.Context;
+import android.app.Activity;
 
 import net.bither.R;
+import net.bither.activity.hot.HDAccountDetailActivity;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
 
@@ -34,15 +36,32 @@ import java.util.List;
  */
 public class DialogHdAccountOptions extends DialogWithActions {
     private HDAccount account;
+    private boolean fromDetail;
+    private Activity activity;
 
-    public DialogHdAccountOptions(Context context, HDAccount account) {
+    public DialogHdAccountOptions(Activity context, HDAccount account) {
         super(context);
         this.account = account;
+        activity = context;
+        fromDetail = context instanceof HDAccountDetailActivity;
     }
 
     @Override
     protected List<Action> getActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
+        if (fromDetail) {
+            actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
+                @Override
+                public void run() {
+                    if (account.issuedExternalIndex() < 0) {
+                        DropdownMessage.showDropdownMessage(activity, R.string
+                                .hd_account_old_addresses_zero);
+                        return;
+                    }
+                    new DialogHdOldAddresses(activity, account).show();
+                }
+            }));
+        }
         actions.add(new Action(R.string.add_hd_account_seed_qr_code, new Runnable() {
             @Override
             public void run() {

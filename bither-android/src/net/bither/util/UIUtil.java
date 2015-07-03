@@ -17,6 +17,7 @@
 package net.bither.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -42,15 +43,17 @@ public class UIUtil {
         return BitherApplication.mContext.getResources().getDisplayMetrics().heightPixels;
     }
 
-    public static void gotoBrower(Activity activity, String url) {
+    public static void gotoBrower(Context activity, String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url)
         ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
             activity.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
-            DropdownMessage.showDropdownMessage(activity, R.string.find_browser_error);
+            if (activity instanceof Activity) {
+                DropdownMessage.showDropdownMessage((Activity) activity, R.string
+                        .find_browser_error);
+            }
         }
-
     }
 }

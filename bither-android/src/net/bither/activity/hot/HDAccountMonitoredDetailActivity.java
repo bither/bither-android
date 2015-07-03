@@ -19,12 +19,16 @@
 package net.bither.activity.hot;
 
 import android.os.Bundle;
-import android.view.View;
 
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogHdOldAddresses;
+import net.bither.ui.base.dialog.DialogWithActions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/4/17.
@@ -34,7 +38,6 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        findViewById(R.id.ibtn_option).setVisibility(View.GONE);
     }
 
     @Override
@@ -45,7 +48,20 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void optionClicked() {
-
+        new DialogWithActions(this) {
+            @Override
+            protected List<Action> getActions() {
+                ArrayList<Action> actions = new ArrayList<Action>();
+                actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
+                    @Override
+                    public void run() {
+                        new DialogHdOldAddresses(HDAccountMonitoredDetailActivity.this,
+                                (HDAccountMonitored) address).show();
+                    }
+                }));
+                return actions;
+            }
+        }.show();
     }
 
     @Override
