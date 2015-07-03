@@ -185,20 +185,17 @@ public class HDAccountProvider implements IHDAccountProvider {
     @Override
     public Tx updateOutHDAccountId(Tx tx) {
         List<String> addressList = tx.getOutAddressList();
-        if (addressList != null) {
+        if (addressList != null && addressList.size() > 0) {
             HashSet<String> set = new HashSet<String>();
             set.addAll(addressList);
             StringBuilder strBuilder = new StringBuilder();
             for (String str : set) {
                 strBuilder.append("'").append(str).append("',");
             }
-            if (strBuilder.length() > 0) {
-                strBuilder.substring(0, strBuilder.length() - 1);
-            }
 
             SQLiteDatabase db = this.mDb.getReadableDatabase();
             String sql = Utils.format("select address,hd_account_id from hd_account_addresses where address in (%s) "
-                    , strBuilder.toString());
+                    , strBuilder.substring(0, strBuilder.length() - 1));
             Cursor c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 String address = c.getString(0);
@@ -217,20 +214,17 @@ public class HDAccountProvider implements IHDAccountProvider {
     @Override
     public int getRelatedAddressCnt(List<String> addresses) {
         int cnt = 0;
-        if (addresses != null) {
+        if (addresses != null && addresses.size() > 0) {
             HashSet<String> set = new HashSet<String>();
             set.addAll(addresses);
             StringBuilder strBuilder = new StringBuilder();
             for (String str : set) {
                 strBuilder.append("'").append(str).append("',");
             }
-            if (strBuilder.length() > 0) {
-                strBuilder.substring(0, strBuilder.length() - 1);
-            }
 
             SQLiteDatabase db = this.mDb.getReadableDatabase();
             String sql = Utils.format("select count(0) cnt from hd_account_addresses where address in (%s) "
-                    , strBuilder.toString());
+                    , strBuilder.substring(0, strBuilder.length() - 1));
             Cursor c = db.rawQuery(sql, null);
             if (c.moveToNext()) {
                 cnt = c.getInt(0);
@@ -243,20 +237,17 @@ public class HDAccountProvider implements IHDAccountProvider {
     @Override
     public List<Integer> getRelatedHDAccountIdList(List<String> addresses) {
         List<Integer> hdAccountIdList = new ArrayList<Integer>();
-        if (addresses != null) {
+        if (addresses != null && addresses.size() > 0) {
             HashSet<String> set = new HashSet<String>();
             set.addAll(addresses);
             StringBuilder strBuilder = new StringBuilder();
             for (String str : set) {
                 strBuilder.append("'").append(str).append("',");
             }
-            if (strBuilder.length() > 0) {
-                strBuilder.substring(0, strBuilder.length() - 1);
-            }
 
             SQLiteDatabase db = this.mDb.getReadableDatabase();
             String sql = Utils.format("select distinct hd_account_id from hd_account_addresses where address in (%s) "
-                    , strBuilder.toString());
+                    , strBuilder.substring(0, strBuilder.length() - 1));
             Cursor c = db.rawQuery(sql, null);
             while (c.moveToNext()) {
                 hdAccountIdList.add(c.getInt(0));
@@ -420,7 +411,7 @@ public class HDAccountProvider implements IHDAccountProvider {
             }
             c.close();
             sql = "select distinct a.* " +
-                    " from ins a, txs b,addressex_txs c,hd_account_addresses d" +
+                    " from ins a, txs b,addresses_txs c,hd_account_addresses d" +
                     " where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.address=d.address" +
                     "   and b.block_no is null and d.hd_account_id=?" +
                     " order by a.tx_hash,a.in_sn";
@@ -441,7 +432,7 @@ public class HDAccountProvider implements IHDAccountProvider {
             c.close();
 
             sql = "select distinct a.* " +
-                    " from outs a, txs b,addressex_txs c,hd_account_addresses d" +
+                    " from outs a, txs b,addresses_txs c,hd_account_addresses d" +
                     " where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.address=d.address" +
                     "   and b.block_no is null and d.hd_account_id=?" +
                     " order by a.tx_hash,a.out_sn";
