@@ -29,30 +29,28 @@ import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.OutPoint;
 import net.bither.bitherj.core.Tx;
-import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.db.AbstractDb;
-import net.bither.bitherj.db.IHDAccountProvider;
+import net.bither.bitherj.db.IHDAccountAddressProvider;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Sha256Hash;
 import net.bither.bitherj.utils.Utils;
-import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class HDAccountProvider implements IHDAccountProvider {
+public class HDAccountAddressProvider implements IHDAccountAddressProvider {
 
     private final static String queryTxHashOfHDAccount = "select distinct txs.tx_hash from " +
             "addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address";
     private final static String inQueryTxHashOfHDAccount = " (" + queryTxHashOfHDAccount + ")";
 
-    private static HDAccountProvider hdAccountProvider = new HDAccountProvider(BitherApplication
+    private static HDAccountAddressProvider hdAccountProvider = new HDAccountAddressProvider(BitherApplication
             .mTxDbHelper);
 
-    public static HDAccountProvider getInstance() {
+    public static HDAccountAddressProvider getInstance() {
         return hdAccountProvider;
     }
 
@@ -60,7 +58,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     private SQLiteOpenHelper mDb;
 
 
-    private HDAccountProvider(SQLiteOpenHelper hdAccountDB) {
+    private HDAccountAddressProvider(SQLiteOpenHelper hdAccountDB) {
         this.mDb = hdAccountDB;
     }
 
