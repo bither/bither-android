@@ -253,7 +253,7 @@ public class AddressProvider implements IAddressProvider {
         return passwordSeed;
     }
 
-    private boolean hasPasswordSeed(SQLiteDatabase db) {
+    public static boolean hasPasswordSeed(SQLiteDatabase db) {
         Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
                 "password_seed is not null ", null);
         int count = 0;
@@ -269,11 +269,10 @@ public class AddressProvider implements IAddressProvider {
 
     public boolean hasPasswordSeed() {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
-        return hasPasswordSeed(db);
+        return AddressProvider.hasPasswordSeed(db);
     }
 
-
-    public void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
+    public static void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
         ContentValues cv = applyPasswordSeedCV(passwordSeed);
         db.insert(AbstractDb.Tables.PASSWORD_SEED, null, cv);
     }
@@ -418,7 +417,7 @@ public class AddressProvider implements IAddressProvider {
         cv.put(AbstractDb.HDSeedsColumns.HDM_ADDRESS, firstAddress);
         int seedId = (int) db.insert(AbstractDb.Tables.HDSEEDS, null, cv);
         if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
-            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
+            AddressProvider.addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -966,7 +965,7 @@ public class AddressProvider implements IAddressProvider {
 
 
 
-    private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
+    private static ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
         ContentValues cv = new ContentValues();
         if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {
             cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());

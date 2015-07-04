@@ -448,7 +448,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     address.setSyncComplete(false);
                     address.updateSyncComplete();
                 }
-                HDAccountAddressProvider.getInstance().setSyncdNotComplete();
+                HDAccountAddressProvider.getInstance().setSyncedNotComplete();
                 TxProvider.getInstance().clearAllTx();
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.notificatTx(null, Tx.TxNotificationType.txFromApi);

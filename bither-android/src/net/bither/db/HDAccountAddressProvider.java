@@ -361,7 +361,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
 
 
     @Override
-    public long getHDAccountConfirmedBanlance(int hdAccountId) {
+    public long getHDAccountConfirmedBalance(int hdAccountId) {
         long sum = 0;
         String unspendOutSql = "select ifnull(sum(a.out_value),0) sum from outs a,txs b where a" +
                 ".tx_hash=b.tx_hash " +
@@ -490,7 +490,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
     }
 
     @Override
-    public void updateSyncdForIndex(int hdAccountId, AbstractHD.PathType pathType, int index) {
+    public void updateSyncedForIndex(int hdAccountId, AbstractHD.PathType pathType, int index) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, 1);
@@ -499,7 +499,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
     }
 
     @Override
-    public void setSyncdNotComplete() {
+    public void setSyncedNotComplete() {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountAddressesColumns.IS_SYNCED, 0);
@@ -804,7 +804,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
 //    }
 //
 //    @Override
-//    public String getHDFristAddress(int hdSeedId) {
+//    public String getHDFirstAddress(int hdSeedId) {
 //        SQLiteDatabase db = this.mDb.getReadableDatabase();
 //        Cursor cursor = db.rawQuery("select hd_address from hd_account where hd_account_id=?"
 //                , new String[]{Integer.toString(hdSeedId)});
@@ -883,7 +883,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
 //    }
 //
 //    @Override
-//    public String getHDAccountEncryptMnmonicSeed(int hdSeedId) {
+//    public String getHDAccountEncryptMnemonicSeed(int hdSeedId) {
 //        String hdAccountMnmonicEncryptSeed = null;
 //        SQLiteDatabase db = this.mDb.getReadableDatabase();
 //        Cursor c = db.rawQuery("select " + AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED +

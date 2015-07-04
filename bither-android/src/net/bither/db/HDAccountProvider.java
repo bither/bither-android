@@ -32,7 +32,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public String getHDFristAddress(int hdSeedId) {
+    public String getHDFirstAddress(int hdSeedId) {
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor cursor = db.rawQuery("select hd_address from hd_account where hd_account_id=?"
                 , new String[]{Integer.toString(hdSeedId)});
@@ -61,8 +61,8 @@ public class HDAccountProvider implements IHDAccountProvider {
         cv.put(AbstractDb.HDAccountColumns.EXTERNAL_PUB, Base58.encode(externalPub));
         cv.put(AbstractDb.HDAccountColumns.INTERNAL_PUB, Base58.encode(internalPub));
         int seedId = (int) db.insert(AbstractDb.Tables.HD_ACCOUNT, null, cv);
-        if (!hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
-            addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
+        if (!AddressProvider.hasPasswordSeed(db) && !Utils.isEmpty(addressOfPS)) {
+            AddressProvider.addPasswordSeed(db, new PasswordSeed(addressOfPS, encryptedMnemonicSeed));
         }
         db.setTransactionSuccessful();
         db.endTransaction();
@@ -182,7 +182,7 @@ public class HDAccountProvider implements IHDAccountProvider {
     }
 
     @Override
-    public String getHDAccountEncryptMnmonicSeed(int hdSeedId) {
+    public String getHDAccountEncryptMnemonicSeed(int hdSeedId) {
         String hdAccountMnmonicEncryptSeed = null;
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         Cursor c = db.rawQuery("select " + AbstractDb.HDAccountColumns.ENCRYPT_MNMONIC_SEED + " from hd_account where hd_account_id=? "
@@ -231,32 +231,5 @@ public class HDAccountProvider implements IHDAccountProvider {
                 c.close();
         }
         return hdSeedIds;
-    }
-
-    private boolean hasPasswordSeed(SQLiteDatabase db) {
-        Cursor c = db.rawQuery("select  count(0) cnt from password_seed  where " +
-                "password_seed is not null ", null);
-        int count = 0;
-        if (c.moveToNext()) {
-            int idColumn = c.getColumnIndex("cnt");
-            if (idColumn != -1) {
-                count = c.getInt(idColumn);
-            }
-        }
-        c.close();
-        return count > 0;
-    }
-
-    private void addPasswordSeed(SQLiteDatabase db, PasswordSeed passwordSeed) {
-        ContentValues cv = applyPasswordSeedCV(passwordSeed);
-        db.insert(AbstractDb.Tables.PASSWORD_SEED, null, cv);
-    }
-
-    private ContentValues applyPasswordSeedCV(PasswordSeed passwordSeed) {
-        ContentValues cv = new ContentValues();
-        if (!Utils.isEmpty(passwordSeed.toPasswordSeedString())) {
-            cv.put(AbstractDb.PasswordSeedColumns.PASSWORD_SEED, passwordSeed.toPasswordSeedString());
-        }
-        return cv;
     }
 }
