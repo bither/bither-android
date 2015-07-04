@@ -280,9 +280,9 @@ public class TxProvider implements ITxProvider {
     }
 
     private static void addTxToDb(SQLiteDatabase db, Tx txItem) {
-//        HashSet<String> addressSet = AbstractDb.hdAccountProvider.
+//        HashSet<String> addressSet = AbstractDb.hdAccountAddressProvider.
 //                getBelongAccountAddresses(txItem.getOutAddressList());
-////        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountProvider.
+////        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountAddressProvider.
 ////                getBelongAccountAddresses(txItem.getOutAddressList());
 //        for (Out out : txItem.getOuts()) {
 //            if (addressSet.contains(out.getOutAddress())) {

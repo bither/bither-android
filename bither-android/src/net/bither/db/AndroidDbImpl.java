@@ -23,6 +23,7 @@ import net.bither.bitherj.db.IDesktopAddressProvider;
 import net.bither.bitherj.db.IDesktopTxProvider;
 import net.bither.bitherj.db.IEnterpriseHDMProvider;
 import net.bither.bitherj.db.IHDAccountAddressProvider;
+import net.bither.bitherj.db.IHDAccountProvider;
 import net.bither.bitherj.db.IPeerProvider;
 import net.bither.bitherj.db.ITxProvider;
 
@@ -48,8 +49,13 @@ public class AndroidDbImpl extends AbstractDb {
     }
 
     @Override
-    public IHDAccountAddressProvider initHDAccountProvider() {
+    public IHDAccountAddressProvider initHDAccountAddressProvider() {
         return HDAccountAddressProvider.getInstance();
+    }
+
+    @Override
+    public IHDAccountProvider initHDAccountProvider() {
+        return HDAccountProvider.getInstance();
     }
 
     @Override
