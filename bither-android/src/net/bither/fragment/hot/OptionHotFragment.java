@@ -373,8 +373,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
-                    && !AddressManager.getInstance().hasHDMKeychain()) {
+            if ((AddressManager.getInstance().getPrivKeyAddresses() == null
+                        || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                    && !AddressManager.getInstance().hasHDMKeychain()
+                    && !AddressManager.getInstance().hasHDAccountHot()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }

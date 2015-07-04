@@ -137,10 +137,13 @@ public class CheckHeaderView extends FrameLayout implements IDialogPasswordListe
     };
 
     public void check() {
-        if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager
-                .getInstance().getPrivKeyAddresses().size() == 0) && !AddressManager.getInstance
-                ().hasHDMKeychain() && (AppSharedPreference.getInstance().getAppMode() ==
-                BitherjSettings.AppMode.HOT || !AddressManager.getInstance().hasHDAccountCold())) {
+        if ((AddressManager.getInstance().getPrivKeyAddresses() == null
+                    || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                && !AddressManager.getInstance().hasHDMKeychain()
+                && !(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD
+                    && AddressManager.getInstance().hasHDAccountCold())
+                && !(AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT
+                    && AddressManager.getInstance().hasHDAccountHot())) {
             DropdownMessage.showDropdownMessage((Activity) getContext(),
                     R.string.private_key_is_empty);
             return;

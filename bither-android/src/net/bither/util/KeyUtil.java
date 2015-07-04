@@ -111,15 +111,12 @@ public class KeyUtil {
     }
 
     public static void setHDAccount(HDAccount hdAccount) {
-
-        AddressManager.getInstance().setHdAccountHot(hdAccount);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {
+            AddressManager.getInstance().setHdAccountHot(hdAccount);
             BackupUtil.backupHotKey();
         }
-
-
     }
 
     public static void stopMonitor(BlockchainService service, Address address) {

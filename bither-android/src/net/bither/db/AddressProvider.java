@@ -481,10 +481,11 @@ public class AddressProvider implements IAddressProvider {
     }
 
     @Override
-    public int addMonitoredHDAccount(boolean isXrandom, byte[] externalPub, byte[] internalPub) {
+    public int addMonitoredHDAccount(String firstAddress, boolean isXrandom, byte[] externalPub, byte[] internalPub) {
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountColumns.HD_ADDRESS, firstAddress);
         cv.put(AbstractDb.HDAccountColumns.IS_XRANDOM, isXrandom ? 1 : 0);
         cv.put(AbstractDb.HDAccountColumns.EXTERNAL_PUB, Base58.encode(externalPub));
         cv.put(AbstractDb.HDAccountColumns.INTERNAL_PUB, Base58.encode(internalPub));
