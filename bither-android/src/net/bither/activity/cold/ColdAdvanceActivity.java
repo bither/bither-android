@@ -62,6 +62,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
+import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogEnterpriseHDMEnable;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
@@ -158,7 +159,6 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (BitherjSettings.DEV_DEBUG) {
                 try {
                     final File logTagDir = FileUtil.getDiskDir("log", true);
@@ -172,9 +172,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 }
 
             }
-//            hasAnyAction = true;
-//            DialogEditPassword dialog = new DialogEditPassword(ColdAdvanceActivity.this);
-//            dialog.show();
+            hasAnyAction = true;
+            DialogEditPassword dialog = new DialogEditPassword(ColdAdvanceActivity.this);
+            dialog.show();
         }
     };
 
