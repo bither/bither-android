@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+
+
+    <FrameLayout
+        android:id="@+id/fl_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/ui_touchable_bg"
+        android:focusable="true"
+        android:foreground="@drawable/dropdown_ic_arrow_selector"
+        android:foregroundGravity="bottom|right">
+
+        <TextView
+            android:id="@+id/tv_subtransaction_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+    </FrameLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1"/>
+
+    <ImageButton
+        android:id="@+id/ibtn_view_on_net"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/transparent"
+        android:src="@drawable/address_full_show_button"/>
+
+</LinearLayout>
