@@ -47,7 +47,7 @@ import java.util.Locale;
 /**
  * Created by songchenwen on 15/7/3.
  */
-public class DialogHdOldAddresses extends CenterDialog {
+public class DialogHdAccountOldAddresses extends CenterDialog {
     private static final int MaxHeight = UIUtil.getScreenHeight() - UIUtil.dip2pix(200);
     private static final int ItemHeight = UIUtil.dip2pix(70);
     private static final int MAX_CACHE_SIZE = 500;
@@ -61,14 +61,14 @@ public class DialogHdOldAddresses extends CenterDialog {
 
     private HashMap<Integer, String> addresses = new HashMap<Integer, String>();
 
-    public DialogHdOldAddresses(Activity context, HDAccount hdAccount) {
+    public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount) {
         super(context);
         this.hdAccount = hdAccount;
         activity = context;
         initView();
     }
 
-    public DialogHdOldAddresses(Activity context, HDAccountMonitored hdAccountMonitored) {
+    public DialogHdAccountOldAddresses(Activity context, HDAccountMonitored hdAccountMonitored) {
         super(context);
         this.hdAccountMonitored = hdAccountMonitored;
         activity = context;

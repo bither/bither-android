@@ -58,7 +58,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
                                 .hd_account_old_addresses_zero);
                         return;
                     }
-                    new DialogHdOldAddresses(activity, account).show();
+                    new DialogHdAccountOldAddresses(activity, account).show();
                 }
             }));
         }

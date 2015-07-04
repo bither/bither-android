@@ -24,7 +24,7 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
-import net.bither.ui.base.dialog.DialogHdOldAddresses;
+import net.bither.ui.base.dialog.DialogHdAccountOldAddresses;
 import net.bither.ui.base.dialog.DialogWithActions;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
                 actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                     @Override
                     public void run() {
-                        new DialogHdOldAddresses(HDAccountMonitoredDetailActivity.this,
+                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this,
                                 (HDAccountMonitored) address).show();
                     }
                 }));
