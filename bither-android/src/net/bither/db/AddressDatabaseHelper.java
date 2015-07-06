@@ -109,7 +109,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void v6Tov7(SQLiteDatabase db) {
-        //1.3.7
+        //1.3.8
         db.execSQL(AbstractDb.CREATE_ENTERPRISE_HD_ACCOUNT);
         db.execSQL(AbstractDb.CREATE_ENTERPRISE_HDM_ADDRESSES_SQL);
         db.execSQL(AbstractDb.CREATE_MULTI_SIGN_SET);
