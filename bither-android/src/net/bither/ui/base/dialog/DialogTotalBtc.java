@@ -84,14 +84,6 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         tvBtc = (TextView) findViewById(R.id.tv_btc);
         vPieChart = (PieChartView) findViewById(R.id.pie);
         flPieContainer = (FrameLayout) findViewById(R.id.fl_pie_container);
-        flPieContainer.getLayoutParams().height = flPieContainer.getLayoutParams().width = UIUtil
-                .getScreenWidth() - UIUtil.dip2pix(80);
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) vPieChart.getLayoutParams();
-        int margin = (int) (flPieContainer.getLayoutParams().width * PieChartMarginRate);
-        lp.topMargin = margin;
-        lp.leftMargin = margin;
-        lp.rightMargin = margin;
-        lp.bottomMargin = margin;
         ivPrivate = (ImageView) findViewById(R.id.iv_private);
         tvPrivate = (TextView) findViewById(R.id.tv_private);
         tvPrivateMoney = (TextView) findViewById(R.id.tv_private_money);
@@ -124,8 +116,6 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         ivHDM.setBackgroundDrawable(vPieChart.getSymbolForIndex(2));
         ivPrivate.setBackgroundDrawable(vPieChart.getSymbolForIndex(3));
         ivWatchOnly.setBackgroundDrawable(vPieChart.getSymbolForIndex(4));
-        flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
-                .getLayoutParams().width * LogoSizeRate);
         vPieChart.setRotateListener(this);
     }
 
@@ -139,20 +129,26 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         this.btcHdm = btcHdm;
         this.btcHd = btcHd;
         this.btcHdMonitored = btcHdMonitored;
+        int count = 0;
         if (btcPrivate != null && btcPrivate.signum() > 0) {
             total = total.add(btcPrivate);
+            count++;
         }
         if (btcWatchOnly != null && btcWatchOnly.signum() > 0) {
             total = total.add(btcWatchOnly);
+            count++;
         }
         if (btcHdm != null && btcHdm.signum() > 0) {
             total = total.add(btcHdm);
+            count++;
         }
         if (btcHd != null && btcHd.signum() > 0) {
             total = total.add(btcHd);
+            count++;
         }
         if (btcHdMonitored != null && btcHdMonitored.signum() > 0) {
             total = total.add(btcHdMonitored);
+            count++;
         }
         tvBtc.setText(UnitUtilWrapper.formatValue(total.longValue()));
         Bitmap btcSymbol = UnitUtilWrapper.getBtcSlimSymbol(tvPrivate);
@@ -191,6 +187,21 @@ public class DialogTotalBtc extends DialogWithArrow implements PieChartView.Rota
         } else {
             llHdMonitored.setVisibility(View.GONE);
         }
+
+        int minusSize = UIUtil.dip2pix(80);
+        if (count > 4) {
+            minusSize = UIUtil.dip2pix(100);
+        }
+        flPieContainer.getLayoutParams().height = flPieContainer.getLayoutParams().width = UIUtil
+                .getScreenWidth() - minusSize;
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) vPieChart.getLayoutParams();
+        int margin = (int) (flPieContainer.getLayoutParams().width * PieChartMarginRate);
+        lp.topMargin = margin;
+        lp.leftMargin = margin;
+        lp.rightMargin = margin;
+        lp.bottomMargin = margin;
+        flLogo.getLayoutParams().width = flLogo.getLayoutParams().height = (int) (flPieContainer
+                .getLayoutParams().width * LogoSizeRate);
     }
 
     @Override
