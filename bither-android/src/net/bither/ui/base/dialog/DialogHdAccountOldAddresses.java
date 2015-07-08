@@ -32,7 +32,6 @@ import net.bither.R;
 import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
@@ -53,7 +52,6 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
     private static final int MAX_CACHE_SIZE = 500;
 
     private HDAccount hdAccount;
-    private HDAccountMonitored hdAccountMonitored;
 
     private ListView lv;
 
@@ -64,13 +62,6 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
     public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount) {
         super(context);
         this.hdAccount = hdAccount;
-        activity = context;
-        initView();
-    }
-
-    public DialogHdAccountOldAddresses(Activity context, HDAccountMonitored hdAccountMonitored) {
-        super(context);
-        this.hdAccountMonitored = hdAccountMonitored;
         activity = context;
         initView();
     }
@@ -134,25 +125,12 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
     }
 
     private int issuedExternalAddressCount() {
-        if (hdAccount != null) {
             return hdAccount.issuedExternalIndex() + 1;
-        }
-        if (hdAccountMonitored != null) {
-            return hdAccountMonitored.issuedExternalIndex() + 1;
-        }
-        return 0;
     }
 
     private String addressForIndex(int index) {
-        if (hdAccount != null) {
             return hdAccount.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH, index)
                     .getAddress();
-        }
-        if (hdAccountMonitored != null) {
-            return hdAccountMonitored.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH,
-                    index).getAddress();
-        }
-        return null;
     }
 
     private void showMsg(int msg) {

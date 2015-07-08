@@ -31,7 +31,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressAlias;
@@ -174,10 +173,10 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     public void onAddressInfoChanged(String address) {
         if (this.address != null) {
             if (Utils.compareString(address, this.address.getAddress()) || (this.address
-                    .isHDAccount() && Utils.compareString(address, HDAccount
-                    .HDAccountPlaceHolder)) || (this.address instanceof HDAccountMonitored &&
-                    Utils.compareString(address, HDAccountMonitored
-                            .HDAccountMonitoredPlaceHolder))) {
+                    .isHDAccount() && this.address.hasPrivKey() && Utils.compareString(address,
+                    HDAccount.HDAccountPlaceHolder)) || (this.address.isHDAccount() && !this
+                    .address.hasPrivKey() && Utils.compareString(address, HDAccount
+                    .HDAccountMonitoredPlaceHolder))) {
                 showAddressInfo();
             }
         }

@@ -11,7 +11,6 @@ import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
@@ -55,7 +54,7 @@ public class TxReceiver extends BroadcastReceiver {
         String contentText = address;
         if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
             contentText = BitherApplication.mContext.getString(R.string.address_group_hd);
-        } else if (Utils.compareString(address, HDAccountMonitored.HDAccountMonitoredPlaceHolder)) {
+        } else if (Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)) {
             contentText = BitherApplication.mContext.getString(R.string.address_group_hd_monitored);
         }
         String title = UnitUtilWrapper.formatValue(amount) + " " + AppSharedPreference.getInstance().getBitcoinUnit().name();

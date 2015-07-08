@@ -118,7 +118,13 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                                 AddAddressHotHDAccountFragment.this.dp.show();
                             }
                         });
-                        hdAccount = new HDAccount(new SecureRandom(), password, null);
+                        while (hdAccount == null) {
+                            try {
+                                hdAccount = new HDAccount(new SecureRandom(), password, null);
+                            } catch (MnemonicException.MnemonicLengthException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         final ArrayList<String> words = new ArrayList<String>();
                         try {
                             words.addAll(hdAccount.getSeedWords(password));

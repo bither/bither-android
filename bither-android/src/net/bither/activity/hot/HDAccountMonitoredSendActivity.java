@@ -26,7 +26,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountMonitored;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
@@ -99,7 +99,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
 
     private void send() {
         tx = null;
-        HDAccountMonitored account = (HDAccountMonitored) address;
+        HDAccount account = (HDAccount) address;
         try {
             tx = account.newTx(toAddress, btcAmount);
         } catch (Exception e) {
@@ -144,8 +144,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
     @Override
     public void onConfirm() {
         Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport
-                .getHDAccountMonitoredUnsignedTx(tx, toAddress, (HDAccountMonitored) address));
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getHDAccountMonitoredUnsignedTx(tx, toAddress, (HDAccount) address));
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
                 .unsigned_transaction_qr_code_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);

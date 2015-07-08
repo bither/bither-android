@@ -22,7 +22,7 @@ import android.os.Bundle;
 
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountMonitored;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogHdAccountOldAddresses;
 import net.bither.ui.base.dialog.DialogWithActions;
@@ -55,8 +55,7 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
                 actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                     @Override
                     public void run() {
-                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this,
-                                (HDAccountMonitored) address).show();
+                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this, (HDAccount) address).show();
                     }
                 }));
                 return actions;
@@ -66,7 +65,7 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void notifyAddressBalanceChange(String address) {
-        if (Utils.compareString(address, HDAccountMonitored.HDAccountMonitoredPlaceHolder)) {
+        if (Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)) {
             loadData();
         }
     }

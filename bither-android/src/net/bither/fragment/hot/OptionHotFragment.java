@@ -57,7 +57,7 @@ import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountMonitored;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -533,7 +533,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                     service.stopAndUnregister();
                                 }
                                 try {
-                                    HDAccountMonitored account = new HDAccountMonitored(bytes,
+                                    HDAccount account = new HDAccount(bytes,
                                             isXRandom, false, null);
                                     AddressManager.getInstance().setHDAccountMonitored(account);
                                     ThreadUtil.runOnMainThread(new Runnable() {

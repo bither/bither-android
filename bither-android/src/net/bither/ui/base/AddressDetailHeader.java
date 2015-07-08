@@ -41,7 +41,6 @@ import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
@@ -132,7 +131,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         }
         btnBalance.setAmount(address.getBalance());
         if ((address.isHDM() && !(address instanceof EnterpriseHDMAddress)) || address.hasPrivKey
-                () || address.isHDAccount()) {
+                ()) {
             btnSend.setCompoundDrawables(null, null, null, null);
         } else {
             Drawable d = getContext().getResources().getDrawable(R.drawable
@@ -151,7 +150,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 //            tvNoTransactions.setVisibility(View.GONE);
 //            llMonitorFailed.setVisibility(View.VISIBLE);
 //        }
-        if (address.isHDAccount() || address instanceof HDAccountMonitored) {
+        if (address.isHDAccount()) {
             ibtnBalanceDetail.setVisibility(View.GONE);
         } else {
             ibtnBalanceDetail.setVisibility(View.VISIBLE);
@@ -245,7 +244,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                             R.string.address_detail_send_balance_zero);
                     return;
                 }
-                if (address instanceof HDAccountMonitored) {
+                if (address.isHDAccount() && !address.hasPrivKey()) {
                     Intent intent = new Intent(activity, HDAccountMonitoredSendActivity.class);
                     activity.startActivityForResult(intent, BitherSetting.INTENT_REF
                             .SEND_REQUEST_CODE);

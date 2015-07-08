@@ -40,7 +40,6 @@ import net.bither.activity.hot.HDAccountMonitoredDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
 import net.bither.ui.base.DropdownMessage;
@@ -65,7 +64,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
     private FragmentActivity activity;
     private HDAccount hdAccount;
-    private HDAccountMonitored hdAccountMonitored;
+    private HDAccount hdAccountMonitored;
     private List<Address> watchOnlys;
     private List<Address> privates;
     private List<HDMAddress> hdms;
@@ -409,7 +408,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         view = (AddressFragmentListItemView) convertView;
         Address a = getChild(groupPosition, childPosition);
         view.setAddress(a);
-        if (a instanceof HDAccountMonitored) {
+        if (a.isHDAccount() && !a.hasPrivKey()) {
             view.ivType.setOnLongClickListener(null);
             view.setOnClickListener(hdAccountMonitoredDetailClick);
         } else if (a.isHDAccount()) {

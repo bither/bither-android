@@ -28,7 +28,6 @@ import android.widget.ListView;
 
 import net.bither.R;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
@@ -175,23 +174,6 @@ public class DialogAddressFullForHD extends DialogWithArrow {
                 return lhs.getIndex() - rhs.getIndex();
             }
         });
-        boolean isIncoming = true;
-        try {
-            isIncoming = tx.deltaAmountFrom(account) >= 0;
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        List<String> foreign = foreignAddresses(isIncoming ? inAddresses : outAddresses);
-        initForeignAddresses(isIncoming, tx, foreign);
-        initView();
-    }
-
-    public DialogAddressFullForHD(Activity context, Tx tx, HDAccountMonitored account) {
-        super(context);
-        activity = context;
-        List<String> inAddresses = tx.getInAddresses();
-        List<String> outAddresses = tx.getOutAddressList();
-        ownAddresses = account.getRelatedAddressesForTx(tx, inAddresses);
         boolean isIncoming = true;
         try {
             isIncoming = tx.deltaAmountFrom(account) >= 0;

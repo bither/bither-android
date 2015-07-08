@@ -36,7 +36,6 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
@@ -262,7 +261,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             int position = 0;
             if (Utils.compareString(addressesToShowAdded.get(0), HDAccount.HDAccountPlaceHolder)) {
                 isHD = true;
-            } else if (Utils.compareString(addressesToShowAdded.get(0), HDAccountMonitored
+            } else if (Utils.compareString(addressesToShowAdded.get(0), HDAccount
                     .HDAccountMonitoredPlaceHolder)) {
                 isHDMonitored = true;
             } else if (addressesToShowAdded.get(0).startsWith("3")) {

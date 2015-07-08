@@ -29,7 +29,6 @@ import net.bither.R;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDAccount;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
@@ -171,11 +170,6 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
 
         @Override
         public void onClick(View v) {
-            if (address instanceof HDAccountMonitored) {
-                new DialogAddressFullForHD(activity, transaction, (HDAccountMonitored) address)
-                        .show(v);
-                return;
-            }
             if (address instanceof HDAccount) {
                 new DialogAddressFullForHD(activity, transaction, (HDAccount) address).show(v);
                 return;

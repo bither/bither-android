@@ -43,7 +43,6 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
-import net.bither.bitherj.core.HDAccountMonitored;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
@@ -159,7 +158,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
         }
 
         public boolean isHDAccountCold() {
-            return Utils.compareString(address, HDAccountMonitored.HDAccountMonitoredPlaceHolder)
+            return Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)
                     && AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
                     .COLD;
         }
@@ -188,7 +187,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
         final ArrayList<Check> checks = new ArrayList<Check>();
         if (AddressManager.getInstance().hasHDAccountCold() && AppSharedPreference.getInstance().getAppMode() ==
                 BitherjSettings.AppMode.COLD) {
-            CheckPoint point = new CheckPoint(HDAccountMonitored.HDAccountMonitoredPlaceHolder);
+            CheckPoint point = new CheckPoint(HDAccount.HDAccountMonitoredPlaceHolder);
             checkPoints.add(point);
             final SecureCharSequence p = new SecureCharSequence(password);
             checks.add(new Check(R.string.hd_account_cold_address_list_label, new Check
