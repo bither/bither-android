@@ -160,8 +160,10 @@
     <string name="setting_name_transaction_fee">默認手續費</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_low">較低</string>
+    <string name="setting_name_transaction_fee_high">較高</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
+    <string name="setting_name_transaction_fee_high_note">高優先順序</string>
     <string name="donate_button">捐贈</string>
     <string name="donate_thanks">謝謝您的捐贈</string>
     <string name="buy_order">買單</string>
