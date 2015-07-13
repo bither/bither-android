@@ -114,6 +114,16 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
         }
         c.close();
 
+        db.execSQL("create table if not exists " +
+                "hd_account_addresses2 " +
+                "(hd_account_id integer not null" +
+                ", path_type integer not null" +
+                ", address_index integer not null" +
+                ", is_issued integer not null" +
+                ", address text not null" +
+                ", pub text not null" +
+                ", is_synced integer not null" +
+                ", primary key (address));");
         if (cnt > 0) {
             db.execSQL("ALTER TABLE hd_account_addresses ADD COLUMN hd_account_id integer");
 
@@ -133,18 +143,8 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
             }
 
             db.execSQL("update hd_account_addresses set hd_account_id=" + String.valueOf(hd_account_id));
+            db.execSQL("INSERT INTO hd_account_addresses2 SELECT * FROM hd_account_addresses;");
         }
-        db.execSQL("create table if not exists " +
-                "hd_account_addresses2 " +
-                "(hd_account_id integer not null" +
-                ", path_type integer not null" +
-                ", address_index integer not null" +
-                ", is_issued integer not null" +
-                ", address text not null" +
-                ", pub text not null" +
-                ", is_synced integer not null" +
-                ", primary key (address));");
-        db.execSQL("INSERT INTO hd_account_addresses2 SELECT * FROM hd_account_addresses;");
         int oldCnt = 0;
         int newCnt = 0;
         c = db.rawQuery("select count(0) cnt from hd_account_addresses", null);
