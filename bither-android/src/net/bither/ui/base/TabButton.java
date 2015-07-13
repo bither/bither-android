@@ -99,6 +99,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         tvText.setShadowLayer(0.5f, 1, -1, Color.argb(100, 0, 0, 0));
         tvText.setPadding(0, 0, 0, UIUtil.dip2pix(0.75f));
         tvText.setLines(1);
+        tvText.setSingleLine(true);
         tvText.setEllipsize(TruncateAt.END);
         llIcon.addView(tvText);
         ivArrowDown = new ImageView(getContext());
