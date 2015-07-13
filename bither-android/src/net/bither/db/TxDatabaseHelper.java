@@ -113,9 +113,8 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
             cnt = c.getInt(0);
         }
         c.close();
-        if (cnt == 0) {
-            db.execSQL("ALTER TABLE hd_account_addresses ADD COLUMN hd_account_id integer not null");
-        } else {
+
+        if (cnt > 0) {
             db.execSQL("ALTER TABLE hd_account_addresses ADD COLUMN hd_account_id integer");
 
             int hd_account_id = -1;
@@ -134,36 +133,35 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
             }
 
             db.execSQL("update hd_account_addresses set hd_account_id=" + String.valueOf(hd_account_id));
-
-            db.execSQL("create table if not exists " +
-                    "hd_account_addresses2 " +
-                    "(hd_account_id integer not null" +
-                    ", path_type integer not null" +
-                    ", address_index integer not null" +
-                    ", is_issued integer not null" +
-                    ", address text not null" +
-                    ", pub text not null" +
-                    ", is_synced integer not null" +
-                    ", primary key (address));");
-            db.execSQL("INSERT INTO hd_account_addresses2 SELECT * FROM hd_account_addresses;");
-            int oldCnt = 0;
-            int newCnt = 0;
-            c = db.rawQuery("select count(0) cnt from hd_account_addresses", null);
-            if (c.moveToNext()) {
-                oldCnt = c.getInt(0);
-            }
-            c.close();
-            c = db.rawQuery("select count(0) cnt from hd_account_addresses2", null);
-            if (c.moveToNext()) {
-                newCnt = c.getInt(0);
-            }
-            c.close();
-            if (oldCnt != newCnt) {
-                throw new RuntimeException("tx db upgrade from 2 to 3 failed. new hd_account_addresses table record count not the same as old one");
-            } else {
-                db.execSQL("DROP TABLE hd_account_addresses;");
-                db.execSQL("ALTER TABLE hd_account_addresses2 RENAME TO hd_account_addresses;");
-            }
+        }
+        db.execSQL("create table if not exists " +
+                "hd_account_addresses2 " +
+                "(hd_account_id integer not null" +
+                ", path_type integer not null" +
+                ", address_index integer not null" +
+                ", is_issued integer not null" +
+                ", address text not null" +
+                ", pub text not null" +
+                ", is_synced integer not null" +
+                ", primary key (address));");
+        db.execSQL("INSERT INTO hd_account_addresses2 SELECT * FROM hd_account_addresses;");
+        int oldCnt = 0;
+        int newCnt = 0;
+        c = db.rawQuery("select count(0) cnt from hd_account_addresses", null);
+        if (c.moveToNext()) {
+            oldCnt = c.getInt(0);
+        }
+        c.close();
+        c = db.rawQuery("select count(0) cnt from hd_account_addresses2", null);
+        if (c.moveToNext()) {
+            newCnt = c.getInt(0);
+        }
+        c.close();
+        if (oldCnt != newCnt) {
+            throw new RuntimeException("tx db upgrade from 2 to 3 failed. new hd_account_addresses table record count not the same as old one");
+        } else {
+            db.execSQL("DROP TABLE hd_account_addresses;");
+            db.execSQL("ALTER TABLE hd_account_addresses2 RENAME TO hd_account_addresses;");
         }
 
         db.execSQL(AbstractDb.CREATE_OUT_HD_ACCOUNT_ID_INDEX);
