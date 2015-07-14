@@ -667,6 +667,7 @@
     <string name="monitor_cold_hd_account">Monitor Cold HD Account</string>
     <string name="monitor_cold_hd_account_limit">You can only monitor 1 cold HD account</string>
     <string name="monitor_cold_hd_account_failed">Monitor cold HD account failed</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">Monitor failed. This account is already in Bither.</string>
     <string name="monitor_cold_hd_account_success">Monitor cold HD account success</string>
     <string name="address_group_hd_monitored">Cold HD Account</string>
     <string name="hd_account_old_addresses">Old Addresses</string>

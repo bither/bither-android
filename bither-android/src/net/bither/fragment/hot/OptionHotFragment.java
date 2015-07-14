@@ -578,6 +578,19 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                                     .string.monitor_cold_hd_account_failed);
                                         }
                                     });
+                                } catch (HDAccount.DuplicatedHDAccountException e) {
+                                    e.printStackTrace();
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string
+                                                    .monitor_cold_hd_account_failed_duplicated);
+                                        }
+                                    });
                                 }
                                 if (service != null) {
                                     service.startAndRegister();
