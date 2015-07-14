@@ -142,8 +142,9 @@ public class TxDatabaseHelper extends SQLiteOpenHelper {
                 throw new RuntimeException("tx db upgrade from 2 to 3 failed. no record in hd_account");
             }
 
-            db.execSQL("update hd_account_addresses set hd_account_id=" + String.valueOf(hd_account_id));
-            db.execSQL("INSERT INTO hd_account_addresses2 SELECT * FROM hd_account_addresses;");
+            db.execSQL("update hd_account_addresses set hd_account_id=?", new String[] {Integer.toString(hd_account_id)});
+            db.execSQL("INSERT INTO hd_account_addresses2(hd_account_id,path_type,address_index,is_issued,address,pub,is_synced) " +
+                    "SELECT hd_account_id,path_type,address_index,is_issued,address,pub,is_synced FROM hd_account_addresses;");
         }
         int oldCnt = 0;
         int newCnt = 0;
