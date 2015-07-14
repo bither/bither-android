@@ -51,6 +51,9 @@ public class HDAccountProvider implements IHDAccountProvider {
     public int addHDAccount(String encryptedMnemonicSeed, String encryptSeed, String firstAddress
             , boolean isXrandom, String addressOfPS, byte[] externalPub
             , byte[] internalPub) {
+        if (this.isPubExist(externalPub, internalPub)) {
+            return -1;
+        }
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
@@ -72,6 +75,9 @@ public class HDAccountProvider implements IHDAccountProvider {
 
     @Override
     public int addMonitoredHDAccount(String firstAddress, boolean isXrandom, byte[] externalPub, byte[] internalPub) {
+        if (this.isPubExist(externalPub, internalPub)) {
+            return -1;
+        }
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         db.beginTransaction();
         ContentValues cv = new ContentValues();
@@ -231,5 +237,18 @@ public class HDAccountProvider implements IHDAccountProvider {
                 c.close();
         }
         return hdSeedIds;
+    }
+
+    @Override
+    public boolean isPubExist(byte[] externalPub, byte[] internalPub) {
+        SQLiteDatabase db = this.mDb.getReadableDatabase();
+        String sql = "select count(0) cnt from hd_account where external_pub=? or internal_pub=?";
+        Cursor c = db.rawQuery(sql, new String[] {Base58.encode(externalPub), Base58.encode(internalPub)});
+        boolean isExist = false;
+        if (c.moveToNext()) {
+            isExist = c.getInt(0) > 0;
+        }
+        c.close();
+        return isExist;
     }
 }
