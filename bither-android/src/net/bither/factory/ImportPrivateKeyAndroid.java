@@ -101,16 +101,21 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
                     List<Address> addressList = new ArrayList<Address>();
                     addressList.add(address);
                     KeyUtil.addAddressListByDesc(service, addressList);
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    if (activity instanceof HotAdvanceActivity) {
-                        ((HotAdvanceActivity) activity).showImportSuccess();
-                    }
-                    if (activity instanceof ColdAdvanceActivity) {
-                        ((ColdAdvanceActivity) activity).showImportSuccess();
-                    }
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp != null && dp.isShowing()) {
+                                dp.setThread(null);
+                                dp.dismiss();
+                            }
+                            if (activity instanceof HotAdvanceActivity) {
+                                ((HotAdvanceActivity) activity).showImportSuccess();
+                            }
+                            if (activity instanceof ColdAdvanceActivity) {
+                                ((ColdAdvanceActivity) activity).showImportSuccess();
+                            }
+                        }
+                    });
                 }
             }
         }.start();
