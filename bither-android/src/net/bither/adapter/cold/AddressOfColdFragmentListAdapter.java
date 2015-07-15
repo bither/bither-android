@@ -93,7 +93,7 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             }
         }
         if (position == 1) {
-            if (hasHDMKeychain()) {
+            if (hasHDMKeychain() && hdAccountCold != null) {
                 return HDMKeychainPlaceHolder;
             }
         }
