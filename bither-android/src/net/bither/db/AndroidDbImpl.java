@@ -40,7 +40,7 @@ public class AndroidDbImpl extends AbstractDb {
 
     @Override
     public ITxProvider initTxProvider() {
-        return TxProvider.getInstance();
+        return Tx2Provider.getInstance();
     }
 
     @Override
