@@ -58,7 +58,7 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
 
     @Override
     protected void initAddress() {
-        address = AddressManager.getInstance().getHdAccount();
+        address = AddressManager.getInstance().getHDAccountHot();
         addressPosition = 0;
     }
 

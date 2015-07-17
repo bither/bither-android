@@ -39,13 +39,15 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="140dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
                 android:orientation="horizontal">
 
                 <ToggleButton
-                    android:id="@+id/tbtn_private_key"
+                    android:id="@+id/tbtn_hd_account"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -56,12 +58,12 @@
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
                     android:textColor="@color/white"
-                    android:textOff="@string/add_address_tab_private_key"
-                    android:textOn="@string/add_address_tab_private_key"
+                    android:textOff="@string/add_cold_hd_account_tab"
+                    android:textOn="@string/add_cold_hd_account_tab"
                     android:textSize="14sp"/>
 
                 <ToggleButton
-                    android:id="@+id/tbtn_hdm"
+                    android:id="@+id/tbtn_other"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
@@ -72,8 +74,8 @@
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
                     android:textColor="@color/white"
-                    android:textOff="@string/add_address_tab_hdm"
-                    android:textOn="@string/add_address_tab_hdm"
+                    android:textOff="@string/add_cold_hd_account_other_tab"
+                    android:textOn="@string/add_cold_hd_account_other_tab"
                     android:textSize="14sp"/>
             </LinearLayout>
         </LinearLayout>

@@ -57,12 +57,18 @@ import net.bither.activity.hot.NetworkMonitorActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
+import net.bither.qrcode.ScanActivity;
+import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
@@ -87,6 +93,8 @@ import java.util.List;
 
 public class OptionHotFragment extends Fragment implements Selectable,
         DialogSetAvatar.SetAvatarDelegate {
+    private static final int MonitorCodeHDRequestCode = 1605;
+
     private static Uri imageUri;
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
@@ -287,6 +295,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
             switch (transactionFeeMode) {
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low);
+                case High:
+                    return getString(R.string.setting_name_transaction_fee_high);
                 default:
                     return getString(R.string.setting_name_transaction_fee_normal);
             }
@@ -299,12 +309,28 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getTransactionFeeMode().ordinal();
+            BitherjSettings.TransactionFeeMode mode = AppSharedPreference.getInstance()
+                    .getTransactionFeeMode();
+            switch (mode) {
+                case High:
+                    return 0;
+                case Low:
+                    return 2;
+                default:
+                    return 1;
+            }
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
             if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
-                return BitherjSettings.TransactionFeeMode.values()[index];
+                switch (index) {
+                    case 0:
+                        return BitherjSettings.TransactionFeeMode.High;
+                    case 1:
+                        return BitherjSettings.TransactionFeeMode.Normal;
+                    case 2:
+                        return BitherjSettings.TransactionFeeMode.Low;
+                }
             }
             return BitherjSettings.TransactionFeeMode.Normal;
         }
@@ -314,6 +340,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
             switch (getModeByIndex(index)) {
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low_note);
+                case High:
+                    return getString(R.string.setting_name_transaction_fee_high_note);
                 default:
                     return getString(R.string.setting_name_transaction_fee_normal_note);
             }
@@ -365,8 +393,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public void onClick(View v) {
-            if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
-                    && !AddressManager.getInstance().hasHDMKeychain()) {
+            if ((AddressManager.getInstance().getPrivKeyAddresses() == null
+                        || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                    && !AddressManager.getInstance().hasHDMKeychain()
+                    && !AddressManager.getInstance().hasHDAccountHot()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
@@ -433,6 +463,19 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener monitorColdHDClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (AddressManager.getInstance().hasHDAccountMonitored()) {
+                DropdownMessage.showDropdownMessage(getActivity(), R.string
+                        .monitor_cold_hd_account_limit);
+                return;
+            }
+            startActivityForResult(new Intent(getActivity(), ScanActivity.class),
+                    MonitorCodeHDRequestCode);
+        }
+    };
 
     @Override
     public void avatarFromCamera() {
@@ -496,6 +539,74 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     }
                 }
                 break;
+            case MonitorCodeHDRequestCode:
+                if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
+                    final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
+                    try {
+                        final boolean isXRandom = content.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0;
+                        final byte[] bytes = Utils.hexStringToByteArray(isXRandom ? content
+                                .substring(1) : content);
+                        new ThreadNeedService(dp, getActivity()) {
+                            @Override
+                            public void runWithService(BlockchainService service) {
+                                if (service != null) {
+                                    service.stopAndUnregister();
+                                }
+                                try {
+                                    HDAccount account = new HDAccount(bytes,
+                                            isXRandom, false, null);
+                                    AddressManager.getInstance().setHDAccountMonitored(account);
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string.monitor_cold_hd_account_success);
+                                        }
+                                    });
+                                } catch (MnemonicException.MnemonicLengthException e) {
+                                    e.printStackTrace();
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string.monitor_cold_hd_account_failed);
+                                        }
+                                    });
+                                } catch (HDAccount.DuplicatedHDAccountException e) {
+                                    e.printStackTrace();
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string
+                                                    .monitor_cold_hd_account_failed_duplicated);
+                                        }
+                                    });
+                                }
+                                if (service != null) {
+                                    service.startAndRegister();
+                                }
+                            }
+                        }.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
+                        DropdownMessage.showDropdownMessage(getActivity(), R.string
+                                .monitor_cold_hd_account_failed);
+                    }
+                }
+                break;
         }
 
     }
@@ -527,6 +638,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
+        view.findViewById(R.id.btn_monitor_hd).setOnClickListener(monitorColdHDClick);
         view.findViewById(R.id.btn_monitor).setOnClickListener(monitorClick);
         ssvCurrency.setSelector(currencySelector);
         ssvMarket.setSelector(marketSelector);
@@ -611,7 +723,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 if (AddressManager.getInstance().getAllAddresses().size() > 0 || AddressManager
                         .getInstance().getTrashAddresses().size() > 0 || AddressManager
                         .getInstance().getHdmKeychain() != null || AddressManager.getInstance()
-                        .hasHDAccount()) {
+                        .hasHDAccountHot()) {
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);

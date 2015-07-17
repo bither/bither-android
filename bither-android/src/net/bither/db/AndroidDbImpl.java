@@ -19,6 +19,10 @@ package net.bither.db;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.IAddressProvider;
 import net.bither.bitherj.db.IBlockProvider;
+import net.bither.bitherj.db.IDesktopAddressProvider;
+import net.bither.bitherj.db.IDesktopTxProvider;
+import net.bither.bitherj.db.IEnterpriseHDMProvider;
+import net.bither.bitherj.db.IHDAccountAddressProvider;
 import net.bither.bitherj.db.IHDAccountProvider;
 import net.bither.bitherj.db.IPeerProvider;
 import net.bither.bitherj.db.ITxProvider;
@@ -45,7 +49,28 @@ public class AndroidDbImpl extends AbstractDb {
     }
 
     @Override
+    public IHDAccountAddressProvider initHDAccountAddressProvider() {
+        return HDAccountAddressProvider.getInstance();
+    }
+
+    @Override
     public IHDAccountProvider initHDAccountProvider() {
         return HDAccountProvider.getInstance();
     }
+
+    @Override
+    public IEnterpriseHDMProvider initEnterpriseHDMProvider() {
+        return EnterpriseHDMProvider.getInstance();
+    }
+
+    @Override
+    public IDesktopAddressProvider initEnDesktopAddressProvider() {
+        return DesktopAddressProvider.getInstance();
+    }
+
+    @Override
+    public IDesktopTxProvider initDesktopTxProvider() {
+        return DesktopTxProvider.getInstance();
+    }
+
 }

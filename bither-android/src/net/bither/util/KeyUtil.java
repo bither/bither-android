@@ -51,7 +51,7 @@ public class KeyUtil {
             ECKey ecKey = ECKey.generateECKey(xRandom);
             ecKey = PrivateKeyUtil.encrypt(ecKey, password);
             Address address = new Address(ecKey.toAddress(),
-                    ecKey.getPubKey(), PrivateKeyUtil.getEncryptedString(ecKey), ecKey.isFromXRandom());
+                    ecKey.getPubKey(), PrivateKeyUtil.getEncryptedString(ecKey), true, ecKey.isFromXRandom());
             ecKey.clearPrivateKey();
             addressList.add(address);
             AddressManager.getInstance().addAddress(address);
@@ -111,15 +111,12 @@ public class KeyUtil {
     }
 
     public static void setHDAccount(HDAccount hdAccount) {
-
-        AddressManager.getInstance().setHdAccount(hdAccount);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             BackupUtil.backupColdKey(false);
         } else {
+            AddressManager.getInstance().setHdAccountHot(hdAccount);
             BackupUtil.backupHotKey();
         }
-
-
     }
 
     public static void stopMonitor(BlockchainService service, Address address) {

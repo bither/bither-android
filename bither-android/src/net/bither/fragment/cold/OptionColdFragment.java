@@ -45,6 +45,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
@@ -141,9 +142,11 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         @Override
         public void onClick(View v) {
-            if ((AddressManager.getInstance().getPrivKeyAddresses() == null || AddressManager
-                    .getInstance().getPrivKeyAddresses().size() == 0) && !AddressManager
-                    .getInstance().hasHDMKeychain()) {
+            if ((AddressManager.getInstance().getPrivKeyAddresses() == null
+                        || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                    && !AddressManager.getInstance().hasHDMKeychain()
+                    && !EnterpriseHDMSeed.hasSeed()
+                    && !AddressManager.getInstance().hasHDAccountCold()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }

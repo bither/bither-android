@@ -40,7 +40,7 @@ import java.util.List;
 
 public class TxProvider implements ITxProvider {
 
-    private static TxProvider txProvider = new TxProvider(BitherApplication.mDbHelper);
+    private static TxProvider txProvider = new TxProvider(BitherApplication.mTxDbHelper);
 
     public static TxProvider getInstance() {
         return txProvider;
@@ -280,13 +280,20 @@ public class TxProvider implements ITxProvider {
     }
 
     private static void addTxToDb(SQLiteDatabase db, Tx txItem) {
-        HashSet<String> addressSet = AbstractDb.hdAccountProvider.
-                getBelongAccountAddresses(txItem.getOutAddressList());
-        for (Out out : txItem.getOuts()) {
-            if (addressSet.contains(out.getOutAddress())) {
-                out.setHDAccountId(AddressManager.getInstance().getHdAccount().getHdSeedId());
-            }
-        }
+//        HashSet<String> addressSet = AbstractDb.hdAccountAddressProvider.
+//                getBelongAccountAddresses(txItem.getOutAddressList());
+////        HashSet<String> coldHDAccountAddressSet = AbstractDb.hdAccountAddressProvider.
+////                getBelongAccountAddresses(txItem.getOutAddressList());
+//        for (Out out : txItem.getOuts()) {
+//            if (addressSet.contains(out.getOutAddress())) {
+//                out.setHDAccountId(AddressManager.getInstance().getHDAccountHot().getHdSeedId());
+//            }
+////            if (coldHDAccountAddressSet.contains(out.getOutAddress())) {
+////                out.setColdHDAccountId(AddressManager.getInstance().getHDAccountMonitored()
+////                        .getHdSeedId());
+////            }
+//        }
+
         TxHelper.insertTx(db, txItem);
         List<TxHelper.AddressTx> addressesTxsRels = new ArrayList<TxHelper.AddressTx>();
         List<TxHelper.AddressTx> temp = TxHelper.insertIn(db, txItem);
@@ -396,7 +403,6 @@ public class TxProvider implements ITxProvider {
                 }
             }
             c.close();
-
         }
         sql = "select count(0) from addresses_txs where tx_hash=? and address=?";
         c = db.rawQuery(sql, new String[]{
@@ -849,37 +855,3 @@ public class TxProvider implements ITxProvider {
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

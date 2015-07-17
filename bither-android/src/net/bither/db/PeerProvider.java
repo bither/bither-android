@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 public class PeerProvider implements IPeerProvider {
-    private static PeerProvider peerProvider = new PeerProvider(BitherApplication.mDbHelper);
+    private static PeerProvider peerProvider = new PeerProvider(BitherApplication.mTxDbHelper);
 
     public static PeerProvider getInstance() {
         return peerProvider;

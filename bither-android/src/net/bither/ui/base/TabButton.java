@@ -52,7 +52,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
 
     private TextView tvText;
     private ImageView ivArrowDown;
-    private boolean ellipsized = false;
+    private boolean ellipsized = true;
 
     private DialogWithArrow dialog;
 
@@ -98,7 +98,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         tvText.setTypeface(null, Typeface.BOLD);
         tvText.setShadowLayer(0.5f, 1, -1, Color.argb(100, 0, 0, 0));
         tvText.setPadding(0, 0, 0, UIUtil.dip2pix(0.75f));
-        tvText.setSingleLine(true);
+        tvText.setLines(1);
         tvText.setEllipsize(TruncateAt.END);
         llIcon.addView(tvText);
         ivArrowDown = new ImageView(getContext());
@@ -136,6 +136,9 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         tvText.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
                                                                    @Override
                                                                    public void onGlobalLayout() {
+                                                                       if (!ellipsized) {
+                                                                           return;
+                                                                       }
                                                                        ellipsized = false;
                                                                        Layout l = tvText.getLayout();
                                                                        if (l != null) {
@@ -183,9 +186,10 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
     }
 
     public void setBigInteger(BigInteger btcPrivate, BigInteger btcWatchOnly, BigInteger btcHdm,
-                              BigInteger btcHD) {
+                              BigInteger btcHD, BigInteger btcHdMonitored) {
         BigInteger btc;
-        if (btcPrivate == null && btcWatchOnly == null && btcHdm == null && btcHD == null) {
+        if (btcPrivate == null && btcWatchOnly == null && btcHdm == null && btcHD == null &&
+                btcHdMonitored == null) {
             btc = null;
         } else {
             btc = BigInteger.ZERO;
@@ -201,7 +205,11 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
             if (btcHD != null) {
                 btc = btc.add(btcHD);
             }
+            if (btcHdMonitored != null) {
+                btc = btc.add(btcHdMonitored);
+            }
         }
+        ellipsized = true;
         if (btc == null) {
             tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
         } else {
@@ -215,12 +223,13 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         }
         if (dialog instanceof DialogTotalBtc) {
             DialogTotalBtc d = (DialogTotalBtc) dialog;
-            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD);
+            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD, btcHdMonitored);
         }
         updateArrow();
     }
 
     public void setText(String text) {
+        ellipsized = true;
         tvText.setText(text);
         ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
     }

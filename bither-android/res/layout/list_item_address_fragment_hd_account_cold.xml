@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/bg"
+             android:paddingLeft="@dimen/card_list_padding"
+             android:paddingRight="@dimen/card_list_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="0dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="4dp"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/text_field_text_color"
+                android:text="@string/hd_account_cold_address_list_label"/>
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <ImageButton
+                    android:id="@+id/ibtn_qr_code_option"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/hdm_button_qr_code_selector"/>
+
+                <ImageButton
+                    android:id="@+id/ibtn_seed_option"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/transparent"
+                    android:src="@drawable/hdm_button_seed_selector"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/card_separator_color"/>
+
+        <LinearLayout
+            android:id="@+id/ll_extra"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#ffEEEEEE"
+            android:orientation="horizontal"
+            android:paddingBottom="7dp"
+            android:paddingLeft="@dimen/card_padding">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/ibtn_xrandom_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:visibility="gone"
+                android:background="@drawable/transparent"
+                android:src="@drawable/xrandom_address_label_selector"/>
+
+            <ImageView
+                android:id="@+id/iv_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="@dimen/card_padding"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/transparent"
+                android:src="@drawable/address_type_hd_selector"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <include layout="@layout/layout_card_foreground_single"/>
+
+</FrameLayout>

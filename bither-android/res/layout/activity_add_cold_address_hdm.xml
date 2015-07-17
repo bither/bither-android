@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffcccccc">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/title_bar_below_margin">
+
+        <fragment
+            android:id="@+id/fragment"
+            android:name="net.bither.fragment.cold.AddAddressColdHDMFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <include layout="@layout/layout_dropdown_message"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/rl_title_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="49.0dip"
+        android:layout_gravity="top"
+        android:background="@drawable/action_bar_black_bg"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/ibtn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center"
+            android:background="@drawable/action_bar_black_left_button"
+            android:src="@drawable/action_bar_glyph_cancel"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:shadowColor="@color/text_field_text_color"
+            android:shadowDx="1"
+            android:shadowDy="-1"
+            android:shadowRadius="0.5"
+            android:text="@string/add_hd_account_other_hdm"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</RelativeLayout>

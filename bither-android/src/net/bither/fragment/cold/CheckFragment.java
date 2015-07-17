@@ -42,6 +42,7 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.Utils;
 import net.bither.model.Check;
@@ -156,6 +157,12 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             return Utils.compareString(address, HDAccount.HDAccountPlaceHolder);
         }
 
+        public boolean isHDAccountCold() {
+            return Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)
+                    && AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
+                    .COLD;
+        }
+
         public boolean isWaiting() {
             return waiting;
         }
@@ -174,14 +181,27 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
     }
 
     @Override
-    public void beginCheck(SecureCharSequence password) {
+    public void beginCheck(final SecureCharSequence password) {
         final List<Address> addresses = AddressManager.getInstance().getPrivKeyAddresses();
         checkPoints.clear();
         final ArrayList<Check> checks = new ArrayList<Check>();
-        if (AddressManager.getInstance().hasHDAccount()) {
+        if (AddressManager.getInstance().hasHDAccountCold() && AppSharedPreference.getInstance().getAppMode() ==
+                BitherjSettings.AppMode.COLD) {
+            CheckPoint point = new CheckPoint(HDAccount.HDAccountMonitoredPlaceHolder);
+            checkPoints.add(point);
+            final SecureCharSequence p = new SecureCharSequence(password);
+            checks.add(new Check(R.string.hd_account_cold_address_list_label, new Check
+                    .ICheckAction() {
+                @Override
+                public boolean check() {
+                    return AddressManager.getInstance().getHDAccountCold().checkWithPassword(p);
+                }
+            }).setCheckListener(point));
+        }
+        if (AddressManager.getInstance().hasHDAccountHot()) {
             CheckPoint point = new CheckPoint(HDAccount.HDAccountPlaceHolder);
             checkPoints.add(point);
-            checks.add(CheckUtil.initCheckForHDAccount(AddressManager.getInstance().getHdAccount
+            checks.add(CheckUtil.initCheckForHDAccount(AddressManager.getInstance().getHDAccountHot
                     (), new SecureCharSequence(password)).setCheckListener(point));
         }
         if (AddressManager.getInstance().hasHDMKeychain()) {
@@ -254,10 +274,12 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
                     resourceId = R.string.hdm_keychain_check_title_hot;
                 }
                 h.tv.setText(resourceId);
+            } else if (point.isHDAccountCold()) {
+                h.tv.setText(R.string.hd_account_cold_address_list_label);
             } else {
                 h.tv.setText(getSpannableStringFromAddress(point.getAddress()));
             }
-            if (!point.isHDM() && !point.isHDAccount()) {
+            if (!point.isHDM() && !point.isHDAccount() && !point.isHDAccountCold()) {
                 h.ibtnFull.setOnClickListener(new AddressFullClick(point.getAddress()));
                 h.ibtnFull.setVisibility(View.VISIBLE);
             } else {

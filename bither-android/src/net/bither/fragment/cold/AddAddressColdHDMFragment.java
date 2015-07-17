@@ -18,6 +18,7 @@
 
 package net.bither.fragment.cold;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.HDMKeychain;
@@ -120,6 +122,11 @@ public class AddAddressColdHDMFragment extends Fragment implements AddHotAddress
                 chain = new HDMKeychain(new SecureRandom(), password);
                 KeyUtil.setHDKeyChain(chain);
                 password.wipe();
+                ArrayList<String> addresses = getAddresses();
+                Intent intent = new Intent();
+                intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                        addresses);
+                getActivity().setResult(Activity.RESULT_OK, intent);
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

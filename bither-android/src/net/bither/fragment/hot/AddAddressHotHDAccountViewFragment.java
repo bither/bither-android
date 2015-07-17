@@ -64,7 +64,7 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
     }
 
     private void showQr() {
-        final HDAccount account = AddressManager.getInstance().getHdAccount();
+        final HDAccount account = AddressManager.getInstance().getHDAccountHot();
         if (account == null) {
             return;
         }
@@ -80,7 +80,7 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
     }
 
     private void showPhrase() {
-        final HDAccount account = AddressManager.getInstance().getHdAccount();
+        final HDAccount account = AddressManager.getInstance().getHDAccountHot();
         if (account == null) {
             return;
         }

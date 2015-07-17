@@ -162,8 +162,10 @@
     <string name="setting_name_transaction_fee">默认手续费</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_low">较低</string>
+    <string name="setting_name_transaction_fee_high">较高</string>
     <string name="setting_name_transaction_fee_normal_note">较快确认</string>
     <string name="setting_name_transaction_fee_low_note">较慢确认</string>
+    <string name="setting_name_transaction_fee_high_note">高优先级</string>
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
@@ -325,6 +327,7 @@
     <string name="donate_sending_verb">捐赠</string>
     <string name="donate_unsigned_transaction_verb">捐赠</string>
 
+    <string name="network_monitor_activity_title">网络监控</string>
     <string name="network_monitor_clear_peer">清空节点</string>
 
     <!-- fancy qr code -->
@@ -600,4 +603,60 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">荣耀地址位数</string>
     <string name="vanity_address_none">无</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">激活企业账户?</string>
+    <string name="enterprise_hdm_keychain_add">创建企业 HDM 账户</string>
+    <string name="enterprise_hdm_seed_add">添加企业 HDM 种子</string>
+    <string name="enterprise_hdm_seed_add_fail">添加企业 HDM 种子失败</string>
+    <string name="enterprise_hdm_seed">企业 HDM 种子</string>
+    <string name="enterprise_hdm_seed_add_note">添加一个种子用来创建企业 HDM 账户</string>
+    <string name="enterprise_hdm_seed_qr_code">企业 HDM 种子二维码</string>
+    <string name="enterprise_hdm_seed_cosign">联合签名</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">备份二维码</string>
+    <string name="enterprise_hdm_seed_backup_phrase">备份密语</string>
+    <string name="enterprise_hdm_keychain">企业 HDM 账户</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">选择多重签名模式</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">收集种子二维码</string>
+    <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">添加种子失败</string>
+    <string name="enterprise_hdm_keychain_add_fail">创建企业 HDM 账户失败</string>
+    <string name="next_step">下一步</string>
+    <string name="enterprise_hdm_keychain_payment_proposal">付款申请</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 个签名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_add_signaure">添加签名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">签名交易失败</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_success">签名交易成功</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集签名</string>
+    <string name="enterprise_hdm_keychain_enable_hint">输入企业版密码</string>
+    <string name="enterprise_hdm_keychain_enable_failed">无效的企业版密码</string>
+
+    <!-- Cold HD -->
+    <string name="add_cold_hd_account_tab">冷 HD 账户</string>
+    <string name="add_cold_hd_account_other_tab">其它</string>
+    <string name="add_cold_hd_account_label">生成新的冷 HD 账户</string>
+    <string name="add_cold_hd_account_button">生成</string>
+    <string name="add_cold_hd_account_other_hdm">生成 HDM 账户</string>
+    <string name="add_cold_hd_account_other_private">生成普通私钥</string>
+    <string name="add_cold_hd_account_monitor_qr">HD 账户监控二维码</string>
+    <string name="hd_account_cold_address_list_label">冷 HD 账户</string>
+    <string name="import_cold_hd_account_seed_qr_code">来自HD种子二维码</string>
+    <string name="import_cold_hd_account_seed_phrase">来自HD密语</string>
+
+    <!-- Monitor HD -->
+    <string name="monitor_cold_hd_account">监控冷 HD 账户</string>
+    <string name="monitor_cold_hd_account_limit">只能监控 1 个冷 HD 账户</string>
+    <string name="monitor_cold_hd_account_failed">监控冷 HD 账户失败</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">监控失败. 这个账户已经存在.</string>
+    <string name="monitor_cold_hd_account_success">监控冷 HD 账户成功</string>
+    <string name="address_group_hd_monitored">冷 HD 账户</string>
+    <string name="hd_account_old_addresses">旧地址列表</string>
+    <string name="hd_account_old_addresses_zero">目前还没有使用过的地址</string>
+
+    <!-- Address Full For HD -->
+    <string name="address_full_for_hd_label_own">账户内地址</string>
+    <string name="address_full_for_hd_label_foreign">账户外地址</string>
+    <string name="address_full_for_hd_type_receiving">接收</string>
+    <string name="address_full_for_hd_type_sending">发送</string>
+    <string name="address_full_for_hd_type_changing">找零</string>
 </resources>

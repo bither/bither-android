@@ -184,7 +184,7 @@ public class HotActivity extends BaseFragmentActivity {
 
         configureTopBarSize();
         configureTabMainIcons();
-        tbtnMain.setBigInteger(null, null, null, null);
+        tbtnMain.setBigInteger(null, null, null, null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
@@ -397,15 +397,17 @@ public class HotActivity extends BaseFragmentActivity {
                 final long btcPrivate = totalPrivate;
                 final long btcWatchOnly = totalWatchOnly;
                 final long btcHdm = totalHdm;
-                final long btcHD = AddressManager.getInstance().hasHDAccount() ? AddressManager
-                        .getInstance().getHdAccount().getBalance() : 0;
+                final long btcHD = AddressManager.getInstance().hasHDAccountHot() ? AddressManager
+                        .getInstance().getHDAccountHot().getBalance() : 0;
+                final long btcHdMonitored = AddressManager.getInstance().hasHDAccountMonitored()
+                        ? AddressManager.getInstance().getHDAccountMonitored().getBalance() : 0;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         configureTabMainIcons();
                         tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf
                                 (btcWatchOnly), BigInteger.valueOf(btcHdm), BigInteger.valueOf
-                                (btcHD));
+                                (btcHD), BigInteger.valueOf(btcHdMonitored));
                     }
                 });
             }

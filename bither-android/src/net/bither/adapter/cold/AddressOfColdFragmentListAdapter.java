@@ -23,6 +23,8 @@ import android.widget.BaseAdapter;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccountCold;
+import net.bither.ui.base.ColdAddressFragmentHDAccountColdListItemView;
 import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
 import net.bither.ui.base.ColdAddressFragmentListItemView;
 
@@ -30,11 +32,13 @@ import java.util.List;
 
 public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     private static final Object HDMKeychainPlaceHolder = new Object();
-    private static final int ItemTypePrivateKey = 0;
-    private static final int ItemTypeHDMKeychain = 1;
+    private final int ItemTypePrivateKey = 0;
+    private int ItemTypeHDMKeychain = 1;
+    private int ItemTypeHDAccountCold = 1;
 
     private FragmentActivity activity;
     private List<Address> privates;
+    private HDAccountCold hdAccountCold;
     private ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
     public AddressOfColdFragmentListAdapter(FragmentActivity activity,
@@ -42,6 +46,11 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         this.activity = activity;
         this.privates = privates;
         this.requestHDMServerQrCodeDelegate = requestHDMServerQrCodeDelegate;
+        if (AddressManager.getInstance().hasHDAccountCold()) {
+            hdAccountCold = AddressManager.getInstance().getHDAccountCold();
+        } else {
+            hdAccountCold = null;
+        }
     }
 
     @Override
@@ -49,6 +58,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         int count = 1;
         if(hasHDMKeychain()){
             count ++;
+        }
+        if (hdAccountCold != null) {
+            count++;
         }
         return count;
     }
@@ -59,22 +71,33 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         if(o == HDMKeychainPlaceHolder){
             return ItemTypeHDMKeychain;
         }
+        if (o instanceof HDAccountCold) {
+            return ItemTypeHDAccountCold;
+        }
         return ItemTypePrivateKey;
     }
 
     @Override
     public int getCount() {
-        return privates.size() + (hasHDMKeychain() ? 1 : 0);
+        return privates.size() + (hasHDMKeychain() ? 1 : 0) + (hdAccountCold != null ? 1 : 0);
     }
 
     @Override
     public Object getItem(int position) {
-        if(hasHDMKeychain()){
-            if(position == 0){
+        if (position == 0) {
+            if (hdAccountCold != null) {
+                return hdAccountCold;
+            }
+            if (hasHDMKeychain()) {
                 return HDMKeychainPlaceHolder;
             }
-            position--;
         }
+        if (position == 1) {
+            if (hasHDMKeychain() && hdAccountCold != null) {
+                return HDMKeychainPlaceHolder;
+            }
+        }
+        position = position - getViewTypeCount() + 1;
         return privates.get(position);
     }
 
@@ -88,6 +111,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         if(getItemViewType(position) == ItemTypeHDMKeychain){
             return getViewForHDMKeychain(position, convertView, parent);
         }
+        if (getItemViewType(position) == ItemTypeHDAccountCold) {
+            return getViewForHDAccountCold(position, convertView, parent);
+        }
         return getViewForPrivateKey(position, convertView, parent);
     }
 
@@ -99,6 +125,14 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         }
         view = (ColdAddressFragmentHDMListItemView) convertView;
         view.setKeychain(AddressManager.getInstance().getHdmKeychain());
+        return convertView;
+    }
+
+    private View getViewForHDAccountCold(int position, View convertView, ViewGroup parent) {
+        if (convertView == null || !(convertView instanceof
+                ColdAddressFragmentHDAccountColdListItemView)) {
+            convertView = new ColdAddressFragmentHDAccountColdListItemView(activity);
+        }
         return convertView;
     }
 
@@ -115,6 +149,22 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
 
         view.showAddress(a);
         return convertView;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        ItemTypeHDMKeychain = -1;
+        ItemTypeHDAccountCold = -1;
+        if (hasHDMKeychain()) {
+            ItemTypeHDMKeychain = 1;
+        }
+        if (AddressManager.getInstance().hasHDAccountCold()) {
+            ItemTypeHDAccountCold = ItemTypeHDMKeychain == 1 ? 2 : 1;
+            hdAccountCold = AddressManager.getInstance().getHDAccountCold();
+        } else {
+            hdAccountCold = null;
+        }
+        super.notifyDataSetChanged();
     }
 
     private boolean hasHDMKeychain(){

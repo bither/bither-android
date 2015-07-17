@@ -20,6 +20,7 @@ package net.bither.activity.hot;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -51,7 +52,7 @@ import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.HDAccountProvider;
+import net.bither.db.HDAccountAddressProvider;
 import net.bither.db.TxProvider;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
@@ -71,6 +72,7 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
+import net.bither.ui.base.dialog.DialogEnterpriseHDMEnable;
 import net.bither.ui.base.dialog.DialogImportBip38KeyText;
 import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -154,6 +156,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnResetTx.setOnClickListener(resetTxListener);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
+        findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
         findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressClick);
         findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
@@ -170,11 +173,39 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         configureHDMServerPasswordReset();
     }
 
-    private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
+    private View.OnClickListener networkMonitorClick = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(HotAdvanceActivity.this, RawPrivateKeyActivity.class));
+            Intent intent = new Intent(HotAdvanceActivity.this, NetworkMonitorActivity.class);
+            startActivity(intent);
         }
+    };
+
+    private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
+        private int clickedTime;
+
+        @Override
+        public void onClick(View v) {
+            v.removeCallbacks(delay);
+            clickedTime++;
+            if (clickedTime >= 7) {
+                new DialogEnterpriseHDMEnable(HotAdvanceActivity.this).show();
+                clickedTime = 0;
+                return;
+            }
+            v.postDelayed(delay, 400);
+        }
+
+        private Runnable delay = new Runnable() {
+            @Override
+            public void run() {
+                if (clickedTime < 7) {
+                    startActivity(new Intent(HotAdvanceActivity.this, RawPrivateKeyActivity.class));
+                }
+                clickedTime = 0;
+            }
+        };
     };
 
     private View.OnClickListener editPasswordClick = new View.OnClickListener() {
@@ -234,14 +265,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         try {
                             File logDir = BitherApplication.getLogDir();
                             FileUtil.copyFile(logDir, logTagDir);
-//                            if (BitherjSettings.DEV_DEBUG) {
-//                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
-//                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
-//
-//                                SQLiteDatabase txDb = BitherApplication.mDbHelper.getReadableDatabase();
-//                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
-//
-//                            }
+                            if (BitherjSettings.DEV_DEBUG) {
+                                SQLiteDatabase addressDB = BitherApplication.mAddressDbHelper.getReadableDatabase();
+                                FileUtil.copyFile(new File(addressDB.getPath()), new File(logTagDir, "address.db"));
+
+                                SQLiteDatabase txDb = BitherApplication.mTxDbHelper.getReadableDatabase();
+                                FileUtil.copyFile(new File(txDb.getPath()), new File(logTagDir, "tx.db"));
+
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -417,7 +448,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     address.setSyncComplete(false);
                     address.updateSyncComplete();
                 }
-                HDAccountProvider.getInstance().setSyncdNotComplete();
+                HDAccountAddressProvider.getInstance().setSyncedNotComplete();
                 TxProvider.getInstance().clearAllTx();
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.notificatTx(null, Tx.TxNotificationType.txFromApi);
@@ -624,7 +655,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 @Override
                 public int getOptionCount() {
                     hasAnyAction = true;
-                    if (AddressManager.getInstance().getHdAccount() != null) {
+                    if (AddressManager.getInstance().getHDAccountHot() != null) {
                         return 2;
                     } else {
                         return 4;

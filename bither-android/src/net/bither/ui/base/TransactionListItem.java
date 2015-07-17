@@ -28,12 +28,14 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressFull;
+import net.bither.ui.base.dialog.DialogAddressFullForHD;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogTransactionConfidence;
 import net.bither.util.DateTimeUtil;
@@ -168,6 +170,10 @@ public class TransactionListItem extends FrameLayout implements MarketTickerChan
 
         @Override
         public void onClick(View v) {
+            if (address instanceof HDAccount) {
+                new DialogAddressFullForHD(activity, transaction, (HDAccount) address).show(v);
+                return;
+            }
             LinkedHashMap<String, Long> addresses = new LinkedHashMap<String, Long>();
             boolean isIncoming = true;
             try {

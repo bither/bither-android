@@ -31,8 +31,15 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.fragment.cold.AddAddressColdHDAccountFragment;
+import net.bither.fragment.cold.AddAddressColdHDAccountViewFragment;
 import net.bither.fragment.cold.AddAddressColdHDMFragment;
+import net.bither.fragment.cold.AddAddressColdOtherFragment;
+import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
+import net.bither.fragment.hot.AddAddressHotHDAccountViewFragment;
+import net.bither.fragment.hot.AddAddressHotOtherFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -41,13 +48,14 @@ import net.bither.util.StringUtil;
 import java.util.ArrayList;
 
 public class AddColdAddressActivity extends AddPrivateKeyActivity {
-    private ToggleButton tbtnHDM;
-    private ToggleButton tbtnPrivateKey;
+    private ToggleButton tbtnHDAccount;
+    private ToggleButton tbtnOther;
     private ViewPager pager;
     private ImageButton ibtnCancel;
 
-    private AddAddressColdHDMFragment vHDM;
-    private AddAddressPrivateKeyFragment vPrivateKey;
+    private AddAddressColdHDAccountFragment hdAccountFragment;
+    private AddAddressColdHDAccountViewFragment hdAccountViewFragment;
+    private AddAddressColdOtherFragment otherFragment;
 
     private boolean shouldSuggestCheck = false;
 
@@ -64,39 +72,37 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private void initView() {
-        tbtnPrivateKey = (ToggleButton) findViewById(R.id.tbtn_private_key);
-        tbtnHDM = (ToggleButton) findViewById(R.id.tbtn_hdm);
+        tbtnHDAccount = (ToggleButton) findViewById(R.id.tbtn_hd_account);
+        tbtnOther = (ToggleButton) findViewById(R.id.tbtn_other);
         pager = (ViewPager) findViewById(R.id.pager);
         ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
-        tbtnPrivateKey.setOnClickListener(new IndicatorClick(0));
-        tbtnHDM.setOnClickListener(new IndicatorClick(1));
+        tbtnHDAccount.setOnClickListener(new IndicatorClick(0));
+        tbtnOther.setOnClickListener(new IndicatorClick(1));
         ibtnCancel.setOnClickListener(cancelClick);
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(pageChange);
         pager.setCurrentItem(0);
-        if (adapter.getCount() > 1) {
-            tbtnPrivateKey.setChecked(true);
-        } else {
-            if (AddressManager.isPrivateLimit()) {
-                tbtnHDM.setChecked(true);
-            } else {
-                tbtnPrivateKey.setChecked(true);
+        tbtnHDAccount.setChecked(true);
+    }
+
+    private Fragment getHDAccountFragment() {
+        if (AddressManager.getInstance().hasHDAccountCold()) {
+            if (hdAccountViewFragment == null) {
+                hdAccountViewFragment = new AddAddressColdHDAccountViewFragment();
             }
+            return hdAccountViewFragment;
         }
+        if (hdAccountFragment == null) {
+            hdAccountFragment = new AddAddressColdHDAccountFragment();
+        }
+        return hdAccountFragment;
     }
 
-    private AddAddressColdHDMFragment getHDMView() {
-        if (vHDM == null) {
-            vHDM = new AddAddressColdHDMFragment();
+    private Fragment getOtherFragment() {
+        if (otherFragment == null) {
+            otherFragment = new AddAddressColdOtherFragment();
         }
-        return vHDM;
-    }
-
-    private AddAddressPrivateKeyFragment getPrivateKeyView() {
-        if (vPrivateKey == null) {
-            vPrivateKey = new AddAddressPrivateKeyFragment();
-        }
-        return vPrivateKey;
+        return otherFragment;
     }
 
     private OnClickListener cancelClick = new OnClickListener() {
@@ -138,32 +144,14 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private void initPosition(int position) {
-        if (position == 1) {
-            if (AddressManager.isHDMKeychainLimit()) {
-                DropdownMessage.showDropdownMessage(AddColdAddressActivity.this,
-                        R.string.hdm_cold_seed_count_limit);
-                tbtnHDM.setChecked(false);
-                tbtnPrivateKey.setChecked(true);
-            } else {
-                if (tbtnPrivateKey.isChecked()) {
-                    pager.setCurrentItem(adapter.getCount() - 1, true);
-                }
-                tbtnHDM.setChecked(true);
-                tbtnPrivateKey.setChecked(false);
-            }
-        } else {
-            if (AddressManager.isPrivateLimit()) {
-                DropdownMessage.showDropdownMessage(AddColdAddressActivity.this,
-                        R.string.private_key_count_limit);
-                tbtnHDM.setChecked(true);
-                tbtnPrivateKey.setChecked(false);
-            } else {
-                if (tbtnHDM.isChecked()) {
-                    pager.setCurrentItem(0, true);
-                }
-                tbtnHDM.setChecked(false);
-                tbtnPrivateKey.setChecked(true);
-            }
+        if (position == 0) {
+            pager.setCurrentItem(0, true);
+            tbtnHDAccount.setChecked(true);
+            tbtnOther.setChecked(false);
+        } else if (position == 1) {
+            pager.setCurrentItem(1, true);
+            tbtnHDAccount.setChecked(false);
+            tbtnOther.setChecked(true);
         }
     }
 
@@ -171,42 +159,18 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
         @Override
         public int getCount() {
-            int count = 0;
-            if (!AddressManager.isPrivateLimit()) {
-                count++;
-            }
-            if (!AddressManager.isHDMKeychainLimit()) {
-                count++;
-            }
-            return count;
+            return 2;
         }
 
         @Override
         public Fragment getItem(int index) {
-            if (getCount() > 1) {
-                switch (index) {
-                    case 0:
-                        return getPrivateKeyView();
-                    case 1:
-                        return getHDMView();
-                    default:
-                        return null;
-                }
-            } else if (getCount() == 1) {
-                if (index == 0) {
-                    if (!AddressManager.isPrivateLimit()) {
-                        return getPrivateKeyView();
-                    } else if (!AddressManager.isHDMKeychainLimit()) {
-                        return getHDMView();
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
+            if (index == 0) {
+                return getHDAccountFragment();
             }
+            if (index == 1) {
+                return getOtherFragment();
+            }
+            return null;
         }
     };
 
@@ -214,14 +178,12 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
         @Override
         public void onPageSelected(int index) {
-            if (adapter.getCount() > 1) {
-                if (index == 0) {
-                    tbtnPrivateKey.setChecked(true);
-                    tbtnHDM.setChecked(false);
-                } else {
-                    tbtnHDM.setChecked(true);
-                    tbtnPrivateKey.setChecked(false);
-                }
+            if (index == 0) {
+                tbtnHDAccount.setChecked(true);
+                tbtnOther.setChecked(false);
+            } else {
+                tbtnHDAccount.setChecked(false);
+                tbtnOther.setChecked(true);
             }
         }
 

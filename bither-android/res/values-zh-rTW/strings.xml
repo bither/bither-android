@@ -160,8 +160,10 @@
     <string name="setting_name_transaction_fee">默認手續費</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_low">較低</string>
+    <string name="setting_name_transaction_fee_high">較高</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
+    <string name="setting_name_transaction_fee_high_note">高優先順序</string>
     <string name="donate_button">捐贈</string>
     <string name="donate_thanks">謝謝您的捐贈</string>
     <string name="buy_order">買單</string>
@@ -325,6 +327,7 @@
     <string name="donate_sending_verb">捐贈</string>
     <string name="donate_unsigned_transaction_verb">捐贈</string>
 
+    <string name="network_monitor_activity_title">網路監控</string>
     <string name="network_monitor_clear_peer">清空節點</string>
 
     <!-- fancy qr code -->
@@ -600,4 +603,60 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">榮耀地址位數</string>
     <string name="vanity_address_none">無</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">啟用企業賬戶?</string>
+    <string name="enterprise_hdm_keychain_add">新增企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_seed_add">新增企業 HDM 種子</string>
+    <string name="enterprise_hdm_seed_add_fail">新增企業 HDM 種子失敗</string>
+    <string name="enterprise_hdm_seed">企業 HDM 種子</string>
+    <string name="enterprise_hdm_seed_add_note">新增一個種子用來創建企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_seed_qr_code">企業 HDM 種子二維碼</string>
+    <string name="enterprise_hdm_seed_cosign">聯合簽名</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">備份二維碼</string>
+    <string name="enterprise_hdm_seed_backup_phrase">備份密語</string>
+    <string name="enterprise_hdm_keychain">企業 HDM 賬戶</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">選擇多重簽名模式</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">收集種子二維碼</string>
+    <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">新增種子失敗</string>
+    <string name="enterprise_hdm_keychain_add_fail">創建企業 HDM 賬戶失敗</string>
+    <string name="next_step">下一步</string>
+    <string name="enterprise_hdm_keychain_payment_proposal">付款申請</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 個簽名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_add_signaure">添加簽名</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">簽名交易失敗</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_success">簽名交易成功</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集簽名</string>
+    <string name="enterprise_hdm_keychain_enable_hint">輸入企業版密碼</string>
+    <string name="enterprise_hdm_keychain_enable_failed">無效的企業版密碼</string>
+
+    <!-- Cold HD -->
+    <string name="add_cold_hd_account_tab">冷 HD 賬戶</string>
+    <string name="add_cold_hd_account_other_tab">其它</string>
+    <string name="add_cold_hd_account_label">生成新的冷 HD 賬戶</string>
+    <string name="add_cold_hd_account_button">生成</string>
+    <string name="add_cold_hd_account_other_hdm">生成 HDM 賬戶</string>
+    <string name="add_cold_hd_account_other_private">生成普通私鑰</string>
+    <string name="add_cold_hd_account_monitor_qr">HD 賬戶監控二維碼</string>
+    <string name="hd_account_cold_address_list_label">冷 HD 賬戶</string>
+    <string name="import_cold_hd_account_seed_qr_code">來自HD種子二維碼</string>
+    <string name="import_cold_hd_account_seed_phrase">來自HD密語</string>
+
+    <!-- Monitor HD -->
+    <string name="monitor_cold_hd_account">監控冷 HD 賬戶</string>
+    <string name="monitor_cold_hd_account_limit">只能監控 1 個冷 HD 賬戶</string>
+    <string name="monitor_cold_hd_account_failed">監控冷 HD 賬戶失敗</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">監控失敗. 這個賬戶已經存在.</string>
+    <string name="monitor_cold_hd_account_success">監控冷 HD 賬戶成功</string>
+    <string name="address_group_hd_monitored">冷 HD 賬戶</string>
+    <string name="hd_account_old_addresses">舊地址列表</string>
+    <string name="hd_account_old_addresses_zero">目前還沒有使用過的地址</string>
+
+    <!-- Address Full For HD -->
+    <string name="address_full_for_hd_label_own">賬戶內地址</string>
+    <string name="address_full_for_hd_label_foreign">賬戶外地址</string>
+    <string name="address_full_for_hd_type_receiving">接收</string>
+    <string name="address_full_for_hd_type_sending">傳送</string>
+    <string name="address_full_for_hd_type_changing">找零</string>
 </resources>

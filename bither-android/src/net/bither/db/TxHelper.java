@@ -99,6 +99,13 @@ public class TxHelper {
         } else {
             cv.putNull(AbstractDb.OutsColumns.HD_ACCOUNT_ID);
         }
+
+//        if (outItem.getColdHDAccountId() != -1) {
+//            cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+//                    outItem.getColdHDAccountId());
+//        } else {
+//            cv.putNull(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+//        }
     }
 
     public static List<AddressTx> insertOut(SQLiteDatabase db, Tx txItem) {
@@ -108,7 +115,8 @@ public class TxHelper {
         List<AddressTx> addressTxes = new ArrayList<AddressTx>();
         for (Out outItem : txItem.getOuts()) {
             String existSql = "select count(0) cnt from outs where tx_hash=? and out_sn=?";
-            c = db.rawQuery(existSql, new String[]{Base58.encode(outItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            c = db.rawQuery(existSql, new String[]{Base58.encode(outItem.getTxHash()), Integer
+                    .toString(outItem.getOutSn())});
             int cnt = 0;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("cnt");
@@ -128,16 +136,33 @@ public class TxHelper {
                             outItem.getHDAccountId());
                     db.update(AbstractDb.Tables.OUTS, cv,
                             " tx_hash=? and out_sn=? ", new String[]{
-                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
+                                    .getOutSn())
                             });
 
                 }
+//                if (outItem.getColdHDAccountId() > -1) {
+//                    cv = new ContentValues();
+//                    cv.put(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID,
+//                            outItem.getColdHDAccountId());
+//                    db.update(AbstractDb.Tables.OUTS, cv,
+//                            " tx_hash=? and out_sn=? ", new String[]{
+//                                    Base58.encode(txItem.getTxHash()), Integer.toString(outItem
+//                                    .getOutSn())
+//                            });
+//
+//                }
+            }
+            if (outItem.getHDAccountId() > -1) {
+                TxHelper.updateHDAddressIsIssued(db, outItem.getOutAddress());
             }
             if (!Utils.isEmpty(outItem.getOutAddress())) {
-                addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem.getTxHash())));
+                addressTxes.add(new AddressTx(outItem.getOutAddress(), Base58.encode(txItem
+                        .getTxHash())));
             }
             sql = "select tx_hash from ins where prev_tx_hash=? and prev_out_sn=?";
-            c = db.rawQuery(sql, new String[]{Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())});
+            c = db.rawQuery(sql, new String[]{Base58.encode(txItem.getTxHash()), Integer.toString
+                    (outItem.getOutSn())});
             boolean isSpentByExistTx = false;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("tx_hash");
@@ -150,12 +175,33 @@ public class TxHelper {
             if (isSpentByExistTx) {
                 sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
                 db.execSQL(sql, new String[]{
-                        Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(txItem.getTxHash()), Integer.toString(outItem.getOutSn())
+                        Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(txItem
+                        .getTxHash()), Integer.toString(outItem.getOutSn())
                 });
             }
 
         }
         return addressTxes;
+    }
+
+    private static void updateHDAddressIsIssued(SQLiteDatabase db, String address) {
+        Cursor c = db.rawQuery("select hd_account_id,path_type,address_index " +
+                " from hd_account_addresses where address=?", new String[] {address});
+        int hdAccountId = -1;
+        int pathType = 0;
+        int addressIndex = 0;
+        if (c.moveToNext()) {
+            hdAccountId = c.getInt(0);
+            pathType = c.getInt(1);
+            addressIndex = c.getInt(2);
+        }
+        c.close();
+        if (hdAccountId > 0) {
+            ContentValues cv = new ContentValues();
+            cv.put(AbstractDb.HDAccountAddressesColumns.IS_ISSUED, 1);
+            db.update(AbstractDb.Tables.HD_ACCOUNT_ADDRESS, cv, " path_type=? and address_index<=? and hd_account_id=? ",
+                    new String[]{Integer.toString(pathType), Integer.toString(addressIndex), Integer.toString(hdAccountId)});
+        }
     }
 
     public static List<AddressTx> insertIn(SQLiteDatabase db, Tx txItem) {
@@ -165,7 +211,8 @@ public class TxHelper {
         List<AddressTx> addressTxes = new ArrayList<AddressTx>();
         for (In inItem : txItem.getIns()) {
             String existSql = "select count(0) cnt from ins where tx_hash=? and in_sn=?";
-            c = db.rawQuery(existSql, new String[]{Base58.encode(inItem.getTxHash()), Integer.toString(inItem.getInSn())});
+            c = db.rawQuery(existSql, new String[]{Base58.encode(inItem.getTxHash()), Integer
+                    .toString(inItem.getInSn())});
             int cnt = 0;
             if (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("cnt");
@@ -187,12 +234,14 @@ public class TxHelper {
             while (c.moveToNext()) {
                 int idColumn = c.getColumnIndex("out_address");
                 if (idColumn != -1) {
-                    addressTxes.add(new AddressTx(c.getString(idColumn), Base58.encode(txItem.getTxHash())));
+                    addressTxes.add(new AddressTx(c.getString(idColumn), Base58.encode(txItem
+                            .getTxHash())));
                 }
             }
             c.close();
             sql = "update outs set out_status=? where tx_hash=? and out_sn=?";
-            db.execSQL(sql, new String[]{Integer.toString(Out.OutStatus.spent.getValue()), Base58.encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
+            db.execSQL(sql, new String[]{Integer.toString(Out.OutStatus.spent.getValue()), Base58
+                    .encode(inItem.getPrevTxHash()), Integer.toString(inItem.getPrevOutSn())});
         }
         return addressTxes;
 
@@ -300,6 +349,10 @@ public class TxHelper {
         if (idColumn != -1 && !c.isNull(idColumn)) {
             outItem.setHDAccountId(c.getInt(idColumn));
         }
+//        idColumn = c.getColumnIndex(AbstractDb.OutsColumns.COLD_HD_ACCOUNT_ID);
+//        if (idColumn != -1 && !c.isNull(idColumn)) {
+//            outItem.setColdHDAccountId(c.getInt(idColumn));
+//        }
         return outItem;
     }
 

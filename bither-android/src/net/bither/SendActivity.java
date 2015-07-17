@@ -89,7 +89,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     private PasswordEntryKeyboardView kvPassword;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
-    private DialogSelectChangeAddress dialogSelectChangeAddress;
+    protected DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private boolean isDonate = false;
 
@@ -481,10 +481,13 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         }
         String address = etAddress.getText().toString().trim();
         boolean isValidAddress = Utils.validBicoinAddress(address);
+        boolean isValidPassword = true;
+        if (etPassword.getVisibility() == View.VISIBLE) {
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
-        boolean isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
+            isValidPassword = Utils.validPassword(password) && password.length() >= 6 &&
                 password.length() <= getResources().getInteger(R.integer.password_length_max);
-        password.wipe();
+            password.wipe();
+        }
         btnSend.setEnabled(isValidAddress && isValidAmounts && isValidPassword);
     }
 

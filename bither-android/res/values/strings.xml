@@ -169,8 +169,10 @@
     <string name="setting_name_transaction_fee">Default Transaction Fee</string>
     <string name="setting_name_transaction_fee_normal">Normal</string>
     <string name="setting_name_transaction_fee_low">Low</string>
+    <string name="setting_name_transaction_fee_high">High</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
+    <string name="setting_name_transaction_fee_high_note">high priority</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
@@ -620,4 +622,61 @@
     <!-- vanity address length -->
     <string name="vanity_address_length">Vanity Address Length</string>
     <string name="vanity_address_none">None</string>
+
+    <!-- Enterprise HDM -->
+    <string name="enterprise_activate_warn">Activate Enterprise Account?</string>
+    <string name="enterprise_hdm_keychain_add">Add Enterprise HDM Account</string>
+    <string name="enterprise_hdm_seed_add">Add Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_add_fail">Add enterprise HDM seed failed</string>
+    <string name="enterprise_hdm_seed">Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_add_note">Add a Seed to Make an Enterprise HDM Account</string>
+    <string name="enterprise_hdm_seed_qr_code">Enterprise HDM Seed QR Code</string>
+    <string name="enterprise_hdm_seed_cosign">Cosign</string>
+    <string name="enterprise_hdm_seed_backup_qr_code">Backup QR Code</string>
+    <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
+    <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
+    <string name="enterprise_hdm_keychain">Enterprise HDM Account</string>
+    <string name="enterprise_hdm_keychain_multisig_scheme">Choose Multisig Scheme</string>
+    <string name="enterprise_hdm_keychain_collect_pubs">Collect Seed QR Codes</string>
+    <string name="enterprise_hdm_keychain_address_count">How many addresses to generate?</string>
+    <string name="enterprise_hdm_keychain_collect_pub_error">Add seed wrong</string>
+    <string name="enterprise_hdm_keychain_add_fail">Add Enterprise HDM Account Failed</string>
+    <string name="next_step">Next</string>
+    <string name="enterprise_hdm_keychain_payment_proposal">Payment Proposal</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">Need %1$d/%2$d Signatures</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_add_signaure">Add Signature</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_failed">Sign transaction failed</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_sign_success">Sign transaction success</string>
+    <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">Signatures Collected</string>
+    <string name="enterprise_hdm_keychain_enable_hint">Enter Enterprise Code</string>
+    <string name="enterprise_hdm_keychain_enable_failed">Invalid Enterprise Code</string>
+
+    <!-- Cold HD -->
+    <string name="add_cold_hd_account_tab">HD Account</string>
+    <string name="add_cold_hd_account_other_tab">Others</string>
+    <string name="add_cold_hd_account_label">Generate New Cold HD Account</string>
+    <string name="add_cold_hd_account_button">Generate</string>
+    <string name="add_cold_hd_account_other_hdm">Generate HDM Account</string>
+    <string name="add_cold_hd_account_other_private">Generate Normal Private Keys</string>
+    <string name="add_cold_hd_account_monitor_qr">HD Account Monitor QR Code</string>
+    <string name="hd_account_cold_address_list_label">Cold HD Account</string>
+    <string name="import_cold_hd_account_seed_qr_code">From HD Account Seed QR Code</string>
+    <string name="import_cold_hd_account_seed_phrase">From HD Account Phrase</string>
+
+    <!-- Monitor HD -->
+    <string name="monitor_cold_hd_account">Monitor Cold HD Account</string>
+    <string name="monitor_cold_hd_account_limit">You can only monitor 1 cold HD account</string>
+    <string name="monitor_cold_hd_account_failed">Monitor cold HD account failed</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">Monitor failed. This account is already in Bither.</string>
+    <string name="monitor_cold_hd_account_success">Monitor cold HD account success</string>
+    <string name="address_group_hd_monitored">Cold HD Account</string>
+    <string name="hd_account_old_addresses">Old Addresses</string>
+    <string name="hd_account_old_addresses_zero">No address used yet</string>
+
+    <!-- Address Full For HD -->
+    <string name="address_full_for_hd_label_own">Own</string>
+    <string name="address_full_for_hd_label_foreign">Foreign</string>
+    <string name="address_full_for_hd_type_receiving">Receiving</string>
+    <string name="address_full_for_hd_type_sending">Sending</string>
+    <string name="address_full_for_hd_type_changing">Changing</string>
 </resources>

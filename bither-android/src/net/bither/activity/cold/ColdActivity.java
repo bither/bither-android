@@ -35,6 +35,7 @@ import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.EncryptedData;
@@ -421,7 +422,7 @@ public class ColdActivity extends BaseFragmentActivity {
                             ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
-                                        PrivateKeyUtil.getEncryptedString(key), key.isFromXRandom());
+                                        PrivateKeyUtil.getEncryptedString(key), false, key.isFromXRandom());
                                 addressList.add(address);
                                 key.clearPrivateKey();
 
@@ -488,8 +489,9 @@ public class ColdActivity extends BaseFragmentActivity {
             if (fragment != null && fragment instanceof ColdAddressFragment) {
                 ((ColdAddressFragment) fragment).refresh();
             }
-            if (AddressManager.getInstance().getPrivKeyAddresses() != null
-                    && AddressManager.getInstance().getPrivKeyAddresses().size() == 0 && AddressManager.getInstance().getHdmKeychain() == null) {
+            if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager
+                    .getInstance().getPrivKeyAddresses().size() == 0 && AddressManager
+                    .getInstance().getHdmKeychain() == null && !AddressManager.getInstance().hasHDAccountCold()) {
                 checkBackup();
             }
         }

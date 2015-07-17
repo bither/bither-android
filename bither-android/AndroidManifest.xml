@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
     android:installLocation="internalOnly"
-    android:versionCode="137"
-    android:versionName="1.3.7">
+    android:versionCode="138"
+    android:versionName="1.3.8">
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="19"
+        android:targetSdkVersion="22"
         tools:ignore="OldTargetApi" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -144,6 +144,10 @@
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.HDAccountMonitoredSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
             android:name=".activity.hot.HdmSendActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
@@ -164,6 +168,10 @@
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.HDAccountDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"/>
+        <activity
+            android:name="net.bither.activity.hot.HDAccountMonitoredDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"/>
         <activity
@@ -276,6 +284,60 @@
             android:name="net.bither.activity.hot.AddHotAddressPrivateKeyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.AddEnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.cold.AddEnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.cold.EnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMAddressDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMSendCollectSignatureActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.EnterpriseHDMSeedUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.cold.AddColdAddressHDMActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".xrandom.HDAccountColdUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"

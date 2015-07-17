@@ -173,8 +173,10 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     public void onAddressInfoChanged(String address) {
         if (this.address != null) {
             if (Utils.compareString(address, this.address.getAddress()) || (this.address
-                    .isHDAccount() && Utils.compareString(address, HDAccount
-                    .HDAccountPlaceHolder))) {
+                    .isHDAccount() && this.address.hasPrivKey() && Utils.compareString(address,
+                    HDAccount.HDAccountPlaceHolder)) || (this.address.isHDAccount() && !this
+                    .address.hasPrivKey() && Utils.compareString(address, HDAccount
+                    .HDAccountMonitoredPlaceHolder))) {
                 showAddressInfo();
             }
         }

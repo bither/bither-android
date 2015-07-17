@@ -73,6 +73,7 @@ public class LinuxSecureRandom extends SecureRandomSpi {
 				Security.insertProviderAt(new LinuxSecureRandomProvider(), 1);
 			} else {
 				urandom = null;
+                Security.insertProviderAt(new LinuxSecureRandomProvider(), 1);
 			}
 		} catch (FileNotFoundException e) {
 			// Should never happen.
@@ -95,6 +96,9 @@ public class LinuxSecureRandom extends SecureRandomSpi {
 
 	@Override
 	protected void engineNextBytes(byte[] bytes) {
+        if (urandom==null){
+            throw  new  RuntimeException("no dev/urandom in your device");
+        }
 		try {
             LogUtil.i(LinuxSecureRandom.class.getSimpleName(), "LinuxSecureRandom get " + bytes.length +" bytes");
 			dis.readFully(bytes); // This will block until all the bytes can be

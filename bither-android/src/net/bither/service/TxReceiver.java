@@ -54,6 +54,8 @@ public class TxReceiver extends BroadcastReceiver {
         String contentText = address;
         if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
             contentText = BitherApplication.mContext.getString(R.string.address_group_hd);
+        } else if (Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)) {
+            contentText = BitherApplication.mContext.getString(R.string.address_group_hd_monitored);
         }
         String title = UnitUtilWrapper.formatValue(amount) + " " + AppSharedPreference.getInstance().getBitcoinUnit().name();
         if (isReceived) {
