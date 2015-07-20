@@ -20,11 +20,11 @@ import android.database.Cursor;
 
 import net.bither.bitherj.db.imp.base.ICursor;
 
-public class BCursor implements ICursor {
+public class AndroidCursor implements ICursor {
 
     private Cursor cursor;
 
-    public BCursor(Cursor cursor) {
+    public AndroidCursor(Cursor cursor) {
         this.cursor = cursor;
     }
 
@@ -33,10 +33,10 @@ public class BCursor implements ICursor {
         return cursor.getCount();
     }
 
-    @Override
-    public int getPosition() {
-        return cursor.getPosition();
-    }
+//    @Override
+//    public int getPosition() {
+//        return cursor.getPosition();
+//    }
 
     @Override
     public boolean move(int var1) {
@@ -98,20 +98,20 @@ public class BCursor implements ICursor {
         return cursor.getColumnIndexOrThrow(var1);
     }
 
-    @Override
-    public String getColumnName(int var1) {
-        return cursor.getColumnName(var1);
-    }
-
-    @Override
-    public String[] getColumnNames() {
-        return cursor.getColumnNames();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return cursor.getColumnCount();
-    }
+//    @Override
+//    public String getColumnName(int var1) {
+//        return cursor.getColumnName(var1);
+//    }
+//
+//    @Override
+//    public String[] getColumnNames() {
+//        return cursor.getColumnNames();
+//    }
+//
+//    @Override
+//    public int getColumnCount() {
+//        return cursor.getColumnCount();
+//    }
 
     @Override
     public byte[] getBlob(int var1) {

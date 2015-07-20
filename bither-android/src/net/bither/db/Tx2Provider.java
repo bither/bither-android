@@ -17,7 +17,6 @@
 package net.bither.db;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.common.base.Function;
@@ -32,8 +31,8 @@ import net.bither.bitherj.db.imp.base.ICursor;
 import net.bither.bitherj.db.imp.base.IDb;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.base.BCursor;
-import net.bither.db.base.Db;
+import net.bither.db.base.AndroidCursor;
+import net.bither.db.base.AndroidDb;
 
 public class Tx2Provider extends AbstractTxProvider {
 
@@ -51,24 +50,24 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     public IDb getReadDb() {
-        return new Db(this.helper.getReadableDatabase());
+        return new AndroidDb(this.helper.getReadableDatabase());
     }
 
     @Override
     public IDb getWriteDb() {
-        return new Db(this.helper.getWritableDatabase());
+        return new AndroidDb(this.helper.getWritableDatabase());
     }
 
     @Override
     public void execUpdate(String sql, String[] params) {
-        Db mdb = (Db)this.getWriteDb();
+        AndroidDb mdb = (AndroidDb)this.getWriteDb();
         mdb.getSQLiteDatabase().execSQL(sql, params);
     }
 
     @Override
     public void execQueryOneRecord(String sql, String[] params, Function<ICursor, Void> func) {
-        Db mdb = (Db)this.getReadDb();
-        ICursor c = new BCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
+        AndroidDb mdb = (AndroidDb)this.getReadDb();
+        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
         if (c.moveToNext()) {
             func.apply(c);
         }
@@ -77,8 +76,8 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     public void execQueryLoop(String sql, String[] params, Function<ICursor, Void> func) {
-        Db mdb = (Db)this.getReadDb();
-        ICursor c = new BCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
+        AndroidDb mdb = (AndroidDb)this.getReadDb();
+        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
         while (c.moveToNext()) {
             func.apply(c);
         }
@@ -87,14 +86,14 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     public void execUpdate(IDb db, String sql, String[] params) {
-        Db mdb = (Db)db;
+        AndroidDb mdb = (AndroidDb)db;
         mdb.getSQLiteDatabase().execSQL(sql, params);
     }
 
     @Override
     public void execQueryOneRecord(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        Db mdb = (Db)db;
-        ICursor c = new BCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
+        AndroidDb mdb = (AndroidDb)db;
+        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
         if (c.moveToNext()) {
             func.apply(c);
         }
@@ -103,8 +102,8 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     public void execQueryLoop(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        Db mdb = (Db)db;
-        ICursor c = new BCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
+        AndroidDb mdb = (AndroidDb)db;
+        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
         while (c.moveToNext()) {
             func.apply(c);
         }
@@ -113,7 +112,7 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     protected void insertTxToDb(IDb db, Tx tx) {
-        Db mdb = (Db)db;
+        AndroidDb mdb = (AndroidDb)db;
         ContentValues cv = new ContentValues();
         if (tx.getBlockNo() != Tx.TX_UNCONFIRMED) {
             cv.put(AbstractDb.TxsColumns.BLOCK_NO, tx.getBlockNo());
@@ -130,7 +129,7 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     protected void insertInToDb(IDb db, In in) {
-        Db mdb = (Db)db;
+        AndroidDb mdb = (AndroidDb)db;
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.InsColumns.TX_HASH, Base58.encode(in.getTxHash()));
         cv.put(AbstractDb.InsColumns.IN_SN, in.getInSn());
@@ -147,7 +146,7 @@ public class Tx2Provider extends AbstractTxProvider {
 
     @Override
     protected void insertOutToDb(IDb db, Out out) {
-        Db mdb = (Db)db;
+        AndroidDb mdb = (AndroidDb)db;
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.OutsColumns.TX_HASH, Base58.encode(out.getTxHash()));
         cv.put(AbstractDb.OutsColumns.OUT_SN, out.getOutSn());

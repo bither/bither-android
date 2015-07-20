@@ -20,11 +20,11 @@ import android.database.sqlite.SQLiteDatabase;
 
 import net.bither.bitherj.db.imp.base.IDb;
 
-public class Db implements IDb {
+public class AndroidDb implements IDb {
 
     private SQLiteDatabase sqliteDatabase;
 
-    public Db(SQLiteDatabase sqliteDatabase) {
+    public AndroidDb(SQLiteDatabase sqliteDatabase) {
         this.sqliteDatabase = sqliteDatabase;
     }
 
