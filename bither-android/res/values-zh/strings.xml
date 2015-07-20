@@ -162,8 +162,10 @@
     <string name="setting_name_transaction_fee">默认手续费</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_low">较低</string>
+    <string name="setting_name_transaction_fee_high">较高</string>
     <string name="setting_name_transaction_fee_normal_note">较快确认</string>
     <string name="setting_name_transaction_fee_low_note">较慢确认</string>
+    <string name="setting_name_transaction_fee_high_note">高优先级</string>
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
@@ -645,6 +647,7 @@
     <string name="monitor_cold_hd_account">监控冷 HD 账户</string>
     <string name="monitor_cold_hd_account_limit">只能监控 1 个冷 HD 账户</string>
     <string name="monitor_cold_hd_account_failed">监控冷 HD 账户失败</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">监控失败. 这个账户已经存在.</string>
     <string name="monitor_cold_hd_account_success">监控冷 HD 账户成功</string>
     <string name="address_group_hd_monitored">冷 HD 账户</string>
     <string name="hd_account_old_addresses">旧地址列表</string>

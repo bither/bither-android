@@ -295,6 +295,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
             switch (transactionFeeMode) {
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low);
+                case High:
+                    return getString(R.string.setting_name_transaction_fee_high);
                 default:
                     return getString(R.string.setting_name_transaction_fee_normal);
             }
@@ -307,12 +309,28 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getTransactionFeeMode().ordinal();
+            BitherjSettings.TransactionFeeMode mode = AppSharedPreference.getInstance()
+                    .getTransactionFeeMode();
+            switch (mode) {
+                case High:
+                    return 0;
+                case Low:
+                    return 2;
+                default:
+                    return 1;
+            }
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
             if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
-                return BitherjSettings.TransactionFeeMode.values()[index];
+                switch (index) {
+                    case 0:
+                        return BitherjSettings.TransactionFeeMode.High;
+                    case 1:
+                        return BitherjSettings.TransactionFeeMode.Normal;
+                    case 2:
+                        return BitherjSettings.TransactionFeeMode.Low;
+                }
             }
             return BitherjSettings.TransactionFeeMode.Normal;
         }
@@ -322,6 +340,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
             switch (getModeByIndex(index)) {
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low_note);
+                case High:
+                    return getString(R.string.setting_name_transaction_fee_high_note);
                 default:
                     return getString(R.string.setting_name_transaction_fee_normal_note);
             }
@@ -556,6 +576,19 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             }
                                             DropdownMessage.showDropdownMessage(getActivity(), R
                                                     .string.monitor_cold_hd_account_failed);
+                                        }
+                                    });
+                                } catch (HDAccount.DuplicatedHDAccountException e) {
+                                    e.printStackTrace();
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string
+                                                    .monitor_cold_hd_account_failed_duplicated);
                                         }
                                     });
                                 }

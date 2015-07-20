@@ -122,7 +122,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
                 ", external_pub text not null" +
                 ", internal_pub text not null" +
                 ", is_xrandom integer not null);");
-        db.execSQL("INSERT INTO hd_account2 SELECT * FROM hd_account;");
+        db.execSQL("INSERT INTO hd_account2(hd_account_id,encrypt_seed,encrypt_mnemonic_seed,hd_address,external_pub,internal_pub,is_xrandom) " +
+                " SELECT hd_account_id,encrypt_seed,encrypt_mnemonic_seed,hd_address,external_pub,internal_pub,is_xrandom FROM hd_account;");
         int oldCnt = 0;
         int newCnt = 0;
         Cursor c = db.rawQuery("select count(0) cnt from hd_account", null);

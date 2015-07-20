@@ -160,8 +160,10 @@
     <string name="setting_name_transaction_fee">默認手續費</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_low">較低</string>
+    <string name="setting_name_transaction_fee_high">較高</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
+    <string name="setting_name_transaction_fee_high_note">高優先順序</string>
     <string name="donate_button">捐贈</string>
     <string name="donate_thanks">謝謝您的捐贈</string>
     <string name="buy_order">買單</string>
@@ -645,6 +647,7 @@
     <string name="monitor_cold_hd_account">監控冷 HD 賬戶</string>
     <string name="monitor_cold_hd_account_limit">只能監控 1 個冷 HD 賬戶</string>
     <string name="monitor_cold_hd_account_failed">監控冷 HD 賬戶失敗</string>
+    <string name="monitor_cold_hd_account_failed_duplicated">監控失敗. 這個賬戶已經存在.</string>
     <string name="monitor_cold_hd_account_success">監控冷 HD 賬戶成功</string>
     <string name="address_group_hd_monitored">冷 HD 賬戶</string>
     <string name="hd_account_old_addresses">舊地址列表</string>
