@@ -45,7 +45,7 @@ public class AndroidDbImpl extends AbstractDb {
 
     @Override
     public IAddressProvider initAddressProvider() {
-        return AddressProvider.getInstance();
+        return Address2Provider.getInstance();
     }
 
     @Override
