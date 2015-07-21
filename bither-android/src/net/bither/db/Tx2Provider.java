@@ -61,6 +61,9 @@ public class Tx2Provider extends AbstractTxProvider {
     @Override
     public void execUpdate(String sql, String[] params) {
         AndroidDb mdb = (AndroidDb)this.getWriteDb();
+        if (params == null) {
+            params = new String[] {};
+        }
         mdb.getSQLiteDatabase().execSQL(sql, params);
     }
 
@@ -87,6 +90,9 @@ public class Tx2Provider extends AbstractTxProvider {
     @Override
     public void execUpdate(IDb db, String sql, String[] params) {
         AndroidDb mdb = (AndroidDb)db;
+        if (params == null) {
+            params = new String[] {};
+        }
         mdb.getSQLiteDatabase().execSQL(sql, params);
     }
 

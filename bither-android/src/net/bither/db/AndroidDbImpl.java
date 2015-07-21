@@ -30,12 +30,12 @@ import net.bither.bitherj.db.ITxProvider;
 public class AndroidDbImpl extends AbstractDb {
     @Override
     public IBlockProvider initBlockProvider() {
-        return BlockProvider.getInstance();
+        return Block2Provider.getInstance();
     }
 
     @Override
     public IPeerProvider initPeerProvider() {
-        return PeerProvider.getInstance();
+        return Peer2Provider.getInstance();
     }
 
     @Override
