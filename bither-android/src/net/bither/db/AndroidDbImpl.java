@@ -50,12 +50,12 @@ public class AndroidDbImpl extends AbstractDb {
 
     @Override
     public IHDAccountAddressProvider initHDAccountAddressProvider() {
-        return HDAccountAddressProvider.getInstance();
+        return HDAccountAddress2Provider.getInstance();
     }
 
     @Override
     public IHDAccountProvider initHDAccountProvider() {
-        return HDAccountProvider.getInstance();
+        return HDAccount2Provider.getInstance();
     }
 
     @Override
