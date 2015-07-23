@@ -135,4 +135,14 @@ public class HDAccount2Provider extends AbstractHDAccountProvider {
         cv.put(AbstractDb.HDAccountColumns.INTERNAL_PUB, Base58.encode(internalPub));
         return (int) mdb.getSQLiteDatabase().insert(AbstractDb.Tables.HD_ACCOUNT, null, cv);
     }
+
+    @Override
+    protected boolean hasPasswordSeed(IDb db) {
+        return Address2Provider.getInstance().hasPasswordSeed(db);
+    }
+
+    @Override
+    protected void addPasswordSeed(IDb db, PasswordSeed passwordSeed) {
+        Address2Provider.getInstance().addPasswordSeed(db, passwordSeed);
+    }
 }
