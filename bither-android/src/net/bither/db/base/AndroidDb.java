@@ -18,6 +18,9 @@ package net.bither.db.base;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.base.Function;
+
+import net.bither.bitherj.db.imp.base.ICursor;
 import net.bither.bitherj.db.imp.base.IDb;
 
 public class AndroidDb implements IDb {
@@ -42,6 +45,32 @@ public class AndroidDb implements IDb {
     @Override
     public void close() {
         this.sqliteDatabase.close();
+    }
+
+    @Override
+    public void execUpdate(String sql, String[] params) {
+        if (params == null) {
+            params = new String[] {};
+        }
+        this.getSQLiteDatabase().execSQL(sql, params);
+    }
+
+    @Override
+    public void execQueryOneRecord(String sql, String[] params, Function<ICursor, Void> func) {
+        ICursor c = new AndroidCursor(this.getSQLiteDatabase().rawQuery(sql, params));
+        if (c.moveToNext()) {
+            func.apply(c);
+        }
+        c.close();
+    }
+
+    @Override
+    public void execQueryLoop(String sql, String[] params, Function<ICursor, Void> func) {
+        ICursor c = new AndroidCursor(this.getSQLiteDatabase().rawQuery(sql, params));
+        while (c.moveToNext()) {
+            func.apply(c);
+        }
+        c.close();
     }
 
     public SQLiteDatabase getSQLiteDatabase() {

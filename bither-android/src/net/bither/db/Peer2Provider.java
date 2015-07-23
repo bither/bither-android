@@ -52,59 +52,31 @@ public class Peer2Provider extends AbstractPeerProvider {
 
     @Override
     public void execUpdate(String sql, String[] params) {
-        AndroidDb mdb = (AndroidDb)this.getWriteDb();
-        if (params == null) {
-            params = new String[] {};
-        }
-        mdb.getSQLiteDatabase().execSQL(sql, params);
+        this.getWriteDb().execUpdate(sql, params);
     }
 
     @Override
     public void execQueryOneRecord(String sql, String[] params, Function<ICursor, Void> func) {
-        AndroidDb mdb = (AndroidDb)this.getReadDb();
-        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
-        if (c.moveToNext()) {
-            func.apply(c);
-        }
-        c.close();
+        this.getReadDb().execQueryOneRecord(sql, params, func);
     }
 
     @Override
     public void execQueryLoop(String sql, String[] params, Function<ICursor, Void> func) {
-        AndroidDb mdb = (AndroidDb)this.getReadDb();
-        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
-        while (c.moveToNext()) {
-            func.apply(c);
-        }
-        c.close();
+        this.getReadDb().execQueryLoop(sql, params, func);
     }
 
     @Override
     public void execUpdate(IDb db, String sql, String[] params) {
-        AndroidDb mdb = (AndroidDb)db;
-        if (params == null) {
-            params = new String[] {};
-        }
-        mdb.getSQLiteDatabase().execSQL(sql, params);
+        db.execUpdate(sql, params);
     }
 
     @Override
     public void execQueryOneRecord(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        AndroidDb mdb = (AndroidDb)db;
-        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
-        if (c.moveToNext()) {
-            func.apply(c);
-        }
-        c.close();
+        db.execQueryOneRecord(sql, params, func);
     }
 
     @Override
     public void execQueryLoop(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        AndroidDb mdb = (AndroidDb)db;
-        ICursor c = new AndroidCursor(mdb.getSQLiteDatabase().rawQuery(sql, params));
-        while (c.moveToNext()) {
-            func.apply(c);
-        }
-        c.close();
+        db.execQueryLoop(sql, params, func);
     }
 }
