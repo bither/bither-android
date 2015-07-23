@@ -59,36 +59,6 @@ public class Tx2Provider extends AbstractTxProvider {
     }
 
     @Override
-    public void execUpdate(String sql, String[] params) {
-        this.getWriteDb().execUpdate(sql, params);
-    }
-
-    @Override
-    public void execQueryOneRecord(String sql, String[] params, Function<ICursor, Void> func) {
-        this.getReadDb().execQueryOneRecord(sql, params, func);
-    }
-
-    @Override
-    public void execQueryLoop(String sql, String[] params, Function<ICursor, Void> func) {
-        this.getReadDb().execQueryLoop(sql, params, func);
-    }
-
-    @Override
-    public void execUpdate(IDb db, String sql, String[] params) {
-        db.execUpdate(sql, params);
-    }
-
-    @Override
-    public void execQueryOneRecord(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        db.execQueryOneRecord(sql, params, func);
-    }
-
-    @Override
-    public void execQueryLoop(IDb db, String sql, String[] params, Function<ICursor, Void> func) {
-        db.execQueryLoop(sql, params, func);
-    }
-
-    @Override
     protected void insertTxToDb(IDb db, Tx tx) {
         AndroidDb mdb = (AndroidDb)db;
         ContentValues cv = new ContentValues();
