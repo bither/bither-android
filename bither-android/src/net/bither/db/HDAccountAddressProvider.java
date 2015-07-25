@@ -43,9 +43,9 @@ import java.util.List;
 
 public class HDAccountAddressProvider implements IHDAccountAddressProvider {
 
-    private final static String queryTxHashOfHDAccount = "select distinct txs.tx_hash from " +
-            "addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address";
-    private final static String inQueryTxHashOfHDAccount = " (" + queryTxHashOfHDAccount + ")";
+//    private final static String queryTxHashOfHDAccount = "select distinct txs.tx_hash from " +
+//            "addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address";
+//    private final static String inQueryTxHashOfHDAccount = " (" + queryTxHashOfHDAccount + ")";
 
     private static HDAccountAddressProvider hdAccountProvider = new HDAccountAddressProvider(BitherApplication
             .mTxDbHelper);
@@ -393,12 +393,6 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
                     " from txs a,addresses_txs b,hd_account_addresses c" +
                     " where a.tx_hash=b.tx_hash and b.address=c.address and c.hd_account_id=? and a.block_no is null" +
                     " order by a.tx_hash";
-//            String sql = "select * from txs " +
-//                    "where tx_hash in" +
-//                    "(select distinct txs.tx_hash from " +
-//                    "addresses_txs txs ,hd_account_addresses hd where txs.address=hd.address)"+
-//                    " and  block_no is null " +
-//                    " order by block_no desc";
             Cursor c = db.rawQuery(sql, new String[] {Integer.toString(hdAccountId)});
             while (c.moveToNext()) {
                 Tx txItem = TxHelper.applyCursor(c);
@@ -413,12 +407,6 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
                     " where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.address=d.address" +
                     "   and b.block_no is null and d.hd_account_id=?" +
                     " order by a.tx_hash,a.in_sn";
-//            sql = "select b.tx_hash,b.in_sn,b.prev_tx_hash,b.prev_out_sn " +
-//                    " from ins b, txs c " +
-//                    " where c.tx_hash in " +
-//                    inQueryTxHashOfHDAccount +
-//                    " and b.tx_hash=c.tx_hash and c.block_no is null  " +
-//                    " order by b.tx_hash ,b.in_sn";
             c = db.rawQuery(sql, new String[] {Integer.toString(hdAccountId)});
             while (c.moveToNext()) {
                 In inItem = TxHelper.applyCursorIn(c);
@@ -434,12 +422,6 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
                     " where a.tx_hash=b.tx_hash and b.tx_hash=c.tx_hash and c.address=d.address" +
                     "   and b.block_no is null and d.hd_account_id=?" +
                     " order by a.tx_hash,a.out_sn";
-//            sql = "select b.tx_hash,b.out_sn,b.out_value,b.out_address " +
-//                    " from  outs b, txs c " +
-//                    " where c.tx_hash in" +
-//                    inQueryTxHashOfHDAccount +
-//                    " and b.tx_hash=c.tx_hash and c.block_no is null  " +
-//                    " order by b.tx_hash,b.out_sn";
             c = db.rawQuery(sql, new String[] {Integer.toString(hdAccountId)});
             while (c.moveToNext()) {
                 Out out = TxHelper.applyCursorOut(c);
@@ -524,7 +506,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
     }
 
     @Override
-    public List<Tx> getRecentlyTxsByAccount(int hdAccountId, int greateThanBlockNo, int limit) {
+    public List<Tx> getRecentlyTxsByAccount(int hdAccountId, int greaterThanBlockNo, int limit) {
         List<Tx> txItemList = new ArrayList<Tx>();
         SQLiteDatabase db = this.mDb.getReadableDatabase();
         String sql = "select distinct a.* " +
@@ -534,12 +516,7 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
                 "   and c.hd_account_id=?" +
                 " order by ifnull(a.block_no,4294967295) desc, a.tx_time desc" +
                 " limit ?";
-//        String sql = "select * from txs  where  tx_hash in " +
-//                inQueryTxHashOfHDAccount +
-//                " and ((block_no is null) or (block_no is not null and block_no>?)) " +
-//                " order by ifnull(block_no,4294967295) desc, tx_time desc " +
-//                " limit ? ";
-        Cursor c = db.rawQuery(sql, new String[]{Integer.toString(greateThanBlockNo)
+        Cursor c = db.rawQuery(sql, new String[]{Integer.toString(greaterThanBlockNo)
                 , Integer.toString(hdAccountId), Integer.toString(limit)});
         try {
             while (c.moveToNext()) {
@@ -591,10 +568,6 @@ public class HDAccountAddressProvider implements IHDAccountAddressProvider {
                     " from txs a,addresses_txs b,hd_account_addresses c" +
                     " where a.tx_hash=b.tx_hash and b.address=c.address and c.hd_account_id=?" +
                     " order by ifnull(block_no,4294967295) desc,a.tx_hash";
-//            String sql = "select * from txs where tx_hash in " +
-//                    inQueryTxHashOfHDAccount +
-//                    " order by" +
-//                    " ifnull(block_no,4294967295) desc  ";
             Cursor c = db.rawQuery(sql, new String[] {Integer.toString(hdAccountId)});
             StringBuilder txsStrBuilder = new StringBuilder();
             while (c.moveToNext()) {

@@ -30,32 +30,32 @@ import net.bither.bitherj.db.ITxProvider;
 public class AndroidDbImpl extends AbstractDb {
     @Override
     public IBlockProvider initBlockProvider() {
-        return BlockProvider.getInstance();
+        return Block2Provider.getInstance();
     }
 
     @Override
     public IPeerProvider initPeerProvider() {
-        return PeerProvider.getInstance();
+        return Peer2Provider.getInstance();
     }
 
     @Override
     public ITxProvider initTxProvider() {
-        return TxProvider.getInstance();
+        return Tx2Provider.getInstance();
     }
 
     @Override
     public IAddressProvider initAddressProvider() {
-        return AddressProvider.getInstance();
+        return Address2Provider.getInstance();
     }
 
     @Override
     public IHDAccountAddressProvider initHDAccountAddressProvider() {
-        return HDAccountAddressProvider.getInstance();
+        return HDAccountAddress2Provider.getInstance();
     }
 
     @Override
     public IHDAccountProvider initHDAccountProvider() {
-        return HDAccountProvider.getInstance();
+        return HDAccount2Provider.getInstance();
     }
 
     @Override
