@@ -340,7 +340,7 @@ public class TxProvider implements ITxProvider {
         String inSql = "select prev_tx_hash,prev_out_sn from ins where tx_hash='" + tx + "'";
         String existOtherIn = "select count(0) cnt from ins where prev_tx_hash=? and prev_out_sn=?";
         String updatePrevOut = "update outs set out_status=%d where tx_hash=%s and out_sn=%d";
-        Cursor c = db.rawQuery(inSql, new String[]{tx});
+        Cursor c = db.rawQuery(inSql, null);
         List<Object[]> needUpdateOuts = new ArrayList<Object[]>();
         while (c.moveToNext()) {
             int idColumn = c.getColumnIndex(AbstractDb.InsColumns.PREV_TX_HASH);
