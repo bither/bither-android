@@ -54,6 +54,7 @@ import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.db.HDAccountAddressProvider;
 import net.bither.db.TxProvider;
+import net.bither.enums.TotalBalanceHide;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
@@ -104,6 +105,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvPinCode;
     private SettingSelectorView ssvQrCodeQuality;
     private SettingSelectorView ssvPasswordStrengthCheck;
+    private SettingSelectorView ssvTotalBalanceHide;
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
@@ -136,6 +138,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvSyncInterval = (SettingSelectorView) findViewById(R.id.ssv_sync_interval);
         ssvQrCodeQuality = (SettingSelectorView) findViewById(R.id.ssv_qr_code_quality);
         ssvPasswordStrengthCheck = (SettingSelectorView) findViewById(R.id.ssv_password_strength_check);
+        ssvTotalBalanceHide = (SettingSelectorView) findViewById(R.id.ssv_total_balance_hide);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
@@ -144,6 +147,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality.setSelector(qrCodeQualitySelector);
         btnEditPassword.setOnClickListener(editPasswordClick);
         ssvPasswordStrengthCheck.setSelector(passwordStrengthCheckSelector);
+        ssvTotalBalanceHide.setSelector(totalBalanceHideSelector);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
@@ -966,6 +970,46 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }
             };
+
+    private SettingSelectorView.SettingSelector totalBalanceHideSelector = new
+            SettingSelectorView.SettingSelector() {
+
+
+        @Override
+        public int getOptionCount() {
+            return TotalBalanceHide.values().length;
+        }
+
+        @Override
+        public CharSequence getOptionName(int index) {
+            return TotalBalanceHide.values()[index].displayName();
+        }
+
+        @Override
+        public CharSequence getOptionNote(int index) {
+            return null;
+        }
+
+        @Override
+        public Drawable getOptionDrawable(int index) {
+            return null;
+        }
+
+        @Override
+        public CharSequence getSettingName() {
+            return getString(R.string.total_balance_hide_setting_name);
+        }
+
+        @Override
+        public int getCurrentOptionIndex() {
+            return AppSharedPreference.getInstance().getTotalBalanceHide().ordinal();
+        }
+
+        @Override
+        public void onOptionIndexSelected(int index) {
+            AppSharedPreference.getInstance().setTotalBalanceHide(TotalBalanceHide.values()[index]);
+        }
+    };
 
     private void importHDFromQRCode() {
         Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);

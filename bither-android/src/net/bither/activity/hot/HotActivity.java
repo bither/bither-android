@@ -143,8 +143,8 @@ public class HotActivity extends BaseFragmentActivity {
         super.onResume();
         BitherApplication.startBlockchainService();
         PeerManager.instance().notifyMaxConnectedPeerCountChange();
+        refreshTotalBalance();
     }
-
 
     private void deleteNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context
