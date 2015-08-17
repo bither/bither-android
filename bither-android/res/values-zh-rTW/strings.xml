@@ -630,6 +630,7 @@
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集簽名</string>
     <string name="enterprise_hdm_keychain_enable_hint">輸入企業版密碼</string>
     <string name="enterprise_hdm_keychain_enable_failed">無效的企業版密碼</string>
+    <string name="enterprise_hdm_keychain_add_new_address">增加新地址</string>
 
     <!-- Cold HD -->
     <string name="add_cold_hd_account_tab">冷 HD 賬戶</string>

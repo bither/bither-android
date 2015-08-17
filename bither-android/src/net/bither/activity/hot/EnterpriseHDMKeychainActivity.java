@@ -38,10 +38,13 @@ import net.bither.ui.base.AddressInfoChangedObserver;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/6/9.
@@ -71,6 +74,7 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         lv = (ListView) findViewById(R.id.lv);
+        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         adapter = new EnterpriseHDMKeychainAdapter(this, addresses);
         lv.setAdapter(adapter);
     }
@@ -163,4 +167,21 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private View.OnClickListener optionClick = new DialogWithActions
+            .DialogWithActionsClickListener() {
+
+        @Override
+        protected List<DialogWithActions.Action> getActions() {
+            return Arrays.asList(new DialogWithActions.Action[]{new DialogWithActions.Action(R
+                    .string.enterprise_hdm_keychain_add_new_address, new Runnable() {
+                @Override
+                public void run() {
+                    startActivityForResult(new Intent(EnterpriseHDMKeychainActivity.this,
+                            EnterpriseHDMKeychainAddNewAddressActivity.class), AddCode);
+                    overridePendingTransition(R.anim.slide_in_right, 0);
+                }
+            })});
+        }
+    };
 }

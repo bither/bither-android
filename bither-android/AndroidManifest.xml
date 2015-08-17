@@ -291,6 +291,11 @@
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMKeychainAddNewAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name="net.bither.activity.hot.EnterpriseHDMKeychainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
