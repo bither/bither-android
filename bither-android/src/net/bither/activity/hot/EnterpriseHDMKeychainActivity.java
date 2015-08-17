@@ -51,6 +51,7 @@ import java.util.List;
  */
 public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     private static final int AddCode = 1123;
+    private static final int AddAddressCode = 1739;
 
     private ArrayList<EnterpriseHDMAddress> addresses = new ArrayList<EnterpriseHDMAddress>();
 
@@ -153,8 +154,8 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == AddCode) {
-            if (resultCode != RESULT_OK) {
+        if (requestCode == AddCode || requestCode == AddAddressCode) {
+            if (resultCode != RESULT_OK && requestCode == AddCode) {
                 finish();
                 return;
             }
@@ -178,7 +179,7 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
                 @Override
                 public void run() {
                     startActivityForResult(new Intent(EnterpriseHDMKeychainActivity.this,
-                            EnterpriseHDMKeychainAddNewAddressActivity.class), AddCode);
+                            EnterpriseHDMKeychainAddNewAddressActivity.class), AddAddressCode);
                     overridePendingTransition(R.anim.slide_in_right, 0);
                 }
             })});
