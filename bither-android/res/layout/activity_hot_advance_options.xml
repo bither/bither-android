@@ -128,9 +128,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
-
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_password_strength_check"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_total_balance_hide"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
 

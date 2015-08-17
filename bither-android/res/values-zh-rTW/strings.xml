@@ -659,4 +659,10 @@
     <string name="address_full_for_hd_type_receiving">接收</string>
     <string name="address_full_for_hd_type_sending">傳送</string>
     <string name="address_full_for_hd_type_changing">找零</string>
+
+    <!-- Hide Total Balance -->
+    <string name="total_balance_hide_setting_name">總餘額</string>
+    <string name="total_balance_hide_show_all">顯示餘額和報表</string>
+    <string name="total_balance_hide_show_chart">只顯示報表</string>
+    <string name="total_balance_hide_hide_all">隱藏</string>
 </resources>

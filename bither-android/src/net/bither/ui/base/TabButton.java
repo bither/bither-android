@@ -38,6 +38,7 @@ import android.widget.ToggleButton;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.dialog.DialogTotalBtc;
 import net.bither.ui.base.dialog.DialogWithArrow;
 import net.bither.util.UIUtil;
@@ -210,12 +211,18 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
             }
         }
         ellipsized = true;
-        if (btc == null) {
-            tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
+        if (AppSharedPreference.getInstance().getTotalBalanceHide().shouldShowBalance()) {
+            tvText.setVisibility(View.VISIBLE);
+            if (btc == null) {
+                tvText.setText(BitherSetting.UNKONW_ADDRESS_STRING);
+            } else {
+                tvText.setText(UnitUtilWrapper.formatValue(btc.longValue()));
+            }
+            ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
         } else {
-            tvText.setText(UnitUtilWrapper.formatValue(btc.longValue()));
+            tvText.setText(null);
+            tvText.setVisibility(View.GONE);
         }
-        ((View) tvText.getParent()).setPadding(0, 0, UIUtil.dip2pix(11), 0);
         tvText.requestLayout();
         if (dialog == null) {
             DialogTotalBtc d = new DialogTotalBtc(getContext());
@@ -235,12 +242,17 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
     }
 
     public void showDialog() {
-        if (dialog != null) {
+        if (dialog != null && AppSharedPreference.getInstance().getTotalBalanceHide()
+                .shouldShowChart()) {
             dialog.show(this);
         }
     }
 
     private void updateArrow() {
+        if (!AppSharedPreference.getInstance().getTotalBalanceHide().shouldShowChart()) {
+            ivArrowDown.setVisibility(View.GONE);
+            return;
+        }
         if (!overrideArrowBehavior) {
             if (tvText.getText() == null || tvText.getText().length() == 0) {
                 ivArrowDown.setVisibility(View.GONE);
