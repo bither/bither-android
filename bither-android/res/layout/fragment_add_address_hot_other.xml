@@ -34,5 +34,6 @@
         android:paddingTop="10dp"
         android:text="@string/add_hd_account_other_hdm"
         android:textColor="@color/white"
+        android:visibility="gone"
         android:textSize="18sp"/>
 </LinearLayout>
