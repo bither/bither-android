@@ -19,7 +19,7 @@ package net.bither.util;
 
 import android.os.Handler;
 
-import com.google.bitcoin.store.WalletProtobufSerializer;
+//import com.google.bitcoin.store.WalletProtobufSerializer;
 
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
@@ -228,10 +228,10 @@ public class UpgradeUtil {
     private static ECKey loadECKey(File walletFile) throws Exception {
         FileInputStream walletStream = null;
         walletStream = new FileInputStream(walletFile);
-        ECKey ecKey = new
-                WalletProtobufSerializer()
-                .readWallet(walletStream);
-        return ecKey;
+//        ECKey ecKey = new
+//                WalletProtobufSerializer()
+//                .readWallet(walletStream);
+        return null;
 
     }
 
