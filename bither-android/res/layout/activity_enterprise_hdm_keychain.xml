@@ -56,10 +56,11 @@
                     android:background="@drawable/title_bar_seperator"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
-                    android:gravity="center"
+                    android:gravity="center_vertical|left"
                     android:shadowColor="@color/text_field_text_color"
                     android:shadowDx="1"
                     android:shadowDy="-1"
@@ -68,6 +69,19 @@
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <ImageButton
+                    android:id="@+id/ibtn_option"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_option_icon"/>
+
             </LinearLayout>
         </FrameLayout>
     </net.bither.ui.base.SwipeRightTouchView>
