@@ -43,6 +43,7 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
+import net.bither.util.BackupUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.xrandom.HDAccountColdUEntropyActivity;
 
@@ -127,6 +128,7 @@ public class AddAddressColdHDAccountFragment extends Fragment implements AddHotA
                             throw new RuntimeException(e);
                         }
                         password.wipe();
+                        BackupUtil.backupColdKey(false);
                         if (service != null) {
                             service.startAndRegister();
                         }
