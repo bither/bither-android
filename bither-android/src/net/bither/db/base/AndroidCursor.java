@@ -38,55 +38,55 @@ public class AndroidCursor implements ICursor {
 //        return cursor.getPosition();
 //    }
 
-    @Override
-    public boolean move(int var1) {
-        return cursor.move(var1);
-    }
-
-    @Override
-    public boolean moveToPosition(int var1) {
-        return cursor.moveToPosition(var1);
-    }
-
-    @Override
-    public boolean moveToFirst() {
-        return cursor.moveToFirst();
-    }
-
-    @Override
-    public boolean moveToLast() {
-        return cursor.moveToLast();
-    }
+//    @Override
+//    public boolean move(int var1) {
+//        return cursor.move(var1);
+//    }
+//
+//    @Override
+//    public boolean moveToPosition(int var1) {
+//        return cursor.moveToPosition(var1);
+//    }
+//
+//    @Override
+//    public boolean moveToFirst() {
+//        return cursor.moveToFirst();
+//    }
+//
+//    @Override
+//    public boolean moveToLast() {
+//        return cursor.moveToLast();
+//    }
 
     @Override
     public boolean moveToNext() {
         return cursor.moveToNext();
     }
 
-    @Override
-    public boolean moveToPrevious() {
-        return cursor.moveToPrevious();
-    }
-
-    @Override
-    public boolean isFirst() {
-        return cursor.isFirst();
-    }
-
-    @Override
-    public boolean isLast() {
-        return cursor.isFirst();
-    }
-
-    @Override
-    public boolean isBeforeFirst() {
-        return cursor.isBeforeFirst();
-    }
-
-    @Override
-    public boolean isAfterLast() {
-        return cursor.isAfterLast();
-    }
+//    @Override
+//    public boolean moveToPrevious() {
+//        return cursor.moveToPrevious();
+//    }
+//
+//    @Override
+//    public boolean isFirst() {
+//        return cursor.isFirst();
+//    }
+//
+//    @Override
+//    public boolean isLast() {
+//        return cursor.isFirst();
+//    }
+//
+//    @Override
+//    public boolean isBeforeFirst() {
+//        return cursor.isBeforeFirst();
+//    }
+//
+//    @Override
+//    public boolean isAfterLast() {
+//        return cursor.isAfterLast();
+//    }
 
     @Override
     public int getColumnIndex(String var1) {
