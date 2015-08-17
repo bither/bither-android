@@ -19,11 +19,18 @@
 package net.bither.activity.hot;
 
 import android.os.Bundle;
-import android.view.View;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.UIUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by songchenwen on 15/6/12.
@@ -32,7 +39,6 @@ public class EnterpriseHDMAddressDetailActivity extends AddressDetailActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        findViewById(R.id.ibtn_option).setVisibility(View.GONE);
     }
 
     @Override
@@ -51,7 +57,34 @@ public class EnterpriseHDMAddressDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void optionClicked() {
-        return;
+        new DialogWithActions(this) {
+
+            @Override
+            protected List<Action> getActions() {
+                ArrayList<Action> actions = new ArrayList<Action>();
+                actions.add(new Action(R.string.address_option_view_on_blockchain_info, new
+                        Runnable() {
+                    @Override
+                    public void run() {
+                        UIUtil.gotoBrower(EnterpriseHDMAddressDetailActivity.this, BitherUrl
+                                .BLOCKCHAIN_INFO_ADDRESS_URL + address.getAddress());
+                    }
+                }));
+                String defaultCountry = Locale.getDefault().getCountry();
+                if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
+                        (defaultCountry, "cn")) {
+                    actions.add(new Action(R.string.address_option_view_on_blockmeta, new
+                            Runnable() {
+                        @Override
+                        public void run() {
+                            UIUtil.gotoBrower(EnterpriseHDMAddressDetailActivity.this, BitherUrl
+                                    .BLOCKMETA_ADDRESS_URL + address.getAddress());
+                        }
+                    }));
+                }
+                return actions;
+            }
+        }.show();
     }
 
 }

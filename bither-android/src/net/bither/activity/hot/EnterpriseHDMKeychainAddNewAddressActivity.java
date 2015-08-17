@@ -220,10 +220,6 @@ public class EnterpriseHDMKeychainAddNewAddressActivity extends SwipeRightFragme
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private int threshold() {
-        return keychain.threshold();
-    }
-
     private int pubCount() {
         return keychain.pubCount();
     }
