@@ -46,14 +46,13 @@ import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.HDAccountAddressProvider;
-import net.bither.db.TxProvider;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
@@ -448,8 +447,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     address.setSyncComplete(false);
                     address.updateSyncComplete();
                 }
-                HDAccountAddressProvider.getInstance().setSyncedNotComplete();
-                TxProvider.getInstance().clearAllTx();
+                AbstractDb.hdAccountAddressProvider.setSyncedNotComplete();
+                AbstractDb.txProvider.clearAllTx();
                 for (Address address : AddressManager.getInstance().getAllAddresses()) {
                     address.notificatTx(null, Tx.TxNotificationType.txFromApi);
                 }
