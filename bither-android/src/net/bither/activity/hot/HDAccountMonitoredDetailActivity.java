@@ -24,8 +24,11 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
+import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdAccountOldAddresses;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +55,42 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
             @Override
             protected List<Action> getActions() {
                 ArrayList<Action> actions = new ArrayList<Action>();
+                actions.add(new Action(R.string.hd_account_request_new_receiving_address, new
+                        Runnable() {
+                    @Override
+                    public void run() {
+                        final DialogProgress dp = new DialogProgress
+                                (HDAccountMonitoredDetailActivity.this, R.string.please_wait);
+                        dp.setCancelable(false);
+                        dp.show();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                final boolean result = ((HDAccount) address)
+                                        .requestNewReceivingAddress();
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dp.dismiss();
+                                        if (result) {
+                                            loadData();
+                                        } else {
+                                            DropdownMessage.showDropdownMessage
+                                                    (HDAccountMonitoredDetailActivity.this, R
+                                                            .string
+                                                            .hd_account_request_new_receiving_address_failed);
+                                        }
+                                    }
+                                });
+                            }
+                        }.start();
+                    }
+                }));
                 actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                     @Override
                     public void run() {
-                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this, (HDAccount) address).show();
+                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this,
+                                (HDAccount) address).show();
                     }
                 }));
                 return actions;

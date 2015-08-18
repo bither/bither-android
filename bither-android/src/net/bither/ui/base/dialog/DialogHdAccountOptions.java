@@ -50,6 +50,33 @@ public class DialogHdAccountOptions extends DialogWithActions {
     protected List<Action> getActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
         if (fromDetail) {
+            actions.add(new Action(R.string.hd_account_request_new_receiving_address, new
+                    Runnable() {
+                @Override
+                public void run() {
+                    final DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
+                    dp.setCancelable(false);
+                    dp.show();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            final boolean result = account.requestNewReceivingAddress();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    if (result) {
+                                        ((HDAccountDetailActivity) activity).loadData();
+                                    } else {
+                                        DropdownMessage.showDropdownMessage(activity, R.string
+                                                .hd_account_request_new_receiving_address_failed);
+                                    }
+                                }
+                            });
+                        }
+                    }.start();
+                }
+            }));
             actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                 @Override
                 public void run() {

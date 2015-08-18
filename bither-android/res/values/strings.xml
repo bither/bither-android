@@ -618,6 +618,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD Account</string>
+    <string name="hd_account_request_new_receiving_address">Request New Address</string>
+    <string name="hd_account_request_new_receiving_address_failed">Unused new address count is limited to 20.</string>
 
     <!-- vanity address length -->
     <string name="vanity_address_length">Vanity Address Length</string>

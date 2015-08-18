@@ -599,6 +599,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 賬戶</string>
+    <string name="hd_account_request_new_receiving_address">生成新地址</string>
+    <string name="hd_account_request_new_receiving_address_failed">生成失敗, 您最多隻能生成20個未使用的新地址.</string>
 
     <!-- vanity address length -->
     <string name="vanity_address_length">榮耀地址位數</string>
