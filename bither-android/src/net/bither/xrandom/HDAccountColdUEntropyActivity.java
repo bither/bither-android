@@ -29,6 +29,7 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
+import net.bither.util.BackupUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +143,8 @@ public class HDAccountColdUEntropyActivity extends UEntropyActivity {
 
 
                 words = hdAccount.getSeedWords(password);
+
+                BackupUtil.backupColdKey(false);
 
                 onProgress(1);
 

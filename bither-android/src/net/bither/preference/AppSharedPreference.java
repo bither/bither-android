@@ -28,6 +28,7 @@ import net.bither.bitherj.BitherjSettings.MarketType;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
+import net.bither.enums.TotalBalanceHide;
 import net.bither.qrcode.Qr;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.UnitUtilWrapper;
@@ -71,6 +72,8 @@ public class AppSharedPreference {
     private static final String PASSWORD_STRENGTH_CHECK = "password_strength_check";
 
     private static final String QR_QUALITY = "qr_quality";
+
+    private static final String TOTAL_BALANCE_HIDE = "total_balance_hide";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -406,5 +409,13 @@ public class AppSharedPreference {
 
     public boolean getPasswordStrengthCheck() {
         return mPreferences.getBoolean(PASSWORD_STRENGTH_CHECK, true);
+    }
+
+    public void setTotalBalanceHide(TotalBalanceHide h) {
+        mPreferences.edit().putInt(TOTAL_BALANCE_HIDE, h.value()).commit();
+    }
+
+    public TotalBalanceHide getTotalBalanceHide() {
+        return TotalBalanceHide.totalBalanceHide(mPreferences.getInt(TOTAL_BALANCE_HIDE, 0));
     }
 }

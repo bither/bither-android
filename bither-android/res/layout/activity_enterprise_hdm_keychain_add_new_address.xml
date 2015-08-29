@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <LinearLayout
+                android:id="@+id/ll_add"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/enterprise_hdm_keychain_address_count"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+                <net.bither.ui.base.CountSelectionView
+                    android:id="@+id/csv_address_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"/>
+
+                <Button
+                    android:id="@+id/btn_generate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/btn_small_send_selector"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/add_hd_account_button"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_collect"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/enterprise_hdm_keychain_collect_pubs"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:layout_gravity="center"
+                            android:background="@color/white"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="1px"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="@color/white"/>
+
+                            <LinearLayout
+                                android:id="@+id/ll_pubs"
+                                android:layout_width="match_parent"
+                                android:layout_height="16dp"
+                                android:background="@color/card_separator_color"
+                                android:orientation="horizontal">
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:layout_gravity="center"
+                            android:background="@color/white"/>
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/ibtn_add_pub"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/entry_keyboard_key_btn_bg"
+                        android:src="@drawable/scan_button_icon"/>
+                </LinearLayout>
+
+
+                <Button
+                    android:id="@+id/btn_collect_finish"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/btn_small_send_selector"
+                    android:enabled="false"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/next_step"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_bar_height"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/title_bar_bg"
+            android:paddingBottom="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:duplicateParentState="true"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ibtn_back"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/tab_button_background"
+                    android:src="@drawable/title_bar_back"/>
+
+                <ImageView
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/title_bar_seperator"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:shadowColor="@color/text_field_text_color"
+                    android:shadowDx="1"
+                    android:shadowDy="-1"
+                    android:shadowRadius="0.5"
+                    android:text="@string/enterprise_hdm_keychain_add_new_address"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </FrameLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

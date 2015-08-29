@@ -33,6 +33,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.BackupUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
 
@@ -120,6 +121,7 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                 if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode
                         .COLD) {
                     HDAccountCold result = importHDAccountCold();
+                    BackupUtil.backupColdKey(false);
                     if (result != null) {
                         success = true;
                     }

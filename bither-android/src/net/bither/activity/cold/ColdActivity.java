@@ -110,8 +110,8 @@ public class ColdActivity extends BaseFragmentActivity {
             }
         }, 500);
         DialogFirstRunWarning.show(this);
-        registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+        registerReceiver(addressIsLoadedReceiver, new IntentFilter(NotificationAndroidImpl
+                .ACTION_ADDRESS_LOAD_COMPLETE_STATE));
     }
 
     @Override
@@ -383,10 +383,10 @@ public class ColdActivity extends BaseFragmentActivity {
                 HDMKeychain hdmKeychain = null;
                 boolean check = false;
                 if (strings != null && strings.length > 0) {
-                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0) {
+                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || strings[0]
+                            .indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
                         String keychainString = strings[0].substring(1);
                         try {
-
                             check = HDMKeychain.checkPassword(keychainString, password);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -412,6 +412,16 @@ public class ColdActivity extends BaseFragmentActivity {
                                 try {
                                     hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString)
                                             , password, null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                continue;
+                            }
+                            if (keyString.indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
+                                String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                                String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+                                try {
+                                    new HDAccountCold(new EncryptedData(encreyptString), password);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }

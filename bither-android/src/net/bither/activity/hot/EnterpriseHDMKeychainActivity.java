@@ -38,16 +38,20 @@ import net.bither.ui.base.AddressInfoChangedObserver;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.MarketTickerChangedObserver;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/6/9.
  */
 public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     private static final int AddCode = 1123;
+    private static final int AddAddressCode = 1739;
 
     private ArrayList<EnterpriseHDMAddress> addresses = new ArrayList<EnterpriseHDMAddress>();
 
@@ -71,6 +75,7 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         lv = (ListView) findViewById(R.id.lv);
+        findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         adapter = new EnterpriseHDMKeychainAdapter(this, addresses);
         lv.setAdapter(adapter);
     }
@@ -149,8 +154,8 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == AddCode) {
-            if (resultCode != RESULT_OK) {
+        if (requestCode == AddCode || requestCode == AddAddressCode) {
+            if (resultCode != RESULT_OK && requestCode == AddCode) {
                 finish();
                 return;
             }
@@ -163,4 +168,21 @@ public class EnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private View.OnClickListener optionClick = new DialogWithActions
+            .DialogWithActionsClickListener() {
+
+        @Override
+        protected List<DialogWithActions.Action> getActions() {
+            return Arrays.asList(new DialogWithActions.Action[]{new DialogWithActions.Action(R
+                    .string.enterprise_hdm_keychain_add_new_address, new Runnable() {
+                @Override
+                public void run() {
+                    startActivityForResult(new Intent(EnterpriseHDMKeychainActivity.this,
+                            EnterpriseHDMKeychainAddNewAddressActivity.class), AddAddressCode);
+                    overridePendingTransition(R.anim.slide_in_right, 0);
+                }
+            })});
+        }
+    };
 }

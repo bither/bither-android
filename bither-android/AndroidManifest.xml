@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
     android:installLocation="internalOnly"
-    android:versionCode="138"
-    android:versionName="1.3.8">
+    android:versionCode="139"
+    android:versionName="1.3.9">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -287,6 +287,11 @@
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name="net.bither.activity.hot.AddEnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name="net.bither.activity.hot.EnterpriseHDMKeychainAddNewAddressActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden"/>

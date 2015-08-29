@@ -273,14 +273,21 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
                 position = 0;
             } else if (isHDM) {
                 if (addressesToShowAdded.size() == 1) {
-                    for (int i = 0;
-                         i < hdms.size();
-                         i++) {
-                        if (Utils.compareString(hdms.get(i).getAddress(),
-                                addressesToShowAdded.get(0))) {
-                            position = i;
-                            break;
+                    boolean found = false;
+                    if(hdms != null && hdms.size() > 0) {
+                        for (int i = 0;
+                             i < hdms.size();
+                             i++) {
+                            if (Utils.compareString(hdms.get(i).getAddress(), addressesToShowAdded.get(0))) {
+                                found = true;
+                                position = i;
+                                break;
+                            }
                         }
+                    }
+                    if (!found) {
+                        addressesToShowAdded.clear();
+                        return;
                     }
                 }
             } else {

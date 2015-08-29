@@ -618,6 +618,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD Account</string>
+    <string name="hd_account_request_new_receiving_address">Request New Address</string>
+    <string name="hd_account_request_new_receiving_address_failed">Unused new address count is limited to 20.</string>
 
     <!-- vanity address length -->
     <string name="vanity_address_length">Vanity Address Length</string>
@@ -650,6 +652,7 @@
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">Signatures Collected</string>
     <string name="enterprise_hdm_keychain_enable_hint">Enter Enterprise Code</string>
     <string name="enterprise_hdm_keychain_enable_failed">Invalid Enterprise Code</string>
+    <string name="enterprise_hdm_keychain_add_new_address">Add New Address</string>
 
     <!-- Cold HD -->
     <string name="add_cold_hd_account_tab">HD Account</string>
@@ -679,4 +682,10 @@
     <string name="address_full_for_hd_type_receiving">Receiving</string>
     <string name="address_full_for_hd_type_sending">Sending</string>
     <string name="address_full_for_hd_type_changing">Changing</string>
+
+    <!-- Hide Total Balance -->
+    <string name="total_balance_hide_setting_name">Total Balance</string>
+    <string name="total_balance_hide_show_all">Show All</string>
+    <string name="total_balance_hide_show_chart">Show Chart</string>
+    <string name="total_balance_hide_hide_all">Hide All</string>
 </resources>

@@ -65,12 +65,12 @@ public class AndroidDbImpl extends AbstractDb {
 
     @Override
     public IDesktopAddressProvider initEnDesktopAddressProvider() {
-        return DesktopAddressProvider.getInstance();
+        return null;
     }
 
     @Override
     public IDesktopTxProvider initDesktopTxProvider() {
-        return DesktopTxProvider.getInstance();
+        return null;
     }
 
 }

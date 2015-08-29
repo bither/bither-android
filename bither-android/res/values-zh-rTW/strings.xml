@@ -599,6 +599,8 @@
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 賬戶</string>
+    <string name="hd_account_request_new_receiving_address">生成新地址</string>
+    <string name="hd_account_request_new_receiving_address_failed">生成失敗, 您最多隻能生成20個未使用的新地址.</string>
 
     <!-- vanity address length -->
     <string name="vanity_address_length">榮耀地址位數</string>
@@ -630,6 +632,7 @@
     <string name="enterprise_hdm_keychain_payment_proposal_signature_collected">已收集簽名</string>
     <string name="enterprise_hdm_keychain_enable_hint">輸入企業版密碼</string>
     <string name="enterprise_hdm_keychain_enable_failed">無效的企業版密碼</string>
+    <string name="enterprise_hdm_keychain_add_new_address">增加新地址</string>
 
     <!-- Cold HD -->
     <string name="add_cold_hd_account_tab">冷 HD 賬戶</string>
@@ -659,4 +662,10 @@
     <string name="address_full_for_hd_type_receiving">接收</string>
     <string name="address_full_for_hd_type_sending">傳送</string>
     <string name="address_full_for_hd_type_changing">找零</string>
+
+    <!-- Hide Total Balance -->
+    <string name="total_balance_hide_setting_name">總餘額</string>
+    <string name="total_balance_hide_show_all">顯示餘額和報表</string>
+    <string name="total_balance_hide_show_chart">只顯示報表</string>
+    <string name="total_balance_hide_hide_all">隱藏</string>
 </resources>

@@ -46,6 +46,7 @@ import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
@@ -468,8 +469,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
             HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
+            HDAccountCold hdAccountCold = PrivateKeyUtil.getHDAccountCold(content, password);
 
-            if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null)) {
+            if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null) &&
+                    hdAccountCold == null) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
