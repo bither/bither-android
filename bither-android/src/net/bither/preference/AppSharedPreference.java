@@ -408,7 +408,7 @@ public class AppSharedPreference {
     }
 
     public boolean getPasswordStrengthCheck() {
-        return mPreferences.getBoolean(PASSWORD_STRENGTH_CHECK, true);
+        return mPreferences.getBoolean(PASSWORD_STRENGTH_CHECK, false);
     }
 
     public void setTotalBalanceHide(TotalBalanceHide h) {
