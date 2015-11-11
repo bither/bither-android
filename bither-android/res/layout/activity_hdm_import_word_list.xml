@@ -100,6 +100,7 @@
                     android:background="@drawable/title_bar_seperator" />
 
                 <TextView
+                    android:id="@+id/tv_title"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"

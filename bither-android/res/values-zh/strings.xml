@@ -543,6 +543,8 @@
     <string name="hdm_import_word_list_wrong_word_warn">单词无效</string>
     <string name="hdm_import_word_list_delete">删除</string>
     <string name="hdm_import_word_list_replace">替换</string>
+    <string name="activity_name_hd_import_word_list">导入 HD 密语</string>
+    <string name="hd_import_word_list_empty_message">请输入 HD 密语</string>
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM 服务器授权失效.\n使用 HDM 冷重新授权?</string>

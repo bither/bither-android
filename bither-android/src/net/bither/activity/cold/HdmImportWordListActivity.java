@@ -63,6 +63,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
 
     private GridView gv;
     private TextView tvEmpty;
+    private TextView tvTitle;
     private EditText etInput;
     private Button btnInput;
     private ImageButton btnSave;
@@ -78,13 +79,11 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hdm_import_word_list);
-        initView();
         Bundle extra = getIntent().getExtras();
         if (extra != null && extra.containsKey(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE)) {
             importHDSeedType = (ImportHDSeed.ImportHDSeedType) extra.getSerializable(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE);
         }
-
-
+        initView();
         etInput.requestFocus();
     }
 
@@ -92,8 +91,19 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         gv = (GridView) findViewById(R.id.gv);
         tvEmpty = (TextView) findViewById(R.id.tv_empty);
+        tvTitle = (TextView) findViewById(R.id.tv_title);
         etInput = (EditText) findViewById(R.id.et_word);
         btnInput = (Button) findViewById(R.id.btn_input);
+        switch (importHDSeedType){
+            case HDMColdPhrase:
+                tvEmpty.setText(R.string.hdm_import_word_list_empty_message);
+                tvTitle.setText(R.string.activity_name_hdm_import_word_list);
+                break;
+            case HDSeedPhrase:
+                tvEmpty.setText(R.string.hd_import_word_list_empty_message);
+                tvTitle.setText(R.string.activity_name_hd_import_word_list);
+                break;
+        }
         btnInput.setOnClickListener(inputClick);
         etInput.setOnEditorActionListener(this);
         gv.setAdapter(adapter);
