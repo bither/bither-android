@@ -664,6 +664,7 @@
     <string name="add_cold_hd_account_other_hdm">Generate HDM Account</string>
     <string name="add_cold_hd_account_other_private">Generate Normal Private Keys</string>
     <string name="add_cold_hd_account_monitor_qr">HD Account Monitor QR Code</string>
+    <string name="add_cold_hd_account_xpub_b58">XPub</string>
     <string name="hd_account_cold_address_list_label">Cold HD Account</string>
     <string name="import_cold_hd_account_seed_qr_code">From HD Account Seed QR Code</string>
     <string name="import_cold_hd_account_seed_phrase">From HD Account Phrase</string>

@@ -213,6 +213,44 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                     }).show();
                 }
             }));
+            actions.add(new DialogWithActions.Action(R.string.add_cold_hd_account_xpub_b58, new
+                    Runnable() {
+                @Override
+                public void run() {
+                    new DialogPassword(getContext(), new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(final SecureCharSequence password) {
+                            final DialogProgress dp = new DialogProgress(getContext(), R.string
+                                    .please_wait);
+                            dp.show();
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        final String xpub = hdAccountCold.xPubB58(password);
+                                        ThreadUtil.runOnMainThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dp.dismiss();
+                                                new DialogSimpleQr(getContext(), xpub, R.string
+                                                        .add_cold_hd_account_xpub_b58).show();
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        ThreadUtil.runOnMainThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                dp.dismiss();
+                                            }
+                                        });
+                                    }
+                                }
+                            }.start();
+                        }
+                    }).show();
+                }
+            }));
             return actions;
         }
     };
