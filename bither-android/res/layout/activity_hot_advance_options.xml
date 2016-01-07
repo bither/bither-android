@@ -78,6 +78,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
+                            <include layout="@layout/layout_dropdown_message"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_bip38_key"
                                 android:layout_width="match_parent"
@@ -293,8 +297,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
-
-            <include layout="@layout/layout_dropdown_message" />
 
         </FrameLayout>
 

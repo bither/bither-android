@@ -19,6 +19,9 @@
 package net.bither.activity.hot;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -28,6 +31,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
@@ -82,6 +86,7 @@ import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
 import net.bither.ui.base.dialog.DialogSimpleQr;
+import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -95,6 +100,8 @@ import net.bither.util.ThreadUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvWifi;
@@ -116,6 +123,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
+    private AlertDialog.Builder selectedBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +166,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
-        btnResetTx.setOnClickListener(resetTxListener);
+        // btnResetTx.setOnClickListener(resetTxListener);
+        btnResetTx.setOnClickListener(selDialog);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
         findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
@@ -382,23 +391,34 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
+    /**
+     *  Improve the method
+     *
+     */
+
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
             if (BitherApplication.canReloadTx()) {
-                Runnable confirmRunnable = new Runnable() {
+                final Runnable confirmRunnable = new Runnable() {
                     @Override
                     public void run() {
                         BitherApplication.reloadTxTime = System.currentTimeMillis();
                         PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
                         if (passwordSeed == null) {
-                            resetTx();
+                            // TODO: the dialog determine the web type
+                            // showSelectedDialog();
+
+                            resetTx(0);
+
                         } else {
-                            callPassword();
+                            callPassword(0);
                         }
                     }
+
                 };
+
                 DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
                         .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
                 dialogConfirmTask.show();
@@ -414,7 +434,94 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     };
 
-    private void callPassword() {
+    // TODO: select dialog
+    private DialogWithActions.DialogWithActionsClickListener selDialog = new DialogWithActions.DialogWithActionsClickListener() {
+        @Override
+        protected List<DialogWithActions.Action> getActions() {
+
+            ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
+            /*
+            final Runnable bitherRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    callPassword(0);
+                }
+            };
+            final Runnable blockChainRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    callPassword(1);
+                }
+            };
+            DialogConfirmTask dialogBitherTask = new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string.reload_tx_need_too_much_time), bitherRunnable);
+            dialogBitherTask.show();
+            DialogConfirmTask dialogBlockCainTask = new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string.reload_tx_need_too_much_time), blockChainRunnable);
+            dialogBlockCainTask.show();
+
+            actions.add(new DialogWithActions.Action("bither.net", bitherRunnable));
+            actions.add(new DialogWithActions.Action("blockchain.info", blockChainRunnable));
+
+            return actions;
+            */
+            if (BitherApplication.canReloadTx()) {
+                // ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
+                final Runnable bitherRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        callPassword(0);
+                    }
+                };
+                final Runnable blockChainRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        callPassword(1);
+                    }
+                };
+                /*
+                DialogConfirmTask dialogBitherTask = new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string.reload_tx_need_too_much_time), bitherRunnable);
+                dialogBitherTask.show();
+                DialogConfirmTask dialogBlockCainTask = new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string.reload_tx_need_too_much_time), blockChainRunnable);
+                dialogBlockCainTask.show();
+                */
+
+                actions.add(new DialogWithActions.Action("bither.net", bitherRunnable));
+                actions.add(new DialogWithActions.Action("blockchain.info", blockChainRunnable));
+
+                return actions;
+            }else {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                        R.string.tx_cannot_reloding);
+            }
+            /*
+            actions.add(new DialogWithActions.Action("bither.net",
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            //
+                            callPassword(0);
+
+                        }
+                    }));
+            actions.add(new DialogWithActions.Action("blockChain.info",
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            //
+                            callPassword(1);
+                        }
+                    }));
+            */
+
+            return actions;
+        }
+    };
+
+
+    /**
+     *  end
+     */
+
+    private void callPassword(final int flag) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -423,19 +530,19 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             new IDialogPasswordListener() {
                                 @Override
                                 public void onPasswordEntered(SecureCharSequence password) {
-                                    resetTx();
+                                    resetTx(flag);
 
                                 }
                             });
                     dialogPassword.show();
                 } else {
-                    resetTx();
+                    resetTx(flag);
                 }
             }
         });
     }
 
-    private void resetTx() {
+    private void resetTx(final int flag) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -460,7 +567,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 }
                 try {
                     if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                        TransactionsUtil.getMyTxFromBither();
+                        // TODO: add web type flag
+                        TransactionsUtil.getMyTxFromBither(flag);
                     }
                     service.startAndRegister();
                     HotAdvanceActivity.this.runOnUiThread(new Runnable() {
