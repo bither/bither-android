@@ -691,4 +691,15 @@
     <string name="total_balance_hide_show_all">Show All</string>
     <string name="total_balance_hide_show_chart">Show Chart</string>
     <string name="total_balance_hide_hide_all">Hide All</string>
+
+    <!-- Reload Data -->
+    <string name="web_reload_web_type">Reload Data from following web</string>
+    <string name="web_reload_bither_net">bither.net</string>
+    <string name="web_reload_block_chain">blockChain.info</string>
+    <string name="web_reload_chain_btc">chain.btc.com</string>
+
+    <string name="web_reload_data_title">Reload Data</string>
+    <string name="web_reload_data_message">Data Source</string>
+    <string name="web_reload_data_confirm">confirm</string>
+    <string name="web_reload_data_cancel">cancel</string>
 </resources>
