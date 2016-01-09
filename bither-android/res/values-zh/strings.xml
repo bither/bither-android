@@ -166,6 +166,11 @@
     <string name="setting_name_transaction_fee_normal_note">较快确认</string>
     <string name="setting_name_transaction_fee_low_note">较慢确认</string>
     <string name="setting_name_transaction_fee_high_note">高优先级</string>
+    <string name="setting_api_config">API 设置</string>
+    <string name="setting_api_config_bither_net">Bither.net</string>
+    <string name="setting_api_config_blockchain">Blockchain.info</string>
+    <string name="setting_name_api_config_bither">Bither</string>
+    <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>

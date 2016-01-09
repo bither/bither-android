@@ -354,8 +354,9 @@ public class BlockchainService extends android.app.Service {
                     }
                 } else {
                     if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                        // fix
-                        TransactionsUtil.getMyTxFromBither(0);
+                        // TODO: get Api Config
+                        int apiConfig = AppSharedPreference.getInstance().getApiConfig().ordinal();
+                        TransactionsUtil.getMyTxFromBither(apiConfig);
                     }
                     startPeerManager();
 
@@ -400,7 +401,9 @@ public class BlockchainService extends android.app.Service {
                 public void run() {
                     try {
                         if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                            TransactionsUtil.getMyTxFromBither(0);
+                            // TODO: get Api Config
+                            int apiConfig = AppSharedPreference.getInstance().getApiConfig().ordinal();
+                            TransactionsUtil.getMyTxFromBither(apiConfig);
                         }
                         startPeerManager();
                         AbstractApp.notificationService.removeBroadcastSyncSPVFinished();

@@ -66,6 +66,11 @@ public class AndroidImplAbstractApp extends AbstractApp {
             }
 
             @Override
+            public BitherjSettings.ApiConfig getApiConfig() {
+                return AppSharedPreference.getInstance().getApiConfig();
+            }
+
+            @Override
             public File getPrivateDir(String dirName) {
                 File file = BitherApplication.mContext.getDir(dirName, Context.MODE_PRIVATE);
                 if (!file.exists()) {
@@ -110,6 +115,7 @@ public class AndroidImplAbstractApp extends AbstractApp {
             public CookieStore getCookieStore() {
                 return PersistentCookieStore.getInstance();
             }
+
 
             
         };

@@ -164,6 +164,11 @@
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
+    <string name="setting_api_config"> API 設定</string>
+    <string name="setting_api_config_bither_net">Bither.net</string>
+    <string name="setting_api_config_blockchain">Blockchain.info</string>
+    <string name="setting_name_api_config_bither">Bither</string>
+    <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">捐贈</string>
     <string name="donate_thanks">謝謝您的捐贈</string>
     <string name="buy_order">買單</string>

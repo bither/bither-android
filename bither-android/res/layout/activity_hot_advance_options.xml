@@ -78,10 +78,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
-                            <include layout="@layout/layout_dropdown_message"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_import_bip38_key"
                                 android:layout_width="match_parent"
@@ -155,6 +151,11 @@
                                 android:textSize="18sp" />
 
                             <include layout="@layout/layout_vertical_seperator" />
+
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_api_config"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
 
                             <Button
                                 android:id="@+id/btn_reset_tx"
@@ -297,6 +298,8 @@
                     </LinearLayout>
                 </LinearLayout>
             </net.bither.ui.base.OverScrollableScrollView>
+
+            <include layout="@layout/layout_dropdown_message" />
 
         </FrameLayout>
 

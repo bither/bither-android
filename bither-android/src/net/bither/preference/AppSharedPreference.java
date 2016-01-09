@@ -64,6 +64,9 @@ public class AppSharedPreference {
     private static final String BITHERJ_DONE_SYNC_FROM_SPV = "bitheri_done_sync_from_spv";
     private static final String SYNC_INTERVAL = "sync_interval";
 
+    // TODO: api mode
+    private static final String API_MODE = "api_mode";
+
     private static final String PREFS_KEY_LAST_USED = "last_used";
 
     private static final String PIN_CODE = "pin_code";
@@ -127,6 +130,22 @@ public class AppSharedPreference {
         }
         this.mPreferences.edit().putInt(TRANSACTION_FEE_MODE, mode.ordinal()).commit();
 
+    }
+
+    // TODO: set api mode
+    public void setApiConfig(BitherjSettings.ApiConfig mode) {
+        if (mode == null) {
+            mode = BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+        }
+        this.mPreferences.edit().putInt(API_MODE, mode.ordinal()).commit();
+    }
+    // TODO: get api mode
+    public BitherjSettings.ApiConfig getApiConfig() {
+        int config = this.mPreferences.getInt(API_MODE, 1);
+        if (config < BitherjSettings.ApiConfig.values().length && config >= 0) {
+            return BitherjSettings.ApiConfig.values()[config];
+        }
+        return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
     }
 
     public int getVerionCode() {

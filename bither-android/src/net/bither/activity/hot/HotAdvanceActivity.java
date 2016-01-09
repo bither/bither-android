@@ -114,6 +114,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private SettingSelectorView ssvQrCodeQuality;
     private SettingSelectorView ssvPasswordStrengthCheck;
     private SettingSelectorView ssvTotalBalanceHide;
+    // TODO: api config
+    private SettingSelectorView ssvApiConfig;
     private Button btnExportLog;
     private Button btnResetTx;
     private Button btnTrashCan;
@@ -148,6 +150,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvQrCodeQuality = (SettingSelectorView) findViewById(R.id.ssv_qr_code_quality);
         ssvPasswordStrengthCheck = (SettingSelectorView) findViewById(R.id.ssv_password_strength_check);
         ssvTotalBalanceHide = (SettingSelectorView) findViewById(R.id.ssv_total_balance_hide);
+        ssvApiConfig = (SettingSelectorView) findViewById(R.id.ssv_api_config);
+        ssvApiConfig.setSelector(apiConfigSelector);
         ssvWifi.setSelector(wifiSelector);
         ssvImportPrivateKey.setSelector(importPrivateKeySelector);
         ssvImprotBip38Key.setSelector(importBip38KeySelector);
@@ -166,8 +170,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportLog = (Button) findViewById(R.id.btn_export_log);
         btnExportLog.setOnClickListener(exportLogClick);
         btnResetTx = (Button) findViewById(R.id.btn_reset_tx);
-        // btnResetTx.setOnClickListener(resetTxListener);
-        btnResetTx.setOnClickListener(selDialog);
+        btnResetTx.setOnClickListener(resetTxListener);
+        // btnResetTx.setOnClickListener(selDialog);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
         findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
@@ -410,10 +414,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             // TODO: the dialog determine the web type
                             // showSelectedDialog();
 
-                            resetTx(0);
+                            resetTx();
 
                         } else {
-                            callPassword(0);
+                            callPassword();
                         }
                     }
 
@@ -468,13 +472,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 final Runnable bitherRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        callPassword(0);
+                        callPassword();
                     }
                 };
                 final Runnable blockChainRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        callPassword(1);
+                        callPassword();
                     }
                 };
                 /*
@@ -521,7 +525,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
      *  end
      */
 
-    private void callPassword(final int flag) {
+    private void callPassword() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -530,19 +534,19 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             new IDialogPasswordListener() {
                                 @Override
                                 public void onPasswordEntered(SecureCharSequence password) {
-                                    resetTx(flag);
+                                    resetTx();
 
                                 }
                             });
                     dialogPassword.show();
                 } else {
-                    resetTx(flag);
+                    resetTx();
                 }
             }
         });
     }
 
-    private void resetTx(final int flag) {
+    private void resetTx() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -568,6 +572,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 try {
                     if (!AddressManager.getInstance().addressIsSyncComplete()) {
                         // TODO: add web type flag
+                        final int flag = AppSharedPreference.getInstance().getApiConfig().ordinal();
                         TransactionsUtil.getMyTxFromBither(flag);
                     }
                     service.startAndRegister();
@@ -1119,6 +1124,83 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             AppSharedPreference.getInstance().setTotalBalanceHide(TotalBalanceHide.values()[index]);
         }
     };
+
+    /**
+     *   set Api Config
+     */
+
+    private SettingSelectorView.SettingSelector apiConfigSelector = new
+            SettingSelectorView.SettingSelector() {
+                int length = BitherjSettings.ApiConfig.values().length;
+                @Override
+                public int getOptionCount() {
+                    return length;
+                }
+
+                @Override
+                public CharSequence getOptionName(int index) {
+                    BitherjSettings.ApiConfig apiConfig = getModeByIndex(index);
+                    switch (apiConfig) {
+                        case BITHER_NET:
+                            return getString(R.string.setting_name_api_config_bither);
+                        case BLOCKCHAIN_INFO:
+                            return getString(R.string.setting_name_api_config_blockchain);
+                    }
+                    return getString(R.string.setting_name_api_config_blockchain);
+                }
+
+                @Override
+                public CharSequence getOptionNote(int index) {
+                    switch (getModeByIndex(index)) {
+                        case BITHER_NET:
+                            return getString(R.string.setting_api_config_bither_net);
+                        case BLOCKCHAIN_INFO:
+                            return getString(R.string.setting_api_config_blockchain);
+                        default:
+                            return getString(R.string.setting_api_config_blockchain);
+                    }
+                }
+
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    return null;
+                }
+
+                @Override
+                public CharSequence getSettingName() {
+                    return getString(R.string.setting_api_config);
+                }
+
+                @Override
+                public int getCurrentOptionIndex() {
+                    BitherjSettings.ApiConfig apiConfig = AppSharedPreference.getInstance().getApiConfig();
+                    switch (apiConfig) {
+                        case BITHER_NET:
+                            return 0;
+                        case BLOCKCHAIN_INFO:
+                            return 1;
+                        default:
+                            return 1;
+                    }
+                }
+
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    AppSharedPreference.getInstance().setApiConfig(getModeByIndex(index));
+                }
+
+                private BitherjSettings.ApiConfig getModeByIndex(int index) {
+                    if (index >= 0 && index < length) {
+                        switch (index) {
+                            case 0:
+                                return BitherjSettings.ApiConfig.BITHER_NET;
+                            case 1:
+                                return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+                        }
+                    }
+                    return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+                }
+            };
 
     private void importHDFromQRCode() {
         Intent intent = new Intent(this, ScanQRCodeTransportActivity.class);
