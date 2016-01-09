@@ -571,9 +571,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 }
                 try {
                     if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                        // TODO: add web type flag
-                        final int flag = AppSharedPreference.getInstance().getApiConfig().ordinal();
-                        TransactionsUtil.getMyTxFromBither(flag);
+                        TransactionsUtil.getMyTxFromBither();
                     }
                     service.startAndRegister();
                     HotAdvanceActivity.this.runOnUiThread(new Runnable() {
