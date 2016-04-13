@@ -35,10 +35,13 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHDMAddressActivity;
 import net.bither.activity.hot.AddressDetailActivity;
+import net.bither.activity.hot.EnterpriseHDMAddressDetailActivity;
 import net.bither.activity.hot.HDAccountDetailActivity;
 import net.bither.activity.hot.HDAccountMonitoredDetailActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMAddress;
+import net.bither.bitherj.core.EnterpriseHDMKeychain;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.ui.base.AddressFragmentListItemView;
@@ -61,10 +64,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private static final int WatchOnlyGroupTag = 2;
     private static final int HDAccountGroupTag = 3;
     private static final int HDAccountMonitoredGroupTag = 4;
+    private static final int EnterpriseHDMKeychainGroupTag = 5;
 
     private FragmentActivity activity;
     private HDAccount hdAccount;
     private HDAccount hdAccountMonitored;
+    private EnterpriseHDMKeychain enterpriseHDMKeychain;
     private List<Address> watchOnlys;
     private List<Address> privates;
     private List<HDMAddress> hdms;
@@ -81,6 +86,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         this.hdms = hdms;
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountMonitored = AddressManager.getInstance().getHDAccountMonitored();
+        enterpriseHDMKeychain = AddressManager.getInstance().getEnterpriseHDMKeychain();
         mLayoutInflater = LayoutInflater.from(activity);
         mListView = listView;
     }
@@ -89,6 +95,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     public void notifyDataSetChanged() {
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountMonitored = AddressManager.getInstance().getHDAccountMonitored();
+        enterpriseHDMKeychain = AddressManager.getInstance().getEnterpriseHDMKeychain();
         super.notifyDataSetChanged();
         this.notifyHeaderChange();
     }
@@ -133,6 +140,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (hdms != null && hdms.size() > 0) {
             count++;
         }
+        if (enterpriseHDMKeychain != null) {
+            count++;
+        }
         return count;
     }
 
@@ -152,6 +162,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
         if (groupPosition == getHDAccountMonitoredGroupIndex()) {
             return HDAccountMonitoredGroupTag;
+        }
+        if (groupPosition == getEnterpriseHDMKeychainGroupIndex()) {
+            return EnterpriseHDMKeychainGroupTag;
         }
         return -1;
     }
@@ -230,6 +243,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 case HDAccountMonitoredGroupTag:
                     tvGroup.setText(R.string.address_group_hd_monitored);
                     ivType.setImageResource(R.drawable.address_type_hd);
+                    llHDM.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.VISIBLE);
+                    return;
+                case EnterpriseHDMKeychainGroupTag:
+                    tvGroup.setText(R.string.enterprise_hdm_keychain);
+                    ivType.setImageResource(R.drawable.address_type_hdm);
                     llHDM.setVisibility(View.INVISIBLE);
                     ivType.setVisibility(View.VISIBLE);
                     return;
@@ -365,6 +384,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 return hdAccount;
             case HDAccountMonitoredGroupTag:
                 return hdAccountMonitored;
+            case EnterpriseHDMKeychainGroupTag:
+                return enterpriseHDMKeychain.getAddresses().get(childPosition);
             default:
                 return null;
         }
@@ -393,6 +414,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                 return 1;
             case HDAccountMonitoredGroupTag:
                 return 1;
+            case EnterpriseHDMKeychainGroupTag:
+                return enterpriseHDMKeychain.getAddresses().size();
             default:
                 return -1;
         }
@@ -416,7 +439,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             view.setOnClickListener(hdAccountDetailClick);
         } else {
             view.ivType.setOnLongClickListener(new AddressLongClick(a));
-            view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM()));
+            view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(), a instanceof EnterpriseHDMAddress));
         }
         return convertView;
     }
@@ -490,19 +513,22 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         private int position;
         private boolean isPrivate;
         private boolean isHDM;
+        private boolean isEnterpriseHDM;
         private boolean clicked = false;
 
-        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM) {
+        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM, boolean isEnterpriseHDM) {
             this.position = position;
             this.isPrivate = isPrivate;
             this.isHDM = isHDM;
+            this.isEnterpriseHDM = isEnterpriseHDM;
         }
 
         @Override
         public void onClick(View v) {
             if (!clicked) {
                 clicked = true;
-                Intent intent = new Intent(activity, AddressDetailActivity.class);
+                Intent intent = new Intent(activity, isEnterpriseHDM ?
+                        EnterpriseHDMAddressDetailActivity.class : AddressDetailActivity.class);
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
                 intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
                         isPrivate);
@@ -557,11 +583,22 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         }
     }
 
+    public int getEnterpriseHDMKeychainGroupIndex() {
+        if (enterpriseHDMKeychain == null) {
+            return -1;
+        }
+        return 0;
+    }
+
     public int getHDAccountGroupIndex() {
         if (hdAccount == null) {
             return -1;
         }
-        return 0;
+        int index = 0;
+        if (enterpriseHDMKeychain != null) {
+            index++;
+        }
+        return index;
     }
 
     public int getHDAccountMonitoredGroupIndex() {
@@ -569,6 +606,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             return -1;
         }
         int index = 0;
+        if (enterpriseHDMKeychain != null) {
+            index++;
+        }
         if (hdAccount != null) {
             index++;
         }
@@ -580,6 +620,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             return -1;
         }
         int index = 0;
+        if (enterpriseHDMKeychain != null) {
+            index++;
+        }
         if (hdAccount != null) {
             index++;
         }
@@ -594,6 +637,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             return -1;
         }
         int index = 0;
+        if (enterpriseHDMKeychain != null) {
+            index++;
+        }
         if (hdAccount != null) {
             index++;
         }
@@ -608,6 +654,9 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
 
     public int getWatchOnlyGroupIndex() {
         int index = 0;
+        if (enterpriseHDMKeychain != null) {
+            index++;
+        }
         if (hdAccount != null) {
             index++;
         }
