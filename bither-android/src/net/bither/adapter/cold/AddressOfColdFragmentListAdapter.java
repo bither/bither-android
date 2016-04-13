@@ -23,8 +23,10 @@ import android.widget.BaseAdapter;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.ui.base.ColdAddressFragmentHDAccountColdListItemView;
+import net.bither.ui.base.ColdAddressFragmentHDMEnterpriseListItemView;
 import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
 import net.bither.ui.base.ColdAddressFragmentListItemView;
 
@@ -35,10 +37,12 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     private final int ItemTypePrivateKey = 0;
     private int ItemTypeHDMKeychain = 1;
     private int ItemTypeHDAccountCold = 1;
+    private int ItemTypeEnterpriseHDM = 1;
 
     private FragmentActivity activity;
     private List<Address> privates;
     private HDAccountCold hdAccountCold;
+    private EnterpriseHDMSeed enterpriseHDMSeed;
     private ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
     public AddressOfColdFragmentListAdapter(FragmentActivity activity,
@@ -51,15 +55,23 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         } else {
             hdAccountCold = null;
         }
+        if (EnterpriseHDMSeed.hasSeed()) {
+            enterpriseHDMSeed = EnterpriseHDMSeed.seed();
+        } else {
+            enterpriseHDMSeed = null;
+        }
     }
 
     @Override
     public int getViewTypeCount() {
         int count = 1;
         if(hasHDMKeychain()){
-            count ++;
+            count++;
         }
         if (hdAccountCold != null) {
+            count++;
+        }
+        if (enterpriseHDMSeed != null) {
             count++;
         }
         return count;
@@ -74,17 +86,24 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         if (o instanceof HDAccountCold) {
             return ItemTypeHDAccountCold;
         }
+        if (o instanceof EnterpriseHDMSeed) {
+            return ItemTypeEnterpriseHDM;
+        }
         return ItemTypePrivateKey;
     }
 
     @Override
     public int getCount() {
-        return privates.size() + (hasHDMKeychain() ? 1 : 0) + (hdAccountCold != null ? 1 : 0);
+        return privates.size() + (hasHDMKeychain() ? 1 : 0) + (hdAccountCold != null ? 1 : 0) +
+                (enterpriseHDMSeed != null ? 1 : 0);
     }
 
     @Override
     public Object getItem(int position) {
         if (position == 0) {
+            if (enterpriseHDMSeed != null) {
+                return enterpriseHDMSeed;
+            }
             if (hdAccountCold != null) {
                 return hdAccountCold;
             }
@@ -93,7 +112,21 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             }
         }
         if (position == 1) {
-            if (hasHDMKeychain() && hdAccountCold != null) {
+            if (enterpriseHDMSeed != null) {
+                if (hdAccountCold != null) {
+                    return hdAccountCold;
+                }
+                if (hasHDMKeychain()) {
+                    return HDMKeychainPlaceHolder;
+                }
+            } else {
+                if (hasHDMKeychain() && hdAccountCold != null) {
+                    return HDMKeychainPlaceHolder;
+                }
+            }
+        }
+        if (position == 2) {
+            if (enterpriseHDMSeed != null && hasHDMKeychain() && hdAccountCold != null) {
                 return HDMKeychainPlaceHolder;
             }
         }
@@ -108,6 +141,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (getItemViewType(position) == ItemTypeEnterpriseHDM) {
+            return getViewForEnterpriseHDM(position, convertView, parent);
+        }
         if(getItemViewType(position) == ItemTypeHDMKeychain){
             return getViewForHDMKeychain(position, convertView, parent);
         }
@@ -115,6 +151,17 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             return getViewForHDAccountCold(position, convertView, parent);
         }
         return getViewForPrivateKey(position, convertView, parent);
+    }
+
+    private View getViewForEnterpriseHDM(int position, View convertView, ViewGroup parent) {
+        ColdAddressFragmentHDMEnterpriseListItemView view;
+        if (convertView == null || !(convertView instanceof
+                ColdAddressFragmentHDMEnterpriseListItemView)) {
+            convertView = new ColdAddressFragmentHDMEnterpriseListItemView(activity);
+        }
+        view = (ColdAddressFragmentHDMEnterpriseListItemView) convertView;
+        view.setSeed(enterpriseHDMSeed);
+        return convertView;
     }
 
     private View getViewForHDMKeychain(int position, View convertView, ViewGroup parent){
@@ -155,6 +202,7 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     public void notifyDataSetChanged() {
         ItemTypeHDMKeychain = -1;
         ItemTypeHDAccountCold = -1;
+        ItemTypeEnterpriseHDM = -1;
         if (hasHDMKeychain()) {
             ItemTypeHDMKeychain = 1;
         }
@@ -163,6 +211,18 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         } else {
             hdAccountCold = null;
+        }
+        if (EnterpriseHDMSeed.hasSeed()) {
+            ItemTypeEnterpriseHDM = 1;
+            if (ItemTypeHDMKeychain >= 0) {
+                ItemTypeEnterpriseHDM++;
+            }
+            if (ItemTypeHDAccountCold >= 0) {
+                ItemTypeEnterpriseHDM++;
+            }
+            enterpriseHDMSeed = EnterpriseHDMSeed.seed();
+        } else {
+            enterpriseHDMSeed = null;
         }
         super.notifyDataSetChanged();
     }
