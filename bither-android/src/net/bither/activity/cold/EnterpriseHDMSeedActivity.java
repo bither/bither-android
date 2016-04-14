@@ -96,9 +96,9 @@ public class EnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                new DialogSimpleQr(v.getContext(), Utils.bytesToHexString(extPub)
-                                        .toUpperCase(), R.string
-                                        .enterprise_hdm_seed_backup_qr_code_promote).show();
+                                new DialogSimpleQr(v.getContext(), EnterpriseHDMSeed.XPubPrefix
+                                        + Utils.bytesToHexString(extPub).toUpperCase(),
+                                        R.string.enterprise_hdm_seed_backup_qr_code_promote).show();
                             }
                         });
                     } catch (MnemonicException.MnemonicLengthException e) {

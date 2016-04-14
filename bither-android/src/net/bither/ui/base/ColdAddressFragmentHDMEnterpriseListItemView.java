@@ -223,8 +223,9 @@ public class ColdAddressFragmentHDMEnterpriseListItemView extends FrameLayout {
                 @Override
                 public void run() {
                     try {
-                        final String pub = Utils.bytesToHexString(seed.getExternalRootPubExtended
-                                (password)).toUpperCase();
+                        final String pub = EnterpriseHDMSeed.XPubPrefix +
+                                Utils.bytesToHexString(
+                                        seed.getExternalRootPubExtended(password)).toUpperCase();
                         password.wipe();
                         post(new Runnable() {
                             @Override
