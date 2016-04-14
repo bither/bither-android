@@ -622,6 +622,8 @@
     <string name="enterprise_hdm_seed_add_note">新增一個種子用來創建企業 HDM 賬戶</string>
     <string name="enterprise_hdm_seed_qr_code">企業 HDM 種子二維碼</string>
     <string name="enterprise_hdm_seed_cosign">聯合簽名</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">從二維碼匯入</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">從密語匯入</string>
     <string name="enterprise_hdm_seed_backup_qr_code">備份二維碼</string>
     <string name="enterprise_hdm_seed_backup_phrase">備份密語</string>
     <string name="enterprise_hdm_keychain">企業 HDM 賬戶</string>
@@ -630,6 +632,7 @@
     <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
     <string name="enterprise_hdm_keychain_collect_pub_error">新增種子失敗</string>
     <string name="enterprise_hdm_keychain_add_fail">創建企業 HDM 賬戶失敗</string>
+    <string name="enterprise_hdm_seed_import_format_error">不符合企業 HDM 種子格式</string>
     <string name="next_step">下一步</string>
     <string name="enterprise_hdm_keychain_payment_proposal">付款申請</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 個簽名</string>

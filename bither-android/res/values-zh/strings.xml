@@ -621,6 +621,8 @@
     <string name="enterprise_hdm_seed">企业 HDM 种子</string>
     <string name="enterprise_hdm_seed_add_note">添加一个种子用来创建企业 HDM 账户</string>
     <string name="enterprise_hdm_seed_qr_code">企业 HDM 种子二维码</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">从二维码导入</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">从密语导入</string>
     <string name="enterprise_hdm_seed_cosign">联合签名</string>
     <string name="enterprise_hdm_seed_backup_qr_code">备份二维码</string>
     <string name="enterprise_hdm_seed_backup_phrase">备份密语</string>
@@ -630,6 +632,7 @@
     <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
     <string name="enterprise_hdm_keychain_collect_pub_error">添加种子失败</string>
     <string name="enterprise_hdm_keychain_add_fail">创建企业 HDM 账户失败</string>
+    <string name="enterprise_hdm_seed_import_format_error">不符合企业 HDM 种子格式</string>
     <string name="next_step">下一步</string>
     <string name="enterprise_hdm_keychain_payment_proposal">付款申请</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 个签名</string>

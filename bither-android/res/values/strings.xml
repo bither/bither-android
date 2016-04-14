@@ -640,10 +640,13 @@
     <string name="enterprise_hdm_seed">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_add_note">Add a Seed to Make an Enterprise HDM Account</string>
     <string name="enterprise_hdm_seed_qr_code">Enterprise HDM Seed QR Code</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">Import from QR Code</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">Import from Phrase</string>
     <string name="enterprise_hdm_seed_cosign">Cosign</string>
     <string name="enterprise_hdm_seed_backup_qr_code">Backup QR Code</string>
     <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
+    <string name="enterprise_hdm_seed_import_format_error">Not match enterprise HDM seed format</string>
     <string name="enterprise_hdm_keychain">Enterprise HDM Account</string>
     <string name="enterprise_hdm_keychain_multisig_scheme">Choose Multisig Scheme</string>
     <string name="enterprise_hdm_keychain_collect_pubs">Collect Seed QR Codes</string>
