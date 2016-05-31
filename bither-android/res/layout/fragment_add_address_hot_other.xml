@@ -8,6 +8,14 @@
               android:paddingRight="5dp"
               android:paddingTop="25dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="@string/normal_private_key_back_up_notice"
+        android:textColor="@color/text_field_text_color"/>
+
     <Button
         android:id="@+id/btn_private_key"
         android:layout_width="match_parent"

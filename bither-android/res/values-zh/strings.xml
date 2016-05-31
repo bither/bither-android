@@ -678,4 +678,7 @@
     <string name="total_balance_hide_show_all">显示余额和报表</string>
     <string name="total_balance_hide_show_chart">只显示报表</string>
     <string name="total_balance_hide_hide_all">隐藏</string>
+
+    <!-- Normal Private Keys Back Up Notice -->
+    <string name="normal_private_key_back_up_notice">普通私钥不属于 HD 账户.\n需要单独备份.</string>
 </resources>

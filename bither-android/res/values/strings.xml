@@ -710,4 +710,7 @@
     <string name="web_reload_data_message">Data Source</string>
     <string name="web_reload_data_confirm">confirm</string>
     <string name="web_reload_data_cancel">cancel</string>
+
+    <!-- Normal Private Keys Back Up Notice -->
+    <string name="normal_private_key_back_up_notice">Normal private keys are not within HD Account.\nThey need separated back ups.</string>
 </resources>
