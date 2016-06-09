@@ -58,8 +58,11 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
@@ -543,9 +546,22 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
                     final String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
                     try {
-                        final boolean isXRandom = content.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0;
-                        final byte[] bytes = Utils.hexStringToByteArray(isXRandom ? content
-                                .substring(1) : content);
+                        Base58.decodeChecked(content);
+                    }catch (AddressFormatException e){
+                        try {
+                            final boolean isXRandom = content.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0;
+                            Utils.hexStringToByteArray(isXRandom ? content.substring(1) : content);
+                            DropdownMessage.showDropdownMessage(getActivity(), R.string.hd_account_monitor_xpub_need_to_upgrade);
+                        } catch (Exception ex) {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            DropdownMessage.showDropdownMessage(getActivity(), R.string
+                                    .monitor_cold_hd_account_failed);
+                        }
+                        return;
+                    }
+                    try {
                         new ThreadNeedService(dp, getActivity()) {
                             @Override
                             public void runWithService(BlockchainService service) {
@@ -553,8 +569,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                     service.stopAndUnregister();
                                 }
                                 try {
-                                    HDAccount account = new HDAccount(bytes,
-                                            isXRandom, false, null);
+                                    HDAccount account = new HDAccount(DeterministicKey.deserializeB58(content).getPubKeyExtended(),
+                                            false, false, null);
                                     AddressManager.getInstance().setHDAccountMonitored(account);
                                     ThreadUtil.runOnMainThread(new Runnable() {
                                         @Override
@@ -589,6 +605,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             DropdownMessage.showDropdownMessage(getActivity(), R
                                                     .string
                                                     .monitor_cold_hd_account_failed_duplicated);
+                                        }
+                                    });
+                                } catch (AddressFormatException e){
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (dp.isShowing()) {
+                                                dp.dismiss();
+                                            }
+                                            DropdownMessage.showDropdownMessage(getActivity(), R
+                                                    .string
+                                                    .hd_account_monitor_xpub_need_to_upgrade);
                                         }
                                     });
                                 }
