@@ -77,6 +77,7 @@ import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogDonate;
+import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSetAvatar;
 import net.bither.util.ExchangeUtil;
@@ -569,7 +570,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                     service.stopAndUnregister();
                                 }
                                 try {
-                                    HDAccount account = new HDAccount(DeterministicKey.deserializeB58(content).getPubKeyExtended(),
+                                    final HDAccount account = new HDAccount(DeterministicKey.deserializeB58(content).getPubKeyExtended(),
                                             false, false, null);
                                     AddressManager.getInstance().setHDAccountMonitored(account);
                                     ThreadUtil.runOnMainThread(new Runnable() {
@@ -580,6 +581,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             }
                                             DropdownMessage.showDropdownMessage(getActivity(), R
                                                     .string.monitor_cold_hd_account_success);
+                                            new DialogHDMonitorFirstAddressValidation(getActivity(), account.getFirstAddressFromDb()).show();
                                         }
                                     });
                                 } catch (MnemonicException.MnemonicLengthException e) {

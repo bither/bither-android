@@ -683,7 +683,8 @@
     <string name="normal_private_key_back_up_notice">普通私鑰不屬於 HD 賬戶.\n需要單獨備份.</string>
 
     <!-- HD Account XPub -->
-    <string name="hd_account_cold_first_20_addresses">顯示前 20 個地址</string>
+    <string name="hd_account_cold_first_address">顯示第 1 個地址</string>
     <string name="hd_account_monitor_xpub_need_to_upgrade">您需要把冷錢包升級到 v1.5.1</string>
     <string name="hd_account_show_xpub">顯示 XPub</string>
+    <string name="hd_account_monitor_check_first_address">請檢查第 1 個地址</string>
 </resources>

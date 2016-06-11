@@ -80,7 +80,7 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
                     @Override
                     public void run() {
                         try {
-                            final String content = account.accountPubExtendedString(password);
+                            final String content = account.xPubB58(password);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {

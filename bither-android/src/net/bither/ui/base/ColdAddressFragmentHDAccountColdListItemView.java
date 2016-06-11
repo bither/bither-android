@@ -30,6 +30,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
+import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSimpleQr;
@@ -159,6 +160,19 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                                     }
                                 }
                             }.start();
+                        }
+                    }).show();
+                }
+            }));
+            actions.add(new DialogWithActions.Action(R.string.hd_account_cold_first_address, new
+                    Runnable() {
+                @Override
+                public void run() {
+                    new DialogPassword(getContext(), new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(final SecureCharSequence password) {
+                            new DialogHDMonitorFirstAddressValidation(getContext(), hdAccountCold
+                                    .getFirstAddressFromDb()).show();
                         }
                     }).show();
                 }
