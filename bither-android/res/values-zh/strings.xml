@@ -687,4 +687,5 @@
     <string name="hd_account_monitor_xpub_need_to_upgrade">您需要把冷钱包升级到 v1.5.1</string>
     <string name="hd_account_show_xpub">显示 XPub</string>
     <string name="hd_account_monitor_check_first_address">请检查第 1 个地址</string>
+    <string name="monitor_addresses_validation">请检查所监控的地址</string>
 </resources>

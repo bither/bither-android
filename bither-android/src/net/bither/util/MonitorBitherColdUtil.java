@@ -34,6 +34,7 @@ import net.bither.qrcode.ScanQRCodeTransportActivity;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.dialog.DialogMonitorAddressesValidation;
 import net.bither.ui.base.dialog.DialogProgress;
 
 import java.util.ArrayList;
@@ -126,8 +127,11 @@ public class MonitorBitherColdUtil {
 
     private void processQrCodeContent(String content, BlockchainService service) {
         try {
-            List<Address> wallets = QRCodeEnodeUtil.formatPublicString(content);
-            addAddress(service, wallets);
+            final List<Address> wallets = QRCodeEnodeUtil.formatPublicString(content);
+            final ArrayList<String> addressStrs = new ArrayList<String>();
+            for(Address a : wallets){
+                addressStrs.add(a.getAddress());
+            }
             activity.runOnUiThread(new Runnable() {
 
                 @Override
@@ -136,6 +140,17 @@ public class MonitorBitherColdUtil {
                         dp.setThread(null);
                         dp.dismiss();
                     }
+                    new DialogMonitorAddressesValidation(activity, addressStrs, new Runnable() {
+                        @Override
+                        public void run() {
+                            new ThreadNeedService(dp, activity){
+                                @Override
+                                public void runWithService(BlockchainService service) {
+                                    addAddress(service, wallets);
+                                }
+                            }.start();
+                        }
+                    }).show();
                 }
             });
         } catch (Exception e) {
@@ -161,6 +176,9 @@ public class MonitorBitherColdUtil {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if(dp != null && dp.isShowing()){
+                        dp.dismiss();
+                    }
                     if (delegate != null) {
                         delegate.onAddressMonitored(addresses);
                     }
