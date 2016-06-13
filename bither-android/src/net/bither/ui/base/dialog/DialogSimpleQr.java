@@ -40,6 +40,7 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
         View.OnClickListener {
     private ImageView ivQr;
     private ProgressBar pb;
+    private TextView tvSubtitle;
 
 
     public DialogSimpleQr(Context context, String content) {
@@ -51,6 +52,22 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
     }
 
     public DialogSimpleQr(Context context, String content, String title) {
+        this(context, content, title, null);
+    }
+
+    public DialogSimpleQr(Context context, String content, int title, int subtitle) {
+        this(context, content, context.getString(title), context.getString(subtitle));
+    }
+
+    public DialogSimpleQr(Context context, String content, int title, String subtitle) {
+        this(context, content, context.getString(title), subtitle);
+    }
+
+    public DialogSimpleQr(Context context, String content, String title, int subtitle) {
+        this(context, content, title, context.getString(subtitle));
+    }
+
+    public DialogSimpleQr(Context context, String content, String title, String subtitle) {
         super(context, R.style.tipsDialog);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
@@ -62,6 +79,13 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
         }
         ivQr = (ImageView) findViewById(R.id.iv_qrcode);
         pb = (ProgressBar) findViewById(R.id.pb);
+        tvSubtitle = (TextView) findViewById(R.id.tv_subtitle);
+        if (!Utils.isEmpty(subtitle)) {
+            tvSubtitle.setText(subtitle);
+            tvSubtitle.setVisibility(View.VISIBLE);
+        } else {
+            tvSubtitle.setVisibility(View.GONE);
+        }
         findViewById(R.id.ll_container).setOnClickListener(this);
         ivQr.setOnClickListener(this);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());

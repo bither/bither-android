@@ -18,7 +18,9 @@
 
 package net.bither.ui.base.dialog;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,29 +32,48 @@ import net.bither.util.WalletUtils;
 /**
  * Created by songchenwen on 16/6/11.
  */
-public class DialogHDMonitorFirstAddressValidation extends CenterDialog {
+public class DialogHDMonitorFirstAddressValidation extends CenterDialog implements Dialog
+        .OnDismissListener, View.OnClickListener {
     private TextView tvTitle;
     private TextView tvAddress;
+    private int clickedId;
+    private Runnable okRunnable;
 
-    public DialogHDMonitorFirstAddressValidation(Context context, String address) {
+    public DialogHDMonitorFirstAddressValidation(Context context, String address, Runnable
+            okRunnable) {
         super(context);
+
         setContentView(R.layout.dialog_hd_monitor_first_address_validation);
         tvTitle = (TextView) findViewById(R.id.tv_title);
         tvAddress = (TextView) findViewById(R.id.tv_address);
-        findViewById(R.id.btn_ok).setOnClickListener(okClicked);
+        findViewById(R.id.btn_ok).setOnClickListener(this);
+        findViewById(R.id.btn_cancel).setOnClickListener(this);
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
             tvTitle.setVisibility(View.GONE);
         } else {
             tvTitle.setVisibility(View.VISIBLE);
         }
         tvAddress.setText(WalletUtils.formatHash(address, 4, 16));
+        this.okRunnable = okRunnable;
+        setOnDismissListener(this);
     }
 
-    private View.OnClickListener okClicked = new View.OnClickListener() {
+    @Override
+    public void show() {
+        super.show();
+        clickedId = 0;
+    }
 
-        @Override
-        public void onClick(View v) {
-            dismiss();
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (clickedId == R.id.btn_ok && okRunnable != null) {
+            okRunnable.run();
         }
-    };
+    }
+
+    @Override
+    public void onClick(View v) {
+        clickedId = v.getId();
+        dismiss();
+    }
 }
