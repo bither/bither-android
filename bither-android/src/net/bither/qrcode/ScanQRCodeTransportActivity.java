@@ -30,11 +30,13 @@ import com.google.zxing.Result;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.qrcode.QRCodeTransportPage;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.PlaySound;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class ScanQRCodeTransportActivity extends ScanActivity {
 	private TextView tv;
@@ -62,6 +64,13 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 			float thumbnailScaleFactor) {
 		String result = scanResult.getText();
 		PlaySound.play(R.raw.qr_code_scanned, null);
+		if (QRCodeUtil.verifyBitherQRCode(result)) {
+			if (!Pattern.compile("^\\d+/\\d+.*").matcher(result).matches()) {
+				DropdownMessage.showDropdownMessage(this, R.string
+						.hd_account_monitor_xpub_need_to_upgrade);
+				return;
+			}
+		}
 		QRCodeTransportPage page = QRCodeTransportPage
 				.formatQrCodeTransport(result);
 		pages.add(page);
