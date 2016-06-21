@@ -109,7 +109,7 @@ public class EnterpriseHDMSendActivity extends SendActivity implements DialogSen
         tx = null;
         String changeTo = getChangeAddress();
         try {
-            tx = address.buildTx(btcAmount, toAddress, changeTo == null ? toAddress : changeTo);
+            tx = address.buildTx(btcAmount, toAddress, changeTo == null ? address.getAddress() : changeTo);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

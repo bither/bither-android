@@ -29,6 +29,7 @@ import android.widget.LinearLayout;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMKeychain;
+import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.ScanActivity;
@@ -202,6 +203,12 @@ public class AddEnterpriseHDMKeychainActivity extends SwipeRightFragmentActivity
                 if (Utils.isEmpty(result)) {
                     return;
                 }
+                if (!result.startsWith(EnterpriseHDMSeed.XPubPrefix)) {
+                    DropdownMessage.showDropdownMessage(this, R.string
+                            .enterprise_hdm_keychain_collect_pub_error);
+                    return;
+                }
+                result = result.substring(EnterpriseHDMSeed.XPubPrefix.length());
                 LogUtil.d("AddPub", "pub : " + result);
                 byte[] pub = null;
                 try {

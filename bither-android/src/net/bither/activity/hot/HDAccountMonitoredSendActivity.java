@@ -25,6 +25,7 @@ import android.view.View;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SendActivity;
+import net.bither.bitherj.api.PushTxThirdParty;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.PeerManager;
@@ -209,6 +210,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
             public void run() {
                 boolean success = false;
                 try {
+                    PushTxThirdParty.getInstance().pushTx(tx);
                     PeerManager.instance().publishTransaction(tx);
                     success = true;
                     tx = null;

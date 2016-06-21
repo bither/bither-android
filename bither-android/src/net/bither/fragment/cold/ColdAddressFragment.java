@@ -31,6 +31,7 @@ import net.bither.adapter.cold.AddressOfColdFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
@@ -106,7 +107,8 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
             }
             mAdapter.notifyDataSetChanged();
             if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain() &&
-                    !AddressManager.getInstance().hasHDAccountCold()) {
+                    !AddressManager.getInstance().hasHDAccountCold() &&
+                    !EnterpriseHDMSeed.hasSeed()) {
                 ivNoAddress.setVisibility(View.VISIBLE);
                 lvPrivate.setVisibility(View.GONE);
             } else {

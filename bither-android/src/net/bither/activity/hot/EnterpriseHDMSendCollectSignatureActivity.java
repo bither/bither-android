@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.api.PushTxThirdParty;
 import net.bither.bitherj.core.EnterpriseHDMTxSignaturePool;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
@@ -179,6 +180,7 @@ public class EnterpriseHDMSendCollectSignatureActivity extends SwipeRightFragmen
                 final Tx tx = t;
                 if (tx != null) {
                     try {
+                        PushTxThirdParty.getInstance().pushTx(tx);
                         PeerManager.instance().publishTransaction(tx);
                     } catch (PeerManager.PublishUnsignedTxException e) {
                         e.printStackTrace();

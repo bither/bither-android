@@ -164,6 +164,11 @@
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
+    <string name="setting_api_config"> API 設定</string>
+    <string name="setting_api_config_bither_net">Bither.net</string>
+    <string name="setting_api_config_blockchain">Blockchain.info</string>
+    <string name="setting_name_api_config_bither">Bither</string>
+    <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">捐贈</string>
     <string name="donate_thanks">謝謝您的捐贈</string>
     <string name="buy_order">買單</string>
@@ -543,6 +548,8 @@
     <string name="hdm_import_word_list_wrong_word_warn">單詞無效</string>
     <string name="hdm_import_word_list_delete">刪除</string>
     <string name="hdm_import_word_list_replace">替換</string>
+    <string name="activity_name_hd_import_word_list">匯入 HD 密語</string>
+    <string name="hd_import_word_list_empty_message">請輸入 HD 密語</string>
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM 服務器授權失效.\n使用 HDM 冷重新授權?</string>
@@ -615,6 +622,8 @@
     <string name="enterprise_hdm_seed_add_note">新增一個種子用來創建企業 HDM 賬戶</string>
     <string name="enterprise_hdm_seed_qr_code">企業 HDM 種子二維碼</string>
     <string name="enterprise_hdm_seed_cosign">聯合簽名</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">從二維碼匯入</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">從密語匯入</string>
     <string name="enterprise_hdm_seed_backup_qr_code">備份二維碼</string>
     <string name="enterprise_hdm_seed_backup_phrase">備份密語</string>
     <string name="enterprise_hdm_keychain">企業 HDM 賬戶</string>
@@ -623,6 +632,7 @@
     <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
     <string name="enterprise_hdm_keychain_collect_pub_error">新增種子失敗</string>
     <string name="enterprise_hdm_keychain_add_fail">創建企業 HDM 賬戶失敗</string>
+    <string name="enterprise_hdm_seed_import_format_error">不符合企業 HDM 種子格式</string>
     <string name="next_step">下一步</string>
     <string name="enterprise_hdm_keychain_payment_proposal">付款申請</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 個簽名</string>
@@ -668,4 +678,14 @@
     <string name="total_balance_hide_show_all">顯示餘額和報表</string>
     <string name="total_balance_hide_show_chart">只顯示報表</string>
     <string name="total_balance_hide_hide_all">隱藏</string>
+
+    <!-- Normal Private Keys Back Up Notice -->
+    <string name="normal_private_key_back_up_notice">普通私鑰不屬於 HD 賬戶.\n需要單獨備份.</string>
+
+    <!-- HD Account XPub -->
+    <string name="hd_account_cold_first_address">顯示第 1 個地址</string>
+    <string name="hd_account_monitor_xpub_need_to_upgrade">您需要把冷錢包升級到 v1.6.0</string>
+    <string name="hd_account_show_xpub">顯示 XPub</string>
+    <string name="hd_account_monitor_check_first_address">請檢查第 1 個地址</string>
+    <string name="monitor_addresses_validation">請檢查所監控的地址</string>
 </resources>

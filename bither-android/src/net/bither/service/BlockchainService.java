@@ -62,7 +62,6 @@ public class BlockchainService extends android.app.Service {
     private static final Logger log = LoggerFactory
             .getLogger(BlockchainService.class);
     private WakeLock wakeLock;
-
     private long serviceCreatedAt;
     private BitherTimer mBitherTimer;
     private SPVFinishedReceiver spvFinishedReceiver = null;

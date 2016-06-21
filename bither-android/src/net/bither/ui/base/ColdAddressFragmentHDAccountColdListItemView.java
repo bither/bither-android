@@ -29,7 +29,9 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
+import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSimpleQr;
@@ -37,6 +39,7 @@ import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
+import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,6 +166,19 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                     }).show();
                 }
             }));
+            actions.add(new DialogWithActions.Action(R.string.hd_account_cold_first_address, new
+                    Runnable() {
+                @Override
+                public void run() {
+                    new DialogPassword(getContext(), new IDialogPasswordListener() {
+                        @Override
+                        public void onPasswordEntered(final SecureCharSequence password) {
+                            new DialogHDMonitorFirstAddressValidation(getContext(), hdAccountCold
+                                    .getFirstAddressFromDb(), null).show();
+                        }
+                    }).show();
+                }
+            }));
             return actions;
         }
     };
@@ -187,14 +203,16 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                                 @Override
                                 public void run() {
                                     try {
-                                        final String content = hdAccountCold
-                                                .accountPubExtendedString(password);
+                                        final String content = hdAccountCold.xPubB58(password);
                                         ThreadUtil.runOnMainThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 dp.dismiss();
-                                                new DialogSimpleQr(getContext(), content, R
-                                                        .string.add_cold_hd_account_monitor_qr)
+                                                new DialogSimpleQr(getContext(), QRCodeUtil
+                                                        .HD_MONITOR_QR_PREFIX + content, R.string
+                                                        .add_cold_hd_account_monitor_qr,
+                                                        WalletUtils.formatHash(content, 4, 24)
+                                                                .toString())
                                                         .show();
                                             }
                                         });

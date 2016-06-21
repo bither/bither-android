@@ -166,6 +166,11 @@
     <string name="setting_name_transaction_fee_normal_note">较快确认</string>
     <string name="setting_name_transaction_fee_low_note">较慢确认</string>
     <string name="setting_name_transaction_fee_high_note">高优先级</string>
+    <string name="setting_api_config">API 设置</string>
+    <string name="setting_api_config_bither_net">Bither.net</string>
+    <string name="setting_api_config_blockchain">Blockchain.info</string>
+    <string name="setting_name_api_config_bither">Bither</string>
+    <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
@@ -543,6 +548,8 @@
     <string name="hdm_import_word_list_wrong_word_warn">单词无效</string>
     <string name="hdm_import_word_list_delete">删除</string>
     <string name="hdm_import_word_list_replace">替换</string>
+    <string name="activity_name_hd_import_word_list">导入 HD 密语</string>
+    <string name="hd_import_word_list_empty_message">请输入 HD 密语</string>
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM 服务器授权失效.\n使用 HDM 冷重新授权?</string>
@@ -614,6 +621,8 @@
     <string name="enterprise_hdm_seed">企业 HDM 种子</string>
     <string name="enterprise_hdm_seed_add_note">添加一个种子用来创建企业 HDM 账户</string>
     <string name="enterprise_hdm_seed_qr_code">企业 HDM 种子二维码</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">从二维码导入</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">从密语导入</string>
     <string name="enterprise_hdm_seed_cosign">联合签名</string>
     <string name="enterprise_hdm_seed_backup_qr_code">备份二维码</string>
     <string name="enterprise_hdm_seed_backup_phrase">备份密语</string>
@@ -623,6 +632,7 @@
     <string name="enterprise_hdm_keychain_address_count">生成多少地址?</string>
     <string name="enterprise_hdm_keychain_collect_pub_error">添加种子失败</string>
     <string name="enterprise_hdm_keychain_add_fail">创建企业 HDM 账户失败</string>
+    <string name="enterprise_hdm_seed_import_format_error">不符合企业 HDM 种子格式</string>
     <string name="next_step">下一步</string>
     <string name="enterprise_hdm_keychain_payment_proposal">付款申请</string>
     <string name="enterprise_hdm_keychain_payment_proposal_signature_needed">需要 %1$d/%2$d 个签名</string>
@@ -668,4 +678,14 @@
     <string name="total_balance_hide_show_all">显示余额和报表</string>
     <string name="total_balance_hide_show_chart">只显示报表</string>
     <string name="total_balance_hide_hide_all">隐藏</string>
+
+    <!-- Normal Private Keys Back Up Notice -->
+    <string name="normal_private_key_back_up_notice">普通私钥不属于 HD 账户.\n需要单独备份.</string>
+
+    <!-- HD Account XPub -->
+    <string name="hd_account_cold_first_address">显示第 1 个地址</string>
+    <string name="hd_account_monitor_xpub_need_to_upgrade">您需要把冷钱包升级到 v1.6.0</string>
+    <string name="hd_account_show_xpub">显示 XPub</string>
+    <string name="hd_account_monitor_check_first_address">请检查第 1 个地址</string>
+    <string name="monitor_addresses_validation">请检查所监控的地址</string>
 </resources>

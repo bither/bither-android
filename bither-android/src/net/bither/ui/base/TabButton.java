@@ -187,10 +187,10 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
     }
 
     public void setBigInteger(BigInteger btcPrivate, BigInteger btcWatchOnly, BigInteger btcHdm,
-                              BigInteger btcHD, BigInteger btcHdMonitored) {
+                              BigInteger btcHD, BigInteger btcHdMonitored, BigInteger btcEnterpriseHdm) {
         BigInteger btc;
         if (btcPrivate == null && btcWatchOnly == null && btcHdm == null && btcHD == null &&
-                btcHdMonitored == null) {
+                btcHdMonitored == null && btcEnterpriseHdm == null) {
             btc = null;
         } else {
             btc = BigInteger.ZERO;
@@ -208,6 +208,9 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
             }
             if (btcHdMonitored != null) {
                 btc = btc.add(btcHdMonitored);
+            }
+            if (btcEnterpriseHdm != null) {
+                btc = btc.add(btcEnterpriseHdm);
             }
         }
         ellipsized = true;
@@ -230,7 +233,7 @@ public class TabButton extends FrameLayout implements OnShowListener, OnDismissL
         }
         if (dialog instanceof DialogTotalBtc) {
             DialogTotalBtc d = (DialogTotalBtc) dialog;
-            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD, btcHdMonitored);
+            d.setPrivateWatchOnlyHDMAndHD(btcPrivate, btcWatchOnly, btcHdm, btcHD, btcHdMonitored, btcEnterpriseHdm);
         }
         updateArrow();
     }

@@ -40,6 +40,7 @@ import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.EnterpriseHDMAddress;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.utils.Utils;
@@ -184,7 +185,7 @@ public class HotActivity extends BaseFragmentActivity {
 
         configureTopBarSize();
         configureTabMainIcons();
-        tbtnMain.setBigInteger(null, null, null, null, null);
+        tbtnMain.setBigInteger(null, null, null, null, null, null);
         if (AbstractApp.addressIsReady) {
             refreshTotalBalance();
         }
@@ -382,6 +383,7 @@ public class HotActivity extends BaseFragmentActivity {
                 long totalPrivate = 0;
                 long totalWatchOnly = 0;
                 long totalHdm = 0;
+                long totalEnterpriseHdm = 0;
                 for (Address address : AddressManager.getInstance().getPrivKeyAddresses()) {
                     totalPrivate += address.getBalance();
                 }
@@ -394,9 +396,16 @@ public class HotActivity extends BaseFragmentActivity {
                         totalHdm += address.getBalance();
                     }
                 }
+                if (AddressManager.getInstance().hasEnterpriseHDMKeychain()) {
+                    for (EnterpriseHDMAddress address : AddressManager.getInstance()
+                            .getEnterpriseHDMKeychain().getAddresses()) {
+                        totalEnterpriseHdm += address.getBalance();
+                    }
+                }
                 final long btcPrivate = totalPrivate;
                 final long btcWatchOnly = totalWatchOnly;
                 final long btcHdm = totalHdm;
+                final long btcEnterpriseHdm = totalEnterpriseHdm;
                 final long btcHD = AddressManager.getInstance().hasHDAccountHot() ? AddressManager
                         .getInstance().getHDAccountHot().getBalance() : 0;
                 final long btcHdMonitored = AddressManager.getInstance().hasHDAccountMonitored()
@@ -407,7 +416,8 @@ public class HotActivity extends BaseFragmentActivity {
                         configureTabMainIcons();
                         tbtnMain.setBigInteger(BigInteger.valueOf(btcPrivate), BigInteger.valueOf
                                 (btcWatchOnly), BigInteger.valueOf(btcHdm), BigInteger.valueOf
-                                (btcHD), BigInteger.valueOf(btcHdMonitored));
+                                (btcHD), BigInteger.valueOf(btcHdMonitored),
+                                BigInteger.valueOf(btcEnterpriseHdm));
                     }
                 });
             }

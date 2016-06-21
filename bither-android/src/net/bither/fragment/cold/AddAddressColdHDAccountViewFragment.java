@@ -28,12 +28,14 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
+import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 
@@ -80,13 +82,15 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
                     @Override
                     public void run() {
                         try {
-                            final String content = account.accountPubExtendedString(password);
+                            final String content = account.xPubB58(password);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     dp.dismiss();
-                                    new DialogSimpleQr(getActivity(), content, R.string
-                                            .add_cold_hd_account_monitor_qr).show();
+                                    new DialogSimpleQr(getActivity(), QRCodeUtil
+                                            .HD_MONITOR_QR_PREFIX + content, R.string
+                                            .add_cold_hd_account_monitor_qr, WalletUtils
+                                            .formatHash(content, 4, 24).toString()).show();
                                 }
                             });
                         } catch (Exception e) {

@@ -16,6 +16,7 @@
 
 package net.bither.runnable;
 
+import net.bither.bitherj.api.PushTxThirdParty;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.PeerManager;
@@ -64,6 +65,7 @@ public class CommitTransactionThread extends ThreadNeedService {
     public void runWithService(BlockchainService service) {
         boolean success = false;
         try {
+            PushTxThirdParty.getInstance().pushTx(tx);
             PeerManager.instance().publishTransaction(tx);
             TransactionsUtil.removeSignTx(new UnSignTransaction(tx, wallet.getAddress()));
             success = true;

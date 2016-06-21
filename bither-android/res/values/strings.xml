@@ -173,6 +173,11 @@
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
     <string name="setting_name_transaction_fee_high_note">high priority</string>
+    <string name="setting_api_config">Api Config</string>
+    <string name="setting_api_config_bither_net">Bither.net</string>
+    <string name="setting_api_config_blockchain">Blockchain.info</string>
+    <string name="setting_name_api_config_bither">Bither</string>
+    <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
@@ -560,6 +565,8 @@
     <string name="hdm_import_word_list_wrong_word_warn">Invalid word</string>
     <string name="hdm_import_word_list_delete">Delete</string>
     <string name="hdm_import_word_list_replace">Replace</string>
+    <string name="activity_name_hd_import_word_list">Import HDM Phrase</string>
+    <string name="hd_import_word_list_empty_message">Enter HDM Phrase</string>
 
     <!-- hdm reset server password -->
     <string name="hdm_reset_server_password_password_wrong_confirm">HDM Server authentication failed.\nUse HDM Cold to reauthorize?</string>
@@ -633,10 +640,13 @@
     <string name="enterprise_hdm_seed">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_add_note">Add a Seed to Make an Enterprise HDM Account</string>
     <string name="enterprise_hdm_seed_qr_code">Enterprise HDM Seed QR Code</string>
+    <string name="enterprise_hdm_seed_import_from_qr_code">Import from QR Code</string>
+    <string name="enterprise_hdm_seed_import_from_phrase">Import from Phrase</string>
     <string name="enterprise_hdm_seed_cosign">Cosign</string>
     <string name="enterprise_hdm_seed_backup_qr_code">Backup QR Code</string>
     <string name="enterprise_hdm_seed_backup_qr_code_promote">Enterprise HDM Seed</string>
     <string name="enterprise_hdm_seed_backup_phrase">Backup Phrase</string>
+    <string name="enterprise_hdm_seed_import_format_error">Not match enterprise HDM seed format</string>
     <string name="enterprise_hdm_keychain">Enterprise HDM Account</string>
     <string name="enterprise_hdm_keychain_multisig_scheme">Choose Multisig Scheme</string>
     <string name="enterprise_hdm_keychain_collect_pubs">Collect Seed QR Codes</string>
@@ -662,6 +672,7 @@
     <string name="add_cold_hd_account_other_hdm">Generate HDM Account</string>
     <string name="add_cold_hd_account_other_private">Generate Normal Private Keys</string>
     <string name="add_cold_hd_account_monitor_qr">HD Account Monitor QR Code</string>
+    <string name="add_cold_hd_account_xpub_b58">XPub</string>
     <string name="hd_account_cold_address_list_label">Cold HD Account</string>
     <string name="import_cold_hd_account_seed_qr_code">From HD Account Seed QR Code</string>
     <string name="import_cold_hd_account_seed_phrase">From HD Account Phrase</string>
@@ -688,4 +699,25 @@
     <string name="total_balance_hide_show_all">Show All</string>
     <string name="total_balance_hide_show_chart">Show Chart</string>
     <string name="total_balance_hide_hide_all">Hide All</string>
+
+    <!-- Reload Data -->
+    <string name="web_reload_web_type">Reload Data from following web</string>
+    <string name="web_reload_bither_net">bither.net</string>
+    <string name="web_reload_block_chain">blockChain.info</string>
+    <string name="web_reload_chain_btc">chain.btc.com</string>
+
+    <string name="web_reload_data_title">Reload Data</string>
+    <string name="web_reload_data_message">Data Source</string>
+    <string name="web_reload_data_confirm">confirm</string>
+    <string name="web_reload_data_cancel">cancel</string>
+
+    <!-- Normal Private Keys Back Up Notice -->
+    <string name="normal_private_key_back_up_notice">Normal private keys are not within HD Account.\nThey need separated back ups.</string>
+
+    <!-- HD Account XPub -->
+    <string name="hd_account_cold_first_address">Show First Address</string>
+    <string name="hd_account_monitor_xpub_need_to_upgrade">You need to upgrade Bither cold to v1.6.0</string>
+    <string name="hd_account_show_xpub">Show XPub</string>
+    <string name="hd_account_monitor_check_first_address">Check First Address</string>
+    <string name="monitor_addresses_validation">Check Monitored Addresses</string>
 </resources>

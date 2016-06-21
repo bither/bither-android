@@ -152,6 +152,11 @@
 
                             <include layout="@layout/layout_vertical_seperator" />
 
+                            <net.bither.ui.base.SettingSelectorView
+                                android:id="@+id/ssv_api_config"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
                             <Button
                                 android:id="@+id/btn_reset_tx"
                                 android:layout_width="match_parent"
