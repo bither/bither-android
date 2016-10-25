@@ -168,7 +168,7 @@
     <string name="setting_name_wifi_no">Sync always</string>
     <string name="setting_name_transaction_fee">Default Transaction Fee</string>
     <string name="setting_name_transaction_fee_normal">Normal</string>
-    <string name="setting_name_transaction_fee_low">Low</string>
+    <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
