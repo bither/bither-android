@@ -1,11 +1,11 @@
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:2.2.0'
     }
 }
 
@@ -13,10 +13,10 @@ project(':bither-android') {
     apply plugin: 'android'
 }
 project(':wheel') {
-    apply plugin: 'android-library'
+    apply plugin: 'com.android.library'
 }
 project(':android-charts') {
-    apply plugin: 'android-library'
+    apply plugin: 'com.android.library'
 }
 project(':bitherj') {
     apply plugin: 'java'
