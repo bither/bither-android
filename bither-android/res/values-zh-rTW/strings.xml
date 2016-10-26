@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">比太</string>
+    <string name="localization.language.code">zh_TW</string>
     <string name="market_trading_amount">交易量</string>
     <string name="market_price_high">最高</string>
     <string name="market_price_low">最低</string>
@@ -688,4 +689,9 @@
     <string name="hd_account_show_xpub">顯示 XPub</string>
     <string name="hd_account_monitor_check_first_address">請檢查第 1 個地址</string>
     <string name="monitor_addresses_validation">請檢查所監控的地址</string>
+
+    <!-- Ad -->
+    <string name="ad_go">前往</string>
+    <string name="ad_image_name">img_zh_TW.png</string>
+    <string name="ad_skip">跳過</string>
 </resources>
