@@ -725,7 +725,7 @@
 
     <!-- Ad -->
     <string name="ad_go">Go</string>
-    <string name="ad_image_name">img_en.png</string>
+    <string name="ad_image_name">img_en</string>
     <string name="ad_skip">Skip</string>
 
     <!-- TODO: Remove or change this placeholder text -->

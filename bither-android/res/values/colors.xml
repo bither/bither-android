@@ -102,5 +102,8 @@
     <!-- vanity address -->
     <color name="vanity_address_glow">#00bbff</color>
     <color name="vanity_address_text">#d8f5ff</color>
-    <color name="vanity_address_qr_bg">#2b2f32</color>
+    <color name="vanity_address_qr_bg">#FF2B2F32</color>
+
+    <!-- ad -->
+    <color name="ad_skip_back_color">#80000000</color>
 </resources>

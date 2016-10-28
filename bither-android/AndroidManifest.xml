@@ -388,6 +388,10 @@
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".AdActivity"
+            android:label="@string/title_activity_ad"></activity>
     </application>
 
 </manifest>

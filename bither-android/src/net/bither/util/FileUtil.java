@@ -81,6 +81,11 @@ public class FileUtil {
     private static final String IMAGE_CACHE_612 = IMAGE_CACHE_DIR + "/612";
     private static final String IMAGE_CACHE_150 = IMAGE_CACHE_DIR + "/150";
 
+    private static final String AD_CACHE = "ad";
+    private static final String AD_NAME = "ad.json";
+    private static final String AD_IMAGE_EN_CACHE = AD_CACHE + "/img_en";
+    private static final String AD_IMAGE_ZH_CN_CACHE = AD_CACHE + "/img_zh_CN";
+    private static final String AD_IMAGE_ZH_TW_CACHE = AD_CACHE + "/img_zh_TW";
 
     /**
      * sdCard exist
@@ -207,6 +212,22 @@ public class FileUtil {
 
     }
 
+    public static File getAdImageEnDir() {
+        return getDiskDir(AD_IMAGE_EN_CACHE, true);
+    }
+
+    public static File getAdImagZhCnDir() {
+        return getDiskDir(AD_IMAGE_ZH_CN_CACHE, true);
+    }
+
+    public static File getAdImagZhTwDir() {
+        return getDiskDir(AD_IMAGE_ZH_TW_CACHE, true);
+    }
+
+    private static File getAdDir() {
+        return getDiskDir(AD_CACHE, false);
+    }
+
     public static File getUploadImageDir() {
         return getDiskDir(IMAGE_CACHE_UPLOAD, true);
     }
@@ -250,6 +271,12 @@ public class FileUtil {
     public static File getDepthFile() {
         File file = getMarketCache();
         file = new File(file, EXCHANGE_DEPTH_NAME);
+        return file;
+    }
+
+    public static File getAdFile() {
+        File file = getAdDir();
+        file = new File(file, AD_NAME);
         return file;
     }
 

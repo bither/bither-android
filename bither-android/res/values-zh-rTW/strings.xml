@@ -692,6 +692,6 @@
 
     <!-- Ad -->
     <string name="ad_go">前往</string>
-    <string name="ad_image_name">img_zh_TW.png</string>
+    <string name="ad_image_name">img_zh_TW</string>
     <string name="ad_skip">跳過</string>
 </resources>

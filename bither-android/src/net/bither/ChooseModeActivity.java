@@ -22,7 +22,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
@@ -56,12 +58,20 @@ import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogUpgrade;
+import net.bither.util.AdUtil;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.FileUtil;
+import net.bither.util.ImageFileUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
+
+
+import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class ChooseModeActivity extends BaseActivity {
     private static final int AnimHideDuration = 600;
@@ -97,7 +107,12 @@ public class ChooseModeActivity extends BaseActivity {
                 upgrade();
             } else {
                 setVersionCode();
-                initActivity();
+                if (isShowAd()) {
+                    Intent intent = new Intent(ChooseModeActivity.this, AdActivity.class);
+                    startActivityForResult(intent, 1);
+                } else {
+                    initActivity();
+                }
             }
         } else {
             DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this, getString(R.string.urandom_not_exists), new Runnable() {
@@ -120,6 +135,32 @@ public class ChooseModeActivity extends BaseActivity {
             });
             dialogConfirmTask.setCancelable(false);
             dialogConfirmTask.show();
+        }
+    }
+
+    private boolean isShowAd() {
+        File file = FileUtil.getAdFile();
+        File imageFile = ImageFileUtil.getAdImageFolder(getString(R.string.ad_image_name));
+        File files[] = imageFile.listFiles();
+        if (file.exists() && imageFile.exists() && files != null && files.length > 0) {
+            return true;
+        } else {
+            downloadAd();
+            return false;
+        }
+    }
+
+    private void downloadAd() {
+        AdUtil adUtil = new AdUtil();
+        adUtil.getAd();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 20) {
+            initActivity();
+            downloadAd();
         }
     }
 
