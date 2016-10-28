@@ -154,7 +154,7 @@ public class ImageFileUtil {
     private static void clearUselessImageFile(File file) {
         File files[] = file.listFiles();
         int length = files.length;
-        if (length > 2) {
+        if (length > 1) {
             for (int i = 0; i < length - 1; i++) {
                 File imageFile = files[i];
                 imageFile.delete();

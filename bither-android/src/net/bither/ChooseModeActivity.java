@@ -69,6 +69,9 @@ import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -140,14 +143,22 @@ public class ChooseModeActivity extends BaseActivity {
 
     private boolean isShowAd() {
         File file = FileUtil.getAdFile();
+        String adStr = (String) FileUtil.deserialize(file);
         File imageFile = ImageFileUtil.getAdImageFolder(getString(R.string.ad_image_name));
         File files[] = imageFile.listFiles();
-        if (file.exists() && imageFile.exists() && files != null && files.length > 0) {
-            return true;
-        } else {
-            downloadAd();
-            return false;
+        if (adStr != null && imageFile.exists() && files != null && files.length > 0) {
+            try {
+                JSONObject jsonObject = new JSONObject(adStr);
+                if (!jsonObject.getString("timestamp").equalsIgnoreCase("0")) {
+                    return true;
+                }
+                return false;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+        return false;
     }
 
     private void downloadAd() {
