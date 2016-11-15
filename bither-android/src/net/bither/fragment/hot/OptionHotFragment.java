@@ -319,20 +319,20 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 case High:
                     return 1;
                 case Higher:
-                    return 2;
-                default:
                     return 0;
+                default:
+                    return 2;
             }
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
             if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
                 switch (index) {
-                    case 0:
+                    case 2:
                         return BitherjSettings.TransactionFeeMode.Normal;
                     case 1:
                         return BitherjSettings.TransactionFeeMode.High;
-                    case 2:
+                    case 0:
                         return BitherjSettings.TransactionFeeMode.Higher;
                 }
             }
