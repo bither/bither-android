@@ -23,6 +23,7 @@ import android.content.Intent;
 
 import net.bither.bitherj.AbstractApp;
 import net.bither.preference.AppSharedPreference;
+import net.bither.util.ThreadUtil;
 
 /**
  * Created by songchenwen on 14-11-10.
@@ -42,13 +43,18 @@ public class PinCodeUtil {
         checkBackground();
     }
 
-    public static boolean checkBackground() {
-        boolean beforeBack = isPreBackground;
-        isPreBackground = !AbstractApp.bitherjSetting.isApplicationRunInForeground();
-        if (isPreBackground && !beforeBack) {
-            backgroundEnterTime = System.currentTimeMillis();
-        }
-        return isPreBackground;
+    public static void checkBackground() {
+        ThreadUtil.getMainThreadHandler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                boolean beforeBack = isPreBackground;
+                isPreBackground = !AbstractApp.bitherjSetting.isApplicationRunInForeground();
+                if (isPreBackground && !beforeBack) {
+                    backgroundEnterTime = System.currentTimeMillis();
+                }
+            }
+        }, 500);
+
     }
 
     public static boolean checkBackgroundWithoutLockDelay() {

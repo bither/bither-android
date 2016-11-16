@@ -58,14 +58,12 @@ import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogUpgrade;
 import net.bither.util.AdUtil;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
-
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -717,6 +715,11 @@ public class ChooseModeActivity extends BaseActivity {
 
     @Override
     protected boolean shouldPresentPinCode() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldPinCodeCheckBackground() {
         return false;
     }
 }
