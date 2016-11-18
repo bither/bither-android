@@ -92,6 +92,9 @@ public class AndroidImplAbstractApp extends AbstractApp {
                     if (!topActivity.getPackageName().equals(BitherApplication.mContext.getPackageName())) {
                         return false;
                     }
+                    if (topActivity.getClassName().equals(AdActivity.class.getName())) {
+                        return false;
+                    }
                 }
                 return true;
             }

@@ -31,6 +31,10 @@ public class BaseActivity extends Activity {
         return true;
     }
 
+    protected boolean shouldPinCodeCheckBackground() {
+        return true;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -42,7 +46,9 @@ public class BaseActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        PinCodeUtil.checkBackground();
+        if (shouldPinCodeCheckBackground()) {
+            PinCodeUtil.checkBackground();
+        }
     }
 
     @Override

@@ -19,9 +19,7 @@
 package net.bither.activity.hot;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
@@ -31,7 +29,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
@@ -57,8 +54,6 @@ import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.db.HDAccountAddressProvider;
-import net.bither.db.TxProvider;
 import net.bither.enums.TotalBalanceHide;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
@@ -76,6 +71,7 @@ import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SettingSelectorView;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogAddressQrCopy;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogEditPassword;
 import net.bither.ui.base.dialog.DialogEnterpriseHDMEnable;
@@ -85,7 +81,6 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
-import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
@@ -95,7 +90,6 @@ import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.LogUtil;
-import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
@@ -175,7 +169,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
         findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
-        findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressClick);
+        findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
@@ -1453,21 +1447,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 });
     }
 
-    private View.OnClickListener bitherAddressClick = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            StringUtil.copyString(BitherjSettings.DONATE_ADDRESS);
-            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                    R.string.bither_team_address_copied);
-        }
-    };
-
     private View.OnClickListener bitherAddressQrClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            new DialogSimpleQr(v.getContext(), BitherjSettings.DONATE_ADDRESS,
+            new DialogAddressQrCopy(v.getContext(), BitherjSettings.DONATE_ADDRESS,
                     R.string.bither_team_address).show();
         }
     };

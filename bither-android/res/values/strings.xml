@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Bither</string>
+    <string name="localization.language.code">en</string>
     <string name="bitcoin_balance_label">BTC</string>
     <string name="bitcoin_symbol">BTC</string>
     <string name="market_trading_amount">Volume</string>
@@ -168,7 +169,7 @@
     <string name="setting_name_wifi_no">Sync always</string>
     <string name="setting_name_transaction_fee">Default Transaction Fee</string>
     <string name="setting_name_transaction_fee_normal">Normal</string>
-    <string name="setting_name_transaction_fee_low">Low</string>
+    <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
@@ -720,4 +721,14 @@
     <string name="hd_account_show_xpub">Show XPub</string>
     <string name="hd_account_monitor_check_first_address">Check First Address</string>
     <string name="monitor_addresses_validation">Check Monitored Addresses</string>
+    <string name="title_activity_ad">AdActivity</string>
+
+    <!-- Ad -->
+    <string name="ad_go">Go</string>
+    <string name="ad_image_name">img_en</string>
+    <string name="ad_skip">Skip</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

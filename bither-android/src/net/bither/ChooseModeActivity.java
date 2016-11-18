@@ -56,12 +56,19 @@ import net.bither.ui.base.RelativeLineHeightSpan;
 import net.bither.ui.base.WrapLayoutParamsForAnimator;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogUpgrade;
+import net.bither.util.AdUtil;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.ImageFileUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.SystemUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UpgradeUtil;
 import net.bither.xrandom.URandom;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 
 public class ChooseModeActivity extends BaseActivity {
     private static final int AnimHideDuration = 600;
@@ -97,7 +104,13 @@ public class ChooseModeActivity extends BaseActivity {
                 upgrade();
             } else {
                 setVersionCode();
-                initActivity();
+                if (isShowAd()) {
+                    Intent intent = new Intent(ChooseModeActivity.this, AdActivity.class);
+                    startActivityForResult(intent, 1);
+                } else {
+                    initActivity();
+                    downloadAd();
+                }
             }
         } else {
             DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this, getString(R.string.urandom_not_exists), new Runnable() {
@@ -120,6 +133,41 @@ public class ChooseModeActivity extends BaseActivity {
             });
             dialogConfirmTask.setCancelable(false);
             dialogConfirmTask.show();
+        }
+    }
+
+    private boolean isShowAd() {
+        JSONObject cacheAdJsonObject = AdUtil.getCacheAdJSON();
+        if (cacheAdJsonObject != null) {
+            File imageFile = ImageFileUtil.getAdImageFolder(getString(R.string.ad_image_name));
+            if (imageFile.exists()) {
+                File files[] = imageFile.listFiles();
+                if (files != null && files.length > 0) {
+                    try {
+                        if (!cacheAdJsonObject.getString("timestamp").equalsIgnoreCase("0")) {
+                            return true;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void downloadAd() {
+        AdUtil adUtil = new AdUtil();
+        adUtil.getAd();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 20) {
+            initActivity();
+            downloadAd();
         }
     }
 
@@ -667,6 +715,11 @@ public class ChooseModeActivity extends BaseActivity {
 
     @Override
     protected boolean shouldPresentPinCode() {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldPinCodeCheckBackground() {
         return false;
     }
 }

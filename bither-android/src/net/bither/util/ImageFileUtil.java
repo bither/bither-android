@@ -144,4 +144,33 @@ public class ImageFileUtil {
         return Utils.format(AVATAR_FILE_NAME, time);
     }
 
+    public static File getAdImageFile(String fileName) {
+        File file = getAdImageFolder(fileName);
+        clearUselessImageFile(file);
+        file = new File(file, fileName);
+        return file;
+    }
+
+    private static void clearUselessImageFile(File file) {
+        File files[] = file.listFiles();
+        int length = files.length;
+        if (length > 1) {
+            for (int i = 0; i < length - 1; i++) {
+                File imageFile = files[i];
+                imageFile.delete();
+            }
+        }
+    }
+
+    public static File getAdImageFolder(String fileName) {
+        File file = null;
+        if (fileName.contains("en")) {
+            file = FileUtil.getAdImageEnDir();
+        } else if (fileName.contains("CN")) {
+            file = FileUtil.getAdImagZhCnDir();
+        } else {
+            file = FileUtil.getAdImagZhTwDir();
+        }
+        return file;
+    }
 }
