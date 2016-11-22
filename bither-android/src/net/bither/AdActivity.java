@@ -78,7 +78,7 @@ public class AdActivity extends Activity {
     private void setIvAd() {
         File imageFolder = ImageFileUtil.getAdImageFolder(getString(R.string.ad_image_name));
         File imageFiles[] = imageFolder.listFiles();
-        Uri uri = Uri.fromFile(imageFiles[imageFiles.length-1]);
+        Uri uri = Uri.fromFile(imageFiles[0]);
         ivAd.setImageBitmap(getBitmapFromUri(uri));
     }
 
