@@ -109,6 +109,7 @@ public class UEntropyMic implements IUEntropySource, Thread.UncaughtExceptionHan
 
     @Override
     public void onResume() {
+        visualizer.onResume();
         if (micThread != null && micThread.isAlive()) {
             return;
         }
@@ -122,6 +123,7 @@ public class UEntropyMic implements IUEntropySource, Thread.UncaughtExceptionHan
 
     @Override
     public void onPause() {
+        visualizer.onPause();
         if (micThread != null && micThread.isAlive()) {
             micHandler.removeCallbacksAndMessages(null);
             micHandler.post(closeRunnable);

@@ -262,6 +262,7 @@ public abstract class UEntropyActivity extends BaseFragmentActivity implements U
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                entropyCollector.onPause();
                 isFinishing = true;
                 if (dpCancel != null && dpCancel.isShowing()) {
                     dpCancel.dismiss();
@@ -283,6 +284,7 @@ public abstract class UEntropyActivity extends BaseFragmentActivity implements U
                 stopAnimation(new Runnable() {
                     @Override
                     public void run() {
+                        entropyCollector.onPause();
                         isFinishing = true;
                         String message;
                         if (entropyCollector.sources().size() == 0) {
