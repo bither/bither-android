@@ -29,12 +29,14 @@ import java.io.InputStream;
  * Created by songchenwen on 14/12/31.
  */
 public class MnemonicCodeAndroid extends MnemonicCode {
+    public static int wordListResource = R.raw.mnemonic_wordlist_english;
+
     public MnemonicCodeAndroid() throws IOException {
         super();
     }
 
     @Override
     protected InputStream openWordList() throws IOException {
-        return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
+        return BitherApplication.mContext.getResources().openRawResource(wordListResource);
     }
 }
