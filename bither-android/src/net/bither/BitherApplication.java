@@ -28,7 +28,7 @@ import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountCold;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
@@ -180,20 +180,24 @@ public class BitherApplication extends Application {
                 AddressManager.getInstance();
                 initLogging();
                 try {
-                    //TODO 编辑以下三个变量来导入种子
-                    String[] words = new String[]{
+                    if (!AddressManager.getInstance().hasHDAccountHot()) {
+                        //TODO 编辑以下三个变量来导入种子
+                        String[] words = new String[]{
 
-                    };
-                    String password = "";
-                    MnemonicCodeAndroid.wordListResource = R.raw.mnemonic_wordlist_zh_cn;
-
-
-                    MnemonicCode.setInstance(new MnemonicCodeAndroid());
-                    byte[] mnemonicCodeSeed = MnemonicCode.instance().toEntropy(Arrays.asList(words));
-                    if (!PasswordSeed.hasPasswordSeed()){
-                        throw new RuntimeException("需要先创建一个普通私钥");
+                        };
+                        String password = "";
+                        MnemonicCodeAndroid.wordListResource = R.raw.mnemonic_wordlist_zh_cn;
+                        MnemonicCode.setInstance(new MnemonicCodeAndroid());
+                        byte[] mnemonicCodeSeed = MnemonicCode.instance().toEntropy(Arrays.asList
+                                (words));
+                        if (!PasswordSeed.hasPasswordSeed()) {
+                            throw new RuntimeException("需要先创建一个普通私钥");
+                        }
+                        if (!PasswordSeed.getPasswordSeed().checkPassword(password)) {
+                            throw new RuntimeException("密码错误");
+                        }
+                        HDAccount hdAccount = new HDAccount(mnemonicCodeSeed, password, false);
                     }
-                    HDAccountCold hdAccount = new HDAccountCold(mnemonicCodeSeed, password, false);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (MnemonicException.MnemonicWordException e) {
