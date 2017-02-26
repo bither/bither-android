@@ -112,6 +112,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private TextView tvVersion;
     private ImageView ivLogo;
     private View llSwitchToCold;
+    private TextView tvPrivacyPolicy;
 
     private MonitorBitherColdUtil monitorUtil;
 
@@ -452,6 +453,21 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
+    private OnClickListener privacyPolicyClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bither/bither-android/wiki/PrivacyPolicy"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.find_browser_error);
+            }
+        }
+    };
+
     private OnClickListener monitorClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -701,6 +717,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        tvPrivacyPolicy = (TextView) view.findViewById(R.id.tv_privacy_policy);
+        tvPrivacyPolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         ivLogo = (ImageView) view.findViewById(R.id.iv_logo);
         btnSwitchToCold = (Button) view.findViewById(R.id.btn_switch_to_cold);
         llSwitchToCold = view.findViewById(R.id.ll_switch_to_cold);
@@ -735,6 +753,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
+        tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
     }
 
     private void setAvatar(String photoName) {

@@ -694,4 +694,7 @@
     <string name="ad_go">前往</string>
     <string name="ad_image_name">img_zh_TW</string>
     <string name="ad_skip">跳過</string>
+
+    <string name="setting_privacy_policy">隱私政策</string>
+
 </resources>

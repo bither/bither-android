@@ -20,7 +20,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -72,6 +74,8 @@ import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.UnitUtilWrapper;
 
+import org.w3c.dom.Text;
+
 import java.util.Date;
 import java.util.List;
 
@@ -91,6 +95,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
+    private TextView tvPrivacyPolicy;
 
     private SettingSelectorView.SettingSelector bitcoinUnitSelector = new SettingSelectorView
             .SettingSelector() {
@@ -227,6 +232,21 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
     };
 
+    private OnClickListener privacyPolicyClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bither/bither-android/wiki/PrivacyPolicy"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.find_browser_error);
+            }
+        }
+    };
+
     @Override
     public void onSelected() {
         configureCloneButton();
@@ -316,6 +336,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
         } else {
             tvVersion.setVisibility(View.GONE);
         }
+        tvPrivacyPolicy = (TextView) view.findViewById(R.id.tv_privacy_policy);
+        tvPrivacyPolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         btnGetSign.setOnClickListener(toSignActivityClickListener);
         btnCloneTo.setOnClickListener(cloneToClick);
@@ -327,7 +349,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         tvBackupPath = (TextView) view.findViewById(R.id.tv_backup_path);
         flBackTime.setOnClickListener(backupTimeListener);
         showBackupTime();
-
+        tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
     }
 
     private void showBackupTime() {
