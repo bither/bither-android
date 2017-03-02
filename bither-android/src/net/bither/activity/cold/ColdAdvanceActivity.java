@@ -610,8 +610,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private void importHDMColdFromPhrase() {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
+        intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HDM_SEED_TYPE, ImportHDSeed
+                .ImportHDSeedType.HDMColdPhrase);
         startActivity(intent);
-
     }
 
     private void importHDFromQRCode() {
@@ -784,7 +785,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 LogUtil.d("importhdseed", "onPasswordEntered");
                 ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password);
+                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password, null);
                 importHDSeedAndroid.importHDSeed();
             }
         }

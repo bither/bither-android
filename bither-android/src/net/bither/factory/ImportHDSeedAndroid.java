@@ -27,7 +27,9 @@ import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.factory.ImportHDSeed;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -57,8 +59,8 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
 
 
     public ImportHDSeedAndroid(Activity activity, ImportHDSeedType importHDSeedType,
-                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password) {
-        super(importHDSeedType, content, worlds, password);
+                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password, MnemonicCode mnemonicCode) {
+        super(importHDSeedType, content, worlds, password, mnemonicCode);
         this.activity = activity;
         this.dp = dp;
     }

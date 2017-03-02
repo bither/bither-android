@@ -176,7 +176,7 @@ public class BitherApplication extends Application {
                 AddressManager.getInstance();
                 initLogging();
                 try {
-                    MnemonicCode.setInstance(new MnemonicCodeAndroid());
+                    MnemonicCode.setInstance(new MnemonicCodeAndroid(null));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

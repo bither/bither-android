@@ -34,6 +34,9 @@ import android.widget.TextView;
 import net.bither.R;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Utils;
+import net.bither.mnemonic.MnemonicCodeAndroid;
+
+import java.io.IOException;
 
 /**
  * Created by songchenwen on 15/1/23.
@@ -50,7 +53,6 @@ public class DialogHdmImportWordListReplace extends CenterDialog implements Dial
     private InputMethodManager imm;
     private int index;
     private DialogHdmImportWordListReplaceListener listener;
-    private MnemonicCode mnemonic = MnemonicCode.instance();
 
     public DialogHdmImportWordListReplace(Activity context, int index,
                                           DialogHdmImportWordListReplaceListener listener) {
@@ -83,14 +85,19 @@ public class DialogHdmImportWordListReplace extends CenterDialog implements Dial
             if (Utils.isEmpty(word)) {
                 return;
             }
-            if (!mnemonic.getWordList().contains(word)) {
-                tvError.setVisibility(View.VISIBLE);
-                shake();
-                return;
-            }
-            dismiss();
-            if (listener != null) {
-                listener.replace(index, word);
+            try {
+                MnemonicCode mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(word));
+                if (mnemonic.getWordList() == null) {
+                    tvError.setVisibility(View.VISIBLE);
+                    shake();
+                    return;
+                }
+                dismiss();
+                if (listener != null) {
+                    listener.replace(index, word);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             dismiss();

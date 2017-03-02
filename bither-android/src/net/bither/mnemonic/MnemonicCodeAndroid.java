@@ -22,19 +22,43 @@ import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 14/12/31.
  */
 public class MnemonicCodeAndroid extends MnemonicCode {
-    public MnemonicCodeAndroid() throws IOException {
+    private String word;
+
+    public MnemonicCodeAndroid(String word) throws IOException {
         super();
+        if (word != null) {
+            this.word = word;
+            this.wordList = openWordList();
+        }
     }
 
     @Override
-    protected InputStream openWordList() throws IOException {
-        return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
+    protected ArrayList<String> openWordList() throws IOException, IllegalArgumentException {
+        if (word == null) {
+            return getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english));
+        }
+        InputStream[] inputStreams = new InputStream[]{
+                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english),
+                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn),
+                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw)};
+        for (InputStream inputStream: inputStreams) {
+            ArrayList<String> words = getWordListForInputStream(inputStream);
+            if (words.contains(word)) {
+                return words;
+            }
+        }
+        return null;
     }
+
 }
