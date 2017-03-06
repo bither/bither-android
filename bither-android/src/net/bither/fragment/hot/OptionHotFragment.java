@@ -298,6 +298,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public String getOptionName(int index) {
             BitherjSettings.TransactionFeeMode transactionFeeMode = getModeByIndex(index);
             switch (transactionFeeMode) {
+                case TenX:
+                    return getString(R.string.setting_name_transaction_fee_10x);
                 case Higher:
                     return getString(R.string.setting_name_transaction_fee_higher);
                 case High:
@@ -318,23 +320,27 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     .getTransactionFeeMode();
             switch (mode) {
                 case High:
-                    return 1;
+                    return 2;
                 case Higher:
+                    return 1;
+                case TenX:
                     return 0;
                 default:
-                    return 2;
+                    return 3;
             }
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
             if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
                 switch (index) {
-                    case 2:
+                    case 3:
                         return BitherjSettings.TransactionFeeMode.Normal;
-                    case 1:
+                    case 2:
                         return BitherjSettings.TransactionFeeMode.High;
-                    case 0:
+                    case 1:
                         return BitherjSettings.TransactionFeeMode.Higher;
+                    case 0:
+                        return BitherjSettings.TransactionFeeMode.TenX;
                 }
             }
             return BitherjSettings.TransactionFeeMode.Normal;
@@ -343,6 +349,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public String getOptionNote(int index) {
             switch (getModeByIndex(index)) {
+                case TenX:
+                    return getFeeStr(BitherjSettings.TransactionFeeMode.TenX);
                 case Higher:
                     return getFeeStr(BitherjSettings.TransactionFeeMode.Higher);
                 case High:
