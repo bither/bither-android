@@ -86,8 +86,8 @@ public class DialogHdmImportWordListReplace extends CenterDialog implements Dial
                 return;
             }
             try {
-                MnemonicCode mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(word));
-                if (mnemonic.getWordList() == null) {
+                MnemonicCode mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
+                if (mnemonic == null) {
                     tvError.setVisibility(View.VISIBLE);
                     shake();
                     return;

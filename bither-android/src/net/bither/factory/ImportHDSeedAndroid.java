@@ -29,7 +29,6 @@ import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.factory.ImportHDSeed;
-import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -44,6 +43,7 @@ import java.util.List;
 public class ImportHDSeedAndroid extends ImportHDSeed {
     private DialogProgress dp;
     private Activity activity;
+    private MnemonicCode mnemonicCode = MnemonicCode.instance();
 
     public ImportHDSeedAndroid(Activity activity, DialogProgress dp, String content, SecureCharSequence password) {
         super(ImportHDSeedType.HDMColdSeedQRCode, content, null, password);
@@ -63,6 +63,7 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
         super(importHDSeedType, content, worlds, password, mnemonicCode);
         this.activity = activity;
         this.dp = dp;
+        this.mnemonicCode = mnemonicCode;
     }
 
 
@@ -135,6 +136,8 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     }
                 }
                 if (success) {
+                    AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
+                    MnemonicCode.setInstance(mnemonicCode);
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {

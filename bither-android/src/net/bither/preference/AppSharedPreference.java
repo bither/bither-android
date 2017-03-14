@@ -25,6 +25,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.BitherjSettings.MarketType;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
@@ -77,6 +78,8 @@ public class AppSharedPreference {
     private static final String QR_QUALITY = "qr_quality";
 
     private static final String TOTAL_BALANCE_HIDE = "total_balance_hide";
+
+    private static final String MNEMONIC_WORD_LIST = "mnemonic_word_list";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -436,5 +439,14 @@ public class AppSharedPreference {
 
     public TotalBalanceHide getTotalBalanceHide() {
         return TotalBalanceHide.totalBalanceHide(mPreferences.getInt(TOTAL_BALANCE_HIDE, 0));
+    }
+
+    public MnemonicWordList getMnemonicWordList() {
+        String value = mPreferences.getString(MNEMONIC_WORD_LIST, "");
+        return MnemonicWordList.getMnemonicWordList(value);
+    }
+
+    public void setMnemonicWordList(MnemonicWordList wordList) {
+        mPreferences.edit().putString(MNEMONIC_WORD_LIST, wordList.getMnemonicWordListValue()).commit();
     }
 }

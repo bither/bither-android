@@ -18,47 +18,50 @@
 
 package net.bither.mnemonic;
 
+
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Created by songchenwen on 14/12/31.
  */
 public class MnemonicCodeAndroid extends MnemonicCode {
-    private String word;
 
-    public MnemonicCodeAndroid(String word) throws IOException {
+    public MnemonicCodeAndroid() throws IOException {
         super();
-        if (word != null) {
-            this.word = word;
-            this.wordList = openWordList();
-        }
     }
 
     @Override
-    protected ArrayList<String> openWordList() throws IOException, IllegalArgumentException {
-        if (word == null) {
-            return getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english));
+    protected HashMap<MnemonicWordList, InputStream> openWordList() throws IOException, IllegalArgumentException {
+        return getAllMnemonicWordListRawResources();
+    }
+
+    private HashMap<MnemonicWordList, InputStream> getAllMnemonicWordListRawResources() {
+        ArrayList<MnemonicWordList> mnemonicWordLists = MnemonicWordList.getAllMnemonicWordLists();
+        HashMap<MnemonicWordList, InputStream> inputStreamMap = new HashMap<>();
+        for (MnemonicWordList mnemonicWordList: mnemonicWordLists) {
+            inputStreamMap.put(mnemonicWordList, getMnemonicWordListRawResource(mnemonicWordList));
         }
-        InputStream[] inputStreams = new InputStream[]{
-                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english),
-                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn),
-                BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw)};
-        for (InputStream inputStream: inputStreams) {
-            ArrayList<String> words = getWordListForInputStream(inputStream);
-            if (words.contains(word)) {
-                return words;
-            }
+        return inputStreamMap;
+    }
+
+    private InputStream getMnemonicWordListRawResource(MnemonicWordList wordList) {
+        switch (wordList) {
+            case English:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
+            case ZhCN:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn);
+            case ZhTw:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw);
         }
-        return null;
+        return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
     }
 
 }

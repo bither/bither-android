@@ -35,6 +35,7 @@ import net.bither.db.AndroidDbImpl;
 import net.bither.db.TxDatabaseHelper;
 import net.bither.exception.UEHandler;
 import net.bither.mnemonic.MnemonicCodeAndroid;
+import net.bither.preference.AppSharedPreference;
 import net.bither.service.BlockchainService;
 import net.bither.xrandom.LinuxSecureRandom;
 
@@ -173,13 +174,15 @@ public class BitherApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                AddressManager.getInstance();
-                initLogging();
                 try {
-                    MnemonicCode.setInstance(new MnemonicCodeAndroid(null));
+                    MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+                    mnemonicCode.setMnemonicWordList(AppSharedPreference.getInstance().getMnemonicWordList());
+                    MnemonicCode.setInstance(mnemonicCode);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                AddressManager.getInstance();
+                initLogging();
             }
         }).start();
     }

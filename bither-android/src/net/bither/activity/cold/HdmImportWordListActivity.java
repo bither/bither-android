@@ -36,6 +36,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
@@ -145,8 +146,8 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
                 return;
             }
             try {
-                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(word));
-                if (mnemonic.getWordList() == null) {
+                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
+                if (mnemonic == null) {
                     DropdownMessage.showDropdownMessage(HdmImportWordListActivity.this,
                             R.string.hdm_import_word_list_wrong_word_warn);
                     return;
@@ -188,11 +189,11 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
     private void isZhTw() {
         try {
             for (String word: words) {
-                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(word));
+                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
                 ArrayList<String> zhCnWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn));
                 ArrayList<String> zhTwWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw));
                 if (!zhCnWorsList.contains(word) && zhTwWorsList.contains(word)) {
-                    mnemonic.wordList = zhTwWorsList;
+                    mnemonic.setWordList(zhTwWorsList, MnemonicWordList.ZhTw);
                     return;
                 }
             }
