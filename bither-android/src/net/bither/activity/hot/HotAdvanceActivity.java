@@ -47,6 +47,7 @@ import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.factory.ImportPrivateKey;
@@ -1267,7 +1268,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
                 final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (hdAccountSeed.indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
+                if (hdAccountSeed.indexOf(MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag()) == 0) {
                     dialogPassword = new DialogPassword(this,
                             new ImportHDAccountPasswordListener(hdAccountSeed));
                     dialogPassword.setCheckPre(false);

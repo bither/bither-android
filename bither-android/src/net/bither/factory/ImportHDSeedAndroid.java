@@ -43,7 +43,6 @@ import java.util.List;
 public class ImportHDSeedAndroid extends ImportHDSeed {
     private DialogProgress dp;
     private Activity activity;
-    private MnemonicCode mnemonicCode = MnemonicCode.instance();
 
     public ImportHDSeedAndroid(Activity activity, DialogProgress dp, String content, SecureCharSequence password) {
         super(ImportHDSeedType.HDMColdSeedQRCode, content, null, password);
@@ -63,7 +62,6 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
         super(importHDSeedType, content, worlds, password, mnemonicCode);
         this.activity = activity;
         this.dp = dp;
-        this.mnemonicCode = mnemonicCode;
     }
 
 

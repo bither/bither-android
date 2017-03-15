@@ -41,6 +41,7 @@ import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
@@ -382,10 +383,10 @@ public class ColdActivity extends BaseFragmentActivity {
                 String[] strings = BackupUtil.getBackupKeyStrList(file);
                 HDMKeychain hdmKeychain = null;
                 boolean check = false;
+                int hdQrCodeFlagLength = hdQrCodeFlagLength(strings);
                 if (strings != null && strings.length > 0) {
-                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || strings[0]
-                            .indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
-                        String keychainString = strings[0].substring(1);
+                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || hdQrCodeFlagLength != 0) {
+                        String keychainString = strings[0].substring(hdQrCodeFlagLength);
                         try {
                             check = HDMKeychain.checkPassword(keychainString, password);
                         } catch (Exception e) {
@@ -417,7 +418,7 @@ public class ColdActivity extends BaseFragmentActivity {
                                 }
                                 continue;
                             }
-                            if (keyString.indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
+                            if (keyString.indexOf(MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag()) == 0) {
                                 String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
                                 String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
                                 try {
@@ -451,6 +452,13 @@ public class ColdActivity extends BaseFragmentActivity {
             }
         }).start();
 
+    }
+
+    private int hdQrCodeFlagLength(String[] strings) {
+        String hdQrCodeFlag = MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag();
+        if (strings.length < hdQrCodeFlag.length()) { return 0; }
+        String prefixStr = strings[0].substring(0, hdQrCodeFlag.length());
+        return hdQrCodeFlag.equals(prefixStr) ? hdQrCodeFlag.length() : 0;
     }
 
     private void checkPasswordWrong() {
