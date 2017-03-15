@@ -43,6 +43,7 @@ import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
@@ -51,6 +52,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
 import net.bither.pin.PinCodeEnableActivity;
@@ -79,6 +81,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
@@ -743,31 +746,38 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
                 final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (hdAccountSeed.indexOf(MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag()) == 0) {
-                    dialogPassword = new DialogPassword(this,
-                            new ImportHDAccountPasswordListener(hdAccountSeed));
-                    dialogPassword.setCheckPre(false);
-                    dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
-                        @Override
-                        public boolean checkPassword(SecureCharSequence password) {
-                            String keyString = hdAccountSeed.substring(1);
-                            String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
-                            String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
-                            EncryptedData encryptedData = new EncryptedData(encreyptString);
-                            byte[] result = null;
-                            try {
-                                result = encryptedData.decrypt(password);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                final MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(hdAccountSeed);
+                if (mnemonicWordList != null) {
+                    try {
+                        MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+                        mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                        dialogPassword = new DialogPassword(this,
+                                new ImportHDAccountPasswordListener(hdAccountSeed, mnemonicCode));
+                        dialogPassword.setCheckPre(false);
+                        dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
+                            @Override
+                            public boolean checkPassword(SecureCharSequence password) {
+                                String keyString = hdAccountSeed.substring(mnemonicWordList.getHdQrCodeFlag().length());
+                                String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                                String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
+                                EncryptedData encryptedData = new EncryptedData(encreyptString);
+                                byte[] result = null;
+                                try {
+                                    result = encryptedData.decrypt(password);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return result != null;
                             }
-                            return result != null;
-                        }
-                    });
-                    dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
-                    dialogPassword.show();
+                        });
+                        dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                        dialogPassword.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.import_hd_account_seed_format_error);
+                    }
                 } else {
-                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this
-                            , R.string.import_hd_account_seed_format_error);
+                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.import_hd_account_seed_format_error);
                 }
                 break;
         }
@@ -775,9 +785,11 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private class ImportHDAccountPasswordListener implements IDialogPasswordListener {
         private String content;
+        private MnemonicCode mnemonicCode;
 
-        public ImportHDAccountPasswordListener(String content) {
+        public ImportHDAccountPasswordListener(String content, MnemonicCode mnemonicCode) {
             this.content = content;
+            this.mnemonicCode = mnemonicCode;
         }
 
         @Override
@@ -786,7 +798,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 LogUtil.d("importhdseed", "onPasswordEntered");
                 ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password, null);
+                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password, mnemonicCode);
                 importHDSeedAndroid.importHDSeed();
             }
         }

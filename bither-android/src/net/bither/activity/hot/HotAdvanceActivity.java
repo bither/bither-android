@@ -1270,7 +1270,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
                 final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                final MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordList(hdAccountSeed);
+                final MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(hdAccountSeed);
                 if (mnemonicWordList != null) {
                     try {
                         MnemonicCode mnemonicCode = new MnemonicCodeAndroid();

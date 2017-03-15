@@ -51,11 +51,14 @@ import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.ScanActivity;
@@ -76,6 +79,7 @@ import net.bither.util.UnitUtilWrapper;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -491,7 +495,18 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
             HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
-            HDAccountCold hdAccountCold = PrivateKeyUtil.getHDAccountCold(content, password);
+            HDAccountCold hdAccountCold = null;
+            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(content);
+            MnemonicCode mnemonicCode = null;
+            if (mnemonicWordList != null) {
+                try {
+                    mnemonicCode = new MnemonicCodeAndroid();
+                    mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                    hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, content, password);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null) &&
                     hdAccountCold == null) {
@@ -514,6 +529,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 KeyUtil.setHDKeyChain(hdmKeychain);
             }
             password.wipe();
+            if (mnemonicCode != null && mnemonicWordList != null) {
+                AppSharedPreference.getInstance().setMnemonicWordList(mnemonicWordList);
+                MnemonicCode.setInstance(mnemonicCode);
+            }
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

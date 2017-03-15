@@ -51,6 +51,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
@@ -71,6 +72,7 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -419,11 +421,15 @@ public class ColdActivity extends BaseFragmentActivity {
                                 }
                                 continue;
                             }
-                            if (keyString.indexOf(MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag()) == 0) {
-                                String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
-                                String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+
+                            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(keyString);
+                            if (mnemonicWordList != null) {
                                 try {
-                                    new HDAccountCold(new EncryptedData(encreyptString), password);
+                                    MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+                                    mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                                    String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                                    String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
+                                    new HDAccountCold(mnemonicCode, new EncryptedData(encreyptString), password);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -437,7 +443,6 @@ public class ColdActivity extends BaseFragmentActivity {
                                         PrivateKeyUtil.getEncryptedString(key), false, key.isFromXRandom());
                                 addressList.add(address);
                                 key.clearPrivateKey();
-
                             }
                         }
 
