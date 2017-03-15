@@ -259,7 +259,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     private void configureCloneButton() {
         if ((AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
-                .size() > 0) || AddressManager.getInstance().hasHDMKeychain()) {
+                .size() > 0) || AddressManager.getInstance().hasHDMKeychain() || AddressManager.getInstance().hasHDAccountCold()) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
         } else {
