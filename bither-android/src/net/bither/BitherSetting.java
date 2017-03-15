@@ -68,6 +68,7 @@ public class BitherSetting {
         public static final int IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE = 1357;
         public static final int IMPORT_HDM_COLD_SEED_REQUEST_CODE = 1358;
         public static final int IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE = 1359;
+        public static final int IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE = 1340;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";

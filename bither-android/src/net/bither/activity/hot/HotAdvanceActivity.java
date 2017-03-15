@@ -1209,8 +1209,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private void importHDFromPhrase() {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE, ImportHDSeed.ImportHDSeedType.HDSeedPhrase);
-        startActivity(intent);
-
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE);
     }
 
     private void importPrivateKeyFromQrCode(boolean isFromBip38) {
@@ -1341,6 +1340,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }).show();
                 break;
+            case BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE:
+                ssvImportPrivateKey.loadData();
             default:
                 super.onActivityResult(requestCode, resultCode, data);
         }
@@ -1431,6 +1432,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
     public void showImportSuccess() {
         hasAnyAction = false;
+        ssvImportPrivateKey.loadData();
+        ssvImprotBip38Key.loadData();
         DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                 R.string.import_private_key_qr_code_success, new Runnable() {
                     @Override

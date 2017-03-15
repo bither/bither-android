@@ -144,14 +144,18 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                                 dp.dismiss();
                             }
                             if (activity instanceof HotAdvanceActivity) {
-                                ((HotAdvanceActivity) activity).showImportSuccess();
+                                HotAdvanceActivity hotAdvanceActivity = (HotAdvanceActivity) activity;
+                                hotAdvanceActivity.showImportSuccess();
                             }
                             if (activity instanceof ColdAdvanceActivity) {
-                                ((ColdAdvanceActivity) activity).showImportSuccess();
+                                ColdAdvanceActivity coldAdvanceActivity = (ColdAdvanceActivity) activity;
+                                coldAdvanceActivity.showImportSuccess();
                             }
+
                             if (activity instanceof HdmImportWordListActivity) {
                                 HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
                                 hdmImportWordListActivity.showImportSuccess();
+                                hdmImportWordListActivity.setResult(Activity.RESULT_OK);
                                 hdmImportWordListActivity.finish();
                             }
                         }

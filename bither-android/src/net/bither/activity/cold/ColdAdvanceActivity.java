@@ -616,7 +616,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HDM_SEED_TYPE, ImportHDSeed
                 .ImportHDSeedType.HDMColdPhrase);
-        startActivity(intent);
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE);
     }
 
     private void importHDFromQRCode() {
@@ -632,8 +632,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE, ImportHDSeed
                 .ImportHDSeedType.HDSeedPhrase);
-        startActivity(intent);
-
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE);
     }
 
     private void importPrivateKeyFromQRCode() {
@@ -780,6 +779,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                     DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.import_hd_account_seed_format_error);
                 }
                 break;
+            case BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE:
+                ssvImportPrivateKey.loadData();
         }
     }
 
