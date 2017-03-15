@@ -42,6 +42,7 @@ import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
@@ -383,7 +384,7 @@ public class ColdActivity extends BaseFragmentActivity {
                 String[] strings = BackupUtil.getBackupKeyStrList(file);
                 HDMKeychain hdmKeychain = null;
                 boolean check = false;
-                int hdQrCodeFlagLength = hdQrCodeFlagLength(strings);
+                int hdQrCodeFlagLength = MnemonicWordList.getHdQrCodeFlagLength(strings[0], MnemonicCode.instance().getMnemonicWordList());
                 if (strings != null && strings.length > 0) {
                     if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || hdQrCodeFlagLength != 0) {
                         String keychainString = strings[0].substring(hdQrCodeFlagLength);
@@ -452,13 +453,6 @@ public class ColdActivity extends BaseFragmentActivity {
             }
         }).start();
 
-    }
-
-    private int hdQrCodeFlagLength(String[] strings) {
-        String hdQrCodeFlag = MnemonicCode.instance().getMnemonicWordList().getHdQrCodeFlag();
-        if (strings.length < hdQrCodeFlag.length()) { return 0; }
-        String prefixStr = strings[0].substring(0, hdQrCodeFlag.length());
-        return hdQrCodeFlag.equals(prefixStr) ? hdQrCodeFlag.length() : 0;
     }
 
     private void checkPasswordWrong() {

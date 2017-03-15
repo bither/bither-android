@@ -175,9 +175,7 @@ public class BitherApplication extends Application {
             @Override
             public void run() {
                 try {
-                    MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
-                    mnemonicCode.setMnemonicWordList(AppSharedPreference.getInstance().getMnemonicWordList());
-                    MnemonicCode.setInstance(mnemonicCode);
+                    MnemonicCodeAndroid.setMnemonicCode(AppSharedPreference.getInstance().getMnemonicWordList());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

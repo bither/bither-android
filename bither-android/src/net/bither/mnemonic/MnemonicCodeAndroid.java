@@ -38,6 +38,12 @@ public class MnemonicCodeAndroid extends MnemonicCode {
         super();
     }
 
+    static public void setMnemonicCode(MnemonicWordList mnemonicWordList) throws IOException {
+        MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+        mnemonicCode.setMnemonicWordList(mnemonicWordList);
+        MnemonicCode.setInstance(mnemonicCode);
+    }
+
     @Override
     protected HashMap<MnemonicWordList, InputStream> openWordList() throws IOException, IllegalArgumentException {
         return getAllMnemonicWordListRawResources();
