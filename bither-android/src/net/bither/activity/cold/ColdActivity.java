@@ -52,6 +52,7 @@ import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.mnemonic.MnemonicCodeAndroid;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.TabButton;
@@ -386,12 +387,26 @@ public class ColdActivity extends BaseFragmentActivity {
                 String[] strings = BackupUtil.getBackupKeyStrList(file);
                 HDMKeychain hdmKeychain = null;
                 boolean check = false;
-                int hdQrCodeFlagLength = MnemonicWordList.getHdQrCodeFlagLength(strings[0], MnemonicCode.instance().getMnemonicWordList());
                 if (strings != null && strings.length > 0) {
+                    MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(strings[0]);
+                    if (mnemonicWordList == null) {
+                        checkPasswordWrong();
+                        return;
+                    }
+                    MnemonicCode mnemonicCode = null;
+                    try {
+                        mnemonicCode = new MnemonicCodeAndroid();
+                        mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        checkPasswordWrong();
+                        return;
+                    }
+                    int hdQrCodeFlagLength = mnemonicCode.getMnemonicWordList().getHdQrCodeFlag().length();
                     if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || hdQrCodeFlagLength != 0) {
                         String keychainString = strings[0].substring(hdQrCodeFlagLength);
                         try {
-                            check = HDMKeychain.checkPassword(keychainString, password);
+                            check = HDMKeychain.checkPassword(mnemonicCode, keychainString, password);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -422,14 +437,13 @@ public class ColdActivity extends BaseFragmentActivity {
                                 continue;
                             }
 
-                            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(keyString);
-                            if (mnemonicWordList != null) {
+                            if (MnemonicWordList.getMnemonicWordListForHdSeed(keyString).equals(mnemonicCode.getMnemonicWordList())) {
                                 try {
-                                    MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
-                                    mnemonicCode.setMnemonicWordList(mnemonicWordList);
                                     String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
                                     String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
                                     new HDAccountCold(mnemonicCode, new EncryptedData(encreyptString), password);
+                                    AppSharedPreference.getInstance().setMnemonicWordList(mnemonicWordList);
+                                    MnemonicCode.setInstance(mnemonicCode);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
