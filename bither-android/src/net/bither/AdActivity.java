@@ -2,12 +2,12 @@ package net.bither;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
@@ -15,13 +15,10 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 
 public class AdActivity extends Activity {
@@ -59,8 +56,8 @@ public class AdActivity extends Activity {
         ivAd = (ImageView) findViewById(R.id.iv_ad);
         btnGo = (Button) findViewById(R.id.btn_go);
         btnSkip = (Button) findViewById(R.id.btn_skip);
-        setBtnSkipText(countdown);
         setIvAd();
+        setBtnSkipText(countdown);
         setAdUrl();
     }
 
@@ -78,8 +75,27 @@ public class AdActivity extends Activity {
     private void setIvAd() {
         File imageFolder = ImageFileUtil.getAdImageFolder(getString(R.string.ad_image_name));
         File imageFiles[] = imageFolder.listFiles();
-        Uri uri = Uri.fromFile(imageFiles[0]);
-        ivAd.setImageBitmap(getBitmapFromUri(uri));
+        File imageFile = null;
+        for (File file: imageFiles) {
+            if (file.getAbsolutePath().contains(getString(R.string.ad_image_name))) {
+                if (!file.getAbsolutePath().contains(".nomedia")) {
+                    imageFile = file;
+                    break;
+                }
+            }
+        }
+
+        if (imageFile != null) {
+            Bitmap bitmap = getBitmapFromFile(imageFile);
+            if (bitmap != null) {
+                ivAd.setImageBitmap(bitmap);
+            } else {
+                adActivityFinish();
+            }
+        } else {
+            adActivityFinish();
+        }
+
     }
 
     private void setAdUrl() {
@@ -108,11 +124,13 @@ public class AdActivity extends Activity {
         AdActivity.this.finish();
     }
 
-    private Bitmap getBitmapFromUri(Uri uri) {
+    private Bitmap getBitmapFromFile(File file) {
         try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
             return bitmap;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
