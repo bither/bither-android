@@ -221,6 +221,7 @@
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
     <string name="import_private_key_qr_code_failed">Import failed.</string>
+    <string name="import_hd_account_failed_duplicated">Import failed. This account is already in Bither.</string>
     <string name="import_private_key_qr_code_failed_monitored">Can\'t import Bither Cold private key.</string>
     <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
     <string name="import_private_key_qr_code_importing">Importing…</string>

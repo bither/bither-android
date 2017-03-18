@@ -37,7 +37,6 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BackupUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
-
 import java.util.List;
 
 public class ImportHDSeedAndroid extends ImportHDSeed {
@@ -189,7 +188,6 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     dp.dismiss();
                 }
                 switch (errorCode) {
-
                     case PASSWORD_IS_DIFFEREND_LOCAL:
                         DropdownMessage.showDropdownMessage(activity,
                                 R.string.import_private_key_qr_code_failed_different_password);
@@ -201,6 +199,11 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     case NOT_HD_ACCOUNT_SEED:
                         DropdownMessage.showDropdownMessage(activity,
                                 R.string.import_hd_account_seed_format_error);
+                        break;
+                    case DUPLICATED_HD_ACCOUNT_SEED:
+                        DropdownMessage.showDropdownMessage(activity,
+                                R.string.import_hd_account_failed_duplicated);
+                        break;
                     default:
                         DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         break;

@@ -213,6 +213,7 @@
     <string name="import_private_key_qr_code_password">输入原密码</string>
     <string name="import_private_key_qr_code_success">导入成功</string>
     <string name="import_private_key_qr_code_failed">导入失败</string>
+    <string name="import_hd_account_failed_duplicated">导入失败. 这个账户已经存在. </string>
     <string name="import_private_key_qr_code_failed_monitored">不能导入冷钱包私钥</string>
     <string name="import_private_key_qr_code_failed_duplicate">私钥已存在</string>
     <string name="import_private_key_qr_code_importing">正在导入…</string>

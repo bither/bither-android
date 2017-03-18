@@ -607,6 +607,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             if (dp.isShowing()) {
                                                 dp.dismiss();
                                             }
+                                            if (isRepeatHD(firstAddress)) {
+                                                DropdownMessage
+                                                        .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
+                                            }
                                             new DialogHDMonitorFirstAddressValidation(getActivity
                                                     (), firstAddress, new Runnable() {
 
@@ -702,6 +706,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 break;
         }
 
+    }
+
+    private boolean isRepeatHD(String firstAddress) {
+        HDAccount hdAccountHot = AddressManager.getInstance().getHDAccountHot();
+        if (hdAccountHot == null) {
+            return false;
+        }
+        HDAccount.HDAccountAddress addressHot = hdAccountHot.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH, 0);
+        if (firstAddress.equals(addressHot.getAddress())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
