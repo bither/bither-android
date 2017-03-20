@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
@@ -209,7 +209,7 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
 
     private List<String> pageContentList = new ArrayList<String>();
 
-    private class QRFragmentPagerAdapter extends FragmentPagerAdapter {
+    private class QRFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
         public QRFragmentPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
