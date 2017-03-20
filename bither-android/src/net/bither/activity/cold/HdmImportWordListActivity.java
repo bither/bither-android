@@ -188,12 +188,20 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
 
     private void isZhTw() {
         try {
+            int zhCnCount = 0;
             for (String word: words) {
                 mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
                 ArrayList<String> zhCnWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn));
                 ArrayList<String> zhTwWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw));
                 if (!zhCnWorsList.contains(word) && zhTwWorsList.contains(word)) {
                     mnemonic.setWordList(zhTwWorsList, MnemonicWordList.ZhTw);
+                    return;
+                }
+                if (zhCnWorsList.contains(word)) {
+                    zhCnCount += 1;
+                }
+                if (zhCnCount == words.size()) {
+                    mnemonic.setWordList(zhCnWorsList, MnemonicWordList.ZhCN);
                     return;
                 }
             }
