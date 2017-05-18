@@ -120,11 +120,11 @@ public class AppSharedPreference {
     }
 
     public BitherjSettings.TransactionFeeMode getTransactionFeeMode() {
-        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
+        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, -1);
         if (ordinal < BitherjSettings.TransactionFeeMode.values().length && ordinal >= 0) {
             return BitherjSettings.TransactionFeeMode.values()[ordinal];
         }
-        return BitherjSettings.TransactionFeeMode.Normal;
+        return BitherjSettings.TransactionFeeMode.TenX;
     }
 
     public void setTransactionFeeMode(BitherjSettings.TransactionFeeMode mode) {
