@@ -27,6 +27,7 @@ import android.os.StrictMode;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
 import net.bither.bitherj.AbstractApp;
+import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Threading;
@@ -69,6 +70,8 @@ public class BitherApplication extends Application {
     public static SQLiteOpenHelper mTxDbHelper;
     public static SQLiteOpenHelper mAddressDbHelper;
 
+    private static int FEE_UPDATE_CODE = 0;
+
 
     @Override
     public void onCreate() {
@@ -90,8 +93,9 @@ public class BitherApplication extends Application {
         ueHandler = new UEHandler();
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);
         activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-    }
 
+        upgrade();
+    }
 
     @Override
     public void onTerminate() {
@@ -195,4 +199,15 @@ public class BitherApplication extends Application {
 //            System.setProperty("http.keepAlive", "false");
 //        }
 //    }
+
+    private void upgrade() {
+        AppSharedPreference appSharedPreference = AppSharedPreference.getInstance();
+        int updateCode = appSharedPreference.getUpdateCode();
+
+        if (updateCode == -1){
+            appSharedPreference.setTransactionFeeMode(BitherjSettings.TransactionFeeMode.TenX);
+
+            appSharedPreference.setUpdateCode(FEE_UPDATE_CODE);
+        }
+    }
 }

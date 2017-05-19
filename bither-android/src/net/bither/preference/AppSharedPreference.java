@@ -81,6 +81,8 @@ public class AppSharedPreference {
 
     private static final String MNEMONIC_WORD_LIST = "mnemonic_word_list";
 
+    private static final String UPDATE_CODE = "update_code";
+
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
     private SharedPreferences mPreferences;
@@ -448,5 +450,13 @@ public class AppSharedPreference {
 
     public void setMnemonicWordList(MnemonicWordList wordList) {
         mPreferences.edit().putString(MNEMONIC_WORD_LIST, wordList.getMnemonicWordListValue()).commit();
+    }
+
+    public int getUpdateCode() {
+        return mPreferences.getInt(UPDATE_CODE, -1);
+    }
+
+    public void setUpdateCode(int code) {
+        mPreferences.edit().putInt(UPDATE_CODE, code).commit();
     }
 }
