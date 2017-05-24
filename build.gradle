@@ -60,6 +60,7 @@ subprojects {
         }
         lintOptions {
             abortOnError false
+            disable "ResourceType"
         }
     }
 }
