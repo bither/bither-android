@@ -349,6 +349,10 @@
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".SignMessageAddressListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
 
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"

@@ -83,7 +83,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
+import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
@@ -640,7 +640,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectAddress(HotAdvanceActivity.this).show();
+                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true).show();
                     break;
                 case 1:
                 default:

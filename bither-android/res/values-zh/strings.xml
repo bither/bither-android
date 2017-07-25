@@ -479,6 +479,9 @@
     <string name="sign_message_output_copied">内容已复制</string>
     <string name="sign_message_input_hint">待签名的消息</string>
     <string name="sign_message_select_address">选择签名消息用的地址</string>
+    <string name="sing_message_select_hd_receive">HD账户 收款地址</string>
+    <string name="sing_message_select_hd_change">HD账户 找零地址</string>
+    <string name="sign_message_select_address_index">序号:</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">验证消息签名</string>

@@ -32,8 +32,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
@@ -55,9 +60,18 @@ import net.bither.util.WalletUtils;
 public class SignMessageActivity extends SwipeRightFragmentActivity implements
         IDialogPasswordListener, DialogFragmentFancyQrCodePager.QrCodeThemeChangeListener {
     public static final String AddressKey = "ADDRESS";
+    public static final String HdAccountPathType = "HdAccountPathType";
+    public static final String HdAddressIndex = "HdAddressIndex";
+    public static final String IsHdAccountHot = "IsHdAccountHot";
     private static final int ScanRequestCode = 1051;
 
     private Address address;
+    private HDAccount.HDAccountAddress hdAccountAddress;
+    private HDAccountCold hdAccountCold;
+    private boolean isHot;
+    private HDAccount hdAccount;
+    private AbstractHD.PathType pathType;
+    private int index;
     private EditText etInput;
     private TextView tvOutput;
     private FrameLayout flOutput;
@@ -76,6 +90,11 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_sign_message);
         address = WalletUtils.findPrivateKey(getIntent().getExtras().getString(AddressKey));
+        pathType = AbstractHD.getTernalRootType(getIntent().getExtras().getInt(HdAccountPathType));
+        index = getIntent().getExtras().getInt(HdAddressIndex);
+        if (address == null) {
+            isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
+        }
         initView();
     }
 
@@ -98,9 +117,23 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         etInput.addTextChangedListener(twInput);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
-        tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
         Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+
+        if (address == null) {
+            if (isHot) {
+                hdAccount = AddressManager.getInstance().getHDAccountHot();
+                hdAccountAddress = addressForIndex(index, pathType);
+                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
+            } else {
+                hdAccountCold = AddressManager.getInstance().getHDAccountCold();
+                hdAccountAddress = addressForIndex(index, pathType);
+                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
+            }
+            ivQr.setContent(hdAccountAddress.getAddress(), theme.getFgColor(), theme.getBgColor());
+        } else {
+            tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
+            ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        }
     }
 
     private View.OnClickListener signClick = new View.OnClickListener() {
@@ -170,7 +203,27 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
             public void run() {
                 String output = null;
                 try {
-                    output = address.signMessage(input, password);
+                    if (address == null) {
+                        if (pathType == AbstractHD.PathType.EXTERNAL_ROOT_PATH) {
+                            DeterministicKey key;
+                            if (isHot) {
+                                key = hdAccount.getExternalKey(index, password);
+                            } else {
+                                key = hdAccountCold.getExternalKey(index, password);
+                            }
+                            output = key.signMessage(input);
+                        } else {
+                            DeterministicKey key;
+                            if (isHot) {
+                                key = hdAccount.getInternalKey(index, password);
+                            } else {
+                                key = hdAccountCold.getInternalKey(index, password);
+                            }
+                            output = key.signMessage(input);
+                        }
+                    } else {
+                        output = address.signMessage(input, password);
+                    }
                 } catch (Exception e) {
                     tvOutput.post(new Runnable() {
                         @Override
@@ -225,6 +278,12 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
 
         @Override
         public void onClick(View v) {
+            if (hdAccountAddress != null) {
+                String text = hdAccountAddress.getAddress();
+                StringUtil.copyString(text);
+                DropdownMessage.showDropdownMessage(SignMessageActivity.this,
+                        R.string.copy_address_success);
+            }
             if (address != null) {
                 String text = address.getAddress();
                 StringUtil.copyString(text);
@@ -238,10 +297,17 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
-                    .setQrCodeThemeChangeListener(SignMessageActivity.this).show
-                    (SignMessageActivity.this.getSupportFragmentManager(),
-                            DialogFragmentFancyQrCodePager.FragmentTag);
+            if (address == null) {
+                DialogFragmentFancyQrCodePager.newInstance(hdAccountAddress.getAddress())
+                        .setQrCodeThemeChangeListener(SignMessageActivity.this).show
+                        (SignMessageActivity.this.getSupportFragmentManager(),
+                                DialogFragmentFancyQrCodePager.FragmentTag);
+            } else {
+                DialogFragmentFancyQrCodePager.newInstance(address.getAddress())
+                        .setQrCodeThemeChangeListener(SignMessageActivity.this).show
+                        (SignMessageActivity.this.getSupportFragmentManager(),
+                                DialogFragmentFancyQrCodePager.FragmentTag);
+            }
         }
     };
 
@@ -253,6 +319,18 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
 
     @Override
     public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme) {
-        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        if (address == null) {
+            ivQr.setContent(hdAccountAddress.getAddress(), theme.getFgColor(), theme.getBgColor());
+        } else {
+            ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        }
+    }
+
+    private HDAccount.HDAccountAddress addressForIndex(int index, AbstractHD.PathType pathType) {
+        if (isHot) {
+            return hdAccount.addressForPath(pathType, index);
+        } else {
+            return hdAccountCold.addressForPath(pathType, index);
+        }
     }
 }

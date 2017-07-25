@@ -479,6 +479,9 @@
     <string name="sign_message_output_copied">內容已復制</string>
     <string name="sign_message_input_hint">待簽名的消息</string>
     <string name="sign_message_select_address">選擇簽名消息用的地址</string>
+    <string name="sing_message_select_hd_receive">HD賬戶 收款地址</string>
+    <string name="sing_message_select_hd_change">HD賬戶 找零地址</string>
+    <string name="sign_message_select_address_index">序號:</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">驗證消息簽名</string>

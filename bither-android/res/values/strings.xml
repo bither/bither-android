@@ -495,6 +495,9 @@
     <string name="sign_message_output_copied">Content Copied</string>
     <string name="sign_message_input_hint">Message to sign</string>
     <string name="sign_message_select_address">Select address to sign message</string>
+    <string name="sing_message_select_hd_receive">HD Account Receiving Address</string>
+    <string name="sing_message_select_hd_change">HD Account Changing Address</string>
+    <string name="sign_message_select_address_index">Index:</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">Verify Message Signature</string>

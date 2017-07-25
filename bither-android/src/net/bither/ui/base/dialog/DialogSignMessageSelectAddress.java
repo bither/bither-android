@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -96,11 +95,11 @@ public class DialogSignMessageSelectAddress extends CenterDialog {
             }
             Address a = getItem(position);
             h.tvAddress.setText(a.getShortAddress());
-            if (a.hasPrivKey()) {
-                h.ivType.setImageResource(R.drawable.address_type_private);
-            } else {
-                h.ivType.setImageResource(R.drawable.address_type_watchonly);
-            }
+//            if (a.hasPrivKey()) {
+//                h.ivType.setImageResource(R.drawable.address_type_private);
+//            } else {
+//                h.ivType.setImageResource(R.drawable.address_type_watchonly);
+//            }
             convertView.setOnClickListener(new ListItemClick(a));
             return convertView;
         }
@@ -122,11 +121,11 @@ public class DialogSignMessageSelectAddress extends CenterDialog {
 
         class ViewHolder {
             TextView tvAddress;
-            ImageView ivType;
+//            ImageView ivType;
 
             public ViewHolder(View v) {
                 tvAddress = (TextView) v.findViewById(R.id.tv_address);
-                ivType = (ImageView) v.findViewById(R.id.iv_type);
+//                ivType = (ImageView) v.findViewById(R.id.iv_type);
                 tvAddress.setTextColor(Color.WHITE);
             }
         }
