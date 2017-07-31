@@ -18,6 +18,7 @@ import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
@@ -25,7 +26,6 @@ import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
-import net.bither.util.UnitUtilWrapper;
 
 import org.json.JSONObject;
 
@@ -63,9 +63,9 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
 
     @Override
     protected void initBalance() {
-            tvBalance.setText(UnitUtilWrapper.formatValue(AddressManager.getInstance().getAmount(AbstractDb.
+            tvBalance.setText(UnitUtil.formatValue(AddressManager.getInstance().getAmount(AbstractDb.
                     hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,AddressManager.getInstance()
-                    .getHDAccountMonitored().getHdSeedId()))));
+                    .getHDAccountMonitored().getHdSeedId())),UnitUtil.BitcoinUnit.BTC));
     }
 
     @Override
@@ -90,6 +90,9 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this,
                                 getString(R.string.not_bitpie_bcc_address));
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -163,7 +166,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, tx, this).show();
+        new DialogHdSendConfirm(this, toAddress, tx, false, this).show();
     }
 
     @Override
@@ -247,6 +250,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                                 DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this,R.string.send_success);
                             }
                         });
+                        success = true;
                     } else {
                         final JSONObject jsonObj = jsonObject.getJSONObject("error");
                         final int code = jsonObj.getInt("code");
@@ -259,10 +263,6 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                         });
                         success = false;
                     }
-                    success = true;
-                    tx = null;
-                    toAddress = null;
-                    btcAmount = 0;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -13,7 +13,7 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.db.AbstractDb;
-import net.bither.util.UnitUtilWrapper;
+import net.bither.bitherj.utils.UnitUtil;
 import net.bither.util.WalletUtils;
 
 /**
@@ -84,7 +84,7 @@ public class ObtainBCCListItemView extends FrameLayout {
             amount = AddressManager.getInstance().getAmount(AbstractDb.
                     txProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,address.getAddress()));
         }
-            tvBalance.setText(UnitUtilWrapper.formatValue(amount));
+            tvBalance.setText(UnitUtil.formatValue(amount, UnitUtil.BitcoinUnit.BTC) + " " + BitherSetting.BCC);
     }
 
     public ObtainBCCListItemView(Context context) {

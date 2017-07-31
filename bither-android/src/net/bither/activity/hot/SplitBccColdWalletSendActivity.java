@@ -16,6 +16,7 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
@@ -25,7 +26,6 @@ import net.bither.runnable.HandlerMessage;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
 import net.bither.util.InputParser;
-import net.bither.util.UnitUtilWrapper;
 
 import org.json.JSONObject;
 
@@ -59,8 +59,8 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     }
 
     protected void initBalance() {
-        tvBalance.setText(UnitUtilWrapper.formatValue(getAmount(AbstractDb.txProvider.
-                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress()))));
+        tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
+                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress())),UnitUtil.BitcoinUnit.BTC));
     }
 
     protected void sendClicked() {
@@ -81,6 +81,9 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,
                                 getString(R.string.not_bitpie_bcc_address));
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -132,7 +135,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                         tx.setBtc(false);
                         if (needConfirm) {
                             DialogHdSendConfirm dialog = new DialogHdSendConfirm
-                                    (SplitBccColdWalletSendActivity.this, toAddress,tx,
+                                    (SplitBccColdWalletSendActivity.this, toAddress,tx, false,
                                             sendConfirmListener);
                             dialog.show();
                         } else {
@@ -229,6 +232,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                                 DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,R.string.send_success);
                             }
                         });
+                        success = true;
                     } else {
                         final JSONObject jsonObj = jsonObject.getJSONObject("error");
                         final int code = jsonObj.getInt("code");
@@ -241,10 +245,6 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                         });
                         success = false;
                     }
-                    success = true;
-                    tx = null;
-                    toAddress = null;
-                    btcAmount = 0;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

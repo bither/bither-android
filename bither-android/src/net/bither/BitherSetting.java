@@ -52,6 +52,7 @@ public class BitherSetting {
 
     public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
     public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;
+    public static final String BCC = "BCC";
 
     public class SwipeRightGesture {
         public static final int SCROLL_DELAY_HORIZONTAL = 75;

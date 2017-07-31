@@ -15,13 +15,13 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.exception.TxBuilderException;
+import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
-import net.bither.util.UnitUtilWrapper;
 
 import org.json.JSONObject;
 
@@ -53,8 +53,8 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
 
     @Override
     protected void initBalance() {
-            tvBalance.setText(UnitUtilWrapper.formatValue(getAmount(AbstractDb.hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,
-                    AddressManager.getInstance().getHDAccountHot().getHdSeedId()))));
+            tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,
+                    AddressManager.getInstance().getHDAccountHot().getHdSeedId())),UnitUtil.BitcoinUnit.BTC));
     }
 
     @Override
@@ -76,6 +76,9 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this,
                                 getString(R.string.not_bitpie_bcc_address));
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -150,7 +153,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, tx, this).show();
+        new DialogHdSendConfirm(this, toAddress, tx, false, this).show();
     }
 
     @Override
@@ -187,11 +190,8 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                                 DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this,R.string.send_success);
                             }
                         });
+                        success = true;
                     }
-                    success = true;
-                    tx = null;
-                    toAddress = null;
-                    btcAmount = 0;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -10,55 +10,63 @@
         android:layout_height="match_parent"
         android:background="@color/bg">
 
-        <fragment
-            android:id="@+id/fragment_split_address"
-            android:name="net.bither.fragment.hot.HotAddressFragment"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/title_bar_height"></fragment>
+            android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/fl_title_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/title_bar_height"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/title_bar_bg"
-            android:paddingBottom="3dp">
-
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/fl_title_bar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/tab_button_background"
-                android:duplicateParentState="true"
-                android:orientation="horizontal">
+                android:layout_height="@dimen/title_bar_height"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/title_bar_bg"
+                android:paddingBottom="3dp">
 
-                <ImageButton
-                    android:id="@+id/ibtn_back"
-                    android:layout_width="@dimen/title_bar_height"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/tab_button_background"
-                    android:src="@drawable/title_bar_back" />
+                    android:duplicateParentState="true"
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/title_bar_seperator" />
+                    <ImageButton
+                        android:id="@+id/ibtn_back"
+                        android:layout_width="@dimen/title_bar_height"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/tab_button_background"
+                        android:src="@drawable/title_bar_back" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center"
-                    android:shadowColor="@color/text_field_text_color"
-                    android:shadowDx="1"
-                    android:shadowDy="-1"
-                    android:shadowRadius="0.5"
-                    android:text="@string/obtain_BCC_select_address"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </FrameLayout>
-        <include layout="@layout/layout_dropdown_message" />
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/title_bar_seperator" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center"
+                        android:shadowColor="@color/text_field_text_color"
+                        android:shadowDx="1"
+                        android:shadowDy="-1"
+                        android:shadowRadius="0.5"
+                        android:text="@string/obtain_BCC_select_address"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <fragment
+                android:id="@+id/fragment_split_address"
+                android:name="net.bither.fragment.hot.HotAddressFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></fragment>
+                <include layout="@layout/layout_dropdown_message" />
+            </FrameLayout>
+        </LinearLayout>
     </net.bither.ui.base.SwipeRightTouchView>
 </FrameLayout>

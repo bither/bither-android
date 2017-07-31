@@ -609,7 +609,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             if (!clicked) {
                 clicked = true;
                 if (isSplitBCCAddress) {
-                    if (a.isSyncComplete()) {
+                    if (isSyncComplete(a)) {
                         Intent intent = new Intent(activity, isPrivate ? SplitBCCSendActivity.class :
                                 SplitBccColdWalletSendActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);

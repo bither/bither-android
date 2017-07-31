@@ -25,6 +25,7 @@ import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.db.AbstractDb;
+import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
@@ -41,7 +42,6 @@ import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.InputParser;
-import net.bither.util.UnitUtilWrapper;
 
 import org.json.JSONObject;
 
@@ -115,8 +115,9 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     }
 
     protected void initBalance() {
-        tvBalance.setText(UnitUtilWrapper.formatValue(getAmount(AbstractDb.txProvider.
-                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress()))));
+        tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
+                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress())),
+                UnitUtil.BitcoinUnit.BTC));
     }
 
     private View.OnClickListener scanClick = new View.OnClickListener() {
@@ -166,9 +167,6 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             });
                             success = false;
                         }
-                        tx = null;
-                        toAddress = null;
-                        btcAmount = 0;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -286,7 +284,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             public void run() {
                                 dp.dismiss();
                                 DialogHdSendConfirm dialog = new DialogHdSendConfirm(SplitBCCSendActivity.this,toAddress,
-                                        tx,sendConfirmListener);
+                                        tx,false,sendConfirmListener);
                                 dialog.show();
                                 dp.setWait();
                             }
@@ -325,6 +323,9 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                         send();
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, getString(R.string.not_bitpie_bcc_address));
+                        if (dp.isShowing()) {
+                            dp.dismiss();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -450,10 +451,8 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                                               final long amount, final String bluetoothMac) {
                     etAddress.setText(address.toString());
                     if (amount > 0) {
-//                        amountCalculatorLink.setBtcAmount(amount);
                         etPassword.requestFocus();
                     } else {
-//                        amountCalculatorLink.requestFocus();
                     }
                     validateValues();
                 }
