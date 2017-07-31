@@ -42,6 +42,7 @@ import net.bither.activity.hot.SplitBCCHDAccountMonitoredSendActivity;
 import net.bither.activity.hot.SplitBCCHDAccountSendActivity;
 import net.bither.activity.hot.SplitBCCSendActivity;
 import net.bither.activity.hot.SplitBccColdWalletSendActivity;
+import net.bither.activity.hot.SplitBccSelectAddressActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
@@ -473,6 +474,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             }
             if (AppSharedPreference.getInstance().isObtainBcc(getIsObtainKey)) {
                 view.setObtainAddress(a);
+                view.setClickable(false);
             } else {
                 view.setAddress(a);
             }
@@ -510,8 +512,11 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         public void onClick(View v) {
             if (!clicked) {
                 clicked = true;
-                    if (isSyncComplete(a))
-                    activity.startActivity(new Intent(activity, SplitBCCHDAccountSendActivity.class));
+                    if (isSyncComplete(a)) {
+                        Intent intent = new Intent(activity, SplitBCCHDAccountSendActivity.class);
+                        activity.startActivityForResult(intent,
+                                SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                    }
                 v.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -549,8 +554,11 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         public void onClick(View v) {
             if (!clicked) {
                 clicked = true;
-                if (isSyncComplete(a))
-                    activity.startActivity(new Intent(activity, SplitBCCHDAccountMonitoredSendActivity.class));
+                if (isSyncComplete(a)) {
+                    Intent intent = new Intent(activity, SplitBCCHDAccountMonitoredSendActivity.class);
+                    activity.startActivityForResult(intent,
+                            SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                }
                 v.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -616,7 +624,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
                                 isPrivate);
                         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
-                        activity.startActivity(intent);
+                        activity.startActivityForResult(intent,
+                                SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
                     }
                 } else {
                     Intent intent = new Intent(activity, isEnterpriseHDM ?

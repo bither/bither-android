@@ -182,6 +182,8 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                         btnSend.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                setResult(SplitBccSelectAddressActivity.
+                                        SPLIT_BCC_HDACCOUNT_REQUEST_CODE, null);
                                 finish();
                             }
                         },1000);
