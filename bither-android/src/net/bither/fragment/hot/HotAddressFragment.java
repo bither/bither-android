@@ -31,6 +31,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ExpandableListView;
 
 import net.bither.R;
+import net.bither.activity.hot.SplitBccSelectAddressActivity;
 import net.bither.adapter.hot.HotAddressFragmentListAdapter;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
@@ -66,6 +67,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private IntentFilter broadcastIntentFilter = new IntentFilter();
     private List<String> addressesToShowAdded;
     private String notifyAddress = null;
+    public  boolean isSplitBCCAddress;
 
     @Override
     public void onCreate(Bundle paramBundle) {
@@ -126,7 +128,13 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         View view = inflater.inflate(R.layout.fragment_hot_address, container, false);
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
-        mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv);
+        if (getActivity() instanceof SplitBccSelectAddressActivity) {
+            isSplitBCCAddress = true;
+        } else {
+            isSplitBCCAddress = false;
+        }
+        mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv,
+                isSplitBCCAddress);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         refresh();

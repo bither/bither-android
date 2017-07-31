@@ -43,6 +43,7 @@ public class AppSharedPreference {
 
 
     private static final String APP_BITHER = "app_bither";
+    private static final String PRE_MOBTAINBCCPREFERENCES = "pre_mobtainbccpreferences";
     private static final String PREFS_KEY_LAST_VERSION = "last_version";
     private static final String DEFAULT_MARKET = "default_market";
     private static final String DEFAULT_EXCHANGE_RATE = "default_exchange_rate";
@@ -83,9 +84,11 @@ public class AppSharedPreference {
 
     private static final String UPDATE_CODE = "update_code";
 
+    private static final String IS_OBTAIN_BCC = "is_obtain_bcc";
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
     private SharedPreferences mPreferences;
+    private SharedPreferences mObtainBccPreferences;
 
     public static AppSharedPreference getInstance() {
         return mInstance;
@@ -94,6 +97,9 @@ public class AppSharedPreference {
     private AppSharedPreference() {
         this.mPreferences = BitherApplication.mContext.getSharedPreferences(APP_BITHER,
                 Context.MODE_MULTI_PROCESS);
+
+        this.mObtainBccPreferences = BitherApplication.mContext.getSharedPreferences(PRE_MOBTAINBCCPREFERENCES,
+                Context.MODE_PRIVATE);
     }
 
     public BitherjSettings.AppMode getAppMode() {
@@ -459,4 +465,14 @@ public class AppSharedPreference {
     public void setUpdateCode(int code) {
         mPreferences.edit().putInt(UPDATE_CODE, code).commit();
     }
+
+    public boolean isObtainBcc(String btcAddress) {
+        return mObtainBccPreferences.getBoolean(btcAddress, false);
+
+    }
+
+    public void setIsObtainBcc(String btcAddress, boolean isObtainBcc) {
+        mObtainBccPreferences.edit().putBoolean(btcAddress, isObtainBcc).apply();
+    }
+
 }

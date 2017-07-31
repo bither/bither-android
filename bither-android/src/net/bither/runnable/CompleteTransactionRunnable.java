@@ -39,6 +39,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     private boolean toSign = false;
     private HDMAddress.HDMFetchOtherSignatureDelegate sigFetcher1;
     private HDMAddress.HDMFetchOtherSignatureDelegate sigFetcher2;
+    private boolean isBtc = true;
 
 
     static {
@@ -56,10 +57,30 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password,boolean isBtc) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, null,isBtc);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
                                        String changeAddress, SecureCharSequence password,
                                        HDMAddress.HDMFetchOtherSignatureDelegate
                                                otherSigFetcher1) throws Exception {
-        this(addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null);
+        this(addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null,true);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher1,boolean isBtc) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null,isBtc);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher1,HDMAddress.HDMFetchOtherSignatureDelegate
+                                               otherSigFetcher2) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, otherSigFetcher2,true);
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
@@ -67,13 +88,14 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                                        HDMAddress.HDMFetchOtherSignatureDelegate
                                                otherSigFetcher1,
                                        HDMAddress.HDMFetchOtherSignatureDelegate
-                                               otherSigFetcher2) throws Exception {
+                                               otherSigFetcher2,boolean isBtc) throws Exception {
         boolean isHDM = otherSigFetcher1 != null || otherSigFetcher2 != null;
         this.amount = amount;
         this.toAddress = toAddress;
         this.password = password;
         sigFetcher1 = otherSigFetcher1;
         sigFetcher2 = otherSigFetcher2;
+        this.isBtc = isBtc;
         if (isHDM) {
             Address a = AddressManager.getInstance().getHdmKeychain().getAddresses().get
                     (addressPosition);
@@ -103,7 +125,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
         try {
-            Tx tx = wallet.buildTx(amount, toAddress, changeAddress);
+            Tx tx = wallet.buildTx(amount, toAddress, changeAddress,isBtc);
             if (tx == null) {
                 obtainMessage(HandlerMessage.MSG_FAILURE, BitherApplication.mContext.getString(R
                         .string.send_failed));
@@ -120,7 +142,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                         throw new RuntimeException("need sig fetcher to sign hdm tx");
                     }
                 } else {
-                    wallet.signTx(tx, password);
+                        wallet.signTx(tx, password, isBtc);
                 }
                 if (password != null) {
                     password.wipe();

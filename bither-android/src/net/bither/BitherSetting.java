@@ -44,7 +44,7 @@ public class BitherSetting {
     public static final int MEMORY_CLASS_LOWEND = 48;
 
     public static final Charset UTF_8 = Charset.forName("UTF-8");
-
+    public static final long BTCFORKBLOCKNO = 477768;
 
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;

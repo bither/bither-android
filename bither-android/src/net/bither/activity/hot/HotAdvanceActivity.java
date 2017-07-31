@@ -40,6 +40,7 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
@@ -118,6 +119,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnTrashCan;
     private LinearLayout btnHDMRecovery;
     private LinearLayout btnHDMServerPasswordReset;
+    private LinearLayout btnSplitBcc;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
@@ -140,6 +142,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
+        btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -160,6 +163,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvTotalBalanceHide.setSelector(totalBalanceHideSelector);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
+        btnSplitBcc.setOnClickListener(splitBccClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -352,6 +356,26 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     }
                 }
             }.start();
+        }
+    };
+
+    private View.OnClickListener splitBccClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+           long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
+            if (lastBlockHeight < BitherSetting.BTCFORKBLOCKNO) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,String.format(getString
+                        (R.string.please_firstly_sync_to_block_no),BitherSetting.BTCFORKBLOCKNO));
+            } else {
+                AddressManager addressManager = AddressManager.getInstance();
+                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
+                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
+                        == 0) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
+                } else {
+                    startActivity(new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class));
+                }
+            }
         }
     };
 

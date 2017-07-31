@@ -702,4 +702,19 @@
 
     <string name="setting_privacy_policy">隱私政策</string>
 
+    <!--Split BCC-->
+    <string name="setting_obtain_BCC">獲得 BCC </string>
+    <string name="obtain_BCC_select_address">選擇獲得 BCC 用的地址</string>
+    <string name="obtain_BCC_send_title">可獲得</string>
+    <string name="obtain_BCC_BCC_name">BCC</string>
+    <string name="obtain_BCC_receive_address">收幣地址</string>
+    <string name="obtain_BCC_to_address_hint">BCC 地址</string>
+    <string name="obtain_BCC_btn_obtain">獲得</string>
+    <string name="not_bitpie_bcc_address">不是比特派BCC地址</string>
+    <string name="you_do_not_have_obtainable_bcc">您沒有可獲得的BCC</string>
+    <string name="no_private_key">請先匯入私鑰</string>
+    <string name="you_already_obtained_bcc">您已經獲得過BCC</string>
+    <string name="get_success">獲得成功</string>
+    <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
+    <string name="no_sync_complete">請稍候，交易暫未同步完成！</string>
 </resources>
