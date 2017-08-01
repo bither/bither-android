@@ -710,7 +710,7 @@
     <string name="obtain_BCC_receive_address">收币地址</string>
     <string name="obtain_BCC_to_address_hint">比特派 BCC 地址</string>
     <string name="obtain_BCC_btn_obtain">获得</string>
-    <string name="not_bitpie_bcc_address">不是比特派BCC地址</string>
+    <string name="not_bitpie_bcc_address">仅支持发往比特派BCC地址</string>
     <string name="you_do_not_have_obtainable_bcc">您没有可获得的 BCC</string>
     <string name="no_private_key">请先导入私钥</string>
     <string name="you_already_obtained_bcc">您已经获得过 BCC</string>

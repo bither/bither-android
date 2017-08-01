@@ -746,7 +746,7 @@
     <string name="obtain_BCC_receive_address">Receive Address</string>
     <string name="obtain_BCC_to_address_hint">Bitpie BCC Address</string>
     <string name="obtain_BCC_btn_obtain">Obtain</string>
-    <string name="not_bitpie_bcc_address">Not a Bitpie BCC address</string>
+    <string name="not_bitpie_bcc_address">Only sent to Bitpie BCC address</string>
     <string name="you_do_not_have_obtainable_bcc">You don\'t have obtainable BCC</string>
     <string name="no_private_key">Please firstly import Private Key</string>
     <string name="you_already_obtained_bcc">You already obtained BCC</string>
