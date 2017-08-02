@@ -44,7 +44,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        address = AddressManager.getInstance().getWatchOnlyAddresses().get(addressPosition);
+        initAddress();
         super.onCreate(savedInstanceState);
         etPassword.setVisibility(View.GONE);
         findViewById(R.id.tv_password).setVisibility(View.GONE);
@@ -55,7 +55,14 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
 
     @Override
     protected void initAddress() {
-
+        addressPosition = getIntent().getExtras().getInt(BitherSetting.INTENT_REF
+                .ADDRESS_POSITION_PASS_VALUE_TAG);
+        if (addressPosition >= 0 && AddressManager.getInstance().getWatchOnlyAddresses()
+                != null && addressPosition < AddressManager.getInstance()
+                .getWatchOnlyAddresses().size()) {
+            address = AddressManager.getInstance().getWatchOnlyAddresses().get
+                    (addressPosition);
+        }
     }
 
     protected void initBalance() {
