@@ -148,9 +148,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             count++;
         }
         if (hdms != null && hdms.size() > 0) {
+            boolean isSplitBcc = activity instanceof SplitBccSelectAddressActivity;
+            if (!isSplitBcc)
             count++;
         }
         if (enterpriseHDMKeychain != null) {
+            boolean isSplitBcc = activity instanceof SplitBccSelectAddressActivity;
+            if (!isSplitBcc)
             count++;
         }
         return count;
