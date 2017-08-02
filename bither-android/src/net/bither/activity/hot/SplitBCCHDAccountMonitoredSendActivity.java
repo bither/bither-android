@@ -302,9 +302,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
 
     @Override
     public void onCancel() {
-        tx = null;
-        toAddress = null;
-        btcAmount = 0;
+
     }
 
     private String replaceSignHashOfString(String s) {
