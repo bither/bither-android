@@ -20,7 +20,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -49,11 +51,14 @@ import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.ScanActivity;
@@ -72,6 +77,9 @@ import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.UnitUtilWrapper;
 
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -91,6 +99,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private TextView tvVersion;
     private LinearLayout llQrForAll;
     private DialogProgress dp;
+    private TextView tvPrivacyPolicy;
 
     private SettingSelectorView.SettingSelector bitcoinUnitSelector = new SettingSelectorView
             .SettingSelector() {
@@ -227,6 +236,21 @@ public class OptionColdFragment extends Fragment implements Selectable {
         }
     };
 
+    private OnClickListener privacyPolicyClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bither/bither-android/wiki/PrivacyPolicy"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.find_browser_error);
+            }
+        }
+    };
+
     @Override
     public void onSelected() {
         configureCloneButton();
@@ -235,7 +259,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     private void configureCloneButton() {
         if ((AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
-                .size() > 0) || AddressManager.getInstance().hasHDMKeychain()) {
+                .size() > 0) || AddressManager.getInstance().hasHDMKeychain() || AddressManager.getInstance().hasHDAccountCold()) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
         } else {
@@ -316,6 +340,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
         } else {
             tvVersion.setVisibility(View.GONE);
         }
+        tvPrivacyPolicy = (TextView) view.findViewById(R.id.tv_privacy_policy);
+        tvPrivacyPolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         btnGetSign.setOnClickListener(toSignActivityClickListener);
         btnCloneTo.setOnClickListener(cloneToClick);
@@ -327,7 +353,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         tvBackupPath = (TextView) view.findViewById(R.id.tv_backup_path);
         flBackTime.setOnClickListener(backupTimeListener);
         showBackupTime();
-
+        tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
     }
 
     private void showBackupTime() {
@@ -469,7 +495,18 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
             HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
-            HDAccountCold hdAccountCold = PrivateKeyUtil.getHDAccountCold(content, password);
+            HDAccountCold hdAccountCold = null;
+            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(content);
+            MnemonicCode mnemonicCode = null;
+            if (mnemonicWordList != null) {
+                try {
+                    mnemonicCode = new MnemonicCodeAndroid();
+                    mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                    hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, content, password);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
             if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null) &&
                     hdAccountCold == null) {
@@ -492,6 +529,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 KeyUtil.setHDKeyChain(hdmKeychain);
             }
             password.wipe();
+            if (mnemonicCode != null && mnemonicWordList != null) {
+                AppSharedPreference.getInstance().setMnemonicWordList(mnemonicWordList);
+                MnemonicCode.setInstance(mnemonicCode);
+            }
 
             getActivity().runOnUiThread(new Runnable() {
                 @Override

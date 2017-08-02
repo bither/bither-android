@@ -33,6 +33,7 @@ import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
@@ -122,7 +123,7 @@ public class AddAddressColdHDAccountFragment extends Fragment implements AddHotA
 
                         final ArrayList<String> words = new ArrayList<String>();
                         try {
-                            hdAccount = new HDAccountCold(new SecureRandom(), password);
+                            hdAccount = new HDAccountCold(MnemonicCode.instance(), new SecureRandom(), password);
                             words.addAll(hdAccount.getSeedWords(password));
                         } catch (MnemonicException.MnemonicLengthException e) {
                             throw new RuntimeException(e);

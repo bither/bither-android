@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
     android:installLocation="internalOnly"
-    android:versionCode="161"
-    android:versionName="1.6.1">
+    android:versionCode="170"
+    android:versionName="1.7.0">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -349,7 +349,30 @@
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
-
+        <activity
+            android:name=".SignMessageAddressListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".activity.hot.SplitBccSelectAddressActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".activity.hot.SplitBCCSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".activity.hot.SplitBCCHDAccountSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+        android:name=".activity.hot.SplitBCCHDAccountMonitoredSendActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".activity.hot.SplitBccColdWalletSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"

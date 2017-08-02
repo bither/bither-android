@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Tx;
 import net.bither.preference.AppSharedPreference;
@@ -45,6 +46,12 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
 
     public DialogHdSendConfirm(Context context, String toAddress, Tx tx,
                                SendConfirmListener listener) {
+        this(context,toAddress,tx,true,listener);
+
+    }
+
+    public DialogHdSendConfirm(Context context, String toAddress, Tx tx, boolean isBtc,
+                               SendConfirmListener listener) {
         super(context);
         this.listener = listener;
         setOnDismissListener(this);
@@ -56,17 +63,22 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
         TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
         View llChange = findViewById(R.id.ll_change);
         TextView tvSymbolChange = (TextView) findViewById(R.id.tv_symbol_change);
-        String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
-        tvSymbol.setText(symbol);
-        tvFeeSymbol.setText(symbol);
-        tvSymbolChange.setText(symbol);
+        if (isBtc) {
+            String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+            tvSymbol.setText(symbol);
+            tvFeeSymbol.setText(symbol);
+            tvSymbolChange.setText(symbol);
+        } else {
+            tvSymbol.setText(BitherSetting.BCC);
+            tvFeeSymbol.setText(BitherSetting.BCC);
+            tvSymbolChange.setText(BitherSetting.BCC);
+        }
         findViewById(R.id.btn_cancel).setOnClickListener(this);
         findViewById(R.id.btn_ok).setOnClickListener(this);
         llChange.setVisibility(View.GONE);
         tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
         tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(toAddress)));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
-
     }
 
     @Override

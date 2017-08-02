@@ -36,10 +36,12 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.fragment.Refreshable;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.dialog.DialogHdmImportWordListReplace;
@@ -50,6 +52,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +85,8 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
         Bundle extra = getIntent().getExtras();
         if (extra != null && extra.containsKey(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE)) {
             importHDSeedType = (ImportHDSeed.ImportHDSeedType) extra.getSerializable(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE);
+        } else if (extra != null && extra.containsKey(BitherSetting.INTENT_REF.IMPORT_HDM_SEED_TYPE)) {
+            importHDSeedType = (ImportHDSeed.ImportHDSeedType) extra.getSerializable(BitherSetting.INTENT_REF.IMPORT_HDM_SEED_TYPE);
         }
         initView();
         etInput.requestFocus();
@@ -140,17 +145,23 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             if (Utils.isEmpty(word)) {
                 return;
             }
-            if (!mnemonic.getWordList().contains(word)) {
-                DropdownMessage.showDropdownMessage(HdmImportWordListActivity.this,
-                        R.string.hdm_import_word_list_wrong_word_warn);
+            try {
+                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
+                if (mnemonic == null) {
+                    DropdownMessage.showDropdownMessage(HdmImportWordListActivity.this,
+                            R.string.hdm_import_word_list_wrong_word_warn);
+                    return;
+                }
+                words.add(word);
+                etInput.setText("");
+                refresh();
+                gv.smoothScrollToPosition(words.size() - 1);
+                if (words.size() >= WordCount) {
+                    complete();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
                 return;
-            }
-            words.add(word);
-            etInput.setText("");
-            refresh();
-            gv.smoothScrollToPosition(words.size() - 1);
-            if (words.size() >= WordCount) {
-                complete();
             }
         }
     };
@@ -161,8 +172,9 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             @Override
             public void onPasswordEntered(SecureCharSequence password) {
                 if (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase) {
+                    isZhTw();
                     ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password);
+                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password, mnemonic);
                     importHDSeedAndroid.importHDSeed();
                 } else {
                     ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
@@ -172,6 +184,32 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
             }
         }).show();
 
+    }
+
+    private void isZhTw() {
+        try {
+            int zhCnCount = 0;
+            for (String word: words) {
+                mnemonic = MnemonicCode.instanceForWord(new MnemonicCodeAndroid(), word);
+                ArrayList<String> zhCnWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn));
+                ArrayList<String> zhTwWorsList = mnemonic.getWordListForInputStream(BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw));
+                if (!zhCnWorsList.contains(word) && zhTwWorsList.contains(word)) {
+                    mnemonic.setWordList(zhTwWorsList, MnemonicWordList.ZhTw);
+                    return;
+                }
+                if (zhCnWorsList.contains(word)) {
+                    zhCnCount += 1;
+                }
+                if (zhCnCount == words.size()) {
+                    mnemonic.setWordList(zhCnWorsList, MnemonicWordList.ZhCN);
+                    return;
+                }
+            }
+            return;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
     }
 
     @Override

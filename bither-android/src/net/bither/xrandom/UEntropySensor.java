@@ -89,6 +89,9 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (paused) {
+            return;
+        }
         if (event != null && event.values != null) {
             byte[] data = new byte[event.values.length * Ints.BYTES];
             byte[] everyData;
@@ -120,6 +123,7 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
     @Override
     public void onResume() {
         if (paused) {
+            paused = false;
             registerAllSensors();
         }
     }
@@ -127,6 +131,7 @@ public class UEntropySensor implements SensorEventListener, IUEntropySource {
     @Override
     public void onPause() {
         if (!paused) {
+            paused = true;
             sensorManager.unregisterListener(this);
         }
     }

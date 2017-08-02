@@ -104,6 +104,26 @@
                             </LinearLayout>
 
                             <LinearLayout
+                                android:id="@+id/ll_split_bcc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/ui_touchable_bg"
+                                    android:duplicateParentState="true"
+                                    android:gravity="left"
+                                    android:padding="10dp"
+                                    android:text="@string/setting_obtain_BCC"
+                                    android:textColor="@color/text_field_text_color"
+                                    android:textSize="18sp" />
+
+                                <include layout="@layout/layout_vertical_seperator" />
+                            </LinearLayout>
+
+                            <LinearLayout
                                 android:id="@+id/ll_hdm_server_auth_reset"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

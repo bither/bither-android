@@ -65,6 +65,8 @@ public class AudioVisualizerView extends View {
 
     private PathDrawer drawer;
 
+    private boolean shouldDraw = true;
+
 
     public AudioVisualizerView(Context context) {
         super(context);
@@ -83,23 +85,33 @@ public class AudioVisualizerView extends View {
         if (!isVisible()) {
             return;
         }
-        if (yCalculator == null) {
-            yCalculator = new YCalculator();
-        } else {
-            yCalculator.reset();
+        if (shouldDraw) {
+            if (yCalculator == null) {
+                yCalculator = new YCalculator();
+            } else {
+                yCalculator.reset();
+            }
+
+            drawer.draw();
+
+            canvas.drawPath(drawer.main(), paint);
+
+            for (Path p : drawer.subs()) {
+                canvas.drawPath(p, subLinePaint);
+            }
+            invalidate();
         }
-
-        drawer.draw();
-
-        canvas.drawPath(drawer.main(), paint);
-
-        for (Path p : drawer.subs()) {
-            canvas.drawPath(p, subLinePaint);
-        }
-
-        invalidate();
     }
 
+
+    public void onPause() {
+        shouldDraw = false;
+        postInvalidate();
+    }
+
+    public void onResume() {
+        shouldDraw = true;
+    }
 
     private class PathDrawer {
         private int subLineCount;

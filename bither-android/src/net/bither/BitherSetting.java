@@ -44,7 +44,7 @@ public class BitherSetting {
     public static final int MEMORY_CLASS_LOWEND = 48;
 
     public static final Charset UTF_8 = Charset.forName("UTF-8");
-
+    public static final long BTCFORKBLOCKNO = 478559;
 
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;
@@ -52,6 +52,7 @@ public class BitherSetting {
 
     public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
     public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;
+    public static final String BCC = "BCC";
 
     public class SwipeRightGesture {
         public static final int SCROLL_DELAY_HORIZONTAL = 75;
@@ -68,6 +69,7 @@ public class BitherSetting {
         public static final int IMPORT_BIP38PRIVATE_KEY_REQUEST_CODE = 1357;
         public static final int IMPORT_HDM_COLD_SEED_REQUEST_CODE = 1358;
         public static final int IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE = 1359;
+        public static final int IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE = 1340;
         public static final int WIRELESS_SETTINGS_CODE = 537;
         public static final int SCAN_ALL_IN_BITHER_COLD_REUEST_CODE = 784;
         public static final String NOTIFICATION_ADDRESS = "tab_intent";
@@ -88,6 +90,7 @@ public class BitherSetting {
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
         public static final String INTENT_FROM_NOTIF = "from_notif";
         public static final String IMPORT_HD_SEED_TYPE = "import_hd_seed_type";
+        public static final String IMPORT_HDM_SEED_TYPE = "import_hdm_seed_type";
     }
 
 

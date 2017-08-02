@@ -171,6 +171,7 @@
     <string name="setting_name_transaction_fee_normal">Normal</string>
     <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
+    <string name="setting_name_transaction_fee_10x">10x</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
     <string name="setting_name_transaction_fee_high_note">high priority</string>
@@ -220,6 +221,7 @@
     <string name="import_private_key_qr_code_password">Enter original password</string>
     <string name="import_private_key_qr_code_success">Import success.</string>
     <string name="import_private_key_qr_code_failed">Import failed.</string>
+    <string name="import_hd_account_failed_duplicated">Import failed. This account is already in Bither.</string>
     <string name="import_private_key_qr_code_failed_monitored">Can\'t import Bither Cold private key.</string>
     <string name="import_private_key_qr_code_failed_duplicate">This private key already exists.</string>
     <string name="import_private_key_qr_code_importing">Importing…</string>
@@ -493,6 +495,9 @@
     <string name="sign_message_output_copied">Content Copied</string>
     <string name="sign_message_input_hint">Message to sign</string>
     <string name="sign_message_select_address">Select address to sign message</string>
+    <string name="sing_message_select_hd_receive">HD Account Receiving Address</string>
+    <string name="sing_message_select_hd_change">HD Account Changing Address</string>
+    <string name="sign_message_select_address_index">Index:</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">Verify Message Signature</string>
@@ -731,4 +736,21 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="setting_privacy_policy">Privacy Policy</string>
+
+    <!--Split BCC-->
+    <string name="setting_obtain_BCC">Obtain BCC</string>
+    <string name="obtain_BCC_select_address">Select address to obtain BCC</string>
+    <string name="obtain_BCC_send_title">Can Obtain</string>
+    <string name="obtain_BCC_BCC_name">BCC</string>
+    <string name="obtain_BCC_receive_address">Receive Address</string>
+    <string name="obtain_BCC_to_address_hint">Bitpie BCC Address</string>
+    <string name="obtain_BCC_btn_obtain">Obtain</string>
+    <string name="not_bitpie_bcc_address">Only sent to Bitpie BCC address</string>
+    <string name="you_do_not_have_obtainable_bcc">You don\'t have obtainable BCC</string>
+    <string name="no_private_key">Please firstly import Private Key</string>
+    <string name="you_already_obtained_bcc">You already obtained BCC</string>
+    <string name="get_success">get success</string>
+    <string name="please_firstly_sync_to_block_no">Please firstly sync to block no %d</string>
+    <string name="no_sync_complete">Please wait. The transaction has been not synced well！</string>
 </resources>

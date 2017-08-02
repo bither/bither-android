@@ -25,6 +25,7 @@ import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.BitherjSettings.MarketType;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.bitherj.utils.Utils;
@@ -42,6 +43,7 @@ public class AppSharedPreference {
 
 
     private static final String APP_BITHER = "app_bither";
+    private static final String PRE_MOBTAINBCCPREFERENCES = "pre_mobtainbccpreferences";
     private static final String PREFS_KEY_LAST_VERSION = "last_version";
     private static final String DEFAULT_MARKET = "default_market";
     private static final String DEFAULT_EXCHANGE_RATE = "default_exchange_rate";
@@ -78,9 +80,15 @@ public class AppSharedPreference {
 
     private static final String TOTAL_BALANCE_HIDE = "total_balance_hide";
 
+    private static final String MNEMONIC_WORD_LIST = "mnemonic_word_list";
+
+    private static final String UPDATE_CODE = "update_code";
+
+    private static final String IS_OBTAIN_BCC = "is_obtain_bcc";
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
     private SharedPreferences mPreferences;
+    private SharedPreferences mObtainBccPreferences;
 
     public static AppSharedPreference getInstance() {
         return mInstance;
@@ -89,6 +97,9 @@ public class AppSharedPreference {
     private AppSharedPreference() {
         this.mPreferences = BitherApplication.mContext.getSharedPreferences(APP_BITHER,
                 Context.MODE_MULTI_PROCESS);
+
+        this.mObtainBccPreferences = BitherApplication.mContext.getSharedPreferences(PRE_MOBTAINBCCPREFERENCES,
+                Context.MODE_PRIVATE);
     }
 
     public BitherjSettings.AppMode getAppMode() {
@@ -117,11 +128,11 @@ public class AppSharedPreference {
     }
 
     public BitherjSettings.TransactionFeeMode getTransactionFeeMode() {
-        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, 0);
+        int ordinal = this.mPreferences.getInt(TRANSACTION_FEE_MODE, -1);
         if (ordinal < BitherjSettings.TransactionFeeMode.values().length && ordinal >= 0) {
             return BitherjSettings.TransactionFeeMode.values()[ordinal];
         }
-        return BitherjSettings.TransactionFeeMode.Normal;
+        return BitherjSettings.TransactionFeeMode.TenX;
     }
 
     public void setTransactionFeeMode(BitherjSettings.TransactionFeeMode mode) {
@@ -437,4 +448,31 @@ public class AppSharedPreference {
     public TotalBalanceHide getTotalBalanceHide() {
         return TotalBalanceHide.totalBalanceHide(mPreferences.getInt(TOTAL_BALANCE_HIDE, 0));
     }
+
+    public MnemonicWordList getMnemonicWordList() {
+        String value = mPreferences.getString(MNEMONIC_WORD_LIST, "");
+        return MnemonicWordList.getMnemonicWordList(value);
+    }
+
+    public void setMnemonicWordList(MnemonicWordList wordList) {
+        mPreferences.edit().putString(MNEMONIC_WORD_LIST, wordList.getMnemonicWordListValue()).commit();
+    }
+
+    public int getUpdateCode() {
+        return mPreferences.getInt(UPDATE_CODE, -1);
+    }
+
+    public void setUpdateCode(int code) {
+        mPreferences.edit().putInt(UPDATE_CODE, code).commit();
+    }
+
+    public boolean isObtainBcc(String btcAddress) {
+        return mObtainBccPreferences.getBoolean(btcAddress, false);
+
+    }
+
+    public void setIsObtainBcc(String btcAddress, boolean isObtainBcc) {
+        mObtainBccPreferences.edit().putBoolean(btcAddress, isObtainBcc).apply();
+    }
+
 }

@@ -155,10 +155,8 @@ public class ImageFileUtil {
         File files[] = file.listFiles();
         int length = files.length;
         if (length > 1) {
-            for (int i = 0; i < length - 1; i++) {
-                File imageFile = files[i];
-                imageFile.delete();
-            }
+            File imageFile = files[length-1];
+            imageFile.delete();
         }
     }
 

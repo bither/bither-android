@@ -26,6 +26,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
@@ -134,7 +135,7 @@ public class HDAccountColdUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                HDAccountCold hdAccount = new HDAccountCold(xRandom, password);
+                HDAccountCold hdAccount = new HDAccountCold(MnemonicCode.instance(), xRandom, password);
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);

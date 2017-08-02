@@ -27,6 +27,7 @@ import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
@@ -36,7 +37,6 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.BackupUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
-
 import java.util.List;
 
 public class ImportHDSeedAndroid extends ImportHDSeed {
@@ -57,8 +57,8 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
 
 
     public ImportHDSeedAndroid(Activity activity, ImportHDSeedType importHDSeedType,
-                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password) {
-        super(importHDSeedType, content, worlds, password);
+                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password, MnemonicCode mnemonicCode) {
+        super(importHDSeedType, content, worlds, password, mnemonicCode);
         this.activity = activity;
         this.dp = dp;
     }
@@ -133,6 +133,8 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     }
                 }
                 if (success) {
+                    AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
+                    MnemonicCode.setInstance(mnemonicCode);
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
@@ -141,14 +143,18 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                                 dp.dismiss();
                             }
                             if (activity instanceof HotAdvanceActivity) {
-                                ((HotAdvanceActivity) activity).showImportSuccess();
+                                HotAdvanceActivity hotAdvanceActivity = (HotAdvanceActivity) activity;
+                                hotAdvanceActivity.showImportSuccess();
                             }
                             if (activity instanceof ColdAdvanceActivity) {
-                                ((ColdAdvanceActivity) activity).showImportSuccess();
+                                ColdAdvanceActivity coldAdvanceActivity = (ColdAdvanceActivity) activity;
+                                coldAdvanceActivity.showImportSuccess();
                             }
+
                             if (activity instanceof HdmImportWordListActivity) {
                                 HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
                                 hdmImportWordListActivity.showImportSuccess();
+                                hdmImportWordListActivity.setResult(Activity.RESULT_OK);
                                 hdmImportWordListActivity.finish();
                             }
                         }
@@ -182,7 +188,6 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     dp.dismiss();
                 }
                 switch (errorCode) {
-
                     case PASSWORD_IS_DIFFEREND_LOCAL:
                         DropdownMessage.showDropdownMessage(activity,
                                 R.string.import_private_key_qr_code_failed_different_password);
@@ -194,6 +199,11 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     case NOT_HD_ACCOUNT_SEED:
                         DropdownMessage.showDropdownMessage(activity,
                                 R.string.import_hd_account_seed_format_error);
+                        break;
+                    case DUPLICATED_HD_ACCOUNT_SEED:
+                        DropdownMessage.showDropdownMessage(activity,
+                                R.string.import_hd_account_failed_duplicated);
+                        break;
                     default:
                         DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         break;

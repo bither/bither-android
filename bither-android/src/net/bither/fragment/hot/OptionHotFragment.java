@@ -112,6 +112,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private TextView tvVersion;
     private ImageView ivLogo;
     private View llSwitchToCold;
+    private TextView tvPrivacyPolicy;
 
     private MonitorBitherColdUtil monitorUtil;
 
@@ -297,6 +298,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public String getOptionName(int index) {
             BitherjSettings.TransactionFeeMode transactionFeeMode = getModeByIndex(index);
             switch (transactionFeeMode) {
+                case TenX:
+                    return getString(R.string.setting_name_transaction_fee_10x);
                 case Higher:
                     return getString(R.string.setting_name_transaction_fee_higher);
                 case High:
@@ -317,23 +320,27 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     .getTransactionFeeMode();
             switch (mode) {
                 case High:
-                    return 1;
+                    return 2;
                 case Higher:
+                    return 1;
+                case TenX:
                     return 0;
                 default:
-                    return 2;
+                    return 3;
             }
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
             if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
                 switch (index) {
-                    case 2:
+                    case 3:
                         return BitherjSettings.TransactionFeeMode.Normal;
-                    case 1:
+                    case 2:
                         return BitherjSettings.TransactionFeeMode.High;
-                    case 0:
+                    case 1:
                         return BitherjSettings.TransactionFeeMode.Higher;
+                    case 0:
+                        return BitherjSettings.TransactionFeeMode.TenX;
                 }
             }
             return BitherjSettings.TransactionFeeMode.Normal;
@@ -342,6 +349,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public String getOptionNote(int index) {
             switch (getModeByIndex(index)) {
+                case TenX:
+                    return getFeeStr(BitherjSettings.TransactionFeeMode.TenX);
                 case Higher:
                     return getFeeStr(BitherjSettings.TransactionFeeMode.Higher);
                 case High:
@@ -442,6 +451,21 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://bither.net/"))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.find_browser_error);
+            }
+        }
+    };
+
+    private OnClickListener privacyPolicyClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/bither/bither-android/wiki/PrivacyPolicy"))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             try {
                 startActivity(intent);
@@ -583,6 +607,10 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             if (dp.isShowing()) {
                                                 dp.dismiss();
                                             }
+                                            if (isRepeatHD(firstAddress)) {
+                                                DropdownMessage
+                                                        .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
+                                            }
                                             new DialogHDMonitorFirstAddressValidation(getActivity
                                                     (), firstAddress, new Runnable() {
 
@@ -680,6 +708,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
     }
 
+    private boolean isRepeatHD(String firstAddress) {
+        HDAccount hdAccountHot = AddressManager.getInstance().getHDAccountHot();
+        if (hdAccountHot == null) {
+            return false;
+        }
+        HDAccount.HDAccountAddress addressHot = hdAccountHot.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH, 0);
+        if (firstAddress.equals(addressHot.getAddress())) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -701,6 +741,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
         tvVersion = (TextView) view.findViewById(R.id.tv_version);
         tvWebsite = (TextView) view.findViewById(R.id.tv_website);
         tvWebsite.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        tvPrivacyPolicy = (TextView) view.findViewById(R.id.tv_privacy_policy);
+        tvPrivacyPolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         ivLogo = (ImageView) view.findViewById(R.id.iv_logo);
         btnSwitchToCold = (Button) view.findViewById(R.id.btn_switch_to_cold);
         llSwitchToCold = view.findViewById(R.id.ll_switch_to_cold);
@@ -735,6 +777,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         tvWebsite.setOnClickListener(websiteClick);
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
+        tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
     }
 
     private void setAvatar(String photoName) {

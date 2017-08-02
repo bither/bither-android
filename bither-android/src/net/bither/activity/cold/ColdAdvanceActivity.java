@@ -33,15 +33,15 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
-import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.EncryptedData;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.bip38.Bip38;
+import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 import net.bither.bitherj.factory.ImportHDSeed;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
@@ -50,6 +50,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportHDSeedAndroid;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.fragment.Refreshable;
+import net.bither.mnemonic.MnemonicCodeAndroid;
 import net.bither.pin.PinCodeChangeActivity;
 import net.bither.pin.PinCodeDisableActivity;
 import net.bither.pin.PinCodeEnableActivity;
@@ -69,7 +70,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.DialogSignMessageSelectAddress;
+import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
@@ -78,6 +79,7 @@ import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
@@ -231,7 +233,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectAddress(ColdAdvanceActivity.this).show();
+                    new DialogSignMessageSelectType(ColdAdvanceActivity.this,false).show();
                     break;
                 case 1:
                 default:
@@ -610,8 +612,9 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
 
     private void importHDMColdFromPhrase() {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
-        startActivity(intent);
-
+        intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HDM_SEED_TYPE, ImportHDSeed
+                .ImportHDSeedType.HDMColdPhrase);
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE);
     }
 
     private void importHDFromQRCode() {
@@ -627,8 +630,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         Intent intent = new Intent(this, HdmImportWordListActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.IMPORT_HD_SEED_TYPE, ImportHDSeed
                 .ImportHDSeedType.HDSeedPhrase);
-        startActivity(intent);
-
+        startActivityForResult(intent, BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE);
     }
 
     private void importPrivateKeyFromQRCode() {
@@ -741,41 +743,52 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 break;
             case BitherSetting.INTENT_REF.IMPORT_HD_ACCOUNT_SEED_REQUEST_CODE:
                 final String hdAccountSeed = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                if (hdAccountSeed.indexOf(QRCodeUtil.HD_QR_CODE_FLAG) == 0) {
-                    dialogPassword = new DialogPassword(this,
-                            new ImportHDAccountPasswordListener(hdAccountSeed));
-                    dialogPassword.setCheckPre(false);
-                    dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
-                        @Override
-                        public boolean checkPassword(SecureCharSequence password) {
-                            String keyString = hdAccountSeed.substring(1);
-                            String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
-                            String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
-                            EncryptedData encryptedData = new EncryptedData(encreyptString);
-                            byte[] result = null;
-                            try {
-                                result = encryptedData.decrypt(password);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                final MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(hdAccountSeed);
+                if (mnemonicWordList != null) {
+                    try {
+                        MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+                        mnemonicCode.setMnemonicWordList(mnemonicWordList);
+                        dialogPassword = new DialogPassword(this,
+                                new ImportHDAccountPasswordListener(hdAccountSeed, mnemonicCode));
+                        dialogPassword.setCheckPre(false);
+                        dialogPassword.setCheckPasswordListener(new ICheckPasswordListener() {
+                            @Override
+                            public boolean checkPassword(SecureCharSequence password) {
+                                String keyString = hdAccountSeed.substring(mnemonicWordList.getHdQrCodeFlag().length());
+                                String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
+                                String encreyptString = Utils.joinString(new String[]{passwordSeeds[0], passwordSeeds[1], passwordSeeds[2]}, QRCodeUtil.QR_CODE_SPLIT);
+                                EncryptedData encryptedData = new EncryptedData(encreyptString);
+                                byte[] result = null;
+                                try {
+                                    result = encryptedData.decrypt(password);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return result != null;
                             }
-                            return result != null;
-                        }
-                    });
-                    dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
-                    dialogPassword.show();
+                        });
+                        dialogPassword.setTitle(R.string.import_private_key_qr_code_password);
+                        dialogPassword.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.import_hd_account_seed_format_error);
+                    }
                 } else {
-                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this
-                            , R.string.import_hd_account_seed_format_error);
+                    DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this, R.string.import_hd_account_seed_format_error);
                 }
                 break;
+            case BitherSetting.INTENT_REF.IMPORT_ACCOUNT_SEED_FROM_PHRASE_REQUEST_CODE:
+                ssvImportPrivateKey.loadData();
         }
     }
 
     private class ImportHDAccountPasswordListener implements IDialogPasswordListener {
         private String content;
+        private MnemonicCode mnemonicCode;
 
-        public ImportHDAccountPasswordListener(String content) {
+        public ImportHDAccountPasswordListener(String content, MnemonicCode mnemonicCode) {
             this.content = content;
+            this.mnemonicCode = mnemonicCode;
         }
 
         @Override
@@ -784,7 +797,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
                 dp.setMessage(R.string.import_private_key_qr_code_importing);
                 LogUtil.d("importhdseed", "onPasswordEntered");
                 ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password);
+                        (ColdAdvanceActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedQRCode, dp, content, null, password, mnemonicCode);
                 importHDSeedAndroid.importHDSeed();
             }
         }

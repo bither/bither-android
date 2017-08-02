@@ -162,6 +162,7 @@
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
+    <string name="setting_name_transaction_fee_10x">10倍</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
@@ -212,6 +213,7 @@
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
     <string name="import_private_key_qr_code_success">導入成功</string>
     <string name="import_private_key_qr_code_failed">導入失敗</string>
+    <string name="import_hd_account_failed_duplicated">匯入失敗. 這個賬戶已經存在. </string>
     <string name="import_private_key_qr_code_failed_monitored">不能導入冷錢包私鑰</string>
     <string name="import_private_key_qr_code_failed_duplicate">私鑰已存在</string>
     <string name="import_private_key_qr_code_importing">正在導入…</string>
@@ -477,6 +479,9 @@
     <string name="sign_message_output_copied">內容已復制</string>
     <string name="sign_message_input_hint">待簽名的消息</string>
     <string name="sign_message_select_address">選擇簽名消息用的地址</string>
+    <string name="sing_message_select_hd_receive">HD賬戶 收款地址</string>
+    <string name="sing_message_select_hd_change">HD賬戶 找零地址</string>
+    <string name="sign_message_select_address_index">序號:</string>
 
     <!-- Verify Message Signature -->
     <string name="verify_message_signature_activity_name">驗證消息簽名</string>
@@ -694,4 +699,22 @@
     <string name="ad_go">前往</string>
     <string name="ad_image_name">img_zh_TW</string>
     <string name="ad_skip">跳過</string>
+
+    <string name="setting_privacy_policy">隱私政策</string>
+
+    <!--Split BCC-->
+    <string name="setting_obtain_BCC">獲得 BCC </string>
+    <string name="obtain_BCC_select_address">選擇獲得 BCC 用的地址</string>
+    <string name="obtain_BCC_send_title">可獲得</string>
+    <string name="obtain_BCC_BCC_name">BCC</string>
+    <string name="obtain_BCC_receive_address">收幣地址</string>
+    <string name="obtain_BCC_to_address_hint">比特派 BCC 地址</string>
+    <string name="obtain_BCC_btn_obtain">獲得</string>
+    <string name="not_bitpie_bcc_address">僅支持發往比特派BCC地址</string>
+    <string name="you_do_not_have_obtainable_bcc">您沒有可獲得的 BCC</string>
+    <string name="no_private_key">請先匯入私鑰</string>
+    <string name="you_already_obtained_bcc">您已經獲得過 BCC</string>
+    <string name="get_success">獲得成功</string>
+    <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
+    <string name="no_sync_complete">請稍候，交易暫未同步完成！</string>
 </resources>

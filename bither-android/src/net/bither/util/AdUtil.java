@@ -18,6 +18,8 @@ public class AdUtil {
     private final String imgZhCN = "img_zh_CN";
     private final String imgZhTW = "img_zh_TW";
     private static String timestamp = "timestamp";
+    private int downloadImageNum;
+    private JSONObject jsonObject;
 
     public void getAd() {
         BaseRunnable baseRunnable = new BaseRunnable() {
@@ -27,11 +29,10 @@ public class AdUtil {
                 try {
                     GetAdApi getAdApi = new GetAdApi();
                     getAdApi.handleHttpGet();
-                    JSONObject jsonObject = new JSONObject(getAdApi
+                    jsonObject = new JSONObject(getAdApi
                             .getResult());
                     if (isDownloadImage(jsonObject)) {
-                        File file = FileUtil.getAdFile();
-                        FileUtil.serializeObject(file, jsonObject.toString());
+                        downloadImageNum = 0;
                         String imgEnPath = jsonObject.getString(imgEn);
                         String imgZhCNPath = jsonObject.getString(imgZhCN);
                         String imgZhTWPath = jsonObject.getString(imgZhTW);
@@ -84,6 +85,15 @@ public class AdUtil {
             DownloadFile downloadFile = new DownloadFile();
             File file = ImageFileUtil.getAdImageFile(fileName+getTime()+".png");
             downloadFile.downloadFile(filePath, file);
+            downloadImageNum += 1;
+            if (downloadImageNum == 3) {
+                try {
+                    File adfile = FileUtil.getAdFile();
+                    FileUtil.serializeObject(adfile, jsonObject.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -18,23 +18,56 @@
 
 package net.bither.mnemonic;
 
+
 import net.bither.BitherApplication;
 import net.bither.R;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
+import net.bither.bitherj.crypto.mnemonic.MnemonicWordList;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by songchenwen on 14/12/31.
  */
 public class MnemonicCodeAndroid extends MnemonicCode {
+
     public MnemonicCodeAndroid() throws IOException {
         super();
     }
 
+    static public void setMnemonicCode(MnemonicWordList mnemonicWordList) throws IOException {
+        MnemonicCode mnemonicCode = new MnemonicCodeAndroid();
+        mnemonicCode.setMnemonicWordList(mnemonicWordList);
+        MnemonicCode.setInstance(mnemonicCode);
+    }
+
     @Override
-    protected InputStream openWordList() throws IOException {
+    protected HashMap<MnemonicWordList, InputStream> openWordList() throws IOException, IllegalArgumentException {
+        return getAllMnemonicWordListRawResources();
+    }
+
+    private HashMap<MnemonicWordList, InputStream> getAllMnemonicWordListRawResources() {
+        ArrayList<MnemonicWordList> mnemonicWordLists = MnemonicWordList.getAllMnemonicWordLists();
+        HashMap<MnemonicWordList, InputStream> inputStreamMap = new HashMap<>();
+        for (MnemonicWordList mnemonicWordList: mnemonicWordLists) {
+            inputStreamMap.put(mnemonicWordList, getMnemonicWordListRawResource(mnemonicWordList));
+        }
+        return inputStreamMap;
+    }
+
+    private InputStream getMnemonicWordListRawResource(MnemonicWordList wordList) {
+        switch (wordList) {
+            case English:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
+            case ZhCN:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_cn);
+            case ZhTw:
+                return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_zh_tw);
+        }
         return BitherApplication.mContext.getResources().openRawResource(R.raw.mnemonic_wordlist_english);
     }
+
 }
