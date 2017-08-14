@@ -41,6 +41,9 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     private String toAddress;
     public Tx tx;
     private boolean needConfirm = true;
+    private int kSignTypeLength = 2;
+    private int kCompressPubKeyLength = 68;
+    private int kUncompressedPubKeyLength = 132;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,11 +340,16 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                 public void run() {
                     boolean success;
                     String[] array = QRCodeUtil.splitString(qr);
-                    ArrayList<byte[]> sigs = new ArrayList<byte[]>();
+                    ArrayList<byte[]> compressSigs = new ArrayList<byte[]>();
+                    ArrayList<byte[]> uncompressedSigs = new ArrayList<byte[]>();
                     for (String s : array) {
-                        sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                        compressSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kCompressPubKeyLength)));
+                        uncompressedSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kUncompressedPubKeyLength)));
                     }
-                    tx.signWithSignatures(sigs);
+                    tx.signWithSignatures(compressSigs);
+                    if (!tx.verifySignatures()) {
+                        tx.signWithSignatures(uncompressedSigs);
+                    }
                     if (tx.verifySignatures()) {
                         runOnUiThread(new Runnable() {
                             @Override
@@ -368,11 +376,15 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         }
     }
 
-    private String replaceSignHashOfString(String s) {
-        String endString = s.substring(s.length()-68,s.length());
-        String appendString = "41"; // 1|0x40|0   Hex
-        String startString = s.substring(0,s.length()-70);
-        return startString+appendString+endString;
+    private String replaceSignHashOfString(String s, int pubKeyLength) {
+        if (s.length() > pubKeyLength + kSignTypeLength) {
+            String endString = s.substring(s.length() - pubKeyLength, s.length());
+            String appendString = "41"; // 1|0x40|0   Hex
+            String startString = s.substring(0, s.length()- pubKeyLength - kSignTypeLength);
+            return startString + appendString + endString;
+        } else {
+            return s;
+        }
     }
 
     void saveIsObtainBcc() {
