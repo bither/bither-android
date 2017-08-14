@@ -717,4 +717,10 @@
     <string name="get_success">获得成功</string>
     <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
     <string name="no_sync_complete">请稍候，交易暂未同步完成！</string>
+
+    <string name="private_key_import">导入</string>
+    <string name="private_key_import_title">请选择导入私钥对应的地址</string>
+    <string name="private_key_compressed_address">压缩私钥地址</string>
+    <string name="private_key_uncompressed_address">未压缩私钥地址</string>
+
 </resources>

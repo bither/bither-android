@@ -27,6 +27,7 @@ import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.dialog.DialogImportPrivateKeyAddressValidation;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
@@ -93,10 +94,37 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
 
 
     public void importPrivateKey() {
+        if (importPrivateKeyType != ImportPrivateKeyType.Text) {
+            Address address = initPrivateKey();
+            importPrivateKey(address);
+            return;
+        }
+        final Address compressAddress = initPrivateKey(true);
+        if (compressAddress == null) {
+            return;
+        }
+        final Address uncompressedAddress = initPrivateKey(false);
+        if (uncompressedAddress == null) {
+            return;
+        }
+        DialogImportPrivateKeyAddressValidation dialogImportPrivateKeyAddressValidation = new DialogImportPrivateKeyAddressValidation(activity, compressAddress.getAddress(), uncompressedAddress.getAddress(), new Runnable() {
+            @Override
+            public void run() {
+                importPrivateKey(compressAddress);
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                importPrivateKey(uncompressedAddress);
+            }
+        });
+        dialogImportPrivateKeyAddressValidation.show();
+    }
+
+    private void importPrivateKey(final Address address) {
         new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
-                Address address = initPrivateKey();
                 if (address != null) {
                     List<Address> addressList = new ArrayList<Address>();
                     addressList.add(address);
@@ -120,6 +148,5 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
             }
         }.start();
     }
-
 
 }

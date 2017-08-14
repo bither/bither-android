@@ -753,4 +753,10 @@
     <string name="get_success">get success</string>
     <string name="please_firstly_sync_to_block_no">Please firstly sync to block no %d</string>
     <string name="no_sync_complete">Please wait. The transaction has been not synced well！</string>
+
+    <string name="private_key_import">Import</string>
+    <string name="private_key_import_title">Please select the address corresponding to the import private key</string>
+    <string name="private_key_compressed_address">Compress private key address</string>
+    <string name="private_key_uncompressed_address">Uncompressed private key address</string>
+
 </resources>
