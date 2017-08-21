@@ -722,5 +722,6 @@
     <string name="private_key_import_title">请选择导入私钥对应的地址</string>
     <string name="private_key_compressed_address">压缩私钥地址</string>
     <string name="private_key_uncompressed_address">未压缩私钥地址</string>
+    <string name="private_key_recommend">(推荐)</string>
 
 </resources>

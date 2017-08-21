@@ -18,22 +18,40 @@ public class DialogImportPrivateKeyAddressValidation extends CenterDialog implem
     private Runnable importCompressPrivateKeyRunnable;
     private Runnable importUncompressedPrivateKeyRunnable;
     private int clickedId;
-    private TextView tvCompressAddress;
-    private TextView tvUncompressedAddress;
+    private TextView tvRecommendAddressTitle;
+    private TextView tvNotRecommendAddressTitle;
+    private TextView tvRecommendAddress;
+    private TextView tvNotRecommendAddress;
+    private boolean isCompressedKeyRecommend;
 
-    public DialogImportPrivateKeyAddressValidation(Context context, String compressAddress, String uncompressedAddress, Runnable
+    public DialogImportPrivateKeyAddressValidation(Context context, String compressAddress, String uncompressedAddress, boolean isCompressedKeyRecommend, Runnable
             importRunnable, Runnable importUncompressedPrivateKeyRunnable) {
         super(context);
+        this.isCompressedKeyRecommend = isCompressedKeyRecommend;
         this.importCompressPrivateKeyRunnable = importRunnable;
         this.importUncompressedPrivateKeyRunnable = importUncompressedPrivateKeyRunnable;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_import_private_key_address_validation);
-        tvCompressAddress = (TextView) findViewById(R.id.tv_compress_address);
-        tvUncompressedAddress = (TextView) findViewById(R.id.tv_uncompressed_address);
-        tvCompressAddress.setText(WalletUtils.formatHash(compressAddress, 4, 16));
-        tvUncompressedAddress.setText(WalletUtils.formatHash(uncompressedAddress, 4, 16));
-        findViewById(R.id.btn_import_compress).setOnClickListener(this);
-        findViewById(R.id.btn_import_uncompressed).setOnClickListener(this);
+        tvRecommendAddressTitle = (TextView) findViewById(R.id.tv_private_key_recommend_address);
+        tvNotRecommendAddressTitle = (TextView) findViewById(R.id.tv_private_key_not_recommend_address);
+        tvRecommendAddress = (TextView) findViewById(R.id.tv_recommend_address);
+        tvNotRecommendAddress = (TextView) findViewById(R.id.tv_not_recommend_address);
+        if (isCompressedKeyRecommend) {
+            String recommendAddressTitle = context.getString(R.string.private_key_compressed_address) + context.getString(R.string.private_key_recommend);
+            tvRecommendAddressTitle.setText(recommendAddressTitle);
+            tvNotRecommendAddressTitle.setText(R.string.private_key_uncompressed_address);
+            tvRecommendAddress.setText(WalletUtils.formatHash(compressAddress, 4, 16));
+            tvNotRecommendAddress.setText(WalletUtils.formatHash(uncompressedAddress, 4, 16));
+        } else {
+            String recommendAddressTitle = context.getString(R.string.private_key_uncompressed_address) + context.getString(R.string.private_key_recommend);
+            tvRecommendAddressTitle.setText(recommendAddressTitle);
+            tvNotRecommendAddressTitle.setText(R.string.private_key_compressed_address);
+            tvRecommendAddress.setText(WalletUtils.formatHash(uncompressedAddress, 4, 16));
+            tvNotRecommendAddress.setText(WalletUtils.formatHash(compressAddress, 4, 16));
+        }
+        findViewById(R.id.btn_import_recommend).setOnClickListener(this);
+        findViewById(R.id.btn_import_not_recommend).setOnClickListener(this);
+
     }
 
     @Override
@@ -50,10 +68,26 @@ public class DialogImportPrivateKeyAddressValidation extends CenterDialog implem
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        if (clickedId == R.id.btn_import_compress && importCompressPrivateKeyRunnable != null) {
-            importCompressPrivateKeyRunnable.run();
-        } else if (clickedId == R.id.btn_import_uncompressed && importUncompressedPrivateKeyRunnable != null) {
-            importUncompressedPrivateKeyRunnable.run();
+        if (clickedId == R.id.btn_import_recommend && importCompressPrivateKeyRunnable != null) {
+            if (isCompressedKeyRecommend) {
+                if (importCompressPrivateKeyRunnable != null) {
+                    importCompressPrivateKeyRunnable.run();
+                }
+            } else {
+                if (importUncompressedPrivateKeyRunnable != null) {
+                    importUncompressedPrivateKeyRunnable.run();
+                }
+            }
+        } else if (clickedId == R.id.btn_import_not_recommend) {
+            if (isCompressedKeyRecommend) {
+                if (importUncompressedPrivateKeyRunnable != null) {
+                    importUncompressedPrivateKeyRunnable.run();
+                }
+            } else {
+                if (importCompressPrivateKeyRunnable != null) {
+                    importCompressPrivateKeyRunnable.run();
+                }
+            }
         }
     }
 

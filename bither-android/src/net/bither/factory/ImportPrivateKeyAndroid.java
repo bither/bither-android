@@ -22,6 +22,7 @@ import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.runnable.ThreadNeedService;
@@ -99,23 +100,31 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
             importPrivateKey(address);
             return;
         }
-        final Address compressAddress = initPrivateKey(true);
-        if (compressAddress == null) {
+
+        boolean isCompressed = getIsCompressed();
+        final ECKey compressKey = initEcKey(true);
+        if (compressKey == null) {
             return;
         }
-        final Address uncompressedAddress = initPrivateKey(false);
-        if (uncompressedAddress == null) {
+        final ECKey uncompressedKey = initEcKey(false);
+        if (uncompressedKey == null) {
             return;
         }
-        DialogImportPrivateKeyAddressValidation dialogImportPrivateKeyAddressValidation = new DialogImportPrivateKeyAddressValidation(activity, compressAddress.getAddress(), uncompressedAddress.getAddress(), new Runnable() {
+        DialogImportPrivateKeyAddressValidation dialogImportPrivateKeyAddressValidation = new DialogImportPrivateKeyAddressValidation(activity, compressKey.toAddress(), uncompressedKey.toAddress(), isCompressed, new Runnable() {
             @Override
             public void run() {
-                importPrivateKey(compressAddress);
+                Address compressAddress = initPrivateKey(true);
+                if (compressAddress != null) {
+                    importPrivateKey(compressAddress);
+                }
             }
         }, new Runnable() {
             @Override
             public void run() {
-                importPrivateKey(uncompressedAddress);
+                Address uncompressedAddress = initPrivateKey(false);
+                if (uncompressedAddress != null) {
+                    importPrivateKey(uncompressedAddress);
+                }
             }
         });
         dialogImportPrivateKeyAddressValidation.show();

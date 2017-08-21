@@ -15,6 +15,7 @@
         android:textSize="16sp" />
 
     <TextView
+        android:id="@+id/tv_private_key_recommend_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -29,14 +30,14 @@
         android:layout_marginTop="10dp" >
 
         <TextView
-            android:id="@+id/tv_compress_address"
+            android:id="@+id/tv_recommend_address"
             android:layout_width="168dp"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btn_import_compress"
+            android:id="@+id/btn_import_recommend"
             android:layout_width="62dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -49,6 +50,7 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/tv_private_key_not_recommend_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -63,14 +65,14 @@
         android:layout_marginTop="10dp" >
 
         <TextView
-            android:id="@+id/tv_uncompressed_address"
+            android:id="@+id/tv_not_recommend_address"
             android:layout_width="168dp"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btn_import_uncompressed"
+            android:id="@+id/btn_import_not_recommend"
             android:layout_width="62dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
