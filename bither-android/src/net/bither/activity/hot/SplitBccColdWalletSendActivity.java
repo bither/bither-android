@@ -30,6 +30,7 @@ import net.bither.util.InputParser;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ltq on 2017/7/29.
@@ -39,7 +40,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
 
     private long btcAmount;
     private String toAddress;
-    public Tx tx;
+    public List<Tx> txs;
     private boolean needConfirm = true;
     private int kSignTypeLength = 2;
     private int kCompressPubKeyLength = 68;
@@ -110,11 +111,12 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
             String addressCannotBtParsed = getString(R.string.address_cannot_be_parsed);
             Intent intent = new Intent(SplitBccColdWalletSendActivity.this,
                     UnsignedTxQrCodeActivity.class);
+
             intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING,
-                    QRCodeTxTransport.getPresignTxString(tx, toAddress, addressCannotBtParsed, QRCodeTxTransport.NO_HDM_INDEX));
+                    QRCodeTxTransport.getBccPresignTxString(txs, toAddress, addressCannotBtParsed));
             if (Utils.isEmpty(toAddress)) {
                 intent.putExtra(BitherSetting.INTENT_REF.OLD_QR_CODE_STRING,
-                        QRCodeTxTransport.oldGetPreSignString(tx, addressCannotBtParsed));
+                        QRCodeTxTransport.oldGetBccPreSignString(txs, addressCannotBtParsed));
             } else {
                 intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING
                         , true);
@@ -139,15 +141,11 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    if (msg.obj != null && msg.obj instanceof Tx) {
-                        Tx smgTx = (Tx) msg.obj;
-                        tx = smgTx;
-                        tx.setBtc(false);
+                    if (msg.obj != null && msg.obj instanceof List) {
+                        List<Tx> smgTx = (List<Tx>) msg.obj;
+                        txs = smgTx;
                         if (needConfirm) {
-                            DialogHdSendConfirm dialog = new DialogHdSendConfirm
-                                    (SplitBccColdWalletSendActivity.this, toAddress,tx, false,
-                                            sendConfirmListener);
-                            dialog.show();
+                            new DialogHdSendConfirm(SplitBccColdWalletSendActivity.this, toAddress, txs, sendConfirmListener).show();
                         } else {
                             sendConfirmListener.onConfirm();
                         }
@@ -179,33 +177,11 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         }
     };
 
-    @Override
-    public void onCommitTransactionSuccess(Tx tx) {
-        needConfirm = true;
-        if (dp.isShowing()) {
-            dp.dismiss();
-        }
-        Intent intent = getIntent();
-        if (tx != null) {
-            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
-                    tx.getHashAsString());
-        }
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    @Override
-    public void onCommitTransactionFailed() {
-        needConfirm = true;
-        btnSend.setEnabled(true);
-        DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this, R.string.send_failed);
-    }
-
     private void send() {
         try {
             CompleteTransactionRunnable completeRunnable = new
-                    CompleteTransactionRunnable(addressPosition, btcAmount,toAddress,toAddress,
-                    null,false);
+                    CompleteTransactionRunnable(addressPosition, btcAmount, toAddress, toAddress,
+                    null, false);
             completeRunnable.setHandler(completeTransactionHandler);
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);
@@ -224,47 +200,43 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         if (!dp.isShowing()) {
             dp.show();
         }
+
         new Thread() {
             @Override
             public void run() {
-                boolean success = false;
-                try {
-                    String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                    BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
-                    bccBroadCastApi.handleHttpPost();
-                    JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
-                    boolean result = jsonObject.getInt("result") == 1 ?true:false;
-                    if (result) {
-                        saveIsObtainBcc();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,R.string.send_success);
-                            }
-                        });
-                        success = true;
-                    } else {
-                        final JSONObject jsonObj = jsonObject.getJSONObject("error");
-                        final int code = jsonObj.getInt("code");
-                        final String message = jsonObj.getString("message");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,String.valueOf(code) + message);
-                            }
-                        });
-                        success = false;
+                String errorMsg = null;
+                for (final Tx tx: txs) {
+                    try {
+                        String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        bccBroadCastApi.handleHttpPost();
+                        JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
+                        boolean result = jsonObject.getInt("result") == 1 ? true : false;
+                        if (!result) {
+                            final JSONObject jsonObj = jsonObject.getJSONObject("error");
+                            final int code = jsonObj.getInt("code");
+                            final String message = jsonObj.getString("message");
+                            errorMsg = String.valueOf(code) + message;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        errorMsg = getString(R.string.send_failed);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    if (errorMsg != null) {
+                        break;
+                    }
                 }
-                if (success) {
+
+                if (errorMsg == null) {
+                    saveIsObtainBcc();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
+                            DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this, R.string.send_success);
                         }
                     });
                     btnSend.postDelayed(new Runnable() {
@@ -276,14 +248,14 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                         }
                     },1000);
                 } else {
+                    final String finalErrorMsg = errorMsg;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity
-                                    .this, R.string.send_failed);
+                            DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this, finalErrorMsg);
                             btnSend.setEnabled(true);
                         }
                     });
@@ -338,19 +310,36 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
             btnSend.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    boolean success;
                     String[] array = QRCodeUtil.splitString(qr);
-                    ArrayList<byte[]> compressSigs = new ArrayList<byte[]>();
-                    ArrayList<byte[]> uncompressedSigs = new ArrayList<byte[]>();
-                    for (String s : array) {
-                        compressSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kCompressPubKeyLength)));
-                        uncompressedSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kUncompressedPubKeyLength)));
+                    int insCount = 0;
+                    for (Tx tx : txs) {
+                        insCount += tx.getIns().size();
                     }
-                    tx.signWithSignatures(compressSigs);
-                    if (!tx.verifySignatures()) {
-                        tx.signWithSignatures(uncompressedSigs);
+                    boolean success = insCount == array.length;
+                    if (success) {
+                        int strIndex = 0;
+                        for (int i = 0; i < txs.size(); i++) {
+                            Tx tx = txs.get(i);
+                            ArrayList<byte[]> compressSigs = new ArrayList<byte[]>();
+                            ArrayList<byte[]> uncompressedSigs = new ArrayList<byte[]>();
+                            for (int j = 0; j < tx.getIns().size(); j++) {
+                                String s = array[strIndex + j];
+                                compressSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kCompressPubKeyLength)));
+                                uncompressedSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kUncompressedPubKeyLength)));
+                            }
+                            tx.signWithSignatures(compressSigs);
+                            if (!tx.verifySignatures()) {
+                                tx.signWithSignatures(uncompressedSigs);
+                            }
+                            if (!tx.verifySignatures()) {
+                                success = false;
+                                break;
+                            }
+                            strIndex += tx.getIns().size();
+                        }
                     }
-                    if (tx.verifySignatures()) {
+
+                    if (success) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

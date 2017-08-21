@@ -25,6 +25,8 @@ import net.bither.ui.base.dialog.DialogHdSendConfirm;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by ltq on 2017/7/28.
  */
@@ -34,7 +36,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
 
     private long btcAmount;
     private String toAddress;
-    private Tx tx;
+    private List<Tx> txs;
 
     static {
         CompleteTransactionRunnable.registerTxBuilderExceptionMessages();
@@ -89,15 +91,15 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     }
 
     private void send() {
-        tx = null;
+        txs = null;
         HDAccount account = (HDAccount) address;
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         try {
-            tx = account.newForkTx(etAddress.getText().toString().trim(), btcAmount, password);
+            txs = account.newForkTx(etAddress.getText().toString().trim(), btcAmount, password);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
-            tx = null;
+            txs = null;
             String msg = getString(R.string.send_failed);
             if (e instanceof KeyCrypterException || e instanceof MnemonicException
                     .MnemonicLengthException) {
@@ -118,7 +120,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         } finally {
             password.wipe();
         }
-        if (tx != null) {
+        if (txs != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -153,7 +155,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, tx, false, this).show();
+        new DialogHdSendConfirm(this, toAddress, txs, this).show();
     }
 
     @Override
@@ -161,47 +163,43 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         if (!dp.isShowing()) {
             dp.show();
         }
+
         new Thread() {
             @Override
             public void run() {
-                boolean success = false;
-                try {
-                    String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                    BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
-                    bccBroadCastApi.handleHttpPost();
-                    JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
-                    boolean result = jsonObject.getInt("result") == 1 ? true : false;
-                    if (!result) {
-                        final JSONObject jsonObj = jsonObject.getJSONObject("error");
-                        final int code = jsonObj.getInt("code");
-                        final String message = jsonObj.getString("message");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this,String.valueOf(code) + message);
-                            }
-                        });
-                        success = false;
-                    } else {
-                        saveIsObtainBcc();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this,R.string.send_success);
-                            }
-                        });
-                        success = true;
+                String errorMsg = null;
+                for (final Tx tx: txs) {
+                    try {
+                        String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        bccBroadCastApi.handleHttpPost();
+                        JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
+                        boolean result = jsonObject.getInt("result") == 1 ? true : false;
+                        if (!result) {
+                            final JSONObject jsonObj = jsonObject.getJSONObject("error");
+                            final int code = jsonObj.getInt("code");
+                            final String message = jsonObj.getString("message");
+                            errorMsg = String.valueOf(code) + message;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        errorMsg = getString(R.string.send_failed);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    if (errorMsg != null) {
+                        break;
+                    }
                 }
-                if (success) {
+
+                if (errorMsg == null) {
+                    saveIsObtainBcc();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
+                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, R.string.send_success);
                         }
                     });
                     btnSend.postDelayed(new Runnable() {
@@ -213,14 +211,15 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                         }
                     },1000);
                 } else {
+                    final String finalErrorMsg = errorMsg;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, R
-                                    .string.send_failed);
+                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, finalErrorMsg);
+                            btnSend.setEnabled(true);
                         }
                     });
                 }
@@ -234,6 +233,6 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc("HDAccountHot",true);
+        AppSharedPreference.getInstance().setIsObtainBcc("HDAccountHot", true);
     }
 }

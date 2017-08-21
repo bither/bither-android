@@ -42,6 +42,7 @@ import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.InputParser;
+import net.bither.util.LogUtil;
 
 import org.json.JSONObject;
 
@@ -52,7 +53,7 @@ import java.util.List;
  */
 
 public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKeyboardView
-        .EntryKeyboardViewListener,CommitTransactionThread.CommitTransactionListener {
+        .EntryKeyboardViewListener {
     protected int addressPosition;
     protected Address address;
 
@@ -66,7 +67,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     protected DialogRCheck dp;
     private PasswordEntryKeyboardView kvPassword;
     private View vKeyboardContainer;
-    private Tx tx;
+    private List<Tx> txs;
     private long btcAmount;
 
     @Override
@@ -136,47 +137,43 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
             if (!dp.isShowing()) {
                 dp.show();
             }
+
             new Thread() {
                 @Override
                 public void run() {
-                    boolean success = false;
-                    try {
-                        String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
-                        bccBroadCastApi.handleHttpPost();
-                        JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
-                        boolean result = jsonObject.getInt("result") == 1 ? true:false;
-                        if (result) {
-                            success = true;
-                            saveIsObtainBcc();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this,R.string.send_success);
-                                }
-                            });
-                        } else {
-                            final JSONObject jsonObj = jsonObject.getJSONObject("error");
-                            final int code = jsonObj.getInt("code");
-                            final String message = jsonObj.getString("message");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this,String.valueOf(code) + message);
-                                }
-                            });
-                            success = false;
+                    String errorMsg = null;
+                    for (final Tx tx: txs) {
+                        try {
+                            String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
+                            BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                            bccBroadCastApi.handleHttpPost();
+                            JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
+                            boolean result = jsonObject.getInt("result") == 1 ? true : false;
+                            if (!result) {
+                                final JSONObject jsonObj = jsonObject.getJSONObject("error");
+                                final int code = jsonObj.getInt("code");
+                                final String message = jsonObj.getString("message");
+                                errorMsg = String.valueOf(code) + message;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            errorMsg = getString(R.string.send_failed);
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        if (errorMsg != null) {
+                            break;
+                        }
                     }
-                    if (success) {
+
+                    if (errorMsg == null) {
+                        saveIsObtainBcc();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
+                                DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, R.string.send_success);
                             }
                         });
                         btnSend.postDelayed(new Runnable() {
@@ -188,14 +185,15 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             }
                         },1000);
                     } else {
+                        final String finalErrorMsg = errorMsg;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
-                                DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, R
-                                        .string.send_failed);
+                                DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, finalErrorMsg);
+                                btnSend.setEnabled(true);
                             }
                         });
                     }
@@ -208,22 +206,6 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
 
         }
     };
-
-    @Override
-    public void onCommitTransactionSuccess(Tx tx) {
-        Intent intent = getIntent();
-        if (tx != null) {
-            intent.putExtra(SelectAddressToSendActivity.INTENT_EXTRA_TRANSACTION,
-                    tx.getHashAsString());
-        }
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    @Override
-    public void onCommitTransactionFailed() {
-        DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, R.string.send_failed);
-    }
 
     private View.OnClickListener sendClick = new View.OnClickListener() {
 
@@ -240,9 +222,9 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                     if (!dp.isShowing()) {
                         dp.show();
                     }
-                    if (msg.obj != null && msg.obj instanceof Tx) {
-                        tx = (Tx) msg.obj;
-                        RCheckRunnable run = new RCheckRunnable(address, tx);
+                    if (msg.obj != null && msg.obj instanceof List) {
+                        txs = (List<Tx>) msg.obj;
+                        RCheckRunnable run = new RCheckRunnable(address, txs);
                         run.setHandler(rcheckHandler);
                         new Thread(run).start();
                     } else {
@@ -276,8 +258,8 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case HandlerMessage.MSG_SUCCESS:
-                    if (msg.obj != null && msg.obj instanceof Tx) {
-                        final Tx tx = (Tx) msg.obj;
+                    if (msg.obj != null && msg.obj instanceof List) {
+                        final List<Tx> txs = (List<Tx>) msg.obj;
                         if (!dp.isShowing()) {
                             dp.show();
                         }
@@ -285,9 +267,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                DialogHdSendConfirm dialog = new DialogHdSendConfirm(SplitBCCSendActivity.this,toAddress,
-                                        tx,false,sendConfirmListener);
-                                dialog.show();
+                                new DialogHdSendConfirm(SplitBCCSendActivity.this, toAddress, txs, sendConfirmListener).show();
                                 dp.setWait();
                             }
                         }, 800);
@@ -340,8 +320,8 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     private void send() {
         try {
             CompleteTransactionRunnable completeRunnable = new
-                    CompleteTransactionRunnable(addressPosition,btcAmount
-                    ,toAddress,toAddress, new SecureCharSequence(etPassword.getText()),false);
+                    CompleteTransactionRunnable(addressPosition, btcAmount
+                    , toAddress, toAddress, new SecureCharSequence(etPassword.getText()), false);
             completeRunnable.setHandler(completeTransactionHandler);
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);

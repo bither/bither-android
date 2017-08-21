@@ -30,6 +30,7 @@ import net.bither.ui.base.dialog.DialogHdSendConfirm;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ltq on 2017/7/29.
@@ -39,7 +40,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         .SendConfirmListener {
     private long btcAmount;
     private String toAddress;
-    private Tx tx;
+    private List<Tx> txs;
 
     static {
         CompleteTransactionRunnable.registerTxBuilderExceptionMessages();
@@ -103,15 +104,14 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     }
 
     private void send() {
-        this.tx = null;
+        this.txs = null;
         HDAccount account = (HDAccount) address;
         try {
-            tx = account.newForkTx(toAddress, btcAmount);
-            tx.setBtc(false);
+            txs = account.newForkTx(toAddress, btcAmount);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
-            tx = null;
+            txs = null;
             String msg = getString(R.string.send_failed);
             if (e instanceof KeyCrypterException || e instanceof MnemonicException
                     .MnemonicLengthException) {
@@ -131,7 +131,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
             });
         }
 
-        if (this.tx != null) {
+        if (this.txs != null) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -166,13 +166,13 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, tx, false, this).show();
+        new DialogHdSendConfirm(this, toAddress, txs, this).show();
     }
 
     @Override
     public void onConfirm() {
         Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getHDAccountMonitoredUnsignedTx(tx, toAddress, (HDAccount) address));
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getBccHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address));
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
                 .unsigned_transaction_qr_code_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -192,12 +192,30 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                     @Override
                     public void run() {
                         String[] array = QRCodeUtil.splitString(qr);
-                        ArrayList<byte[]> sigs = new ArrayList<byte[]>();
-                        for (String s : array) {
-                            sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                        int insCount = 0;
+                        for (Tx tx : txs) {
+                            insCount += tx.getIns().size();
                         }
-                        tx.signWithSignatures(sigs);
-                        if (tx.verifySignatures()) {
+                        boolean success = insCount == array.length;
+                        if (success) {
+                            int strIndex = 0;
+                            for (int i = 0; i < txs.size(); i++) {
+                                Tx tx = txs.get(i);
+                                ArrayList<byte[]> sigs = new ArrayList<byte[]>();
+                                for (int j = 0; j < tx.getIns().size(); j++) {
+                                    String s = array[strIndex + j];
+                                    sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                                }
+                                tx.signWithSignatures(sigs);
+                                if (!tx.verifySignatures()) {
+                                    success = false;
+                                    break;
+                                }
+                                strIndex += tx.getIns().size();
+                            }
+                        }
+
+                        if (success) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -232,47 +250,43 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         if (!dp.isShowing()) {
             dp.show();
         }
+
         new Thread() {
             @Override
             public void run() {
-                boolean success = false;
-                try {
-                    String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                    BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
-                    bccBroadCastApi.handleHttpPost();
-                    JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
-                    boolean result = jsonObject.getInt("result") == 1 ?true:false;
-                    if (result) {
-                        saveIsObtainBcc();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this,R.string.send_success);
-                            }
-                        });
-                        success = true;
-                    } else {
-                        final JSONObject jsonObj = jsonObject.getJSONObject("error");
-                        final int code = jsonObj.getInt("code");
-                        final String message = jsonObj.getString("message");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this,String.valueOf(code) + message);
-                            }
-                        });
-                        success = false;
+                String errorMsg = null;
+                for (final Tx tx: txs) {
+                    try {
+                        String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        bccBroadCastApi.handleHttpPost();
+                        JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
+                        boolean result = jsonObject.getInt("result") == 1 ? true : false;
+                        if (!result) {
+                            final JSONObject jsonObj = jsonObject.getJSONObject("error");
+                            final int code = jsonObj.getInt("code");
+                            final String message = jsonObj.getString("message");
+                            errorMsg = String.valueOf(code) + message;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        errorMsg = getString(R.string.send_failed);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                    if (errorMsg != null) {
+                        break;
+                    }
                 }
-                if (success) {
+
+                if (errorMsg == null) {
+                    saveIsObtainBcc();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
+                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this, R.string.send_success);
                         }
                     });
                     btnSend.postDelayed(new Runnable() {
@@ -284,14 +298,14 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                         }
                     },1000);
                 } else {
+                    final String finalErrorMsg = errorMsg;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity
-                                    .this, R.string.send_failed);
+                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this, finalErrorMsg);
                             btnSend.setEnabled(true);
                         }
                     });
