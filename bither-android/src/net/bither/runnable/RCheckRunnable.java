@@ -21,21 +21,33 @@ package net.bither.runnable;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.Tx;
 
+import java.util.List;
+
 /**
  * Created by songchenwen on 14-10-20.
  */
 public class RCheckRunnable extends BaseRunnable {
     private Address address;
     private Tx tx;
+    private List<Tx> txs;
 
     public RCheckRunnable(Address address, Tx tx) {
         this.address = address;
         this.tx = tx;
     }
 
+    public RCheckRunnable(Address address, List<Tx> txs) {
+        this.address = address;
+        this.txs = txs;
+    }
+
     @Override
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
-        obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
+        if (tx != null) {
+            obtainMessage(HandlerMessage.MSG_SUCCESS, tx);
+        } else if (txs != null) {
+            obtainMessage(HandlerMessage.MSG_SUCCESS, txs);
+        }
     }
 }

@@ -22,11 +22,13 @@ import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.core.Address;
+import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.dialog.DialogImportPrivateKeyAddressValidation;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.KeyUtil;
 import net.bither.util.ThreadUtil;
@@ -93,10 +95,45 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
 
 
     public void importPrivateKey() {
+        if (importPrivateKeyType != ImportPrivateKeyType.Text) {
+            Address address = initPrivateKey();
+            importPrivateKey(address);
+            return;
+        }
+
+        boolean isCompressed = getIsCompressed();
+        final ECKey compressKey = initEcKey(true);
+        if (compressKey == null) {
+            return;
+        }
+        final ECKey uncompressedKey = initEcKey(false);
+        if (uncompressedKey == null) {
+            return;
+        }
+        DialogImportPrivateKeyAddressValidation dialogImportPrivateKeyAddressValidation = new DialogImportPrivateKeyAddressValidation(activity, compressKey.toAddress(), uncompressedKey.toAddress(), isCompressed, new Runnable() {
+            @Override
+            public void run() {
+                Address compressAddress = initPrivateKey(true);
+                if (compressAddress != null) {
+                    importPrivateKey(compressAddress);
+                }
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                Address uncompressedAddress = initPrivateKey(false);
+                if (uncompressedAddress != null) {
+                    importPrivateKey(uncompressedAddress);
+                }
+            }
+        });
+        dialogImportPrivateKeyAddressValidation.show();
+    }
+
+    private void importPrivateKey(final Address address) {
         new ThreadNeedService(dp, activity) {
             @Override
             public void runWithService(BlockchainService service) {
-                Address address = initPrivateKey();
                 if (address != null) {
                     List<Address> addressList = new ArrayList<Address>();
                     addressList.add(address);
@@ -120,6 +157,5 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
             }
         }.start();
     }
-
 
 }

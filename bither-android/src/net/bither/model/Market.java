@@ -58,9 +58,6 @@ public class Market {
             case BITSTAMP:
                 resource = R.color.market_color_bitstamp;
                 break;
-            case BTCE:
-                resource = R.color.market_color_btce;
-                break;
             case OKCOIN:
                 resource = R.color.market_color_okcoin;
                 break;
@@ -116,8 +113,6 @@ public class Market {
                 return "huobi.com";
             case BITSTAMP:
                 return "bitstamp.net";
-            case BTCE:
-                return "btc-e.com";
             case OKCOIN:
                 return "okcoin.cn";
             case CHBTC:

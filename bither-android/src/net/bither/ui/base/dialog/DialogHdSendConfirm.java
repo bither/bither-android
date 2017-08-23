@@ -30,6 +30,8 @@ import net.bither.preference.AppSharedPreference;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
+import java.util.List;
+
 /**
  * Created by songchenwen on 15/4/17.
  */
@@ -79,6 +81,35 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
         tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
         tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(toAddress)));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
+    }
+
+    public DialogHdSendConfirm(Context context, String toAddress, List<Tx> txs, SendConfirmListener listener) {
+        super(context);
+        this.listener = listener;
+        setOnDismissListener(this);
+        setContentView(R.layout.dialog_send_confirm);
+        TextView tvAddress = (TextView) findViewById(R.id.tv_address);
+        TextView tvBtc = (TextView) findViewById(R.id.tv_btc);
+        TextView tvFee = (TextView) findViewById(R.id.tv_fee);
+        TextView tvSymbol = (TextView) findViewById(R.id.tv_symbol);
+        TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
+        View llChange = findViewById(R.id.ll_change);
+        TextView tvSymbolChange = (TextView) findViewById(R.id.tv_symbol_change);
+        tvSymbol.setText(BitherSetting.BCC);
+        tvFeeSymbol.setText(BitherSetting.BCC);
+        tvSymbolChange.setText(BitherSetting.BCC);
+        findViewById(R.id.btn_cancel).setOnClickListener(this);
+        findViewById(R.id.btn_ok).setOnClickListener(this);
+        llChange.setVisibility(View.GONE);
+        tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
+        long amount = 0;
+        long fee = 0;
+        for (Tx tx: txs) {
+            amount += tx.amountSentToAddress(toAddress);
+            fee += tx.getFee();
+        }
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee));
     }
 
     @Override

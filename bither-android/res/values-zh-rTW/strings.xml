@@ -717,4 +717,11 @@
     <string name="get_success">獲得成功</string>
     <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
     <string name="no_sync_complete">請稍候，交易暫未同步完成！</string>
+
+    <string name="private_key_import">導入</string>
+    <string name="private_key_import_title">請選擇導入私鑰對應的地址</string>
+    <string name="private_key_compressed_address">壓縮私鑰地址</string>
+    <string name="private_key_uncompressed_address">未壓縮私鑰地址</string>
+    <string name="private_key_recommend">(推薦)</string>
+
 </resources>

@@ -140,10 +140,6 @@ public class BitherSetting {
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitstamp);
                 break;
-            case BTCE:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_btce);
-                break;
             case OKCOIN:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_okcoin);

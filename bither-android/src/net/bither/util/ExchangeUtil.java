@@ -171,7 +171,6 @@ public class ExchangeUtil {
             case BTCTRADE:
                 return Currency.CNY;
             case MARKET796:
-            case BTCE:
             case BITSTAMP:
             case BITFINEX:
             case COINBASE:
