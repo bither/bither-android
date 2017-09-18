@@ -233,7 +233,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectType(ColdAdvanceActivity.this,false).show();
+                    new DialogSignMessageSelectType(ColdAdvanceActivity.this,false,false).show();
                     break;
                 case 1:
                 default:

@@ -724,4 +724,10 @@
     <string name="private_key_uncompressed_address">未壓縮私鑰地址</string>
     <string name="private_key_recommend">(推薦)</string>
 
+    <!--Detect another assets-->
+    <string name="detect_another_BCC_assets">檢測 BCC 資產</string>
+    <string name="detect_another_BCC_assets_select_address">選擇檢測 BCC 資產用的地址</string>
+    <string name="detect_exist_another_assets_alert">該地址存在 %1$s個%2$s,提取到你的比特派賬戶？</string>
+    <string name="detect_no_assets_alert">該地址在區塊瀏覽器上未查詢到其他資產</string>
+    <string name="extract_assets">提取資產</string>
 </resources>

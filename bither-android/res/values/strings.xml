@@ -760,4 +760,10 @@
     <string name="private_key_uncompressed_address">Uncompressed private key address</string>
     <string name="private_key_recommend">(Recommend)</string>
 
+    <!--Detect another assets-->
+    <string name="detect_another_BCC_assets">Detect BCC assets</string>
+    <string name="detect_another_BCC_assets_select_address">Select address to detect BCC assets</string>
+    <string name="detect_exist_another_assets_alert">This address has %1$s%2$s, extract your Bitpie account?</string>
+    <string name="detect_no_assets_alert">No other assets were found on the block browser for this address</string>
+    <string name="extract_assets">Extract Assets</string>
 </resources>

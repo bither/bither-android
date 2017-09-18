@@ -21,6 +21,7 @@ import net.bither.enums.SignMessageTypeSelect;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.ui.base.SwipeRightFragmentActivity;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.DetectAnotherAssetsUtil;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
@@ -35,6 +36,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     public static final String SignMgsTypeSelect = "SignMgsTypeSelect";
     public static final String PassWord = "PassWord";
     public static final String IsHdAccountHot = "IsHdAccountHot";
+    public static final String IsDetectBcc = "IsDetectBcc";
 
     private int page = 1;
     private boolean hasMore = true;
@@ -44,8 +46,10 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     private SignMessageTypeSelect signMessageTypeSelect;
     private AbstractHD.PathType pathType;
     private boolean isHot;
+    private boolean isDetectBcc;
     private ListView lv;
     private FrameLayout flTitleBar;
+    private TextView tvTitle;
     private ArrayList<Address> addresses = new ArrayList<Address>();
     private ArrayList<HDAccount.HDAccountAddress> hdAccountAddresses = new ArrayList<>();
     private HDAccount hdAccount;
@@ -56,10 +60,17 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_sign_message_select_address);
+        tvTitle = (TextView) findViewById(R.id.tv_title);
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
+        isDetectBcc = (boolean) getIntent().getSerializableExtra(IsDetectBcc);
+        if (!isDetectBcc) {
+            tvTitle.setText(R.string.sign_message_select_address);
+        } else {
+            tvTitle.setText(R.string.detect_another_BCC_assets_select_address);
+        }
         if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
             String tempString = getIntent().getStringExtra(PassWord);
             password = tempString.subSequence(0, tempString.length());
@@ -280,9 +291,15 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
-            intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
-            SignMessageAddressListActivity.this.startActivity(intent);
+            if (!isDetectBcc) {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
+                SignMessageAddressListActivity.this.startActivity(intent);
+            } else {
+                DetectAnotherAssetsUtil detectAnotherAssetsUtil = new DetectAnotherAssetsUtil(
+                        SignMessageAddressListActivity.this);
+                detectAnotherAssetsUtil.getBCCUnspentOutputs(address.getAddress());
+            }
         }
     }
 
@@ -295,11 +312,19 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
-            intent.putExtra(SignMessageActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
-            intent.putExtra(SignMessageActivity.HdAddressIndex, hdAccountAddress.getIndex());
-            intent.putExtra(IsHdAccountHot, isHot);
-            SignMessageAddressListActivity.this.startActivity(intent);
+            if (!isDetectBcc) {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
+                intent.putExtra(SignMessageActivity.HdAddressIndex, hdAccountAddress.getIndex());
+                intent.putExtra(IsHdAccountHot, isHot);
+                SignMessageAddressListActivity.this.startActivity(intent);
+            } else {
+                DetectAnotherAssetsUtil detectAnotherAssetsUtil = new DetectAnotherAssetsUtil(
+                        SignMessageAddressListActivity.this);
+                detectAnotherAssetsUtil.getBCCHDUnspentOutputs(hdAccountAddress.getAddress(),
+                        hdAccountAddress.getPathType(), hdAccountAddress.getIndex());
+
+            }
         }
     }
 

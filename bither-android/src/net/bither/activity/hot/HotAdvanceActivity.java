@@ -120,6 +120,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private LinearLayout btnHDMRecovery;
     private LinearLayout btnHDMServerPasswordReset;
     private LinearLayout btnSplitBcc;
+    private LinearLayout btnDetectBcc;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
@@ -143,6 +144,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
+        btnDetectBcc = (LinearLayout) findViewById(R.id.ll_detect_bcc);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -164,6 +166,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         btnSplitBcc.setOnClickListener(splitBccClick);
+        btnDetectBcc.setOnClickListener(detectBccClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -378,6 +381,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             }
         }
     };
+
+    private View.OnClickListener detectBccClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            new DialogSignMessageSelectType(HotAdvanceActivity.this,true,true).show();
+        }
+    };
+
 
     private View.OnClickListener hdmServerPasswordResetClick = new View.OnClickListener() {
 
@@ -664,7 +675,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true).show();
+                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true,false).show();
                     break;
                 case 1:
                 default:
