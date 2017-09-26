@@ -376,8 +376,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         == 0) {
                     DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
                 } else {
-                    startActivity(new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class));
-                }
+                    Intent intent = new Intent(HotAdvanceActivity.this,SplitBccSelectAddressActivity.class);
+                    intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, false);
+                    startActivity(intent);                }
             }
         }
     };
@@ -385,7 +386,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener detectBccClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            new DialogSignMessageSelectType(HotAdvanceActivity.this,true,true).show();
+            Intent intent = new Intent(HotAdvanceActivity.this,SplitBccSelectAddressActivity.class);
+            intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, true);
+            startActivity(intent);
         }
     };
 
@@ -675,7 +678,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true,false).show();
+                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true).show();
                     break;
                 case 1:
                 default:

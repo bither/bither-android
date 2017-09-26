@@ -730,4 +730,5 @@
     <string name="detect_exist_another_assets_alert">该地址存在 %1$s个%2$s,提取到你的比特派账户？</string>
     <string name="detect_no_assets_alert">该地址在区块浏览器上未查询到其他资产</string>
     <string name="extract_assets">提取资产</string>
+    <string name="extract_assets_BCC_send_title">可提取</string>
 </resources>

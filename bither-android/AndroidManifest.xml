@@ -378,7 +378,19 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
-            android:name=".BCCAssetsDetectHotActivtity"
+            android:name=".BCCAssetsDetectHotActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".BCCAssetsHotMonitoredActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".BCCAssetsHDAccountMonitoredActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".BCCAssetsDetectListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity

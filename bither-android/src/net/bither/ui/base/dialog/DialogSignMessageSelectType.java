@@ -14,7 +14,6 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.enums.SignMessageTypeSelect;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
-import static net.bither.SignMessageAddressListActivity.IsDetectBcc;
 import static net.bither.SignMessageAddressListActivity.IsHdAccountHot;
 import static net.bither.SignMessageAddressListActivity.PassWord;
 import static net.bither.SignMessageAddressListActivity.SignMgsTypeSelect;
@@ -32,11 +31,9 @@ public class DialogSignMessageSelectType extends CenterDialog {
     private View vLineChange;
     private HDAccount hdAccount;
     private HDAccountCold hdAccountCold;
-    private boolean isDetectBcc;
 
-    public DialogSignMessageSelectType(Context context, final boolean isHot, final boolean isDetectBcc) {
+    public DialogSignMessageSelectType(Context context, final boolean isHot) {
         super(context);
-        this.isDetectBcc = isDetectBcc;
         setContentView(R.layout.dialog_sign_message_select_type);
         llHdReceive = (LinearLayout) findViewById(R.id.ll_hd_receive);
         llHdChange = (LinearLayout) findViewById(R.id.ll_hd_change);
@@ -76,7 +73,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdReceive);
                         intent.putExtra(PassWord, password.toString());
                         intent.putExtra(IsHdAccountHot, isHot);
-                        intent.putExtra(IsDetectBcc,isDetectBcc);
                         getContext().startActivity(intent);
                     }
                 }).show();
@@ -94,7 +90,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdChange);
                         intent.putExtra(PassWord, password);
                         intent.putExtra(IsHdAccountHot, isHot);
-                        intent.putExtra(IsDetectBcc,isDetectBcc);
                         getContext().startActivity(intent);
                     }
                 }).show();
@@ -108,7 +103,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                 Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                 intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.Hot);
                 intent.putExtra(IsHdAccountHot, isHot);
-                intent.putExtra(IsDetectBcc,isDetectBcc);
                 getContext().startActivity(intent);
                 dismiss();
             }

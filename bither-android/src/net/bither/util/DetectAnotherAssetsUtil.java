@@ -6,7 +6,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import net.bither.BCCAssetsDetectHDActivity;
-import net.bither.BCCAssetsDetectHotActivtity;
+import net.bither.BCCAssetsDetectHotActivity;
+import net.bither.BCCAssetsHDAccountMonitoredActivity;
+import net.bither.BCCAssetsHotMonitoredActivity;
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.api.UnspentOutputsApi;
 import net.bither.bitherj.core.AbstractHD;
@@ -31,10 +34,10 @@ public class DetectAnotherAssetsUtil {
 
     public DetectAnotherAssetsUtil(Activity activity) {
         this.activity = activity;
-         dp = new DialogProgress(activity, R.string.please_wait);
+        dp = new DialogProgress(activity, R.string.please_wait);
     }
 
-    public void getBCCUnspentOutputs(final String address) {
+    public void getBCCUnspentOutputs(final String address, final int position, final boolean isPrivate) {
         dp.show();
         Runnable BTCUnspentOutputs = new Runnable() {
             @Override
@@ -45,7 +48,7 @@ public class DetectAnotherAssetsUtil {
                     JSONArray jsonArray = new JSONArray(unspentOutputsApi.getResult());
                     List<ExtractBccUtxo> extractBccUtxos = ExtractBccUtxo.format(jsonArray);
                     final List<Out> rawOutList = ExtractBccUtxo.rawOutList(extractBccUtxos);
-                    extractBcc(extractBccUtxos,rawOutList,address);
+                    extractBcc(extractBccUtxos, rawOutList, address, position, isPrivate);
                     dp.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -56,7 +59,8 @@ public class DetectAnotherAssetsUtil {
         new Thread(BTCUnspentOutputs).start();
     }
 
-    public void getBCCHDUnspentOutputs(final String address, final AbstractHD.PathType path, final int index) {
+    public void getBCCHDUnspentOutputs(final String address, final AbstractHD.PathType path, final int index,
+                                       final boolean isMonitored) {
         dp.show();
         Runnable BTCUnspentOutputs = new Runnable() {
             @Override
@@ -67,8 +71,8 @@ public class DetectAnotherAssetsUtil {
                     JSONArray jsonArray = new JSONArray(unspentOutputsApi.getResult());
                     List<ExtractBccUtxo> extractBccUtxos = ExtractBccUtxo.format(jsonArray);
                     final List<Out> rawOutList = ExtractBccUtxo.rawOutList(extractBccUtxos);
-                    extractHDBcc(extractBccUtxos,rawOutList, path, index,
-                            address);
+                    extractHDBcc(extractBccUtxos, rawOutList, path, index,
+                            address, isMonitored);
                     dp.dismiss();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -80,7 +84,8 @@ public class DetectAnotherAssetsUtil {
     }
 
 
-    private void extractBcc(final List<ExtractBccUtxo> extractBccUtxos, final List<Out> rawOutList, final String toAddress) {
+    private void extractBcc(final List<ExtractBccUtxo> extractBccUtxos, final List<Out> rawOutList,
+                            final String address, final int position, final boolean isPrivate) {
         final Runnable alertTaskRunnable = new Runnable() {
             @Override
             public void run() {
@@ -92,8 +97,13 @@ public class DetectAnotherAssetsUtil {
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    Intent intent = new Intent(activity, BCCAssetsDetectHotActivtity.class);
-                                    intent.putExtra(BCCAssetsDetectHotActivtity.DECTECTED_BCC_AMOUNT_TAG,(Serializable)extractBccUtxos);
+                                    Intent intent = new Intent(activity, isPrivate ? BCCAssetsDetectHotActivity.class :
+                                            BCCAssetsHotMonitoredActivity.class);
+                                    intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_AMOUNT_TAG, (Serializable) extractBccUtxos);
+                                    intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
+                                    intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
+                                            isPrivate);
+//                                    intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
                                     activity.startActivity(intent);
                                 }
                             });
@@ -109,14 +119,16 @@ public class DetectAnotherAssetsUtil {
                 }
             }
         };
-        new Thread(){
+        new Thread() {
             public void run() {
                 new Handler(Looper.getMainLooper()).post(alertTaskRunnable);
             }
         }.start();
     }
 
-    private void extractHDBcc(final List<ExtractBccUtxo> extractBccUtxos, final List<Out> rawOutList, final AbstractHD.PathType path, final int index, final String toAddress) {
+    private void extractHDBcc(final List<ExtractBccUtxo> extractBccUtxos, final List<Out> rawOutList,
+                              final AbstractHD.PathType path, final int index, final String address,
+                              final boolean isMonitored) {
         final Runnable alertTaskRunnable = new Runnable() {
             @Override
             public void run() {
@@ -128,11 +140,20 @@ public class DetectAnotherAssetsUtil {
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    Intent intent = new Intent(activity, BCCAssetsDetectHDActivity.class);
-                                    intent.putExtra(BCCAssetsDetectHotActivtity.DECTECTED_BCC_AMOUNT_TAG,(Serializable)extractBccUtxos);
-                                    intent.putExtra(BCCAssetsDetectHotActivtity.DECTECTED_BCC_HD_PATH_TYPE, path.getValue());
-                                    intent.putExtra(BCCAssetsDetectHotActivtity.DECTECTED_BCC_HD_ADDRESS_INDEX, index);
-                                    activity.startActivity(intent);
+                                    if (isMonitored) {
+                                        Intent intent = new Intent(activity, BCCAssetsHDAccountMonitoredActivity.class);
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_AMOUNT_TAG, (Serializable) extractBccUtxos);
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DETECT_BCC_ADDRESS,address);
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_HD_PATH_TYPE, path.getValue());
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_HD_ADDRESS_INDEX, index);
+                                        activity.startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(activity, BCCAssetsDetectHDActivity.class);
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_AMOUNT_TAG, (Serializable) extractBccUtxos);
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_HD_PATH_TYPE, path.getValue());
+                                        intent.putExtra(BCCAssetsDetectHotActivity.DECTECTED_BCC_HD_ADDRESS_INDEX, index);
+                                        activity.startActivity(intent);
+                                    }
                                 }
                             });
                     dialogConfirmTask.show();
@@ -147,7 +168,7 @@ public class DetectAnotherAssetsUtil {
                 }
             }
         };
-        new Thread(){
+        new Thread() {
             public void run() {
                 new Handler(Looper.getMainLooper()).post(alertTaskRunnable);
             }

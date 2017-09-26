@@ -766,4 +766,5 @@
     <string name="detect_exist_another_assets_alert">This address has %1$s%2$s, extract your Bitpie account?</string>
     <string name="detect_no_assets_alert">No other assets were found on the block browser for this address</string>
     <string name="extract_assets">Extract Assets</string>
+    <string name="extract_assets_BCC_send_title">Can Extract</string>
 </resources>

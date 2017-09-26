@@ -75,7 +75,12 @@ public class ExtractBccUtxo implements Serializable {
            String scriptPubKey = object.getString("scriptPubKey");
            Double amount = object.getDouble("amount");
            long satoshis = object.getLong("satoshis");
-           long height = object.getLong("height");
+           long height = 0;
+           try {
+              height = object.getLong("height");
+           }catch (JSONException j){
+               height = 0;
+           }
            long confirmations = object.getLong("confirmations");
            ExtractBccUtxo extractBccUtxo = new ExtractBccUtxo(address,txid,vout,scriptPubKey,
                    amount,satoshis,height,confirmations);

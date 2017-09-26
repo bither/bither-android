@@ -48,11 +48,12 @@ import java.util.List;
  * Created by ltq on 2017/9/17.
  */
 
-public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements EntryKeyboardView
+public class BCCAssetsDetectHotActivity extends SwipeRightActivity implements EntryKeyboardView
         .EntryKeyboardViewListener {
     public static final String DECTECTED_BCC_AMOUNT_TAG = "DECTECTED_BCC_AMOUNT_TAG";
     public static final String DECTECTED_BCC_HD_PATH_TYPE = "DECTECTED_BCC_HD_PATH_TYPE";
     public static final String DECTECTED_BCC_HD_ADDRESS_INDEX = "DECTECTED_BCC_HD_ADDRESS_INDEX";
+    public static final String DETECT_BCC_ADDRESS = "DETECT_BCC_ADDRESS";
 
     protected int addressPosition;
     protected Address address;
@@ -61,6 +62,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
     protected TextView tvAddressLabel;
     protected EditText etAddress;
     protected EditText etPassword;
+    protected TextView tvBccSendTitle;
     private String toAddress;
     private ImageButton ibtnScan;
     protected Button btnSend;
@@ -102,15 +104,19 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
         ibtnScan = (ImageButton) findViewById(R.id.ibtn_scan);
         btnSend = (Button) findViewById(R.id.btn_send);
         etPassword = (EditText) findViewById(R.id.et_password);
+        tvBccSendTitle = (TextView)findViewById(R.id.bcc_send_title);
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
 
-        BCCAssetsDetectHotActivtity.ReceivingAddressListener addressListener = new BCCAssetsDetectHotActivtity.ReceivingAddressListener();
+        BCCAssetsDetectHotActivity.ReceivingAddressListener addressListener = new BCCAssetsDetectHotActivity.ReceivingAddressListener();
         etAddress.setOnFocusChangeListener(addressListener);
         etAddress.addTextChangedListener(addressListener);
         dp = new DialogRCheck(this);
+        tvBccSendTitle.setText(getString(R.string.extract_assets_BCC_send_title));
+        btnSend.setText(getString(R.string.extract_assets));
+
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
         kvPassword.registerEditText(etPassword).setListener(this);
@@ -127,7 +133,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(BCCAssetsDetectHotActivtity.this, ScanActivity.class);
+            Intent intent = new Intent(BCCAssetsDetectHotActivity.this, ScanActivity.class);
             startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
         }
     };
@@ -168,14 +174,13 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                     }
 
                     if (errorMsg == null) {
-//                        saveIsObtainBcc();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
-                                DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this, R.string.send_success);
+                                DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, R.string.send_success);
                             }
                         });
                         btnSend.postDelayed(new Runnable() {
@@ -194,7 +199,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                                 if (dp.isShowing()) {
                                     dp.dismiss();
                                 }
-                                DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this, finalErrorMsg);
+                                DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, finalErrorMsg);
                                 btnSend.setEnabled(true);
                             }
                         });
@@ -230,7 +235,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                         run.setHandler(rcheckHandler);
                         new Thread(run).start();
                     } else {
-                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this,
+                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this,
                                 R.string.password_wrong);
                     }
                     break;
@@ -238,7 +243,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this, R.string.password_wrong);
+                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, R.string.password_wrong);
                     break;
                 case HandlerMessage.MSG_FAILURE:
                     if (dp.isShowing()) {
@@ -248,7 +253,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                     if (msg.obj instanceof String) {
                         msgError = (String) msg.obj;
                     }
-                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this, msgError);
+                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, msgError);
                     break;
                 default:
                     break;
@@ -269,7 +274,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                new DialogHdSendConfirm(BCCAssetsDetectHotActivtity.this, toAddress, txs, sendConfirmListener).show();
+                                new DialogHdSendConfirm(BCCAssetsDetectHotActivity.this, toAddress, txs, Utils.getFeeBase(), sendConfirmListener).show();
                                 dp.setWait();
                             }
                         }, 800);
@@ -306,7 +311,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
                     if (result) {
                         send();
                     } else {
-                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this, getString(R.string.not_bitpie_bcc_address));
+                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, getString(R.string.not_bitpie_bcc_address));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -323,7 +328,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
         try {
             CompleteTransactionRunnable completeRunnable = new
                     CompleteTransactionRunnable(addressPosition, btcAmount
-                    , toAddress, toAddress, new SecureCharSequence(etPassword.getText()), false);
+                    , toAddress, toAddress, new SecureCharSequence(etPassword.getText()), false,outs);
             completeRunnable.setHandler(completeTransactionHandler);
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);
@@ -333,7 +338,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
             thread.start();
         } catch (Exception e) {
             e.printStackTrace();
-            DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this,
+            DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this,
                     R.string.send_failed);
         }
     }
@@ -442,7 +447,7 @@ public class BCCAssetsDetectHotActivtity extends SwipeRightActivity implements E
 
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
-                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivtity.this,
+                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this,
                             R.string.scan_watch_only_address_error);
                 }
             }.parse();

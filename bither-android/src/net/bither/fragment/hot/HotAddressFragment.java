@@ -68,6 +68,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private List<String> addressesToShowAdded;
     private String notifyAddress = null;
     public  boolean isSplitBCCAddress;
+    public  boolean isDetectBcc;
 
     @Override
     public void onCreate(Bundle paramBundle) {
@@ -129,12 +130,14 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
         if (getActivity() instanceof SplitBccSelectAddressActivity) {
+            SplitBccSelectAddressActivity splitBccSelectAddressActivity =  (SplitBccSelectAddressActivity)getActivity();
+            isDetectBcc = splitBccSelectAddressActivity.isDetectBcc();
             isSplitBCCAddress = true;
         } else {
             isSplitBCCAddress = false;
         }
         mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv,
-                isSplitBCCAddress);
+                isSplitBCCAddress,isDetectBcc);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         refresh();

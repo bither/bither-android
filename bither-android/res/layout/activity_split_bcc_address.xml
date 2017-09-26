@@ -43,6 +43,7 @@
                         android:background="@drawable/title_bar_seperator" />
 
                     <TextView
+                        android:id="@+id/tv_title"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
@@ -51,7 +52,6 @@
                         android:shadowDx="1"
                         android:shadowDy="-1"
                         android:shadowRadius="0.5"
-                        android:text="@string/obtain_BCC_select_address"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         android:textStyle="bold" />
