@@ -327,6 +327,7 @@ public class BCCAssetsHotMonitoredActivity extends BCCAssetsDetectHotActivity {
                                 compressSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kCompressPubKeyLength)));
                                 uncompressedSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kUncompressedPubKeyLength)));
                             }
+                            tx.setDetectBcc(true);
                             tx.signWithSignatures(compressSigs);
                             if (!tx.verifySignatures()) {
                                 tx.signWithSignatures(uncompressedSigs);

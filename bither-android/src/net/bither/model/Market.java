@@ -52,29 +52,11 @@ public class Market {
     public int getMarketColor() {
         int resource = -1;
         switch (getMarketType()) {
-            case HUOBI:
-                resource = R.color.market_color_huobi;
-                break;
             case BITSTAMP:
                 resource = R.color.market_color_bitstamp;
                 break;
-            case OKCOIN:
-                resource = R.color.market_color_okcoin;
-                break;
-            case CHBTC:
-                resource = R.color.market_color_chbtc;
-                break;
-            case BTCCHINA:
-                resource = R.color.market_color_btcchina;
-                break;
-            case MARKET796:
-                resource = R.color.market_color_796;
-                break;
             case BITFINEX:
                 resource = R.color.market_color_bitfinex;
-                break;
-            case BTCTRADE:
-                resource = R.color.market_color_btctrade;
                 break;
             case COINBASE:
                 resource = R.color.market_color_coinbase;
@@ -109,22 +91,10 @@ public class Market {
 
     public String getDomainName() {
         switch (getMarketType()) {
-            case HUOBI:
-                return "huobi.com";
             case BITSTAMP:
                 return "bitstamp.net";
-            case OKCOIN:
-                return "okcoin.cn";
-            case CHBTC:
-                return "chbtc.com";
-            case BTCCHINA:
-                return "btcchina.com";
             case BITFINEX:
                 return "bitfinex.com";
-            case MARKET796:
-                return "796.com";
-            case BTCTRADE:
-                return "btctrade.com";
             case COINBASE:
                 return "coinbase.com";
 
