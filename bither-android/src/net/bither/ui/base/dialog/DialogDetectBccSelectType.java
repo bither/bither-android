@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import net.bither.BCCAssetsDetectListActivity;
 import net.bither.R;
@@ -27,6 +28,7 @@ public class DialogDetectBccSelectType extends CenterDialog {
     private LinearLayout llHdReceive;
     private LinearLayout llHdChange;
     private LinearLayout llHot;
+    private TextView tvDetectBcc;
     private View vLineReceive;
     private View vLineChange;
     private HDAccount hdAccount;
@@ -38,11 +40,13 @@ public class DialogDetectBccSelectType extends CenterDialog {
         llHdReceive = (LinearLayout) findViewById(R.id.ll_hd_receive);
         llHdChange = (LinearLayout) findViewById(R.id.ll_hd_change);
         llHot = (LinearLayout) findViewById(R.id.ll_hot);
+        tvDetectBcc = (TextView)findViewById(R.id.tv_sign_message);
         vLineReceive = (View) findViewById(R.id.v_line_receive);
         vLineChange = (View) findViewById(R.id.v_line_change);
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountMonitored = AddressManager.getInstance().getHDAccountMonitored();
         llHot.setVisibility(View.GONE);
+        tvDetectBcc.setText(getContext().getString(R.string.detect_another_BCC_assets_select_address));
 
         if (isHotHD) {
             if (hdAccount == null) {
