@@ -22,10 +22,12 @@ import android.app.Activity;
 
 import net.bither.R;
 import net.bither.activity.hot.HDAccountDetailActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.DetectAnotherAssetsUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -187,6 +189,18 @@ public class DialogHdAccountOptions extends DialogWithActions {
                         }).show();
                     }
                 }));
+        actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
+            @Override
+            public void run() {
+                if (!account.isSyncComplete()) {
+                    DropdownMessage.showDropdownMessage(activity, R.string.no_sync_complete);
+                } else {
+                    DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(activity);
+                    detectUtil.getBCCHDUnspentOutputs(account.getAddress(), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
+                            account.issuedExternalIndex() == 0 ? 0 : account.issuedExternalIndex() + 1, false);
+                }
+            }
+        }));
         return actions;
     }
 }
