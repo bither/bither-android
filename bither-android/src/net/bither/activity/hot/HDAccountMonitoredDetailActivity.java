@@ -21,6 +21,7 @@ package net.bither.activity.hot;
 import android.os.Bundle;
 
 import net.bither.R;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
@@ -28,6 +29,7 @@ import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdAccountOldAddresses;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.DetectAnotherAssetsUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -91,6 +93,18 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
                     public void run() {
                         new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this,
                                 (HDAccount) address).show();
+                    }
+                }));
+                actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!address.isSyncComplete()) {
+                            DropdownMessage.showDropdownMessage(HDAccountMonitoredDetailActivity.this, R.string.no_sync_complete);
+                        } else {
+                            DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(HDAccountMonitoredDetailActivity.this);
+                            detectUtil.getBCCHDUnspentOutputs(address.getAddress(), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
+                                    ((HDAccount) address).issuedExternalIndex() == 0 ? 0 :  ((HDAccount) address).issuedExternalIndex() + 1,true);
+                        }
                     }
                 }));
                 return actions;
