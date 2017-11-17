@@ -3,10 +3,10 @@ apply plugin: 'com.android.library'
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url 'https://maven.google.com/'
-            name 'Google'
-        }
+//        maven {
+//            url 'https://maven.google.com/'
+//            name 'Google'
+//        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.0'
@@ -31,9 +31,14 @@ subprojects {
         compileSdkVersion 22
         buildToolsVersion '26.0.2'
         defaultConfig {
-            minSdkVersion 14
+            minSdkVersion 9
             targetSdkVersion 22
             multiDexEnabled true
+        }
+
+        dexOptions {
+            preDexLibraries = false
+            additionalParameters=['--core-library']
         }
 
         sourceSets {
@@ -73,12 +78,12 @@ subprojects {
         }
     }
 }
-repositories {
-    maven {
-        url 'https://maven.google.com/'
-        name 'Google'
-    }
-}
+//repositories {
+//    maven {
+//        url 'https://maven.google.com/'
+//        name 'Google'
+//    }
+//}
 allprojects {
     repositories {
         jcenter()
