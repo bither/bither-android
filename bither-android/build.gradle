@@ -1,6 +1,12 @@
-repositories {
-    mavenLocal()
-    mavenCentral()
+//repositories {
+//    mavenLocal()
+//    mavenCentral()
+//}
+configurations {
+    all {
+        exclude module: 'httpclient'
+        exclude module: 'commons-logging'
+    }
 }
 dependencies {
     compile 'com.google.protobuf:protobuf-java:2.5.0'
