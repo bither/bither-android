@@ -470,14 +470,15 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             }
             view = (ObtainBCCListItemView)convertView;
             Address a = getChild(groupPosition, childPosition);
+            String coinName = splitCoin.getIsGatKey();
             if (a.isHDAccount() && !a.hasPrivKey()) {
-                getIsObtainKey = "HDMonitored";
+                getIsObtainKey = "HDMonitored" + coinName;
                 view.setOnClickListener(new hdAccountMonitoredDetailClick(a));
             } else if (a.isHDAccount()) {
-                getIsObtainKey = "HDAccountHot";
+                getIsObtainKey = "HDAccountHot" + coinName;
                 view.setOnClickListener(new hdAccountDetailClick(a));
             } else {
-                getIsObtainKey = a.getAddress();
+                getIsObtainKey = a.getAddress() + coinName;
                 view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(),
                         a instanceof EnterpriseHDMAddress,a));
             }

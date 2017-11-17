@@ -382,6 +382,6 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress(),true);
+        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress() + splitCoin.getIsGatKey(), true);
     }
 }

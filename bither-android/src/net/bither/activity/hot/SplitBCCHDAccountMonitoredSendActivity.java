@@ -332,6 +332,6 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc("HDMonitored",true);
+        AppSharedPreference.getInstance().setIsObtainBcc("HDMonitored" + splitCoin.getIsGatKey(),true);
     }
 }

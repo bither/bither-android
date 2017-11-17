@@ -239,6 +239,6 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc("HDAccountHot", true);
+        AppSharedPreference.getInstance().setIsObtainBcc("HDAccountHot" + splitCoin.getIsGatKey(), true);
     }
 }
