@@ -14,4 +14,3 @@ build/*
 gradle/wrapper/*
 gradlew*
 local.properties
-gradle.properties
