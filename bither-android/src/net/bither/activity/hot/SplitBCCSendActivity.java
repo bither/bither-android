@@ -452,7 +452,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                 }
             }.parse();
 
