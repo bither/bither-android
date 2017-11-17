@@ -31,7 +31,7 @@ subprojects {
         compileSdkVersion 22
         buildToolsVersion '26.0.2'
         defaultConfig {
-            minSdkVersion 14
+            minSdkVersion 9
             targetSdkVersion 22
             multiDexEnabled true
         }
