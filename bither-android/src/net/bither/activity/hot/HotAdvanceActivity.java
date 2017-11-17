@@ -41,6 +41,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
 import net.bither.bitherj.core.PeerManager;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
 import net.bither.bitherj.crypto.ECKey;
@@ -96,6 +97,8 @@ import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -120,11 +123,15 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private LinearLayout btnHDMRecovery;
     private LinearLayout btnHDMServerPasswordReset;
     private LinearLayout btnSplitBcc;
+    private LinearLayout btnSplitBtg;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
     private AlertDialog.Builder selectedBuilder;
+    private TextView tvSplitBcc;
+    private TextView tvSplitBtg;
+    public static final String SplitCoinKey = "SplitCoin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +150,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
+        btnSplitBtg = (LinearLayout) findViewById(R.id.ll_split_btg);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -164,6 +172,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
         btnSplitBcc.setOnClickListener(splitBccClick);
+        btnSplitBtg.setOnClickListener(splitBtgClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -182,6 +191,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
         configureHDMServerPasswordReset();
+        tvSplitBcc = (TextView) findViewById(R.id.tv_split_bcc);
+        tvSplitBtg = (TextView) findViewById(R.id.tv_split_btg);
+        tvSplitBcc.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BCC.getName()));
+        tvSplitBtg.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BTG.getName()));
     }
 
     @Override
@@ -362,10 +375,34 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener splitBccClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-           long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
-            if (lastBlockHeight < BitherSetting.BTCFORKBLOCKNO) {
+            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
+            long forkBlockHeight = SplitCoin.BCC.getForkBlockHeight();
+            if (lastBlockHeight < forkBlockHeight) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, String.format(getString
+                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
+            } else {
+                AddressManager addressManager = AddressManager.getInstance();
+                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
+                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
+                        == 0) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, getString(R.string.no_private_key));
+                } else {
+                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
+                    intent.putExtra(SplitCoinKey, SplitCoin.BCC);
+                    startActivity(intent);
+                }
+            }
+        }
+    };
+
+    private View.OnClickListener splitBtgClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
+            long forkBlockHeight = SplitCoin.BTG.getForkBlockHeight();
+            if (lastBlockHeight < forkBlockHeight) {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,String.format(getString
-                        (R.string.please_firstly_sync_to_block_no),BitherSetting.BTCFORKBLOCKNO));
+                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
             } else {
                 AddressManager addressManager = AddressManager.getInstance();
                 if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
@@ -373,7 +410,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         == 0) {
                     DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
                 } else {
-                    startActivity(new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class));
+                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
+                    intent.putExtra(SplitCoinKey, SplitCoin.BTG);
+                    startActivity(intent);
                 }
             }
         }

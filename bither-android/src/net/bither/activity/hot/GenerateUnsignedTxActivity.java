@@ -337,7 +337,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new StringInputParser(input) {
+            new StringInputParser(input, null) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {

@@ -164,13 +164,6 @@ public class ExchangeUtil {
 
     public static Currency getExchangeType(BitherjSettings.MarketType marketType) {
         switch (marketType) {
-            case HUOBI:
-            case OKCOIN:
-            case BTCCHINA:
-            case CHBTC:
-            case BTCTRADE:
-                return Currency.CNY;
-            case MARKET796:
             case BITSTAMP:
             case BITFINEX:
             case COINBASE:

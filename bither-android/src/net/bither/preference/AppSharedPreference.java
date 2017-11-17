@@ -197,7 +197,7 @@ public class AppSharedPreference {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
                 (defaultCountry, "cn")) {
-            setMarketType(MarketType.BTCCHINA);
+            setMarketType(MarketType.BITSTAMP);
         } else {
             setMarketType(MarketType.BITSTAMP);
         }

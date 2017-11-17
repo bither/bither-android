@@ -12,8 +12,10 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.utils.UnitUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.util.WalletUtils;
 
 /**
@@ -50,23 +52,23 @@ public class ObtainBCCListItemView extends FrameLayout {
         tvIndexTitle.setVisibility(GONE);
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(Address address, SplitCoin splitCoin) {
         this.address = address;
         if (address != null) {
-            showAddressInfo();
-            tvBalanceTitle.setText(getResources().getString(R.string.obtain_BCC_send_title));
+            showAddressInfo(splitCoin);
+            tvBalanceTitle.setText(getResources().getString(R.string.get_split_coin));
         }
     }
 
-    public void setObtainAddress(Address address) {
+    public void setObtainAddress(Address address, SplitCoin splitCoin) {
         this.address = address;
         if (address != null) {
             tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 20));
-            tvBalanceTitle.setText(getResources().getString(R.string.you_already_obtained_bcc));
+            tvBalanceTitle.setText(Utils.format(getResources().getString(R.string.you_already_get_split_coin), splitCoin.getName()));
         }
     }
 
-    private void showAddressInfo() {
+    private void showAddressInfo(SplitCoin splitCoin) {
         if (address == null) {
             return;
         }
@@ -74,17 +76,17 @@ public class ObtainBCCListItemView extends FrameLayout {
         long amount = 0;
         if (address.isHDAccount() && !address.hasPrivKey()) {
             amount = AddressManager.getInstance().getAmount(AbstractDb.
-                    hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,AddressManager.getInstance()
+                    hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), AddressManager.getInstance()
                     .getHDAccountMonitored().getHdSeedId()));
         } else if (address.isHDAccount()) {
             amount = AddressManager.getInstance().getAmount(AbstractDb.
-                    hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,AddressManager.getInstance().
+                    hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), AddressManager.getInstance().
                     getHDAccountHot().getHdSeedId()));
         } else {
             amount = AddressManager.getInstance().getAmount(AbstractDb.
-                    txProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,address.getAddress()));
+                    txProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress()));
         }
-            tvBalance.setText(UnitUtil.formatValue(amount, UnitUtil.BitcoinUnit.BTC) + " " + BitherSetting.BCC);
+        tvBalance.setText(UnitUtil.formatValue(amount, UnitUtil.BitcoinUnit.BTC) + " " + splitCoin.getName());
     }
 
     public ObtainBCCListItemView(Context context) {

@@ -49,7 +49,6 @@
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
                             android:background="@drawable/text_field_holo_light_background"
-                            android:hint="@string/obtain_BCC_to_address_hint"
                             android:singleLine="true"
                             android:textColor="@color/text_field_text_color"
                             android:textSize="14sp"/>
@@ -179,7 +178,7 @@
                     android:shadowDx="1"
                     android:shadowDy="-1"
                     android:shadowRadius="0.5"
-                    android:text="@string/obtain_BCC_send_title"
+                    android:text="@string/get_split_coin"
                     android:textColor="@color/white"
                     android:textSize="16sp"/>
 
@@ -197,6 +196,7 @@
                     android:textSize="16sp"
                     android:textStyle="bold"/>
                 <TextView
+                    android:id="@+id/tv_split_coin_name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
@@ -205,7 +205,6 @@
                     android:shadowDx="1"
                     android:shadowDy="-1"
                     android:shadowRadius="0.5"
-                    android:text="@string/obtain_BCC_BCC_name"
                     android:textColor="@color/white"
                     android:textSize="16sp"/>
             </LinearLayout>

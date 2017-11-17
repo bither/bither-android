@@ -18,6 +18,7 @@ package net.bither.util;
 
 
 import net.bither.R;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
 
@@ -29,9 +30,11 @@ import javax.annotation.Nullable;
 public abstract class InputParser {
     public abstract static class StringInputParser extends InputParser {
         private final String input;
+        private final SplitCoin splitCoin;
 
-        public StringInputParser(@Nonnull final String input) {
+        public StringInputParser(@Nonnull final String input, SplitCoin splitCoin) {
             this.input = input;
+            this.splitCoin = splitCoin;
         }
 
         @Override
@@ -51,6 +54,8 @@ public abstract class InputParser {
                 }
             } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
                 if (Utils.validBicoinAddress(input)) {
+                    bitcoinRequest(input, null, 0, null);
+                } else if (splitCoin == SplitCoin.BTG && Utils.validBicoinGoldAddress(input)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
                     error(R.string.input_parser_invalid_address);

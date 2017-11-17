@@ -10,6 +10,7 @@ import net.bither.bitherj.api.BccBroadCastApi;
 import net.bither.bitherj.api.BccHasAddressApi;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -32,6 +33,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
+
 /**
  * Created by ltq on 2017/7/29.
  */
@@ -49,6 +52,8 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        splitCoin = (SplitCoin) intent.getSerializableExtra(SplitCoinKey);
         etPassword.setVisibility(View.GONE);
         findViewById(R.id.tv_password).setVisibility(View.GONE);
         btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
@@ -65,7 +70,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     @Override
     protected void initBalance() {
             tvBalance.setText(UnitUtil.formatValue(AddressManager.getInstance().getAmount(AbstractDb.
-                    hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,AddressManager.getInstance()
+                    hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), AddressManager.getInstance()
                     .getHDAccountMonitored().getHdSeedId())),UnitUtil.BitcoinUnit.BTC));
     }
 
@@ -77,7 +82,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, splitCoin);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
@@ -90,7 +95,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                         send();
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this,
-                                getString(R.string.not_bitpie_bcc_address));
+                                Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -107,7 +112,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         this.txs = null;
         HDAccount account = (HDAccount) address;
         try {
-            txs = account.newForkTx(toAddress, btcAmount);
+            txs = account.newForkTx(toAddress, btcAmount, splitCoin);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
@@ -145,13 +150,13 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     protected void validateValues() {
         boolean isValidAmounts = false;
             btcAmount = AddressManager.getInstance().getAmount(AbstractDb.
-                    hdAccountAddressProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO,AddressManager.getInstance()
+                    hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(),AddressManager.getInstance()
                     .getHDAccountMonitored().getHdSeedId()));
         if (btcAmount > 0) {
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validBicoinAddress(toAddress);
+        boolean isValidAddress = Utils.validBicoinAddress(toAddress) || Utils.validBicoinGoldAddress(toAddress);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
@@ -166,13 +171,13 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, txs, this).show();
+        new DialogHdSendConfirm(this, toAddress, txs, this, splitCoin).show();
     }
 
     @Override
     public void onConfirm() {
         Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getBccHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address));
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getSplitCoinHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address, splitCoin));
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
                 .unsigned_transaction_qr_code_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -258,7 +263,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                 for (final Tx tx: txs) {
                     try {
                         String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, splitCoin);
                         bccBroadCastApi.handleHttpPost();
                         JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                         boolean result = jsonObject.getInt("result") == 1 ? true : false;
@@ -321,7 +326,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
 
     private String replaceSignHashOfString(String s) {
         String endString = s.substring(s.length()-68,s.length());
-        String appendString = "41"; // 1|0x40|0   Hex
+        String appendString = splitCoin.getReplaceSignHash(); // 1|0x40|0   Hex
         String startString = s.substring(0,s.length()-70);
         return startString+appendString+endString;
     }

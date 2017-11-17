@@ -44,7 +44,6 @@ public class BitherSetting {
     public static final int MEMORY_CLASS_LOWEND = 48;
 
     public static final Charset UTF_8 = Charset.forName("UTF-8");
-    public static final long BTCFORKBLOCKNO = 478559;
 
     public static final int REQUEST_CODE_IMAGE = 1007;
     public static final int REQUEST_CODE_CAMERA = 1008;
@@ -52,7 +51,6 @@ public class BitherSetting {
 
     public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
     public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;
-    public static final String BCC = "BCC";
 
     public class SwipeRightGesture {
         public static final int SCROLL_DELAY_HORIZONTAL = 75;
@@ -132,36 +130,13 @@ public class BitherSetting {
     public static String getMarketName(BitherjSettings.MarketType marketType) {
         String name = "";
         switch (marketType) {
-            case HUOBI:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_huobi);
-                break;
             case BITSTAMP:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitstamp);
                 break;
-            case OKCOIN:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_okcoin);
-                break;
-            case CHBTC:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_chbtc);
-                break;
-            case BTCCHINA:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_btcchina);
-                break;
             case BITFINEX:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitfinex);
-                break;
-            case MARKET796:
-                name = BitherApplication.mContext
-                        .getString(R.string.market_name_796);
-                break;
-            case BTCTRADE:
-                name = BitherApplication.mContext.getString(R.string.market_name_btctrade);
                 break;
             case COINBASE:
                 name = BitherApplication.mContext.getString(R.string.market_name_coinbase);

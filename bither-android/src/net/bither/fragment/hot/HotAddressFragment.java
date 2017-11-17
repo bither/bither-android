@@ -16,6 +16,7 @@
 
 package net.bither.fragment.hot;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +39,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDMAddress;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -54,6 +56,8 @@ import net.bither.util.UIUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
+
 public class HotAddressFragment extends Fragment implements Refreshable, Selectable {
     private HotAddressFragmentListAdapter mAdapter;
     private PinnedHeaderAddressExpandableListView lv;
@@ -67,7 +71,8 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private IntentFilter broadcastIntentFilter = new IntentFilter();
     private List<String> addressesToShowAdded;
     private String notifyAddress = null;
-    public  boolean isSplitBCCAddress;
+    public boolean isSplitCoinAddress;
+    public SplitCoin splitCoin = SplitCoin.BCC;
 
     @Override
     public void onCreate(Bundle paramBundle) {
@@ -129,12 +134,16 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
         if (getActivity() instanceof SplitBccSelectAddressActivity) {
-            isSplitBCCAddress = true;
+            isSplitCoinAddress = true;
         } else {
-            isSplitBCCAddress = false;
+            isSplitCoinAddress = false;
+        }
+        Bundle bundle= this.getArguments();
+        if (bundle != null) {
+            splitCoin = (SplitCoin) bundle.get(SplitCoinKey);
         }
         mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv,
-                isSplitBCCAddress);
+                isSplitCoinAddress, splitCoin);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         refresh();
@@ -431,4 +440,6 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             v.configureHeaderView(groupPosition, childPosition);
         }
     };
+
+
 }
