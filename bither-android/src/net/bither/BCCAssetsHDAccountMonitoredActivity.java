@@ -12,6 +12,7 @@ import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -86,7 +87,7 @@ public class BCCAssetsHDAccountMonitoredActivity extends BCCAssetsDetectHotActiv
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, SplitCoin.BCC);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
@@ -99,7 +100,7 @@ public class BCCAssetsHDAccountMonitoredActivity extends BCCAssetsDetectHotActiv
                         send();
                     } else {
                         DropdownMessage.showDropdownMessage(BCCAssetsHDAccountMonitoredActivity.this,
-                                getString(R.string.not_bitpie_bcc_address));
+                                Utils.format(getString(R.string.not_bitpie_split_coin_address), SplitCoin.BCC.getName()));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -116,7 +117,7 @@ public class BCCAssetsHDAccountMonitoredActivity extends BCCAssetsDetectHotActiv
         this.txs = null;
         HDAccount account = (HDAccount) address;
         try {
-            txs = account.newForkTx(toAddress, btcAmount,outs);
+            txs = account.newForkTx(toAddress, btcAmount,outs, SplitCoin.BCC);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
@@ -268,7 +269,7 @@ public class BCCAssetsHDAccountMonitoredActivity extends BCCAssetsDetectHotActiv
                 for (final Tx tx: txs) {
                     try {
                         String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, SplitCoin.BCC);
                         bccBroadCastApi.handleHttpPost();
                         JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                         boolean result = jsonObject.getInt("result") == 1 ? true : false;

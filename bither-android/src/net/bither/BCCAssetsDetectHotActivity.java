@@ -21,6 +21,7 @@ import net.bither.bitherj.api.BccHasAddressApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.utils.UnitUtil;
@@ -153,7 +154,7 @@ public class BCCAssetsDetectHotActivity extends SwipeRightActivity implements En
                     for (final Tx tx: txs) {
                         try {
                             String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                            BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                            BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, SplitCoin.BCC);
                             bccBroadCastApi.handleHttpPost();
                             JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                             boolean result = jsonObject.getInt("result") == 1 ? true : false;
@@ -302,7 +303,7 @@ public class BCCAssetsDetectHotActivity extends SwipeRightActivity implements En
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, SplitCoin.BCC);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
@@ -311,7 +312,8 @@ public class BCCAssetsDetectHotActivity extends SwipeRightActivity implements En
                     if (result) {
                         send();
                     } else {
-                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this, getString(R.string.not_bitpie_bcc_address));
+                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHotActivity.this,
+                                Utils.format(getString(R.string.not_bitpie_split_coin_address), SplitCoin.BCC.getName()));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -433,7 +435,7 @@ public class BCCAssetsDetectHotActivity extends SwipeRightActivity implements En
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new InputParser.StringInputParser(input) {
+            new InputParser.StringInputParser(input, SplitCoin.BCC) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {

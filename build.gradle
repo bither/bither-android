@@ -3,9 +3,13 @@ apply plugin: 'com.android.library'
 buildscript {
     repositories {
         mavenCentral()
+//        maven {
+//            url 'https://maven.google.com/'
+//            name 'Google'
+//        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.3.2'
     }
 }
 
@@ -25,7 +29,17 @@ subprojects {
 
     android {
         compileSdkVersion 22
-        buildToolsVersion '25.0.0'
+        buildToolsVersion '26.0.2'
+        defaultConfig {
+            minSdkVersion 9
+            targetSdkVersion 22
+//            multiDexEnabled true
+        }
+
+        dexOptions {
+            preDexLibraries = false
+            additionalParameters=['--core-library']
+        }
 
         sourceSets {
             main {
@@ -61,6 +75,20 @@ subprojects {
         lintOptions {
             abortOnError false
             disable "ResourceType"
+        }
+    }
+}
+//repositories {
+//    maven {
+//        url 'https://maven.google.com/'
+//        name 'Google'
+//    }
+//}
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url 'https://maven.google.com'
         }
     }
 }

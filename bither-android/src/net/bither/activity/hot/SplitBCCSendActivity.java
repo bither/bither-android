@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +23,7 @@ import net.bither.bitherj.api.BccHasAddressApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Out;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.db.AbstractDb;
@@ -48,6 +50,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
+
 /**
  * Created by ltq on 2017/7/26.
  */
@@ -69,12 +73,16 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     private View vKeyboardContainer;
     private List<Tx> txs;
     private long btcAmount;
+    protected TextView tvSplitCoinName;
+    protected SplitCoin splitCoin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_scan_address_to_split_bcc);
+        Intent intent = getIntent();
+        splitCoin = (SplitCoin) intent.getSerializableExtra(SplitCoinKey);
         initAddress();
         initView();
         initBalance();
@@ -102,10 +110,10 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         btnSend = (Button) findViewById(R.id.btn_send);
         etPassword = (EditText) findViewById(R.id.et_password);
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
+        tvSplitCoinName = (TextView) findViewById(R.id.tv_split_coin_name);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
         etPassword.addTextChangedListener(passwordWatcher);
         etPassword.setOnEditorActionListener(passwordAction);
-
         SplitBCCSendActivity.ReceivingAddressListener addressListener = new SplitBCCSendActivity.ReceivingAddressListener();
         etAddress.setOnFocusChangeListener(addressListener);
         etAddress.addTextChangedListener(addressListener);
@@ -113,11 +121,13 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         ibtnScan.setOnClickListener(scanClick);
         btnSend.setOnClickListener(sendClick);
         kvPassword.registerEditText(etPassword).setListener(this);
+        tvSplitCoinName.setText(splitCoin.getName().toString());
+        etAddress.setHint(Utils.format(getString(R.string.bitpie_split_coin_address), splitCoin.getName()));
     }
 
     protected void initBalance() {
         tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
-                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress())),
+                        getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress())),
                 UnitUtil.BitcoinUnit.BTC));
     }
 
@@ -142,10 +152,10 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                 @Override
                 public void run() {
                     String errorMsg = null;
-                    for (final Tx tx: txs) {
+                    for (final Tx tx : txs) {
                         try {
                             String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                            BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                            BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, splitCoin);
                             bccBroadCastApi.handleHttpPost();
                             JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                             boolean result = jsonObject.getInt("result") == 1 ? true : false;
@@ -183,7 +193,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                                         SPLIT_BCC_HDACCOUNT_REQUEST_CODE, null);
                                 finish();
                             }
-                        },1000);
+                        }, 1000);
                     } else {
                         final String finalErrorMsg = errorMsg;
                         runOnUiThread(new Runnable() {
@@ -211,7 +221,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
 
         @Override
         public void onClick(View v) {
-        sendClicked();
+            sendClicked();
         }
     };
 
@@ -267,7 +277,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             @Override
                             public void run() {
                                 dp.dismiss();
-                                new DialogHdSendConfirm(SplitBCCSendActivity.this, toAddress, txs, sendConfirmListener).show();
+                                new DialogHdSendConfirm(SplitBCCSendActivity.this, toAddress, txs, sendConfirmListener, splitCoin).show();
                                 dp.setWait();
                             }
                         }, 800);
@@ -295,16 +305,16 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, splitCoin);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
                             .getResult());
-                    boolean result = jsonObject.getInt("result") == 1? true:false;
+                    boolean result = jsonObject.getInt("result") == 1 ? true : false;
                     if (result) {
                         send();
                     } else {
-                        DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, getString(R.string.not_bitpie_bcc_address));
+                        DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -320,8 +330,8 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     private void send() {
         try {
             CompleteTransactionRunnable completeRunnable = new
-                    CompleteTransactionRunnable(addressPosition, btcAmount
-                    , toAddress, toAddress, new SecureCharSequence(etPassword.getText()), false);
+                    CompleteTransactionRunnable(splitCoin.getCoin(), addressPosition, btcAmount
+                    , toAddress, toAddress, new SecureCharSequence(etPassword.getText()));
             completeRunnable.setHandler(completeTransactionHandler);
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);
@@ -406,12 +416,12 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
 
     protected void validateValues() {
         boolean isValidAmounts = false;
-        btcAmount = getAmount(AbstractDb.txProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress()));
+        btcAmount = getAmount(AbstractDb.txProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress()));
         if (btcAmount > 0) {
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validBicoinAddress(toAddress);
+        boolean isValidAddress = Utils.validBicoinAddress(toAddress) || Utils.validBicoinGoldAddress(toAddress);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
@@ -427,7 +437,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new InputParser.StringInputParser(input) {
+            new InputParser.StringInputParser(input, splitCoin) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -442,7 +452,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                 }
             }.parse();
 
@@ -467,6 +477,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     public void onEntryKeyboardShow(EntryKeyboardView v) {
         vKeyboardContainer.setVisibility(View.VISIBLE);
     }
+
     public long getAmount(List<Out> outs) {
         long amount = 0;
         for (Out out : outs) {
@@ -476,6 +487,6 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress(),true);
+        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress() + splitCoin.getIsGatKey(), true);
     }
 }

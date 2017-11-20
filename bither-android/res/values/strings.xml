@@ -738,18 +738,15 @@
 
     <string name="setting_privacy_policy">Privacy Policy</string>
 
-    <!--Split BCC-->
-    <string name="setting_obtain_BCC">Obtain BCC</string>
-    <string name="obtain_BCC_select_address">Select address to obtain BCC</string>
-    <string name="obtain_BCC_send_title">Can Obtain</string>
-    <string name="obtain_BCC_BCC_name">BCC</string>
+    <!--Split Coin-->
+    <string name="get_split_coin_setting_name">Get %s</string>
+    <string name="get_split_coin">Getable: </string>
+    <string name="not_bitpie_split_coin_address">Only sent to Bitpie %s address</string>
+    <string name="you_already_get_split_coin">You already gat %s</string>
+    <string name="bitpie_split_coin_address">Bitpie %s address</string>
     <string name="obtain_BCC_receive_address">Receive Address</string>
-    <string name="obtain_BCC_to_address_hint">Bitpie BCC Address</string>
-    <string name="obtain_BCC_btn_obtain">Obtain</string>
-    <string name="not_bitpie_bcc_address">Only sent to Bitpie BCC address</string>
-    <string name="you_do_not_have_obtainable_bcc">You don\'t have obtainable BCC</string>
+    <string name="obtain_BCC_btn_obtain">Get</string>
     <string name="no_private_key">Please firstly import Private Key</string>
-    <string name="you_already_obtained_bcc">You already obtained BCC</string>
     <string name="get_success">get success</string>
     <string name="please_firstly_sync_to_block_no">Please firstly sync to block no %d</string>
     <string name="no_sync_complete">Please wait. The transaction has been not synced well！</string>

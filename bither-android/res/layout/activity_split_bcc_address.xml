@@ -43,7 +43,7 @@
                         android:background="@drawable/title_bar_seperator" />
 
                     <TextView
-                        android:id="@+id/tv_title"
+                        android:id="@+id/tv_split_coin_title"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
@@ -57,16 +57,21 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </FrameLayout>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-            <fragment
-                android:id="@+id/fragment_split_address"
-                android:name="net.bither.fragment.hot.HotAddressFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"></fragment>
+                <FrameLayout
+                    android:id="@+id/fl_split_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </FrameLayout>
+
                 <include layout="@layout/layout_dropdown_message" />
+
             </FrameLayout>
+
         </LinearLayout>
     </net.bither.ui.base.SwipeRightTouchView>
 </FrameLayout>

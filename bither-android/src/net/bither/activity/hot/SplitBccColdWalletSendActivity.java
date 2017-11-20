@@ -11,6 +11,7 @@ import net.bither.R;
 import net.bither.bitherj.api.BccBroadCastApi;
 import net.bither.bitherj.api.BccHasAddressApi;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.db.AbstractDb;
@@ -32,6 +33,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
+
 /**
  * Created by ltq on 2017/7/29.
  */
@@ -50,6 +53,8 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     protected void onCreate(Bundle savedInstanceState) {
         initAddress();
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        splitCoin = (SplitCoin) intent.getSerializableExtra(SplitCoinKey);
         etPassword.setVisibility(View.GONE);
         findViewById(R.id.tv_password).setVisibility(View.GONE);
         btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
@@ -71,7 +76,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
 
     protected void initBalance() {
         tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
-                getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress())),UnitUtil.BitcoinUnit.BTC));
+                getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress())),UnitUtil.BitcoinUnit.BTC));
     }
 
     protected void sendClicked() {
@@ -81,7 +86,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, splitCoin);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
@@ -91,7 +96,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                         send();
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,
-                                getString(R.string.not_bitpie_bcc_address));
+                                Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -145,7 +150,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                         List<Tx> smgTx = (List<Tx>) msg.obj;
                         txs = smgTx;
                         if (needConfirm) {
-                            new DialogHdSendConfirm(SplitBccColdWalletSendActivity.this, toAddress, txs, sendConfirmListener).show();
+                            new DialogHdSendConfirm(SplitBccColdWalletSendActivity.this, toAddress, txs, sendConfirmListener, splitCoin).show();
                         } else {
                             sendConfirmListener.onConfirm();
                         }
@@ -180,8 +185,8 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     private void send() {
         try {
             CompleteTransactionRunnable completeRunnable = new
-                    CompleteTransactionRunnable(addressPosition, btcAmount, toAddress, toAddress,
-                    null, false);
+                    CompleteTransactionRunnable(splitCoin.getCoin(), addressPosition, btcAmount, toAddress, toAddress,
+                    null);
             completeRunnable.setHandler(completeTransactionHandler);
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);
@@ -208,7 +213,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                 for (final Tx tx: txs) {
                     try {
                         String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw);
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, splitCoin);
                         bccBroadCastApi.handleHttpPost();
                         JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                         boolean result = jsonObject.getInt("result") == 1 ? true : false;
@@ -267,12 +272,12 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     @Override
     protected void validateValues() {
         boolean isValidAmounts = false;
-        btcAmount = getAmount(AbstractDb.txProvider.getUnspentOutputByBlockNo(BitherSetting.BTCFORKBLOCKNO, address.getAddress()));
+        btcAmount = getAmount(AbstractDb.txProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress()));
         if (btcAmount > 0) {
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validBicoinAddress(toAddress);
+        boolean isValidAddress = Utils.validBicoinAddress(toAddress) || Utils.validBicoinGoldAddress(toAddress);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
@@ -287,7 +292,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new InputParser.StringInputParser(input) {
+            new InputParser.StringInputParser(input, splitCoin) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -298,7 +303,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(SplitBccColdWalletSendActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                 }
             }.parse();
             return;
@@ -368,7 +373,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     private String replaceSignHashOfString(String s, int pubKeyLength) {
         if (s.length() > pubKeyLength + kSignTypeLength) {
             String endString = s.substring(s.length() - pubKeyLength, s.length());
-            String appendString = "41"; // 1|0x40|0   Hex
+            String appendString = splitCoin.getReplaceSignHash(); // 1|0x40|0   Hex
             String startString = s.substring(0, s.length()- pubKeyLength - kSignTypeLength);
             return startString + appendString + endString;
         } else {
@@ -377,6 +382,6 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
     }
 
     void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress(),true);
+        AppSharedPreference.getInstance().setIsObtainBcc(address.getAddress() + splitCoin.getIsGatKey(), true);
     }
 }

@@ -58,6 +58,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
 import net.bither.R;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.camera.CameraManager;
 import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -73,6 +74,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
+
+import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
 
 public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback,
         CompoundButton.OnCheckedChangeListener {
