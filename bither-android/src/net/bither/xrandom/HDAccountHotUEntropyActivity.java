@@ -22,6 +22,7 @@ import android.content.Intent;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -141,7 +142,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                         onProgress(Math.min(1.0, p * (1.0 - startProgress - saveProgress) +
                                 startProgress));
                     }
-                });
+                }, AbstractHD.PurposePathLevel.P2SHP2WPKH);
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);

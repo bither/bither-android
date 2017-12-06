@@ -764,4 +764,23 @@
     <string name="detect_no_assets_alert">No other assets were found on the block browser for this address</string>
     <string name="extract_assets">Extract Assets</string>
     <string name="extract_assets_BCC_send_title">Can Extract</string>
+
+    <!--Segwit-->
+    <string name="address_normal">Normal Address</string>
+    <string name="address_segwit">Segwit Address</string>
+    <string name="address_multisig">Multisig Address</string>
+    <string name="address_normal_type">Normal</string>
+    <string name="address_segwit_type">Segwit</string>
+    <string name="address_multisig_type">Multisig</string>
+    <string name="open_segwit">Open segwit addresses</string>
+    <string name="open_segwit_dialog_info">After the opening of the default use of segwit address, confirm the opening?</string>
+    <string name="open_segwit_success">Opened segwit addresses</string>
+    <string name="open_segwit_failure">Failed to open segwit addresses</string>
+    <string name="address_type_switch_to_normal">Switch to Normal address</string>
+    <string name="address_type_switch_to_segwit">Switch to Segwit address</string>
+    <string name="address_type_switch_tips">After switching the default use %s address, confirm the switch? </string>
+    <string name="address_type_switch_success_tips">Switch successfully</string>
+    <string name="address_type_switch_failure_tips">Switch failed</string>
+    <string name="address_segwit_alert">Please never send bbc to this address, otherwise the bbc can\'t be found back！</string>
+    <string name="open_segwit_only_support_hd_account">Segwit Address only support HD Account open</string>
 </resources>

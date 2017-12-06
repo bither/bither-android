@@ -34,6 +34,7 @@ public class SplitBccSelectAddressActivity extends SwipeRightFragmentActivity {
 
         Intent intent = getIntent();
         splitCoin = (SplitCoin) intent.getSerializableExtra(SplitCoinKey);
+        isDetectBcc = (boolean) getIntent().getSerializableExtra(DETECT_BCC_ASSETS);
         initView();
     }
 

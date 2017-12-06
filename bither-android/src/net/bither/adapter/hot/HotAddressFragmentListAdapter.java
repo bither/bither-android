@@ -641,7 +641,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private OnLongClickListener hdAccountLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            new DialogHdAccountOptions(activity, hdAccount).show();
+            new DialogHdAccountOptions(activity, hdAccount, true).show();
             return true;
         }
     };

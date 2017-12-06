@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
@@ -120,7 +121,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                         });
                         while (hdAccount == null) {
                             try {
-                                hdAccount = new HDAccount(new SecureRandom(), password, null);
+                                hdAccount = new HDAccount(new SecureRandom(), password, null, AbstractHD.PurposePathLevel.P2SHP2WPKH);
                             } catch (MnemonicException.MnemonicLengthException e) {
                                 e.printStackTrace();
                             }

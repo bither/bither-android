@@ -85,6 +85,10 @@ public class AppSharedPreference {
     private static final String UPDATE_CODE = "update_code";
 
     private static final String IS_OBTAIN_BCC = "is_obtain_bcc";
+
+    private static final String OPEN_SEGWIT = "open_segwit";
+
+    private static final String ADDRESS_NORMAL = "address_normal";
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
     private SharedPreferences mPreferences;
@@ -475,4 +479,19 @@ public class AppSharedPreference {
         mObtainBccPreferences.edit().putBoolean(btcAddress, isObtainBcc).apply();
     }
 
+    public void setOpenSegwit(boolean isOpen) {
+        mPreferences.edit().putBoolean(OPEN_SEGWIT, isOpen).commit();
+    }
+
+    public boolean isOpenSegwit() {
+        return mPreferences.getBoolean(OPEN_SEGWIT,false);
+    }
+
+    public void setAddressNormal(boolean addressNormal) {
+        mPreferences.edit().putBoolean(ADDRESS_NORMAL, false);
+    }
+
+    public boolean isAddressNormal() {
+       return mPreferences.getBoolean(ADDRESS_NORMAL, false);
+    }
 }

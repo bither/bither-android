@@ -59,10 +59,12 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
 
     private HashMap<Integer, String> addresses = new HashMap<Integer, String>();
 
-    public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount) {
+    private AbstractHD.PathType pathType;
+    public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount, AbstractHD.PathType... pathType) {
         super(context);
         this.hdAccount = hdAccount;
         activity = context;
+        this.pathType = pathType[0];
         initView();
     }
 
@@ -125,11 +127,11 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
     }
 
     private int issuedExternalAddressCount() {
-            return hdAccount.issuedExternalIndex() + 1;
+            return hdAccount.issuedExternalIndex(pathType) + 1;
     }
 
     private String addressForIndex(int index) {
-            return hdAccount.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH, index)
+            return hdAccount.addressForPath(pathType, index)
                     .getAddress();
     }
 

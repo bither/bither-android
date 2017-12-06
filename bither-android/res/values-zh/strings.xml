@@ -728,4 +728,23 @@
     <string name="detect_no_assets_alert">该地址在区块浏览器上未查询到其他资产</string>
     <string name="extract_assets">提取资产</string>
     <string name="extract_assets_BCC_send_title">可提取</string>
+
+    <!--Segwit-->
+    <string name="address_normal">普通地址</string>
+    <string name="address_segwit">隔离验证地址</string>
+    <string name="address_multisig">多重签名地址</string>
+    <string name="address_normal_type">普通</string>
+    <string name="address_segwit_type">隔离验证</string>
+    <string name="address_multisig_type">多重签名</string>
+    <string name="open_segwit">开通隔离验证地址</string>
+    <string name="open_segwit_dialog_info">开通后默认使用隔离验证地址，确认开通？</string>
+    <string name="open_segwit_success">开通隔离验证地址成功</string>
+    <string name="open_segwit_failure">开通隔离验证地址失败</string>
+    <string name="address_type_switch_to_normal">切换到普通地址</string>
+    <string name="address_type_switch_to_segwit">切换到隔离验证地址</string>
+    <string name="address_type_switch_tips">切换后默认使用%s地址，确认切换？</string>
+    <string name="address_type_switch_success_tips">切换成功</string>
+    <string name="address_type_switch_failure_tips">切换失败</string>
+    <string name="address_segwit_alert">一定不要把BCC发到该地址上，发了将无法找回！</string>
+    <string name="open_segwit_only_support_hd_account">隔离验证地址仅支持HD账户开通</string>
 </resources>

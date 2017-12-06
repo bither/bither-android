@@ -39,8 +39,10 @@ import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.activity.hot.HDAccountMonitoredSendActivity;
 import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
@@ -76,6 +78,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private DialogProgress dp;
     private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
     private String strAddress;
+    private Boolean isSegwitAddress;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -112,15 +115,31 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         super(context, attrs, defStyle);
     }
 
-    public void showAddress(final Address address, int addressPosition) {
+    public void showAddress(final Address address, int addressPosition, boolean isSegwitAddress) {
         this.addressPosition = addressPosition;
-        if (address.getAddress() == null) {
-            return;
-        }
-        tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
-        if (!Utils.compareString(strAddress, address.getAddress())) {
-            Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-            ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        this.isSegwitAddress = isSegwitAddress;
+        System.out.println(isSegwitAddress);
+        System.out.println(addressPosition);
+        AbstractHD.PathType pathType = isSegwitAddress ? AbstractHD.PathType.EXTERNAL_BIP49_PATH :
+                AbstractHD.PathType.EXTERNAL_ROOT_PATH;
+        if ( address.isHDAccount()) {
+            if (((HDAccount)address).getAddress(pathType) == null) {
+                return;
+            }
+            tvAddress.setText(WalletUtils.formatHash(((HDAccount)address).getAddress(pathType), 4, 12));
+            if (!Utils.compareString(strAddress, ((HDAccount)address).getAddress(pathType))) {
+                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+                ivQr.setContent(((HDAccount)address).getAddress(pathType), theme.getFgColor(), theme.getBgColor());
+            }
+        } else {
+            if (address.getAddress() == null) {
+                return;
+            }
+            tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
+            if (!Utils.compareString(strAddress, address.getAddress())) {
+                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+                ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+            }
         }
 
         llMore.setVisibility(View.VISIBLE);
@@ -156,7 +175,11 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             ibtnBalanceDetail.setVisibility(View.VISIBLE);
         }
         this.address = address;
-        strAddress = address.getAddress();
+        if ( address.isHDAccount()) {
+            strAddress = ((HDAccount)address).getAddress(pathType);
+        } else {
+            strAddress = address.getAddress();
+        }
         if(balanceDetailFuture != null){
             balanceDetailFuture.cancel(true);
         }
@@ -229,9 +252,18 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
-                    .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
-                    .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
+            AbstractHD.PathType pathType = isSegwitAddress ? AbstractHD.PathType.EXTERNAL_BIP49_PATH :
+                    AbstractHD.PathType.EXTERNAL_ROOT_PATH;
+            if (address.isHDAccount()) {
+                String a = ((HDAccount)address).getAddress(pathType);
+                DialogFragmentFancyQrCodePager.newInstance(a, address.getVanityLen())
+                        .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
+                        .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
+            } else {
+                DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
+                        .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
+                        .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
+            }
         }
     };
 

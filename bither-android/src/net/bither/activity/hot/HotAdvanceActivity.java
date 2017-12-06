@@ -125,10 +125,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private LinearLayout btnSplitBcc;
     private LinearLayout btnDetectBcc;
     private LinearLayout btnSplitBtg;
+    private LinearLayout btnOpenSegwit;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
+    private TextView tvOpenSegwit;
     private AlertDialog.Builder selectedBuilder;
     private TextView tvSplitBcc;
     private TextView tvSplitBtg;
@@ -145,6 +147,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private void initView() {
         findViewById(R.id.ibtn_back).setOnClickListener(new IBackClickListener());
         tvVserion = (TextView) findViewById(R.id.tv_version);
+        tvOpenSegwit = (TextView) findViewById(R.id.tv_open_segwit);
         ssvWifi = (SettingSelectorView) findViewById(R.id.ssv_wifi);
         ssvPinCode = (SettingSelectorView) findViewById(R.id.ssv_pin_code);
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
@@ -153,6 +156,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
         btnDetectBcc = (LinearLayout) findViewById(R.id.ll_detect_bcc);
         btnSplitBtg = (LinearLayout) findViewById(R.id.ll_split_btg);
+        btnOpenSegwit = (LinearLayout) findViewById(R.id.ll_open_segwit);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -176,6 +180,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnSplitBcc.setOnClickListener(splitBccClick);
         btnDetectBcc.setOnClickListener(detectBccClick);
         btnSplitBtg.setOnClickListener(splitBtgClick);
+        btnOpenSegwit.setOnClickListener(openSegwitClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -192,6 +197,11 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
+        if (AppSharedPreference.getInstance().isOpenSegwit()) {
+            tvOpenSegwit.setText(getString(R.string.address_type_switch_to_normal));
+        } else {
+            tvOpenSegwit.setText(getString(R.string.address_type_switch_to_segwit));
+        }
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
         configureHDMServerPasswordReset();
         tvSplitBcc = (TextView) findViewById(R.id.tv_split_bcc);
@@ -435,6 +445,36 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             intent.putExtra(SplitCoinKey, SplitCoin.BCC);
             intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, true);
             startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener openSegwitClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            AddressManager addressManager = AddressManager.getInstance();
+            if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
+                    addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
+                    == 0) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
+                return;
+            } else if (! addressManager.hasHDAccountHot()) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                        getString(R.string.open_segwit_only_support_hd_account));
+                return;
+            }
+            if (AppSharedPreference.getInstance().isOpenSegwit()) {
+
+            } else {
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
+                        .this, getString(R.string.open_segwit_dialog_info), new Runnable() {
+                    @Override
+                    public void run() {
+                        AppSharedPreference.getInstance().setOpenSegwit(true);
+
+                    }
+                });
+                dialogConfirmTask.show();
+            }
         }
     };
 
