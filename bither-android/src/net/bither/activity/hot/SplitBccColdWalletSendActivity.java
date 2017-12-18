@@ -76,7 +76,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
 
     protected void initBalance() {
         tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
-                getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress())),UnitUtil.BitcoinUnit.BTC));
+                getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress())), UnitUtil.BitcoinUnit.BTC));
     }
 
     protected void sendClicked() {
@@ -91,7 +91,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
                             .getResult());
-                    boolean result = jsonObject.getInt("result") == 1? true:false;
+                    boolean result = jsonObject.getInt("result") == 1 ? true : false;
                     if (result) {
                         send();
                     } else {
@@ -210,7 +210,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
             @Override
             public void run() {
                 String errorMsg = null;
-                for (final Tx tx: txs) {
+                for (final Tx tx : txs) {
                     try {
                         String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
                         BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, splitCoin);
@@ -251,7 +251,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                                     SPLIT_BCC_HDACCOUNT_REQUEST_CODE, null);
                             finish();
                         }
-                    },1000);
+                    }, 1000);
                 } else {
                     final String finalErrorMsg = errorMsg;
                     runOnUiThread(new Runnable() {
@@ -331,6 +331,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
                                 String s = array[strIndex + j];
                                 compressSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kCompressPubKeyLength)));
                                 uncompressedSigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s, kUncompressedPubKeyLength)));
+
                             }
                             tx.signWithSignatures(compressSigs);
                             if (!tx.verifySignatures()) {
@@ -374,7 +375,7 @@ public class SplitBccColdWalletSendActivity extends SplitBCCSendActivity {
         if (s.length() > pubKeyLength + kSignTypeLength) {
             String endString = s.substring(s.length() - pubKeyLength, s.length());
             String appendString = splitCoin.getReplaceSignHash(); // 1|0x40|0   Hex
-            String startString = s.substring(0, s.length()- pubKeyLength - kSignTypeLength);
+            String startString = s.substring(0, s.length() - pubKeyLength - kSignTypeLength);
             return startString + appendString + endString;
         } else {
             return s;

@@ -160,10 +160,12 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             if (password != null) {
                 password.wipe();
             }
+
             if (e instanceof HDMSignUserCancelExcetion) {
                 obtainMessage(HandlerMessage.MSG_FAILURE);
                 return;
             }
+
             e.printStackTrace();
             String msg = getMessageFromException(e);
             obtainMessage(HandlerMessage.MSG_FAILURE, msg);
