@@ -52,12 +52,19 @@ public abstract class InputParser {
                 } catch (final BitcoinURI.BitcoinURIParseException x) {
                     error(R.string.input_parser_invalid_bitcoin_uri, input);
                 }
-            } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
+            } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches() && splitCoin != null) {
                 if (Utils.validSplitBitCoinAddress(input,splitCoin)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
                     error(R.string.input_parser_invalid_address);
                 }
+            }else if(PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
+                if (Utils.validBicoinAddress(input)) {
+                    bitcoinRequest(input, null, 0, null);
+                } else {
+                    error(R.string.input_parser_invalid_address);
+                }
+
             } else {
                 cannotClassify(input);
             }
