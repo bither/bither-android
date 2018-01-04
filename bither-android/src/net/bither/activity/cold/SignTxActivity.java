@@ -31,6 +31,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.ECKey;
@@ -39,6 +40,7 @@ import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.ScanActivity;
@@ -127,6 +129,7 @@ public class SignTxActivity extends SwipeRightActivity implements
 
     private void showTransaction() {
         String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+
         tvSymbol.setText(symbol);
         tvFeeSymbol.setText(symbol);
         tvSymbolChange.setText(symbol);

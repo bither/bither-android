@@ -86,7 +86,7 @@ public class ObtainBCCListItemView extends FrameLayout {
             amount = AddressManager.getInstance().getAmount(AbstractDb.
                     txProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress()));
         }
-        tvBalance.setText(UnitUtil.formatValue(amount, UnitUtil.BitcoinUnit.BTC) + " " + splitCoin.getName());
+        tvBalance.setText(UnitUtil.formatValue(amount, splitCoin.getBitcoinUnit()) + " " + splitCoin.getName());
     }
 
     public ObtainBCCListItemView(Context context) {

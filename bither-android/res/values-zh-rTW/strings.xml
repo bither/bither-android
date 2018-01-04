@@ -163,6 +163,7 @@
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
     <string name="setting_name_transaction_fee_10x">10倍</string>
+    <string name="setting_name_transaction_fee_20x">20倍</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
@@ -714,6 +715,7 @@
     <string name="get_success">獲得成功</string>
     <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
     <string name="no_sync_complete">請稍候，交易暫未同步完成！</string>
+    <string name="get_bcd_block_hash_error">獲取BCD區塊高度哈希失敗！</string>
 
     <string name="private_key_import">導入</string>
     <string name="private_key_import_title">請選擇導入私鑰對應的地址</string>

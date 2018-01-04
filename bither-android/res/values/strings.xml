@@ -172,6 +172,7 @@
     <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
     <string name="setting_name_transaction_fee_10x">10x</string>
+    <string name="setting_name_transaction_fee_20x">20x</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
     <string name="setting_name_transaction_fee_high_note">high priority</string>
@@ -750,6 +751,7 @@
     <string name="get_success">get success</string>
     <string name="please_firstly_sync_to_block_no">Please firstly sync to block no %d</string>
     <string name="no_sync_complete">Please wait. The transaction has been not synced well！</string>
+    <string name="get_bcd_block_hash_error">Failed to get BCD block height hash!</string>
 
     <string name="private_key_import">Import</string>
     <string name="private_key_import_title">Please select the address corresponding to the import private key</string>

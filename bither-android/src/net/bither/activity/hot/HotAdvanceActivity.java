@@ -125,6 +125,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private LinearLayout btnSplitBcc;
     private LinearLayout btnSplitBtg;
     private LinearLayout btnSplitSbtc;
+    private LinearLayout btnSplitBtw;
+    private LinearLayout btnSplitBcd;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
@@ -133,6 +135,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private TextView tvSplitBcc;
     private TextView tvSplitBtg;
     private TextView tvSplitSbtc;
+    private TextView tvSplitBtw;
+    private TextView tvSplitBcd;
     public static final String SplitCoinKey = "SplitCoin";
 
     @Override
@@ -154,6 +158,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
         btnSplitBtg = (LinearLayout) findViewById(R.id.ll_split_btg);
         btnSplitSbtc = (LinearLayout) findViewById(R.id.ll_split_sbtc);
+        btnSplitBtw = (LinearLayout) findViewById(R.id.ll_split_btw);
+        btnSplitBcd = (LinearLayout) findViewById(R.id.ll_split_bcd);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -177,6 +183,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnSplitBcc.setOnClickListener(splitBccClick);
         btnSplitBtg.setOnClickListener(splitBtgClick);
         btnSplitSbtc.setOnClickListener(splitSbtcClick);
+        btnSplitBtw.setOnClickListener(splitBtwClick);
+        btnSplitBcd.setOnClickListener(splitBcdClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -198,9 +206,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvSplitBcc = (TextView) findViewById(R.id.tv_split_bcc);
         tvSplitBtg = (TextView) findViewById(R.id.tv_split_btg);
         tvSplitSbtc = (TextView) findViewById(R.id.tv_split_sbtc);
+        tvSplitBtw = (TextView) findViewById(R.id.tv_split_btw);
+        tvSplitBcd = (TextView) findViewById(R.id.tv_split_bcd);
         tvSplitBcc.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BCC.getName()));
         tvSplitBtg.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BTG.getName()));
         tvSplitSbtc.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.SBTC.getName()));
+        tvSplitBtw.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BTW.getName()));
+        tvSplitBcd.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BCD.getName()));
     }
 
     @Override
@@ -441,6 +453,51 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 } else {
                     Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
                     intent.putExtra(SplitCoinKey, SplitCoin.SBTC);
+                    startActivity(intent);
+                }
+            }
+        }
+    };
+    private View.OnClickListener splitBtwClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
+            long forkBlockHeight = SplitCoin.BTW.getForkBlockHeight();
+            if (lastBlockHeight < forkBlockHeight) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,String.format(getString
+                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
+            } else {
+                AddressManager addressManager = AddressManager.getInstance();
+                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
+                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
+                        == 0) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
+                } else {
+                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
+                    intent.putExtra(SplitCoinKey, SplitCoin.BTW);
+                    startActivity(intent);
+                }
+            }
+        }
+    };
+
+    private View.OnClickListener splitBcdClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
+            long forkBlockHeight = SplitCoin.BCD.getForkBlockHeight();
+            if (lastBlockHeight < forkBlockHeight) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,String.format(getString
+                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
+            } else {
+                AddressManager addressManager = AddressManager.getInstance();
+                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
+                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
+                        == 0) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
+                } else {
+                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
+                    intent.putExtra(SplitCoinKey, SplitCoin.BCD);
                     startActivity(intent);
                 }
             }
