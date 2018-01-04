@@ -33,7 +33,7 @@ subprojects {
         defaultConfig {
             minSdkVersion 9
             targetSdkVersion 22
-//            multiDexEnabled true
+            multiDexEnabled true
         }
 
         dexOptions {

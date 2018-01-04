@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.StrictMode;
+import android.support.multidex.MultiDex;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
@@ -209,5 +210,11 @@ public class BitherApplication extends Application {
 
             appSharedPreference.setUpdateCode(FEE_UPDATE_CODE);
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
