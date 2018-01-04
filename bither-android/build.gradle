@@ -2,6 +2,21 @@
 //    mavenLocal()
 //    mavenCentral()
 //}
+
+android {
+//    useLibrary 'org.apache.http.legacy'
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+//            multiDexEnabled true
+        }
+    }
+}
+
 configurations {
     all {
         exclude module: 'httpclient'
