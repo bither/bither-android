@@ -236,7 +236,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
 
     private void qrCodeTxTranscation(String...blockHash) {
         Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getSplitCoinHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address, splitCoin));
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getSplitCoinHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address, splitCoin, blockHash));
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
                 .unsigned_transaction_qr_code_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -268,7 +268,11 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                                 ArrayList<byte[]> sigs = new ArrayList<byte[]>();
                                 for (int j = 0; j < tx.getIns().size(); j++) {
                                     String s = array[strIndex + j];
-                                    sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                                    if(splitCoin ==  SplitCoin.BCD) {
+                                        sigs.add(Utils.hexStringToByteArray(s));
+                                    }else {
+                                        sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                                    }
                                 }
                                 tx.signWithSignatures(sigs);
                                 if (!tx.verifySignatures()) {
