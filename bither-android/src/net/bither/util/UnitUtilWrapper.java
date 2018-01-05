@@ -50,7 +50,7 @@ import net.bither.preference.AppSharedPreference;
  */
 public class UnitUtilWrapper {
     public static enum BitcoinUnitWrapper {
-        BTC(BitcoinUnit.BTC), bits(BitcoinUnit.bits),BTW(BitcoinUnit.BTW);
+        BTC(BitcoinUnit.BTC), bits(BitcoinUnit.bits);
         public BitcoinUnit unit;
         public long satoshis;
         public int slimDrawable;
@@ -63,6 +63,7 @@ public class UnitUtilWrapper {
             this.unit = unit;
             satoshis = unit.satoshis;
             switch (unit) {
+                case BCD:
                 case BTW:
                 case BTC:
                     boldAfterDot = 2;
