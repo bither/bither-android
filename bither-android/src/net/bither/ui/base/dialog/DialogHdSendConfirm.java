@@ -110,8 +110,8 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
             amount += tx.amountSentToAddress(toAddress);
             fee += tx.getFee();
         }
-        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount,splitCoin));
-        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee,splitCoin));
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount,splitCoin.getCoin()));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee,splitCoin.getCoin()));
     }
 
     @Override

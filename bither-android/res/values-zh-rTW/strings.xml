@@ -704,6 +704,7 @@
     <string name="setting_privacy_policy">隱私政策</string>
 
     <!--Split Coin-->
+    <string name="get_fork_coins_title">獲得分叉幣</string>
     <string name="get_split_coin_setting_name">獲得 %s</string>
     <string name="get_split_coin">可獲得: </string>
     <string name="not_bitpie_split_coin_address">僅支持發往比特派%s地址</string>

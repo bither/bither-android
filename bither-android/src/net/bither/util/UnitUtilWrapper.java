@@ -40,6 +40,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
@@ -123,8 +124,12 @@ public class UnitUtilWrapper {
         return formatValueWithBold(value, unit().boldAfterDot);
     }
 
-    public static SpannableString formatValueWithBold(final long value, SplitCoin splitCoin) {
-        return formatValueWithBold(value, 2,splitCoin);
+
+    public static SpannableString formatValueWithBold(final long value, Coin coin) {
+        if(coin != Coin.BTC) {
+            return formatValueWithBold(value, 2,coin.getSplitCoin());
+        }
+        return formatValueWithBold(value);
     }
 
     private static SpannableString formatValueWithBold(final long value, int boldLengthAfterDot,SplitCoin...coin) {

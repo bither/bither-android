@@ -740,6 +740,7 @@
     <string name="setting_privacy_policy">Privacy Policy</string>
 
     <!--Split Coin-->
+    <string name="get_fork_coins_title">Get Fork Coins</string>
     <string name="get_split_coin_setting_name">Get %s</string>
     <string name="get_split_coin">Getable: </string>
     <string name="not_bitpie_split_coin_address">Only sent to Bitpie %s address</string>
