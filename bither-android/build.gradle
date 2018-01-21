@@ -5,14 +5,24 @@
 
 android {
 //    useLibrary 'org.apache.http.legacy'
-
+    signingConfigs {
+        config11 {
+            keyAlias 'key0'
+            keyPassword 'qazwsx1'
+            storeFile file('/Users/denmark/Documents/bitpie-release103.jks')
+            storePassword 'as940228'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config11
         }
         debug {
 //            multiDexEnabled true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -29,8 +39,7 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.+'
     compile 'com.google.zxing:core:3.1.0@jar'
     compile 'com.android.support:multidex:1.0.0'
-
-    compile ('com.github.tony19:logback-android-classic:1.0.10-2@jar'){
+    compile('com.github.tony19:logback-android-classic:1.0.10-2@jar') {
         // Work around for gradle 0.9 and 0.10
         transitive = true
     }
