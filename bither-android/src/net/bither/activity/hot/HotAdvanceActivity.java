@@ -85,6 +85,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSignHashSelectType;
 import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
@@ -122,7 +123,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnTrashCan;
     private LinearLayout btnHDMRecovery;
     private LinearLayout btnHDMServerPasswordReset;
-    private LinearLayout llForkCoins;
+    private LinearLayout llForkCoins, signHash;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
@@ -147,6 +148,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
         llForkCoins = (LinearLayout) findViewById(R.id.ll_fork_coins);
+        signHash = (LinearLayout) findViewById(R.id.ll_sign_hash);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -186,6 +188,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
         configureHDMServerPasswordReset();
+
+        signHash.setOnClickListener(signHashClick);
     }
 
     @Override
@@ -195,6 +199,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         configureHDMRecovery();
         configureHDMServerPasswordReset();
     }
+
+    private View.OnClickListener signHashClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogSignHashSelectType(HotAdvanceActivity.this, true).show();
+        }
+    };
 
     private View.OnClickListener networkMonitorClick = new View.OnClickListener() {
 

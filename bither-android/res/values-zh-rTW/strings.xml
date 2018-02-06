@@ -724,4 +724,11 @@
     <string name="private_key_uncompressed_address">未壓縮私鑰地址</string>
     <string name="private_key_recommend">(推薦)</string>
 
+    <string name="hot.advance.sign.message">簽名 Hash</string>
+    <string name="sign.hash.select.address">選擇簽名 Hash 用的地址</string>
+    <string name="copy.public.key">公鈅已複製</string>
+    <string name="address_cold">冷錢包地址</string>
+    <string name="error_hash">Hash 格式錯誤</string>
+    <string name="sign_hash_input_hint">待簽名 Hash</string>
+
 </resources>

@@ -35,6 +35,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     public static final String SignMgsTypeSelect = "SignMgsTypeSelect";
     public static final String PassWord = "PassWord";
     public static final String IsHdAccountHot = "IsHdAccountHot";
+    public static final String IsSignHash = "IsSignHash";
 
     private int page = 1;
     private boolean hasMore = true;
@@ -44,6 +45,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     private SignMessageTypeSelect signMessageTypeSelect;
     private AbstractHD.PathType pathType;
     private boolean isHot;
+    private boolean isSignHash;
     private ListView lv;
     private FrameLayout flTitleBar;
     private ArrayList<Address> addresses = new ArrayList<Address>();
@@ -60,6 +62,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
+        isSignHash = getIntent().getBooleanExtra(IsSignHash, false);
         if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
             String tempString = getIntent().getStringExtra(PassWord);
             password = tempString.subSequence(0, tempString.length());
@@ -280,9 +283,16 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
-            intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
-            SignMessageAddressListActivity.this.startActivity(intent);
+            if (!isSignHash) {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.AddressKey, address.getAddress());
+                SignMessageAddressListActivity.this.startActivity(intent);
+            } else {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignHashActivity.class);
+                intent.putExtra(SignHashActivity.AddressKey, address.getAddress());
+                SignMessageAddressListActivity.this.startActivity(intent);
+            }
+
         }
     }
 
@@ -295,11 +305,19 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
-            intent.putExtra(SignMessageActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
-            intent.putExtra(SignMessageActivity.HdAddressIndex, hdAccountAddress.getIndex());
-            intent.putExtra(IsHdAccountHot, isHot);
-            SignMessageAddressListActivity.this.startActivity(intent);
+            if (!isSignHash) {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
+                intent.putExtra(SignMessageActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
+                intent.putExtra(SignMessageActivity.HdAddressIndex, hdAccountAddress.getIndex());
+                intent.putExtra(IsHdAccountHot, isHot);
+                SignMessageAddressListActivity.this.startActivity(intent);
+            } else {
+                Intent intent = new Intent(SignMessageAddressListActivity.this, SignHashActivity.class);
+                intent.putExtra(SignHashActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
+                intent.putExtra(SignHashActivity.HdAddressIndex, hdAccountAddress.getIndex());
+                intent.putExtra(IsHdAccountHot, isHot);
+                SignMessageAddressListActivity.this.startActivity(intent);
+            }
         }
     }
 
