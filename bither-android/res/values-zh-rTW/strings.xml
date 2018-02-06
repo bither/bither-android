@@ -24,7 +24,7 @@
     <string name="address_option_delete">停止監控</string>
     <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
-    <string name="address_option_view_on_blockmeta">在BlockMeta.com上查看</string>
+    <string name="address_option_view_on_btc">在btc.com上查看</string>
     <string name="address_delete_confirmation">確認停止監控這個地址?</string>
     <string name="address_remonitor_confirmation">確認重新監控這個地址?</string>
     <string name="address_monitor_failed">監控失敗</string>
