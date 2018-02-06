@@ -298,18 +298,9 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
 
         @Override
         public void onClick(View v) {
-            if (hdAccountAddress != null) {
-                String text = Utils.bytesToHexString(hdAccountAddress.getPub());
-                StringUtil.copyString(text);
-                DropdownMessage.showDropdownMessage(SignHashActivity.this,
-                        R.string.copy_public_key);
-            }
-            if (address != null) {
-                String text = Utils.bytesToHexString(address.getPubKey());
-                StringUtil.copyString(text);
-                DropdownMessage.showDropdownMessage(SignHashActivity.this,
-                        R.string.copy_public_key);
-            }
+            StringUtil.copyString(ivQr.getContent());
+            DropdownMessage.showDropdownMessage(SignHashActivity.this,
+                    R.string.copy_public_key);
         }
     };
 
