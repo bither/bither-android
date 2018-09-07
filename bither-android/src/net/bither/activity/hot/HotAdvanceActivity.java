@@ -430,6 +430,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
 
             if (BitherApplication.canReloadTx()) {
+                if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sync_complete);
+                    return;
+                }
                 final Runnable confirmRunnable = new Runnable() {
                     @Override
                     public void run() {
