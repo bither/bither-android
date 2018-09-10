@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherApplication;
@@ -33,6 +34,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
+import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Version;
@@ -70,6 +72,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSignHashSelectType;
 import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
@@ -92,6 +95,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnTrashCan;
     private DialogProgress dp;
     private TextView tvVserion;
+    private LinearLayout llSignHash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +127,8 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
+        llSignHash = (LinearLayout) findViewById(R.id.ll_sign_hash);
+        llSignHash.setOnClickListener(signHashClick);
     }
 
     @Override
@@ -131,6 +137,12 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvPinCode.loadData();
     }
 
+    private View.OnClickListener signHashClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogSignHashSelectType(ColdAdvanceActivity.this, false).show();
+        }
+    };
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
         private int clickedTime;
 

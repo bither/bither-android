@@ -31,6 +31,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.ECKey;
@@ -39,6 +40,7 @@ import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.ScanActivity;
@@ -126,7 +128,14 @@ public class SignTxActivity extends SwipeRightActivity implements
     }
 
     private void showTransaction() {
-        String symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        String symbol;
+        Coin coin = Utils.getCoinByAddressHeader(qrCodeTransport.getToAddress());
+        if(coin == Coin.BTC) {
+            symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        } else {
+            symbol = coin.getSplitCoin().getName();
+        }
+
         tvSymbol.setText(symbol);
         tvFeeSymbol.setText(symbol);
         tvSymbolChange.setText(symbol);
@@ -137,13 +146,13 @@ public class SignTxActivity extends SwipeRightActivity implements
                     qrCodeTransport.getMyAddress().length()));
         }
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
-        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo()));
-        tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee()));
+        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo(), coin));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee(), coin));
         llChange.setVisibility(View.GONE);
         if(!Utils.isEmpty(qrCodeTransport.getChangeAddress())){
             llChange.setVisibility(View.VISIBLE);
             tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
-            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getChangeAmt()));
+            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getChangeAmt(),coin));
         }
         Address address = WalletUtils
                 .findPrivateKey(qrCodeTransport.getMyAddress());

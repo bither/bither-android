@@ -24,7 +24,7 @@
     <string name="address_option_delete">停止監控</string>
     <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
-    <string name="address_option_view_on_blockmeta">在BlockMeta.com上查看</string>
+    <string name="address_option_view_on_btc">在btc.com上查看</string>
     <string name="address_delete_confirmation">確認停止監控這個地址?</string>
     <string name="address_remonitor_confirmation">確認重新監控這個地址?</string>
     <string name="address_monitor_failed">監控失敗</string>
@@ -163,6 +163,7 @@
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
     <string name="setting_name_transaction_fee_10x">10倍</string>
+    <string name="setting_name_transaction_fee_20x">20倍</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
@@ -703,6 +704,7 @@
     <string name="setting_privacy_policy">隱私政策</string>
 
     <!--Split Coin-->
+    <string name="get_fork_coins_title">獲得分叉幣</string>
     <string name="get_split_coin_setting_name">獲得 %s</string>
     <string name="get_split_coin">可獲得: </string>
     <string name="not_bitpie_split_coin_address">僅支持發往比特派%s地址</string>
@@ -714,6 +716,7 @@
     <string name="get_success">獲得成功</string>
     <string name="please_firstly_sync_to_block_no">请先同步到块%d</string>
     <string name="no_sync_complete">請稍候，交易暫未同步完成！</string>
+    <string name="get_bcd_block_hash_error">獲取BCD區塊高度哈希失敗！</string>
 
     <string name="private_key_import">導入</string>
     <string name="private_key_import_title">請選擇導入私鑰對應的地址</string>
@@ -747,4 +750,12 @@
     <string name="address_type_switch_failure_tips">切換失敗</string>
     <string name="address_segwit_alert">一定不要把BCC發到該地址上，發了將無法找回！</string>
     <string name="open_segwit_only_support_hd_account">隔離驗證地址僅支援HD賬戶開通</string>
+
+    <string name="hot.advance.sign.message">簽名 Hash</string>
+    <string name="sign.hash.select.address">選擇簽名 Hash 用的地址</string>
+    <string name="copy.public.key">公鈅已複製</string>
+    <string name="address_cold">冷錢包地址</string>
+    <string name="error_hash">Hash 格式錯誤</string>
+    <string name="sign_hash_input_hint">待簽名 Hash</string>
+
 </resources>

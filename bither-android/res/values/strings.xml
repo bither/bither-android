@@ -32,7 +32,7 @@
     <string name="address_option_delete">Stop monitoring</string>
     <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
-    <string name="address_option_view_on_blockmeta">View on BlockMeta.com</string>
+    <string name="address_option_view_on_btc">View on btc.com</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
     <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
@@ -172,6 +172,7 @@
     <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
     <string name="setting_name_transaction_fee_10x">10x</string>
+    <string name="setting_name_transaction_fee_20x">20x</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
     <string name="setting_name_transaction_fee_high_note">high priority</string>
@@ -739,6 +740,7 @@
     <string name="setting_privacy_policy">Privacy Policy</string>
 
     <!--Split Coin-->
+    <string name="get_fork_coins_title">Get Fork Coins</string>
     <string name="get_split_coin_setting_name">Get %s</string>
     <string name="get_split_coin">Getable: </string>
     <string name="not_bitpie_split_coin_address">Only sent to Bitpie %s address</string>
@@ -750,6 +752,7 @@
     <string name="get_success">get success</string>
     <string name="please_firstly_sync_to_block_no">Please firstly sync to block no %d</string>
     <string name="no_sync_complete">Please wait. The transaction has been not synced well！</string>
+    <string name="get_bcd_block_hash_error">Failed to get BCD block height hash!</string>
 
     <string name="private_key_import">Import</string>
     <string name="private_key_import_title">Please select the address corresponding to the import private key</string>
@@ -783,4 +786,12 @@
     <string name="address_type_switch_failure_tips">Switch failed</string>
     <string name="address_segwit_alert">Please never send bbc to this address, otherwise the bbc can\'t be found back！</string>
     <string name="open_segwit_only_support_hd_account">Segwit Address only support HD Account open</string>
+
+    <string name="hot.advance.sign.message">Sign Hash</string>
+    <string name="sign.hash.select.address">Select address to sign hash</string>
+    <string name="copy.public.key">Public key copied</string>
+    <string name="address_cold">Cold Wallet Address</string>
+    <string name="error_hash">Hash format error</string>
+    <string name="sign_hash_input_hint">Hash to sign</string>
+
 </resources>

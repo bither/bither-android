@@ -21,6 +21,7 @@ import net.bither.R;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
+import net.bither.image.glcrop.Util;
 
 import java.util.regex.Pattern;
 
@@ -47,19 +48,23 @@ public abstract class InputParser {
                     final long amount = bitcoinUri.getAmount();
                     final String bluetoothMac = (String) bitcoinUri.getParameterByName(Bluetooth
                             .MAC_URI_PARAM);
-
                     bitcoinRequest(address, addressLabel, amount, bluetoothMac);
                 } catch (final BitcoinURI.BitcoinURIParseException x) {
                     error(R.string.input_parser_invalid_bitcoin_uri, input);
                 }
-            } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
-                if (Utils.validBicoinAddress(input)) {
-                    bitcoinRequest(input, null, 0, null);
-                } else if (splitCoin == SplitCoin.BTG && Utils.validBicoinGoldAddress(input)) {
+            } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches() && splitCoin != null) {
+                if (Utils.validSplitBitCoinAddress(input,splitCoin)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
                     error(R.string.input_parser_invalid_address);
                 }
+            }else if(PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
+                if (Utils.validBicoinAddress(input)) {
+                    bitcoinRequest(input, null, 0, null);
+                } else {
+                    error(R.string.input_parser_invalid_address);
+                }
+
             } else {
                 cannotClassify(input);
             }

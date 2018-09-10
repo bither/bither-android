@@ -40,6 +40,8 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.R;
+import net.bither.bitherj.core.Coin;
+import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.preference.AppSharedPreference;
@@ -49,7 +51,7 @@ import net.bither.preference.AppSharedPreference;
  */
 public class UnitUtilWrapper {
     public static enum BitcoinUnitWrapper {
-        BTC(BitcoinUnit.BTC), bits(BitcoinUnit.bits),;
+        BTC(BitcoinUnit.BTC), bits(BitcoinUnit.bits);
         public BitcoinUnit unit;
         public long satoshis;
         public int slimDrawable;
@@ -62,6 +64,8 @@ public class UnitUtilWrapper {
             this.unit = unit;
             satoshis = unit.satoshis;
             switch (unit) {
+                case BCD:
+                case BTW:
                 case BTC:
                     boldAfterDot = 2;
                     slimDrawable = R.drawable.symbol_btc_slim;
@@ -112,13 +116,29 @@ public class UnitUtilWrapper {
         return UnitUtil.formatValue(value, unit().unit);
     }
 
+    public static String formatValue(final long value,SplitCoin splitCoin) {
+        return UnitUtil.formatValue(value, splitCoin.getBitcoinUnit());
+    }
 
     public static SpannableString formatValueWithBold(final long value) {
         return formatValueWithBold(value, unit().boldAfterDot);
     }
 
-    private static SpannableString formatValueWithBold(final long value, int boldLengthAfterDot) {
-        String str = formatValue(value);
+
+    public static SpannableString formatValueWithBold(final long value, Coin coin) {
+        if(coin != Coin.BTC) {
+            return formatValueWithBold(value, 2,coin.getSplitCoin());
+        }
+        return formatValueWithBold(value);
+    }
+
+    private static SpannableString formatValueWithBold(final long value, int boldLengthAfterDot,SplitCoin...coin) {
+        String str;
+        if (coin != null && coin.length > 0) {
+            str = formatValue(value,coin[0]);
+        }else {
+            str = formatValue(value);
+        }
         int dotPosition = str.indexOf(".");
         int boldLength = str.length();
         if (dotPosition > 0 && dotPosition + boldLengthAfterDot < str.length()) {

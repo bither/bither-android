@@ -62,10 +62,10 @@ public class DialogAddressWatchOnlyOption extends DialogWithActions {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString(defaultCountry,
                 "cn")) {
-            actions.add(new Action(R.string.address_option_view_on_blockmeta, new Runnable() {
+            actions.add(new Action(R.string.address_option_view_on_btc, new Runnable() {
                 @Override
                 public void run() {
-                    UIUtil.gotoBrower(activity, BitherUrl.BLOCKMETA_ADDRESS_URL + address
+                    UIUtil.gotoBrower(activity, BitherUrl.BTC_COM_ADDRESS_URL + address
                             .getAddress());
                 }
             }));

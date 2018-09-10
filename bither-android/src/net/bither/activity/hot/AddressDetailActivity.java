@@ -70,7 +70,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
     private AddressDetailHeader header;
     private Button btnAddressAlias;
     private TxAndBlockBroadcastReceiver txAndBlockBroadcastReceiver = new TxAndBlockBroadcastReceiver();
-    public Boolean isSigwitAddress = true;
+    public Boolean isSigwitAddress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

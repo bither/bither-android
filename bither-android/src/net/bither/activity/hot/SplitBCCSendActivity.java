@@ -20,6 +20,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.api.BccBroadCastApi;
 import net.bither.bitherj.api.BccHasAddressApi;
+import net.bither.bitherj.api.GetBcdBlockHashApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Out;
@@ -74,7 +75,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     private List<Tx> txs;
     private long btcAmount;
     protected TextView tvSplitCoinName;
-    protected SplitCoin splitCoin;
+    protected SplitCoin splitCoin = SplitCoin.BCC;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +129,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
     protected void initBalance() {
         tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.txProvider.
                         getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), address.getAddress())),
-                UnitUtil.BitcoinUnit.BTC));
+                splitCoin.getBitcoinUnit()));
     }
 
     private View.OnClickListener scanClick = new View.OnClickListener() {
@@ -312,7 +313,11 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
                             .getResult());
                     boolean result = jsonObject.getInt("result") == 1 ? true : false;
                     if (result) {
-                        send();
+                        if(splitCoin == SplitCoin.BCD) {
+                            getPreBlockHash();
+                        }else {
+                            send();
+                        }
                     } else {
                         DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
                         if (dp.isShowing()) {
@@ -327,12 +332,56 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         new Thread(baseRunnable).start();
     }
 
-    private void send() {
+    private void getPreBlockHash() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    GetBcdBlockHashApi getBlockHash = new GetBcdBlockHashApi();
+
+                    getBlockHash.handleHttpGet();
+                    JSONObject jsonObject = new JSONObject(getBlockHash
+                            .getResult());
+                    String blockHash = jsonObject.getString("current_block_hash");
+                    if(blockHash != null && !blockHash.isEmpty()) {
+                        send(blockHash);
+                    }else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, R.string.get_bcd_block_hash_error);
+                            }
+                        });
+                    }
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            DropdownMessage.showDropdownMessage(SplitBCCSendActivity.this, R.string.get_bcd_block_hash_error);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void send(String...blockHash) {
         try {
             CompleteTransactionRunnable completeRunnable = new
                     CompleteTransactionRunnable(splitCoin.getCoin(), addressPosition, btcAmount
                     , toAddress, toAddress, new SecureCharSequence(etPassword.getText()));
             completeRunnable.setHandler(completeTransactionHandler);
+            if(blockHash != null && blockHash.length > 0) {
+                completeRunnable.setBlockHash(blockHash[0]);
+            }
             Thread thread = new Thread(completeRunnable);
             dp.setThread(thread);
             if (!dp.isShowing()) {
@@ -421,7 +470,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validBicoinAddress(toAddress) || Utils.validBicoinGoldAddress(toAddress);
+        boolean isValidAddress = Utils.validSplitBitCoinAddress(toAddress,splitCoin);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());

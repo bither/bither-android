@@ -46,6 +46,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     private boolean isBtc = true;
     private List<Out> outs = null;
     private Coin coin = Coin.BTC;
+    private String blockHash;
 
     static {
         registerTxBuilderExceptionMessages();
@@ -170,6 +171,10 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         }
     }
 
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
+    }
+
     @Override
     public void run() {
         obtainMessage(HandlerMessage.MSG_PREPARE);
@@ -194,6 +199,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
             }
             if (toSign) {
                 for (Tx tx: txs) {
+                    if(coin == Coin.BCD && blockHash != null && !blockHash.isEmpty()) {
+                        tx.setBlockHash(Utils.hexStringToByteArray(blockHash));
+                    }
                     wallet.signTx(tx, password, coin);
                     if (!tx.verifySignatures()) {
                         obtainMessage(HandlerMessage.MSG_FAILURE, getMessageFromException(null));
@@ -203,16 +211,24 @@ public class CompleteTransactionRunnable extends BaseRunnable {
                 if (password != null) {
                     password.wipe();
                 }
+            }else if(coin == Coin.BCD){
+                for (Tx tx: txs) {
+                    if (coin == Coin.BCD && blockHash != null && !blockHash.isEmpty()) {
+                        tx.setBlockHash(Utils.hexStringToByteArray(blockHash));
+                    }
+                }
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS, txs);
         } catch (Exception e) {
             if (password != null) {
                 password.wipe();
             }
+
             if (e instanceof HDMSignUserCancelExcetion) {
                 obtainMessage(HandlerMessage.MSG_FAILURE);
                 return;
             }
+
             e.printStackTrace();
             String msg = getMessageFromException(e);
             obtainMessage(HandlerMessage.MSG_FAILURE, msg);

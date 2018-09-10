@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
     android:installLocation="internalOnly"
-    android:versionCode="177"
-    android:versionName="1.7.7">
+    android:versionCode="182"
+    android:versionName="1.8.2">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -391,6 +391,14 @@
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsDetectListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".activity.hot.SplitForkCoinsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
+        <activity
+            android:name=".SignHashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity

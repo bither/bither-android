@@ -40,7 +40,6 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
-import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
@@ -85,6 +84,7 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.ui.base.dialog.DialogSignHashSelectType;
 import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.listener.IBackClickListener;
@@ -96,8 +96,6 @@ import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.ThreadUtil;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,18 +120,14 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private Button btnTrashCan;
     private LinearLayout btnHDMRecovery;
     private LinearLayout btnHDMServerPasswordReset;
-    private LinearLayout btnSplitBcc;
-    private LinearLayout btnDetectBcc;
-    private LinearLayout btnSplitBtg;
-    private LinearLayout btnOpenSegwit;
+    private LinearLayout llDetectBcc;
+    private LinearLayout llOpenSegwit;
+    private LinearLayout llForkCoins, signHash;
     private DialogProgress dp;
     private HDMKeychainRecoveryUtil hdmRecoveryUtil;
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
     private TextView tvOpenSegwit;
-    private AlertDialog.Builder selectedBuilder;
-    private TextView tvSplitBcc;
-    private TextView tvSplitBtg;
     public static final String SplitCoinKey = "SplitCoin";
 
     @Override
@@ -153,10 +147,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         btnEditPassword = (Button) findViewById(R.id.btn_edit_password);
         btnTrashCan = (Button) findViewById(R.id.btn_trash_can);
         btnHDMRecovery = (LinearLayout) findViewById(R.id.ll_hdm_recover);
-        btnSplitBcc = (LinearLayout) findViewById(R.id.ll_split_bcc);
-        btnDetectBcc = (LinearLayout) findViewById(R.id.ll_detect_bcc);
-        btnSplitBtg = (LinearLayout) findViewById(R.id.ll_split_btg);
-        btnOpenSegwit = (LinearLayout) findViewById(R.id.ll_open_segwit);
+        llDetectBcc = (LinearLayout) findViewById(R.id.ll_detect_bcc);
+        llOpenSegwit = (LinearLayout) findViewById(R.id.ll_open_segwit);
+        llForkCoins = (LinearLayout) findViewById(R.id.ll_fork_coins);
+        signHash = (LinearLayout) findViewById(R.id.ll_sign_hash);
         btnHDMServerPasswordReset = (LinearLayout) findViewById(R.id.ll_hdm_server_auth_reset);
         ssvImportPrivateKey = (SettingSelectorView) findViewById(R.id.ssv_import_private_key);
         ssvImprotBip38Key = (SettingSelectorView) findViewById(R.id.ssv_import_bip38_key);
@@ -177,10 +171,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         ssvTotalBalanceHide.setSelector(totalBalanceHideSelector);
         btnTrashCan.setOnClickListener(trashCanClick);
         btnHDMRecovery.setOnClickListener(hdmRecoverClick);
-        btnSplitBcc.setOnClickListener(splitBccClick);
-        btnDetectBcc.setOnClickListener(detectBccClick);
-        btnSplitBtg.setOnClickListener(splitBtgClick);
-        btnOpenSegwit.setOnClickListener(openSegwitClick);
+        llDetectBcc.setOnClickListener(detectBccClick);
+        llOpenSegwit.setOnClickListener(openSegwitClick);
+        llForkCoins.setOnClickListener(splitClick);
         btnHDMServerPasswordReset.setOnClickListener(hdmServerPasswordResetClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
@@ -204,10 +197,8 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
         configureHDMServerPasswordReset();
-        tvSplitBcc = (TextView) findViewById(R.id.tv_split_bcc);
-        tvSplitBtg = (TextView) findViewById(R.id.tv_split_btg);
-        tvSplitBcc.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BCC.getName()));
-        tvSplitBtg.setText(Utils.format(getString(R.string.get_split_coin_setting_name), SplitCoin.BTG.getName()));
+
+        signHash.setOnClickListener(signHashClick);
     }
 
     @Override
@@ -217,6 +208,13 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         configureHDMRecovery();
         configureHDMServerPasswordReset();
     }
+
+    private View.OnClickListener signHashClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogSignHashSelectType(HotAdvanceActivity.this, true).show();
+        }
+    };
 
     private View.OnClickListener networkMonitorClick = new View.OnClickListener() {
 
@@ -385,63 +383,18 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         }
     };
 
-    private View.OnClickListener splitBccClick = new View.OnClickListener() {
+    private View.OnClickListener splitClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
-            long forkBlockHeight = SplitCoin.BCC.getForkBlockHeight();
-            if (lastBlockHeight < forkBlockHeight) {
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, String.format(getString
-                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
-            } else {
-                AddressManager addressManager = AddressManager.getInstance();
-                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
-                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
-                        == 0) {
-                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, getString(R.string.no_private_key));
-                } else {
-                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
-                    intent.putExtra(SplitCoinKey, SplitCoin.BCC);
-                    intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, false);
-                    startActivity(intent);
-                }
-            }
-        }
-    };
-
-    private View.OnClickListener splitBtgClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            long lastBlockHeight = PeerManager.instance().getLastBlockHeight();
-            long forkBlockHeight = SplitCoin.BTG.getForkBlockHeight();
-            if (lastBlockHeight < forkBlockHeight) {
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,String.format(getString
-                        (R.string.please_firstly_sync_to_block_no), forkBlockHeight));
-            } else {
-                AddressManager addressManager = AddressManager.getInstance();
-                if (!addressManager.hasHDAccountHot() && !addressManager.hasHDAccountMonitored() &&
-                        addressManager.getPrivKeyAddresses().size() == 0 && addressManager.getWatchOnlyAddresses().size()
-                        == 0) {
-                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,getString(R.string.no_private_key));
-                } else {
-
-//                    Intent intent = new Intent(HotAdvanceActivity.this,SplitBccSelectAddressActivity.class);
-//                    intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, false);
-//                    startActivity(intent);                }
-
-                    Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
-                    intent.putExtra(SplitCoinKey, SplitCoin.BTG);
-                    intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, false);
-                    startActivity(intent);
-                }
-            }
+            Intent intent = new Intent(HotAdvanceActivity.this, SplitForkCoinsActivity.class);
+            startActivity(intent);
         }
     };
 
     private View.OnClickListener detectBccClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(HotAdvanceActivity.this,SplitBccSelectAddressActivity.class);
+            Intent intent = new Intent(HotAdvanceActivity.this, SplitBccSelectAddressActivity.class);
             intent.putExtra(SplitCoinKey, SplitCoin.BCC);
             intent.putExtra(SplitBccSelectAddressActivity.DETECT_BCC_ASSETS, true);
             startActivity(intent);
@@ -477,7 +430,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             }
         }
     };
-
 
     private View.OnClickListener hdmServerPasswordResetClick = new View.OnClickListener() {
 
@@ -517,8 +469,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     };
 
     /**
-     *  Improve the method
-     *
+     * Improve the method
      */
 
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
@@ -526,6 +477,10 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
 
             if (BitherApplication.canReloadTx()) {
+                if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sync_complete);
+                    return;
+                }
                 final Runnable confirmRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -613,7 +568,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                 actions.add(new DialogWithActions.Action("blockchain.info", blockChainRunnable));
 
                 return actions;
-            }else {
+            } else {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                         R.string.tx_cannot_reloding);
             }
@@ -643,7 +598,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
 
 
     /**
-     *  end
+     * end
      */
 
     private void callPassword() {
@@ -764,7 +719,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectType(HotAdvanceActivity.this,true).show();
+                    new DialogSignMessageSelectType(HotAdvanceActivity.this, true).show();
                     break;
                 case 1:
                 default:
@@ -1208,49 +1163,50 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             SettingSelectorView.SettingSelector() {
 
 
-        @Override
-        public int getOptionCount() {
-            return TotalBalanceHide.values().length;
-        }
+                @Override
+                public int getOptionCount() {
+                    return TotalBalanceHide.values().length;
+                }
 
-        @Override
-        public CharSequence getOptionName(int index) {
-            return TotalBalanceHide.values()[index].displayName();
-        }
+                @Override
+                public CharSequence getOptionName(int index) {
+                    return TotalBalanceHide.values()[index].displayName();
+                }
 
-        @Override
-        public CharSequence getOptionNote(int index) {
-            return null;
-        }
+                @Override
+                public CharSequence getOptionNote(int index) {
+                    return null;
+                }
 
-        @Override
-        public Drawable getOptionDrawable(int index) {
-            return null;
-        }
+                @Override
+                public Drawable getOptionDrawable(int index) {
+                    return null;
+                }
 
-        @Override
-        public CharSequence getSettingName() {
-            return getString(R.string.total_balance_hide_setting_name);
-        }
+                @Override
+                public CharSequence getSettingName() {
+                    return getString(R.string.total_balance_hide_setting_name);
+                }
 
-        @Override
-        public int getCurrentOptionIndex() {
-            return AppSharedPreference.getInstance().getTotalBalanceHide().ordinal();
-        }
+                @Override
+                public int getCurrentOptionIndex() {
+                    return AppSharedPreference.getInstance().getTotalBalanceHide().ordinal();
+                }
 
-        @Override
-        public void onOptionIndexSelected(int index) {
-            AppSharedPreference.getInstance().setTotalBalanceHide(TotalBalanceHide.values()[index]);
-        }
-    };
+                @Override
+                public void onOptionIndexSelected(int index) {
+                    AppSharedPreference.getInstance().setTotalBalanceHide(TotalBalanceHide.values()[index]);
+                }
+            };
 
     /**
-     *   set Api Config
+     * set Api Config
      */
 
     private SettingSelectorView.SettingSelector apiConfigSelector = new
             SettingSelectorView.SettingSelector() {
                 int length = BitherjSettings.ApiConfig.values().length;
+
                 @Override
                 public int getOptionCount() {
                     return length;

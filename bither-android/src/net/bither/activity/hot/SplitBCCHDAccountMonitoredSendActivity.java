@@ -2,12 +2,14 @@ package net.bither.activity.hot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.api.BccBroadCastApi;
 import net.bither.bitherj.api.BccHasAddressApi;
+import net.bither.bitherj.api.GetBcdBlockHashApi;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.SplitCoin;
@@ -71,7 +73,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
     protected void initBalance() {
             tvBalance.setText(UnitUtil.formatValue(AddressManager.getInstance().getAmount(AbstractDb.
                     hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(), AddressManager.getInstance()
-                    .getHDAccountMonitored().getHdSeedId())),UnitUtil.BitcoinUnit.BTC));
+                    .getHDAccountMonitored().getHdSeedId())),splitCoin.getBitcoinUnit()));
     }
 
     @Override
@@ -106,6 +108,56 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
             }
         };
         new Thread(baseRunnable).start();
+    }
+
+    private void getPreBlockHash() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    GetBcdBlockHashApi getBlockHash = new GetBcdBlockHashApi();
+
+                    getBlockHash.handleHttpGet();
+                    JSONObject jsonObject = new JSONObject(getBlockHash
+                            .getResult());
+                    final String blockHash = jsonObject.getString("current_block_hash");
+                    if(blockHash != null && !blockHash.isEmpty()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                qrCodeTxTranscation(blockHash);
+                            }
+                        });
+
+                    }else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this, R.string.get_bcd_block_hash_error);
+                            }
+                        });
+                    }
+
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountMonitoredSendActivity.this, R.string.get_bcd_block_hash_error);
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     private void send() {
@@ -156,7 +208,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validBicoinAddress(toAddress) || Utils.validBicoinGoldAddress(toAddress);
+        boolean isValidAddress = Utils.validSplitBitCoinAddress(toAddress,splitCoin);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
@@ -176,8 +228,15 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
 
     @Override
     public void onConfirm() {
+        if(!dp.isShowing()) {
+            dp.show();
+        }
+        getPreBlockHash();
+    }
+
+    private void qrCodeTxTranscation(String...blockHash) {
         Intent intent = new Intent(this, UnsignedTxQrCodeActivity.class);
-        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getSplitCoinHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address, splitCoin));
+        intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, QRCodeTxTransport.getSplitCoinHDAccountMonitoredUnsignedTx(txs, toAddress, (HDAccount) address, splitCoin, blockHash));
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string
                 .unsigned_transaction_qr_code_title));
         startActivityForResult(intent, BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE);
@@ -209,7 +268,11 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
                                 ArrayList<byte[]> sigs = new ArrayList<byte[]>();
                                 for (int j = 0; j < tx.getIns().size(); j++) {
                                     String s = array[strIndex + j];
-                                    sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                                    if(splitCoin ==  SplitCoin.BCD) {
+                                        sigs.add(Utils.hexStringToByteArray(s));
+                                    }else {
+                                        sigs.add(Utils.hexStringToByteArray(replaceSignHashOfString(s)));
+                                    }
                                 }
                                 tx.signWithSignatures(sigs);
                                 if (!tx.verifySignatures()) {
