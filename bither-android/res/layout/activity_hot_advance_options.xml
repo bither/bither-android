@@ -162,25 +162,6 @@
 
                                 <include layout="@layout/layout_vertical_seperator" />
                             </LinearLayout>
-                            <LinearLayout
-                                android:id="@+id/ll_open_segwit"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/tv_open_segwit"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/ui_touchable_bg"
-                                    android:duplicateParentState="true"
-                                    android:gravity="left"
-                                    android:padding="10dp"
-                                    android:text="@string/open_segwit"
-                                    android:textColor="@color/text_field_text_color"
-                                    android:textSize="18sp" />
-                                <include layout="@layout/layout_vertical_seperator" />
-                            </LinearLayout>
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_message_signing"

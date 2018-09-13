@@ -120,28 +120,21 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         this.isSegwitAddress = isSegwitAddress;
         System.out.println(isSegwitAddress);
         System.out.println(addressPosition);
-        AbstractHD.PathType pathType = isSegwitAddress ? AbstractHD.PathType.EXTERNAL_BIP49_PATH :
-                AbstractHD.PathType.EXTERNAL_ROOT_PATH;
-        if ( address.isHDAccount()) {
-            if (((HDAccount)address).getAddress(pathType) == null) {
-                return;
-            }
-            tvAddress.setText(WalletUtils.formatHash(((HDAccount)address).getAddress(pathType), 4, 12));
-            if (!Utils.compareString(strAddress, ((HDAccount)address).getAddress(pathType))) {
-                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-                ivQr.setContent(((HDAccount)address).getAddress(pathType), theme.getFgColor(), theme.getBgColor());
-            }
+        String addrStr;
+        if (address.isHDAccount()) {
+            addrStr = address.getAddress(isSegwitAddress);
         } else {
-            if (address.getAddress() == null) {
-                return;
-            }
-            tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
-            if (!Utils.compareString(strAddress, address.getAddress())) {
-                Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-                ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
-            }
+            addrStr = address.getAddress();
         }
-
+        if (addrStr == null) {
+            return;
+        }
+        tvAddress.setText(WalletUtils.formatHash(addrStr,4,12));
+        if (!Utils.compareString(strAddress, addrStr)) {
+            Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
+            ivQr.setContent(addrStr, theme.getFgColor(), theme.getBgColor());
+        }
+        strAddress = addrStr;
         llMore.setVisibility(View.VISIBLE);
         if (address.txCount() == 0) {
             tvNoTransactions.setVisibility(View.VISIBLE);
@@ -175,11 +168,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             ibtnBalanceDetail.setVisibility(View.VISIBLE);
         }
         this.address = address;
-        if ( address.isHDAccount()) {
-            strAddress = ((HDAccount)address).getAddress(pathType);
-        } else {
-            strAddress = address.getAddress();
-        }
         if(balanceDetailFuture != null){
             balanceDetailFuture.cancel(true);
         }
@@ -191,9 +179,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            if (address != null) {
-                String text = address.getAddress();
-                StringUtil.copyString(text);
+            if (strAddress != null) {
+                StringUtil.copyString(strAddress);
                 DropdownMessage.showDropdownMessage(activity, R.string.copy_address_success);
             }
         }
@@ -207,7 +194,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 @Override
                 public void runWithService(BlockchainService service) {
                     if (address != null) {
-
                         KeyUtil.stopMonitor(service, address);
                     }
                     activity.runOnUiThread(new Runnable() {
@@ -252,18 +238,12 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            AbstractHD.PathType pathType = isSegwitAddress ? AbstractHD.PathType.EXTERNAL_BIP49_PATH :
-                    AbstractHD.PathType.EXTERNAL_ROOT_PATH;
-            if (address.isHDAccount()) {
-                String a = ((HDAccount)address).getAddress(pathType);
-                DialogFragmentFancyQrCodePager.newInstance(a, address.getVanityLen())
-                        .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
-                        .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
-            } else {
-                DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
-                        .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
-                        .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
+            if (activity == null || address == null || strAddress == null) {
+                return;
             }
+            DialogFragmentFancyQrCodePager.newInstance(strAddress, address.getVanityLen())
+                    .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
+                    .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
         }
     };
 
@@ -318,6 +298,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
     @Override
     public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme) {
-        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        if (strAddress != null) {
+            ivQr.setContent(strAddress, theme.getFgColor(), theme.getBgColor());
+        }
     }
 }

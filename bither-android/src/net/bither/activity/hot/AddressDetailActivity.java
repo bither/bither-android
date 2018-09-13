@@ -38,6 +38,7 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.AddressDetailHeader;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.MarketTickerChangedObserver;
@@ -70,7 +71,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
     private AddressDetailHeader header;
     private Button btnAddressAlias;
     private TxAndBlockBroadcastReceiver txAndBlockBroadcastReceiver = new TxAndBlockBroadcastReceiver();
-    public Boolean isSigwitAddress = false;
+    public Boolean isSegwitAddress = AppSharedPreference.getInstance().isSegwitAddressType();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,7 +202,7 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
     }
 
     public void loadData() {
-        header.showAddress(address, addressPosition, isSigwitAddress);
+        header.showAddress(address, addressPosition, isSegwitAddress);
         onAddressAliasChanged(address, address.getAlias());
         page = 1;
         hasMore = true;

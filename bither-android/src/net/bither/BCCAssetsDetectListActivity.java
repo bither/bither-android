@@ -81,7 +81,6 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
                 new IBackClickListener(0, R.anim.slide_out_right));
         lv = (ListView) findViewById(R.id.lv);
         flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);
-        lv.setAdapter(adapter);
         switch (signMessageTypeSelect) {
             case HdReceive:
                 pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
@@ -90,16 +89,17 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
                 pathType = AbstractHD.PathType.INTERNAL_ROOT_PATH;
                 break;
         }
+        lv.setAdapter(adapter);
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
 
         @Override
         public int getCount() {
-            if (pathType == AbstractHD.PathType.EXTERNAL_ROOT_PATH) {
-                return issuedExternalAddressCount();
+            if (pathType == AbstractHD.PathType.EXTERNAL_ROOT_PATH || pathType == AbstractHD.PathType.EXTERNAL_BIP49_PATH) {
+                return issuedExternalAddressCount(pathType);
             } else {
-                return issuedInternalAddressCount();
+                return issuedInternalAddressCount(pathType);
             }
         }
 
@@ -133,19 +133,19 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
 
     };
 
-    private int issuedExternalAddressCount() {
+    private int issuedExternalAddressCount(AbstractHD.PathType pathType) {
         if (isMonitored) {
-            return hdAccountMonitored.issuedExternalIndex() + 1;
+            return hdAccountMonitored.issuedExternalIndex(pathType) + 1;
         } else {
-            return hdAccount.issuedExternalIndex() + 1;
+            return hdAccount.issuedExternalIndex(pathType) + 1;
         }
     }
 
-    private int issuedInternalAddressCount() {
+    private int issuedInternalAddressCount(AbstractHD.PathType pathType) {
         if (isMonitored) {
-            return hdAccountMonitored.issuedInternalIndex() + 1;
+            return hdAccountMonitored.issuedInternalIndex(pathType) + 1;
         } else {
-            return hdAccount.issuedInternalIndex() + 1;
+            return hdAccount.issuedInternalIndex(pathType) + 1;
         }
     }
 

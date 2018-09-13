@@ -83,7 +83,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                     if (result) {
                         if(splitCoin == SplitCoin.BCD) {
                             getPreBlockHash();
-                        }else {
+                        } else {
                             send();
                         }
 

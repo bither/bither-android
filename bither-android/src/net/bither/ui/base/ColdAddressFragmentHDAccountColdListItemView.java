@@ -44,6 +44,8 @@ import net.bither.util.WalletUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.bitherj.qrcode.QRCodeUtil.HD_MONITOR_QR_SPLIT;
+
 /**
  * Created by songchenwen on 15/6/25.
  */
@@ -204,12 +206,13 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                                 public void run() {
                                     try {
                                         final String content = hdAccountCold.xPubB58(password);
+                                        final String p2shp2wpkhContent = hdAccountCold.p2shp2wpkhXPubB58(password);
                                         ThreadUtil.runOnMainThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 dp.dismiss();
                                                 new DialogSimpleQr(getContext(), QRCodeUtil
-                                                        .HD_MONITOR_QR_PREFIX + content, R.string
+                                                        .HD_MONITOR_QR_PREFIX + content + HD_MONITOR_QR_SPLIT + p2shp2wpkhContent, R.string
                                                         .add_cold_hd_account_monitor_qr,
                                                         WalletUtils.formatHash(content, 4, 24)
                                                                 .toString())

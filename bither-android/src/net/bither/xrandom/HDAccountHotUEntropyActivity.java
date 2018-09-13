@@ -142,7 +142,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                         onProgress(Math.min(1.0, p * (1.0 - startProgress - saveProgress) +
                                 startProgress));
                     }
-                }, AbstractHD.PurposePathLevel.P2SHP2WPKH);
+                });
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);

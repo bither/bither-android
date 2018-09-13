@@ -121,7 +121,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                         });
                         while (hdAccount == null) {
                             try {
-                                hdAccount = new HDAccount(new SecureRandom(), password, null, AbstractHD.PurposePathLevel.P2SHP2WPKH);
+                                hdAccount = new HDAccount(new SecureRandom(), password, null);
                             } catch (MnemonicException.MnemonicLengthException e) {
                                 e.printStackTrace();
                             }

@@ -35,7 +35,7 @@ public class HDAccountDetailActivity extends AddressDetailActivity {
 
     @Override
     protected void optionClicked() {
-        new DialogHdAccountOptions(HDAccountDetailActivity.this, (HDAccount) address, isSigwitAddress).show();
+        new DialogHdAccountOptions(HDAccountDetailActivity.this, (HDAccount) address, isSegwitAddress).show();
     }
 
     @Override

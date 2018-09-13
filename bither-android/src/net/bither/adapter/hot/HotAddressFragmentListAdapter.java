@@ -608,13 +608,13 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                         activity.startActivityForResult(intent,
                                 SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
                     }
-                    v.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            clicked = false;
-                        }
-                    }, 500);
                 }
+                v.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        clicked = false;
+                    }
+                }, 500);
             }
         }
     }

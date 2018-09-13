@@ -75,7 +75,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
                                     @Override
                                     public void run() {
                                         dp.dismiss();
-                                            ((AddressDetailActivity) activity).isSigwitAddress =
+                                            ((AddressDetailActivity) activity).isSegwitAddress =
                                                     !isSegwitAddress;
                                             ((HDAccountDetailActivity) activity).loadData();
                                     }
@@ -98,7 +98,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
                                     @Override
                                     public void run() {
                                         dp.dismiss();
-                                            ((AddressDetailActivity) activity).isSigwitAddress =
+                                            ((AddressDetailActivity) activity).isSegwitAddress =
                                                     !isSegwitAddress;
                                             ((HDAccountDetailActivity) activity).loadData();
                                     }
@@ -138,7 +138,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
             actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                 @Override
                 public void run() {
-                    if (account.issuedExternalIndex() < 0) {
+                    if (account.issuedExternalIndex(pathType) < 0) {
                         DropdownMessage.showDropdownMessage(activity, R.string
                                 .hd_account_old_addresses_zero);
                         return;
@@ -254,8 +254,8 @@ public class DialogHdAccountOptions extends DialogWithActions {
                         DropdownMessage.showDropdownMessage(activity, R.string.no_sync_complete);
                     } else {
                         DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(activity);
-                        detectUtil.getBCCHDUnspentOutputs(account.getAddress(), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
-                                account.issuedExternalIndex() == 0 ? 0 : account.issuedExternalIndex() + 1, false);
+                        detectUtil.getBCCHDUnspentOutputs(account.getAddress(isSegwitAddress), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
+                                account.issuedExternalIndex(pathType) == 0 ? 0 : account.issuedExternalIndex(pathType) + 1, false);
                     }
                 }
             }));
