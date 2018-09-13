@@ -789,6 +789,6 @@
     <string name="address_type_switch_failure_tips">Switch failed</string>
     <string name="address_segwit_alert">Please never send bbc to this address, otherwise the bbc can\'t be found back！</string>
     <string name="open_segwit_only_support_hd_account">Segwit Address only support HD Account</string>
-    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">If your cold HD account needs to use segwit address，please upgrade your cold wallet to 1.8.3 re-monitoring</string>
+    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">If your cold HD account needs to use segwit address，please upgrade your cold wallet to v1.8.3 and re-monitor</string>
 
 </resources>

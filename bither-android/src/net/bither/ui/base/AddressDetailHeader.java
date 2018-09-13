@@ -78,7 +78,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private DialogProgress dp;
     private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
     private String strAddress;
-    private Boolean isSegwitAddress;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -117,9 +116,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
     public void showAddress(final Address address, int addressPosition, boolean isSegwitAddress) {
         this.addressPosition = addressPosition;
-        this.isSegwitAddress = isSegwitAddress;
-        System.out.println(isSegwitAddress);
-        System.out.println(addressPosition);
         String addrStr;
         if (address.isHDAccount()) {
             addrStr = address.getAddress(isSegwitAddress);

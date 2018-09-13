@@ -753,6 +753,6 @@
     <string name="address_type_switch_failure_tips">切換失敗</string>
     <string name="address_segwit_alert">一定不要把BCC發到該地址上，發了將無法找回！</string>
     <string name="open_segwit_only_support_hd_account">隔離驗證地址僅支援HD賬戶</string>
-    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD賬戶需要使用隔離驗證地址需要將您的冷錢包升級到1.8.3重新監控</string>
+    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD賬戶需要使用隔離驗證地址需要將您的冷錢包升級到v1.8.3重新監控</string>
 
 </resources>

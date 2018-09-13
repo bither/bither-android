@@ -26,6 +26,7 @@ import net.bither.activity.hot.HDAccountDetailActivity;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.DetectAnotherAssetsUtil;
@@ -59,33 +60,10 @@ public class DialogHdAccountOptions extends DialogWithActions {
 
     @Override
     protected List<Action> getActions() {
-        final ArrayList<Action> actions = new ArrayList<Action>();
+        final ArrayList<Action> actions = new ArrayList<>();
         if (fromDetail) {
-            if (!isSegwitAddress) {
-                actions.add(new Action(R.string.address_segwit, new Runnable() {
-                    @Override
-                    public void run() {
-                        final DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
-                        dp.setCancelable(false);
-                        dp.show();
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                ThreadUtil.runOnMainThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dp.dismiss();
-                                            ((AddressDetailActivity) activity).isSegwitAddress =
-                                                    !isSegwitAddress;
-                                            ((HDAccountDetailActivity) activity).loadData();
-                                    }
-                                });
-                            }
-                        }.start();
-                    }
-                }));
-            } else {
-                actions.add(new Action(R.string.address_normal, new Runnable() {
+            if (isSegwitAddress || (!isSegwitAddress && AbstractDb.hdAccountProvider.getSegwitExternalPub(account.getHdSeedId()) != null)) {
+                actions.add(new Action(!isSegwitAddress ? R.string.address_segwit : R.string.address_normal, new Runnable() {
                     @Override
                     public void run() {
                         final DialogProgress dp = new DialogProgress(activity, R.string.please_wait);

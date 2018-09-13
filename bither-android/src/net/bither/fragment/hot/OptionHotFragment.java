@@ -463,43 +463,34 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private OnClickListener changeAddressTypeClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+
             if (AppSharedPreference.getInstance().isSegwitAddressType()) {
-                changeAddressType();
+                changeAddressType(false);
                 return;
             }
             final AddressManager addressManager = AddressManager.getInstance();
             if (addressManager.hasHDAccountHot()) {
                 if (addressManager.hasHDAccountMonitored() && AbstractDb.hdAccountProvider.getSegwitExternalPub(addressManager.getHDAccountMonitored().getHdSeedId()) == null) {
-                    DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips), new Runnable() {
+                    DialogConfirmTask tip = new DialogConfirmTask(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips), new Runnable() {
                         @Override
                         public void run() {
-                            changeAddressType();
+                            changeAddressType(false);
                         }
                     }, false);
-                    dialogConfirmTask.setCancelable(false);
-                    dialogConfirmTask.show();
+                    tip.setCancelable(false);
+                    tip.show();
                 } else {
                     if (addressManager.getHDAccountHot().getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) == null) {
-                        DialogPassword dialogPassword = new DialogPassword(getActivity(),
-                                new IDialogPasswordListener() {
-                                    @Override
-                                    public void onPasswordEntered(SecureCharSequence password) {
-                                        addressManager.getHDAccountHot().addSegwitPub(password);
-                                        if (addressManager.getHDAccountHot().getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) != null) {
-                                            changeAddressType();
-                                        }
-                                    }
-                                });
-                        dialogPassword.show();
+                        changeAddressType(true);
                     } else {
-                        changeAddressType();
+                        changeAddressType(false);
                     }
                 }
             } else if (addressManager.hasHDAccountMonitored()) {
                 if (AbstractDb.hdAccountProvider.getSegwitExternalPub(addressManager.getHDAccountMonitored().getHdSeedId()) == null) {
                     DropdownMessage.showDropdownMessage(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips));
                 } else {
-                    changeAddressType();
+                    changeAddressType(false);
                 }
             } else {
                 DropdownMessage.showDropdownMessage(getActivity(), getString(R.string.open_segwit_only_support_hd_account));
@@ -507,11 +498,49 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     };
 
-    private void changeAddressType() {
-        AppSharedPreference instance = AppSharedPreference.getInstance();
-        boolean isSegwit = !instance.isSegwitAddressType();
-        AppSharedPreference.getInstance().setIsSegwitAddressType(isSegwit);
-        showChangeAddressType(isSegwit);
+    private void changeAddressType(final boolean isOpenSegwit) {
+        final AppSharedPreference instance = AppSharedPreference.getInstance();
+        final boolean isSegwit = !instance.isSegwitAddressType();
+        DialogConfirmTask confirmTask = new DialogConfirmTask(getActivity(), getString(R.string.address_type_switch_tips, getString(isSegwit ? R.string.address_segwit_type : R.string.address_normal_type)), new Runnable() {
+            @Override
+            public void run() {
+                if (isOpenSegwit) {
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogPassword dialogPassword = new DialogPassword(getActivity(),
+                                    new IDialogPasswordListener() {
+                                        @Override
+                                        public void onPasswordEntered(SecureCharSequence password) {
+                                            ThreadUtil.runOnMainThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (dp == null) {
+                                                        dp = new DialogProgress(getActivity(), R.string.please_wait);
+                                                    }
+                                                    dp.show();
+                                                }
+                                            });
+                                            AddressManager addressManager = AddressManager.getInstance();
+                                            addressManager.getHDAccountHot().addSegwitPub(password);
+                                            if (addressManager.getHDAccountHot().getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) != null) {
+                                                showChangeAddressType(isSegwit, true);
+                                            } else {
+                                                DropdownMessage.showDropdownMessage(getActivity(), R.string.address_type_switch_failure_tips);
+                                            }
+                                        }
+                                    });
+                            dialogPassword.show();
+                        }
+                    });
+                } else {
+                    instance.setIsSegwitAddressType(isSegwit);
+                    showChangeAddressType(isSegwit, true);
+                }
+            }
+        });
+        confirmTask.setCancelable(false);
+        confirmTask.show();
     }
 
     private OnClickListener websiteClick = new OnClickListener() {
@@ -865,11 +894,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
         tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
-        showChangeAddressType(AppSharedPreference.getInstance().isSegwitAddressType());
+        showChangeAddressType(AppSharedPreference.getInstance().isSegwitAddressType(), false);
         btnChangeAddressType.setOnClickListener(changeAddressTypeClick);
     }
 
-    private void showChangeAddressType(final boolean isSegwit) {
+    private void showChangeAddressType(final boolean isSegwit, final boolean isChange) {
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
@@ -877,6 +906,12 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     btnChangeAddressType.setText(getString(R.string.address_type_switch_to_normal));
                 } else {
                     btnChangeAddressType.setText(getString(R.string.address_type_switch_to_segwit));
+                }
+                if (isChange) {
+                    DropdownMessage.showDropdownMessage(getActivity(), R.string.address_type_switch_success_tips);
+                }
+                if (dp != null && dp.isShowing()) {
+                    dp.dismiss();
                 }
             }
 
