@@ -1,26 +1,25 @@
-package net.bither.activity.hot;
+package net.bither;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
-import net.bither.R;
+import net.bither.activity.hot.SplitBccSelectAddressActivity;
 import net.bither.bitherj.api.BccBroadCastApi;
 import net.bither.bitherj.api.BccHasAddressApi;
-import net.bither.bitherj.api.GetBcdBlockHashApi;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
-import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.preference.AppSharedPreference;
+import net.bither.model.ExtractBccUtxo;
 import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
@@ -30,18 +29,19 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
-
 /**
- * Created by ltq on 2017/7/28.
+ * Created by ltq on 2017/9/17.
  */
 
-public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implements DialogHdSendConfirm
+public class BCCAssetsDetectHDActivity extends BCCAssetsDetectHotActivity implements DialogHdSendConfirm
         .SendConfirmListener {
 
     private long btcAmount;
     private String toAddress;
     private List<Tx> txs;
+    private List<Out> outs;
+    private AbstractHD.PathType path;
+    private int index;
 
     static {
         CompleteTransactionRunnable.registerTxBuilderExceptionMessages();
@@ -50,20 +50,22 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        splitCoin = (SplitCoin) intent.getSerializableExtra(SplitCoinKey);
     }
 
     @Override
     protected void initAddress() {
-            address = AddressManager.getInstance().getHDAccountHot();
-            addressPosition = 0;
+        address = AddressManager.getInstance().getHDAccountHot();
+        addressPosition = 0;
     }
 
     @Override
     protected void initBalance() {
-            tvBalance.setText(UnitUtil.formatValue(getAmount(AbstractDb.hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(),
-                    AddressManager.getInstance().getHDAccountHot().getHdSeedId())),splitCoin.getBitcoinUnit()));
+        List<ExtractBccUtxo> extractBccUtxos = (List<ExtractBccUtxo>) getIntent().getExtras().getSerializable(DECTECTED_BCC_AMOUNT_TAG);
+        outs = ExtractBccUtxo.rawOutList(extractBccUtxos);
+        path = AbstractHD.getTernalRootType(getIntent().getExtras().getInt(DECTECTED_BCC_HD_PATH_TYPE));
+        index = getIntent().getExtras().getInt(DECTECTED_BCC_HD_ADDRESS_INDEX);
+        tvBalance.setText(UnitUtil.formatValue(getAmount(outs),UnitUtil.BitcoinUnit.BTC));
+        btcAmount = getAmount(outs);
     }
 
     @Override
@@ -74,22 +76,18 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         BaseRunnable baseRunnable = new BaseRunnable() {
             @Override
             public void run() {
-                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, splitCoin);
+                BccHasAddressApi bccHasAddressApi = new BccHasAddressApi(toAddress, SplitCoin.BCC);
                 try {
                     bccHasAddressApi.handleHttpGet();
                     JSONObject jsonObject = new JSONObject(bccHasAddressApi
                             .getResult());
                     boolean result = jsonObject.getInt("result") == 1 ? true : false;
                     if (result) {
-                        if(splitCoin == SplitCoin.BCD) {
-                            getPreBlockHash();
-                        } else {
-                            send();
-                        }
-
+                        send();
                     } else {
-                        DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this,
-                                Utils.format(getString(R.string.not_bitpie_split_coin_address), splitCoin.getName()));
+                        DropdownMessage.showDropdownMessage(BCCAssetsDetectHDActivity.this,
+                                Utils.format(getString(R.string.not_bitpie_split_coin_address), SplitCoin.BCC.getName()));
+
                         if (dp.isShowing()) {
                             dp.dismiss();
                         }
@@ -102,53 +100,12 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         new Thread(baseRunnable).start();
     }
 
-    private void getPreBlockHash() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    GetBcdBlockHashApi getBlockHash = new GetBcdBlockHashApi();
-
-                    getBlockHash.handleHttpGet();
-                    JSONObject jsonObject = new JSONObject(getBlockHash
-                            .getResult());
-                    String blockHash = jsonObject.getString("current_block_hash");
-                    if(blockHash != null && !blockHash.isEmpty()) {
-                        send(blockHash);
-                    }else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (dp.isShowing()) {
-                                    dp.dismiss();
-                                }
-                                DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, R.string.get_bcd_block_hash_error);
-                            }
-                        });
-                    }
-
-                }catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (dp.isShowing()) {
-                                dp.dismiss();
-                            }
-                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, R.string.get_bcd_block_hash_error);
-                        }
-                    });
-                }
-            }
-        }).start();
-    }
-
-    private void send(String...blockhash) {
+    private void send() {
         txs = null;
         HDAccount account = (HDAccount) address;
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         try {
-            txs = account.newForkTx(etAddress.getText().toString().trim(), btcAmount, password, splitCoin,blockhash);
+            txs = account.extractBcc(etAddress.getText().toString().trim(), getAmount(outs), outs, path, index, password);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
@@ -167,7 +124,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                     if (dp.isShowing()) {
                         dp.dismiss();
                     }
-                    DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, m);
+                    DropdownMessage.showDropdownMessage(BCCAssetsDetectHDActivity.this, m);
                 }
             });
         } finally {
@@ -187,13 +144,12 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     @Override
     protected void validateValues() {
         boolean isValidAmounts = false;
-            btcAmount = getAmount(AbstractDb.hdAccountAddressProvider.getUnspentOutputByBlockNo(splitCoin.getForkBlockHeight(),
-                    AddressManager.getInstance().getHDAccountHot().getHdSeedId()));
+        btcAmount = getAmount(outs);
         if (btcAmount > 0) {
             isValidAmounts = true;
         }
         toAddress = etAddress.getText().toString().trim();
-        boolean isValidAddress = Utils.validSplitBitCoinAddress(toAddress,splitCoin);
+        boolean isValidAddress = Utils.validBicoinAddress(toAddress);
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
             SecureCharSequence password = new SecureCharSequence(etPassword.getText());
@@ -208,7 +164,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
         if (dp.isShowing()) {
             dp.dismiss();
         }
-        new DialogHdSendConfirm(this, toAddress, txs, this, splitCoin).show();
+        new DialogHdSendConfirm(this, toAddress, txs,Utils.getFeeBase(), this).show();
     }
 
     @Override
@@ -224,7 +180,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                 for (final Tx tx: txs) {
                     try {
                         String raw = Utils.bytesToHexString(tx.bitcoinSerialize());
-                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, splitCoin);
+                        BccBroadCastApi bccBroadCastApi = new BccBroadCastApi(raw, SplitCoin.BCC);
                         bccBroadCastApi.handleHttpPost();
                         JSONObject jsonObject = new JSONObject(bccBroadCastApi.getResult());
                         boolean result = jsonObject.getInt("result") == 1 ? true : false;
@@ -245,14 +201,13 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                 }
 
                 if (errorMsg == null) {
-                    saveIsObtainBcc();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, R.string.send_success);
+                            DropdownMessage.showDropdownMessage(BCCAssetsDetectHDActivity.this, R.string.send_success);
                         }
                     });
                     btnSend.postDelayed(new Runnable() {
@@ -271,7 +226,7 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
                             if (dp.isShowing()) {
                                 dp.dismiss();
                             }
-                            DropdownMessage.showDropdownMessage(SplitBCCHDAccountSendActivity.this, finalErrorMsg);
+                            DropdownMessage.showDropdownMessage(BCCAssetsDetectHDActivity.this, finalErrorMsg);
                             btnSend.setEnabled(true);
                         }
                     });
@@ -283,9 +238,5 @@ public class SplitBCCHDAccountSendActivity extends SplitBCCSendActivity implemen
     @Override
     public void onCancel() {
 
-    }
-
-    void saveIsObtainBcc() {
-        AppSharedPreference.getInstance().setIsObtainBcc("HDAccountHot" + splitCoin.getIsGatKey(), true);
     }
 }

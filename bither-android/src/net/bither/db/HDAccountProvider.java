@@ -75,6 +75,16 @@ public class HDAccountProvider extends AbstractHDAccountProvider {
     }
 
     @Override
+    protected void insertHDAccountSegwitPubToDb(IDb db, int hdAccountId, byte[] segwitExternalPub, byte[] segwitInternalPub) {
+        AndroidDb mdb = (AndroidDb)db;
+        ContentValues cv = new ContentValues();
+        cv.put(AbstractDb.HDAccountSegwitPubColumns.HD_ACCOUNT_ID, hdAccountId);
+        cv.put(AbstractDb.HDAccountSegwitPubColumns.SEGWIT_EXTERNAL_PUB, Base58.encode(segwitExternalPub));
+        cv.put(AbstractDb.HDAccountSegwitPubColumns.SEGWIT_INTERNAL_PUB, Base58.encode(segwitInternalPub));
+        mdb.getSQLiteDatabase().insert(AbstractDb.Tables.HD_ACCOUNT_SEGWIT_PUB, null, cv);
+    }
+
+    @Override
     protected boolean hasPasswordSeed(IDb db) {
         return AddressProvider.getInstance().hasPasswordSeed(db);
     }
@@ -83,4 +93,5 @@ public class HDAccountProvider extends AbstractHDAccountProvider {
     protected void addPasswordSeed(IDb db, PasswordSeed passwordSeed) {
         AddressProvider.getInstance().addPasswordSeed(db, passwordSeed);
     }
+
 }

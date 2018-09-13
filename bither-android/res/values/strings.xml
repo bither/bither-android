@@ -766,4 +766,29 @@
     <string name="address_cold">Cold Wallet Address</string>
     <string name="error_hash">Hash format error</string>
     <string name="sign_hash_input_hint">Hash to sign</string>
+
+    <!--Detect another assets-->
+    <string name="detect_another_BCC_assets">Detect BCC assets</string>
+    <string name="detect_another_BCC_assets_select_address">Select address to detect BCC assets</string>
+    <string name="detect_exist_another_assets_alert">This address has %1$s%2$s, extract your Bitpie account?</string>
+    <string name="detect_no_assets_alert">No other assets were found on the block browser for this address</string>
+    <string name="extract_assets">Extract Assets</string>
+    <string name="extract_assets_BCC_send_title">Can Extract</string>
+
+    <!--Segwit-->
+    <string name="address_normal">Normal Address</string>
+    <string name="address_segwit">Segwit Address</string>
+    <string name="address_multisig">Multisig Address</string>
+    <string name="address_normal_type">Normal</string>
+    <string name="address_segwit_type">Segwit</string>
+    <string name="address_multisig_type">Multisig</string>
+    <string name="address_type_switch_to_normal">Switch to Normal address</string>
+    <string name="address_type_switch_to_segwit">Switch to Segwit address</string>
+    <string name="address_type_switch_tips">After switching the default use %s address, confirm the switch? </string>
+    <string name="address_type_switch_success_tips">Switch successfully</string>
+    <string name="address_type_switch_failure_tips">Switch failed</string>
+    <string name="address_segwit_alert">Please never send bbc to this address, otherwise the bbc can\'t be found back！</string>
+    <string name="open_segwit_only_support_hd_account">Segwit Address only support HD Account</string>
+    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">If your cold HD account needs to use segwit address，please upgrade your cold wallet to 1.8.3 re-monitoring</string>
+
 </resources>

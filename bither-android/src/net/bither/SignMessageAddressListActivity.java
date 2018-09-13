@@ -35,6 +35,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     public static final String SignMgsTypeSelect = "SignMgsTypeSelect";
     public static final String PassWord = "PassWord";
     public static final String IsHdAccountHot = "IsHdAccountHot";
+    public static final String IsDetectBcc = "IsDetectBcc";
     public static final String IsSignHash = "IsSignHash";
 
     private int page = 1;
@@ -48,6 +49,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     private boolean isSignHash;
     private ListView lv;
     private FrameLayout flTitleBar;
+    private TextView tvTitle;
     private ArrayList<Address> addresses = new ArrayList<Address>();
     private ArrayList<HDAccount.HDAccountAddress> hdAccountAddresses = new ArrayList<>();
     private HDAccount hdAccount;
@@ -58,10 +60,12 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_sign_message_select_address);
+        tvTitle = (TextView) findViewById(R.id.tv_title);
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
+        tvTitle.setText(R.string.sign_message_select_address);
         isSignHash = getIntent().getBooleanExtra(IsSignHash, false);
         if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
             String tempString = getIntent().getStringExtra(PassWord);

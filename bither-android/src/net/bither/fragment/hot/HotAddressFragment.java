@@ -71,8 +71,10 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
     private IntentFilter broadcastIntentFilter = new IntentFilter();
     private List<String> addressesToShowAdded;
     private String notifyAddress = null;
+    public  boolean isDetectBcc;
     public boolean isSplitCoinAddress;
     public SplitCoin splitCoin = SplitCoin.BCC;
+
 
     @Override
     public void onCreate(Bundle paramBundle) {
@@ -134,6 +136,8 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
         lv = (PinnedHeaderAddressExpandableListView) view.findViewById(R.id.lv);
         lv.setOnScrollListener(listScroll);
         if (getActivity() instanceof SplitBccSelectAddressActivity) {
+            SplitBccSelectAddressActivity splitBccSelectAddressActivity =  (SplitBccSelectAddressActivity)getActivity();
+            isDetectBcc = splitBccSelectAddressActivity.isDetectBcc();
             isSplitCoinAddress = true;
         } else {
             isSplitCoinAddress = false;
@@ -143,7 +147,7 @@ public class HotAddressFragment extends Fragment implements Refreshable, Selecta
             splitCoin = (SplitCoin) bundle.get(SplitCoinKey);
         }
         mAdapter = new HotAddressFragmentListAdapter(getActivity(), watchOnlys, privates, hdms, lv,
-                isSplitCoinAddress, splitCoin);
+                isSplitCoinAddress, splitCoin, isDetectBcc);
         lv.setAdapter(mAdapter);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         refresh();

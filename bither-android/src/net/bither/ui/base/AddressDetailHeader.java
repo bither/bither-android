@@ -39,8 +39,10 @@ import net.bither.activity.hot.GenerateUnsignedTxActivity;
 import net.bither.activity.hot.HDAccountMonitoredSendActivity;
 import net.bither.activity.hot.HDAccountSendActivity;
 import net.bither.activity.hot.HdmSendActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
+import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.preference.AppSharedPreference;
@@ -76,6 +78,7 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
     private DialogProgress dp;
     private FutureTask<DialogBalanceDetail.Info> balanceDetailFuture;
     private String strAddress;
+    private Boolean isSegwitAddress;
 
     public AddressDetailHeader(AddressDetailActivity activity) {
         super(activity);
@@ -112,17 +115,26 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
         super(context, attrs, defStyle);
     }
 
-    public void showAddress(final Address address, int addressPosition) {
+    public void showAddress(final Address address, int addressPosition, boolean isSegwitAddress) {
         this.addressPosition = addressPosition;
-        if (address.getAddress() == null) {
+        this.isSegwitAddress = isSegwitAddress;
+        System.out.println(isSegwitAddress);
+        System.out.println(addressPosition);
+        String addrStr;
+        if (address.isHDAccount()) {
+            addrStr = address.getAddress(isSegwitAddress);
+        } else {
+            addrStr = address.getAddress();
+        }
+        if (addrStr == null) {
             return;
         }
-        tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
-        if (!Utils.compareString(strAddress, address.getAddress())) {
+        tvAddress.setText(WalletUtils.formatHash(addrStr,4,12));
+        if (!Utils.compareString(strAddress, addrStr)) {
             Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
-            ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+            ivQr.setContent(addrStr, theme.getFgColor(), theme.getBgColor());
         }
-
+        strAddress = addrStr;
         llMore.setVisibility(View.VISIBLE);
         if (address.txCount() == 0) {
             tvNoTransactions.setVisibility(View.VISIBLE);
@@ -156,7 +168,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
             ibtnBalanceDetail.setVisibility(View.VISIBLE);
         }
         this.address = address;
-        strAddress = address.getAddress();
         if(balanceDetailFuture != null){
             balanceDetailFuture.cancel(true);
         }
@@ -168,9 +179,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            if (address != null) {
-                String text = address.getAddress();
-                StringUtil.copyString(text);
+            if (strAddress != null) {
+                StringUtil.copyString(strAddress);
                 DropdownMessage.showDropdownMessage(activity, R.string.copy_address_success);
             }
         }
@@ -184,7 +194,6 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
                 @Override
                 public void runWithService(BlockchainService service) {
                     if (address != null) {
-
                         KeyUtil.stopMonitor(service, address);
                     }
                     activity.runOnUiThread(new Runnable() {
@@ -229,7 +238,10 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
         @Override
         public void onClick(View v) {
-            DialogFragmentFancyQrCodePager.newInstance(address.getAddress(), address.getVanityLen())
+            if (activity == null || address == null || strAddress == null) {
+                return;
+            }
+            DialogFragmentFancyQrCodePager.newInstance(strAddress, address.getVanityLen())
                     .setQrCodeThemeChangeListener(AddressDetailHeader.this).show(activity
                     .getSupportFragmentManager(), DialogFragmentFancyQrCodePager.FragmentTag);
         }
@@ -286,6 +298,8 @@ public class AddressDetailHeader extends FrameLayout implements DialogFragmentFa
 
     @Override
     public void qrCodeThemeChangeTo(Qr.QrCodeTheme theme) {
-        ivQr.setContent(address.getAddress(), theme.getFgColor(), theme.getBgColor());
+        if (strAddress != null) {
+            ivQr.setContent(strAddress, theme.getFgColor(), theme.getBgColor());
+        }
     }
 }

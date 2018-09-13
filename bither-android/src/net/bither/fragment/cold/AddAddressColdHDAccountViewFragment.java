@@ -62,50 +62,7 @@ public class AddAddressColdHDAccountViewFragment extends Fragment implements Vie
             case R.id.btn_phrase:
                 showPhrase();
                 return;
-            case R.id.btn_monitor:
-                showMonitor();
-                return;
         }
-    }
-
-    private void showMonitor() {
-        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
-        if (account == null) {
-            return;
-        }
-        new DialogPassword(getActivity(), new IDialogPasswordListener() {
-            @Override
-            public void onPasswordEntered(final SecureCharSequence password) {
-                final DialogProgress dp = new DialogProgress(getActivity(), R.string.please_wait);
-                dp.show();
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            final String content = account.xPubB58(password);
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dp.dismiss();
-                                    new DialogSimpleQr(getActivity(), QRCodeUtil
-                                            .HD_MONITOR_QR_PREFIX + content, R.string
-                                            .add_cold_hd_account_monitor_qr, WalletUtils
-                                            .formatHash(content, 4, 24).toString()).show();
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dp.dismiss();
-                                }
-                            });
-                        }
-                    }
-                }.start();
-            }
-        }).show();
     }
 
     private void showQr() {

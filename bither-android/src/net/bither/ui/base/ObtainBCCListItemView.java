@@ -32,6 +32,7 @@ public class ObtainBCCListItemView extends FrameLayout {
     private TextView tvBalanceTitle;
 
     private Address address;
+    private boolean isDetectBcc;
 
     public ObtainBCCListItemView(FragmentActivity activity) {
         super(activity);
@@ -65,6 +66,15 @@ public class ObtainBCCListItemView extends FrameLayout {
         if (address != null) {
             tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 20));
             tvBalanceTitle.setText(Utils.format(getResources().getString(R.string.you_already_get_split_coin), splitCoin.getName()));
+        }
+    }
+
+    public void setDetectBcc(boolean detectBcc,Address address) {
+        this.address = address;
+        isDetectBcc = detectBcc;
+        if (address != null) {
+            tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 20));
+            tvBalanceTitle.setVisibility(GONE);
         }
     }
 

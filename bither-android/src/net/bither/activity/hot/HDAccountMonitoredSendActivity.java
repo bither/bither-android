@@ -26,22 +26,32 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.SendActivity;
 import net.bither.bitherj.api.PushTxThirdParty;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.core.In;
 import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.crypto.KeyCrypterException;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
+import net.bither.bitherj.crypto.hd.HDKeyDerivation;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static net.bither.bitherj.utils.HDAccountUtils.getRedeemScript;
+
 
 /**
  * Created by songchenwen on 15/4/17.
@@ -102,7 +112,13 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
         tx = null;
         HDAccount account = (HDAccount) address;
         try {
-            tx = account.newTx(toAddress, btcAmount);
+            boolean isSegwitChangeAddress = AppSharedPreference.getInstance().isSegwitAddressType();
+            if (isSegwitChangeAddress) {
+                if (address instanceof HDAccount && ((HDAccount) address).getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) == null) {
+                    isSegwitChangeAddress = false;
+                }
+            }
+            tx = account.newTx(toAddress, btcAmount, isSegwitChangeAddress);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;
@@ -165,11 +181,35 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                     @Override
                     public void run() {
                         String[] array = QRCodeUtil.splitString(qr);
-                        ArrayList<byte[]> sigs = new ArrayList<byte[]>();
+                        ArrayList<byte[]> sigs = new ArrayList<>();
                         for (String s : array) {
                             sigs.add(Utils.hexStringToByteArray(s));
                         }
-                        tx.signWithSignatures(sigs);
+                        if (tx.isSegwitAddress()) {
+                            HDAccount account = (HDAccount) address;
+                            List<HDAccount.HDAccountAddress> addresses = account.getSigningAddressesForInputs(tx
+                                    .getIns());
+                            List<byte[]> signatures = new ArrayList<>();
+                            List<byte[]> witnesses = new ArrayList<>();
+                            for (int i = 0; i < addresses.size(); i++) {
+                                HDAccount.HDAccountAddress hdAccountAddress = addresses.get(i);
+                                if (hdAccountAddress.getPathType().isSegwit()) {
+                                    DeterministicKey root = HDKeyDerivation.createMasterPubKeyFromExtendedBytes(account.getExternalPub(hdAccountAddress.getPathType()));
+                                    DeterministicKey key = root.deriveSoftened(hdAccountAddress.getIndex());
+                                    signatures.add(getRedeemScript(key.getPubKey()));
+                                    witnesses.add(sigs.get(i));
+                                } else {
+                                    signatures.add(sigs.get(i));
+                                    byte[] witness = {0x00};
+                                    witnesses.add(witness);
+                                }
+                            }
+                            tx.signWithSignatures(signatures);
+                            tx.setWitnesses(witnesses);
+                        } else {
+                            tx.signWithSignatures(sigs);
+                        }
+                        tx.setIsSigned(true);
                         if (tx.verifySignatures()) {
                             runOnUiThread(new Runnable() {
                                 @Override

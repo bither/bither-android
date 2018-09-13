@@ -731,4 +731,28 @@
     <string name="error_hash">Hash 格式錯誤</string>
     <string name="sign_hash_input_hint">待簽名 Hash</string>
 
+    <!--Detect another assets-->
+    <string name="detect_another_BCC_assets">檢測 BCC 資產</string>
+    <string name="detect_another_BCC_assets_select_address">選擇檢測 BCC 資產用的地址</string>
+    <string name="detect_exist_another_assets_alert">該地址存在 %1$s個%2$s,提取到你的比特派賬戶？</string>
+    <string name="detect_no_assets_alert">該地址在區塊瀏覽器上未查詢到其他資產</string>
+    <string name="extract_assets">提取資產</string>
+    <string name="extract_assets_BCC_send_title">可提取</string>
+
+    <!--Segwit-->
+    <string name="address_normal">普通地址</string>
+    <string name="address_segwit">隔離驗證地址</string>
+    <string name="address_multisig">多重簽名地址</string>
+    <string name="address_normal_type">普通</string>
+    <string name="address_segwit_type">隔離驗證</string>
+    <string name="address_multisig_type">多重簽名</string>
+    <string name="address_type_switch_to_normal">切換到普通地址</string>
+    <string name="address_type_switch_to_segwit">切換到隔離驗證地址</string>
+    <string name="address_type_switch_tips">切換後默認使用%s地址，確認切換？</string>
+    <string name="address_type_switch_success_tips">切換成功</string>
+    <string name="address_type_switch_failure_tips">切換失敗</string>
+    <string name="address_segwit_alert">一定不要把BCC發到該地址上，發了將無法找回！</string>
+    <string name="open_segwit_only_support_hd_account">隔離驗證地址僅支援HD賬戶</string>
+    <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD賬戶需要使用隔離驗證地址需要將您的冷錢包升級到1.8.3重新監控</string>
+
 </resources>

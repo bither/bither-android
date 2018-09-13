@@ -17,6 +17,7 @@
 package net.bither.fragment.hot;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
@@ -59,8 +60,10 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
+import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -78,8 +81,10 @@ import net.bither.ui.base.SettingSelectorView.SettingSelector;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogDonate;
 import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
+import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSetAvatar;
+import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
@@ -113,6 +118,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private ImageView ivLogo;
     private View llSwitchToCold;
     private TextView tvPrivacyPolicy;
+    private Button btnChangeAddressType;
 
     private MonitorBitherColdUtil monitorUtil;
 
@@ -454,6 +460,60 @@ public class OptionHotFragment extends Fragment implements Selectable,
             dialog.show();
         }
     };
+    private OnClickListener changeAddressTypeClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (AppSharedPreference.getInstance().isSegwitAddressType()) {
+                changeAddressType();
+                return;
+            }
+            final AddressManager addressManager = AddressManager.getInstance();
+            if (addressManager.hasHDAccountHot()) {
+                if (addressManager.hasHDAccountMonitored() && AbstractDb.hdAccountProvider.getSegwitExternalPub(addressManager.getHDAccountMonitored().getHdSeedId()) == null) {
+                    DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips), new Runnable() {
+                        @Override
+                        public void run() {
+                            changeAddressType();
+                        }
+                    }, false);
+                    dialogConfirmTask.setCancelable(false);
+                    dialogConfirmTask.show();
+                } else {
+                    if (addressManager.getHDAccountHot().getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) == null) {
+                        DialogPassword dialogPassword = new DialogPassword(getActivity(),
+                                new IDialogPasswordListener() {
+                                    @Override
+                                    public void onPasswordEntered(SecureCharSequence password) {
+                                        addressManager.getHDAccountHot().addSegwitPub(password);
+                                        if (addressManager.getHDAccountHot().getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) != null) {
+                                            changeAddressType();
+                                        }
+                                    }
+                                });
+                        dialogPassword.show();
+                    } else {
+                        changeAddressType();
+                    }
+                }
+            } else if (addressManager.hasHDAccountMonitored()) {
+                if (AbstractDb.hdAccountProvider.getSegwitExternalPub(addressManager.getHDAccountMonitored().getHdSeedId()) == null) {
+                    DropdownMessage.showDropdownMessage(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips));
+                } else {
+                    changeAddressType();
+                }
+            } else {
+                DropdownMessage.showDropdownMessage(getActivity(), getString(R.string.open_segwit_only_support_hd_account));
+            }
+        }
+    };
+
+    private void changeAddressType() {
+        AppSharedPreference instance = AppSharedPreference.getInstance();
+        boolean isSegwit = !instance.isSegwitAddressType();
+        AppSharedPreference.getInstance().setIsSegwitAddressType(isSegwit);
+        showChangeAddressType(isSegwit);
+    }
+
     private OnClickListener websiteClick = new OnClickListener() {
 
         @Override
@@ -585,7 +645,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
             case MonitorCodeHDRequestCode:
                 if (data.getExtras().containsKey(ScanActivity.INTENT_EXTRA_RESULT)) {
                     String content = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                    if (!content.startsWith(QRCodeUtil.HD_MONITOR_QR_PREFIX)) {
+                    if (!content.startsWith(QRCodeUtil.OLD_HD_MONITOR_QR_PREFIX) && !content.startsWith(QRCodeUtil.HD_MONITOR_QR_PREFIX)) {
                         try {
                             final boolean isXRandom = content.indexOf(QRCodeUtil.XRANDOM_FLAG) == 0;
                             Utils.hexStringToByteArray(isXRandom ? content.substring(1) : content);
@@ -599,121 +659,139 @@ public class OptionHotFragment extends Fragment implements Selectable,
                         }
                         return;
                     }
-                    final String c = content.substring(QRCodeUtil.HD_MONITOR_QR_PREFIX.length());
-                    try {
-                        new ThreadNeedService(dp, getActivity()) {
-                            @Override
-                            public void runWithService(final BlockchainService service) {
-                                try {
-                                    final DeterministicKey key = DeterministicKey.deserializeB58(c);
-                                    final String firstAddress = key.deriveSoftened(AbstractHD
-                                            .PathType.EXTERNAL_ROOT_PATH.getValue())
-                                            .deriveSoftened(0).toAddress();
-                                    ThreadUtil.runOnMainThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
-                                            }
-                                            if (isRepeatHD(firstAddress)) {
-                                                DropdownMessage
-                                                        .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
-                                            }
-                                            new DialogHDMonitorFirstAddressValidation(getActivity
-                                                    (), firstAddress, new Runnable() {
-
-                                                @Override
-                                                public void run() {
-                                                    new ThreadNeedService(dp, getActivity()) {
-                                                        @Override
-                                                        public void runWithService
-                                                                (BlockchainService service) {
-                                                            try {
-                                                                final HDAccount account = new
-                                                                        HDAccount(key
-                                                                        .getPubKeyExtended(),
-                                                                        false, false, null);
-                                                                if (service != null) {
-                                                                    service.stopAndUnregister();
-                                                                }
-                                                                AddressManager.getInstance()
-                                                                        .setHDAccountMonitored
-                                                                                (account);
-                                                                if (service != null) {
-                                                                    service.startAndRegister();
-                                                                }
-                                                                ThreadUtil.runOnMainThread(new Runnable() {
-
-                                                                    @Override
-                                                                    public void run() {
-                                                                        if (dp.isShowing()) {
-                                                                            dp.dismiss();
-                                                                        }
-                                                                        DropdownMessage
-                                                                                .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_success);
-                                                                    }
-                                                                });
-                                                            } catch (MnemonicException
-                                                                    .MnemonicLengthException e) {
-                                                                e.printStackTrace();
-                                                                ThreadUtil.runOnMainThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        if (dp.isShowing()) {
-                                                                            dp.dismiss();
-                                                                        }
-                                                                        DropdownMessage
-                                                                                .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed);
-                                                                    }
-                                                                });
-                                                            } catch (HDAccount
-                                                                    .DuplicatedHDAccountException
-                                                                    e) {
-                                                                e.printStackTrace();
-                                                                ThreadUtil.runOnMainThread(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        if (dp.isShowing()) {
-                                                                            dp.dismiss();
-                                                                        }
-                                                                        DropdownMessage
-                                                                                .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
-                                                                    }
-                                                                });
-                                                            }
-                                                        }
-                                                    }.start();
-                                                }
-                                            }).show();
-                                        }
-                                    });
-                                } catch (AddressFormatException e) {
-                                    ThreadUtil.runOnMainThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (dp.isShowing()) {
-                                                dp.dismiss();
-                                            }
-                                            DropdownMessage.showDropdownMessage(getActivity(), R
-                                                    .string
-                                                    .hd_account_monitor_xpub_need_to_upgrade);
-                                        }
-                                    });
-                                }
+                    if (content.startsWith(QRCodeUtil.OLD_HD_MONITOR_QR_PREFIX)) {
+                        String normalC = content.substring(QRCodeUtil.OLD_HD_MONITOR_QR_PREFIX.length());
+                        monitorColdHdAccount(normalC, null);
+                    } else {
+                        String c = content.substring(QRCodeUtil.HD_MONITOR_QR_PREFIX.length());
+                        if (c.contains(QRCodeUtil.HD_MONITOR_QR_SPLIT)) {
+                            String[] cStrs = c.split(QRCodeUtil.HD_MONITOR_QR_SPLIT);
+                            if (cStrs.length == 2) {
+                                monitorColdHdAccount(cStrs[0], cStrs[1]);
                             }
-                        }.start();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        if (dp.isShowing()) {
-                            dp.dismiss();
                         }
-                        DropdownMessage.showDropdownMessage(getActivity(), R.string
-                                .monitor_cold_hd_account_failed);
                     }
                 }
                 break;
         }
+    }
 
+    private void monitorColdHdAccount(final String normalC, final String p2shp2wpkhC) {
+        try {
+            new ThreadNeedService(dp, getActivity()) {
+                @Override
+                public void runWithService(final BlockchainService service) {
+                    try {
+                        final DeterministicKey key = DeterministicKey.deserializeB58(normalC);
+                        final String firstAddress = key.deriveSoftened(AbstractHD
+                                .PathType.EXTERNAL_ROOT_PATH.getValue())
+                                .deriveSoftened(0).toAddress();
+                        DeterministicKey p2shp2wpkhKey = null;
+                        if (!Utils.isEmpty(p2shp2wpkhC)) {
+                            p2shp2wpkhKey = DeterministicKey.deserializeB58(p2shp2wpkhC);
+                        }
+                        final DeterministicKey finalP2shp2wpkhKey = p2shp2wpkhKey;
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                if (isRepeatHD(firstAddress)) {
+                                    DropdownMessage
+                                            .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
+                                }
+                                new DialogHDMonitorFirstAddressValidation(getActivity
+                                        (), firstAddress, new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        new ThreadNeedService(dp, getActivity()) {
+                                            @Override
+                                            public void runWithService
+                                                    (BlockchainService service) {
+                                                try {
+                                                    final HDAccount account = new
+                                                            HDAccount(key.getPubKeyExtended(),
+                                                            finalP2shp2wpkhKey == null ? null : finalP2shp2wpkhKey.getPubKeyExtended(),
+                                                            false, false, null);
+                                                    if (service != null) {
+                                                        service.stopAndUnregister();
+                                                    }
+                                                    AddressManager.getInstance()
+                                                            .setHDAccountMonitored
+                                                                    (account);
+                                                    if (service != null) {
+                                                        service.startAndRegister();
+                                                    }
+                                                    ThreadUtil.runOnMainThread(new Runnable() {
+
+                                                        @Override
+                                                        public void run() {
+                                                            if (dp.isShowing()) {
+                                                                dp.dismiss();
+                                                            }
+                                                            DropdownMessage
+                                                                    .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_success);
+                                                        }
+                                                    });
+                                                } catch (MnemonicException
+                                                        .MnemonicLengthException e) {
+                                                    e.printStackTrace();
+                                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (dp.isShowing()) {
+                                                                dp.dismiss();
+                                                            }
+                                                            DropdownMessage
+                                                                    .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed);
+                                                        }
+                                                    });
+                                                } catch (HDAccount
+                                                        .DuplicatedHDAccountException
+                                                        e) {
+                                                    e.printStackTrace();
+                                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (dp.isShowing()) {
+                                                                dp.dismiss();
+                                                            }
+                                                            DropdownMessage
+                                                                    .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }.start();
+                                    }
+                                }).show();
+                            }
+                        });
+                    } catch (AddressFormatException e) {
+                        ThreadUtil.runOnMainThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dp.isShowing()) {
+                                    dp.dismiss();
+                                }
+                                DropdownMessage.showDropdownMessage(getActivity(), R
+                                        .string
+                                        .hd_account_monitor_xpub_need_to_upgrade);
+                            }
+                        });
+                    }
+                }
+            }.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (dp.isShowing()) {
+                dp.dismiss();
+            }
+            DropdownMessage.showDropdownMessage(getActivity(), R.string
+                    .monitor_cold_hd_account_failed);
+        }
     }
 
     private boolean isRepeatHD(String firstAddress) {
@@ -757,6 +835,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         btnAvatar = (Button) view.findViewById(R.id.btn_avatar);
         btnCheck = (Button) view.findViewById(R.id.btn_check_private_key);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
+        btnChangeAddressType = (Button) view.findViewById(R.id.btn_change_address_type);
         view.findViewById(R.id.btn_monitor_hd).setOnClickListener(monitorColdHDClick);
         view.findViewById(R.id.btn_monitor).setOnClickListener(monitorClick);
         ssvCurrency.setSelector(currencySelector);
@@ -786,6 +865,22 @@ public class OptionHotFragment extends Fragment implements Selectable,
         ivLogo.setOnClickListener(logoClickListener);
         setAvatar(AppSharedPreference.getInstance().getUserAvatar());
         tvPrivacyPolicy.setOnClickListener(privacyPolicyClick);
+        showChangeAddressType(AppSharedPreference.getInstance().isSegwitAddressType());
+        btnChangeAddressType.setOnClickListener(changeAddressTypeClick);
+    }
+
+    private void showChangeAddressType(final boolean isSegwit) {
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isSegwit) {
+                    btnChangeAddressType.setText(getString(R.string.address_type_switch_to_normal));
+                } else {
+                    btnChangeAddressType.setText(getString(R.string.address_type_switch_to_segwit));
+                }
+            }
+
+        });
     }
 
     private void setAvatar(String photoName) {

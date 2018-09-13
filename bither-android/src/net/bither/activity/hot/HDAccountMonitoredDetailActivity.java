@@ -21,13 +21,16 @@ package net.bither.activity.hot;
 import android.os.Bundle;
 
 import net.bither.R;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdAccountOldAddresses;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogWithActions;
+import net.bither.util.DetectAnotherAssetsUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -46,6 +49,11 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
     @Override
     protected void initAddress() {
         address = AddressManager.getInstance().getHDAccountMonitored();
+        if (isSegwitAddress) {
+            if (address instanceof HDAccount && ((HDAccount) address).getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) == null) {
+                isSegwitAddress = false;
+            }
+        }
         addressPosition = 0;
     }
 
@@ -54,7 +62,30 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
         new DialogWithActions(this) {
             @Override
             protected List<Action> getActions() {
-                ArrayList<Action> actions = new ArrayList<Action>();
+                ArrayList<Action> actions = new ArrayList<>();
+                if (address instanceof HDAccount && ((HDAccount) address).getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) != null) {
+                    actions.add(new Action(isSegwitAddress ? R.string.address_normal : R.string.address_segwit, new Runnable() {
+                        @Override
+                        public void run() {
+                            final DialogProgress dp = new DialogProgress(HDAccountMonitoredDetailActivity.this, R.string.please_wait);
+                            dp.setCancelable(false);
+                            dp.show();
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dp.dismiss();
+                                            isSegwitAddress = !isSegwitAddress;
+                                            loadData();
+                                        }
+                                    });
+                                }
+                            }.start();
+                        }
+                    }));
+                }
                 actions.add(new Action(R.string.hd_account_request_new_receiving_address, new
                         Runnable() {
                     @Override
@@ -89,10 +120,31 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
                 actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                     @Override
                     public void run() {
-                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this,
-                                (HDAccount) address).show();
+                        HDAccount hdAccount = (HDAccount) address;
+                        AbstractHD.PathType pathType;
+                        if (isSegwitAddress && hdAccount.getExternalPub(AbstractHD.PathType.EXTERNAL_BIP49_PATH) != null) {
+                            pathType = AbstractHD.PathType.EXTERNAL_BIP49_PATH;
+                        } else {
+                            pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
+                        }
+                        new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this, hdAccount, pathType).show();
                     }
                 }));
+                if (!isSegwitAddress) {
+                    actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!address.isSyncComplete()) {
+                                DropdownMessage.showDropdownMessage(HDAccountMonitoredDetailActivity.this, R.string.no_sync_complete);
+                            } else {
+                                DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(HDAccountMonitoredDetailActivity.this);
+                                AbstractHD.PathType pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
+                                detectUtil.getBCCHDUnspentOutputs(address.getAddress(), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
+                                        ((HDAccount) address).issuedExternalIndex(pathType) == 0 ? 0 :  ((HDAccount) address).issuedExternalIndex(pathType) + 1,true);
+                            }
+                        }
+                    }));
+                }
                 return actions;
             }
         }.show();

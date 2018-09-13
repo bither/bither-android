@@ -34,6 +34,7 @@ import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.exception.TxBuilderException;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.CompleteTransactionRunnable;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.dialog.DialogHdSendConfirm;
@@ -93,7 +94,7 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
         HDAccount account = (HDAccount) address;
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         try {
-            tx = account.newTx(toAddress, btcAmount, password);
+            tx = account.newTx(toAddress, btcAmount, AppSharedPreference.getInstance().isSegwitAddressType(), password);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

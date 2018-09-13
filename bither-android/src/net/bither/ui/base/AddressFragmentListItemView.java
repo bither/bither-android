@@ -33,6 +33,7 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogAddressFull;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
@@ -105,7 +106,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         if (address == null) {
             return;
         }
-        tvAddress.setText(address.getShortAddress());
+        tvAddress.setText(address.getShortAddress(AppSharedPreference.getInstance().isSegwitAddressType()));
         tvBalanceMoney.setVisibility(View.VISIBLE);
         ivBalanceSymbol.setVisibility(View.VISIBLE);
         llExtra.setVisibility(View.VISIBLE);
@@ -172,7 +173,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     @Override
     public void onAddressInfoChanged(String address) {
         if (this.address != null) {
-            if (Utils.compareString(address, this.address.getAddress()) || (this.address
+            if (Utils.compareString(address, this.address.getAddress(AppSharedPreference.getInstance().isSegwitAddressType())) || (this.address
                     .isHDAccount() && this.address.hasPrivKey() && Utils.compareString(address,
                     HDAccount.HDAccountPlaceHolder)) || (this.address.isHDAccount() && !this
                     .address.hasPrivKey() && Utils.compareString(address, HDAccount
@@ -186,7 +187,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         @Override
         public void onClick(View v) {
             LinkedHashMap<String, Long> map = new LinkedHashMap<String, Long>();
-                map.put(address.getAddress(), 0L);
+                map.put(address.getAddress(AppSharedPreference.getInstance().isSegwitAddressType()), 0L);
             DialogAddressFull dialog = new DialogAddressFull(activity, map);
             dialog.show(v);
         }

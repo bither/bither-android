@@ -33,6 +33,7 @@ import net.bither.bitherj.api.http.BitherUrl;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.utils.Utils;
+import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
@@ -59,10 +60,13 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
 
     private HashMap<Integer, String> addresses = new HashMap<Integer, String>();
 
-    public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount) {
+    private AbstractHD.PathType pathType;
+
+    public DialogHdAccountOldAddresses(Activity context, HDAccount hdAccount, AbstractHD.PathType pathType) {
         super(context);
         this.hdAccount = hdAccount;
         activity = context;
+        this.pathType = pathType;
         initView();
     }
 
@@ -125,11 +129,11 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
     }
 
     private int issuedExternalAddressCount() {
-            return hdAccount.issuedExternalIndex() + 1;
+            return hdAccount.issuedExternalIndex(pathType) + 1;
     }
 
     private String addressForIndex(int index) {
-            return hdAccount.addressForPath(AbstractHD.PathType.EXTERNAL_ROOT_PATH, index)
+            return hdAccount.addressForPath(pathType, index)
                     .getAddress();
     }
 

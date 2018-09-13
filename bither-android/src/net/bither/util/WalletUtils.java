@@ -86,7 +86,9 @@ public class WalletUtils {
                                       final int lineSize, final char groupSeparator) {
         final SpannableStringBuilder builder = prefix != null ? new SpannableStringBuilder(
                 prefix) : new SpannableStringBuilder();
-
+        if (address == null) {
+            return builder;
+        }
         final int len = address.length();
         for (int i = 0;
              i < len;

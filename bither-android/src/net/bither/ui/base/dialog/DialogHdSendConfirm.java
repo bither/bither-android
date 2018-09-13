@@ -23,7 +23,6 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.TextView;
 
-import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.SplitCoin;
@@ -47,6 +46,7 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
 
     private boolean confirmed = false;
     private SendConfirmListener listener;
+    private SplitCoin splitCoin;
 
     public DialogHdSendConfirm(Context context, String toAddress, Tx tx,
                                SendConfirmListener listener) {
@@ -57,6 +57,7 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
                                SendConfirmListener listener) {
         super(context);
         this.listener = listener;
+        this.splitCoin = coin.getSplitCoin();
         setOnDismissListener(this);
         setContentView(R.layout.dialog_send_confirm);
         TextView tvAddress = (TextView) findViewById(R.id.tv_address);
@@ -88,11 +89,42 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
     public DialogHdSendConfirm(Context context, String toAddress, List<Tx> txs, SendConfirmListener listener, SplitCoin splitCoin) {
         super(context);
         this.listener = listener;
+        this.splitCoin = splitCoin;
         setOnDismissListener(this);
         setContentView(R.layout.dialog_send_confirm);
-        TextView tvAddress = (TextView) findViewById(R.id.tv_address);
+        configureUI(toAddress);
         TextView tvBtc = (TextView) findViewById(R.id.tv_btc);
         TextView tvFee = (TextView) findViewById(R.id.tv_fee);
+        long amount = 0;
+        long fee = 0;
+        for (Tx tx: txs) {
+            amount += tx.amountSentToAddress(toAddress);
+            fee += tx.getFee();
+        }
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee));
+    }
+
+    // detect bcc assets
+    public DialogHdSendConfirm(Context context, String toAddress, List<Tx> txs, long fee, SendConfirmListener listener) {
+        super(context);
+        this.listener = listener;
+        this.splitCoin = SplitCoin.BCC;
+        setOnDismissListener(this);
+        setContentView(R.layout.dialog_send_confirm);
+        configureUI(toAddress);
+        TextView tvBtc = (TextView) findViewById(R.id.tv_btc);
+        TextView tvFee = (TextView) findViewById(R.id.tv_fee);
+        long amount = 0;
+        for (Tx tx: txs) {
+            amount += tx.amountSentToAddress(toAddress);
+        }
+        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount));
+        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee));
+    }
+
+    private void configureUI(String toAddress) {
+        TextView tvAddress = (TextView) findViewById(R.id.tv_address);
         TextView tvSymbol = (TextView) findViewById(R.id.tv_symbol);
         TextView tvFeeSymbol = (TextView) findViewById(R.id.tv_fee_symbol);
         View llChange = findViewById(R.id.ll_change);
@@ -104,14 +136,6 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
         findViewById(R.id.btn_ok).setOnClickListener(this);
         llChange.setVisibility(View.GONE);
         tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
-        long amount = 0;
-        long fee = 0;
-        for (Tx tx: txs) {
-            amount += tx.amountSentToAddress(toAddress);
-            fee += tx.getFee();
-        }
-        tvBtc.setText(UnitUtilWrapper.formatValueWithBold(amount,splitCoin.getCoin()));
-        tvFee.setText(UnitUtilWrapper.formatValueWithBold(fee,splitCoin.getCoin()));
     }
 
     @Override

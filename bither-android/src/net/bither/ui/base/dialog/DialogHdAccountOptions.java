@@ -21,11 +21,14 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 
 import net.bither.R;
+import net.bither.activity.hot.AddressDetailActivity;
 import net.bither.activity.hot.HDAccountDetailActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.DetectAnotherAssetsUtil;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
@@ -38,18 +41,73 @@ public class DialogHdAccountOptions extends DialogWithActions {
     private HDAccount account;
     private boolean fromDetail;
     private Activity activity;
+    private boolean isSegwitAddress;
+    private AbstractHD.PathType pathType;
 
-    public DialogHdAccountOptions(Activity context, HDAccount account) {
+    public DialogHdAccountOptions(Activity context, HDAccount account, boolean isSwitchToSegwit) {
         super(context);
         this.account = account;
         activity = context;
         fromDetail = context instanceof HDAccountDetailActivity;
+        this.isSegwitAddress = isSwitchToSegwit;
+        if (isSwitchToSegwit) {
+            pathType = AbstractHD.PathType.EXTERNAL_BIP49_PATH;
+        } else {
+            pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
+        }
     }
 
     @Override
     protected List<Action> getActions() {
         final ArrayList<Action> actions = new ArrayList<Action>();
         if (fromDetail) {
+            if (!isSegwitAddress) {
+                actions.add(new Action(R.string.address_segwit, new Runnable() {
+                    @Override
+                    public void run() {
+                        final DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
+                        dp.setCancelable(false);
+                        dp.show();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dp.dismiss();
+                                            ((AddressDetailActivity) activity).isSegwitAddress =
+                                                    !isSegwitAddress;
+                                            ((HDAccountDetailActivity) activity).loadData();
+                                    }
+                                });
+                            }
+                        }.start();
+                    }
+                }));
+            } else {
+                actions.add(new Action(R.string.address_normal, new Runnable() {
+                    @Override
+                    public void run() {
+                        final DialogProgress dp = new DialogProgress(activity, R.string.please_wait);
+                        dp.setCancelable(false);
+                        dp.show();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dp.dismiss();
+                                            ((AddressDetailActivity) activity).isSegwitAddress =
+                                                    !isSegwitAddress;
+                                            ((HDAccountDetailActivity) activity).loadData();
+                                    }
+                                });
+                            }
+                        }.start();
+                    }
+                }));
+            }
             actions.add(new Action(R.string.hd_account_request_new_receiving_address, new
                     Runnable() {
                 @Override
@@ -60,7 +118,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
                     new Thread() {
                         @Override
                         public void run() {
-                            final boolean result = account.requestNewReceivingAddress();
+                            final boolean result = account.requestNewReceivingAddress(pathType);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -80,12 +138,12 @@ public class DialogHdAccountOptions extends DialogWithActions {
             actions.add(new Action(R.string.hd_account_old_addresses, new Runnable() {
                 @Override
                 public void run() {
-                    if (account.issuedExternalIndex() < 0) {
+                    if (account.issuedExternalIndex(pathType) < 0) {
                         DropdownMessage.showDropdownMessage(activity, R.string
                                 .hd_account_old_addresses_zero);
                         return;
                     }
-                    new DialogHdAccountOldAddresses(activity, account).show();
+                    new DialogHdAccountOldAddresses(activity, account, pathType).show();
                 }
             }));
         }
@@ -163,7 +221,8 @@ public class DialogHdAccountOptions extends DialogWithActions {
                                     @Override
                                     public void run() {
                                         try {
-                                            final String xpub = account.xPubB58(password);
+                                            final String xpub = account.xPubB58(password,
+                                                    AbstractHD.PurposePathLevel.P2SHP2WPKH);
                                             ThreadUtil.runOnMainThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -187,6 +246,20 @@ public class DialogHdAccountOptions extends DialogWithActions {
                         }).show();
                     }
                 }));
+        if (!isSegwitAddress) {
+            actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
+                @Override
+                public void run() {
+                    if (!account.isSyncComplete()) {
+                        DropdownMessage.showDropdownMessage(activity, R.string.no_sync_complete);
+                    } else {
+                        DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(activity);
+                        detectUtil.getBCCHDUnspentOutputs(account.getAddress(isSegwitAddress), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
+                                account.issuedExternalIndex(pathType) == 0 ? 0 : account.issuedExternalIndex(pathType) + 1, false);
+                    }
+                }
+            }));
+        }
         return actions;
     }
 }

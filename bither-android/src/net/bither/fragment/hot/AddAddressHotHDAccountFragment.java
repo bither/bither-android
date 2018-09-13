@@ -30,6 +30,7 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;

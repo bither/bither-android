@@ -58,10 +58,12 @@ import net.bither.ui.base.PinnedHeaderAddressExpandableListView;
 import net.bither.ui.base.PinnedHeaderExpandableListView.PinnedExpandableListViewAdapter;
 import net.bither.ui.base.dialog.DialogAddressWatchOnlyLongClick;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogDetectBccSelectType;
 import net.bither.ui.base.dialog.DialogHDMAddressOptions;
 import net.bither.ui.base.dialog.DialogHDMSeedOptions;
 import net.bither.ui.base.dialog.DialogHdAccountOptions;
 import net.bither.ui.base.dialog.DialogProgress;
+import net.bither.util.DetectAnotherAssetsUtil;
 
 import java.util.List;
 
@@ -86,17 +88,20 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private LayoutInflater mLayoutInflater;
     private PinnedHeaderAddressExpandableListView mListView;
     private boolean isHeaderNeedChange = false;
+    private boolean isDetectBcc;
     private boolean isSplitCoinAddress;
     private SplitCoin splitCoin;
 
     public HotAddressFragmentListAdapter(FragmentActivity activity, List<Address> watchOnlys,
                                          List<Address> privates, List<HDMAddress> hdms,
                                          PinnedHeaderAddressExpandableListView listView,
-                                         boolean isSplitCoinAddress, SplitCoin splitCoin) {
+                                          boolean isSplitCoinAddress, SplitCoin splitCoin, boolean isDetectBcc) {
+
         this.activity = activity;
         this.watchOnlys = watchOnlys;
         this.privates = privates;
         this.hdms = hdms;
+        this.isDetectBcc = isDetectBcc;
         this.isSplitCoinAddress = isSplitCoinAddress;
         this.splitCoin = splitCoin;
         hdAccount = AddressManager.getInstance().getHDAccountHot();
@@ -155,12 +160,12 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         if (hdms != null && hdms.size() > 0) {
             boolean isSplitBcc = activity instanceof SplitBccSelectAddressActivity;
             if (!isSplitBcc)
-            count++;
+                count++;
         }
         if (enterpriseHDMKeychain != null) {
             boolean isSplitBcc = activity instanceof SplitBccSelectAddressActivity;
             if (!isSplitBcc)
-            count++;
+                count++;
         }
         return count;
     }
@@ -460,120 +465,149 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             } else {
                 view.ivType.setOnLongClickListener(new AddressLongClick(a));
                 view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(),
-                        a instanceof EnterpriseHDMAddress,a));
+                        a instanceof EnterpriseHDMAddress, a));
             }
         } else {
             ObtainBCCListItemView view;
-            String getIsObtainKey;
-            if (convertView == null || !(convertView instanceof AddressFragmentListItemView)) {
-                convertView = new ObtainBCCListItemView(activity);
-            }
-            view = (ObtainBCCListItemView)convertView;
-            Address a = getChild(groupPosition, childPosition);
-            String coinName = splitCoin.getIsGatKey();
-            if (a.isHDAccount() && !a.hasPrivKey()) {
-                getIsObtainKey = "HDMonitored" + coinName;
-                view.setOnClickListener(new hdAccountMonitoredDetailClick(a));
-            } else if (a.isHDAccount()) {
-                getIsObtainKey = "HDAccountHot" + coinName;
-                view.setOnClickListener(new hdAccountDetailClick(a));
-            } else {
-                getIsObtainKey = a.getAddress() + coinName;
-                view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(),
-                        a instanceof EnterpriseHDMAddress,a));
-            }
-            if (AppSharedPreference.getInstance().isObtainBcc(getIsObtainKey)) {
-                if (splitCoin != null) {
-                    view.setObtainAddress(a, splitCoin);
-                    view.setClickable(false);
+            if (isDetectBcc) {
+                if (convertView == null || !(convertView instanceof AddressFragmentListItemView)) {
+                    convertView = new ObtainBCCListItemView(activity);
+                }
+                view = (ObtainBCCListItemView) convertView;
+                Address a = getChild(groupPosition, childPosition);
+                view.setDetectBcc(isDetectBcc, a);
+                if (a.isHDAccount() && !a.hasPrivKey()) {
+                    view.setOnClickListener(new hdAccountMonitoredDetailClick(a));
+                } else if (a.isHDAccount()) {
+                    view.setOnClickListener(new hdAccountDetailClick(a));
+                } else {
+                    view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(),
+                            a instanceof EnterpriseHDMAddress, a));
                 }
             } else {
-                if (splitCoin != null) {
-                    view.setAddress(a, splitCoin);
+                String getIsObtainKey;
+                if (convertView == null || !(convertView instanceof AddressFragmentListItemView)) {
+                    convertView = new ObtainBCCListItemView(activity);
+                }
+                view = (ObtainBCCListItemView) convertView;
+                Address a = getChild(groupPosition, childPosition);
+                String coinName = splitCoin.getIsGatKey();
+                if (a.isHDAccount() && !a.hasPrivKey()) {
+                    getIsObtainKey = "HDMonitored" + coinName;
+                    view.setOnClickListener(new hdAccountMonitoredDetailClick(a));
+                } else if (a.isHDAccount()) {
+                    getIsObtainKey = "HDAccountHot" + coinName;
+                    view.setOnClickListener(new hdAccountDetailClick(a));
+                } else {
+                    getIsObtainKey = a.getAddress() + coinName;
+                    view.setOnClickListener(new AddressDetailClick(childPosition, a.hasPrivKey(), a.isHDM(),
+                            a instanceof EnterpriseHDMAddress, a));
+                }
+                if (AppSharedPreference.getInstance().isObtainBcc(getIsObtainKey)) {
+                    if (splitCoin != null) {
+                        view.setObtainAddress(a, splitCoin);
+                        view.setClickable(false);
+                    }
+                } else {
+                    if (splitCoin != null) {
+                        view.setAddress(a, splitCoin);
+                    }
                 }
             }
         }
-        return convertView;
-    }
-
-    private class AddressLongClick implements OnLongClickListener {
-        private Address address;
-
-        public AddressLongClick(Address address) {
-            this.address = address;
+            return convertView;
         }
+        private class AddressLongClick implements OnLongClickListener {
+            private Address address;
 
-        @Override
-        public boolean onLongClick(View v) {
-            if (address.isHDM()) {
-                new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
-            } else if (address.hasPrivKey()) {
-                new DialogAddressWithShowPrivateKey(activity, address, null).show();
-            } else {
-                new DialogAddressWatchOnlyLongClick(activity, address).show();
+            public AddressLongClick(Address address) {
+                this.address = address;
             }
-            return true;
-        }
-    }
 
-    private class hdAccountDetailClick implements OnClickListener {
-        private boolean clicked = false;
-        private Address a;
-        public hdAccountDetailClick(Address a) {
-            this.a = a;
-        }
-        @Override
-        public void onClick(View v) {
-            if (!clicked) {
-                clicked = true;
-                    if (isSyncComplete(a)) {
-                        Intent intent = new Intent(activity, SplitBCCHDAccountSendActivity.class);
-                        intent.putExtra(SplitCoinKey, splitCoin);
-                        activity.startActivityForResult(intent,
-                                SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
-                    }
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        clicked = false;
-                    }
-                }, 500);
+            @Override
+            public boolean onLongClick(View v) {
+                if (address.isHDM()) {
+                    new DialogHDMAddressOptions(activity, (HDMAddress) address).show();
+                } else if (address.hasPrivKey()) {
+                    new DialogAddressWithShowPrivateKey(activity, address, null).show();
+                } else {
+                    new DialogAddressWatchOnlyLongClick(activity, address).show();
+                }
+                return true;
             }
         }
-    }
 
-    private View.OnClickListener hdAccountDetailClick = new View.OnClickListener() {
-        private boolean clicked = false;
-        @Override
-        public void onClick(View v) {
-            if (!clicked) {
-                clicked = true;
+        private class hdAccountDetailClick implements OnClickListener {
+            private boolean clicked = false;
+            private Address a;
+
+            public hdAccountDetailClick(Address a) {
+                this.a = a;
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (!clicked) {
+                    clicked = true;
+                    if (isDetectBcc) {
+                        new DialogDetectBccSelectType(activity, true, true, false).show();
+                    } else {
+                        if (isSyncComplete(a)) {
+                            Intent intent = new Intent(activity, SplitBCCHDAccountSendActivity.class);
+                            intent.putExtra(SplitCoinKey, splitCoin);
+                            activity.startActivityForResult(intent,
+                                    SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                        }
+                    }
+                    v.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            clicked = false;
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        private View.OnClickListener hdAccountDetailClick = new View.OnClickListener() {
+            private boolean clicked = false;
+
+            @Override
+            public void onClick(View v) {
+                if (!clicked) {
+                    clicked = true;
                     activity.startActivity(new Intent(activity, HDAccountDetailActivity.class));
-                v.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        clicked = false;
-                    }
-                }, 500);
+                    v.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            clicked = false;
+                        }
+                    }, 500);
+                }
             }
-        }
-    };
+        };
 
     private class hdAccountMonitoredDetailClick implements OnClickListener {
         private boolean clicked = false;
         private Address a;
+
         public hdAccountMonitoredDetailClick(Address a) {
             this.a = a;
         }
+
         @Override
         public void onClick(View v) {
             if (!clicked) {
                 clicked = true;
-                if (isSyncComplete(a)) {
-                    Intent intent = new Intent(activity, SplitBCCHDAccountMonitoredSendActivity.class);
-                    intent.putExtra(SplitCoinKey, splitCoin);
-                    activity.startActivityForResult(intent,
-                            SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                if (isDetectBcc) {
+                    new DialogDetectBccSelectType(activity, false, true, true).show();
+                } else {
+                    if (isSyncComplete(a)) {
+                        Intent intent = new Intent(activity, SplitBCCHDAccountMonitoredSendActivity.class);
+                        intent.putExtra(SplitCoinKey, splitCoin);
+                        activity.startActivityForResult(intent,
+                                SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                    }
                 }
                 v.postDelayed(new Runnable() {
                     @Override
@@ -592,8 +626,8 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         public void onClick(View v) {
             if (!clicked) {
                 clicked = true;
-                    activity.startActivity(new Intent(activity, HDAccountMonitoredDetailActivity
-                            .class));
+                activity.startActivity(new Intent(activity, HDAccountMonitoredDetailActivity
+                        .class));
                 v.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -607,7 +641,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
     private OnLongClickListener hdAccountLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            new DialogHdAccountOptions(activity, hdAccount).show();
+            new DialogHdAccountOptions(activity, hdAccount, true).show();
             return true;
         }
     };
@@ -620,7 +654,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
         private boolean clicked = false;
         private Address a;
 
-        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM, boolean isEnterpriseHDM,Address a) {
+        public AddressDetailClick(int position, boolean isPrivate, boolean isHDM, boolean isEnterpriseHDM, Address a) {
             this.position = position;
             this.isPrivate = isPrivate;
             this.isHDM = isHDM;
@@ -633,17 +667,24 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
             if (!clicked) {
                 clicked = true;
                 if (isSplitCoinAddress) {
-                    if (isSyncComplete(a)) {
-                        Intent intent = new Intent(activity, isPrivate ? SplitBCCSendActivity.class :
-                                SplitBccColdWalletSendActivity.class);
-                        intent.putExtra(SplitCoinKey, splitCoin);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
-                                isPrivate);
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
-                        activity.startActivityForResult(intent,
-                                SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                    if (isDetectBcc) {
+                        DetectAnotherAssetsUtil detectAnotherAssetsUtil = new DetectAnotherAssetsUtil(
+                                activity);
+                        detectAnotherAssetsUtil.getBCCUnspentOutputs(a.getAddress(), position, isPrivate);
+                    } else {
+                        if (isSyncComplete(a)) {
+                            Intent intent = new Intent(activity, isPrivate ? SplitBCCSendActivity.class :
+                                    SplitBccColdWalletSendActivity.class);
+                            intent.putExtra(SplitCoinKey, splitCoin);
+                            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, position);
+                            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_HAS_PRIVATE_KEY_PASS_VALUE_TAG,
+                                    isPrivate);
+                            intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
+                            activity.startActivityForResult(intent,
+                                    SplitBccSelectAddressActivity.SPLIT_BCC_HDACCOUNT_REQUEST_CODE);
+                        }
                     }
+
                 } else {
                     Intent intent = new Intent(activity, isEnterpriseHDM ?
                             EnterpriseHDMAddressDetailActivity.class : AddressDetailActivity.class);
@@ -652,6 +693,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                             isPrivate);
                     intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_IS_HDM_KEY_PASS_VALUE_TAG, isHDM);
                     activity.startActivity(intent);
+
                 }
                 v.postDelayed(new Runnable() {
                     @Override
@@ -659,6 +701,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                         clicked = false;
                     }
                 }, 500);
+
             }
         }
     }
