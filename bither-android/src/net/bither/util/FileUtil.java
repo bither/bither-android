@@ -283,7 +283,6 @@ public class FileUtil {
 
     @SuppressWarnings("resource")
     public static Object deserialize(File file) {
-        Object object = new Object();
         FileInputStream fos = null;
         try {
             if (!file.exists()) {
@@ -292,25 +291,20 @@ public class FileUtil {
             fos = new FileInputStream(file);
             ObjectInputStream ois;
             ois = new ObjectInputStream(fos);
-            object = ois.readObject();
-
+            Object object = ois.readObject();
+            return object;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-
         } finally {
             try {
                 if (fos != null) {
                     fos.close();
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
-        return object;
     }
 
     public static void serializeObject(File file, Object object) {

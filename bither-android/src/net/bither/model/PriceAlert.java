@@ -148,11 +148,20 @@ public class PriceAlert implements Serializable {
     }
 
     private static List<PriceAlert> getPriceAlertFromFile() {
-        File file = FileUtil.getPriceAlertFile();
-        List<PriceAlert> priceAlertList = (List<PriceAlert>) FileUtil.deserialize(file);
-        if (priceAlertList == null) {
-            priceAlertList = new ArrayList<PriceAlert>();
+        try {
+            File file = FileUtil.getPriceAlertFile();
+            List<PriceAlert> priceAlertList = new ArrayList<>();
+            if (file == null) {
+                return priceAlertList;
+            }
+            priceAlertList = (List<PriceAlert>) FileUtil.deserialize(file);
+            if (priceAlertList == null) {
+                priceAlertList = new ArrayList<>();
+            }
+            return priceAlertList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-        return priceAlertList;
     }
 }

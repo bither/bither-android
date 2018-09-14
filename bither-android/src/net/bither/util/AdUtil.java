@@ -64,18 +64,15 @@ public class AdUtil {
     }
 
     public static JSONObject getCacheAdJSON() {
-        File file = FileUtil.getAdFile();
-        String adStr = (String) FileUtil.deserialize(file);
-        if (adStr != null) {
-            try {
-                JSONObject jsonObject = new JSONObject(adStr);
-                if (jsonObject != null) {
-                    return jsonObject;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
+        try {
+            File file = FileUtil.getAdFile();
+            String adStr = (String) FileUtil.deserialize(file);
+            JSONObject jsonObject = new JSONObject(adStr);
+            return jsonObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }

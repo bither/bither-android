@@ -29,6 +29,7 @@
             android:text="@string/ad_go"
             android:onClick="btnGoOnClick"
             android:textColor="@color/white"
+            android:visibility="gone"
             android:textSize="22sp" />
 
         <Button

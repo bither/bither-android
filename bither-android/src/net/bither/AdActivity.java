@@ -99,12 +99,20 @@ public class AdActivity extends Activity {
     }
 
     private void setAdUrl() {
-        File file = FileUtil.getAdFile();
-        String adStr = (String) FileUtil.deserialize(file);
         try {
-            JSONObject jsonObject = new JSONObject(adStr);
-            url = jsonObject.getString("url");
-        } catch (JSONException e) {
+            File file = FileUtil.getAdFile();
+            if (file == null) {
+                return;
+            }
+            if (FileUtil.deserialize(file) instanceof String) {
+                String adStr = (String) FileUtil.deserialize(file);
+                JSONObject jsonObject = new JSONObject(adStr);
+                url = jsonObject.getString("url");
+                if (url != null) {
+                    btnGo.setVisibility(View.VISIBLE);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

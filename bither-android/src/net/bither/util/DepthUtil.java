@@ -27,13 +27,21 @@ public class DepthUtil {
     private static List<Depth> depths = init();
 
     private static List<Depth> init() {
-        File file = FileUtil.getDepthFile();
-        @SuppressWarnings("unchecked")
-        List<Depth> depths = (List<Depth>) FileUtil.deserialize(file);
-        if (depths == null) {
-            depths = new ArrayList<Depth>();
+        try {
+            File file = FileUtil.getDepthFile();
+            if (file == null) {
+                return new ArrayList<>();
+            }
+            @SuppressWarnings("unchecked")
+            List<Depth> depths = (List<Depth>) FileUtil.deserialize(file);
+            if (depths == null) {
+                depths = new ArrayList<>();
+            }
+            return depths;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return depths;
+        return new ArrayList<>();
     }
 
     public static Depth getKDepth(MarketType marketType) {

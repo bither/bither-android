@@ -28,13 +28,21 @@ public class KLineUtil {
 	private static List<KLine> kLines = init();
 
 	private static List<KLine> init() {
-		File file = FileUtil.getKlineFile();
-		@SuppressWarnings("unchecked")
-		List<KLine> kLines = (List<KLine>) FileUtil.deserialize(file);
-		if (kLines == null) {
-			kLines = new ArrayList<KLine>();
+		try {
+			File file = FileUtil.getKlineFile();
+			if (file == null) {
+				return new ArrayList<>();
+			}
+			@SuppressWarnings("unchecked")
+			List<KLine> kLines = (List<KLine>) FileUtil.deserialize(file);
+			if (kLines == null) {
+				kLines = new ArrayList<>();
+			}
+			return kLines;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return kLines;
+		return new ArrayList<>();
 	}
 
 	public static KLine getKLine(MarketType marketType,

@@ -385,7 +385,9 @@ public class MarketListHeader extends FrameLayout implements MarketTickerChanged
             if (isShowing()) {
                 imm.hideSoftInputFromWindow(etAlertHigh.getWindowToken(),
                         InputMethodManager.HIDE_NOT_ALWAYS);
-                ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
+                if (this != null) {
+                    ObjectAnimator.ofInt(this, "bottom", 0).setDuration(AnimDuration).start();
+                }
                 etAlertLow.clearFocus();
                 etAlertHigh.clearFocus();
             }

@@ -248,24 +248,34 @@ public class UpgradeUtil {
     }
 
     private static List<String> readPrivateAddressSequence() {
-        File file = getWarmPrivateAddressSequenceFile();
-        if (file.exists()) {
-            ArrayList<String> addresses = (ArrayList<String>) FileUtil
-                    .deserialize(file);
-            return addresses;
-        } else {
-            return null;
+        try {
+            File file = getWarmPrivateAddressSequenceFile();
+            if (file != null && file.exists()) {
+                ArrayList<String> addresses = (ArrayList<String>) FileUtil
+                        .deserialize(file);
+                return addresses;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     private static List<String> readWatchOnlyAddressSequence() {
-        File file = getWatchOnlyAddressSequenceFile();
-        if (file.exists()) {
-            ArrayList<String> addresses = (ArrayList<String>) FileUtil
-                    .deserialize(file);
-            return addresses;
-        } else {
-            return null;
+        try {
+            File file = getWatchOnlyAddressSequenceFile();
+            if (file != null && file.exists()) {
+                ArrayList<String> addresses = (ArrayList<String>) FileUtil
+                        .deserialize(file);
+                return addresses;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
 }
