@@ -164,6 +164,7 @@
     <string name="setting_name_transaction_fee_high">高</string>
     <string name="setting_name_transaction_fee_10x">10倍</string>
     <string name="setting_name_transaction_fee_20x">20倍</string>
+    <string name="setting_name_transaction_fee_low">低</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
