@@ -58,7 +58,8 @@ public class UpgradeUtil {
 
     public static boolean needUpgrade() {
         int verionCode = AppSharedPreference.getInstance().getVerionCode();
-        return (verionCode < UPGRADE_ADDRESS_TO_DB && verionCode > 0) || getOldWatchOnlyCacheDir().exists();
+        File file = getOldWatchOnlyCacheDir();
+        return (verionCode < UPGRADE_ADDRESS_TO_DB && verionCode > 0) || (file == null ? false : file.exists());
     }
 
     public static void upgradeNewVerion(Handler handler) {
@@ -134,9 +135,14 @@ public class UpgradeUtil {
     }
 
     public static File getOldWatchOnlyCacheDir() {
-        File file = Utils.getWalletRomCache();
-        file = new File(file, WALLET_WATCH_ONLY_OLD);
-        return file;
+        try {
+            File file = Utils.getWalletRomCache();
+            file = new File(file, WALLET_WATCH_ONLY_OLD);
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static List<ECKey> initPrivateWallet(

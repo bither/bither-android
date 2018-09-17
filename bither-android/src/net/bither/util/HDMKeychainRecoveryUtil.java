@@ -213,7 +213,11 @@ public class HDMKeychainRecoveryUtil implements IPasswordGetterDelegate {
         if (requestCode == ColdRootRequestCode) {
             if (resultCode == Activity.RESULT_OK) {
                 String result = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-                coldRoot = Utils.hexStringToByteArray(result);
+                if (result.length() % 2 == 0) {
+                    coldRoot = Utils.hexStringToByteArray(result);
+                } else {
+                    coldRoot = null;
+                }
             } else {
                 coldRoot = null;
             }
