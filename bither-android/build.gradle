@@ -20,6 +20,7 @@ configurations {
     all {
         exclude module: 'httpclient'
         exclude module: 'commons-logging'
+        exclude module: 'json'
     }
 }
 dependencies {
@@ -31,6 +32,7 @@ dependencies {
     compile('com.github.tony19:logback-android-classic:1.0.10-2@jar') {
         // Work around for gradle 0.9 and 0.10
         transitive = true
+        exclude group: 'com.google.android'
     }
     compile project(':bitherj')
     compile project(':wheel')
