@@ -79,6 +79,9 @@ public class BitherApplication extends Application {
         new LinuxSecureRandom();
         super.onCreate();
         mContext = getApplicationContext();
+        ueHandler = new UEHandler();
+        Thread.setDefaultUncaughtExceptionHandler(ueHandler);
+        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         mAddressDbHelper = new AddressDatabaseHelper(mContext);
         mTxDbHelper = new TxDatabaseHelper(mContext);
         AndroidDbImpl androidDb = new AndroidDbImpl();
@@ -91,10 +94,6 @@ public class BitherApplication extends Application {
         Threading.throwOnLockCycles();
         initApp();
         mBitherApplication = this;
-        ueHandler = new UEHandler();
-        Thread.setDefaultUncaughtExceptionHandler(ueHandler);
-        activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-
         upgrade();
     }
 
@@ -123,7 +122,7 @@ public class BitherApplication extends Application {
     }
 
     public static File getLogDir() {
-        final File logDir = mContext.getDir("log", Context.MODE_WORLD_READABLE);
+        final File logDir = mContext.getDir("log", Context.MODE_PRIVATE);
         return logDir;
     }
 
