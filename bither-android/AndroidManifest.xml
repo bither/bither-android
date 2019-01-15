@@ -350,6 +350,13 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
+            android:name=".xrandom.BitpieHDAccountColdUEntropyActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
             android:name=".SignMessageAddressListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />

@@ -64,6 +64,11 @@ public class AndroidDbImpl extends AbstractDb {
     }
 
     @Override
+    public IHDAccountProvider initBitpieHDAccountProvider() {
+        return BitpieHDAccountProvider.getInstance();
+    }
+
+    @Override
     public IDesktopAddressProvider initEnDesktopAddressProvider() {
         return null;
     }

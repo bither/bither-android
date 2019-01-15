@@ -106,7 +106,9 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
                 privates.addAll(ps);
             }
             mAdapter.notifyDataSetChanged();
-            if (privates.size() == 0 && !AddressManager.getInstance().hasHDMKeychain() &&
+            if (privates.size() == 0 &&
+                    !AddressManager.getInstance().hasBitpieHDAccountCold() &&
+                    !AddressManager.getInstance().hasHDMKeychain() &&
                     !AddressManager.getInstance().hasHDAccountCold() &&
                     !EnterpriseHDMSeed.hasSeed()) {
                 ivNoAddress.setVisibility(View.VISIBLE);

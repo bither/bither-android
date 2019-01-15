@@ -47,12 +47,28 @@
                 android:orientation="horizontal">
 
                 <ToggleButton
-                    android:id="@+id/tbtn_hd_account"
+                    android:id="@+id/tbtn_bitpie_account"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/action_bar_toggle_button_left"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="@color/white"
+                    android:textOff="@string/bitpie_connector_add_cold_hd_account_tab"
+                    android:textOn="@string/bitpie_connector_add_cold_hd_account_tab"
+                    android:textSize="14sp"/>
+
+                <ToggleButton
+                    android:id="@+id/tbtn_hd_account"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/action_bar_toggle_button_middle"
                     android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -65,7 +81,7 @@
                 <ToggleButton
                     android:id="@+id/tbtn_other"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/action_bar_toggle_button_right"

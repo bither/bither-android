@@ -23,8 +23,10 @@ import android.widget.BaseAdapter;
 
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
+import net.bither.ui.base.ColdAddressFragmentBitpieHDAccountColdListItemView;
 import net.bither.ui.base.ColdAddressFragmentHDAccountColdListItemView;
 import net.bither.ui.base.ColdAddressFragmentHDMEnterpriseListItemView;
 import net.bither.ui.base.ColdAddressFragmentHDMListItemView;
@@ -38,10 +40,12 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     private int ItemTypeHDMKeychain = 1;
     private int ItemTypeHDAccountCold = 1;
     private int ItemTypeEnterpriseHDM = 1;
+    private int ItemTypeBitpieHDAccountCold = 1;
 
     private FragmentActivity activity;
     private List<Address> privates;
     private HDAccountCold hdAccountCold;
+    private BitpieHDAccountCold bitpieHDAccountCold;
     private EnterpriseHDMSeed enterpriseHDMSeed;
     private ColdAddressFragmentHDMListItemView.RequestHDMServerQrCodeDelegate requestHDMServerQrCodeDelegate;
 
@@ -55,6 +59,11 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         } else {
             hdAccountCold = null;
         }
+        if (AddressManager.getInstance().hasBitpieHDAccountCold()) {
+            bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
+        } else {
+            bitpieHDAccountCold = null;
+        }
         if (EnterpriseHDMSeed.hasSeed()) {
             enterpriseHDMSeed = EnterpriseHDMSeed.seed();
         } else {
@@ -66,6 +75,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
     public int getViewTypeCount() {
         int count = 1;
         if(hasHDMKeychain()){
+            count++;
+        }
+        if (bitpieHDAccountCold != null) {
             count++;
         }
         if (hdAccountCold != null) {
@@ -89,18 +101,24 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         if (o instanceof EnterpriseHDMSeed) {
             return ItemTypeEnterpriseHDM;
         }
+        if (o instanceof BitpieHDAccountCold) {
+            return ItemTypeBitpieHDAccountCold;
+        }
         return ItemTypePrivateKey;
     }
 
     @Override
     public int getCount() {
         return privates.size() + (hasHDMKeychain() ? 1 : 0) + (hdAccountCold != null ? 1 : 0) +
-                (enterpriseHDMSeed != null ? 1 : 0);
+                (enterpriseHDMSeed != null ? 1 : 0) + (bitpieHDAccountCold != null ? 1 : 0);
     }
 
     @Override
     public Object getItem(int position) {
         if (position == 0) {
+            if (bitpieHDAccountCold != null) {
+                return bitpieHDAccountCold;
+            }
             if (enterpriseHDMSeed != null) {
                 return enterpriseHDMSeed;
             }
@@ -112,7 +130,10 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
             }
         }
         if (position == 1) {
-            if (enterpriseHDMSeed != null) {
+            if (bitpieHDAccountCold != null) {
+                if (enterpriseHDMSeed != null) {
+                    return enterpriseHDMSeed;
+                }
                 if (hdAccountCold != null) {
                     return hdAccountCold;
                 }
@@ -120,14 +141,45 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
                     return HDMKeychainPlaceHolder;
                 }
             } else {
-                if (hasHDMKeychain() && hdAccountCold != null) {
-                    return HDMKeychainPlaceHolder;
+                if (enterpriseHDMSeed != null) {
+                    if (hdAccountCold != null) {
+                        return hdAccountCold;
+                    }
+                    if (hasHDMKeychain()) {
+                        return HDMKeychainPlaceHolder;
+                    }
+                } else {
+                    if (hasHDMKeychain() && hdAccountCold != null) {
+                        return HDMKeychainPlaceHolder;
+                    }
                 }
             }
         }
         if (position == 2) {
-            if (enterpriseHDMSeed != null && hasHDMKeychain() && hdAccountCold != null) {
-                return HDMKeychainPlaceHolder;
+            if (bitpieHDAccountCold != null) {
+                if (enterpriseHDMSeed != null) {
+                    if (hdAccountCold != null) {
+                        return hdAccountCold;
+                    }
+                    if (hasHDMKeychain()) {
+                        return HDMKeychainPlaceHolder;
+                    }
+                } else {
+                    if (hasHDMKeychain() && hdAccountCold != null) {
+                        return HDMKeychainPlaceHolder;
+                    }
+                }
+            } else {
+                if (enterpriseHDMSeed != null && hasHDMKeychain() && hdAccountCold != null) {
+                    return HDMKeychainPlaceHolder;
+                }
+            }
+        }
+        if (position == 3) {
+            if (bitpieHDAccountCold != null) {
+                if (enterpriseHDMSeed != null && hasHDMKeychain() && hdAccountCold != null) {
+                    return HDMKeychainPlaceHolder;
+                }
             }
         }
         position = position - getViewTypeCount() + 1;
@@ -149,6 +201,9 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         }
         if (getItemViewType(position) == ItemTypeHDAccountCold) {
             return getViewForHDAccountCold(position, convertView, parent);
+        }
+        if (getItemViewType(position) == ItemTypeBitpieHDAccountCold) {
+            return getViewForBitpieHDAccountCold(convertView);
         }
         return getViewForPrivateKey(position, convertView, parent);
     }
@@ -183,6 +238,14 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    private View getViewForBitpieHDAccountCold(View convertView) {
+        if (convertView == null || !(convertView instanceof
+                ColdAddressFragmentHDAccountColdListItemView)) {
+            convertView = new ColdAddressFragmentBitpieHDAccountColdListItemView(activity);
+        }
+        return convertView;
+    }
+
     private View getViewForPrivateKey(int position, View convertView, ViewGroup parent){
         ColdAddressFragmentListItemView view;
         if (convertView == null
@@ -203,17 +266,26 @@ public class AddressOfColdFragmentListAdapter extends BaseAdapter {
         ItemTypeHDMKeychain = -1;
         ItemTypeHDAccountCold = -1;
         ItemTypeEnterpriseHDM = -1;
+        ItemTypeBitpieHDAccountCold = -1;
+        if (AddressManager.getInstance().hasBitpieHDAccountCold()) {
+            ItemTypeBitpieHDAccountCold = 1;
+            bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
+        }
         if (hasHDMKeychain()) {
-            ItemTypeHDMKeychain = 1;
+            ItemTypeHDMKeychain = ItemTypeBitpieHDAccountCold == 1 ? 2: 1;
         }
         if (AddressManager.getInstance().hasHDAccountCold()) {
-            ItemTypeHDAccountCold = ItemTypeHDMKeychain == 1 ? 2 : 1;
+            if (ItemTypeBitpieHDAccountCold == 1) {
+                ItemTypeHDAccountCold = ItemTypeHDMKeychain == 2 ? 3 : 2;
+            } else {
+                ItemTypeHDAccountCold = ItemTypeHDMKeychain == 1 ? 2 : 1;
+            }
             hdAccountCold = AddressManager.getInstance().getHDAccountCold();
         } else {
             hdAccountCold = null;
         }
         if (EnterpriseHDMSeed.hasSeed()) {
-            ItemTypeEnterpriseHDM = 1;
+            ItemTypeEnterpriseHDM = ItemTypeBitpieHDAccountCold == 1 ? 2: 1;
             if (ItemTypeHDMKeychain >= 0) {
                 ItemTypeEnterpriseHDM++;
             }

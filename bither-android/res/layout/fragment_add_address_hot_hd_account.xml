@@ -9,6 +9,7 @@
               android:paddingTop="25dp">
 
     <TextView
+        android:id="@+id/tv_generate_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"

@@ -31,28 +31,27 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.PasswordSeed;
+import net.bither.fragment.cold.AddAddressBitpieColdHDAccountFragment;
+import net.bither.fragment.cold.AddAddressBitpieColdHDAccountViewFragment;
 import net.bither.fragment.cold.AddAddressColdHDAccountFragment;
 import net.bither.fragment.cold.AddAddressColdHDAccountViewFragment;
-import net.bither.fragment.cold.AddAddressColdHDMFragment;
 import net.bither.fragment.cold.AddAddressColdOtherFragment;
-import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
-import net.bither.fragment.hot.AddAddressHotHDAccountViewFragment;
-import net.bither.fragment.hot.AddAddressHotOtherFragment;
 import net.bither.fragment.hot.AddAddressPrivateKeyFragment;
 import net.bither.ui.base.AddPrivateKeyActivity;
-import net.bither.ui.base.DropdownMessage;
 import net.bither.util.StringUtil;
 
 import java.util.ArrayList;
 
 public class AddColdAddressActivity extends AddPrivateKeyActivity {
     private ToggleButton tbtnHDAccount;
+    private ToggleButton tbtnBitpieHDAccount;
     private ToggleButton tbtnOther;
     private ViewPager pager;
     private ImageButton ibtnCancel;
 
+    private AddAddressBitpieColdHDAccountFragment bitpieHdAccountFragment;
+    private AddAddressBitpieColdHDAccountViewFragment bitpieHdAccountViewFragment;
     private AddAddressColdHDAccountFragment hdAccountFragment;
     private AddAddressColdHDAccountViewFragment hdAccountViewFragment;
     private AddAddressColdOtherFragment otherFragment;
@@ -72,17 +71,32 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private void initView() {
+        tbtnBitpieHDAccount = (ToggleButton) findViewById(R.id.tbtn_bitpie_account);
         tbtnHDAccount = (ToggleButton) findViewById(R.id.tbtn_hd_account);
         tbtnOther = (ToggleButton) findViewById(R.id.tbtn_other);
         pager = (ViewPager) findViewById(R.id.pager);
         ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
-        tbtnHDAccount.setOnClickListener(new IndicatorClick(0));
-        tbtnOther.setOnClickListener(new IndicatorClick(1));
+        tbtnBitpieHDAccount.setOnClickListener(new IndicatorClick(0));
+        tbtnHDAccount.setOnClickListener(new IndicatorClick(1));
+        tbtnOther.setOnClickListener(new IndicatorClick(2));
         ibtnCancel.setOnClickListener(cancelClick);
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(pageChange);
         pager.setCurrentItem(0);
-        tbtnHDAccount.setChecked(true);
+        tbtnBitpieHDAccount.setChecked(true);
+    }
+
+    private Fragment getBitpieHDAccountFragment() {
+        if (AddressManager.getInstance().hasBitpieHDAccountCold()) {
+            if (hdAccountViewFragment == null) {
+                bitpieHdAccountViewFragment = new AddAddressBitpieColdHDAccountViewFragment();
+            }
+            return bitpieHdAccountViewFragment;
+        }
+        if (bitpieHdAccountFragment == null) {
+            bitpieHdAccountFragment = new AddAddressBitpieColdHDAccountFragment();
+        }
+        return bitpieHdAccountFragment;
     }
 
     private Fragment getHDAccountFragment() {
@@ -144,12 +158,17 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private void initPosition(int position) {
+        pager.setCurrentItem(position, true);
         if (position == 0) {
-            pager.setCurrentItem(0, true);
-            tbtnHDAccount.setChecked(true);
+            tbtnBitpieHDAccount.setChecked(true);
+            tbtnHDAccount.setChecked(false);
             tbtnOther.setChecked(false);
         } else if (position == 1) {
-            pager.setCurrentItem(1, true);
+            tbtnBitpieHDAccount.setChecked(false);
+            tbtnHDAccount.setChecked(true);
+            tbtnOther.setChecked(false);
+        } else if (position == 2) {
+            tbtnBitpieHDAccount.setChecked(false);
             tbtnHDAccount.setChecked(false);
             tbtnOther.setChecked(true);
         }
@@ -159,15 +178,18 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public Fragment getItem(int index) {
             if (index == 0) {
-                return getHDAccountFragment();
+                return getBitpieHDAccountFragment();
             }
             if (index == 1) {
+                return getHDAccountFragment();
+            }
+            if (index == 2) {
                 return getOtherFragment();
             }
             return null;
@@ -179,9 +201,15 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
         @Override
         public void onPageSelected(int index) {
             if (index == 0) {
+                tbtnBitpieHDAccount.setChecked(true);
+                tbtnHDAccount.setChecked(false);
+                tbtnOther.setChecked(false);
+            } else if (index == 1) {
+                tbtnBitpieHDAccount.setChecked(false);
                 tbtnHDAccount.setChecked(true);
                 tbtnOther.setChecked(false);
-            } else {
+            } else if (index == 2) {
+                tbtnBitpieHDAccount.setChecked(false);
                 tbtnHDAccount.setChecked(false);
                 tbtnOther.setChecked(true);
             }

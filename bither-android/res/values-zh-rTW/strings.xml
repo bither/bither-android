@@ -756,4 +756,14 @@
     <string name="open_segwit_only_support_hd_account">隔離驗證地址僅支援HD賬戶</string>
     <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD賬戶需要使用隔離驗證地址需要將您的冷錢包升級到v1.8.3重新監控</string>
 
+    <!-- bitpie connector -->
+    <string name="bitpie_connector_add_cold_hd_account_tab">比特派</string>
+    <string name="bitpie_connector_add_account_label">創建新的 Bitpie Connector 賬戶</string>
+    <string name="bitpie_hd_account_cold_address_list_label">冷 Bitpie Connector 賬戶</string>
+    <string name="bitpie_add_hd_account_view_label">已有 Bitpie Connector 賬戶</string>
+    <string name="bitpie_add_hd_account_seed_qr_code">Bitpie Connector 賬戶種子二維碼</string>
+    <string name="bitpie_add_hd_account_seed_qr_phrase">Bitpie Connector 賬戶密語</string>
+
+    <string name="bitpie_add_hd_account_show_seed_label">Bitpie Connector 種子能夠恢復 Bitpie Connector 賬戶,\n請安全的保管它.</string>
+    <string name="bitpie_add_hd_account_show_seed_button">我已保管好了 Bitpie Connector 種子</string>
 </resources>

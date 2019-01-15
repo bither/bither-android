@@ -25,6 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:id="@+id/tv_title"
                 android:textSize="18sp"
                 android:textColor="@color/text_field_text_color"
                 android:text="@string/hd_account_cold_address_list_label"/>

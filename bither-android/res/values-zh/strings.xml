@@ -756,4 +756,13 @@
     <string name="open_segwit_only_support_hd_account">隔离验证地址仅支持HD账户</string>
     <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD账户需要使用隔离验证地址需要将您的冷钱包升级到v1.8.3重新监控</string>
 
+    <string name="bitpie_connector_add_cold_hd_account_tab">比特派</string>
+    <string name="bitpie_connector_add_account_label">创建新的 Bitpie Connector 账户</string>
+    <string name="bitpie_hd_account_cold_address_list_label">冷 Bitpie Connector 账户</string>
+    <string name="bitpie_add_hd_account_view_label">已有 Bitpie Connector 账户</string>
+    <string name="bitpie_add_hd_account_seed_qr_code">Bitpie Connector 账户种子二维码</string>
+    <string name="bitpie_add_hd_account_seed_qr_phrase">Bitpie Connector 账户密语</string>
+
+    <string name="bitpie_add_hd_account_show_seed_label">Bitpie Connector 种子能够用来恢复 Bitpie Connector 账户,\n请安全地保管它.</string>
+    <string name="bitpie_add_hd_account_show_seed_button">我已经保管好了 Bitpie Connector 种子</string>
 </resources>

@@ -12,7 +12,7 @@ import net.bither.preference.AppSharedPreference;
 import java.sql.SQLException;
 
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 8;
+    public static final int DB_VERSION = 9;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -33,7 +33,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_ENTERPRISE_HDM_ADDRESSES_SQL);
         db.execSQL(AbstractDb.CREATE_MULTI_SIGN_SET);
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_SEGWIT_PUB);
-//        db.execSQL(AbstractDb.CREATE_COLD_HD_ACCOUNT);
+        db.execSQL(AbstractDb.CREATE_BITPIE_HD_ACCOUNT);
     }
 
     @Override
@@ -64,6 +64,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
                 v6Tov7(db);
             case 7:
                 v7Tov8(db);
+            case 8:
+                v8Tov9(db);
 
         }
     }
@@ -147,5 +149,9 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 
     private void v7Tov8(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_SEGWIT_PUB);
+    }
+
+    private void v8Tov9(SQLiteDatabase db) {
+        db.execSQL(AbstractDb.CREATE_BITPIE_HD_ACCOUNT);
     }
 }
