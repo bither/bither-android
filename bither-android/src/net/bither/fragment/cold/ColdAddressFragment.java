@@ -47,8 +47,10 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.FileUtil;
 import net.bither.util.ThreadUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +74,13 @@ public class ColdAddressFragment extends Fragment implements Refreshable,
 
         View view = inflater.inflate(R.layout.fragment_cold_address, container,
                 false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileUtil.getBackupFileListOfCold();
+                FileUtil.getBackupFileOfCold();
+            }
+        });
         lvPrivate = (ListView) view.findViewById(R.id.lv_address);
         ivNoAddress = view.findViewById(R.id.iv_no_address);
         privates = new ArrayList<Address>();

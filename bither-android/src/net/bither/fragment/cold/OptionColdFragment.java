@@ -47,6 +47,7 @@ import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.core.HDMKeychain;
@@ -258,8 +259,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
     }
 
     private void configureCloneButton() {
-        if ((AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses()
-                .size() > 0) || AddressManager.getInstance().hasHDMKeychain() || AddressManager.getInstance().hasHDAccountCold()) {
+        if ((AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager.getInstance().getPrivKeyAddresses().size() > 0)
+                || AddressManager.getInstance().hasHDMKeychain()
+                || AddressManager.getInstance().hasHDAccountCold()
+                || AddressManager.getInstance().hasBitpieHDAccountCold()) {
             btnCloneFrom.setVisibility(View.GONE);
             btnCloneTo.setVisibility(View.VISIBLE);
         } else {
@@ -496,6 +499,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
             HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
             HDAccountCold hdAccountCold = null;
+            BitpieHDAccountCold bitpieHDAccountCold = null;
             MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(content);
             MnemonicCode mnemonicCode = null;
             if (mnemonicWordList != null) {
@@ -503,13 +507,14 @@ public class OptionColdFragment extends Fragment implements Selectable {
                     mnemonicCode = new MnemonicCodeAndroid();
                     mnemonicCode.setMnemonicWordList(mnemonicWordList);
                     hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, content, password);
+                    bitpieHDAccountCold = PrivateKeyUtil.getBitpieHDAccountCould(mnemonicCode, content, password);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
             if ((addressList == null || addressList.size() == 0) && (hdmKeychain == null) &&
-                    hdAccountCold == null) {
+                    hdAccountCold == null && bitpieHDAccountCold == null) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -523,8 +528,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 });
                 return;
             }
-
-            KeyUtil.addAddressListByDesc(null, addressList);
+            if (addressList != null) {
+                KeyUtil.addAddressListByDesc(null, addressList);
+            }
             if (hdmKeychain != null) {
                 KeyUtil.setHDKeyChain(hdmKeychain);
             }
