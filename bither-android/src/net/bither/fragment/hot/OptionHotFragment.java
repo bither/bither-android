@@ -314,6 +314,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     return getString(R.string.setting_name_transaction_fee_high);
                 case Low:
                     return getString(R.string.setting_name_transaction_fee_low);
+                case Lower:
+                    return getString(R.string.setting_name_transaction_fee_lower);
                 default:
                     return getString(R.string.setting_name_transaction_fee_normal);
             }
@@ -339,6 +341,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     return 0;
                 case Low:
                     return 5;
+                case Lower:
+                    return 6;
                 default:
                     return 4;
             }
@@ -359,6 +363,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                         return BitherjSettings.TransactionFeeMode.TenX;
                     case 0:
                         return BitherjSettings.TransactionFeeMode.TwentyX;
+                    case 6:
+                        return BitherjSettings.TransactionFeeMode.Lower;
                 }
             }
             return BitherjSettings.TransactionFeeMode.Normal;
@@ -377,6 +383,8 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     return getFeeStr(BitherjSettings.TransactionFeeMode.Higher);
                 case High:
                     return getFeeStr(BitherjSettings.TransactionFeeMode.High);
+                case Lower:
+                    return getFeeStr(BitherjSettings.TransactionFeeMode.Lower);
                 default:
                     return getFeeStr(BitherjSettings.TransactionFeeMode.Normal);
             }

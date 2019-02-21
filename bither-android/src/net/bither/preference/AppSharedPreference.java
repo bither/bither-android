@@ -135,7 +135,7 @@ public class AppSharedPreference {
         if (ordinal < BitherjSettings.TransactionFeeMode.values().length && ordinal >= 0) {
             return BitherjSettings.TransactionFeeMode.values()[ordinal];
         }
-        return BitherjSettings.TransactionFeeMode.TenX;
+        return BitherjSettings.TransactionFeeMode.Normal;
     }
 
     public void setTransactionFeeMode(BitherjSettings.TransactionFeeMode mode) {
