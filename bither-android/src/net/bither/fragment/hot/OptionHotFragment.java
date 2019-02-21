@@ -479,7 +479,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private OnClickListener changeAddressTypeClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (AppSharedPreference.getInstance().isSegwitAddressType()) {
                 changeAddressType(false);
                 return;
@@ -490,7 +489,12 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     DialogConfirmTask tip = new DialogConfirmTask(getActivity(), getString(R.string.address_type_switch_hd_account_cold_no_segwit_pub_tips), new Runnable() {
                         @Override
                         public void run() {
-                            changeAddressType(false);
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    changeAddressType(false);
+                                }
+                            });
                         }
                     }, false);
                     tip.setCancelable(false);
