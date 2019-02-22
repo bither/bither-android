@@ -1185,7 +1185,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         case BLOCKCHAIN_INFO:
                             return getString(R.string.setting_name_api_config_blockchain);
                     }
-                    return getString(R.string.setting_name_api_config_blockchain);
+                    return getString(R.string.setting_name_api_config_bither);
                 }
 
                 @Override
@@ -1196,7 +1196,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         case BLOCKCHAIN_INFO:
                             return getString(R.string.setting_api_config_blockchain);
                         default:
-                            return getString(R.string.setting_api_config_blockchain);
+                            return getString(R.string.setting_api_config_bither_net);
                     }
                 }
 
@@ -1219,7 +1219,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                         case BLOCKCHAIN_INFO:
                             return 1;
                         default:
-                            return 1;
+                            return 0;
                     }
                 }
 
@@ -1237,7 +1237,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                                 return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
                         }
                     }
-                    return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+                    return BitherjSettings.ApiConfig.BITHER_NET;
                 }
             };
 

@@ -215,6 +215,7 @@
 
                             <net.bither.ui.base.SettingSelectorView
                                 android:id="@+id/ssv_api_config"
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
