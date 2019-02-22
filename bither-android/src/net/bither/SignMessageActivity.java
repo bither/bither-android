@@ -122,13 +122,15 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
         if (address == null) {
             if (isHot) {
                 hdAccount = AddressManager.getInstance().getHDAccountHot();
-                hdAccountAddress = addressForIndex(index, pathType);
-                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
             } else {
                 hdAccountCold = AddressManager.getInstance().getHDAccountCold();
-                hdAccountAddress = addressForIndex(index, pathType);
-                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
             }
+            hdAccountAddress = addressForIndex(index, pathType);
+            if (hdAccountAddress == null) {
+                finish();
+                return;
+            }
+            tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
             ivQr.setContent(hdAccountAddress.getAddress(), theme.getFgColor(), theme.getBgColor());
         } else {
             tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 12));
