@@ -33,7 +33,6 @@ import java.util.List;
 
 public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     public static final String SignMgsTypeSelect = "SignMgsTypeSelect";
-    public static final String PassWord = "PassWord";
     public static final String IsHdAccountHot = "IsHdAccountHot";
     public static final String IsDetectBcc = "IsDetectBcc";
     public static final String IsSignHash = "IsSignHash";
@@ -67,10 +66,6 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
         tvTitle.setText(R.string.sign_message_select_address);
         isSignHash = getIntent().getBooleanExtra(IsSignHash, false);
-        if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
-            String tempString = getIntent().getStringExtra(PassWord);
-            password = tempString.subSequence(0, tempString.length());
-        }
         initView();
     }
 
@@ -150,9 +145,9 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
             isLoading = true;
             List<HDAccount.HDAccountAddress> address;
             if (isHot) {
-                address = hdAccount.getHdHotAddresses(page, pathType, password);
+                address = hdAccount.getHdHotAddresses(page, pathType);
             } else {
-                address = hdAccountCold.getHdColdAddresses(page, pathType, password);
+                address = hdAccountCold.getHdColdAddresses(page, pathType);
             }
             if (page == 1) {
                 hdAccountAddresses.clear();

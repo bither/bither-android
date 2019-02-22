@@ -15,7 +15,6 @@ import net.bither.enums.SignMessageTypeSelect;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
 import static net.bither.SignMessageAddressListActivity.IsHdAccountHot;
-import static net.bither.SignMessageAddressListActivity.PassWord;
 import static net.bither.SignMessageAddressListActivity.SignMgsTypeSelect;
 
 /**
@@ -71,7 +70,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdReceive);
-                        intent.putExtra(PassWord, password.toString());
                         intent.putExtra(IsHdAccountHot, isHot);
                         getContext().startActivity(intent);
                     }
@@ -88,7 +86,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdChange);
-                        intent.putExtra(PassWord, password);
                         intent.putExtra(IsHdAccountHot, isHot);
                         getContext().startActivity(intent);
                     }
