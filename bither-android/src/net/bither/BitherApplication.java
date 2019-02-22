@@ -22,6 +22,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
@@ -108,8 +109,11 @@ public class BitherApplication extends Application {
     }
 
     public static void startBlockchainService() {
-        mContext.startService(new Intent(mContext, BlockchainService.class));
-
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+            mContext.startForegroundService(new Intent(mContext, BlockchainService.class));
+        } else {
+            mContext.startService(new Intent(mContext, BlockchainService.class));
+        }
     }
 
 
