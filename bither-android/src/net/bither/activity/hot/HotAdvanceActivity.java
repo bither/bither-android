@@ -438,10 +438,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
 
             if (BitherApplication.canReloadTx()) {
-                if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sync_complete);
-                    return;
-                }
                 final Runnable confirmRunnable = new Runnable() {
                     @Override
                     public void run() {
@@ -591,7 +587,9 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
             @Override
             public void run() {
                 if (dp == null) {
-                    dp = new DialogProgress(HotAdvanceActivity.this, R.string.please_wait);
+                    dp = new DialogProgress(HotAdvanceActivity.this, R.string.reload_tx_please_wait);
+                } else {
+                    dp.setMessage(R.string.reload_tx_please_wait);
                 }
                 dp.show();
             }
