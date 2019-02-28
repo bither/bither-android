@@ -179,9 +179,14 @@ public class MonitorBitherColdUtil {
                     if(dp != null && dp.isShowing()){
                         dp.dismiss();
                     }
-                    if (delegate != null) {
-                        delegate.onAddressMonitored(addresses);
-                    }
+                    DropdownMessage.showDropdownMessage(activity, R.string.scan_for_all_addresses_in_bither_cold_success, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (delegate != null) {
+                                delegate.onAddressMonitored(addresses);
+                            }
+                        }
+                    });
                 }
             });
 

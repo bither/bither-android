@@ -222,7 +222,7 @@
     <string name="import_hdm_cold_seed_qr_code_scan_title">Scan HDM Cold Seed QR Code</string>
     <string name="import_bip38private_key_qr_code_scan_title">Scan BIP38-private key QR Code</string>
     <string name="import_private_key_qr_code_password">Enter original password</string>
-    <string name="import_private_key_qr_code_success">Import success.</string>
+    <string name="import_private_key_qr_code_success">Import success. Load UTXO only</string>
     <string name="import_private_key_qr_code_failed">Import failed.</string>
     <string name="import_hd_account_failed_duplicated">Import failed. This account is already in Bither.</string>
     <string name="import_private_key_qr_code_failed_monitored">Can\'t import Bither Cold private key.</string>
@@ -231,7 +231,7 @@
     <string name="import_private_key_qr_code_failed_different_password">Password of the private key to import is different from ours. Import failed.</string>
     <string name="import_private_key_failed_tx_too_mush">Cannot import private key with large amount of transactions. </string>
     <string name="import_private_key_failed_special_address">Cannot import private key with special transactions. </string>
-    <string name="reload_tx_need_too_much_time">Reload Transactions data?\nNeed long time.\nConsume network data.\nRecommand trying only with wrong data.</string>
+    <string name="reload_tx_need_too_much_time">Reload Transactions data?\nLoad UTXO only\nNeed long time.\nConsume network data.\nRecommand trying only with wrong data.</string>
     <string name="reload_tx_please_wait">Reloading transactions data, please wait...</string>
     <string name="reload_tx_failed">Reload transactions data failed , Please retry again. </string>
     <string name="reload_tx_success">Reload transactions data success </string>
@@ -333,7 +333,7 @@
     <string name="prompt_wallet_height">Wallet Height : %d</string>
     <string name="scan_for_all_addresses_in_bither_cold">Monitor Bither Cold</string>
     <string name="scan_for_all_addresses_in_bither_cold_title">Scan Qr Code to watch Bither Cold</string>
-    <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success</string>
+    <string name="scan_for_all_addresses_in_bither_cold_success">Monitor Bither Cold Success, Load UTXO only</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">Monitor Bither Cold Failed</string>
     <string name="time_is_wrong">Current system time is wrong, please correct it.</string>
     <string name="only_supports_the_compressed_private_key">Only supports the compressed format of private key</string>
@@ -692,7 +692,7 @@
     <string name="monitor_cold_hd_account_limit">You can only monitor 1 cold HD account</string>
     <string name="monitor_cold_hd_account_failed">Monitor cold HD account failed</string>
     <string name="monitor_cold_hd_account_failed_duplicated">Monitor failed. This account is already in Bither.</string>
-    <string name="monitor_cold_hd_account_success">Monitor cold HD account success</string>
+    <string name="monitor_cold_hd_account_success">Monitor cold HD account success, Load UTXO only</string>
     <string name="address_group_hd_monitored">Cold HD Account</string>
     <string name="hd_account_old_addresses">Old Addresses</string>
     <string name="hd_account_old_addresses_zero">No address used yet</string>
@@ -731,6 +731,7 @@
     <string name="hd_account_monitor_check_first_address">Check First Address</string>
     <string name="monitor_addresses_validation">Check Monitored Addresses</string>
     <string name="title_activity_ad">AdActivity</string>
+    <string name="monitor_addresses_tip">Be assured the Bither Cold Wallet of the monitor address is under your control</string>
 
     <!-- Ad -->
     <string name="ad_go">Go</string>
