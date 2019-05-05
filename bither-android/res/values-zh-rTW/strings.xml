@@ -215,6 +215,7 @@
     <string name="import_bip38private_key_qr_code_scan_title">掃描BIP38私鑰二維碼</string>
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
     <string name="import_private_key_qr_code_success">導入成功，只會加載未花費交易</string>
+    <string name="import_cold_private_key_qr_code_success">導入成功</string>
     <string name="import_private_key_qr_code_failed">導入失敗</string>
     <string name="import_hd_account_failed_duplicated">匯入失敗. 這個賬戶已經存在. </string>
     <string name="import_private_key_qr_code_failed_monitored">不能導入冷錢包私鑰</string>

@@ -881,7 +881,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         ssvImportPrivateKey.loadData();
         ssvImprotBip38Key.loadData();
         DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
-                R.string.import_private_key_qr_code_success, new Runnable() {
+                R.string.import_cold_private_key_qr_code_success, new Runnable() {
                     @Override
                     public void run() {
                         if (BitherApplication.coldActivity != null) {
