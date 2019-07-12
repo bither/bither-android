@@ -19,6 +19,7 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.activity.cold.BitpieConnectorActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -88,6 +90,7 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
         findViewById(R.id.ibtn_qr_code_option).setVisibility(GONE);
         dp = new DialogProgress(getContext(), R.string.please_wait);
         dp.setCancelable(false);
+        setOnClickListener(onClick);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
@@ -98,6 +101,13 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
         }
     };
 
+    private OnClickListener onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(v.getContext(), BitpieConnectorActivity.class);
+            v.getContext().startActivity(i);
+        }
+    };
 
     private OnClickListener seedOptionClick = new DialogWithActions
             .DialogWithActionsClickListener() {

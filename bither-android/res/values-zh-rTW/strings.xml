@@ -766,4 +766,17 @@
 
     <string name="bitpie_add_hd_account_show_seed_label">Bitpie Connector 種子能夠恢復 Bitpie Connector 賬戶,\n請安全的保管它.</string>
     <string name="bitpie_add_hd_account_show_seed_button">我已保管好了 Bitpie Connector 種子</string>
+    <string name="bitpie_activity_name_bitpie_connector">Bitpie Connector 賬戶</string>
+
+    <string name="bitpie_action_sign_tx">簽名交易</string>
+    <string name="bitpie_action_sign_message">簽名消息</string>
+    <string name="bitpie_action_sign_hash">簽名哈希</string>
+
+    <string name="bitpie_activity_name_sign_tx">Bitpie Connector 簽名交易</string>
+    <string name="bitpie_activity_name_sign_msg">Bitpie Connector 簽名消息</string>
+    <string name="bitpie_activity_name_sign_hash">Bitpie Connector 簽名哈希</string>
+
+    <string name="bitpie_activity_send_coins_label">幣種</string>
+    <string name="bitpie_scan_unsigned_transaction_title">掃描熱錢包上的未簽名交易</string>
+    <string name="bitpie_scan_message_title">掃描熱錢包上的待签名消息</string>
 </resources>

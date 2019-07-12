@@ -801,4 +801,18 @@
 
     <string name="bitpie_add_hd_account_show_seed_label">Bitpie Connector can be used for recover Bitpie Connector account,\nPlease keep it somewhere safe.</string>
     <string name="bitpie_add_hd_account_show_seed_button">I have kept it safely.</string>
+    <string name="bitpie_activity_name_bitpie_connector">Bitpie Connector Account</string>
+    <string name="bitpie_action_sign_tx">Sign Transaction</string>
+    <string name="bitpie_action_sign_message">Sign Message</string>
+    <string name="bitpie_action_sign_hash">Sign Hash</string>
+
+    <string name="bitpie_activity_name_sign_tx">Bitpie Connector Sign Transaction</string>
+    <string name="bitpie_activity_name_sign_msg">Bitpie Connector Sign Message</string>
+    <string name="bitpie_activity_name_sign_hash">Bitpie Connector Sign Hash</string>
+
+    <string name="bitpie_activity_send_coins_label">Coin Type</string>
+    <string name="bitpie_activity_send_coins_hint">BTC</string>
+
+    <string name="bitpie_scan_unsigned_transaction_title">Scan QR Code on Bitpie</string>
+    <string name="bitpie_scan_message_title">Scan QR Code on Bitpie</string>
 </resources>
