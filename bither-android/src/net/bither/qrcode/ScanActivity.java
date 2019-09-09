@@ -18,6 +18,7 @@ package net.bither.qrcode;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -33,6 +34,7 @@ import android.os.HandlerThread;
 import android.os.Process;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -57,15 +59,17 @@ import com.google.zxing.ResultPointCallback;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import net.bither.BitherSetting;
 import net.bither.R;
-import net.bither.bitherj.core.SplitCoin;
 import net.bither.camera.CameraManager;
 import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.ScannerView;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageManageUtil;
+import net.bither.util.PermissionUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +78,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
-
-import static net.bither.activity.hot.HotAdvanceActivity.SplitCoinKey;
 
 public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback,
         CompoundButton.OnCheckedChangeListener {
@@ -146,10 +148,39 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 
     @Override
     public void surfaceCreated(final SurfaceHolder holder) {
-        cameraHandler.post(openRunnable);
+    	if (PermissionUtil.isCameraPermission(this, BitherSetting.REQUEST_CODE_PERMISSION_CAMERA)) {
+			cameraHandler.post(openRunnable);
+		}
     }
 
-    @Override
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		switch (requestCode) {
+			case BitherSetting.REQUEST_CODE_PERMISSION_CAMERA:
+				if (grantResults != null && grantResults.length > 0) {
+					if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+						DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(
+								this, getString(R.string.permissions_no_grant), new Runnable() {
+							@Override
+							public void run() {
+								Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+								Uri uri = Uri.fromParts("package", getPackageName(), null);
+								intent.setData(uri);
+								startActivity(intent);
+							}
+						});
+						dialogConfirmTask.show();
+					} else {
+						openRunnable.run();
+					}
+				}
+			default:
+				break;
+		}
+	}
+
+	@Override
     public void surfaceDestroyed(final SurfaceHolder holder) {
     }
 
