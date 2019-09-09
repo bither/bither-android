@@ -8,90 +8,182 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="5dp"
         android:minWidth="200dp"
+        android:layout_gravity="center"
         android:text="@string/sign.hash.select.address"
         android:textColor="@color/white"
         android:textSize="17sp" />
 
     <LinearLayout
-        android:id="@+id/ll_hd_receive"
+        android:id="@+id/ll_hd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:orientation="horizontal">
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/tv_group_hd_receive"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/ll_hd_receive"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="left|center_vertical"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/sing_message_select_hd_receive"
-            android:textColor="@color/white"
-            android:textSize="15dp" />
+            android:background="@drawable/ui_touchable_bg"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/iv_type_hd_receive"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/address_type_hd" />
+            <TextView
+                android:id="@+id/tv_group_hd_receive"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/sing_message_select_hd_receive"
+                android:textColor="@color/white"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:id="@+id/iv_type_hd_receive"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/address_type_hd" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/v_line_receive"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#757575" />
+
+        <LinearLayout
+            android:id="@+id/ll_hd_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/ui_touchable_bg"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_group_hd_change"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/sing_message_select_hd_change"
+                android:textColor="@color/white"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:id="@+id/iv_type_hd_change"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/address_type_hd" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/v_line_change"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#757575" />
+
     </LinearLayout>
-
-    <View
-        android:id="@+id/v_line_receive"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#757575" />
 
     <LinearLayout
-        android:id="@+id/ll_hd_change"
+        android:id="@+id/ll_bitpie_cold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:orientation="horizontal">
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/tv_group_hd_change"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/ll_bitpie_cold_receive"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:gravity="left|center_vertical"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/sing_message_select_hd_change"
-            android:textColor="@color/white"
-            android:textSize="15dp" />
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/ui_touchable_bg"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/iv_type_hd_change"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="5dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/address_type_hd" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/sing_message_select_hd_receive"
+                android:textColor="@color/white"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/address_type_hd" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#757575" />
+
+        <LinearLayout
+            android:id="@+id/ll_bitpie_cold_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:background="@drawable/ui_touchable_bg"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/sing_message_select_hd_change"
+                android:textColor="@color/white"
+                android:textSize="15dp" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/address_type_hd" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#757575" />
+
     </LinearLayout>
-
-    <View
-        android:id="@+id/v_line_change"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#757575" />
 
     <LinearLayout
         android:id="@+id/ll_hot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/ui_touchable_bg"
         android:orientation="horizontal">
 
         <TextView

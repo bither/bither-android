@@ -34,7 +34,6 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
-import net.bither.activity.hot.HotAdvanceActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Version;
@@ -72,7 +71,6 @@ import net.bither.ui.base.dialog.DialogImportPrivateKeyText;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogPasswordWithOther;
 import net.bither.ui.base.dialog.DialogProgress;
-import net.bither.ui.base.dialog.DialogSignHashSelectType;
 import net.bither.ui.base.dialog.DialogSignMessageSelectType;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.ui.base.listener.ICheckPasswordListener;
@@ -140,7 +138,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener signHashClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new DialogSignHashSelectType(ColdAdvanceActivity.this, false).show();
+            new DialogSignMessageSelectType(ColdAdvanceActivity.this,false, true).show();
         }
     };
     private View.OnClickListener rawPrivateKeyClick = new View.OnClickListener() {
@@ -245,7 +243,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         public void onOptionIndexSelected(int index) {
             switch (index) {
                 case 0:
-                    new DialogSignMessageSelectType(ColdAdvanceActivity.this,false).show();
+                    new DialogSignMessageSelectType(ColdAdvanceActivity.this,false, false).show();
                     break;
                 case 1:
                 default:

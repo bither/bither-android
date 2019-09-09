@@ -15,12 +15,15 @@ import android.widget.TextView;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.enums.SignMessageTypeSelect;
 import net.bither.ui.base.SmoothScrollListRunnable;
 import net.bither.ui.base.SwipeRightFragmentActivity;
+import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.ui.base.listener.IBackClickListener;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
@@ -54,6 +57,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     private ArrayList<HDAccount.HDAccountAddress> hdAccountAddresses = new ArrayList<>();
     private HDAccount hdAccount;
     private HDAccountCold hdAccountCold;
+    private BitpieHDAccountCold bitpieHDAccountCold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         tvTitle = (TextView) findViewById(R.id.tv_title);
         hdAccount = AddressManager.getInstance().getHDAccountHot();
         hdAccountCold = AddressManager.getInstance().getHDAccountCold();
+        bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
         tvTitle.setText(R.string.sign_message_select_address);
@@ -89,54 +94,41 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                 adapter.notifyDataSetChanged();
                 break;
             case HdReceive:
+            case BitpieColdReceive:
                 pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
-                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    private int lastFirstVisibleItem;
-
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
-                                && hasMore && !isLoading
-                                && lastFirstVisibleItem < firstVisibleItem) {
-                            page++;
-                            loadAddress();
-                        }
-                        lastFirstVisibleItem = firstVisibleItem;
-                    }
-                });
-                loadData();
+                loadHdAddress();
                 break;
             case HdChange:
+            case BitpieColdChange:
                 pathType = AbstractHD.PathType.INTERNAL_ROOT_PATH;
-                lv.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    private int lastFirstVisibleItem;
-
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
-                                && hasMore && !isLoading
-                                && lastFirstVisibleItem < firstVisibleItem) {
-                            page++;
-                            loadAddress();
-                        }
-                        lastFirstVisibleItem = firstVisibleItem;
-
-                    }
-                });
-                loadData();
+                loadHdAddress();
                 break;
         }
 
+    }
+
+    private void loadHdAddress() {
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
+                        && hasMore && !isLoading
+                        && lastFirstVisibleItem < firstVisibleItem) {
+                    page++;
+                    loadAddress();
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+
+            }
+        });
+        loadData();
     }
 
     private void loadData() {
@@ -149,11 +141,16 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         if (!isLoading && hasMore) {
             isLoading = true;
             List<HDAccount.HDAccountAddress> address;
-            if (isHot) {
-                address = hdAccount.getHdHotAddresses(page, pathType, password);
+            if (signMessageTypeSelect.isBitpieCold()) {
+                address = bitpieHDAccountCold.getHdColdAddresses(page, pathType, password);
             } else {
-                address = hdAccountCold.getHdColdAddresses(page, pathType, password);
+                if (isHot) {
+                    address = hdAccount.getHdHotAddresses(page, pathType, password);
+                } else {
+                    address = hdAccountCold.getHdColdAddresses(page, pathType, password);
+                }
             }
+
             if (page == 1) {
                 hdAccountAddresses.clear();
             }
@@ -195,9 +192,11 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                     convertView.setOnClickListener(new ListItemClick(a));
                     break;
                 case HdReceive:
+                case HdChange:
+                case BitpieColdReceive:
+                case BitpieColdChange:
                     HDAccount.HDAccountAddress hdar = (HDAccount.HDAccountAddress) getItem(position);
                     h.tvAddress.setText(WalletUtils.formatHash(hdar.getAddress(), 4, 20));
-                    h.tvIndex.setText(String.valueOf(hdar.getIndex()));
                     h.tvIndex.setText(String.valueOf(hdar.getIndex()));
                     if (isHot) {
                         h.tvBalance.setText(UnitUtilWrapper.formatValue(hdar.getBalance()));
@@ -205,17 +204,6 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                         h.llBalance.setVisibility(View.GONE);
                     }
                     convertView.setOnClickListener(new HdAddressListItemClick(hdar));
-                    break;
-                case HdChange:
-                    HDAccount.HDAccountAddress hdac = (HDAccount.HDAccountAddress) getItem(position);
-                    h.tvAddress.setText(WalletUtils.formatHash(hdac.getAddress(), 4, 20));
-                    h.tvIndex.setText(String.valueOf(hdac.getIndex()));
-                    if (isHot) {
-                        h.tvBalance.setText(UnitUtilWrapper.formatValue(hdac.getBalance()));
-                    } else {
-                        h.llBalance.setVisibility(View.GONE);
-                    }
-                    convertView.setOnClickListener(new HdAddressListItemClick(hdac));
                     break;
             }
             return convertView;
@@ -230,8 +218,9 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         public Object getItem(int position) {
             switch (signMessageTypeSelect) {
                 case HdReceive:
-                    return hdAccountAddresses.get(position);
                 case HdChange:
+                case BitpieColdReceive:
+                case BitpieColdChange:
                     return hdAccountAddresses.get(position);
                 case Hot:
                     return addresses.get(position);
@@ -244,8 +233,9 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         public int getCount() {
             switch (signMessageTypeSelect) {
                 case HdReceive:
-                    return hdAccountAddresses.size();
                 case HdChange:
+                case BitpieColdReceive:
+                case BitpieColdChange:
                     return hdAccountAddresses.size();
                 case Hot:
                     return addresses.size();
@@ -309,17 +299,20 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
 
         @Override
         public void onClick(View v) {
+            boolean isBitpieCold = signMessageTypeSelect.isBitpieCold();
             if (!isSignHash) {
                 Intent intent = new Intent(SignMessageAddressListActivity.this, SignMessageActivity.class);
                 intent.putExtra(SignMessageActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
                 intent.putExtra(SignMessageActivity.HdAddressIndex, hdAccountAddress.getIndex());
                 intent.putExtra(IsHdAccountHot, isHot);
+                intent.putExtra(SignMessageActivity.IsBitpieCold, isBitpieCold);
                 SignMessageAddressListActivity.this.startActivity(intent);
             } else {
                 Intent intent = new Intent(SignMessageAddressListActivity.this, SignHashActivity.class);
                 intent.putExtra(SignHashActivity.HdAccountPathType, hdAccountAddress.getPathType().getValue());
                 intent.putExtra(SignHashActivity.HdAddressIndex, hdAccountAddress.getIndex());
                 intent.putExtra(IsHdAccountHot, isHot);
+                intent.putExtra(SignHashActivity.IsBitpieCold, isBitpieCold);
                 SignMessageAddressListActivity.this.startActivity(intent);
             }
         }

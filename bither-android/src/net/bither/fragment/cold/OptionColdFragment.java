@@ -507,7 +507,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                     mnemonicCode = new MnemonicCodeAndroid();
                     mnemonicCode.setMnemonicWordList(mnemonicWordList);
                     hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, content, password);
-                    bitpieHDAccountCold = PrivateKeyUtil.getBitpieHDAccountCould(mnemonicCode, content, password);
+                    bitpieHDAccountCold = PrivateKeyUtil.getBitpieHDAccountCold(mnemonicCode, content, password);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

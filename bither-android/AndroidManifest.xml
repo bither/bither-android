@@ -409,15 +409,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
-            android:name=".activity.cold.BitpieConnectorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BitherTransparentBgTheme" />
-        <activity
             android:name=".activity.cold.BitpieSignTxActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BitherTransparentBgTheme" />
-        <activity
-            android:name=".activity.cold.BitpieSignMessageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity

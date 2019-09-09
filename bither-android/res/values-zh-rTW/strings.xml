@@ -483,6 +483,8 @@
     <string name="sign_message_select_address">選擇簽名消息用的地址</string>
     <string name="sing_message_select_hd_receive">HD賬戶 收款地址</string>
     <string name="sing_message_select_hd_change">HD賬戶 找零地址</string>
+    <string name="sing_message_select_bitpie_cold_receive">Bitpie Cold 收款地址</string>
+    <string name="sing_message_select_bitpie_cold_change">Bitpie Cold 找零地址</string>
     <string name="sign_message_select_address_index">序號:</string>
 
     <!-- Verify Message Signature -->
@@ -660,6 +662,7 @@
     <string name="add_cold_hd_account_other_hdm">生成 HDM 賬戶</string>
     <string name="add_cold_hd_account_other_private">生成普通私鑰</string>
     <string name="add_cold_hd_account_monitor_qr">HD 賬戶監控二維碼</string>
+    <string name="add_bitpie_cold_hd_account_monitor_qr">Bitpie Cold 賬戶監控二維碼</string>
     <string name="hd_account_cold_address_list_label">冷 HD 賬戶</string>
     <string name="import_cold_hd_account_seed_qr_code">來自HD種子二維碼</string>
     <string name="import_cold_hd_account_seed_phrase">來自HD密語</string>
@@ -756,25 +759,25 @@
     <string name="open_segwit_only_support_hd_account">隔離驗證地址僅支援HD賬戶</string>
     <string name="address_type_switch_hd_account_cold_no_segwit_pub_tips">如果您的冷HD賬戶需要使用隔離驗證地址需要將您的冷錢包升級到v1.8.3重新監控</string>
 
-    <!-- bitpie connector -->
+    <!-- Bitpie Cold -->
     <string name="bitpie_connector_add_cold_hd_account_tab">比特派</string>
-    <string name="bitpie_connector_add_account_label">創建新的 Bitpie Connector 賬戶</string>
-    <string name="bitpie_hd_account_cold_address_list_label">冷 Bitpie Connector 賬戶</string>
-    <string name="bitpie_add_hd_account_view_label">已有 Bitpie Connector 賬戶</string>
-    <string name="bitpie_add_hd_account_seed_qr_code">Bitpie Connector 賬戶種子二維碼</string>
-    <string name="bitpie_add_hd_account_seed_qr_phrase">Bitpie Connector 賬戶密語</string>
+    <string name="bitpie_connector_add_account_label">創建新的 Bitpie Cold 賬戶</string>
+    <string name="bitpie_hd_account_cold_address_list_label">冷 Bitpie Cold 賬戶</string>
+    <string name="bitpie_add_hd_account_view_label">已有 Bitpie Cold 賬戶</string>
+    <string name="bitpie_add_hd_account_seed_qr_code">Bitpie Cold 賬戶種子二維碼</string>
+    <string name="bitpie_add_hd_account_seed_qr_phrase">Bitpie Cold 賬戶密語</string>
 
-    <string name="bitpie_add_hd_account_show_seed_label">Bitpie Connector 種子能夠恢復 Bitpie Connector 賬戶,\n請安全的保管它.</string>
-    <string name="bitpie_add_hd_account_show_seed_button">我已保管好了 Bitpie Connector 種子</string>
-    <string name="bitpie_activity_name_bitpie_connector">Bitpie Connector 賬戶</string>
+    <string name="bitpie_add_hd_account_show_seed_label">Bitpie Cold 種子能夠恢復 Bitpie Cold 賬戶,\n請安全的保管它.</string>
+    <string name="bitpie_add_hd_account_show_seed_button">我已保管好了 Bitpie Cold 種子</string>
+    <string name="bitpie_activity_name_bitpie_connector">Bitpie Cold 賬戶</string>
 
     <string name="bitpie_action_sign_tx">簽名交易</string>
     <string name="bitpie_action_sign_message">簽名消息</string>
     <string name="bitpie_action_sign_hash">簽名哈希</string>
 
-    <string name="bitpie_activity_name_sign_tx">Bitpie Connector 簽名交易</string>
-    <string name="bitpie_activity_name_sign_msg">Bitpie Connector 簽名消息</string>
-    <string name="bitpie_activity_name_sign_hash">Bitpie Connector 簽名哈希</string>
+    <string name="bitpie_activity_name_sign_tx">Bitpie Cold 簽名交易</string>
+    <string name="bitpie_activity_name_sign_msg">Bitpie Cold 簽名消息</string>
+    <string name="bitpie_activity_name_sign_hash">Bitpie Cold 簽名哈希</string>
 
     <string name="bitpie_activity_send_coins_label">幣種</string>
     <string name="bitpie_scan_unsigned_transaction_title">掃描熱錢包上的未簽名交易</string>

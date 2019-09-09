@@ -35,6 +35,7 @@ import android.widget.TextView;
 import net.bither.bitherj.core.AbstractHD;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
@@ -63,13 +64,16 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
     public static final String HdAccountPathType = "HdAccountPathType";
     public static final String HdAddressIndex = "HdAddressIndex";
     public static final String IsHdAccountHot = "IsHdAccountHot";
+    public static final String IsBitpieCold = "IsBitpieCold";
     private static final int ScanRequestCode = 1051;
 
     private Address address;
     private HDAccount.HDAccountAddress hdAccountAddress;
     private HDAccountCold hdAccountCold;
-    private boolean isHot;
     private HDAccount hdAccount;
+    private BitpieHDAccountCold bitpieHDAccountCold;
+    private boolean isHot;
+    private boolean isBitpieCold;
     private AbstractHD.PathType pathType;
     private int index;
     private EditText etInput;
@@ -94,6 +98,7 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
         index = getIntent().getExtras().getInt(HdAddressIndex);
         if (address == null) {
             isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
+            isBitpieCold = getIntent().getBooleanExtra(IsBitpieCold, false);
         }
         initView();
     }
@@ -120,15 +125,15 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
         Qr.QrCodeTheme theme = AppSharedPreference.getInstance().getFancyQrCodeTheme();
 
         if (address == null) {
-            if (isHot) {
+            if (isBitpieCold) {
+                bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
+            } else if (isHot) {
                 hdAccount = AddressManager.getInstance().getHDAccountHot();
-                hdAccountAddress = addressForIndex(index, pathType);
-                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 24));
             } else {
                 hdAccountCold = AddressManager.getInstance().getHDAccountCold();
-                hdAccountAddress = addressForIndex(index, pathType);
-                tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 24));
             }
+            hdAccountAddress = addressForIndex(index, pathType);
+            tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 24));
             ivQr.setContent(hdAccountAddress.getAddress(), theme.getFgColor(), theme.getBgColor());
         } else {
             tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 24));
@@ -218,7 +223,9 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
                     if (address == null) {
                         if (pathType == AbstractHD.PathType.EXTERNAL_ROOT_PATH) {
                             DeterministicKey key;
-                            if (isHot) {
+                            if (isBitpieCold) {
+                                key = bitpieHDAccountCold.getExternalKey(index, password);
+                            } else if (isHot) {
                                 key = hdAccount.getExternalKey(index, password);
                             } else {
                                 key = hdAccountCold.getExternalKey(index, password);
@@ -227,7 +234,9 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
                             pubkey = Utils.bytesToHexString(key.getPubKeyUnCompressed());
                         } else {
                             DeterministicKey key;
-                            if (isHot) {
+                            if (isBitpieCold) {
+                                key = bitpieHDAccountCold.getInternalKey(index, password);
+                            } else if (isHot) {
                                 key = hdAccount.getInternalKey(index, password);
                             } else {
                                 key = hdAccountCold.getInternalKey(index, password);
@@ -331,7 +340,9 @@ public class SignHashActivity extends SwipeRightFragmentActivity implements
     }
 
     private HDAccount.HDAccountAddress addressForIndex(int index, AbstractHD.PathType pathType) {
-        if (isHot) {
+        if (isBitpieCold) {
+            return bitpieHDAccountCold.addressForPath(pathType, index);
+        } else if (isHot) {
             return hdAccount.addressForPath(pathType, index);
         } else {
             return hdAccountCold.addressForPath(pathType, index);

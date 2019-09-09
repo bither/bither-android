@@ -5,7 +5,7 @@ package net.bither.enums;
  */
 
 public enum SignMessageTypeSelect {
-    HdReceive(0), HdChange(1), Hot(2);
+    HdReceive(0), HdChange(1), Hot(2), BitpieColdReceive(3), BitpieColdChange(4);
 
     private int value;
 
@@ -15,6 +15,10 @@ public enum SignMessageTypeSelect {
 
     public int value() {
         return value;
+    }
+
+    public boolean isBitpieCold() {
+        return this == BitpieColdReceive || this == BitpieColdChange;
     }
 
 }

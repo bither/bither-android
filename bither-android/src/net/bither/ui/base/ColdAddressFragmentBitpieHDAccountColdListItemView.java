@@ -19,7 +19,6 @@
 package net.bither.ui.base;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +27,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.R;
-import net.bither.activity.cold.BitpieConnectorActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -41,9 +40,12 @@ import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
+import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.bither.bitherj.qrcode.QRCodeUtil.HD_MONITOR_QR_SPLIT;
 
 /**
  * Created by yiwenlong on 19/1/14.
@@ -87,10 +89,9 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
         }
         findViewById(R.id.iv_type).setOnLongClickListener(typeClick);
         findViewById(R.id.ibtn_seed_option).setOnClickListener(seedOptionClick);
-        findViewById(R.id.ibtn_qr_code_option).setVisibility(GONE);
+        findViewById(R.id.ibtn_qr_code_option).setOnClickListener(qrCodeOptionClick);
         dp = new DialogProgress(getContext(), R.string.please_wait);
         dp.setCancelable(false);
-        setOnClickListener(onClick);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
@@ -98,14 +99,6 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
         public boolean onLongClick(View v) {
             seedOptionClick.onClick(v);
             return true;
-        }
-    };
-
-    private OnClickListener onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i = new Intent(v.getContext(), BitpieConnectorActivity.class);
-            v.getContext().startActivity(i);
         }
     };
 
@@ -193,5 +186,59 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
             return actions;
         }
     };
+
+    private OnClickListener qrCodeOptionClick = new DialogWithActions
+            .DialogWithActionsClickListener() {
+
+        @Override
+        protected List<DialogWithActions.Action> getActions() {
+            ArrayList<DialogWithActions.Action> actions = new ArrayList<>();
+            actions.add(new DialogWithActions.Action(R.string.add_bitpie_cold_hd_account_monitor_qr, new
+                    Runnable() {
+                        @Override
+                        public void run() {
+                            new DialogPassword(getContext(), new IDialogPasswordListener() {
+                                @Override
+                                public void onPasswordEntered(final SecureCharSequence password) {
+                                    final DialogProgress dp = new DialogProgress(getContext(), R.string
+                                            .please_wait);
+                                    dp.show();
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                final String content = bitpiehdAccountCold.xPubB58(password);
+                                                final String p2shp2wpkhContent = bitpiehdAccountCold.p2shp2wpkhXPubB58(password);
+                                                ThreadUtil.runOnMainThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        dp.dismiss();
+                                                        new DialogSimpleQr(getContext(), QRCodeUtil
+                                                                .BITPIE_COLD_MONITOR_QR_PREFIX + content + HD_MONITOR_QR_SPLIT + p2shp2wpkhContent, R.string
+                                                                .add_bitpie_cold_hd_account_monitor_qr,
+                                                                WalletUtils.formatHash(content, 4, 24)
+                                                                        .toString())
+                                                                .show();
+                                                    }
+                                                });
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                                ThreadUtil.runOnMainThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        dp.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }.start();
+                                }
+                            }).show();
+                        }
+                    }));
+            return actions;
+        }
+    };
+
 
 }
