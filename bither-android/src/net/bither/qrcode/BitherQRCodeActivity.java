@@ -43,6 +43,8 @@ import net.bither.ui.base.listener.IBackClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.bitherj.qrcode.QRCodeUtil.BITPIE_COLD_MONITOR_QR_SING_MESSAGE_PREFIX;
+
 public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
     private List<String> contents;
     private List<String> oldContents;
@@ -83,7 +85,12 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
             overridePendingTransition(0, 0);
         } else {
             isNewVerion = true;
-            this.contents = QRCodeUtil.getQrCodeStringList(QRCodeUtil.encodeQrCodeString(codeString));
+            if (codeString.startsWith(BITPIE_COLD_MONITOR_QR_SING_MESSAGE_PREFIX)) {
+                this.contents = new ArrayList<>();
+                contents.add(codeString);
+            } else {
+                this.contents = QRCodeUtil.getQrCodeStringList(QRCodeUtil.encodeQrCodeString(codeString));
+            }
             initView();
             String title = getTitleString();
             if (!Utils.isEmpty(title)) {

@@ -60,4 +60,20 @@
             android:textColor="@color/white"/>
     </FrameLayout>
 
+    <Button
+        android:id="@+id/btn_sign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bitpie_scan_sign_message_monitor"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginBottom="15dp"
+        android:textSize="17sp"
+        android:background="@drawable/entry_keyboard_key_btn_bg"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+
 </LinearLayout>

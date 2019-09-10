@@ -780,8 +780,10 @@
     <string name="bitpie_activity_name_sign_hash">Bitpie Cold 签名哈希</string>
 
     <string name="bitpie_activity_send_coins_label">币种</string>
-    <string name="bitpie_scan_unsigned_transaction_title">扫比特派钱包上的未签名交易</string>
-    <string name="bitpie_scan_message_title">扫比特派钱包上的待签名消息</string>
+    <string name="bitpie_scan_unsigned_transaction_title">扫描比特派钱包上的未签名交易</string>
+    <string name="bitpie_scan_message_title">扫描比特派钱包上的待签名消息</string>
+    <string name="bitpie_scan_sign_message_monitor">比特派连接签名</string>
+    <string name="bitpie_signed_message_qr_code_title">用比特派扫描以连接</string>
 
     <string name="permissions_no_grant">请前往设置->应用->比太->权限管理中打开相关权限，否则功能无法正常使用！</string>
 

@@ -20,15 +20,18 @@ package net.bither.ui.base.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.activity.cold.BitpieColdSignMessageActivity;
 import net.bither.bitherj.utils.Utils;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.util.UIUtil;
@@ -41,7 +44,8 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
     private ImageView ivQr;
     private ProgressBar pb;
     private TextView tvSubtitle;
-
+    private Button btnSign;
+    private Context context;
 
     public DialogSimpleQr(Context context, String content) {
         this(context, content, null);
@@ -69,6 +73,7 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
 
     public DialogSimpleQr(Context context, String content, String title, String subtitle) {
         super(context, R.style.tipsDialog);
+        this.context = context;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getWindow().getAttributes().dimAmount = 0.8f;
         setCanceledOnTouchOutside(true);
@@ -76,6 +81,11 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
         if (!Utils.isEmpty(title)) {
             TextView tvTitle = (TextView) findViewById(R.id.tv_title);
             tvTitle.setText(title);
+            btnSign = findViewById(R.id.btn_sign);
+            if (title.equals(context.getString(R.string.add_bitpie_cold_hd_account_monitor_qr))) {
+                btnSign.setVisibility(View.VISIBLE);
+                btnSign.setOnClickListener(toBitpieColdSignMessageActivityClickListener);
+            }
         }
         ivQr = (ImageView) findViewById(R.id.iv_qrcode);
         pb = (ProgressBar) findViewById(R.id.pb);
@@ -95,6 +105,16 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
         new FancyQrCodeThread(content, ivQr.getLayoutParams().width, Color.BLACK, Color.WHITE,
                 this, false).start();
     }
+
+    private View.OnClickListener toBitpieColdSignMessageActivityClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, BitpieColdSignMessageActivity.class);
+            context.startActivity(intent);
+            dismiss();
+        }
+    };
 
     @Override
     public void generated(Bitmap bmp) {

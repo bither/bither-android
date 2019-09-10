@@ -47,6 +47,27 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
+                            android:text="@string/bitpie_activity_send_coins_label"
+                            android:textColor="@color/text_field_light_text_color"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/tv_coin_type"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:singleLine="true"
+                            android:text="@string/bitpie_activity_send_coins_hint"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
                             android:text="@string/send_coins_fragment_sending_address_label"
                             android:textColor="@color/text_field_light_text_color"
                             android:textSize="14sp"

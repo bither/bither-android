@@ -62,6 +62,7 @@ import javax.annotation.Nullable;
 public class SignTxActivity extends SwipeRightActivity implements
         IDialogPasswordListener {
 
+    private TextView tvCoinType;
     private TextView tvFrom;
     private TextView tvTo;
     private TextView tvAmount;
@@ -91,6 +92,7 @@ public class SignTxActivity extends SwipeRightActivity implements
     private void initView() {
         findViewById(R.id.ibtn_cancel).setOnClickListener(
                 new IBackClickListener(0, R.anim.slide_out_right));
+        tvCoinType = findViewById(R.id.tv_coin_type);
         tvFrom = (TextView) findViewById(R.id.tv_address_from);
         tvTo = (TextView) findViewById(R.id.tv_address_to);
         tvAmount = (TextView) findViewById(R.id.tv_amount);

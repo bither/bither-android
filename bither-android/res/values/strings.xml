@@ -819,6 +819,8 @@
 
     <string name="bitpie_scan_unsigned_transaction_title">Scan QR Code on Bitpie</string>
     <string name="bitpie_scan_message_title">Scan QR Code on Bitpie</string>
+    <string name="bitpie_scan_sign_message_monitor">Bitpie connection signature</string>
+    <string name="bitpie_signed_message_qr_code_title">Scan with Bitpie to connect</string>
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
 
