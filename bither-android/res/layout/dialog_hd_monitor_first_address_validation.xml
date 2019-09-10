@@ -16,6 +16,16 @@
         android:textSize="18sp"/>
 
     <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="@string/monitor_addresses_tip"
+        android:textAlignment="center"
+        android:textColor="@color/password_strength_normal"
+        android:textSize="13sp"/>
+
+    <TextView
         android:id="@+id/tv_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

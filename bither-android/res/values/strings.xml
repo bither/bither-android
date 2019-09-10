@@ -731,6 +731,7 @@
     <string name="hd_account_show_xpub">Show XPub</string>
     <string name="hd_account_monitor_check_first_address">Check First Address</string>
     <string name="monitor_addresses_validation">Check Monitored Addresses</string>
+    <string name="monitor_addresses_tip">Be assured the Bither Cold Wallet of the monitor address is under your control</string>
     <string name="title_activity_ad">AdActivity</string>
 
     <!-- Ad -->

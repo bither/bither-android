@@ -699,6 +699,7 @@
     <string name="hd_account_show_xpub">顯示 XPub</string>
     <string name="hd_account_monitor_check_first_address">請檢查第 1 個地址</string>
     <string name="monitor_addresses_validation">請檢查所監控的地址</string>
+    <string name="monitor_addresses_tip">請確保該監控地址所對應的比太冷錢包在您手中</string>
 
     <!-- Ad -->
     <string name="ad_go">前往</string>
