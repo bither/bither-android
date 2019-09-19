@@ -42,6 +42,7 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.cold.BitpieColdSignChangeCoinActivity;
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.cold.ColdAdvanceActivity;
 import net.bither.activity.cold.SignTxActivity;
@@ -78,8 +79,6 @@ import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.UnitUtilWrapper;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -101,6 +100,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
     private LinearLayout llQrForAll;
     private DialogProgress dp;
     private TextView tvPrivacyPolicy;
+    private Button btnGetSignChangeCoin;
 
     private SettingSelectorView.SettingSelector bitcoinUnitSelector = new SettingSelectorView
             .SettingSelector() {
@@ -157,7 +157,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
                         || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
                     && !AddressManager.getInstance().hasHDMKeychain()
                     && !EnterpriseHDMSeed.hasSeed()
-                    && !AddressManager.getInstance().hasHDAccountCold()) {
+                    && !AddressManager.getInstance().hasHDAccountCold()
+                    && !AddressManager.getInstance().hasBitpieHDAccountCold()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
                 return;
             }
@@ -165,6 +166,20 @@ public class OptionColdFragment extends Fragment implements Selectable {
             startActivity(intent);
         }
     };
+
+    private OnClickListener toSignChangeCoinActivityClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (!AddressManager.getInstance().hasBitpieHDAccountCold()) {
+                DropdownMessage.showDropdownMessage(getActivity(), R.string.bitpie_connector_add_account_label);
+                return;
+            }
+            Intent intent = new Intent(getActivity(), BitpieColdSignChangeCoinActivity.class);
+            startActivity(intent);
+        }
+    };
+
     private OnClickListener cloneToClick = new OnClickListener() {
 
         @Override
@@ -321,6 +336,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
     private void initView(View view) {
         btnGetSign = (Button) view.findViewById(R.id.btn_get_sign);
+        btnGetSignChangeCoin = view.findViewById(R.id.btn_get_sign_change_coin);
         btnCloneTo = (Button) view.findViewById(R.id.btn_clone_to);
         btnCloneFrom = (Button) view.findViewById(R.id.btn_clone_from);
         btnAdvance = (Button) view.findViewById(R.id.btn_advance);
@@ -347,6 +363,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
         tvPrivacyPolicy.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         dp = new DialogProgress(getActivity(), R.string.please_wait);
         btnGetSign.setOnClickListener(toSignActivityClickListener);
+        btnGetSignChangeCoin.setOnClickListener(toSignChangeCoinActivityClickListener);
         btnCloneTo.setOnClickListener(cloneToClick);
         btnCloneFrom.setOnClickListener(cloneFromClick);
         llQrForAll.setOnClickListener(qrForAllClick);

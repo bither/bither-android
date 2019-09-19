@@ -783,8 +783,13 @@
     <string name="bitpie_activity_send_coins_label">幣種</string>
     <string name="bitpie_scan_unsigned_transaction_title">掃描比特派上的未簽名交易</string>
     <string name="bitpie_scan_message_title">掃描比特派上的待签名消息</string>
-    <string name="bitpie_scan_sign_message_monitor">比特派連接簽名</string>
-    <string name="bitpie_signed_message_qr_code_title">用比特派掃描以連接</string>
+    <string name="bitpie_scan_sign_message_monitor">比特派登錄簽名</string>
+    <string name="bitpie_signed_message_qr_code_title">用比特派掃描以登錄</string>
+    <string name="bitpie_signed_message_change_coin">簽名切換幣種</string>
+    <string name="bitpie_signed_miner_fee_tx">簽名礦工費交易</string>
+    <string name="bitpie_signed_send_tx">簽名發幣交易</string>
+    <string name="bitpie_signed_message_change_to_coin_title">比特派切換幣種</string>
+    <string name="bitpie_signed_message_change_coin_confirm">確認切換</string>
 
     <string name="permissions_no_grant">請前往設置->應用->比太->權限管理中打開相關權限，否則功能無法正常使用！</string>
 

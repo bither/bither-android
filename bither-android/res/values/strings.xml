@@ -819,8 +819,13 @@
 
     <string name="bitpie_scan_unsigned_transaction_title">Scan QR Code on Bitpie</string>
     <string name="bitpie_scan_message_title">Scan QR Code on Bitpie</string>
-    <string name="bitpie_scan_sign_message_monitor">Bitpie connection signature</string>
-    <string name="bitpie_signed_message_qr_code_title">Scan with Bitpie to connect</string>
+    <string name="bitpie_scan_sign_message_monitor">Sign to log in Bitpie</string>
+    <string name="bitpie_signed_message_qr_code_title">Use Bitpie scan to login</string>
+    <string name="bitpie_signed_message_change_coin">Sign to switch coin</string>
+    <string name="bitpie_signed_miner_fee_tx">Sign to pay transaction fee</string>
+    <string name="bitpie_signed_send_tx">Sign Transaction</string>
+    <string name="bitpie_signed_message_change_to_coin_title">Bitpie coin switch</string>
+    <string name="bitpie_signed_message_change_coin_confirm">Confirm to switch</string>
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
 

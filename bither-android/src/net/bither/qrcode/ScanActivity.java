@@ -70,6 +70,7 @@ import net.bither.ui.base.dialog.DialogProgress;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.PermissionUtil;
+import net.bither.util.ThreadUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,8 +173,8 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 						});
 						dialogConfirmTask.show();
 					} else {
-						openRunnable.run();
-					}
+                        ThreadUtil.getMainThreadHandler().postDelayed(openRunnable, 400);
+                    }
 				}
 			default:
 				break;

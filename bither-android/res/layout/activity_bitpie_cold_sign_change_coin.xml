@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <net.bither.ui.base.SwipeRightTouchView
+        android:id="@+id/swipe_right_touch_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffffff">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/title_bar_below_margin">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_can_not_find_private_key"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/dropdown_message_background_color"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="@string/can_not_find_private_key"
+                        android:textColor="@color/red"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="@string/bitpie_signed_message_change_to_coin_title"
+                            android:textColor="@color/text_field_light_text_color"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/tv_coin_type"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:singleLine="true"
+                            android:textColor="@color/text_field_text_color"
+                            android:textSize="18sp"/>
+
+                        <Button
+                            android:id="@+id/btn_sign"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginRight="20dp"
+                            android:layout_marginTop="30dp"
+                            android:background="@drawable/btn_small_send_selector"
+                            android:padding="10dp"
+                            android:text="@string/bitpie_signed_message_change_coin_confirm"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+
+            <include layout="@layout/layout_dropdown_message"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/rl_title_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="49.0dip"
+            android:layout_gravity="top"
+            android:background="@drawable/action_bar_black_bg"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/ibtn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:background="@drawable/action_bar_black_left_button"
+                android:src="@drawable/action_bar_glyph_cancel"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:shadowColor="@color/text_field_text_color"
+                android:shadowDx="1"
+                android:shadowDy="-1"
+                android:shadowRadius="0.5"
+                android:text="@string/bitpie_signed_message_change_coin"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </net.bither.ui.base.SwipeRightTouchView>
+
+</FrameLayout>

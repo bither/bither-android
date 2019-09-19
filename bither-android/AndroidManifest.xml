@@ -409,13 +409,15 @@
             android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
-            android:name=".activity.cold.BitpieSignTxActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BitherTransparentBgTheme" />
-        <activity
             android:name=".activity.cold.BitpieColdSignMessageActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/BitherTransparentBgTheme" />
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activity.cold.BitpieColdSignChangeCoinActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"

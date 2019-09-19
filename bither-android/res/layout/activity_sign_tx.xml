@@ -210,42 +210,50 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:text="@string/send_confirm_fee"
-                            android:textColor="@color/text_field_light_text_color"
-                            android:textSize="14sp"
-                            android:textStyle="bold"/>
-
                         <LinearLayout
+                            android:id="@+id/ll_fee"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:orientation="horizontal">
+                            android:orientation="vertical" >
 
                             <TextView
-                                android:id="@+id/tv_fee"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginLeft="5dp"
-                                android:singleLine="true"
-                                android:text="@string/add_address_watch_only_hint"
-                                android:textColor="@color/text_field_text_color"
-                                android:textSize="16sp"/>
+                                android:layout_marginTop="15dp"
+                                android:text="@string/send_confirm_fee"
+                                android:textColor="@color/text_field_light_text_color"
+                                android:textSize="14sp"
+                                android:textStyle="bold"/>
 
-                            <TextView
-                                android:id="@+id/tv_fee_symbol"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:layout_marginLeft="2dp"
-                                android:singleLine="true"
-                                android:text="@string/bitcoin_symbol"
-                                android:textColor="@color/text_field_text_color"
-                                android:textSize="16sp"/>
+                                android:layout_marginTop="5dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tv_fee"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="5dp"
+                                    android:singleLine="true"
+                                    android:text="@string/add_address_watch_only_hint"
+                                    android:textColor="@color/text_field_text_color"
+                                    android:textSize="16sp"/>
+
+                                <TextView
+                                    android:id="@+id/tv_fee_symbol"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="2dp"
+                                    android:singleLine="true"
+                                    android:text="@string/bitcoin_symbol"
+                                    android:textColor="@color/text_field_text_color"
+                                    android:textSize="16sp"/>
+                            </LinearLayout>
+
                         </LinearLayout>
 
                         <Button

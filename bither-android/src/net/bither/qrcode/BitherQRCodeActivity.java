@@ -30,6 +30,9 @@ import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.activity.cold.BitpieColdSignChangeCoinActivity;
+import net.bither.activity.cold.SignTxActivity;
+import net.bither.bitherj.qrcode.QRCodeBitpieColdSignMessage;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -43,8 +46,6 @@ import net.bither.ui.base.listener.IBackClickListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.bither.bitherj.qrcode.QRCodeUtil.BITPIE_COLD_MONITOR_QR_SING_MESSAGE_PREFIX;
-
 public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements DialogQRCodeOption.ISwitchQRCode {
     private List<String> contents;
     private List<String> oldContents;
@@ -55,6 +56,9 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
     private ImageButton btnSwitch;
     private boolean isNewVerion;
     private boolean hasOldQRCode;
+    private QRCodeBitpieColdSignMessage.SignMessageType signMessageType;
+    private boolean isFeeTx;
+    private boolean isOnlyGetXpub;
 
     private QRFragmentPagerAdapter adapter;
 
@@ -75,6 +79,15 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
             if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING)) {
                 hasChangeAddress = intent.getExtras().getBoolean(BitherSetting.INTENT_REF.QR_CODE_HAS_CHANGE_ADDRESS_STRING);
             }
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_MESSAGE_TYPE_STRING)) {
+                signMessageType = QRCodeBitpieColdSignMessage.getSignMessageType(intent.getExtras().getInt(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_MESSAGE_TYPE_STRING, 0));
+            }
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_FEE_TX_STRING)) {
+                isFeeTx = intent.getExtras().getBoolean(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_FEE_TX_STRING, false);
+            }
+            if (intent.getExtras().containsKey(BitherSetting.INTENT_REF.BITPIE_COLD_CHANGE_COIN_IS_ONLY_GET_XPUB_STRING)) {
+                isOnlyGetXpub = intent.getExtras().getBoolean(BitherSetting.INTENT_REF.BITPIE_COLD_CHANGE_COIN_IS_ONLY_GET_XPUB_STRING, false);
+            }
         }
         hasOldQRCode = !Utils.isEmpty(oldString) || hasChangeAddress;
         if (!Utils.isEmpty(oldString)) {
@@ -85,7 +98,7 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
             overridePendingTransition(0, 0);
         } else {
             isNewVerion = true;
-            if (codeString.startsWith(BITPIE_COLD_MONITOR_QR_SING_MESSAGE_PREFIX)) {
+            if (signMessageType != null) {
                 this.contents = new ArrayList<>();
                 contents.add(codeString);
             } else {
@@ -155,11 +168,24 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
     };
 
     protected void complete() {
+        if (isFeeTx) {
+            Intent intent = new Intent(this, SignTxActivity.class);
+            startActivity(intent);
+        } else if (signMessageType != null && signMessageType == QRCodeBitpieColdSignMessage.SignMessageType.ChangeCoinGetXpub && !isOnlyGetXpub) {
+            Intent intent = new Intent(this, BitpieColdSignChangeCoinActivity.class);
+            startActivity(intent);
+        }
         super.finish();
     }
 
     protected String getCompleteButtonTitle() {
-        return getString(R.string.complete);
+        if (isFeeTx) {
+            return getString(R.string.bitpie_signed_send_tx);
+        } else if (signMessageType != null && signMessageType == QRCodeBitpieColdSignMessage.SignMessageType.ChangeCoinGetXpub && !isOnlyGetXpub) {
+            return getString(R.string.bitpie_signed_message_change_coin);
+        } else {
+            return getString(R.string.complete);
+        }
     }
 
     protected String getTitleString() {

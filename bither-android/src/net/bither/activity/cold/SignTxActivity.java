@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.common.base.Function;
@@ -31,7 +32,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.core.Coin;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.ECKey;
@@ -40,8 +41,6 @@ import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
-import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.BitherQRCodeActivity;
 import net.bither.qrcode.ScanActivity;
 import net.bither.qrcode.ScanQRCodeTransportActivity;
@@ -54,6 +53,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +76,7 @@ public class SignTxActivity extends SwipeRightActivity implements
 
     private Button btnSign;
     private TextView tvCannotFindPrivateKey;
+    private LinearLayout llFee;
 
     private QRCodeTxTransport qrCodeTransport;
 
@@ -96,6 +97,7 @@ public class SignTxActivity extends SwipeRightActivity implements
         tvFrom = (TextView) findViewById(R.id.tv_address_from);
         tvTo = (TextView) findViewById(R.id.tv_address_to);
         tvAmount = (TextView) findViewById(R.id.tv_amount);
+        llFee = findViewById(R.id.ll_fee);
         tvFee = (TextView) findViewById(R.id.tv_fee);
         llChange = findViewById(R.id.ll_change);
         tvAddressChange = (TextView) findViewById(R.id.tv_address_change);
@@ -112,15 +114,14 @@ public class SignTxActivity extends SwipeRightActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE
-                && resultCode == Activity.RESULT_OK) {
-            String str = data.getExtras().getString(
-                    ScanActivity.INTENT_EXTRA_RESULT);
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            String str = data.getExtras().getString(ScanActivity.INTENT_EXTRA_RESULT);
             qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
             if (qrCodeTransport != null) {
                 showTransaction();
             } else {
                 super.finish();
+                return;
             }
         } else {
             super.finish();
@@ -130,48 +131,65 @@ public class SignTxActivity extends SwipeRightActivity implements
     }
 
     private void showTransaction() {
-        String symbol;
-        Coin coin = Utils.getCoinByAddressHeader(qrCodeTransport.getToAddress());
-        if(coin == Coin.BTC) {
-            symbol = AppSharedPreference.getInstance().getBitcoinUnit().name();
+        String symbol = qrCodeTransport.getCoinDetail().displayCode;
+        int unitDecimal = qrCodeTransport.getCoinDetail().unitDecimal;
+        if (qrCodeTransport.isUseOwnFee() && qrCodeTransport.getFeeCoinDetail() != null) {
+            llFee.setVisibility(View.GONE);
         } else {
-            symbol = coin.getSplitCoin().getName();
+            String feeSymbol;
+            int feeUnitDecimal;
+            if (qrCodeTransport.getFeeCoinDetail() == null || qrCodeTransport.isUseOwnFee()) {
+                feeSymbol = symbol;
+                feeUnitDecimal = unitDecimal;
+            } else {
+                feeSymbol = qrCodeTransport.getFeeCoinDetail().displayCode;
+                feeUnitDecimal = qrCodeTransport.getFeeCoinDetail().unitDecimal;
+            }
+            tvFeeSymbol.setText(feeSymbol);
+            tvFee.setText(UnitUtilWrapper.formatValueWithBoldByUnit(BigInteger.valueOf(qrCodeTransport.getFee()), feeUnitDecimal));
+            llFee.setVisibility(View.VISIBLE);
         }
 
+        tvCoinType.setText(symbol);
         tvSymbol.setText(symbol);
-        tvFeeSymbol.setText(symbol);
         tvSymbolChange.setText(symbol);
         if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHD) {
             tvFrom.setText(R.string.address_group_hd_monitored);
+        } if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.BitpieCold) {
+            tvFrom.setText(R.string.bitpie_hd_account_cold_address_list_label);
         } else {
             tvFrom.setText(WalletUtils.formatHash(qrCodeTransport.getMyAddress(), 4,
                     qrCodeTransport.getMyAddress().length()));
         }
         tvTo.setText(WalletUtils.formatHash(qrCodeTransport.getToAddress(), 4, qrCodeTransport.getToAddress().length()));
-        tvAmount.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getTo(), coin));
-        tvFee.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getFee(), coin));
+        tvAmount.setText(UnitUtilWrapper.formatValueWithBoldByUnit(BigInteger.valueOf(qrCodeTransport.getTo()), unitDecimal));
         llChange.setVisibility(View.GONE);
         if(!Utils.isEmpty(qrCodeTransport.getChangeAddress())){
             llChange.setVisibility(View.VISIBLE);
             tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
-            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBold(qrCodeTransport.getChangeAmt(),coin));
+            tvAmountChange.setText(UnitUtilWrapper.formatValueWithBoldByUnit(BigInteger.valueOf(qrCodeTransport.getChangeAmt()), unitDecimal));
         }
-        Address address = WalletUtils
-                .findPrivateKey(qrCodeTransport.getMyAddress());
-        if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport
-                .getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD) ||
-                (qrCodeTransport
-                .getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() != QRCodeTxTransport
-                .TxTransportType.ColdHDM && !AddressManager.getInstance().hasHDMKeychain()) ||
-                (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() ==
-                        QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()
-                ) || (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
-                .ColdHD && !AddressManager.getInstance().hasHDAccountCold())) {
-            btnSign.setEnabled(false);
-            tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
-        } else {
+        if (qrCodeTransport.getTxTransportType().isBitpieCold()
+                && AddressManager.getInstance().hasBitpieHDAccountCold()
+                && AddressManager.getInstance().getBitpieHDAccountCold().getFirstAddressFromDb().equals(qrCodeTransport.getMyAddress())) {
             btnSign.setEnabled(true);
+            if (qrCodeTransport.isFeeTx()) {
+                btnSign.setText(R.string.bitpie_signed_miner_fee_tx);
+            }
             tvCannotFindPrivateKey.setVisibility(View.GONE);
+        } else {
+            Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());
+            if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD && !qrCodeTransport.getTxTransportType().isBitpieCold()) ||
+                    (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHDM && !AddressManager.getInstance().hasHDMKeychain()) ||
+                    (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()) ||
+                    (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHD && !AddressManager.getInstance().hasHDAccountCold()) ||
+                    (qrCodeTransport.getTxTransportType().isBitpieCold() && !AddressManager.getInstance().hasBitpieHDAccountCold())) {
+                btnSign.setEnabled(false);
+                tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
+            } else {
+                btnSign.setEnabled(true);
+                tvCannotFindPrivateKey.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -190,8 +208,7 @@ public class SignTxActivity extends SwipeRightActivity implements
         Thread thread = new Thread() {
             public void run() {
                 List<String> strings = null;
-                if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
-                        .ColdHD) {
+                if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHD) {
                     HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
                     try {
                         List<byte[]> bytes = account.signHashHexes(qrCodeTransport.getHashList(),
@@ -218,8 +235,32 @@ public class SignTxActivity extends SwipeRightActivity implements
                         password.wipe();
                         return;
                     }
-
-
+                } else if (qrCodeTransport.getTxTransportType().isBitpieCold()) {
+                    BitpieHDAccountCold bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
+                    try {
+                        List<byte[]> bytes = bitpieHDAccountCold.signHashHexes(qrCodeTransport.getHashList(), qrCodeTransport.getPathTypeIndexes(), qrCodeTransport.getCoinDetail(), qrCodeTransport.getFeeCoinDetail(), password);
+                        strings = new ArrayList<String>(Collections2.transform(bytes, new
+                                Function<byte[], String>() {
+                                    @Nullable
+                                    @Override
+                                    public String apply(byte[] input) {
+                                        return Utils.bytesToHexString(input);
+                                    }
+                                }));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        dp.setThread(null);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dp.dismiss();
+                                DropdownMessage.showDropdownMessage(SignTxActivity.this, R.string
+                                        .unsigned_transaction_sign_failed);
+                            }
+                        });
+                        password.wipe();
+                        return;
+                    }
                 } else if (qrCodeTransport.getHdmIndex() >= 0) {
                     if (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType
                             .ColdHDM) {
@@ -327,6 +368,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                         dp.dismiss();
                         Intent intent = new Intent(SignTxActivity.this, BitherQRCodeActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, r);
+                        intent.putExtra(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_FEE_TX_STRING, qrCodeTransport.isFeeTx());
                         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.signed_transaction_qr_code_title));
                         startActivity(intent);
                         finish();
@@ -352,8 +394,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                 ScanQRCodeTransportActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING,
                 getString(R.string.scan_unsigned_transaction_title));
-        startActivityForResult(intent,
-                BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
+        startActivityForResult(intent, BitherSetting.INTENT_REF.SCAN_REQUEST_CODE);
     }
 
 }

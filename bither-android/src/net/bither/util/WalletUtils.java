@@ -27,6 +27,7 @@ import android.text.style.TypefaceSpan;
 import net.bither.BitherSetting;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
@@ -133,9 +134,7 @@ public class WalletUtils {
 
     public static Address findPrivateKey(String address) {
         for (Address bitherAddressWithPrivateKey : AddressManager.getInstance().getPrivKeyAddresses()) {
-
-            if (Utils.compareString(address,
-                    bitherAddressWithPrivateKey.getAddress())) {
+            if (Utils.compareString(address, bitherAddressWithPrivateKey.getAddress())) {
                 return bitherAddressWithPrivateKey;
             }
         }
@@ -148,7 +147,5 @@ public class WalletUtils {
         }
         return null;
     }
-
-
 
 }

@@ -30,6 +30,7 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.crypto.hd.DeterministicKey;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
@@ -138,7 +139,7 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
                                 public void run() {
                                     final ArrayList<String> words = new ArrayList<String>();
                                     try {
-                                        words.addAll(bitpiehdAccountCold.getSeedWords(password));
+                                        words.addAll(bitpiehdAccountCold.getSeedWords(password, true));
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         ThreadUtil.runOnMainThread(new Runnable() {
@@ -207,8 +208,8 @@ public class ColdAddressFragmentBitpieHDAccountColdListItemView extends FrameLay
                                         @Override
                                         public void run() {
                                             try {
-                                                final String content = bitpiehdAccountCold.xPubB58(password);
-                                                final String p2shp2wpkhContent = bitpiehdAccountCold.p2shp2wpkhXPubB58(password);
+                                                final String content = DeterministicKey.deserializeB58(bitpiehdAccountCold.xPubB58(password)).serializePubB58();
+                                                final String p2shp2wpkhContent = DeterministicKey.deserializeB58(bitpiehdAccountCold.p2shp2wpkhXPubB58(password)).serializePubB58();
                                                 ThreadUtil.runOnMainThread(new Runnable() {
                                                     @Override
                                                     public void run() {

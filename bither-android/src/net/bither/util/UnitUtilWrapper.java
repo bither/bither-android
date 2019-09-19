@@ -46,6 +46,8 @@ import net.bither.bitherj.utils.UnitUtil;
 import net.bither.bitherj.utils.UnitUtil.BitcoinUnit;
 import net.bither.preference.AppSharedPreference;
 
+import java.math.BigInteger;
+
 /**
  * Created by songchenwen on 14-11-11.
  */
@@ -116,7 +118,7 @@ public class UnitUtilWrapper {
         return UnitUtil.formatValue(value, unit().unit);
     }
 
-    public static String formatValue(final long value,SplitCoin splitCoin) {
+    public static String formatValue(final long value, SplitCoin splitCoin) {
         return UnitUtil.formatValue(value, splitCoin.getBitcoinUnit());
     }
 
@@ -126,19 +128,40 @@ public class UnitUtilWrapper {
 
 
     public static SpannableString formatValueWithBold(final long value, Coin coin) {
-        if(coin != Coin.BTC) {
-            return formatValueWithBold(value, 2,coin.getSplitCoin());
+        if (coin != Coin.BTC) {
+            return formatValueWithBold(value, 2, coin.getSplitCoin());
         }
         return formatValueWithBold(value);
     }
 
-    private static SpannableString formatValueWithBold(final long value, int boldLengthAfterDot,SplitCoin...coin) {
+    public static SpannableString formatValueWithBoldByUnit(final BigInteger value, int unitDecimal) {
+        return formatValueWithBoldByUnit(value, unitDecimal, 2);
+    }
+
+    private static SpannableString formatValueWithBold(final long value, int boldLengthAfterDot, SplitCoin... coin) {
         String str;
         if (coin != null && coin.length > 0) {
-            str = formatValue(value,coin[0]);
-        }else {
+            str = formatValue(value, coin[0]);
+        } else {
             str = formatValue(value);
         }
+        int dotPosition = str.indexOf(".");
+        int boldLength = str.length();
+        if (dotPosition > 0 && dotPosition + boldLengthAfterDot < str.length()) {
+            boldLength = dotPosition + boldLengthAfterDot + 1;
+        }
+        SpannableString spannable = new SpannableString(str);
+        spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, boldLength,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (boldLength < str.length()) {
+            spannable.setSpan(new RelativeSizeSpan(0.8f), boldLength, str.length(),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return spannable;
+    }
+
+    private static SpannableString formatValueWithBoldByUnit(final BigInteger value, int unitDecimal, int boldLengthAfterDot) {
+        String str = UnitUtil.formatValue(value, unitDecimal);
         int dotPosition = str.indexOf(".");
         int boldLength = str.length();
         if (dotPosition > 0 && dotPosition + boldLengthAfterDot < str.length()) {

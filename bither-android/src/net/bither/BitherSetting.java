@@ -84,6 +84,9 @@ public class BitherSetting {
         public static final String OLD_QR_CODE_STRING = "old_qr_code_string";
         public static final String QR_CODE_HAS_CHANGE_ADDRESS_STRING = "qr_code_has_change_address";
         public static final String TITLE_STRING = "title_string";
+        public static final String BITPIE_COLD_SIGN_MESSAGE_TYPE_STRING = "bitpie_cold_sign_message_type_string";
+        public static final String BITPIE_COLD_CHANGE_COIN_IS_ONLY_GET_XPUB_STRING = "bitpie_cold_change_coin_is_only_get_xpub_string";
+        public static final String BITPIE_COLD_SIGN_FEE_TX_STRING = "bitpie_cold_sign_fee_tx_string";
         public static final String QRCODE_TYPE = "qrcode_type";
         public static final String MARKET_INTENT = "market_intnet";
         public static final String PIC_PASS_VALUE_TAG = "pic_pass_value";
