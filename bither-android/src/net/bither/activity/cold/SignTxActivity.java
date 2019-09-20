@@ -19,6 +19,7 @@ package net.bither.activity.cold;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -33,11 +34,13 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.EnterpriseHDMSeed;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.ECKey;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
+import net.bither.bitherj.exception.BitpieColdNoSupportCoinException;
 import net.bither.bitherj.qrcode.QRCodeTxTransport;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
@@ -116,10 +119,19 @@ public class SignTxActivity extends SwipeRightActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
-            if (qrCodeTransport != null) {
-                showTransaction();
-            } else {
+            try {
+                qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
+                if (qrCodeTransport != null) {
+                    showTransaction();
+                } else {
+                    super.finish();
+                    return;
+                }
+            } catch (BitpieColdNoSupportCoinException ex) {
+                ex.printStackTrace();
+                showScanResultInvalid(getString(R.string.bitpie_no_support_coin));
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 super.finish();
                 return;
             }
@@ -131,8 +143,16 @@ public class SignTxActivity extends SwipeRightActivity implements
     }
 
     private void showTransaction() {
-        String symbol = qrCodeTransport.getCoinDetail().displayCode;
-        int unitDecimal = qrCodeTransport.getCoinDetail().unitDecimal;
+        String symbol;
+        int unitDecimal;
+        if (qrCodeTransport.getCoinDetail() == null) {
+             Coin coin = Utils.getCoinByAddressHeader(qrCodeTransport.getToAddress());
+            symbol = coin.getName();
+            unitDecimal = coin.getUnitDecimal();
+        } else {
+            symbol = qrCodeTransport.getCoinDetail().displayCode;
+            unitDecimal = qrCodeTransport.getCoinDetail().unitDecimal;
+        }
         if (qrCodeTransport.isUseOwnFee() && qrCodeTransport.getFeeCoinDetail() != null) {
             llFee.setVisibility(View.GONE);
         } else {
@@ -169,14 +189,17 @@ public class SignTxActivity extends SwipeRightActivity implements
             tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
             tvAmountChange.setText(UnitUtilWrapper.formatValueWithBoldByUnit(BigInteger.valueOf(qrCodeTransport.getChangeAmt()), unitDecimal));
         }
-        if (qrCodeTransport.getTxTransportType().isBitpieCold()
-                && AddressManager.getInstance().hasBitpieHDAccountCold()
-                && AddressManager.getInstance().getBitpieHDAccountCold().getFirstAddressFromDb().equals(qrCodeTransport.getMyAddress())) {
-            btnSign.setEnabled(true);
-            if (qrCodeTransport.isFeeTx()) {
-                btnSign.setText(R.string.bitpie_signed_miner_fee_tx);
+        if (qrCodeTransport.getTxTransportType().isBitpieCold()) {
+            if (AddressManager.getInstance().hasBitpieHDAccountCold() && AddressManager.getInstance().getBitpieHDAccountCold().getFirstAddressFromDb().equals(qrCodeTransport.getMyAddress())) {
+                btnSign.setEnabled(true);
+                if (qrCodeTransport.isFeeTx()) {
+                    btnSign.setText(R.string.bitpie_signed_miner_fee_tx);
+                }
+                tvCannotFindPrivateKey.setVisibility(View.GONE);
+            } else {
+                btnSign.setEnabled(false);
+                tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
             }
-            tvCannotFindPrivateKey.setVisibility(View.GONE);
         } else {
             Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());
             if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD && !qrCodeTransport.getTxTransportType().isBitpieCold()) ||

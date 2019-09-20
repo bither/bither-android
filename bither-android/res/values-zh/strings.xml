@@ -789,6 +789,8 @@
     <string name="bitpie_signed_send_tx">签名发币交易</string>
     <string name="bitpie_signed_message_change_to_coin_title">比特派切换币种</string>
     <string name="bitpie_signed_message_change_coin_confirm">确认切换</string>
+    <string name="bitpie_signed_change_coin_qr_code_title">用比特派扫描以切换币种</string>
+    <string name="bitpie_no_support_coin">暂不支持该币种，请升级至最新版本重试</string>
 
     <string name="permissions_no_grant">请前往设置->应用->比太->权限管理中打开相关权限，否则功能无法正常使用！</string>
 

@@ -81,22 +81,20 @@ public class BitpieColdSignMessageActivity extends SwipeRightActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(ScanActivity.INTENT_EXTRA_RESULT);
-            qrCodeBitpieColdSignMessage = QRCodeBitpieColdSignMessage.formatQRCode(str);
-            if (qrCodeBitpieColdSignMessage != null) {
-                DialogPassword dialogPassword = new DialogPassword(this, this);
-                dialogPassword.show();
-            } else {
-                DropdownMessage.showDropdownMessage(BitpieColdSignMessageActivity.this, "请扫比特派钱包上的待签名消息");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        BitpieColdSignMessageActivity.super.finish();
-                    }
-                }, 500);
+            try {
+                qrCodeBitpieColdSignMessage = QRCodeBitpieColdSignMessage.formatQRCode(str);
+                if (qrCodeBitpieColdSignMessage != null) {
+                    DialogPassword dialogPassword = new DialogPassword(this, this);
+                    dialogPassword.show();
+                } else {
+                    super.finish();
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                super.finish();
             }
         } else {
             super.finish();
-            return;
         }
     }
 

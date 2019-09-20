@@ -826,6 +826,8 @@
     <string name="bitpie_signed_send_tx">Sign Transaction</string>
     <string name="bitpie_signed_message_change_to_coin_title">Bitpie coin switch</string>
     <string name="bitpie_signed_message_change_coin_confirm">Confirm to switch</string>
+    <string name="bitpie_signed_change_coin_qr_code_title">Use Bitpie scan to switch</string>
+    <string name="bitpie_no_support_coin">This coin hasn`t been supported yet, please update to the newest version</string>
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
 

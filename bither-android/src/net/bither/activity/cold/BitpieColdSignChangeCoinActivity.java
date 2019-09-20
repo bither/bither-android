@@ -12,6 +12,7 @@ import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.exception.BitpieColdNoSupportCoinException;
 import net.bither.bitherj.qrcode.QRCodeBitpieColdSignMessage;
 import net.bither.bitherj.utils.Utils;
 import net.bither.qrcode.BitherQRCodeActivity;
@@ -44,18 +45,27 @@ public class BitpieColdSignChangeCoinActivity extends SwipeRightActivity impleme
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             String str = data.getExtras().getString(ScanActivity.INTENT_EXTRA_RESULT);
-            QRCodeBitpieColdSignMessage signMessage = QRCodeBitpieColdSignMessage.formatQRCode(str);
-            if (signMessage == null) {
+            try {
+                QRCodeBitpieColdSignMessage signMessage = QRCodeBitpieColdSignMessage.formatQRCode(str);
+                if (signMessage == null) {
+                    super.finish();
+                    return;
+                } else {
+                    qrCodeBitpieColdSignMessage = signMessage;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showChangeCoin();
+                        }
+                    }, 400);
+                }
+            } catch (BitpieColdNoSupportCoinException ex) {
+                ex.printStackTrace();
+                showScanResultInvalid(getString(R.string.bitpie_no_support_coin));
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 super.finish();
                 return;
-            } else {
-                qrCodeBitpieColdSignMessage = signMessage;
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        showChangeCoin();
-                    }
-                }, 400);
             }
         } else {
             super.finish();
@@ -126,7 +136,7 @@ public class BitpieColdSignChangeCoinActivity extends SwipeRightActivity impleme
                         dp.dismiss();
                         Intent intent = new Intent(BitpieColdSignChangeCoinActivity.this, BitherQRCodeActivity.class);
                         intent.putExtra(BitherSetting.INTENT_REF.QR_CODE_STRING, result);
-                        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.signed_transaction_qr_code_title));
+                        intent.putExtra(BitherSetting.INTENT_REF.TITLE_STRING, getString(R.string.bitpie_signed_change_coin_qr_code_title));
                         intent.putExtra(BitherSetting.INTENT_REF.BITPIE_COLD_SIGN_MESSAGE_TYPE_STRING, qrCodeBitpieColdSignMessage.getSignMessageType().getType());
                         intent.putExtra(BitherSetting.INTENT_REF.BITPIE_COLD_CHANGE_COIN_IS_ONLY_GET_XPUB_STRING, qrCodeBitpieColdSignMessage.isOnlyGetXpub());
                         startActivity(intent);

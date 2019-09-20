@@ -16,11 +16,13 @@
 
 package net.bither.ui.base;
 
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 
 import net.bither.R;
+import net.bither.activity.cold.BitpieColdSignChangeCoinActivity;
 
 public class SwipeRightActivity extends BaseActivity {
     protected SwipeRightTouchView mTouchView;
@@ -73,4 +75,19 @@ public class SwipeRightActivity extends BaseActivity {
 		getWindow().getAttributes().height = WindowManager.LayoutParams.MATCH_PARENT;
 		super.onResume();
 	}
+
+	protected void showScanResultInvalid(final String msg) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DropdownMessage.showDropdownMessage(SwipeRightActivity.this, msg, new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        return;
+                    }
+                });
+            }
+        }, 400);
+    }
 }
