@@ -165,6 +165,7 @@
     <string name="setting_name_transaction_fee_10x">10倍</string>
     <string name="setting_name_transaction_fee_20x">20倍</string>
     <string name="setting_name_transaction_fee_low">低</string>
+    <string name="setting_name_transaction_fee_lower">更低</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
@@ -213,7 +214,8 @@
     <string name="import_hdm_cold_seed_qr_code_scan_title">掃描HDM冷種子二維碼</string>
     <string name="import_bip38private_key_qr_code_scan_title">掃描BIP38私鑰二維碼</string>
     <string name="import_private_key_qr_code_password">輸入原密碼</string>
-    <string name="import_private_key_qr_code_success">導入成功</string>
+    <string name="import_private_key_qr_code_success">導入成功，只會加載未花費交易</string>
+    <string name="import_cold_private_key_qr_code_success">導入成功</string>
     <string name="import_private_key_qr_code_failed">導入失敗</string>
     <string name="import_hd_account_failed_duplicated">匯入失敗. 這個賬戶已經存在. </string>
     <string name="import_private_key_qr_code_failed_monitored">不能導入冷錢包私鑰</string>
@@ -222,7 +224,8 @@
     <string name="import_private_key_qr_code_failed_different_password">導入私鑰的密碼與已有密碼不同, 無法導入</string>
     <string name="import_private_key_failed_tx_too_mush">此私鑰有太多交易 ,不能導入</string>
     <string name="import_private_key_failed_special_address">此私鑰有特殊交易 ,不能導入</string>
-    <string name="reload_tx_need_too_much_time">確認重載交易數據 ?\n需要較長時間\n消耗網絡流量\n建議只在數據出錯時嘗試</string>
+    <string name="reload_tx_need_too_much_time">確認重載交易數據 ?\n只會加載未花費交易\n需要較長時間\n消耗網絡流量\n建議只在數據出錯時嘗試</string>
+    <string name="reload_tx_please_wait">正在重載交易數據，只會加載未花費交易，請耐心等待...</string>
     <string name="reload_tx_failed">重載交易數據失敗 , 請重試 . </string>
     <string name="reload_tx_success">重載交易數據成功 </string>
     <string name="tx_cannot_reloding">壹個小時內只能重載交易數據壹次.</string>
@@ -319,7 +322,7 @@
     <string name="scan_transaction_signature_title">掃描冷錢包上的簽名信息</string>
     <string name="scan_for_all_addresses_in_bither_cold">一鍵監控冷錢包</string>
     <string name="scan_for_all_addresses_in_bither_cold_title">掃描冷錢包的二維碼</string>
-    <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功</string>
+    <string name="scan_for_all_addresses_in_bither_cold_success">監控冷錢包成功，只會加載未花費交易</string>
     <string name="scan_for_all_addresses_in_bither_cold_failed">監控冷錢包失敗</string>
     <string name="time_is_wrong">系統時間錯誤, 請重新設置</string>
     <string name="only_supports_the_compressed_private_key">只支持壓縮格式的私鑰</string>
@@ -672,7 +675,7 @@
     <string name="monitor_cold_hd_account_limit">只能監控 1 個冷 HD 賬戶</string>
     <string name="monitor_cold_hd_account_failed">監控冷 HD 賬戶失敗</string>
     <string name="monitor_cold_hd_account_failed_duplicated">監控失敗. 這個賬戶已經存在.</string>
-    <string name="monitor_cold_hd_account_success">監控冷 HD 賬戶成功</string>
+    <string name="monitor_cold_hd_account_success">監控冷 HD 賬戶成功，只會加載未花費交易</string>
     <string name="address_group_hd_monitored">冷 HD 賬戶</string>
     <string name="hd_account_old_addresses">舊地址列表</string>
     <string name="hd_account_old_addresses_zero">目前還沒有使用過的地址</string>

@@ -135,7 +135,7 @@ public class AppSharedPreference {
         if (ordinal < BitherjSettings.TransactionFeeMode.values().length && ordinal >= 0) {
             return BitherjSettings.TransactionFeeMode.values()[ordinal];
         }
-        return BitherjSettings.TransactionFeeMode.TenX;
+        return BitherjSettings.TransactionFeeMode.Normal;
     }
 
     public void setTransactionFeeMode(BitherjSettings.TransactionFeeMode mode) {
@@ -149,7 +149,7 @@ public class AppSharedPreference {
     // TODO: set api mode
     public void setApiConfig(BitherjSettings.ApiConfig mode) {
         if (mode == null) {
-            mode = BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+            mode = BitherjSettings.ApiConfig.BITHER_NET;
         }
         this.mPreferences.edit().putInt(API_MODE, mode.ordinal()).commit();
     }
@@ -159,7 +159,7 @@ public class AppSharedPreference {
         if (config < BitherjSettings.ApiConfig.values().length && config >= 0) {
             return BitherjSettings.ApiConfig.values()[config];
         }
-        return BitherjSettings.ApiConfig.BLOCKCHAIN_INFO;
+        return BitherjSettings.ApiConfig.BITHER_NET;
     }
 
     public int getVerionCode() {

@@ -133,6 +133,10 @@ public class SignMessageActivity extends SwipeRightFragmentActivity implements
                 hdAccountCold = AddressManager.getInstance().getHDAccountCold();
             }
             hdAccountAddress = addressForIndex(index, pathType);
+            if (hdAccountAddress == null) {
+                finish();
+                return;
+            }
             tvAddress.setText(WalletUtils.formatHash(hdAccountAddress.getAddress(), 4, 12));
             ivQr.setContent(hdAccountAddress.getAddress(), theme.getFgColor(), theme.getBgColor());
         } else {

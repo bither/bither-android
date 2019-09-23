@@ -228,7 +228,6 @@ public class AddressDetailActivity extends SwipeRightFragmentActivity implements
                             } else {
                                 hasMore = false;
                             }
-                            Collections.sort(transactions);
                             mAdapter.notifyDataSetChanged();
                             isLoding = false;
                         }

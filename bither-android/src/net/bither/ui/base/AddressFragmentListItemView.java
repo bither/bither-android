@@ -125,7 +125,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         if (this.address != null && this.address.isSyncComplete()) {
             tvBalance.setText(UnitUtilWrapper.formatValueWithBold(this.address.getBalance()));
             tvBalanceMoney.setBigInteger(BigInteger.valueOf(this.address.getBalance()));
-            tvTransactionCount.setText(Integer.toString(this.address.txCount()));
+//            tvTransactionCount.setText(Integer.toString(this.address.txCount()));
 
             Tx lastTransaction = null;
             if (this.address.txCount() > 0) {

@@ -22,6 +22,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
@@ -108,8 +109,7 @@ public class BitherApplication extends Application {
     }
 
     public static void startBlockchainService() {
-        mContext.startService(new Intent(mContext, BlockchainService.class));
-
+            mContext.startService(new Intent(mContext, BlockchainService.class));
     }
 
 
@@ -204,9 +204,8 @@ public class BitherApplication extends Application {
         AppSharedPreference appSharedPreference = AppSharedPreference.getInstance();
         int updateCode = appSharedPreference.getUpdateCode();
 
-        if (updateCode == -1){
-            appSharedPreference.setTransactionFeeMode(BitherjSettings.TransactionFeeMode.TwentyX);
-
+        if (updateCode == -1) {
+            appSharedPreference.setTransactionFeeMode(BitherjSettings.TransactionFeeMode.Normal);
             appSharedPreference.setUpdateCode(FEE_UPDATE_CODE);
         }
     }

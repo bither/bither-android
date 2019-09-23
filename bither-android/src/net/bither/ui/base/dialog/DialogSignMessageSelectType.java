@@ -18,7 +18,6 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 
 import static net.bither.SignMessageAddressListActivity.IsHdAccountHot;
 import static net.bither.SignMessageAddressListActivity.IsSignHash;
-import static net.bither.SignMessageAddressListActivity.PassWord;
 import static net.bither.SignMessageAddressListActivity.SignMgsTypeSelect;
 
 /**
@@ -93,7 +92,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdReceive);
-                        intent.putExtra(PassWord, password.toString());
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
                         getContext().startActivity(intent);
@@ -111,7 +109,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdChange);
-                        intent.putExtra(PassWord, password);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
                         getContext().startActivity(intent);
@@ -129,7 +126,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.BitpieColdReceive);
-                        intent.putExtra(PassWord, password.toString());
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
                         getContext().startActivity(intent);
@@ -147,7 +143,6 @@ public class DialogSignMessageSelectType extends CenterDialog {
                     public void onPasswordEntered(final SecureCharSequence password) {
                         Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.BitpieColdChange);
-                        intent.putExtra(PassWord, password);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
                         getContext().startActivity(intent);

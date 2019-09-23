@@ -24,14 +24,11 @@ public class GetBlockCountRunnable extends BaseRunnable {
 	public void run() {
 		obtainMessage(HandlerMessage.MSG_PREPARE);
 		try {
-			GetBlockCountApi getBlockCountApi = new GetBlockCountApi();
-			getBlockCountApi.handleHttpGet();
-			long count = getBlockCountApi.getResult();
+			long count = GetBlockCountApi.getBlockCount();
 			obtainMessage(HandlerMessage.MSG_SUCCESS, count);
 		} catch (Exception e) {
 			obtainMessage(HandlerMessage.MSG_FAILURE);
 			e.printStackTrace();
-
 		}
 
 	}

@@ -17,6 +17,7 @@
 package net.bither.factory;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
@@ -152,10 +153,16 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                             }
 
                             if (activity instanceof HdmImportWordListActivity) {
-                                HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
+                                final HdmImportWordListActivity hdmImportWordListActivity = (HdmImportWordListActivity) activity;
                                 hdmImportWordListActivity.showImportSuccess();
-                                hdmImportWordListActivity.setResult(Activity.RESULT_OK);
-                                hdmImportWordListActivity.finish();
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hdmImportWordListActivity.setResult(Activity.RESULT_OK);
+                                        hdmImportWordListActivity.finish();
+                                    }
+                                }, 3000);
+
                             }
                         }
                     });

@@ -23,6 +23,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
@@ -236,7 +237,6 @@ public class ChooseModeActivity extends BaseActivity {
                 }
             } else if (appMode == BitherjSettings.AppMode.HOT) {
                 BitherApplication.getBitherApplication().startBlockchainService();
-
                 if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
                     initView();
                     dowloadSpvBlock();
@@ -710,7 +710,7 @@ public class ChooseModeActivity extends BaseActivity {
         Intent intent = new Intent(
                 BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
                 BitherApplication.mContext, BlockchainService.class);
-        BitherApplication.mContext.startService(intent);
+            BitherApplication.mContext.startService(intent);
     }
 
     @Override

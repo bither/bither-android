@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:gravity="center"
+        android:layout_gravity="center"
         android:text="@string/monitor_addresses_tip"
         android:textAlignment="center"
         android:textColor="@color/password_strength_normal"
@@ -31,6 +32,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textColor="@color/white"
+        android:layout_gravity="center"
         android:textSize="18sp"/>
 
     <LinearLayout
