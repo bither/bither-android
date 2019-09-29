@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
@@ -71,7 +72,7 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
     }
 
     private void showQr() {
-        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
+        final BitpieHDAccountCold account = AddressManager.getInstance().getBitpieHDAccountCold();
         if (account == null) {
             return;
         }
@@ -87,7 +88,7 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
     }
 
     private void showPhrase() {
-        final HDAccountCold account = AddressManager.getInstance().getHDAccountCold();
+        final BitpieHDAccountCold account = AddressManager.getInstance().getBitpieHDAccountCold();
         if (account == null) {
             return;
         }

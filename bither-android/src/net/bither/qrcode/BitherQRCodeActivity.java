@@ -26,12 +26,15 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.activity.cold.BitpieColdSignChangeCoinActivity;
 import net.bither.activity.cold.SignTxActivity;
+import net.bither.bitherj.core.AddressManager;
+import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.qrcode.QRCodeBitpieColdSignMessage;
 import net.bither.bitherj.qrcode.QRCodeEnodeUtil;
 import net.bither.bitherj.qrcode.QRCodeUtil;
@@ -52,6 +55,8 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
     private boolean hasChangeAddress = false;
     private ViewPager pager;
     private TextView tvTitle;
+    private LinearLayout llFirstAddress;
+    private TextView tvFirstAddress;
     private ImageView ivSeparator;
     private ImageButton btnSwitch;
     private boolean isNewVerion;
@@ -119,6 +124,8 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
         btnSwitch.setOnClickListener(switchClickListener);
         pager = (ViewPager) findViewById(R.id.pager);
         tvTitle = (TextView) findViewById(R.id.tv_title);
+        tvFirstAddress = findViewById(R.id.tv_first_address);
+        llFirstAddress = findViewById(R.id.ll_first_address);
         mTouchView.addIgnoreView(pager);
         if (hasOldQRCode) {
             ivSeparator.setVisibility(View.VISIBLE);
@@ -126,6 +133,12 @@ public class BitherQRCodeActivity extends SwipeRightFragmentActivity implements 
         } else {
             ivSeparator.setVisibility(View.INVISIBLE);
             btnSwitch.setVisibility(View.INVISIBLE);
+        }
+        if (signMessageType == QRCodeBitpieColdSignMessage.SignMessageType.LoginSign) {
+            if (AddressManager.getInstance().hasBitpieHDAccountCold()) {
+                tvFirstAddress.setText(AddressManager.getInstance().getBitpieHDAccountCold().getFirstAddressFromDb());
+                llFirstAddress.setVisibility(View.VISIBLE);
+            }
         }
         adapter = new QRFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);

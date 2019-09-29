@@ -36,14 +36,17 @@ import java.util.List;
 
 public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     public static final String SignMgsTypeSelect = "SignMgsTypeSelect";
+    public static final String PassWord = "PassWord";
     public static final String IsHdAccountHot = "IsHdAccountHot";
     public static final String IsDetectBcc = "IsDetectBcc";
     public static final String IsSignHash = "IsSignHash";
+    public static final String IsShowAddress= "IsShowAddress";
 
     private int page = 1;
     private boolean hasMore = true;
     private boolean isLoading = false;
 
+    private CharSequence password;
     private SignMessageTypeSelect signMessageTypeSelect;
     private AbstractHD.PathType pathType;
     private boolean isHot;
@@ -56,6 +59,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
     private HDAccount hdAccount;
     private HDAccountCold hdAccountCold;
     private BitpieHDAccountCold bitpieHDAccountCold;
+    private boolean isShowAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +72,13 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
-        tvTitle.setText(R.string.sign_message_select_address);
+        isShowAddress = getIntent().getBooleanExtra(IsShowAddress, false);
+        tvTitle.setText(isShowAddress ? R.string.address_mine : R.string.sign_message_select_address);
         isSignHash = getIntent().getBooleanExtra(IsSignHash, false);
+        if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
+            String tempString = getIntent().getStringExtra(PassWord);
+            password = tempString.subSequence(0, tempString.length());
+        }
         initView();
     }
 
@@ -136,12 +145,12 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
             isLoading = true;
             List<HDAccount.HDAccountAddress> address;
             if (signMessageTypeSelect.isBitpieCold()) {
-                address = bitpieHDAccountCold.getHdColdAddresses(page, pathType);
+                address = bitpieHDAccountCold.getHdColdAddresses(page, pathType, password);
             } else {
                 if (isHot) {
                     address = hdAccount.getHdHotAddresses(page, pathType);
                 } else {
-                    address = hdAccountCold.getHdColdAddresses(page, pathType);
+                    address = hdAccountCold.getHdColdAddresses(page, pathType, password);
                 }
             }
 
@@ -183,7 +192,9 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                     h.tvAddress.setText(WalletUtils.formatHash(a.getAddress(), 4, 20));
                     h.tvIndex.setText(String.valueOf(position));
                     h.tvBalance.setText(UnitUtilWrapper.formatValue(a.getBalance()));
-                    convertView.setOnClickListener(new ListItemClick(a));
+                    if (!isShowAddress) {
+                        convertView.setOnClickListener(new ListItemClick(a));
+                    }
                     break;
                 case HdReceive:
                 case HdChange:
@@ -197,7 +208,9 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                     } else {
                         h.llBalance.setVisibility(View.GONE);
                     }
-                    convertView.setOnClickListener(new HdAddressListItemClick(hdar));
+                    if (!isShowAddress) {
+                        convertView.setOnClickListener(new HdAddressListItemClick(hdar));
+                    }
                     break;
             }
             return convertView;

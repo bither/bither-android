@@ -18,6 +18,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 
 import static net.bither.SignMessageAddressListActivity.IsHdAccountHot;
 import static net.bither.SignMessageAddressListActivity.IsSignHash;
+import static net.bither.SignMessageAddressListActivity.PassWord;
 import static net.bither.SignMessageAddressListActivity.SignMgsTypeSelect;
 
 /**
@@ -94,6 +95,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdReceive);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
+                        intent.putExtra(PassWord, password);
                         getContext().startActivity(intent);
                     }
                 }).show();
@@ -111,6 +113,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdChange);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
+                        intent.putExtra(PassWord, password);
                         getContext().startActivity(intent);
                     }
                 }).show();
@@ -128,6 +131,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.BitpieColdReceive);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
+                        intent.putExtra(PassWord, password);
                         getContext().startActivity(intent);
                     }
                 }).show();
@@ -145,6 +149,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
                         intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.BitpieColdChange);
                         intent.putExtra(IsHdAccountHot, isHot);
                         intent.putExtra(IsSignHash, isSignHash);
+                        intent.putExtra(PassWord, password);
                         getContext().startActivity(intent);
                     }
                 }).show();

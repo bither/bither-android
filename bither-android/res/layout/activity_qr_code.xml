@@ -29,6 +29,33 @@
                     android:textColor="@color/text_field_text_color"
                     android:textSize="18sp" />
 
+                <LinearLayout
+                    android:id="@+id/ll_first_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/text_field_text_color"
+                        android:text="@string/hd_account_monitor_check_first_address"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_first_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="@color/password_strength_weak"
+                        android:text="@string/hd_account_monitor_check_first_address"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
 
                 <net.bither.ui.base.OverScrollableViewPager
                     android:id="@+id/pager"

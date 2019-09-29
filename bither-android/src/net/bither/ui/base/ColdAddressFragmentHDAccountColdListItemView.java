@@ -19,6 +19,7 @@
 package net.bither.ui.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import net.bither.R;
+import net.bither.SignMessageAddressListActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.enums.SignMessageTypeSelect;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogHDMonitorFirstAddressValidation;
 import net.bither.ui.base.dialog.DialogPassword;
@@ -44,6 +47,11 @@ import net.bither.util.WalletUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.SignMessageAddressListActivity.IsHdAccountHot;
+import static net.bither.SignMessageAddressListActivity.IsShowAddress;
+import static net.bither.SignMessageAddressListActivity.IsSignHash;
+import static net.bither.SignMessageAddressListActivity.PassWord;
+import static net.bither.SignMessageAddressListActivity.SignMgsTypeSelect;
 import static net.bither.bitherj.qrcode.QRCodeUtil.HD_MONITOR_QR_SPLIT;
 
 /**
@@ -181,6 +189,24 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                     }).show();
                 }
             }));
+            actions.add(new DialogWithActions.Action(R.string.address_mine, new
+                    Runnable() {
+                        @Override
+                        public void run() {
+                            new DialogPassword(getContext(), new IDialogPasswordListener() {
+                                @Override
+                                public void onPasswordEntered(final SecureCharSequence password) {
+                                    Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
+                                    intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.HdReceive);
+                                    intent.putExtra(IsHdAccountHot, false);
+                                    intent.putExtra(IsSignHash, false);
+                                    intent.putExtra(PassWord, password);
+                                    intent.putExtra(IsShowAddress, true);
+                                    getContext().startActivity(intent);
+                                }
+                            }).show();
+                        }
+                    }));
             return actions;
         }
     };
