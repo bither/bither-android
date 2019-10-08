@@ -834,4 +834,10 @@
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
 
+    <string name="tip_sync_address_tx">%s\nthe Tx data of this address is being synced</string>
+    <string name="tip_no_peers_connected_scan">Searching connectable nodes</string>
+    <string name="tip_sync_block_height">Local block height is %d blocks behind the latest block height. Now syncing…</string>
+    <string name="tip_network_error">Network is disconnected. Please check your network setting</string>
+    <string name="tip_no_peers_connected">No connectable node</string>
+
 </resources>

@@ -8,10 +8,48 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/title_bar_below_margin" >
 
-        <net.bither.ui.base.OverScrollableViewPager
-            android:id="@+id/pager"
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@color/dropdown_message_background_color"
+                android:visibility="gone"
+                android:orientation="horizontal" >
+
+                <ProgressBar
+                    android:id="@+id/pb_alert"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:indeterminateDrawable="@drawable/check_progress_bar"
+                    android:indeterminateDuration="600"
+                    android:layout_marginRight="8dp"
+                    android:visibility="gone"
+                    android:indeterminateOnly="true" />
+
+                <TextView
+                    android:id="@+id/tv_alert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <net.bither.ui.base.OverScrollableViewPager
+                android:id="@+id/pager"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+
+        </LinearLayout>
 
         <include layout="@layout/layout_dropdown_message" />
 

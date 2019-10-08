@@ -19,7 +19,10 @@
 package net.bither.activity.hot;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -31,10 +34,12 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.TrashCanActivity;
 import net.bither.VerifyMessageSignatureActivity;
 import net.bither.activity.cold.HdmImportWordListActivity;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
@@ -125,13 +130,16 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private HDMResetServerPasswordUtil hdmResetServerPasswordUtil;
     private TextView tvVserion;
     public static final String SplitCoinKey = "SplitCoin";
+    private final AddressTxLoadingReceiver addressIsLoadingReceiver = new AddressTxLoadingReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hot_advance_options);
+        AbstractApp.notificationService.removeAddressTxLoading();
         initView();
+        registerReceiver();
     }
 
     private void initView() {
@@ -189,12 +197,43 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         signHash.setOnClickListener(signHashClick);
     }
 
+    private void registerReceiver() {
+        registerReceiver(addressIsLoadingReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_STATE));
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(addressIsLoadingReceiver);
+        super.onDestroy();
+        BitherApplication.hotActivity = null;
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         ssvPinCode.loadData();
         configureHDMRecovery();
         configureHDMServerPasswordReset();
+    }
+
+    private final class AddressTxLoadingReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_STATE)) {
+                return;
+            }
+            if (!intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_INFO)) {
+                return;
+            }
+            String address = intent.getStringExtra(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_INFO);
+            if (Utils.isEmpty(address)) {
+                return;
+            }
+            if (dp != null) {
+                dp.setMessage(getString(R.string.tip_sync_address_tx, address));
+            }
+        }
     }
 
     private View.OnClickListener signHashClick = new View.OnClickListener() {
