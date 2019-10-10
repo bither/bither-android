@@ -84,8 +84,13 @@ public class BitpieColdSignMessageActivity extends SwipeRightActivity implements
             try {
                 qrCodeBitpieColdSignMessage = QRCodeBitpieColdSignMessage.formatQRCode(str);
                 if (qrCodeBitpieColdSignMessage != null) {
-                    DialogPassword dialogPassword = new DialogPassword(this, this);
-                    dialogPassword.show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogPassword dialogPassword = new DialogPassword(BitpieColdSignMessageActivity.this, BitpieColdSignMessageActivity.this);
+                            dialogPassword.show();
+                        }
+                    }, 400);
                 } else {
                     super.finish();
                 }

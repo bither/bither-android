@@ -122,7 +122,12 @@ public class SignTxActivity extends SwipeRightActivity implements
             try {
                 qrCodeTransport = QRCodeTxTransport.formatQRCodeTransport(str);
                 if (qrCodeTransport != null) {
-                    showTransaction();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showTransaction();
+                        }
+                    }, 400);
                 } else {
                     super.finish();
                     return;
@@ -189,7 +194,7 @@ public class SignTxActivity extends SwipeRightActivity implements
             tvAddressChange.setText(WalletUtils.formatHash(qrCodeTransport.getChangeAddress(), 4, qrCodeTransport.getChangeAddress().length()));
             tvAmountChange.setText(UnitUtilWrapper.formatValueWithBoldByUnit(BigInteger.valueOf(qrCodeTransport.getChangeAmt()), unitDecimal));
         }
-        if (qrCodeTransport.getTxTransportType().isBitpieCold()) {
+        if (txTransportTypeIsBitpieCold()) {
             if (AddressManager.getInstance().hasBitpieHDAccountCold() && AddressManager.getInstance().getBitpieHDAccountCold().getFirstAddressFromDb().equals(qrCodeTransport.getMyAddress())) {
                 btnSign.setEnabled(true);
                 if (qrCodeTransport.isFeeTx()) {
@@ -202,11 +207,11 @@ public class SignTxActivity extends SwipeRightActivity implements
             }
         } else {
             Address address = WalletUtils.findPrivateKey(qrCodeTransport.getMyAddress());
-            if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD && !qrCodeTransport.getTxTransportType().isBitpieCold()) ||
+            if ((qrCodeTransport.getHdmIndex() < 0 && address == null && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHD && !txTransportTypeIsBitpieCold()) ||
                     (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() != QRCodeTxTransport.TxTransportType.ColdHDM && !AddressManager.getInstance().hasHDMKeychain()) ||
                     (qrCodeTransport.getHdmIndex() >= 0 && qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHDM && !EnterpriseHDMSeed.hasSeed()) ||
                     (qrCodeTransport.getTxTransportType() == QRCodeTxTransport.TxTransportType.ColdHD && !AddressManager.getInstance().hasHDAccountCold()) ||
-                    (qrCodeTransport.getTxTransportType().isBitpieCold() && !AddressManager.getInstance().hasBitpieHDAccountCold())) {
+                    (txTransportTypeIsBitpieCold() && !AddressManager.getInstance().hasBitpieHDAccountCold())) {
                 btnSign.setEnabled(false);
                 tvCannotFindPrivateKey.setVisibility(View.VISIBLE);
             } else {
@@ -214,6 +219,16 @@ public class SignTxActivity extends SwipeRightActivity implements
                 tvCannotFindPrivateKey.setVisibility(View.GONE);
             }
         }
+    }
+
+    private boolean txTransportTypeIsBitpieCold() {
+        if (qrCodeTransport == null) {
+            return false;
+        }
+        if (qrCodeTransport.getTxTransportType() == null) {
+            return false;
+        }
+        return qrCodeTransport.getTxTransportType().isBitpieCold();
     }
 
     private OnClickListener signClick = new OnClickListener() {
@@ -258,7 +273,7 @@ public class SignTxActivity extends SwipeRightActivity implements
                         password.wipe();
                         return;
                     }
-                } else if (qrCodeTransport.getTxTransportType().isBitpieCold()) {
+                } else if (txTransportTypeIsBitpieCold()) {
                     BitpieHDAccountCold bitpieHDAccountCold = AddressManager.getInstance().getBitpieHDAccountCold();
                     try {
                         List<byte[]> bytes = bitpieHDAccountCold.signHashHexes(qrCodeTransport.getHashList(), qrCodeTransport.getPathTypeIndexes(), qrCodeTransport.getCoinDetail(), qrCodeTransport.getFeeCoinDetail(), password);

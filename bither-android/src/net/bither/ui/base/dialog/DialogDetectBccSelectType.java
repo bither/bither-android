@@ -40,7 +40,7 @@ public class DialogDetectBccSelectType extends CenterDialog {
         llHdReceive = (LinearLayout) findViewById(R.id.ll_hd_receive);
         llHdChange = (LinearLayout) findViewById(R.id.ll_hd_change);
         llHot = (LinearLayout) findViewById(R.id.ll_hot);
-        tvDetectBcc = (TextView)findViewById(R.id.tv_sign_message);
+        tvDetectBcc = (TextView)findViewById(R.id.tv_title);
         vLineReceive = (View) findViewById(R.id.v_line_receive);
         vLineChange = (View) findViewById(R.id.v_line_change);
         hdAccount = AddressManager.getInstance().getHDAccountHot();
