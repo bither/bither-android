@@ -795,6 +795,10 @@
     <string name="bitpie_signed_message_change_coin_confirm">確認切換</string>
     <string name="bitpie_signed_change_coin_qr_code_title">用比特派掃描以切換幣種</string>
     <string name="bitpie_no_support_coin">暫不支持該幣種，請升級至最新版本重試</string>
+    <string name="bitpie_scan_tip">請使用比特派掃描此二維碼</string>
+    <string name="bitpie_scan_next">已掃描，下一步</string>
+    <string name="bitpie_cold_info_title">Bitpie Cold 說明</string>
+    <string name="bitpie_cold_info">Bitpie Cold：可以使比太錢包為更多幣種提供冷錢包功能。\n如果您用比太冷錢包+bitpie cold 與比特派配合進行二維碼掃描發幣的功能，好處是可以讓比太輕松的為很多幣種提供冷錢包功能，缺點就是熱錢包部分（比特派並不開源），當然，兩款錢包也都由比太團隊研發。但比特派是否開源與比太冷錢包+bitpie cold 的安全性無關，因為比太是完全開源的，而且，bitpie cold 協議的二維碼規範也都是開源的，也就是所有的二維碼數據用戶都可自行驗證，無需擔心安全風險。更多幣種支持陸續開發中，用戶可自行選擇使用錢包的方式。</string>
 
     <string name="permissions_no_grant">請前往設置->應用->比太->權限管理中打開相關權限，否則功能無法正常使用！</string>
 

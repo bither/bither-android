@@ -8,17 +8,34 @@
               android:paddingRight="5dp"
               android:paddingTop="25dp">
 
-    <TextView
-        android:id="@+id/tv_account_label"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:text="@string/add_hd_account_view_label"
-        android:textColor="@color/text_field_text_color"
-        android:textSize="16sp"/>
+        android:orientation="horizontal" >
 
+        <ImageButton
+            android:id="@+id/ibtn_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/transparent"
+            android:visibility="gone"
+            android:src="@drawable/xrandom_info_icon_selector"/>
+
+        <TextView
+            android:id="@+id/tv_account_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/add_hd_account_view_label"
+            android:textColor="@color/text_field_text_color"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_qr"

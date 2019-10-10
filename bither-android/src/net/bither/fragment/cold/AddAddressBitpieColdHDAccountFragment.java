@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.R;
@@ -42,6 +43,7 @@ import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
 import net.bither.ui.base.AddPrivateKeyActivity;
 import net.bither.ui.base.DialogFragmentHDMSingularColdSeed;
+import net.bither.ui.base.dialog.DialogBitpieColdInfo;
 import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -61,6 +63,7 @@ public class AddAddressBitpieColdHDAccountFragment extends Fragment implements A
     private CheckBox cbxXRandom;
     private DialogProgress dp;
     private BitpieHDAccountCold hdAccount;
+    private ImageButton ibtnInfo;
 
 
     @Override
@@ -68,6 +71,7 @@ public class AddAddressBitpieColdHDAccountFragment extends Fragment implements A
             savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_address_hot_hd_account, container, false);
         cbxXRandom = v.findViewById(R.id.cbx_xrandom);
+        ibtnInfo = v.findViewById(R.id.ibtn_info);
         cbxXRandom.setOnCheckedChangeListener(xRandomCheck);
         v.findViewById(R.id.ibtn_xrandom_info).setOnClickListener(DialogXRandomInfo.GuideClick);
         v.findViewById(R.id.btn_add).setOnClickListener(addClick);
@@ -75,6 +79,8 @@ public class AddAddressBitpieColdHDAccountFragment extends Fragment implements A
         label.setText(R.string.bitpie_connector_add_account_label);
         dp = new DialogProgress(v.getContext(), R.string.please_wait);
         dp.setCancelable(false);
+        ibtnInfo.setOnClickListener(bitpieColdInfoClick);
+        ibtnInfo.setVisibility(View.VISIBLE);
         return v;
     }
 
@@ -207,6 +213,13 @@ public class AddAddressBitpieColdHDAccountFragment extends Fragment implements A
                 });
             }
             return dialog;
+        }
+    };
+
+    private View.OnClickListener bitpieColdInfoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogBitpieColdInfo(getActivity()).show();
         }
     };
 }

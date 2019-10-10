@@ -123,7 +123,7 @@ public class HotActivity extends BaseFragmentActivity {
         if (!NetworkUtil.isConnected()) {
             tvAlert.setText(R.string.tip_network_error);
             llAlert.setVisibility(View.VISIBLE);
-        } else if (PeerManager.instance().getConnectedPeers().size() == 0) {
+        } else if (!AddressManager.getInstance().noAddress() && PeerManager.instance().getConnectedPeers().size() == 0) {
             tvAlert.setText(R.string.tip_no_peers_connected_scan);
             pbAlert.setVisibility(View.VISIBLE);
             llAlert.setVisibility(View.VISIBLE);

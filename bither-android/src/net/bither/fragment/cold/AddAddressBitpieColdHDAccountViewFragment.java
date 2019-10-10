@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import net.bither.R;
@@ -30,6 +31,8 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.ui.base.dialog.DialogBitpieColdInfo;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -54,6 +57,9 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
         btnQr.setText(R.string.bitpie_add_hd_account_seed_qr_code);
         TextView btnPhrase = v.findViewById(R.id.btn_phrase);
         btnPhrase.setText(R.string.bitpie_add_hd_account_seed_qr_phrase);
+        ImageButton ibtnInfo = v.findViewById(R.id.ibtn_info);
+        ibtnInfo.setOnClickListener(bitpieColdInfoClick);
+        ibtnInfo.setVisibility(View.VISIBLE);
         btnQr.setOnClickListener(this);
         btnPhrase.setOnClickListener(this);
         return v;
@@ -133,4 +139,12 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
             }
         }).show();
     }
+
+    private View.OnClickListener bitpieColdInfoClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            new DialogBitpieColdInfo(getActivity()).show();
+        }
+    };
+
 }

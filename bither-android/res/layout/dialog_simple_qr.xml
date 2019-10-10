@@ -60,11 +60,21 @@
             android:textColor="@color/white"/>
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/tv_scan_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bitpie_scan_tip"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:visibility="gone"
+        android:textColor="@color/white" />
+
     <Button
         android:id="@+id/btn_sign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/bitpie_scan_sign_message_monitor"
+        android:text="@string/bitpie_scan_next"
         android:layout_marginTop="5dp"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"

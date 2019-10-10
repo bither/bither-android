@@ -831,6 +831,10 @@
     <string name="bitpie_signed_message_change_coin_confirm">Confirm to switch</string>
     <string name="bitpie_signed_change_coin_qr_code_title">Use Bitpie scan to switch</string>
     <string name="bitpie_no_support_coin">This coin hasn`t been supported yet, please update to the newest version</string>
+    <string name="bitpie_scan_tip">Please use bitpie to Scan this QR code</string>
+    <string name="bitpie_scan_next">Scanned, next</string>
+    <string name="bitpie_cold_info_title">Bitpie Cold introduction</string>
+    <string name="bitpie_cold_info" formatted="false">Bitpie Cold: it is a new efficient approach brought by us to manage more coins or tokens with cold storage solutions.\nBy using Bither Cold + Bitpie Cold, you are enabled to get access to more various types and categories of crypto assets management. However, the disadvantage of it hereof is that Bitpie (hot wallet side) is not open sourced despite the fact that both Bither and Bitpie are developed by Bither Team. Regardless that Bitpie is not 100% open sourced, the safety of Bither Cold+ Bitpie Cold solution is totally not affected since both Bither and the QR code specification of the Bitpie Cold protocol are 100% open source, viz., all the QR code data can be verified by the user themselves. More currency support is under development. You are free to choose the wallet solution provided by us.</string>
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
 

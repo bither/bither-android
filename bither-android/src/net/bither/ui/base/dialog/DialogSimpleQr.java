@@ -46,6 +46,7 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
     private TextView tvSubtitle;
     private Button btnSign;
     private Context context;
+    private TextView tvScanTip;
 
     public DialogSimpleQr(Context context, String content) {
         this(context, content, null);
@@ -82,7 +83,9 @@ public class DialogSimpleQr extends Dialog implements FancyQrCodeThread.FancyQrC
             TextView tvTitle = (TextView) findViewById(R.id.tv_title);
             tvTitle.setText(title);
             btnSign = findViewById(R.id.btn_sign);
+            tvScanTip = findViewById(R.id.tv_scan_tip);
             if (title.equals(context.getString(R.string.add_bitpie_cold_hd_account_monitor_qr))) {
+                tvScanTip.setVisibility(View.VISIBLE);
                 btnSign.setVisibility(View.VISIBLE);
                 btnSign.setOnClickListener(toBitpieColdSignMessageActivityClickListener);
             }
