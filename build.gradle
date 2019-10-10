@@ -49,7 +49,7 @@ subprojects {
                 java.srcDirs = ['src']
                 res.srcDirs = ['res']
                 assets.srcDirs = ['assets']
-//                jniLibs.srcDirs = ['native-libs']
+                jniLibs.srcDirs = ['native-libs']
                 jni.srcDirs = []
             }
 
