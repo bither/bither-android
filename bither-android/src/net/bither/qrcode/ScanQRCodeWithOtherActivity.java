@@ -31,8 +31,7 @@ import net.bither.bitherj.utils.Utils;
 import net.bither.util.PlaySound;
 
 public class ScanQRCodeWithOtherActivity extends ScanActivity {
-    private TextView tv;
-    private TextView tvTitle;
+
     private BitherSetting.QRCodeType qrCodeType;
     private String lastResult;
 
@@ -46,11 +45,6 @@ public class ScanQRCodeWithOtherActivity extends ScanActivity {
         if (qrCodeType == null) {
             finish();
         }
-        setOverlay(R.layout.layout_scan_qr_code_transport_overlay);
-
-        tv = (TextView) findViewById(R.id.tv);
-        tvTitle = (TextView) findViewById(R.id.tv_title);
-        configureTitle();
         flash();
         PlaySound.loadSound(R.raw.qr_code_scanned);
     }
@@ -85,18 +79,6 @@ public class ScanQRCodeWithOtherActivity extends ScanActivity {
             }
         }
         return isValid;
-    }
-
-    private void configureTitle() {
-        String title = null;
-        if (getIntent() != null
-                && getIntent().getExtras() != null
-                && getIntent().getExtras().containsKey(
-                BitherSetting.INTENT_REF.TITLE_STRING)) {
-            title = getIntent().getExtras().getString(
-                    BitherSetting.INTENT_REF.TITLE_STRING);
-        }
-        tvTitle.setText(title);
     }
 
     private void flash() {

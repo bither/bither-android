@@ -37,8 +37,7 @@ import net.bither.util.PlaySound;
 import java.util.ArrayList;
 
 public class ScanQRCodeTransportActivity extends ScanActivity {
-	private TextView tv;
-	private TextView tvTitle;
+
 	private int totalPage = 1;
 	private ArrayList<QRCodeTransportPage> pages;
 	private String lastResult;
@@ -47,12 +46,8 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         ibtnGallery.setVisibility(View.GONE);
-        setOverlay(R.layout.layout_scan_qr_code_transport_overlay);
-		tv = (TextView) findViewById(R.id.tv);
-		tvTitle = (TextView) findViewById(R.id.tv_title);
 		pages = new ArrayList<QRCodeTransportPage>();
 		tv.setText(R.string.scan_qr_transport_init_label);
-		configureTitle();
 		flash();
 		PlaySound.loadSound(R.raw.qr_code_scanned);
 	}
@@ -112,18 +107,6 @@ public class ScanQRCodeTransportActivity extends ScanActivity {
             return true;
         }
 		return false;
-	}
-
-	private void configureTitle() {
-		String title = null;
-		if (getIntent() != null
-				&& getIntent().getExtras() != null
-				&& getIntent().getExtras().containsKey(
-						BitherSetting.INTENT_REF.TITLE_STRING)) {
-			title = getIntent().getExtras().getString(
-					BitherSetting.INTENT_REF.TITLE_STRING);
-		}
-		tvTitle.setText(title);
 	}
 
 	private void flash() {

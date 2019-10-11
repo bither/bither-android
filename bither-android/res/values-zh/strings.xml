@@ -797,7 +797,7 @@
     <string name="bitpie_scan_tip">请使用比特派扫描此二维码</string>
     <string name="bitpie_scan_next">已扫描，下一步</string>
     <string name="bitpie_cold_info_title">Bitpie Cold 说明</string>
-    <string name="bitpie_cold_info">Bitpie Cold：可以使比太钱包为更多币种提供冷钱包功能。\n如果您用比太冷钱包+bitpie cold 与比特派配合进行二维码扫描发币的功能，好处是可以让比太轻松的为很多币种提供冷钱包功能，缺点就是热钱包部分（比特派并不开源），当然，两款钱包也都由比太团队研发。但比特派是否开源与比太冷钱包+bitpie cold 的安全性无关，因为比太是完全开源的，而且，bitpie cold 协议的二维码规范也都是开源的，也就是所有的二维码数据用户都可自行验证，无需担心安全风险。目前 bitpie cold 已支持 BTC、USDT-Omni 两个币种，用户可自行选择使用钱包的方式。</string>
+    <string name="bitpie_cold_info">Bitpie Cold：可以使比太钱包为更多币种提供冷钱包功能。\n如果您用比太冷钱包+bitpie cold 与比特派配合进行二维码扫描发币的功能，好处是可以让比太轻松的为很多币种提供冷钱包功能，缺点就是热钱包部分（比特派并不开源），当然，两款钱包也都由比太团队研发。但比特派是否开源与比太冷钱包+bitpie cold 的安全性无关，因为比太是完全开源的，而且，bitpie cold 协议的二维码规范也都是开源的，也就是所有的二维码数据用户都可自行验证，无需担心安全风险。更多币种支持陆续开发中，用户可自行选择使用钱包的方式。</string>
 
     <string name="permissions_no_grant">请前往设置->应用->比太->权限管理中打开相关权限，否则功能无法正常使用！</string>
 

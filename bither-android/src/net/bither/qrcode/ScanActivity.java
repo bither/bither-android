@@ -45,6 +45,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
@@ -61,6 +62,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.bitherj.utils.Utils;
 import net.bither.camera.CameraManager;
 import net.bither.ui.base.BaseActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -88,6 +90,9 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
     private static final long VIBRATE_DURATION = 50L;
 	private static final long AUTO_FOCUS_INTERVAL_MS = 2500L;
 
+    protected TextView tv;
+    protected TextView tvTitle;
+
 	private final CameraManager cameraManager = new CameraManager();
 	protected ScannerView scannerView;
 	private SurfaceHolder surfaceHolder;
@@ -114,7 +119,6 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
         super.onCreate(savedInstanceState);
         overridePendingTransition(0, R.anim.scanner_in_exit);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
 		setContentView(R.layout.scan_activity);
 		flOverlayContainer = (FrameLayout) findViewById(R.id.fl_overlay_container);
 		scannerView = (ScannerView) findViewById(R.id.scan_activity_mask);
@@ -122,6 +126,12 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
         ibtnGallery.setOnClickListener(galleryClick);
         ((CheckBox) findViewById(R.id.cbx_torch)).setOnCheckedChangeListener(this);
         fromGallery = false;
+        setOverlay(R.layout.layout_scan_qr_code_transport_overlay);
+        tv = findViewById(R.id.tv);
+        tvTitle = findViewById(R.id.tv_title);
+        if (!Utils.isEmpty(getIntentTitle())) {
+            tvTitle.setText(getIntentTitle());
+        }
     }
 
     public void setOverlay(View v) {
@@ -131,6 +141,18 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 
     public void setOverlay(int resource) {
         setOverlay(LayoutInflater.from(this).inflate(resource, null));
+    }
+
+    private String getIntentTitle() {
+        String title = null;
+        if (getIntent() != null
+                && getIntent().getExtras() != null
+                && getIntent().getExtras().containsKey(
+                BitherSetting.INTENT_REF.TITLE_STRING)) {
+            title = getIntent().getExtras().getString(
+                    BitherSetting.INTENT_REF.TITLE_STRING);
+        }
+        return title;
     }
 
     @Override
