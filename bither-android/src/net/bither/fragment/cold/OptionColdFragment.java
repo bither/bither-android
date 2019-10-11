@@ -514,17 +514,28 @@ public class OptionColdFragment extends Fragment implements Selectable {
 
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
-            HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(content, password);
-            HDAccountCold hdAccountCold = null;
+            HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(PrivateKeyUtil.getCloneContent(), password);
+
             BitpieHDAccountCold bitpieHDAccountCold = null;
-            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(content);
+            MnemonicWordList bitpieColdMnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(PrivateKeyUtil.getCloneContent());
             MnemonicCode mnemonicCode = null;
+            if (bitpieColdMnemonicWordList != null) {
+                try {
+                    mnemonicCode = new MnemonicCodeAndroid();
+                    mnemonicCode.setMnemonicWordList(bitpieColdMnemonicWordList);
+                    bitpieHDAccountCold = PrivateKeyUtil.getBitpieHDAccountCold(mnemonicCode, PrivateKeyUtil.getCloneContent(), password);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            HDAccountCold hdAccountCold = null;
+            MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(PrivateKeyUtil.getCloneContent());
             if (mnemonicWordList != null) {
                 try {
                     mnemonicCode = new MnemonicCodeAndroid();
                     mnemonicCode.setMnemonicWordList(mnemonicWordList);
-                    hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, content, password);
-                    bitpieHDAccountCold = PrivateKeyUtil.getBitpieHDAccountCold(mnemonicCode, content, password);
+                    hdAccountCold = PrivateKeyUtil.getHDAccountCold(mnemonicCode, PrivateKeyUtil.getCloneContent(), password);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

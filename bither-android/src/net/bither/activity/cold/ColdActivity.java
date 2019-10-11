@@ -432,7 +432,7 @@ public class ColdActivity extends BaseFragmentActivity {
                                     String encryptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
                                     if (MnemonicWordList.isHDQrCode(keyString)) {
                                         new HDAccountCold(mnemonicCode, new EncryptedData(encryptString), password);
-                                    } else if (MnemonicWordList.isBitpieQrCode(keyString)) {
+                                    } else if (MnemonicWordList.isBitpieColdQrCode(keyString)) {
                                         new BitpieHDAccountCold(mnemonicCode, new EncryptedData(encryptString), password);
                                     }
                                     AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
