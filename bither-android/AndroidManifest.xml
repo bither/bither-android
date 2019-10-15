@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
     android:installLocation="internalOnly"
-    android:versionCode="189"
-    android:versionName="1.8.9">
+    android:versionCode="190"
+    android:versionName="1.9.0">
 
     <uses-sdk
         android:minSdkVersion="9"
