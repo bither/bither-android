@@ -321,6 +321,8 @@
     <string name="generate_address_count_label">How many private keys to generate?</string>
     <string name="recover_from_backup_of_cold">Find previous back up of Bither Cold on SD card. Recover from it?</string>
     <string name="first_add_private_key_check_suggest">Would you check your private keys now?</string>
+    <string name="no_backup">No Backup</string>
+    <string name="backup_failed">Backup failed, please check if you have permission to open</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">Init Transaction</string>

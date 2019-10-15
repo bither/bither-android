@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
@@ -35,6 +36,7 @@ import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
+import net.bither.util.PermissionUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 
@@ -122,7 +124,7 @@ public class DialogFancyQrCode extends Dialog implements View.OnClickListener,
     }
 
     private void save() {
-        if (qrCode != null) {
+        if (qrCode != null && PermissionUtil.isWriteExternalStoragePermission(activity, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
             new SaveThread().start();
         }
     }

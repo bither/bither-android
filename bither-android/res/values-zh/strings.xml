@@ -311,6 +311,8 @@
     <string name="recover_from_backup_of_cold">检测到sd卡上有过去的冷钱包备份，是否从备份中恢复？</string>
     <string name="backup_finish">备份成功 !</string>
     <string name="first_add_private_key_check_suggest">是否现在一键检测私钥?</string>
+    <string name="no_backup">暂无备份</string>
+    <string name="backup_failed">备份失败，请检查是否开启权限</string>
 
     <!-- warm wallet -->
     <string name="prepare_tx">初始化交易</string>

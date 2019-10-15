@@ -148,7 +148,7 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
                 address = bitpieHDAccountCold.getHdColdAddresses(page, pathType, password);
             } else {
                 if (isHot) {
-                    address = hdAccount.getHdHotAddresses(page, pathType);
+                    address = hdAccount.getHdHotAddresses(page, pathType, password);
                 } else {
                     address = hdAccountCold.getHdColdAddresses(page, pathType, password);
                 }

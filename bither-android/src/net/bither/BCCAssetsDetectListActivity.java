@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -24,6 +25,7 @@ import net.bither.util.UnitUtilWrapper;
 import net.bither.util.WalletUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ltq on 2017/9/20.
@@ -35,6 +37,10 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
     public static final String IsHdAccountHot = "IsHdAccountHot";
     public static final String IsDetectBcc = "IsDetectBcc";
     public static final String IsMonitored = "IsMonitored";
+
+    private int page = 1;
+    private boolean hasMore = true;
+    private boolean isLoading = false;
 
     private CharSequence password;
     private SignMessageTypeSelect signMessageTypeSelect;
@@ -81,6 +87,7 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
                 new IBackClickListener(0, R.anim.slide_out_right));
         lv = (ListView) findViewById(R.id.lv);
         flTitleBar = (FrameLayout) findViewById(R.id.fl_title_bar);
+        lv.setAdapter(adapter);
         switch (signMessageTypeSelect) {
             case HdReceive:
                 pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
@@ -89,29 +96,73 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
                 pathType = AbstractHD.PathType.INTERNAL_ROOT_PATH;
                 break;
         }
-        lv.setAdapter(adapter);
+        loadHdAddress();
+    }
+
+    private void loadHdAddress() {
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int lastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 6
+                        && hasMore && !isLoading
+                        && lastFirstVisibleItem < firstVisibleItem) {
+                    page++;
+                    loadAddress();
+                }
+                lastFirstVisibleItem = firstVisibleItem;
+
+            }
+        });
+        loadData();
+    }
+
+    private void loadData() {
+        page = 1;
+        hasMore = true;
+        loadAddress();
+    }
+
+    private void loadAddress() {
+        if (!isLoading && hasMore) {
+            isLoading = true;
+            List<HDAccount.HDAccountAddress> address;
+            if (isMonitored) {
+                address = hdAccountMonitored.getHdHotAddresses(page, pathType, password);
+            } else {
+                address = hdAccount.getHdHotAddresses(page, pathType, password);
+            }
+            if (page == 1) {
+                hdAccountAddresses.clear();
+            }
+            if (address != null && address.size() > 0) {
+                hdAccountAddresses.addAll(address);
+                hasMore = true;
+            } else {
+                hasMore = false;
+            }
+            adapter.notifyDataSetChanged();
+            isLoading = false;
+        }
     }
 
     private BaseAdapter adapter = new BaseAdapter() {
 
         @Override
         public int getCount() {
-            if (pathType == AbstractHD.PathType.EXTERNAL_ROOT_PATH || pathType == AbstractHD.PathType.EXTERNAL_BIP49_PATH) {
-                return issuedExternalAddressCount(pathType);
-            } else {
-                return issuedInternalAddressCount(pathType);
-            }
+            return hdAccountAddresses == null ? 0 : hdAccountAddresses.size();
         }
 
 
         @Override
         public Object getItem(int position) {
-            HDAccount.HDAccountAddress a = addressForIndex(position);
-                if (hdAccountAddresses.size() >= MAX_CACHE_SIZE) {
-                    hdAccountAddresses.clear();
-                }
-                hdAccountAddresses.add(a);
-            return a;
+            return hdAccountAddresses.get(position);
         }
 
 
@@ -133,41 +184,11 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
 
     };
 
-    private int issuedExternalAddressCount(AbstractHD.PathType pathType) {
-        if (isMonitored) {
-            return hdAccountMonitored.issuedExternalIndex(pathType) + 1;
-        } else {
-            return hdAccount.issuedExternalIndex(pathType) + 1;
-        }
-    }
-
-    private int issuedInternalAddressCount(AbstractHD.PathType pathType) {
-        if (isMonitored) {
-            return hdAccountMonitored.issuedInternalIndex(pathType) + 1;
-        } else {
-            return hdAccount.issuedInternalIndex(pathType) + 1;
-        }
-    }
-
-    private HDAccount.HDAccountAddress addressForIndex(int index) {
-        if (isMonitored) {
-            return hdAccountMonitored.addressForPath(pathType, index);
-        } else {
-            return hdAccount.addressForPath(pathType, index);
-        }
-    }
-
-    private void showMsg(int msg) {
-        DropdownMessage.showDropdownMessage(BCCAssetsDetectListActivity.this, msg);
-    }
-
     private class Item extends FrameLayout {
         TextView tvAddress;
         TextView tvIndex;
         TextView tvBalance;
         LinearLayout llBalance;
-
-        private HDAccount.HDAccountAddress address;
 
         public Item(Context context) {
             super(context);
@@ -183,11 +204,10 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
         }
 
         public void setAddress(HDAccount.HDAccountAddress address) {
-            this.address = address;
             tvAddress.setText(WalletUtils.formatHash(address.getAddress(), 4, 20));
             tvIndex.setText(String.valueOf(address.getIndex()));
             tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
-           setOnClickListener(new BCCAssetsDetectListActivity.HdAddressListItemClick(address));
+            setOnClickListener(new BCCAssetsDetectListActivity.HdAddressListItemClick(address));
         }
     }
 
@@ -203,7 +223,7 @@ public class BCCAssetsDetectListActivity extends SwipeRightFragmentActivity {
             DetectAnotherAssetsUtil detectAnotherAssetsUtil = new DetectAnotherAssetsUtil(
                     BCCAssetsDetectListActivity.this);
             detectAnotherAssetsUtil.getBCCHDUnspentOutputs(hdAccountAddress.getAddress(),
-                    hdAccountAddress.getPathType(), hdAccountAddress.getIndex(),isMonitored);
+                    hdAccountAddress.getPathType(), hdAccountAddress.getIndex(), isMonitored);
 
         }
     }

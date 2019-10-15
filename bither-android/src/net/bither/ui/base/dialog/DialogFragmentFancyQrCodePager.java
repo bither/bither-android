@@ -45,6 +45,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
@@ -53,6 +54,7 @@ import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.PermissionUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -171,7 +173,9 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     }
 
     private void save() {
-        new SaveThread().start();
+        if (PermissionUtil.isWriteExternalStoragePermission(activity, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
+            new SaveThread().start();
+        }
     }
 
     @Override

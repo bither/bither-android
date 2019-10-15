@@ -31,7 +31,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
     private LinearLayout llHd;
     private LinearLayout llHdReceive;
     private LinearLayout llHdChange;
-    private LinearLayout llBitpieCode;
+    private LinearLayout llBitpieCold;
     private LinearLayout llBitpieColdReceive;
     private LinearLayout llBitpieColdChange;
     private View vHotLine;
@@ -48,7 +48,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
         llHd = findViewById(R.id.ll_hd);
         llHdReceive = findViewById(R.id.ll_hd_receive);
         llHdChange = findViewById(R.id.ll_hd_change);
-        llBitpieCode = findViewById(R.id.ll_bitpie_cold);
+        llBitpieCold = findViewById(R.id.ll_bitpie_cold);
         llBitpieColdReceive = findViewById(R.id.ll_bitpie_cold_receive);
         llBitpieColdChange = findViewById(R.id.ll_bitpie_cold_change);
         vHotLine = findViewById(R.id.v_hot_line);
@@ -69,8 +69,8 @@ public class DialogSignMessageSelectType extends CenterDialog {
             if (hdAccountCold == null) {
                 llHd.setVisibility(View.GONE);
             }
-            if (bitpieHDAccountCold == null) {
-                llBitpieCode.setVisibility(View.GONE);
+            if (bitpieHDAccountCold != null) {
+                llBitpieCold.setVisibility(View.VISIBLE);
             }
         }
 

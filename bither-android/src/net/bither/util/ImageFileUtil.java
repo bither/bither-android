@@ -36,8 +36,7 @@ public class ImageFileUtil {
     private static final String AVATAR_FILE_NAME = "a%d.jpg";
 
     public static File getImageForGallery(long timeMillis) {
-        String pictureName = getImageNameForGallery(
-                timeMillis);
+        String pictureName = getImageNameForGallery(timeMillis);
         File dcimFile = new File(Environment.getExternalStorageDirectory()
                 + File.separator + Environment.DIRECTORY_DCIM, "Camera");
         if (!dcimFile.exists()) {
@@ -60,7 +59,6 @@ public class ImageFileUtil {
                 timeMillis);
         File file = getImageForGallery(timeMillis);
         try {
-
             NativeUtil.compressBitmap(bit, 100, file.getAbsolutePath(), true);
             saveExifInterface(file, orientation);
             addPicutureToResolver(file, pictureName, orientation, timeMillis);

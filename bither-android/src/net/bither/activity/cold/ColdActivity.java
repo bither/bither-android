@@ -20,7 +20,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -68,6 +71,7 @@ import net.bither.util.BackupUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.PermissionUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -326,16 +330,21 @@ public class ColdActivity extends BaseFragmentActivity {
     }
 
     private void checkBackup() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<File> files = FileUtil.getBackupFileListOfCold();
-                if (files != null && files.size() > 0) {
-                    showDialogOfColdBackup();
+        if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager
+                .getInstance().getPrivKeyAddresses().size() == 0 && AddressManager
+                .getInstance().getHdmKeychain() == null
+                && !AddressManager.getInstance().hasHDAccountCold()
+                && !AddressManager.getInstance().hasBitpieHDAccountCold()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final List<File> files = FileUtil.getBackupFileListOfCold();
+                    if (files != null && files.size() > 0) {
+                        showDialogOfColdBackup();
+                    }
                 }
-            }
-        }).start();
-
+            }).start();
+        }
     }
 
     private void showDialogOfColdBackup() {
@@ -432,11 +441,11 @@ public class ColdActivity extends BaseFragmentActivity {
                                     String encryptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
                                     if (MnemonicWordList.isHDQrCode(keyString)) {
                                         new HDAccountCold(mnemonicCode, new EncryptedData(encryptString), password);
+                                        AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
+                                        MnemonicCode.setInstance(mnemonicCode);
                                     } else if (MnemonicWordList.isBitpieColdQrCode(keyString)) {
                                         new BitpieHDAccountCold(mnemonicCode, new EncryptedData(encryptString), password);
                                     }
-                                    AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
-                                    MnemonicCode.setInstance(mnemonicCode);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -469,6 +478,9 @@ public class ColdActivity extends BaseFragmentActivity {
 
     private MnemonicCode getMnemonicCode(String string) {
         MnemonicWordList mnemonicWordList = MnemonicWordList.getMnemonicWordListForHdSeed(string);
+        if (mnemonicWordList == null && string.equals(MnemonicWordList.getBitpieColdQrCodeFlag())) {
+            mnemonicWordList = MnemonicWordList.English;
+        }
         MnemonicCode mnemonicCode = null;
         if (mnemonicWordList != null) {
             try {
@@ -527,13 +539,39 @@ public class ColdActivity extends BaseFragmentActivity {
             if (fragment != null && fragment instanceof ColdAddressFragment) {
                 ((ColdAddressFragment) fragment).refresh();
             }
-            if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager
-                    .getInstance().getPrivKeyAddresses().size() == 0 && AddressManager
-                    .getInstance().getHdmKeychain() == null
-                    && !AddressManager.getInstance().hasHDAccountCold()
-                    && !AddressManager.getInstance().hasBitpieHDAccountCold()) {
-                checkBackup();
+            if (!PermissionUtil.isWriteExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
+                return;
             }
+            checkBackup();
         }
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE:
+                if (grantResults != null && grantResults.length > 0) {
+                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(
+                                this, getString(R.string.permissions_no_grant), new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                intent.setData(uri);
+                                startActivity(intent);
+                            }
+                        });
+                        dialogConfirmTask.show();
+                    } else {
+                        checkBackup();
+                    }
+                }
+            default:
+                break;
+        }
+    }
+
 }

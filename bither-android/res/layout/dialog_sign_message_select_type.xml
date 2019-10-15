@@ -105,6 +105,7 @@
         android:id="@+id/ll_bitpie_cold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="vertical" >
 
         <LinearLayout
