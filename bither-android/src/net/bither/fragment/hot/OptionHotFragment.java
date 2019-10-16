@@ -92,6 +92,7 @@ import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.MarketUtil;
 import net.bither.util.MonitorBitherColdUtil;
+import net.bither.util.PermissionUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.UnitUtilWrapper;
@@ -472,6 +473,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private OnClickListener avatarClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (!PermissionUtil.isWriteExternalStoragePermission(getActivity(), BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
+                return;
+            }
             DialogSetAvatar dialog = new DialogSetAvatar(getActivity(), OptionHotFragment.this);
             dialog.show();
         }

@@ -153,6 +153,7 @@ public class PinCodeEnterView extends FrameLayout implements TextWatcher,
         @Override
         public void onAnimationEnd(Animation animation) {
             et.setEnabled(true);
+            et.requestFocus();
             clearText();
             dvNew.clearAnimation();
             dvNew.setVisibility(View.GONE);
