@@ -337,7 +337,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new StringInputParser(input, null) {
+            new StringInputParser(input, null, true) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -352,7 +352,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            messageResId);
                 }
             }.parse();
             return;
@@ -521,6 +521,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         }
         String address = etAddress.getText().toString().trim();
         boolean isValidAddress = Utils.validBicoinAddress(address);
+        if (isValidAddress && Utils.validBech32Address(address)) {
+            isValidAddress = false;
+            DropdownMessage.showDropdownMessage(this, R.string.cold_no_support_bc1_segwit_address);
+            etAddress.setText("");
+        }
         btnSend.setEnabled(isValidAddress && isValidAmounts);
     }
 

@@ -18,24 +18,28 @@ package net.bither.util;
 
 
 import net.bither.R;
+import net.bither.bitherj.bech32.Bech32;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.Utils;
-import net.bither.image.glcrop.Util;
 
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static net.bither.bitherj.utils.Utils.BitcoinNewAddressPrefix;
+
 public abstract class InputParser {
     public abstract static class StringInputParser extends InputParser {
         private final String input;
         private final SplitCoin splitCoin;
+        private final boolean isColdSendBtc;
 
-        public StringInputParser(@Nonnull final String input, SplitCoin splitCoin) {
+        public StringInputParser(@Nonnull final String input, SplitCoin splitCoin, boolean isColdSendBtc) {
             this.input = input;
             this.splitCoin = splitCoin;
+            this.isColdSendBtc = isColdSendBtc;
         }
 
         @Override
@@ -53,20 +57,25 @@ public abstract class InputParser {
                     error(R.string.input_parser_invalid_bitcoin_uri, input);
                 }
             } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches() && splitCoin != null) {
-                if (Utils.validSplitBitCoinAddress(input,splitCoin)) {
+                if (Utils.validSplitBitCoinAddress(input, splitCoin)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
-                    error(R.string.input_parser_invalid_address);
+                    error(R.string.scan_watch_only_address_error);
                 }
-            }else if(PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
+            } else if (PATTERN_BITCOIN_ADDRESS.matcher(input).matches()) {
                 if (Utils.validBicoinAddress(input)) {
                     bitcoinRequest(input, null, 0, null);
                 } else {
-                    error(R.string.input_parser_invalid_address);
+                    error(R.string.scan_watch_only_address_error);
                 }
-
+            } else if (input.toLowerCase().startsWith(BitcoinNewAddressPrefix) && Bech32.decode(input) != null) {
+                if (isColdSendBtc) {
+                    error(R.string.cold_no_support_bc1_segwit_address);
+                } else {
+                    bitcoinRequest(input.toLowerCase(), null, 0, null);
+                }
             } else {
-                cannotClassify(input);
+                error(R.string.scan_watch_only_address_error);
             }
         }
     }

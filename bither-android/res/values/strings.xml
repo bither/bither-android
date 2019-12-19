@@ -846,4 +846,6 @@
     <string name="tip_network_error">Network is disconnected. Please check your network setting</string>
     <string name="tip_no_peers_connected">No connectable node</string>
 
+    <string name="cold_no_support_bc1_segwit_address">BITHD Cold wallet doesn’t support sending coins to Segwit addresses beginning with “bc”.</string>
+
 </resources>

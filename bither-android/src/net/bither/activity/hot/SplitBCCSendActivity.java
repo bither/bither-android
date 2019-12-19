@@ -486,7 +486,7 @@ public class SplitBCCSendActivity extends SwipeRightActivity implements EntryKey
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new InputParser.StringInputParser(input, splitCoin) {
+            new InputParser.StringInputParser(input, splitCoin, false) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {

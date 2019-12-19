@@ -392,7 +392,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new StringInputParser(input, null) {
+            new StringInputParser(input, null, false) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -409,7 +409,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(HdmSendActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            messageResId);
                 }
             }.parse();
         } else if (!coldSignatureFetcher.onActivityResult(requestCode, resultCode, data) && !resetServerPasswordUtil.onActivityResult(requestCode, resultCode, data)) {

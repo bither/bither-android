@@ -75,6 +75,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
         btnSend.setCompoundDrawablesWithIntrinsicBounds(R.drawable
                 .unsigned_transaction_button_icon_mirror_transparent, 0, R.drawable
                 .unsigned_transaction_button_icon, 0);
+        isColdSendBtc = true;
     }
 
     @Override

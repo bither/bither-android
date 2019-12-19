@@ -90,6 +90,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
     protected DialogSelectChangeAddress dialogSelectChangeAddress;
+    protected boolean isColdSendBtc;
 
     private boolean isDonate = false;
 
@@ -354,7 +355,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new StringInputParser(input, null) {
+            new StringInputParser(input, null, isColdSendBtc) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -372,8 +373,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
 
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
-                    DropdownMessage.showDropdownMessage(SendActivity.this,
-                            R.string.scan_watch_only_address_error);
+                    DropdownMessage.showDropdownMessage(SendActivity.this, messageResId);
                 }
             }.parse();
 
@@ -483,6 +483,11 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         }
         String address = etAddress.getText().toString().trim();
         boolean isValidAddress = Utils.validBicoinAddress(address);
+        if (isColdSendBtc && isValidAddress && Utils.validBech32Address(address)) {
+            isValidAddress = false;
+            DropdownMessage.showDropdownMessage(this, R.string.cold_no_support_bc1_segwit_address);
+            etAddress.setText("");
+        }
         boolean isValidPassword = true;
         if (etPassword.getVisibility() == View.VISIBLE) {
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());

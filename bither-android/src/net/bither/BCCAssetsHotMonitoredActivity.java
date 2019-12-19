@@ -288,7 +288,7 @@ public class BCCAssetsHotMonitoredActivity extends BCCAssetsDetectHotActivity {
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
                 .RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
-            new InputParser.StringInputParser(input, SplitCoin.BCC) {
+            new InputParser.StringInputParser(input, SplitCoin.BCC, false) {
                 @Override
                 protected void bitcoinRequest(final String address, final String addressLabel,
                                               final long amount, final String bluetoothMac) {
@@ -299,7 +299,7 @@ public class BCCAssetsHotMonitoredActivity extends BCCAssetsDetectHotActivity {
                 @Override
                 protected void error(final int messageResId, final Object... messageArgs) {
                     DropdownMessage.showDropdownMessage(BCCAssetsHotMonitoredActivity.this,
-                            R.string.scan_watch_only_address_error);
+                            messageResId);
                 }
             }.parse();
             return;
