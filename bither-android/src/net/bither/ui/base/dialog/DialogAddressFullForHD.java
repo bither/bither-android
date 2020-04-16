@@ -31,6 +31,7 @@ import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Out;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.exception.ScriptException;
+import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.SubtransactionLabelInHDAccountListItem;
 import net.bither.ui.base.SubtransactionListItem;
 import net.bither.ui.base.SubtransactionOfOwnInHDAccountListItem;
@@ -207,9 +208,14 @@ public class DialogAddressFullForHD extends DialogWithArrow {
             }
             if (isIncoming) {
                 value = tx.getIns().get(i).getValue();
-                if (subAddress == null) {
+                if (Utils.isEmpty(subAddress)) {
                     subAddress = getContext().getResources().getString(R.string
                             .address_cannot_be_parsed);
+                } else {
+                    if (foreignAddresses.containsKey(subAddress)) {
+                        Long tValue = foreignAddresses.get(subAddress);
+                        value = value + (tValue == null ? 0 : tValue);
+                    }
                 }
                 foreignAddresses.put(subAddress, value);
             }
@@ -230,9 +236,14 @@ public class DialogAddressFullForHD extends DialogWithArrow {
                 e.printStackTrace();
             }
             if (!isIncoming) {
-                if (subAddress == null) {
+                if (Utils.isEmpty(subAddress)) {
                     subAddress = getContext().getResources().getString(R.string
                             .address_cannot_be_parsed);
+                } else {
+                    if (foreignAddresses.containsKey(subAddress)) {
+                        Long tValue = foreignAddresses.get(subAddress);
+                        value = value + (tValue == null ? 0 : tValue);
+                    }
                 }
                 foreignAddresses.put(subAddress, value);
             }
