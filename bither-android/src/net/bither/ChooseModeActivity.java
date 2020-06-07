@@ -105,13 +105,7 @@ public class ChooseModeActivity extends BaseActivity {
                 upgrade();
             } else {
                 setVersionCode();
-                if (isShowAd()) {
-                    Intent intent = new Intent(ChooseModeActivity.this, AdActivity.class);
-                    startActivityForResult(intent, 1);
-                } else {
-                    initActivity();
-                    downloadAd();
-                }
+                initActivity();
             }
         } else {
             DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ChooseModeActivity.this, getString(R.string.urandom_not_exists), new Runnable() {
@@ -168,7 +162,6 @@ public class ChooseModeActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 20) {
             initActivity();
-            downloadAd();
         }
     }
 
