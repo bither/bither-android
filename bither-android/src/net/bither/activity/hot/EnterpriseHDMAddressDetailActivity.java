@@ -82,6 +82,15 @@ public class EnterpriseHDMAddressDetailActivity extends AddressDetailActivity {
                         }
                     }));
                 }
+                actions.add(new Action(R.string.address_option_view_on_blockchair,
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                UIUtil.gotoBrower(EnterpriseHDMAddressDetailActivity.this,
+                                        BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
+                                                .getAddress());
+                            }
+                }));
                 return actions;
             }
         }.show();

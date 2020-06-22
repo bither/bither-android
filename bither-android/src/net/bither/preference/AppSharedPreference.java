@@ -88,6 +88,9 @@ public class AppSharedPreference {
 
     private static final String IS_SEGWIT_ADDRESS_TYPE = "is_segwit_address_type";
 
+    private static final String IS_USE_DYNAMIC_MINER_FEE = "is_use_dynamic_miner_fee";
+
+
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
     private SharedPreferences mPreferences;
@@ -484,6 +487,14 @@ public class AppSharedPreference {
 
     public boolean isSegwitAddressType() {
         return mPreferences.getBoolean(IS_SEGWIT_ADDRESS_TYPE,false);
+    }
+
+    public void setIsUseDynamicMinerFee(boolean isUseDynamicMinerFee) {
+        mPreferences.edit().putBoolean(IS_USE_DYNAMIC_MINER_FEE, isUseDynamicMinerFee).commit();
+    }
+
+    public boolean isUseDynamicMinerFee() {
+        return mPreferences.getBoolean(IS_USE_DYNAMIC_MINER_FEE,true);
     }
 
 }

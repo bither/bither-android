@@ -62,8 +62,8 @@ public class DialogHDMAddressOptions extends DialogWithActions {
 
     @Override
     protected List<Action> getActions() {
-        ArrayList<Action> acitons = new ArrayList<Action>();
-        acitons.add(new Action(R.string.address_option_view_on_blockchain_info, new Runnable() {
+        ArrayList<Action> actions = new ArrayList<Action>();
+        actions.add(new Action(R.string.address_option_view_on_blockchain_info, new Runnable() {
             @Override
             public void run() {
                 UIUtil.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
@@ -73,7 +73,7 @@ public class DialogHDMAddressOptions extends DialogWithActions {
         String defaultCountry = Locale.getDefault().getCountry();
         if (Utils.compareString(defaultCountry, "CN") || Utils.compareString(defaultCountry,
                 "cn")) {
-            acitons.add(new Action(R.string.address_option_view_on_btc, new Runnable() {
+            actions.add(new Action(R.string.address_option_view_on_btc, new Runnable() {
                 @Override
                 public void run() {
                     UIUtil.gotoBrower(activity, BitherUrl.BTC_COM_ADDRESS_URL + address
@@ -81,6 +81,15 @@ public class DialogHDMAddressOptions extends DialogWithActions {
                 }
             }));
         }
+        actions.add(new Action(R.string.address_option_view_on_blockchair,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        UIUtil.gotoBrower(activity,
+                                BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
+                                        .getAddress());
+                    }
+        }));
         Action moveToTrashAction = new Action(R.string.trash_private_key, new Runnable() {
             @Override
             public void run() {
@@ -138,7 +147,7 @@ public class DialogHDMAddressOptions extends DialogWithActions {
             }
         });
         if (withAlias) {
-            acitons.add(new Action(R.string.address_alias_manage, new Runnable() {
+            actions.add(new Action(R.string.address_alias_manage, new Runnable() {
                 @Override
                 public void run() {
                     new DialogAddressAlias(getContext(), address,
@@ -149,6 +158,6 @@ public class DialogHDMAddressOptions extends DialogWithActions {
         }
         // Not support move hdm address to trash now
         // acitons.add(moveToTrashAction);
-        return acitons;
+        return actions;
     }
 }

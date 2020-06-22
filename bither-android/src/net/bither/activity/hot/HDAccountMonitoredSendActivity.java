@@ -85,7 +85,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
     }
 
     @Override
-    protected void sendClicked() {
+    protected void sendClicked(final Long dynamicFeeBase) {
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
             btcAmount = btc;
@@ -99,7 +99,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                 new Thread() {
                     @Override
                     public void run() {
-                        send();
+                        send(dynamicFeeBase);
                     }
                 }.start();
             } else {
@@ -109,7 +109,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
         }
     }
 
-    private void send() {
+    private void send(Long dynamicFeeBase) {
         tx = null;
         HDAccount account = (HDAccount) address;
         try {
@@ -119,7 +119,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                     isSegwitChangeAddress = false;
                 }
             }
-            tx = account.newTx(toAddress, btcAmount, isSegwitChangeAddress);
+            tx = account.newTx(toAddress, btcAmount, isSegwitChangeAddress, dynamicFeeBase);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

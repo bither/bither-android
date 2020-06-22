@@ -196,6 +196,14 @@ public class DialogHdAccountOldAddresses extends CenterDialog {
                                     }
                                 }));
                             }
+                            actions.add(new Action(R.string.address_option_view_on_blockchair,
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            UIUtil.gotoBrower(activity,
+                                                    BitherUrl.BLOCKCHAIR_ADDRESS_URL + address);
+                                        }
+                            }));
                             return actions;
                         }
                     }.show();

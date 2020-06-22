@@ -81,7 +81,7 @@ public class EnterpriseHDMSendActivity extends SendActivity implements DialogSen
     }
 
     @Override
-    protected void sendClicked() {
+    protected void sendClicked(final Long dynamicFeeBase) {
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
             btcAmount = btc;
@@ -95,7 +95,7 @@ public class EnterpriseHDMSendActivity extends SendActivity implements DialogSen
                 new Thread() {
                     @Override
                     public void run() {
-                        send();
+                        send(dynamicFeeBase);
                     }
                 }.start();
             } else {
@@ -105,11 +105,11 @@ public class EnterpriseHDMSendActivity extends SendActivity implements DialogSen
         }
     }
 
-    private void send() {
+    private void send(Long dynamicFeeBase) {
         tx = null;
         String changeTo = getChangeAddress();
         try {
-            tx = address.buildTx(btcAmount, toAddress, changeTo == null ? address.getAddress() : changeTo);
+            tx = address.buildTx(btcAmount, toAddress, changeTo == null ? address.getAddress() : changeTo, dynamicFeeBase);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

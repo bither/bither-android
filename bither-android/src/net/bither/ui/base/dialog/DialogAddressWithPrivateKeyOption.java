@@ -62,6 +62,15 @@ public class DialogAddressWithPrivateKeyOption extends DialogWithActions {
                 }
             }));
         }
+        actions.add(new Action(R.string.address_option_view_on_blockchair,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        UIUtil.gotoBrower(activity,
+                                BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
+                                        .getAddress());
+                    }
+        }));
         actions.add(new Action(R.string.private_key_management, new Runnable() {
             @Override
             public void run() {

@@ -35,6 +35,20 @@
         android:id="@+id/iv_blockmeta"
         android:background="#22ffffff" />
 
+    <TextView
+        android:id="@+id/tv_view_on_blockchair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_touchable_foreground"
+        android:padding="10dp"
+        android:text="@string/address_option_view_on_blockchair"
+        android:textColor="@color/dialog_text_color_selector"
+        android:textSize="18sp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#22ffffff" />
 
     <TextView
         android:id="@+id/tv_private_key_management"

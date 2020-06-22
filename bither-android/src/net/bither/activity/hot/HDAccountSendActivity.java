@@ -65,7 +65,7 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
     }
 
     @Override
-    protected void sendClicked() {
+    protected void sendClicked(final Long dynamicFeeBase) {
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
             btcAmount = btc;
@@ -79,7 +79,7 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
                 new Thread() {
                     @Override
                     public void run() {
-                        send();
+                        send(dynamicFeeBase);
                     }
                 }.start();
             } else {
@@ -89,12 +89,12 @@ public class HDAccountSendActivity extends SendActivity implements DialogHdSendC
         }
     }
 
-    private void send() {
+    private void send(Long dynamicFeeBase) {
         tx = null;
         HDAccount account = (HDAccount) address;
         SecureCharSequence password = new SecureCharSequence(etPassword.getText());
         try {
-            tx = account.newTx(toAddress, btcAmount, AppSharedPreference.getInstance().isSegwitAddressType(), password);
+            tx = account.newTx(toAddress, btcAmount, AppSharedPreference.getInstance().isSegwitAddressType(), password, dynamicFeeBase);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

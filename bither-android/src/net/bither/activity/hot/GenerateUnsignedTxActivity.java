@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -38,6 +40,7 @@ import android.widget.TextView;
 import net.bither.BitherSetting;
 import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.api.BitherStatsDynamicFeeApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -71,7 +74,6 @@ import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UnitUtilWrapper;
 
-
 public class GenerateUnsignedTxActivity extends SwipeRightActivity implements EntryKeyboardView
         .EntryKeyboardViewListener, CommitTransactionThread.CommitTransactionListener,
         DialogSendOption.DialogSendOptionListener {
@@ -88,6 +90,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     private ImageView ivBalanceSymbol;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
+    private CheckBox cbxMinerFee;
+    private ImageView ivMinerFeeDes;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private Tx tx;
@@ -145,6 +149,11 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
+        cbxMinerFee = findViewById(R.id.cbx_miner_fee);
+        cbxMinerFee.setOnCheckedChangeListener(cbxMinerFeeCheckChangeListener);
+        cbxMinerFee.setChecked(AppSharedPreference.getInstance().isUseDynamicMinerFee());
+        ivMinerFeeDes = findViewById(R.id.iv_miner_fee_des);
+        ivMinerFeeDes.setOnClickListener(ivMinerFeeDesClick);
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         dialogSelectChangeAddress = new DialogSelectChangeAddress(this, address);
         final CurrencyAmountView btcAmountView = (CurrencyAmountView) findViewById(R.id.cav_btc);
@@ -295,43 +304,110 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this, R.string.send_failed);
     }
 
+    private OnClickListener ivMinerFeeDesClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask confirmTask = new DialogConfirmTask(GenerateUnsignedTxActivity.this, getString(R.string.dynamic_miner_fee_des), new Runnable() {
+                @Override
+                public void run() {  }
+            }, false);
+            confirmTask.setCancelable(false);
+            confirmTask.show();
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener cbxMinerFeeCheckChangeListener = new CompoundButton
+            .OnCheckedChangeListener() {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            AppSharedPreference.getInstance().setIsUseDynamicMinerFee(isChecked);
+        }
+    };
+
     private OnClickListener sendClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            final long btc = amountCalculatorLink.getAmount();
-            if (btc > 0) {
-                if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
-                    if (Utils.compareString(etAddress.getText().toString().trim(),
-                            dialogSelectChangeAddress.getChangeAddress().getAddress())) {
-                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
-                                R.string.select_change_address_change_to_same_warn);
-                        return;
-                    }
+            baseSendClicked();
+        }
+    };
+
+    private void baseSendClicked() {
+        if (cbxMinerFee.isChecked()) {
+            if (!dp.isShowing()) {
+                dp.show();
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Long dynamicFeeBase = null;
                     try {
-                        CompleteTransactionRunnable completeRunnable = new
-                                CompleteTransactionRunnable(addressPosition, amountCalculatorLink
-                                .getAmount(), etAddress.getText().toString().trim(),
-                                dialogSelectChangeAddress.getChangeAddress().getAddress(), null);
-                        completeRunnable.setHandler(completeTransactionHandler);
-                        Thread thread = new Thread(completeRunnable);
-                        dp.setThread(thread);
-                        if (!dp.isShowing()) {
-                            dp.show();
-                        }
-                        thread.start();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
-                                R.string.send_failed);
+                        dynamicFeeBase = BitherStatsDynamicFeeApi.queryStatsDynamicFee();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-                } else {
+                    final Long finalDynamicFeeBase = dynamicFeeBase;
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            if (finalDynamicFeeBase != null && finalDynamicFeeBase > 0) {
+                                sendClicked(finalDynamicFeeBase);
+                            } else {
+                                DialogConfirmTask confirmTask = new DialogConfirmTask(GenerateUnsignedTxActivity.this, getString(R.string.dynamic_miner_fee_failure_title), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        sendClicked(null);
+                                    }
+                                });
+                                confirmTask.setCancelable(false);
+                                confirmTask.show();
+                            }
+                        }
+                    });
+                }
+            }).start();
+        } else {
+            sendClicked(null);
+        }
+    }
+
+    private void sendClicked(Long dynamicFeeBase) {
+        final long btc = amountCalculatorLink.getAmount();
+        if (btc > 0) {
+            if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
+                if (Utils.compareString(etAddress.getText().toString().trim(),
+                        dialogSelectChangeAddress.getChangeAddress().getAddress())) {
+                    DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                            R.string.select_change_address_change_to_same_warn);
+                    return;
+                }
+                try {
+                    CompleteTransactionRunnable completeRunnable = new
+                            CompleteTransactionRunnable(addressPosition, amountCalculatorLink
+                            .getAmount(), etAddress.getText().toString().trim(),
+                            dialogSelectChangeAddress.getChangeAddress().getAddress(), null, dynamicFeeBase);
+                    completeRunnable.setHandler(completeTransactionHandler);
+                    Thread thread = new Thread(completeRunnable);
+                    dp.setThread(thread);
+                    if (!dp.isShowing()) {
+                        dp.show();
+                    }
+                    thread.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
                     DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
                             R.string.send_failed);
                 }
+            } else {
+                DropdownMessage.showDropdownMessage(GenerateUnsignedTxActivity.this,
+                        R.string.send_failed);
             }
         }
-    };
+    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity

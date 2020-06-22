@@ -629,49 +629,49 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     dp.setMessage(R.string.reload_tx_please_wait);
                 }
                 dp.show();
+                ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
+                    @Override
+                    public void runWithService(BlockchainService service) {
+                        service.stopAndUnregister();
+                        for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                            address.setSyncComplete(false);
+                            address.updateSyncComplete();
+                        }
+                        AbstractDb.hdAccountAddressProvider.setSyncedNotComplete();
+                        AbstractDb.txProvider.clearAllTx();
+                        for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                            address.notificatTx(null, Tx.TxNotificationType.txFromApi);
+                        }
+                        try {
+                            if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                                TransactionsUtil.getMyTxFromBither();
+                            }
+                            service.startAndRegister();
+                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                            R.string.reload_tx_success);
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dp.dismiss();
+                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                            R.string.network_or_connection_error);
+                                }
+                            });
+
+                        }
+                    }
+                };
+                threadNeedService.start();
             }
         });
-        ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
-            @Override
-            public void runWithService(BlockchainService service) {
-                service.stopAndUnregister();
-                for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                    address.setSyncComplete(false);
-                    address.updateSyncComplete();
-                }
-                AbstractDb.hdAccountAddressProvider.setSyncedNotComplete();
-                AbstractDb.txProvider.clearAllTx();
-                for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                    address.notificatTx(null, Tx.TxNotificationType.txFromApi);
-                }
-                try {
-                    if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                        TransactionsUtil.getMyTxFromBither();
-                    }
-                    service.startAndRegister();
-                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                    R.string.reload_tx_success);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dp.dismiss();
-                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                    R.string.network_or_connection_error);
-                        }
-                    });
-
-                }
-            }
-        };
-        threadNeedService.start();
     }
 
     private SettingSelectorView.SettingSelector messageSigningSelector = new SettingSelectorView

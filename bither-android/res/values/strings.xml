@@ -33,6 +33,7 @@
     <string name="address_option_remonitor">Remonitor</string>
     <string name="address_option_view_on_blockchain_info">View on Blockchain.info</string>
     <string name="address_option_view_on_btc">View on btc.com</string>
+    <string name="address_option_view_on_blockchair">View on blockchair.com</string>
     <string name="address_delete_confirmation">Sure to stop monitoring this address?</string>
     <string name="address_remonitor_confirmation">Sure to remonitor this address?</string>
     <string name="address_monitor_failed">Monitor failed</string>
@@ -118,11 +119,11 @@
     <string name="send_coins_fragment_receiving_address_label">Pay to</string>
     <string name="send_coins_fragment_amount_label">Amount to pay</string>
     <string name="send_result_sent_to">will be sent to</string>
-    <string name="send_result_with_fee">with fee</string>
+    <string name="send_result_with_fee">miner fee</string>
     <string name="send_confirm_address">You will send to:</string>
     <string name="send_confirm_amount">Amount:</string>
-    <string name="send_confirm_fee">Fee:</string>
-    <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction fee is low.\n<b>Confirmation may be very slow</b>.</string>
+    <string name="send_confirm_fee">Miner Fee:</string>
+    <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction miner fee is low.\n<b>Confirmation may be very slow</b>.</string>
     <string name="unsigned_transaction_exit_waring">Give up signing?\nThis transaction will not get broadcasted.</string>
 
     <!-- market -->
@@ -167,7 +168,7 @@
     <string name="setting_name_wifi">Network Setting</string>
     <string name="setting_name_wifi_yes">Sync over wifi only</string>
     <string name="setting_name_wifi_no">Sync always</string>
-    <string name="setting_name_transaction_fee">Default Transaction Fee</string>
+    <string name="setting_name_transaction_fee">Default Transaction Miner Fee</string>
     <string name="setting_name_transaction_fee_normal">Normal</string>
     <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
@@ -185,7 +186,7 @@
     <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">Donate</string>
     <string name="donate_thanks">Thank you for donating.</string>
-    <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction fee as default?\nThis may cause slow confirmation.</string>
+    <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction miner fee as default?\nThis may cause slow confirmation.</string>
     <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
     <string name="set_avatar">Set Avatar</string>
     <string name="set_avatar_camera">From Camera</string>
@@ -847,5 +848,9 @@
     <string name="tip_no_peers_connected">No connectable node</string>
 
     <string name="cold_no_support_bc1_segwit_address">BITHD Cold wallet doesn’t support sending coins to Segwit addresses beginning with “bc”.</string>
+
+    <string name="dynamic_miner_fee_title">Use Dynamic Miner Fee</string>
+    <string name="dynamic_miner_fee_des">The system will caculate the miner fee automaticlly after switch on Dynamic Miner Fee function. The miner fee is determined by Bitcoin Blockchain.</string>
+    <string name="dynamic_miner_fee_failure_title">Dynamic Miner Fee caculation failed, use the default Miner fee?</string>
 
 </resources>

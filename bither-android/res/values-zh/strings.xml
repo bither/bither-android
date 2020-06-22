@@ -25,6 +25,7 @@
     <string name="address_option_remonitor">重新监控</string>
     <string name="address_option_view_on_blockchain_info">在Blockchain.info上查看</string>
     <string name="address_option_view_on_btc">在btc.com上查看</string>
+    <string name="address_option_view_on_blockchair">在blockchair.com上查看</string>
     <string name="address_delete_confirmation">确认停止监控这个地址?</string>
     <string name="address_remonitor_confirmation">确认重新监控这个地址?</string>
     <string name="address_monitor_failed">监控失败</string>
@@ -111,11 +112,11 @@
     <string name="send_coins_fragment_receiving_address_label">发送给</string>
     <string name="send_coins_fragment_amount_label">金额</string>
     <string name="send_result_sent_to">已被发给了</string>
-    <string name="send_result_with_fee">手续费</string>
+    <string name="send_result_with_fee">矿工费</string>
     <string name="send_confirm_address">将要发送给:</string>
     <string name="send_confirm_amount">金额:</string>
-    <string name="send_confirm_fee">手续费:</string>
-    <string name="send_confirm_low_priority_warn">交易中有小于0.01BTC的支出,\n手续费较低.\n<b>确认时间可能很长</b>.</string>
+    <string name="send_confirm_fee">矿工费:</string>
+    <string name="send_confirm_low_priority_warn">交易中有小于0.01BTC的支出,\n矿工费较低.\n<b>确认时间可能很长</b>.</string>
     <string name="unsigned_transaction_exit_waring">放弃签名吗?\n此交易将不会被广播</string>
 
     <!-- market -->
@@ -160,7 +161,7 @@
     <string name="setting_name_wifi">网络设置</string>
     <string name="setting_name_wifi_yes">只在wifi下同步</string>
     <string name="setting_name_wifi_no">一直同步</string>
-    <string name="setting_name_transaction_fee">默认手续费</string>
+    <string name="setting_name_transaction_fee">默认矿工费</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
@@ -178,7 +179,7 @@
     <string name="setting_name_api_config_blockchain">Blockchain</string>
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
-    <string name="setting_name_transaction_fee_low_warn">确认默认使用低手续费模式?\n这会导致较慢的交易确认</string>
+    <string name="setting_name_transaction_fee_low_warn">确认默认使用低矿工费模式?\n这会导致较慢的交易确认</string>
     <string name="backup_again">一个小时内刚刚进行过备份，确认要再次备份吗?</string>
     <string name="set_avatar">设置头像</string>
     <string name="set_avatar_camera">来自相机</string>
@@ -811,5 +812,8 @@
 
     <string name="cold_no_support_bc1_segwit_address">冷钱包暂不支持发往bc开头的隔离验证地址</string>
 
+    <string name="dynamic_miner_fee_title">使用动态矿工费</string>
+    <string name="dynamic_miner_fee_des">开启动态矿工费后，软件将根据当前比特币的网络状态自动计算实时最优费用；矿工费由比特币网络收取。</string>
+    <string name="dynamic_miner_fee_failure_title">计算动态矿工费失败，是否使用默认矿工费？</string>
 
 </resources>

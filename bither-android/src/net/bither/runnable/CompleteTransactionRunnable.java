@@ -47,56 +47,50 @@ public class CompleteTransactionRunnable extends BaseRunnable {
     private List<Out> outs = null;
     private Coin coin = Coin.BTC;
     private String blockHash;
+    private Long dynamicFeeBase;
 
     static {
         registerTxBuilderExceptionMessages();
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       SecureCharSequence password) throws Exception {
-        this(addressPosition, amount, toAddress, toAddress, password, null);
-    }
-
-    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       String changeAddress, SecureCharSequence password) throws Exception {
-        this(addressPosition, amount, toAddress, changeAddress, password, null);
+                                       String changeAddress, SecureCharSequence password, Long dynamicFeeBase) throws Exception {
+        this(addressPosition, amount, toAddress, changeAddress, password, dynamicFeeBase, null);
     }
 
     public CompleteTransactionRunnable(Coin coin, int addressPosition, long amount, String toAddress,
                                        String changeAddress, SecureCharSequence password) throws Exception {
-        this(coin, addressPosition, amount, toAddress, changeAddress, password, null);
+        this(coin, addressPosition, amount, toAddress, changeAddress, password, null, null);
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
                                        String changeAddress, SecureCharSequence password, boolean isBtc, List<Out> outs) throws Exception {
-        this(addressPosition, amount, toAddress, changeAddress, password, null,null, isBtc,outs);
+        this(addressPosition, amount, toAddress, changeAddress, password, null, null, isBtc, outs);
     }
 
     public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       String changeAddress, SecureCharSequence password,
+                                       String changeAddress, SecureCharSequence password, Long dynamicFeeBase,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate otherSigFetcher1) throws Exception {
+        this(Coin.BTC, addressPosition, amount, toAddress, changeAddress, password, dynamicFeeBase, otherSigFetcher1, null);
+    }
+
+    public CompleteTransactionRunnable(Coin coin, int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password, Long dynamicFeeBase,
                                        HDMAddress.HDMFetchOtherSignatureDelegate
                                                otherSigFetcher1) throws Exception {
-        this(Coin.BTC, addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null);
+        this(coin, addressPosition, amount, toAddress, changeAddress, password, dynamicFeeBase, otherSigFetcher1, null);
+    }
+
+    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
+                                       String changeAddress, SecureCharSequence password, Long dynamicFeeBase,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate otherSigFetcher1,
+                                       HDMAddress.HDMFetchOtherSignatureDelegate otherSigFetcher2) throws Exception {
+        this(Coin.BTC, addressPosition, amount, toAddress, changeAddress, password, dynamicFeeBase, otherSigFetcher1, otherSigFetcher2);
     }
 
     public CompleteTransactionRunnable(Coin coin, int addressPosition, long amount, String toAddress,
                                        String changeAddress, SecureCharSequence password,
-                                       HDMAddress.HDMFetchOtherSignatureDelegate
-                                               otherSigFetcher1) throws Exception {
-        this(coin, addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, null);
-    }
-
-    public CompleteTransactionRunnable(int addressPosition, long amount, String toAddress,
-                                       String changeAddress, SecureCharSequence password,
-                                       HDMAddress.HDMFetchOtherSignatureDelegate
-                                               otherSigFetcher1,HDMAddress.HDMFetchOtherSignatureDelegate
-                                               otherSigFetcher2) throws Exception {
-        this(Coin.BTC, addressPosition, amount, toAddress, changeAddress, password, otherSigFetcher1, otherSigFetcher2);
-    }
-
-    public CompleteTransactionRunnable(Coin coin, int addressPosition, long amount, String toAddress,
-                                       String changeAddress, SecureCharSequence password,
-                                       HDMAddress.HDMFetchOtherSignatureDelegate
+                                       Long dynamicFeeBase, HDMAddress.HDMFetchOtherSignatureDelegate
                                                otherSigFetcher1,
                                        HDMAddress.HDMFetchOtherSignatureDelegate
                                                otherSigFetcher2) throws Exception {
@@ -104,6 +98,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         this.amount = amount;
         this.toAddress = toAddress;
         this.password = password;
+        this.dynamicFeeBase = dynamicFeeBase;
         sigFetcher1 = otherSigFetcher1;
         sigFetcher2 = otherSigFetcher2;
         this.coin = coin;
@@ -277,7 +272,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
     private void signTx() {
         try {
-            Tx tx = wallet.buildTx(amount, toAddress, changeAddress, coin);
+            Tx tx = wallet.buildTx(amount, toAddress, changeAddress, coin, dynamicFeeBase);
             if (tx == null) {
                 obtainMessage(HandlerMessage.MSG_FAILURE, BitherApplication.mContext.getString(R
                         .string.send_failed));

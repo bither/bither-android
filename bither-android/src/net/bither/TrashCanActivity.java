@@ -236,6 +236,16 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                             }));
                         }
 
+                        actions.add(new Action(R.string.address_option_view_on_blockchair,
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        UIUtil.gotoBrower(TrashCanActivity.this,
+                                                BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
+                                                        .getAddress());
+                                    }
+                        }));
+
                         actions.add(new Action(R.string.address_alias_manage, new Runnable() {
                             @Override
                             public void run() {

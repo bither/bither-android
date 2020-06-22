@@ -32,6 +32,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 
 import net.bither.activity.hot.SelectAddressToSendActivity;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.api.BitherStatsDynamicFeeApi;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.Tx;
@@ -55,6 +58,7 @@ import net.bither.ui.base.CurrencyAmountView;
 import net.bither.ui.base.CurrencyCalculatorLink;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SwipeRightActivity;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogRCheck;
 import net.bither.ui.base.dialog.DialogSelectChangeAddress;
 import net.bither.ui.base.dialog.DialogSendConfirm;
@@ -67,6 +71,7 @@ import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
+import net.bither.util.ThreadUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
@@ -89,6 +94,8 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
     private PasswordEntryKeyboardView kvPassword;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
+    private CheckBox cbxMinerFee;
+    private ImageView ivMinerFeeDes;
     protected DialogSelectChangeAddress dialogSelectChangeAddress;
     protected boolean isColdSendBtc;
 
@@ -133,6 +140,11 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
+        cbxMinerFee = findViewById(R.id.cbx_miner_fee);
+        cbxMinerFee.setOnCheckedChangeListener(cbxMinerFeeCheckChangeListener);
+        cbxMinerFee.setChecked(AppSharedPreference.getInstance().isUseDynamicMinerFee());
+        ivMinerFeeDes = findViewById(R.id.iv_miner_fee_des);
+        ivMinerFeeDes.setOnClickListener(ivMinerFeeDesClick);
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         dialogSelectChangeAddress = new DialogSelectChangeAddress(this, address);
         tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
@@ -295,15 +307,79 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         DropdownMessage.showDropdownMessage(SendActivity.this, R.string.send_failed);
     }
 
+    private OnClickListener ivMinerFeeDesClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask confirmTask = new DialogConfirmTask(SendActivity.this, getString(R.string.dynamic_miner_fee_des), new Runnable() {
+                @Override
+                public void run() {  }
+            }, false);
+            confirmTask.setCancelable(false);
+            confirmTask.show();
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener cbxMinerFeeCheckChangeListener = new CompoundButton
+            .OnCheckedChangeListener() {
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            AppSharedPreference.getInstance().setIsUseDynamicMinerFee(isChecked);
+        }
+    };
+
     private OnClickListener sendClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            sendClicked();
+            baseSendClicked();
         }
     };
 
-    protected void sendClicked() {
+    private void baseSendClicked() {
+        if (cbxMinerFee.isChecked()) {
+            if (!dp.isShowing()) {
+                dp.show();
+            }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Long dynamicFeeBase = null;
+                    try {
+                        dynamicFeeBase = BitherStatsDynamicFeeApi.queryStatsDynamicFee();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    final Long finalDynamicFeeBase = dynamicFeeBase;
+                    ThreadUtil.runOnMainThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (dp.isShowing()) {
+                                dp.dismiss();
+                            }
+                            if (finalDynamicFeeBase != null && finalDynamicFeeBase > 0) {
+                                sendClicked(finalDynamicFeeBase);
+                            } else {
+                                DialogConfirmTask confirmTask = new DialogConfirmTask(SendActivity.this, getString(R.string.dynamic_miner_fee_failure_title), new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        sendClicked(null);
+                                    }
+                                });
+                                confirmTask.setCancelable(false);
+                                confirmTask.show();
+                            }
+                        }
+                    });
+                }
+            }).start();
+        } else {
+            sendClicked(null);
+        }
+    }
+
+    protected void sendClicked(Long dynamicFeeBase) {
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
             String address = etAddress.getText().toString().trim();
@@ -319,7 +395,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                             CompleteTransactionRunnable(addressPosition,
                             amountCalculatorLink.getAmount(), address
                             , dialogSelectChangeAddress.getChangeAddress().getAddress
-                            (), new SecureCharSequence(etPassword.getText()));
+                            (), new SecureCharSequence(etPassword.getText()), dynamicFeeBase);
                     completeRunnable.setHandler(completeTransactionHandler);
                     Thread thread = new Thread(completeRunnable);
                     dp.setThread(thread);
