@@ -213,36 +213,15 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                     @Override
                     protected List<Action> getActions() {
                         ArrayList<Action> actions = new ArrayList<Action>();
-                        actions.add(new Action(R.string.address_option_view_on_blockchain_info,
-                                new Runnable() {
-                            @Override
-                            public void run() {
-                                UIUtil.gotoBrower(TrashCanActivity.this,
-                                        BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
-                                                .getAddress());
-                            }
-                        }));
-
-                        String defaultCountry = Locale.getDefault().getCountry();
-                        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString
-                                (defaultCountry, "cn")) {
-                            actions.add(new Action(R.string.address_option_view_on_btc,
-                                    new Runnable() {
-                                @Override
-                                public void run() {
-                                    UIUtil.gotoBrower(TrashCanActivity.this,
-                                            BitherUrl.BTC_COM_ADDRESS_URL + address.getAddress());
-                                }
-                            }));
-                        }
 
                         actions.add(new Action(R.string.address_option_view_on_blockchair,
                                 new Runnable() {
                                     @Override
                                     public void run() {
                                         UIUtil.gotoBrower(TrashCanActivity.this,
-                                                BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
-                                                        .getAddress());
+                                                String.format(BitherUrl.BLOCKCHAIR_ADDRESS_URL, address
+                                                        .getAddress()));
+
                                     }
                         }));
 

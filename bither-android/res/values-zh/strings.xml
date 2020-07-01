@@ -804,7 +804,7 @@
 
     <string name="permissions_no_grant">请前往设置->应用->比太->权限管理中打开相关权限，否则功能无法正常使用！</string>
 
-    <string name="tip_sync_address_tx">%s\n正在同步该地址交易数据</string>
+    <string name="tip_sync_address_tx">%s\n正在同步该地址交易数据\n数据来自Blockchair.com</string>
     <string name="tip_no_peers_connected_scan">正在搜索可连接的节点</string>
     <string name="tip_sync_block_height">本地块高度落后于区块最新高度 %d 个块，正在同步</string>
     <string name="tip_network_error">网络已断开，请检查网络设置</string>

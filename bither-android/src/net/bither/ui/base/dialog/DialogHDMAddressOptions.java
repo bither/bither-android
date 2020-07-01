@@ -63,31 +63,13 @@ public class DialogHDMAddressOptions extends DialogWithActions {
     @Override
     protected List<Action> getActions() {
         ArrayList<Action> actions = new ArrayList<Action>();
-        actions.add(new Action(R.string.address_option_view_on_blockchain_info, new Runnable() {
-            @Override
-            public void run() {
-                UIUtil.gotoBrower(activity, BitherUrl.BLOCKCHAIN_INFO_ADDRESS_URL + address
-                        .getAddress());
-            }
-        }));
-        String defaultCountry = Locale.getDefault().getCountry();
-        if (Utils.compareString(defaultCountry, "CN") || Utils.compareString(defaultCountry,
-                "cn")) {
-            actions.add(new Action(R.string.address_option_view_on_btc, new Runnable() {
-                @Override
-                public void run() {
-                    UIUtil.gotoBrower(activity, BitherUrl.BTC_COM_ADDRESS_URL + address
-                            .getAddress());
-                }
-            }));
-        }
         actions.add(new Action(R.string.address_option_view_on_blockchair,
                 new Runnable() {
                     @Override
                     public void run() {
                         UIUtil.gotoBrower(activity,
-                                BitherUrl.BLOCKCHAIR_ADDRESS_URL + address
-                                        .getAddress());
+                                String.format(BitherUrl.BLOCKCHAIR_ADDRESS_URL, address.getAddress()));
+
                     }
         }));
         Action moveToTrashAction = new Action(R.string.trash_private_key, new Runnable() {
