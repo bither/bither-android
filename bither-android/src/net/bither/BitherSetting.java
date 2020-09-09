@@ -143,9 +143,6 @@ public class BitherSetting {
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitfinex);
                 break;
-            case COINBASE:
-                name = BitherApplication.mContext.getString(R.string.market_name_coinbase);
-                break;
             default:
                 name = BitherApplication.mContext
                         .getString(R.string.market_name_bitstamp);

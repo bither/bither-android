@@ -58,9 +58,6 @@ public class Market {
             case BITFINEX:
                 resource = R.color.market_color_bitfinex;
                 break;
-            case COINBASE:
-                resource = R.color.market_color_coinbase;
-                break;
             default:
                 resource = R.color.text_field_text_color;
                 break;
@@ -95,9 +92,6 @@ public class Market {
                 return "bitstamp.net";
             case BITFINEX:
                 return "bitfinex.com";
-            case COINBASE:
-                return "coinbase.com";
-
             default:
                 return null;
         }

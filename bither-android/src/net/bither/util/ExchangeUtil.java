@@ -166,7 +166,6 @@ public class ExchangeUtil {
         switch (marketType) {
             case BITSTAMP:
             case BITFINEX:
-            case COINBASE:
                 return Currency.USD;
             default:
                 break;
