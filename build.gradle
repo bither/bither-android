@@ -29,12 +29,12 @@ project(':bitherj') {
 subprojects {
 
     android {
-        compileSdkVersion 28
+        compileSdkVersion 29
         buildToolsVersion '28.0.2'
 
         defaultConfig {
             minSdkVersion 9
-            targetSdkVersion 28
+            targetSdkVersion 29
             multiDexEnabled true
         }
 
