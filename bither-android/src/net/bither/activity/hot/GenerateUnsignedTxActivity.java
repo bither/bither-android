@@ -69,6 +69,7 @@ import net.bither.ui.base.keyboard.EntryKeyboardView;
 import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
+import net.bither.util.DynamicFeeUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
@@ -347,7 +348,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    final Long finalDynamicFeeBase = dynamicFeeBase;
+                    final Long finalDynamicFeeBase = DynamicFeeUtils.getFinalDynamicFeeBase(dynamicFeeBase);
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
