@@ -2,12 +2,8 @@ apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
-        mavenCentral()
-        google()
-//        maven {
-//            url 'https://maven.google.com/'
-//            name 'Google'
-//        }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.2'
@@ -62,6 +58,7 @@ subprojects {
             debug.setRoot('build-types/debug')
             release.setRoot('build-types/release')
         }
+
         packagingOptions {
             exclude 'META-INF/NOTICE.txt'
             exclude 'META-INF/LICENSE.txt'
@@ -88,10 +85,7 @@ subprojects {
 //}
 allprojects {
     repositories {
-        jcenter()
-        maven {
-            url 'https://maven.google.com'
-        }
-        google()
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
 }
