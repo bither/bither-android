@@ -73,8 +73,8 @@ public class SignMessageAddressListActivity extends SwipeRightFragmentActivity {
         signMessageTypeSelect = (SignMessageTypeSelect) getIntent().getSerializableExtra(SignMgsTypeSelect);
         isHot = (boolean) getIntent().getSerializableExtra(IsHdAccountHot);
         isShowAddress = getIntent().getBooleanExtra(IsShowAddress, false);
-        tvTitle.setText(isShowAddress ? R.string.address_mine : R.string.sign_message_select_address);
         isSignHash = getIntent().getBooleanExtra(IsSignHash, false);
+        tvTitle.setText(isShowAddress ? R.string.address_mine : (isSignHash ? R.string.sign_hash_select_address : R.string.sign_message_select_address));
         if (signMessageTypeSelect != SignMessageTypeSelect.Hot) {
             String tempString = getIntent().getStringExtra(PassWord);
             password = tempString.subSequence(0, tempString.length());

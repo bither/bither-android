@@ -164,6 +164,7 @@ public class DialogSignMessageSelectType extends CenterDialog {
                 Intent intent = new Intent(getContext(), SignMessageAddressListActivity.class);
                 intent.putExtra(SignMgsTypeSelect, SignMessageTypeSelect.Hot);
                 intent.putExtra(IsHdAccountHot, isHot);
+                intent.putExtra(IsSignHash, isSignHash);
                 getContext().startActivity(intent);
                 dismiss();
             }
