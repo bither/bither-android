@@ -30,11 +30,14 @@ import android.widget.CompoundButton;
 
 import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.HDAccountCold;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.crypto.mnemonic.MnemonicException;
+import net.bither.bitherj.db.AbstractDb;
+import net.bither.fragment.hot.AddAddressHotHDAccountFragment;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.ThreadNeedService;
 import net.bither.service.BlockchainService;
@@ -50,6 +53,7 @@ import net.bither.xrandom.HDAccountColdUEntropyActivity;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/6/25.
@@ -121,48 +125,73 @@ public class AddAddressColdHDAccountFragment extends Fragment implements AddHotA
                             }
                         });
 
-                        final ArrayList<String> words = new ArrayList<String>();
                         try {
                             hdAccount = new HDAccountCold(MnemonicCode.instance(), new SecureRandom(), password);
-                            words.addAll(hdAccount.getSeedWords(password));
-                        } catch (MnemonicException.MnemonicLengthException e) {
-                            throw new RuntimeException(e);
-                        }
-                        password.wipe();
-                        BackupUtil.backupColdKey(false);
-                        if (service != null) {
-                            service.startAndRegister();
-                        }
-                        ThreadUtil.runOnMainThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                v.setKeepScreenOn(false);
-                                AddAddressColdHDAccountFragment.this.dp.dismiss();
-                                DialogFragmentHDMSingularColdSeed.newInstance(words, hdAccount
-                                        .getQRCodeFullEncryptPrivKey(), R.string
-                                        .add_hd_account_show_seed_label, R.string
-                                        .add_hd_account_show_seed_button, new
-                                        DialogFragmentHDMSingularColdSeed
-                                                .DialogFragmentHDMSingularColdSeedListener() {
-                                    @Override
-                                    public void HDMSingularColdSeedRemembered() {
-                                        if (getActivity() instanceof AddPrivateKeyActivity) {
-                                            AddPrivateKeyActivity activity =
-                                                    (AddPrivateKeyActivity) getActivity();
-                                            activity.save();
-                                        } else {
-                                            getActivity().finish();
-                                        }
-                                    }
-                                }).show(getActivity().getSupportFragmentManager(),
-                                        DialogFragmentHDMSingularColdSeed.FragmentTag);
+                            final List<String> words = hdAccount.getSeedWords(password);
+                            String firstAddress = HDAccount.getFirstAddress(words);
+                            String dbFirstAddress = hdAccount.getFirstAddressFromDb();
+                            if (!firstAddress.equals(dbFirstAddress)) {
+                                onFailed(password);
+                                return;
                             }
-                        });
+                            password.wipe();
+                            BackupUtil.backupColdKey(false);
+                            if (service != null) {
+                                service.startAndRegister();
+                            }
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    v.setKeepScreenOn(false);
+                                    AddAddressColdHDAccountFragment.this.dp.dismiss();
+                                    DialogFragmentHDMSingularColdSeed.newInstance(words, R.string
+                                            .add_hd_account_show_seed_label, R.string
+                                            .add_hd_account_show_seed_button, new
+                                            DialogFragmentHDMSingularColdSeed
+                                                    .DialogFragmentHDMSingularColdSeedListener() {
+                                                @Override
+                                                public void HDMSingularColdSeedRemembered() {
+                                                    if (getActivity() instanceof AddPrivateKeyActivity) {
+                                                        AddPrivateKeyActivity activity =
+                                                                (AddPrivateKeyActivity) getActivity();
+                                                        activity.save();
+                                                    } else {
+                                                        getActivity().finish();
+                                                    }
+                                                }
+                                            }).show(getActivity().getSupportFragmentManager(),
+                                            DialogFragmentHDMSingularColdSeed.FragmentTag);
+                                }
+                            });
+
+                        } catch (Exception ex) {
+                            onFailed(password);
+                        }
                     }
                 }.start();
             }
         }
     };
+
+    void onFailed(SecureCharSequence password) {
+        if (AddressManager.getInstance().noAddress()) {
+            AbstractDb.addressProvider.deletePassword(password);
+        }
+        password.wipe();
+        if (hdAccount != null) {
+            AbstractDb.hdAccountProvider.deleteHDAccount(hdAccount.getHdSeedId());
+            AbstractDb.hdAccountAddressProvider.deleteHDAccountAddress(hdAccount.getHdSeedId());
+        }
+        ThreadUtil.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                AddAddressColdHDAccountFragment.this.dp.dismiss();
+                DialogConfirmTask dialog = new DialogConfirmTask(getActivity(), getString(R.string.xrandom_generating_failed), null, false);
+                dialog.setCancelable(false);
+                dialog.show();
+            }
+        });
+    }
 
     @Override
     public ArrayList<String> getAddresses() {

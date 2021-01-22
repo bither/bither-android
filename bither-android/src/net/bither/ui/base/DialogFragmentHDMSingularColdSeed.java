@@ -51,15 +51,11 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
 
     public static final String FragmentTag = "DialogFragmentHDMSingularColdSeed";
     public static final String WordsKey = "Content";
-    public static final String QrCodeKey = "QRCode";
     public static final String LabelKey = "Label";
     public static final String ButtonKey = "Button";
 
-    private String qr;
     private List<String> words;
     private ViewPager pager;
-    private ToggleButton tbtnWords;
-    private ToggleButton tbtnQr;
     private PagerAdapter adapter;
     private DialogFragmentHDMSingularColdSeedListener listener;
     private Activity activity;
@@ -67,24 +63,22 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
     private int labelStr;
     private int buttonStr;
 
-    public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words, String qr,
+    public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words,
                                                                 DialogFragmentHDMSingularColdSeedListener listener) {
         DialogFragmentHDMSingularColdSeed dialog = new DialogFragmentHDMSingularColdSeed();
         Bundle bundle = new Bundle();
         bundle.putSerializable(WordsKey, new ArrayList<String>(words));
-        bundle.putString(QrCodeKey, qr);
         dialog.setArguments(bundle);
         dialog.listener = listener;
         return dialog;
     }
 
-    public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words, String qr,
+    public static DialogFragmentHDMSingularColdSeed newInstance(List<String> words,
                                                                 int label, int button,
                                                                 DialogFragmentHDMSingularColdSeedListener listener) {
         DialogFragmentHDMSingularColdSeed dialog = new DialogFragmentHDMSingularColdSeed();
         Bundle bundle = new Bundle();
         bundle.putSerializable(WordsKey, new ArrayList<String>(words));
-        bundle.putString(QrCodeKey, qr);
         bundle.putInt(LabelKey, label);
         bundle.putInt(ButtonKey, button);
         dialog.setArguments(bundle);
@@ -96,7 +90,6 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NORMAL, R.style.QrCodePager);
-        qr = getArguments().getString(QrCodeKey);
         words = (List<String>) getArguments().getSerializable(WordsKey);
         labelStr = getArguments().getInt(LabelKey, 0);
         buttonStr = getArguments().getInt(ButtonKey, 0);
@@ -109,8 +102,6 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
         View vContainer = inflater.inflate(R.layout.dialog_hdm_singular_cold_seed, container,
                 false);
         pager = (ViewPager) vContainer.findViewById(R.id.pager);
-        tbtnWords = (ToggleButton) vContainer.findViewById(R.id.tbtn_words);
-        tbtnQr = (ToggleButton) vContainer.findViewById(R.id.tbtn_qr);
         vContainer.findViewById(R.id.btn_confirm).setOnClickListener(this);
         pager.setOffscreenPageLimit(1);
         int size = Math.min(UIUtil.getScreenWidth(), UIUtil.getScreenHeight());
@@ -118,10 +109,6 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
         pager.setAdapter(adapter);
         pager.setCurrentItem(0);
         pager.setOnPageChangeListener(this);
-        tbtnWords.setChecked(true);
-        tbtnQr.setChecked(false);
-        tbtnWords.setOnClickListener(new IndicatorClick(0));
-        tbtnQr.setOnClickListener(new IndicatorClick(1));
         if (labelStr != 0) {
             TextView tvLabel = (TextView) vContainer.findViewById(R.id.tv_label);
             tvLabel.setText(labelStr);
@@ -171,53 +158,18 @@ public class DialogFragmentHDMSingularColdSeed extends DialogFragment implements
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
-                return DialogFragmentHDMSingularColdSeedWords.newInstance(words);
-            } else {
-                return DialogFragmentHDMSingularColdSeedQr.newInstance(qr);
-            }
+            return DialogFragmentHDMSingularColdSeedWords.newInstance(words);
         }
 
         @Override
         public int getCount() {
-            return 2;
-        }
-    }
-
-
-    private class IndicatorClick implements View.OnClickListener {
-        private int position;
-
-        public IndicatorClick(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (position != pager.getCurrentItem()) {
-                pager.setCurrentItem(position, true);
-            }
-            if (position == 0) {
-                tbtnQr.setChecked(false);
-                tbtnWords.setChecked(true);
-            } else {
-                tbtnQr.setChecked(true);
-                tbtnWords.setChecked(false);
-            }
+            return 1;
         }
     }
 
     @Override
     public void onPageSelected(int position) {
-        if (adapter.getCount() > 1) {
-            if (position == 0) {
-                tbtnWords.setChecked(true);
-                tbtnQr.setChecked(false);
-            } else {
-                tbtnQr.setChecked(true);
-                tbtnWords.setChecked(false);
-            }
-        }
+
     }
 
     @Override

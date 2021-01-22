@@ -33,20 +33,6 @@
         android:textSize="18sp"/>
 
     <Button
-        android:id="@+id/btn_qr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/btn_small_send_selector"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="@string/add_hd_account_seed_qr_code"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
-
-    <Button
         android:id="@+id/btn_phrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

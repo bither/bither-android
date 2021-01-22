@@ -34,7 +34,9 @@ import net.bither.R;
 import net.bither.activity.cold.AddColdAddressActivity;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.BitherjSettings;
+import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.dialog.DialogConfirmTask;
@@ -275,6 +277,20 @@ public abstract class UEntropyActivity extends BaseFragmentActivity implements U
                 });
             }
         });
+    }
+
+    protected void onFailed(Integer hdSeedId, SecureCharSequence password, Runnable finishGenerateRunnable) {
+        if (AddressManager.getInstance().noAddress()) {
+            AbstractDb.addressProvider.deletePassword(password);
+        }
+        if (hdSeedId != null) {
+            AbstractDb.hdAccountProvider.deleteHDAccount(hdSeedId);
+            AbstractDb.hdAccountAddressProvider.deleteHDAccountAddress(hdSeedId);
+        }
+        if (finishGenerateRunnable != null) {
+            finishGenerateRunnable.run();
+        }
+        onFailed();
     }
 
     protected void onFailed() {

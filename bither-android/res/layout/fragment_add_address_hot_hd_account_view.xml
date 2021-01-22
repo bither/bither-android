@@ -49,7 +49,8 @@
         android:paddingTop="10dp"
         android:text="@string/add_hd_account_seed_qr_code"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_phrase"

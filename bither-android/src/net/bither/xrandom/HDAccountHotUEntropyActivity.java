@@ -59,8 +59,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
         ArrayList<String> addresses = new ArrayList<String>();
         addresses.add(HDAccount.HDAccountPlaceHolder);
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
-        DialogFragmentHDMSingularColdSeed.newInstance(words, AddressManager.getInstance()
-                .getHDAccountHot().getQRCodeFullEncryptPrivKey(), R.string
+        DialogFragmentHDMSingularColdSeed.newInstance(words, R.string
                 .add_hd_account_show_seed_label, R.string.add_hd_account_show_seed_button, new
                 DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
                     @Override
@@ -115,10 +114,11 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
 
 
         @Override
-        public void runWithService(BlockchainService service) {
+        public void runWithService(final BlockchainService service) {
             boolean success = false;
             onProgress(startProgress);
-
+            HDAccount hdAccount = null;
+            Integer hdSeedId = null;
             try {
                 if (service != null) {
                     service.stopAndUnregister();
@@ -133,7 +133,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                HDAccount hdAccount = new HDAccount(xRandom, password, new HDAccount
+                hdAccount = new HDAccount(xRandom, password, new HDAccount
                         .HDAccountGenerationDelegate() {
 
                     @Override
@@ -142,14 +142,26 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                                 startProgress));
                     }
                 });
+                hdSeedId = hdAccount.getHdSeedId();
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);
                     return;
                 }
 
-
-                words = hdAccount.getSeedWords(password);
+                final List<String> validWords = hdAccount.getSeedWords(password);
+                String firstAddress = HDAccount.getFirstAddress(words);
+                String dbFirstAddress = hdAccount.getFirstAddressFromDb();
+                if (!firstAddress.equals(dbFirstAddress)) {
+                    onFailed(hdSeedId, password, new Runnable() {
+                        @Override
+                        public void run() {
+                            finishGenerate(service);
+                        }
+                    });
+                    return;
+                }
+                words = validWords;
                 KeyUtil.setHDAccount(hdAccount);
 
                 onProgress(1);
@@ -160,15 +172,18 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                 e.printStackTrace();
             }
 
-            finishGenerate(service);
             if (success) {
-                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) {
-
-                }
+                finishGenerate(service);
+                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) { }
                 onProgress(1);
                 onSuccess(HDAccount.HDAccountPlaceHolder);
             } else {
-                onFailed();
+                onFailed(hdSeedId, password, new Runnable() {
+                    @Override
+                    public void run() {
+                        finishGenerate(service);
+                    }
+                });
             }
         }
     }

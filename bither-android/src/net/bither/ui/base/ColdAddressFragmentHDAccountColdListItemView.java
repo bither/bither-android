@@ -113,21 +113,6 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
         @Override
         protected List<DialogWithActions.Action> getActions() {
             ArrayList<DialogWithActions.Action> actions = new ArrayList<DialogWithActions.Action>();
-            actions.add(new DialogWithActions.Action(R.string.add_hd_account_seed_qr_code, new
-                    Runnable() {
-                @Override
-                public void run() {
-                    new DialogPassword(getContext(), new IDialogPasswordListener() {
-                        @Override
-                        public void onPasswordEntered(final SecureCharSequence password) {
-                            password.wipe();
-                            String content = hdAccountCold.getQRCodeFullEncryptPrivKey();
-                            new DialogSimpleQr(getContext(), content, R.string
-                                    .add_hd_account_seed_qr_code).show();
-                        }
-                    }).show();
-                }
-            }));
             actions.add(new DialogWithActions.Action(R.string.add_hd_account_seed_qr_phrase, new
                     Runnable() {
                 @Override

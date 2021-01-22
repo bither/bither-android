@@ -125,20 +125,6 @@ public class DialogHdAccountOptions extends DialogWithActions {
                 }
             }));
         }
-        actions.add(new Action(R.string.add_hd_account_seed_qr_code, new Runnable() {
-            @Override
-            public void run() {
-                new DialogPassword(getContext(), new IDialogPasswordListener() {
-                    @Override
-                    public void onPasswordEntered(SecureCharSequence password) {
-                        password.wipe();
-                        String content = account.getQRCodeFullEncryptPrivKey();
-                        new DialogSimpleQr(getContext(), content, R.string
-                                .add_hd_account_seed_qr_code).show();
-                    }
-                }).show();
-            }
-        }));
         actions.add(new Action(R.string.add_hd_account_seed_qr_phrase, new Runnable() {
             @Override
             public void run() {

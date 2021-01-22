@@ -407,24 +407,29 @@ public class OptionHotFragment extends Fragment implements Selectable,
     private OnClickListener switchToColdClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
-                    getStyledConfirmString(getString(R.string
-                            .launch_sequence_switch_to_cold_warn)), new Runnable() {
+            configureSwitchToCold(new Runnable() {
                 @Override
                 public void run() {
-                    ThreadUtil.runOnMainThread(new Runnable() {
+                    DialogConfirmTask dialog = new DialogConfirmTask(getActivity(),
+                            getStyledConfirmString(getString(R.string
+                                    .launch_sequence_switch_to_cold_warn)), new Runnable() {
                         @Override
                         public void run() {
-                            AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode
-                                    .COLD);
-                            startActivity(new Intent(getActivity(), ChooseModeActivity.class));
-                            getActivity().overridePendingTransition(R.anim.activity_in_drop, 0);
-                            getActivity().finish();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AppSharedPreference.getInstance().setAppMode(BitherjSettings.AppMode
+                                            .COLD);
+                                    startActivity(new Intent(getActivity(), ChooseModeActivity.class));
+                                    getActivity().overridePendingTransition(R.anim.activity_in_drop, 0);
+                                    getActivity().finish();
+                                }
+                            });
                         }
                     });
+                    dialog.show();
                 }
             });
-            dialog.show();
         }
 
         private SpannableString getStyledConfirmString(String str) {
@@ -771,9 +776,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                                     if (service != null) {
                                                         service.stopAndUnregister();
                                                     }
-                                                    AddressManager.getInstance()
-                                                            .setHDAccountMonitored
-                                                                    (account);
+                                                    AddressManager.getInstance().setHDAccountMonitored(account);
                                                     if (service != null) {
                                                         service.startAndRegister();
                                                     }
@@ -786,19 +789,6 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                                             }
                                                             DropdownMessage
                                                                     .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_success);
-                                                        }
-                                                    });
-                                                } catch (MnemonicException
-                                                        .MnemonicLengthException e) {
-                                                    e.printStackTrace();
-                                                    ThreadUtil.runOnMainThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            if (dp.isShowing()) {
-                                                                dp.dismiss();
-                                                            }
-                                                            DropdownMessage
-                                                                    .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed);
                                                         }
                                                     });
                                                 } catch (HDAccount
@@ -990,7 +980,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
     }
 
-    private void configureSwitchToCold() {
+    private void configureSwitchToCold(final Runnable canSwitchToColdRunnable) {
         final Runnable check = new Runnable() {
             @Override
             public void run() {
@@ -1001,6 +991,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     llSwitchToCold.setVisibility(View.GONE);
                 } else {
                     llSwitchToCold.setVisibility(View.VISIBLE);
+                    if (canSwitchToColdRunnable != null) {
+                        ThreadUtil.runOnMainThread(canSwitchToColdRunnable);
+                    }
                 }
             }
         };
@@ -1020,11 +1013,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
     @Override
     public void onResume() {
         super.onResume();
-        configureSwitchToCold();
+        configureSwitchToCold(null);
     }
 
     @Override
     public void onSelected() {
-        configureSwitchToCold();
+        configureSwitchToCold(null);
     }
 }

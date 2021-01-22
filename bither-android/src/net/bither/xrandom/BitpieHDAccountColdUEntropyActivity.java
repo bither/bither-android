@@ -64,7 +64,6 @@ public class BitpieHDAccountColdUEntropyActivity extends UEntropyActivity {
         intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG, addresses);
         DialogFragmentHDMSingularColdSeed.newInstance(
                 words,
-                AddressManager.getInstance().getBitpieHDAccountCold().getQRCodeFullEncryptPrivKey(),
                 R.string.bitpie_add_hd_account_show_seed_label,
                 R.string.bitpie_add_hd_account_show_seed_button,
                 new DialogFragmentHDMSingularColdSeed.DialogFragmentHDMSingularColdSeedListener() {
@@ -121,10 +120,11 @@ public class BitpieHDAccountColdUEntropyActivity extends UEntropyActivity {
 
 
         @Override
-        public void runWithService(BlockchainService service) {
+        public void runWithService(final BlockchainService service) {
             boolean success = false;
             onProgress(startProgress);
-
+            BitpieHDAccountCold hdAccount = null;
+            Integer hdSeedId = null;
             try {
                 if (service != null) {
                     service.stopAndUnregister();
@@ -139,15 +139,27 @@ public class BitpieHDAccountColdUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                BitpieHDAccountCold hdAccount = new BitpieHDAccountCold(MnemonicCode.instance(), xRandom, password);
+                hdAccount = new BitpieHDAccountCold(MnemonicCode.instance(), xRandom, password);
+                hdSeedId = hdAccount.getHdSeedId();
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);
                     return;
                 }
 
-
-                words = hdAccount.getSeedWords(password);
+                final List<String> validWords = hdAccount.getSeedWords(password);
+                String firstAddress = HDAccount.getFirstAddress(words);
+                String dbFirstAddress = hdAccount.getFirstAddressFromDb();
+                if (!firstAddress.equals(dbFirstAddress)) {
+                    onFailed(hdSeedId, password, new Runnable() {
+                        @Override
+                        public void run() {
+                            finishGenerate(service);
+                        }
+                    });
+                    return;
+                }
+                words = validWords;
 
                 BackupUtil.backupColdKey(false);
 
@@ -159,15 +171,18 @@ public class BitpieHDAccountColdUEntropyActivity extends UEntropyActivity {
                 e.printStackTrace();
             }
 
-            finishGenerate(service);
             if (success) {
-                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) {
-
-                }
+                finishGenerate(service);
+                while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) { }
                 onProgress(1);
                 onSuccess(BitpieHDAccountCold.BitpieHDAccountPlaceHolder);
             } else {
-                onFailed();
+                onFailed(hdSeedId, password, new Runnable() {
+                    @Override
+                    public void run() {
+                        finishGenerate(service);
+                    }
+                });
             }
         }
     }

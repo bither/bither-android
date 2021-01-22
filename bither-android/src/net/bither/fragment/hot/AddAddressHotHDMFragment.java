@@ -431,7 +431,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
     }
 
     @Override
-    public void singularServerFinish(final List<String> words, final String qr) {
+    public void singularServerFinish(final List<String> words) {
         hdmHotAddWithAndroid.hdmKeychainLimit = AddressManager.isHDMKeychainLimit();
         llHot.setEnabled(false);
         llHot.setSelected(true);
@@ -443,7 +443,7 @@ public class AddAddressHotHDMFragment extends Fragment implements AddHotAddressA
         vBg.addLineAnimated(llServer, llHot, new Runnable() {
             @Override
             public void run() {
-                DialogFragmentHDMSingularColdSeed.newInstance(words, qr, AddAddressHotHDMFragment
+                DialogFragmentHDMSingularColdSeed.newInstance(words, AddAddressHotHDMFragment
                         .this).show(getActivity().getSupportFragmentManager(),
                         DialogFragmentHDMSingularColdSeed.FragmentTag);
             }
