@@ -184,7 +184,7 @@ public class EnterpriseHDMSeedActivity extends SwipeRightFragmentActivity {
                         }
                     });
                     try {
-                        final List<String> words = seed.getSeedWords(password);
+                        final List<String> words = seed.getSeedWords(password, false);
                         password.wipe();
                         passwordGetter.wipe();
                         runOnUiThread(new Runnable() {

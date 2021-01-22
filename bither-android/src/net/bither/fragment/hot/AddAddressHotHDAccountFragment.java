@@ -127,36 +127,42 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                         });
                         try {
                             hdAccount = new HDAccount(new SecureRandom(), password, null);
-                            final List<String> words = hdAccount.getSeedWords(password);
-                            password.wipe();
-                            KeyUtil.setHDAccount(hdAccount);
-                            if (service != null) {
-                                service.startAndRegister();
-                            }
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    v.setKeepScreenOn(false);
-                                    AddAddressHotHDAccountFragment.this.dp.dismiss();
-                                    DialogFragmentHDMSingularColdSeed.newInstance(words, R.string
-                                            .add_hd_account_show_seed_label, R.string
-                                            .add_hd_account_show_seed_button, new
-                                            DialogFragmentHDMSingularColdSeed
-                                                    .DialogFragmentHDMSingularColdSeedListener() {
-                                                @Override
-                                                public void HDMSingularColdSeedRemembered() {
-                                                    if (getActivity() instanceof AddPrivateKeyActivity) {
-                                                        AddPrivateKeyActivity activity =
-                                                                (AddPrivateKeyActivity) getActivity();
-                                                        activity.save();
-                                                    } else {
-                                                        getActivity().finish();
-                                                    }
-                                                }
-                                            }).show(getActivity().getSupportFragmentManager(),
-                                            DialogFragmentHDMSingularColdSeed.FragmentTag);
+                            try {
+                                final List<String> words = hdAccount.getSeedWords(password);
+                                password.wipe();
+                                KeyUtil.setHDAccount(hdAccount);
+                                if (service != null) {
+                                    service.startAndRegister();
                                 }
-                            });
+                                ThreadUtil.runOnMainThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        v.setKeepScreenOn(false);
+                                        AddAddressHotHDAccountFragment.this.dp.dismiss();
+                                        DialogFragmentHDMSingularColdSeed.newInstance(words, R.string
+                                                .add_hd_account_show_seed_label, R.string
+                                                .add_hd_account_show_seed_button, new
+                                                DialogFragmentHDMSingularColdSeed
+                                                        .DialogFragmentHDMSingularColdSeedListener() {
+                                                    @Override
+                                                    public void HDMSingularColdSeedRemembered() {
+                                                        if (getActivity() instanceof AddPrivateKeyActivity) {
+                                                            AddPrivateKeyActivity activity =
+                                                                    (AddPrivateKeyActivity) getActivity();
+                                                            activity.save();
+                                                        } else {
+                                                            getActivity().finish();
+                                                        }
+                                                    }
+                                                }).show(getActivity().getSupportFragmentManager(),
+                                                DialogFragmentHDMSingularColdSeed.FragmentTag);
+                                    }
+                                });
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                hdAccount.validFailedDelete(password);
+                                onFailed(password);
+                            }
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             onFailed(password);

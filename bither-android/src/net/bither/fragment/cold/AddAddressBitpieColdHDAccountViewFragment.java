@@ -41,6 +41,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by yiwenlong on 19/1/15.
@@ -108,23 +109,8 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
                 new Thread() {
                     @Override
                     public void run() {
-                        final ArrayList<String> words = new ArrayList<String>();
                         try {
-                            words.addAll(account.getSeedWords(password));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
-                                    }
-                                }
-                            });
-                        } finally {
-                            password.wipe();
-                        }
-                        if (words.size() > 0) {
+                            final List<String> words = account.getSeedWords(password);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -134,6 +120,21 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
                                     new DialogHDMSeedWordList(getActivity(), words).show();
                                 }
                             });
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    DialogConfirmTask dialog = new DialogConfirmTask(getActivity(), getString(R.string.hd_account_valid_failed), null, false);
+                                    dialog.setCancelable(false);
+                                    dialog.show();
+                                }
+                            });
+                        } finally {
+                            password.wipe();
                         }
                     }
                 }.start();

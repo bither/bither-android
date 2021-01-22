@@ -619,6 +619,7 @@
     <string name="add_hd_account_seed_qr_phrase">HD 账户密语</string>
     <string name="add_hd_account_show_seed_label">HD 种子能够用来恢复 HD 账户,\n请安全地保管它.</string>
     <string name="add_hd_account_show_seed_button">我已经保管好了 HD 种子</string>
+    <string name="hd_account_valid_failed">HD 账户出现错误，请您及时将此账户上的资产进行转移，并在资产转移后弃用此账户，启用新创建的账户。</string>
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 账户</string>

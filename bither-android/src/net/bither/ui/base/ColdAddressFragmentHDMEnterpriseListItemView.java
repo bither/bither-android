@@ -150,7 +150,7 @@ public class ColdAddressFragmentHDMEnterpriseListItemView extends FrameLayout {
                                         }
                                     });
                                     try {
-                                        final List<String> words = seed.getSeedWords(password);
+                                        final List<String> words = seed.getSeedWords(password, false);
                                         password.wipe();
                                         passwordGetter.wipe();
                                         ThreadUtil.runOnMainThread(new Runnable() {

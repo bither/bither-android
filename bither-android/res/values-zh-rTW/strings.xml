@@ -619,6 +619,7 @@
     <string name="add_hd_account_seed_qr_phrase">HD 賬戶密語</string>
     <string name="add_hd_account_show_seed_label">HD 種子能夠用來恢復 HD 賬戶,\n請安全地保管它.</string>
     <string name="add_hd_account_show_seed_button">我已經保管好了 HD 種子</string>
+    <string name="hd_account_valid_failed">HD 賬戶出現錯誤，請您及時將此賬戶上的資產進行轉移，並在資產轉移後棄用此賬戶，啓用新創建的賬戶。</string>
 
     <!-- show hd account -->
     <string name="address_group_hd">HD 賬戶</string>

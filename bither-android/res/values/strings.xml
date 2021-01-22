@@ -638,6 +638,7 @@
     <string name="add_hd_account_seed_qr_phrase">HD Account Seed Phrase</string>
     <string name="add_hd_account_show_seed_label">HD seed can be used to recover HD account.\nPlease keep it somewhere safe.</string>
     <string name="add_hd_account_show_seed_button">I have kept it safely.</string>
+    <string name="hd_account_valid_failed">There is an error in the HD account, please transfer the assets from this account, and discard this account after transfer, then create a new account.</string>
 
     <!-- show hd account -->
     <string name="address_group_hd">HD Account</string>

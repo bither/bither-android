@@ -117,8 +117,6 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
         public void runWithService(final BlockchainService service) {
             boolean success = false;
             onProgress(startProgress);
-            HDAccount hdAccount = null;
-            Integer hdSeedId = null;
             try {
                 if (service != null) {
                     service.stopAndUnregister();
@@ -133,7 +131,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                hdAccount = new HDAccount(xRandom, password, new HDAccount
+                HDAccount hdAccount = new HDAccount(xRandom, password, new HDAccount
                         .HDAccountGenerationDelegate() {
 
                     @Override
@@ -142,20 +140,23 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                                 startProgress));
                     }
                 });
-                hdSeedId = hdAccount.getHdSeedId();
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);
                     return;
                 }
+                try {
+                    words = hdAccount.getSeedWords(password);
+                    KeyUtil.setHDAccount(hdAccount);
 
-                words = hdAccount.getSeedWords(password);
-                KeyUtil.setHDAccount(hdAccount);
+                    onProgress(1);
 
-                onProgress(1);
-
-                entropyCollector.stop();
-                success = true;
+                    entropyCollector.stop();
+                    success = true;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    hdAccount.validFailedDelete(password);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

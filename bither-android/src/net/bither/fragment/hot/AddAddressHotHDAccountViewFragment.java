@@ -28,6 +28,7 @@ import net.bither.R;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogHDMSeedWordList;
 import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.DialogProgress;
@@ -36,6 +37,7 @@ import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.ThreadUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by songchenwen on 15/4/16.
@@ -93,23 +95,8 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
                 new Thread() {
                     @Override
                     public void run() {
-                        final ArrayList<String> words = new ArrayList<String>();
                         try {
-                            words.addAll(account.getSeedWords(password));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            ThreadUtil.runOnMainThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (dp.isShowing()) {
-                                        dp.dismiss();
-                                    }
-                                }
-                            });
-                        } finally {
-                            password.wipe();
-                        }
-                        if (words.size() > 0) {
+                            final List<String> words = account.getSeedWords(password);
                             ThreadUtil.runOnMainThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -119,6 +106,21 @@ public class AddAddressHotHDAccountViewFragment extends Fragment implements View
                                     new DialogHDMSeedWordList(getActivity(), words).show();
                                 }
                             });
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (dp.isShowing()) {
+                                        dp.dismiss();
+                                    }
+                                    DialogConfirmTask dialog = new DialogConfirmTask(getActivity(), getString(R.string.hd_account_valid_failed), null, false);
+                                    dialog.setCancelable(false);
+                                    dialog.show();
+                                }
+                            });
+                        } finally {
+                            password.wipe();
                         }
                     }
                 }.start();

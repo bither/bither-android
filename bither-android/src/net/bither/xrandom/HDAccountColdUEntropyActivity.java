@@ -119,7 +119,6 @@ public class HDAccountColdUEntropyActivity extends UEntropyActivity {
             boolean success = false;
             onProgress(startProgress);
             HDAccountCold hdAccount = null;
-            Integer hdSeedId = null;
             try {
                 if (service != null) {
                     service.stopAndUnregister();
@@ -135,20 +134,24 @@ public class HDAccountColdUEntropyActivity extends UEntropyActivity {
                 }
 
                 hdAccount = new HDAccountCold(MnemonicCode.instance(), xRandom, password);
-                hdSeedId = hdAccount.getHdSeedId();
                 if (cancelRunnable != null) {
                     finishGenerate(service);
                     runOnUiThread(cancelRunnable);
                     return;
                 }
-                words = hdAccount.getSeedWords(password);
+                try {
+                    words = hdAccount.getSeedWords(password);
 
-                BackupUtil.backupColdKey(false);
+                    BackupUtil.backupColdKey(false);
 
-                onProgress(1);
+                    onProgress(1);
 
-                entropyCollector.stop();
-                success = true;
+                    entropyCollector.stop();
+                    success = true;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    hdAccount.validFailedDelete(password);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

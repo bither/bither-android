@@ -91,7 +91,7 @@ public class DialogHDMSeedOptions extends DialogWithActions {
             public void run() {
                 final ArrayList<String> words = new ArrayList<String>();
                 try {
-                    words.addAll(keychain.getSeedWords(password));
+                    words.addAll(keychain.getSeedWords(password, false));
                 } catch (Exception e) {
                     e.printStackTrace();
                     ThreadUtil.runOnMainThread(new Runnable() {
