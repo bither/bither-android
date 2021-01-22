@@ -149,19 +149,7 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                     return;
                 }
 
-                final List<String> validWords = hdAccount.getSeedWords(password);
-                String firstAddress = HDAccount.getFirstAddress(words);
-                String dbFirstAddress = hdAccount.getFirstAddressFromDb();
-                if (!firstAddress.equals(dbFirstAddress)) {
-                    onFailed(hdSeedId, password, new Runnable() {
-                        @Override
-                        public void run() {
-                            finishGenerate(service);
-                        }
-                    });
-                    return;
-                }
-                words = validWords;
+                words = hdAccount.getSeedWords(password);
                 KeyUtil.setHDAccount(hdAccount);
 
                 onProgress(1);
@@ -172,18 +160,13 @@ public class HDAccountHotUEntropyActivity extends UEntropyActivity {
                 e.printStackTrace();
             }
 
+            finishGenerate(service);
             if (success) {
-                finishGenerate(service);
                 while (System.currentTimeMillis() - startGeneratingTime < MinGeneratingTime) { }
                 onProgress(1);
                 onSuccess(HDAccount.HDAccountPlaceHolder);
             } else {
-                onFailed(hdSeedId, password, new Runnable() {
-                    @Override
-                    public void run() {
-                        finishGenerate(service);
-                    }
-                });
+                onFailed();
             }
         }
     }

@@ -769,9 +769,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                             public void runWithService
                                                     (BlockchainService service) {
                                                 try {
-                                                    final HDAccount account = new
-                                                            HDAccount(key.getPubKeyExtended(),
-                                                            finalP2shp2wpkhKey == null ? null : finalP2shp2wpkhKey.getPubKeyExtended(),
+                                                    final HDAccount account = new HDAccount(key.getPubKeyExtended(), finalP2shp2wpkhKey == null ? null : finalP2shp2wpkhKey.getPubKeyExtended(),
                                                             false, false, null);
                                                     if (service != null) {
                                                         service.stopAndUnregister();
@@ -803,6 +801,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                                             }
                                                             DropdownMessage
                                                                     .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed_duplicated);
+                                                        }
+                                                    });
+                                                } catch (Exception ex) {
+                                                    ex.printStackTrace();
+                                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (dp.isShowing()) {
+                                                                dp.dismiss();
+                                                            }
+                                                            DropdownMessage
+                                                                    .showDropdownMessage(getActivity(), R.string.monitor_cold_hd_account_failed);
                                                         }
                                                     });
                                                 }

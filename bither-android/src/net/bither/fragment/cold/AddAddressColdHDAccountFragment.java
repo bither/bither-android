@@ -128,12 +128,6 @@ public class AddAddressColdHDAccountFragment extends Fragment implements AddHotA
                         try {
                             hdAccount = new HDAccountCold(MnemonicCode.instance(), new SecureRandom(), password);
                             final List<String> words = hdAccount.getSeedWords(password);
-                            String firstAddress = HDAccount.getFirstAddress(words);
-                            String dbFirstAddress = hdAccount.getFirstAddressFromDb();
-                            if (!firstAddress.equals(dbFirstAddress)) {
-                                onFailed(password);
-                                return;
-                            }
                             password.wipe();
                             BackupUtil.backupColdKey(false);
                             if (service != null) {
@@ -174,14 +168,7 @@ public class AddAddressColdHDAccountFragment extends Fragment implements AddHotA
     };
 
     void onFailed(SecureCharSequence password) {
-        if (AddressManager.getInstance().noAddress()) {
-            AbstractDb.addressProvider.deletePassword(password);
-        }
         password.wipe();
-        if (hdAccount != null) {
-            AbstractDb.hdAccountProvider.deleteHDAccount(hdAccount.getHdSeedId());
-            AbstractDb.hdAccountAddressProvider.deleteHDAccountAddress(hdAccount.getHdSeedId());
-        }
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {

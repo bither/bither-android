@@ -128,13 +128,6 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
                         try {
                             hdAccount = new HDAccount(new SecureRandom(), password, null);
                             final List<String> words = hdAccount.getSeedWords(password);
-                            String firstAddress = HDAccount.getFirstAddress(words);
-                            String dbFirstAddress = hdAccount.getFirstAddressFromDb();
-                            if (!firstAddress.equals(dbFirstAddress)) {
-                                onFailed(password);
-                                return;
-                            }
-
                             password.wipe();
                             KeyUtil.setHDAccount(hdAccount);
                             if (service != null) {
@@ -175,14 +168,7 @@ public class AddAddressHotHDAccountFragment extends Fragment implements AddHotAd
     };
 
     void onFailed(SecureCharSequence password) {
-        if (AddressManager.getInstance().noAddress()) {
-            AbstractDb.addressProvider.deletePassword(password);
-        }
         password.wipe();
-        if (hdAccount != null) {
-            AbstractDb.hdAccountProvider.deleteHDAccount(hdAccount.getHdSeedId());
-            AbstractDb.hdAccountAddressProvider.deleteHDAccountAddress(hdAccount.getHdSeedId());
-        }
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {

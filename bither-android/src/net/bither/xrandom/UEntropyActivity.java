@@ -279,20 +279,6 @@ public abstract class UEntropyActivity extends BaseFragmentActivity implements U
         });
     }
 
-    protected void onFailed(Integer hdSeedId, SecureCharSequence password, Runnable finishGenerateRunnable) {
-        if (AddressManager.getInstance().noAddress()) {
-            AbstractDb.addressProvider.deletePassword(password);
-        }
-        if (hdSeedId != null) {
-            AbstractDb.hdAccountProvider.deleteHDAccount(hdSeedId);
-            AbstractDb.hdAccountAddressProvider.deleteHDAccountAddress(hdSeedId);
-        }
-        if (finishGenerateRunnable != null) {
-            finishGenerateRunnable.run();
-        }
-        onFailed();
-    }
-
     protected void onFailed() {
         runOnUiThread(new Runnable() {
             @Override
