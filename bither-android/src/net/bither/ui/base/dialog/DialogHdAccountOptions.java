@@ -186,7 +186,7 @@ public class DialogHdAccountOptions extends DialogWithActions {
                                     public void run() {
                                         try {
                                             final String xpub = account.xPubB58(password,
-                                                    AbstractHD.PurposePathLevel.P2SHP2WPKH);
+                                                    AbstractHD.PurposePathLevel.Normal);
                                             ThreadUtil.runOnMainThread(new Runnable() {
                                                 @Override
                                                 public void run() {

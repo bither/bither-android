@@ -107,6 +107,7 @@
                                 android:id="@+id/ll_fork_coins"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:visibility="gone"
                                 android:orientation="vertical">
 
                                 <TextView
@@ -148,6 +149,7 @@
                                 android:id="@+id/ll_detect_bcc"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:visibility="gone"
                                 android:orientation="vertical">
 
                                 <TextView
