@@ -56,7 +56,6 @@ public class AddAddressBitpieColdHDAccountViewFragment extends Fragment implemen
         label.setText(R.string.bitpie_add_hd_account_view_label);
         TextView btnQr = v.findViewById(R.id.btn_qr);
         btnQr.setText(R.string.bitpie_add_hd_account_seed_qr_code);
-        btnQr.setVisibility(View.VISIBLE);
         TextView btnPhrase = v.findViewById(R.id.btn_phrase);
         btnPhrase.setText(R.string.bitpie_add_hd_account_seed_qr_phrase);
         ImageButton ibtnInfo = v.findViewById(R.id.ibtn_info);
