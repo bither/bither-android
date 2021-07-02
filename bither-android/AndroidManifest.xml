@@ -72,25 +72,27 @@
         android:theme="@style/BitherTheme"
         android:usesCleartextTraffic="true">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name="net.bither.activity.hot.HotActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="net.bither.image.glcrop.CropImageGlActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="net.bither.activity.cold.ColdActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="adjustNothing"></activity>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="ChooseModeActivity"
             android:screenOrientation="portrait"
@@ -113,14 +115,17 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.GenerateUnsignedTxActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.NetworkMonitorActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.MarketDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -130,51 +135,65 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.cold.SignTxActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="SendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.hot.HDAccountSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.HDAccountMonitoredSendActivity"
-            android:theme="@style/BitherTransparentBgTheme"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.HdmSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".qrcode.BitherQRCodeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.UnsignedTxQrCodeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.AddressDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.HDAccountDetailActivity"
-            android:theme="@style/BitherTransparentBgTheme"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.HDAccountMonitoredDetailActivity"
-            android:theme="@style/BitherTransparentBgTheme"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name="net.bither.activity.hot.CheckPrivateKeyActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.HotAdvanceActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.cold.ColdAdvanceActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".TrashCanActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".qrcode.ScanActivity"
@@ -217,7 +236,7 @@
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".qrcode.ScanQRCodeWithOtherActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
@@ -234,148 +253,180 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".pin.PinCodeEnableActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".pin.PinCodeDisableActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".pin.PinCodeChangeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".rawprivatekey.RawPrivateKeyActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".SignMessageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".VerifyMessageSignatureActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.cold.HdmImportWordListActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/BitherTransparentBgTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="net.bither.activity.hot.AddHotAddressHDMActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.AddHotAddressPrivateKeyActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.AddEnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.EnterpriseHDMKeychainAddNewAddressActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.EnterpriseHDMKeychainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.EnterpriseHDMSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.cold.AddEnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.cold.EnterpriseHDMSeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.cold.EnterpriseHdmImportPhraseActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/BitherTransparentBgTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="net.bither.activity.hot.EnterpriseHDMAddressDetailActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.EnterpriseHDMSendCollectSignatureActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".xrandom.EnterpriseHDMSeedUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.cold.AddColdAddressHDMActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BitherTheme"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".xrandom.HDAccountColdUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".xrandom.BitpieHDAccountColdUEntropyActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".SignMessageAddressListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.SplitBccSelectAddressActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.SplitBCCSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.SplitBCCHDAccountSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
-        android:name=".activity.hot.SplitBCCHDAccountMonitoredSendActivity"
-        android:theme="@style/BitherTransparentBgTheme" />
+            android:name=".activity.hot.SplitBCCHDAccountMonitoredSendActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.SplitBccColdWalletSendActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsDetectHDActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsDetectHotActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsHotMonitoredActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsHDAccountMonitoredActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".BCCAssetsDetectListActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.hot.SplitForkCoinsActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".SignHashActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme" />
         <activity
             android:name=".activity.cold.BitpieColdSignMessageActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.cold.BitpieColdSignChangeCoinActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
@@ -413,7 +464,8 @@
 
         <activity
             android:name=".AdActivity"
-            android:label="@string/title_activity_ad"></activity>
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_ad"/>
     </application>
 
 </manifest>

@@ -513,8 +513,8 @@ public class ScanActivity extends BaseActivity implements SurfaceHolder.Callback
 	}
 
 	public void finish() {
-		super.finish();
-		overridePendingTransition(R.anim.scanner_out_enter, 0);
+        overridePendingTransition(R.anim.scanner_out_enter, 0);
+        super.finish();
     }
 
     private String decodeQrCodeFromBitmap(Bitmap bmp) {
