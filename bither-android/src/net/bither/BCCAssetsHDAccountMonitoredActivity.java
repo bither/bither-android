@@ -117,7 +117,7 @@ public class BCCAssetsHDAccountMonitoredActivity extends BCCAssetsDetectHotActiv
         this.txs = null;
         HDAccount account = (HDAccount) address;
         try {
-            txs = account.newForkTx(toAddress, btcAmount,outs, SplitCoin.BCC);
+            txs = account.newForkTx(toAddress, btcAmount,outs, SplitCoin.BCC, true);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

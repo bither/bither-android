@@ -164,7 +164,7 @@ public class SplitBCCHDAccountMonitoredSendActivity extends SplitBCCSendActivity
         this.txs = null;
         HDAccount account = (HDAccount) address;
         try {
-            txs = account.newForkTx(toAddress, btcAmount, splitCoin);
+            txs = account.newForkTx(toAddress, btcAmount, splitCoin, true);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

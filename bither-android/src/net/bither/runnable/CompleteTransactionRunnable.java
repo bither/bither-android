@@ -184,11 +184,9 @@ public class CompleteTransactionRunnable extends BaseRunnable {
         }
     }
 
-
-
     private void signSplitCoinTxs(SplitCoin splitCoin) {
         try {
-            List<Tx> txs = wallet.buildSplitCoinTx(amount, toAddress, changeAddress, splitCoin);
+            List<Tx> txs = wallet.buildSplitCoinTx(amount, toAddress, changeAddress, splitCoin, !toSign);
             if (txs == null) {
                 obtainMessage(HandlerMessage.MSG_FAILURE, BitherApplication.mContext.getString(R
                         .string.send_failed));
@@ -272,7 +270,7 @@ public class CompleteTransactionRunnable extends BaseRunnable {
 
     private void signTx() {
         try {
-            Tx tx = wallet.buildTx(amount, toAddress, changeAddress, coin, dynamicFeeBase);
+            Tx tx = wallet.buildTx(amount, toAddress, changeAddress, coin, dynamicFeeBase, !toSign);
             if (tx == null) {
                 obtainMessage(HandlerMessage.MSG_FAILURE, BitherApplication.mContext.getString(R
                         .string.send_failed));

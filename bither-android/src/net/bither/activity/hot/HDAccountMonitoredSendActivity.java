@@ -119,7 +119,7 @@ public class HDAccountMonitoredSendActivity extends SendActivity implements Dial
                     isSegwitChangeAddress = false;
                 }
             }
-            tx = account.newTx(toAddress, btcAmount, isSegwitChangeAddress, dynamicFeeBase);
+            tx = account.newTx(toAddress, btcAmount, isSegwitChangeAddress, dynamicFeeBase, true);
         } catch (Exception e) {
             e.printStackTrace();
             btcAmount = 0;

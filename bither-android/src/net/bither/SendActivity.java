@@ -69,7 +69,6 @@ import net.bither.ui.base.keyboard.amount.AmountEntryKeyboardView;
 import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IBackClickListener;
 import net.bither.util.BroadcastUtil;
-import net.bither.util.DynamicFeeUtils;
 import net.bither.util.InputParser.StringInputParser;
 import net.bither.util.MarketUtil;
 import net.bither.util.ThreadUtil;
@@ -352,12 +351,7 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
                         ex.printStackTrace();
                     }
 
-                    final Long finalDynamicFeeBase;
-                    if (address != null && !address.hasPrivKey()) {
-                        finalDynamicFeeBase = DynamicFeeUtils.getFinalDynamicFeeBase(dynamicFeeBase);
-                    } else {
-                        finalDynamicFeeBase = dynamicFeeBase;
-                    }
+                    final Long finalDynamicFeeBase = dynamicFeeBase;
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {
