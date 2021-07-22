@@ -32,7 +32,6 @@ import net.bither.R;
 import net.bither.activity.hot.AddHotAddressActivity;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.crypto.PasswordSeed;
-import net.bither.fragment.cold.AddAddressBitpieColdHDAccountFragment;
 import net.bither.fragment.cold.AddAddressBitpieColdHDAccountViewFragment;
 import net.bither.fragment.cold.AddAddressColdHDAccountFragment;
 import net.bither.fragment.cold.AddAddressColdHDAccountViewFragment;
@@ -50,7 +49,6 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     private ViewPager pager;
     private ImageButton ibtnCancel;
 
-    private AddAddressBitpieColdHDAccountFragment bitpieHdAccountFragment;
     private AddAddressBitpieColdHDAccountViewFragment bitpieHdAccountViewFragment;
     private AddAddressColdHDAccountFragment hdAccountFragment;
     private AddAddressColdHDAccountViewFragment hdAccountViewFragment;
@@ -71,32 +69,17 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     }
 
     private void initView() {
-        tbtnBitpieHDAccount = (ToggleButton) findViewById(R.id.tbtn_bitpie_account);
         tbtnHDAccount = (ToggleButton) findViewById(R.id.tbtn_hd_account);
         tbtnOther = (ToggleButton) findViewById(R.id.tbtn_other);
         pager = (ViewPager) findViewById(R.id.pager);
         ibtnCancel = (ImageButton) findViewById(R.id.ibtn_cancel);
-        tbtnBitpieHDAccount.setOnClickListener(new IndicatorClick(0));
-        tbtnHDAccount.setOnClickListener(new IndicatorClick(1));
-        tbtnOther.setOnClickListener(new IndicatorClick(2));
+        tbtnHDAccount.setOnClickListener(new IndicatorClick(0));
+        tbtnOther.setOnClickListener(new IndicatorClick(1));
         ibtnCancel.setOnClickListener(cancelClick);
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(pageChange);
         pager.setCurrentItem(0);
-        tbtnBitpieHDAccount.setChecked(true);
-    }
-
-    private Fragment getBitpieHDAccountFragment() {
-        if (AddressManager.getInstance().hasBitpieHDAccountCold()) {
-            if (hdAccountViewFragment == null) {
-                bitpieHdAccountViewFragment = new AddAddressBitpieColdHDAccountViewFragment();
-            }
-            return bitpieHdAccountViewFragment;
-        }
-        if (bitpieHdAccountFragment == null) {
-            bitpieHdAccountFragment = new AddAddressBitpieColdHDAccountFragment();
-        }
-        return bitpieHdAccountFragment;
+        tbtnHDAccount.setChecked(true);
     }
 
     private Fragment getHDAccountFragment() {
@@ -160,15 +143,9 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
     private void initPosition(int position) {
         pager.setCurrentItem(position, true);
         if (position == 0) {
-            tbtnBitpieHDAccount.setChecked(true);
-            tbtnHDAccount.setChecked(false);
-            tbtnOther.setChecked(false);
-        } else if (position == 1) {
-            tbtnBitpieHDAccount.setChecked(false);
             tbtnHDAccount.setChecked(true);
             tbtnOther.setChecked(false);
-        } else if (position == 2) {
-            tbtnBitpieHDAccount.setChecked(false);
+        } else if (position == 1) {
             tbtnHDAccount.setChecked(false);
             tbtnOther.setChecked(true);
         }
@@ -178,18 +155,15 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
 
         @Override
         public Fragment getItem(int index) {
             if (index == 0) {
-                return getBitpieHDAccountFragment();
-            }
-            if (index == 1) {
                 return getHDAccountFragment();
             }
-            if (index == 2) {
+            if (index == 1) {
                 return getOtherFragment();
             }
             return null;
@@ -201,15 +175,9 @@ public class AddColdAddressActivity extends AddPrivateKeyActivity {
         @Override
         public void onPageSelected(int index) {
             if (index == 0) {
-                tbtnBitpieHDAccount.setChecked(true);
-                tbtnHDAccount.setChecked(false);
-                tbtnOther.setChecked(false);
-            } else if (index == 1) {
-                tbtnBitpieHDAccount.setChecked(false);
                 tbtnHDAccount.setChecked(true);
                 tbtnOther.setChecked(false);
-            } else if (index == 2) {
-                tbtnBitpieHDAccount.setChecked(false);
+            } else if (index == 1) {
                 tbtnHDAccount.setChecked(false);
                 tbtnOther.setChecked(true);
             }
