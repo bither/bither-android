@@ -384,12 +384,6 @@ public class SendActivity extends SwipeRightActivity implements EntryKeyboardVie
         if (btc > 0) {
             String address = etAddress.getText().toString().trim();
             if (Utils.validBicoinAddress(address)) {
-                if (Utils.compareString(address,
-                        dialogSelectChangeAddress.getChangeAddress().getAddress())) {
-                    DropdownMessage.showDropdownMessage(SendActivity.this,
-                            R.string.select_change_address_change_to_same_warn);
-                    return;
-                }
                 try {
                     CompleteTransactionRunnable completeRunnable = new
                             CompleteTransactionRunnable(addressPosition,

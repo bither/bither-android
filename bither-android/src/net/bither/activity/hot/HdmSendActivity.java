@@ -398,12 +398,6 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         final long btc = amountCalculatorLink.getAmount();
         if (btc > 0) {
             if (Utils.validBicoinAddress(etAddress.getText().toString().trim())) {
-                if (Utils.compareString(etAddress.getText().toString().trim(),
-                        dialogSelectChangeAddress.getChangeAddress().getAddress())) {
-                    DropdownMessage.showDropdownMessage(HdmSendActivity.this,
-                            R.string.select_change_address_change_to_same_warn);
-                    return;
-                }
                 try {
                     CompleteTransactionRunnable completeRunnable;
                     if (!isInRecovery) {
