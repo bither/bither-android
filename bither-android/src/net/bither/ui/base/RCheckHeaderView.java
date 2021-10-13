@@ -18,6 +18,8 @@
 
 package net.bither.ui.base;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -29,9 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.nineoldandroids.animation.ArgbEvaluator;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.bitherj.core.AddressManager;

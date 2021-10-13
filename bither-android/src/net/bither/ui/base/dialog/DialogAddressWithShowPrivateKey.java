@@ -249,18 +249,21 @@ public class DialogAddressWithShowPrivateKey extends CenterDialog implements Vie
                                 if (activity instanceof AddressDetailActivity) {
                                     activity.finish();
                                 }
-                                if (AppSharedPreference.getInstance().getAppMode() ==
-                                        BitherjSettings.AppMode.HOT) {
-                                    Fragment f = BitherApplication.hotActivity.getFragmentAtIndex
-                                            (1);
+                                if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                                    if (BitherApplication.hotActivity == null) {
+                                        return;
+                                    }
+                                    Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
                                     if (f instanceof HotAddressFragment) {
                                         HotAddressFragment hotAddressFragment =
                                                 (HotAddressFragment) f;
                                         hotAddressFragment.refresh();
                                     }
                                 } else {
-                                    Fragment f = BitherApplication.coldActivity
-                                            .getFragmentAtIndex(1);
+                                    if (BitherApplication.coldActivity == null) {
+                                        return;
+                                    }
+                                    Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
                                     if (f instanceof ColdAddressFragment) {
                                         ColdAddressFragment coldAddressFragment =
                                                 (ColdAddressFragment) f;

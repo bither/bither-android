@@ -16,6 +16,8 @@
 
 package net.bither.fragment.cold;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
@@ -32,10 +34,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.bitherj.BitherjSettings;
@@ -223,7 +221,7 @@ public class CheckFragment extends Fragment implements CheckHeaderViewListener {
             ObjectAnimator animator = ObjectAnimator.ofInt(
                     new WrapLayoutParamsForAnimator(fl), "height", lvHeight)
                     .setDuration(ListExpandAnimDuration);
-            animator.addListener(new AnimatorListener() {
+            animator.addListener(new Animator.AnimatorListener() {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {

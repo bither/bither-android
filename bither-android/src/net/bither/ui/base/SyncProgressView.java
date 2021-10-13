@@ -16,13 +16,12 @@
 
 package net.bither.ui.base;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.R;
 import net.bither.util.LogUtil;

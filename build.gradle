@@ -2,11 +2,12 @@ apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath 'com.android.tools.build:gradle:4.1.2'
     }
 }
 
@@ -26,11 +27,13 @@ subprojects {
 
     android {
         compileSdkVersion 29
-        buildToolsVersion '28.0.2'
+        buildToolsVersion '29.0.2'
 
         defaultConfig {
-            minSdkVersion 9
+            minSdkVersion 14
             targetSdkVersion 29
+            versionCode 202
+            versionName "2.0.2"
             multiDexEnabled true
         }
 
@@ -77,15 +80,11 @@ subprojects {
         }
     }
 }
-//repositories {
-//    maven {
-//        url 'https://maven.google.com/'
-//        name 'Google'
-//    }
-//}
+
 allprojects {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/google' }
-        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }

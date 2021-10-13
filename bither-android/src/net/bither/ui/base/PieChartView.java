@@ -16,6 +16,7 @@
 
 package net.bither.ui.base;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -28,8 +29,6 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

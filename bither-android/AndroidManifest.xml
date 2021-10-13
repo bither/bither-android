@@ -2,14 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.bither"
-    android:installLocation="internalOnly"
-    android:versionCode="202"
-    android:versionName="2.0.2">
-
-    <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="29"
-        tools:ignore="OldTargetApi" />
+    android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

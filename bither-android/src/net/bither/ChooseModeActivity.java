@@ -16,6 +16,8 @@
 
 package net.bither;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,10 +41,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
@@ -396,7 +394,7 @@ public class ChooseModeActivity extends BaseActivity {
 
     }
 
-    private AnimatorListener coldClickAnimListener = new AnimatorListener() {
+    private Animator.AnimatorListener coldClickAnimListener = new Animator.AnimatorListener() {
 
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -419,7 +417,7 @@ public class ChooseModeActivity extends BaseActivity {
         }
     };
 
-    private AnimatorListener warmClickAnimListener = new AnimatorListener() {
+    private Animator.AnimatorListener warmClickAnimListener = new Animator.AnimatorListener() {
 
         @Override
         public void onAnimationEnd(Animator animation) {
@@ -579,7 +577,7 @@ public class ChooseModeActivity extends BaseActivity {
         }
     };
 
-    private AnimatorListener coldCheckAnimListener = new AnimatorListener() {
+    private Animator.AnimatorListener coldCheckAnimListener = new Animator.AnimatorListener() {
 
         @Override
         public void onAnimationStart(Animator animation) {

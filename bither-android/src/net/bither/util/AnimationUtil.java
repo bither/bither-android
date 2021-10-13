@@ -16,14 +16,13 @@
 
 package net.bither.util;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.widget.FrameLayout;
-
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import net.bither.ui.base.WrapFrameLayoutForAnimation;
 

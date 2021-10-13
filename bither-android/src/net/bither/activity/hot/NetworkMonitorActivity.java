@@ -49,7 +49,7 @@ public final class NetworkMonitorActivity extends BaseFragmentActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		overridePendingTransition(R.anim.slide_in_right, 0);
-		setContentView(R.layout.network_monitor_content);
+		setContentView(R.layout.network_monitor_onepane);
 
 		// final ActionBar actionBar = getSupportActionBar();
 		// actionBar.setDisplayHomeAsUpEnabled(true);
