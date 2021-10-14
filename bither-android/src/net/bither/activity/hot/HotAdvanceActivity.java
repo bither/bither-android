@@ -205,8 +205,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     protected void onDestroy() {
         unregisterReceiver(addressIsLoadingReceiver);
         super.onDestroy();
-        BitherApplication.hotActivity = null;
-
     }
 
     @Override
@@ -1513,17 +1511,17 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         hasAnyAction = false;
         ssvImportPrivateKey.loadData();
         ssvImprotBip38Key.loadData();
+        if (BitherApplication.hotActivity != null) {
+            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
+            if (f != null && f instanceof Refreshable) {
+                Refreshable r = (Refreshable) f;
+                r.doRefresh();
+            }
+        }
         DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                 R.string.import_private_key_qr_code_success, new Runnable() {
                     @Override
                     public void run() {
-                        if (BitherApplication.hotActivity != null) {
-                            Fragment f = BitherApplication.hotActivity.getFragmentAtIndex(1);
-                            if (f != null && f instanceof Refreshable) {
-                                Refreshable r = (Refreshable) f;
-                                r.doRefresh();
-                            }
-                        }
                         if (hasAnyAction) {
                             return;
                         }

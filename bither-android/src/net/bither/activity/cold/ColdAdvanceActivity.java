@@ -878,17 +878,17 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         hasAnyAction = false;
         ssvImportPrivateKey.loadData();
         ssvImprotBip38Key.loadData();
+        if (BitherApplication.coldActivity != null) {
+            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
+            if (f != null && f instanceof Refreshable) {
+                Refreshable r = (Refreshable) f;
+                r.doRefresh();
+            }
+        }
         DropdownMessage.showDropdownMessage(ColdAdvanceActivity.this,
                 R.string.import_cold_private_key_qr_code_success, new Runnable() {
                     @Override
                     public void run() {
-                        if (BitherApplication.coldActivity != null) {
-                            Fragment f = BitherApplication.coldActivity.getFragmentAtIndex(1);
-                            if (f != null && f instanceof Refreshable) {
-                                Refreshable r = (Refreshable) f;
-                                r.doRefresh();
-                            }
-                        }
                         if (hasAnyAction) {
                             return;
                         }

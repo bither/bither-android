@@ -274,6 +274,9 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                                         notifyDataSetChanged();
                                         if (AppSharedPreference.getInstance().getAppMode() ==
                                                 BitherjSettings.AppMode.HOT) {
+                                            if (BitherApplication.hotActivity == null) {
+                                                return;
+                                            }
                                             Fragment f = BitherApplication.hotActivity
                                                     .getFragmentAtIndex(1);
                                             if (f instanceof HotAddressFragment) {
@@ -282,6 +285,9 @@ public class TrashCanActivity extends SwipeRightFragmentActivity {
                                                 hotAddressFragment.refresh();
                                             }
                                         } else {
+                                            if (BitherApplication.coldActivity == null) {
+                                                return;
+                                            }
                                             Fragment f = BitherApplication.coldActivity
                                                     .getFragmentAtIndex(1);
                                             if (f instanceof ColdAddressFragment) {
