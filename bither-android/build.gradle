@@ -22,7 +22,7 @@ configurations {
 dependencies {
     api 'com.google.protobuf:protobuf-java:2.5.0'
     api 'com.android.support:appcompat-v7:27.+'
-    api 'com.google.zxing:core:3.4.1@jar'
+    api 'com.google.zxing:core:3.1.0@jar'
     api 'com.android.support:multidex:1.0.3'
     api('com.github.tony19:logback-android-classic:1.1.1-6@jar') {
         // Work around for gradle 0.9 and 0.10
