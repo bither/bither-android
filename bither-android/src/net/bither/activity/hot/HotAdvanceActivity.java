@@ -644,6 +644,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             if (!AddressManager.getInstance().addressIsSyncComplete()) {
                                 TransactionsUtil.getMyTxFromBither();
                             }
+                            AbstractDb.peerProvider.recreate();
                             service.startAndRegister();
                             HotAdvanceActivity.this.runOnUiThread(new Runnable() {
                                 @Override
