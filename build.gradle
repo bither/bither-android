@@ -32,8 +32,8 @@ subprojects {
         defaultConfig {
             minSdkVersion 14
             targetSdkVersion 29
-            versionCode 202
-            versionName "2.0.2"
+            versionCode 203
+            versionName "2.0.3"
             multiDexEnabled true
         }
 
