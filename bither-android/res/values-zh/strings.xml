@@ -299,6 +299,7 @@
     <string name="clone_from_waiting">正在克隆…</string>
     <string name="clone_from_success">克隆成功</string>
     <string name="clone_from_failed">克隆失败</string>
+    <string name="clone_from_failed_content_empty">克隆失败，请确认克隆源的密码输入是否正确</string>
     <string name="clone_from_password">输入克隆源的密码</string>
     <string name="qr_code_for_all_addresses">冷钱包监控二维码</string>
     <string name="qr_code_for_all_addresses_title">使用热钱包扫描来监控冷钱包</string>

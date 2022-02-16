@@ -309,6 +309,7 @@
     <string name="clone_from_waiting">Cloning…</string>
     <string name="clone_from_success">Clone success</string>
     <string name="clone_from_failed">Clone failed</string>
+    <string name="clone_from_failed_content_empty">Clone failed, Please confirm whether the source password is entered correctly</string>
     <string name="clone_from_password">Enter source password</string>
     <string name="qr_code_for_all_addresses">Watch Only QR Code</string>
     <string name="qr_code_for_all_addresses_title">Scan with Bither Hot to watch Bither Cold</string>
