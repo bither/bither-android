@@ -436,7 +436,9 @@
             android:name="net.bither.service.BlockchainService"
             android:exported="false" />
 
-        <receiver android:name="net.bither.receiver.AutosyncReceiver">
+        <receiver
+            android:name="net.bither.receiver.AutosyncReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -446,7 +448,9 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-        <receiver android:name="net.bither.receiver.NetworkReceiver">
+        <receiver
+            android:name="net.bither.receiver.NetworkReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
