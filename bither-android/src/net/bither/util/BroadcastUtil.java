@@ -38,6 +38,7 @@ public class BroadcastUtil {
 
     public static void sendBroadcastStartPeer() {
         final Intent broadcast = new Intent(ACTION_START_PEER_MANAGER);
+        broadcast.setPackage(BitherApplication.mContext.getPackageName());
         BitherApplication.mContext.sendBroadcast(broadcast);
     }
 
@@ -46,6 +47,7 @@ public class BroadcastUtil {
         if (tickers != null && tickers.size() > 0) {
             MarketUtil.setTickerList(tickers);
             final Intent broadcast = new Intent(ACTION_MARKET);
+            broadcast.setPackage(BitherApplication.mContext.getPackageName());
             BitherApplication.mContext.sendBroadcast(broadcast);
         }
     }

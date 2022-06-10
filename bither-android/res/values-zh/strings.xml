@@ -346,6 +346,16 @@
 
     <string name="network_monitor_activity_title">网络监控</string>
     <string name="network_monitor_clear_peer">清空节点</string>
+    <string name="network_custom_peer_title">自定义节点</string>
+    <string name="network_custom_peer_clear">清空自定义节点</string>
+    <string name="network_custom_peer_used">当前自定义节点</string>
+    <string name="network_custom_peer_tips">如果您使用的是 bitcoin core 0.19.0.1 版本及以上，请确认配置了以下参数：\npeerbloomfilters=1\nblockfilterindex=1\npeerblockfilters=1</string>
+    <string name="network_custom_peer_dns_or_ip">域名或IP</string>
+    <string name="network_custom_peer_port">端口</string>
+    <string name="network_custom_peer_port_hint">默认%d</string>
+    <string name="network_custom_peer_dns_or_ip_empty">请输入域名或IP</string>
+    <string name="network_custom_peer_port_invalid">无效的Port</string>
+    <string name="network_custom_peer_success">自定义节点完成</string>
 
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">分享</string>

@@ -73,6 +73,7 @@ public class NotificationAndroidImpl implements NotificationService {
     @Override
     public void sendLastBlockChange() {
         Intent broadcast = new Intent(ACTION_SYNC_LAST_BLOCK_CHANGE);
+        broadcast.setPackage(BitherApplication.mContext.getPackageName());
         BitherApplication.mContext.sendBroadcast(broadcast);
     }
 
@@ -85,6 +86,7 @@ public class NotificationAndroidImpl implements NotificationService {
             broadcast.putExtra(MESSAGE_TX, tx.getTxHash());
         }
         broadcast.putExtra(MESSAGE_TX_NOTIFICATION_TYPE, txNotificationType.getValue());
+        broadcast.setPackage(BitherApplication.mContext.getPackageName());
         BitherApplication.mContext.sendBroadcast(broadcast);
         log.debug("address " + address
                 + " balance updated " + deltaBalance
@@ -122,6 +124,7 @@ public class NotificationAndroidImpl implements NotificationService {
     public void sendConnectedChangeBroadcast(String connectedChangeBroadcast, boolean isConnected) {
         Intent intent = new Intent(connectedChangeBroadcast);
         intent.putExtra(connectedChangeBroadcast, isConnected);
+        intent.setPackage(BitherApplication.mContext.getPackageName());
         BitherApplication.mContext.sendBroadcast(intent);
     }
 
@@ -130,6 +133,7 @@ public class NotificationAndroidImpl implements NotificationService {
         final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
         broadcast.putExtra(ACTION_PROGRESS_INFO, value);
         broadcast.putExtra(ACTION_UNSYNC_BLOCK_NUMBER_INFO, unsyncBlockNumber);
+        broadcast.setPackage(BitherApplication.mContext.getPackageName());
         BitherApplication.mContext.sendBroadcast(broadcast);
     }
 

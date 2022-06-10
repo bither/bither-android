@@ -90,6 +90,8 @@ public class AppSharedPreference {
 
     private static final String IS_USE_DYNAMIC_MINER_FEE = "is_use_dynamic_miner_fee";
 
+    private static final String NETWORK_CUSTOM_PEER_DNS_OR_IP = "network_custom_peer_dns_or_ip";
+    private static final String NETWORK_CUSTOM_PEER_PORT = "network_custom_peer_port";
 
     private static AppSharedPreference mInstance = new AppSharedPreference();
 
@@ -495,6 +497,22 @@ public class AppSharedPreference {
 
     public boolean isUseDynamicMinerFee() {
         return mPreferences.getBoolean(IS_USE_DYNAMIC_MINER_FEE,true);
+    }
+
+    public void setNetworkCustomPeer(String dnsOrIp, int port) {
+        mPreferences.edit().putString(NETWORK_CUSTOM_PEER_DNS_OR_IP, dnsOrIp).putInt(NETWORK_CUSTOM_PEER_PORT, port).commit();
+    }
+
+    public String getNetworkCustomPeerDnsOrIp() {
+        return mPreferences.getString(NETWORK_CUSTOM_PEER_DNS_OR_IP,"");
+    }
+
+    public int getNetworkCustomPeerPort() {
+        return mPreferences.getInt(NETWORK_CUSTOM_PEER_PORT, BitherjSettings.port);
+    }
+
+    public void removeNetworkCustomPeer() {
+        mPreferences.edit().remove(NETWORK_CUSTOM_PEER_DNS_OR_IP).remove(NETWORK_CUSTOM_PEER_PORT).commit();
     }
 
 }

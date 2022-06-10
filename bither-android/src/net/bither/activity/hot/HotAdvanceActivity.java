@@ -186,6 +186,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         // btnResetTx.setOnClickListener(selDialog);
         btnExportAddress = (Button) findViewById(R.id.btn_export_address);
         btnExportAddress.setOnClickListener(exportAddressClick);
+        findViewById(R.id.btn_network_custom_peer).setOnClickListener(networkCustomPeerClick);
         findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
         findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
@@ -242,10 +243,17 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     };
 
     private View.OnClickListener networkMonitorClick = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(HotAdvanceActivity.this, NetworkMonitorActivity.class);
+            startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener networkCustomPeerClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(HotAdvanceActivity.this, NetworkCustomPeerActivity.class);
             startActivity(intent);
         }
     };

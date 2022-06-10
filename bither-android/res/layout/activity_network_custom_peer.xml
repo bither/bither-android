@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/title_bar_below_margin"
+        android:background="#ffffffff">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingRight="@dimen/horizontal_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin">
+
+                <TextView
+                    android:id="@+id/tv_current_custom_peer_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/network_custom_peer_used"
+                    android:textColor="@color/text_field_light_text_color"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_current_custom_peer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="@dimen/card_list_padding"
+                    android:layout_marginRight="3dp"
+                    android:layout_marginBottom="@dimen/horizontal_edge_padding"
+                    android:textColor="@color/text_field_text_color"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/network_custom_peer_dns_or_ip"
+                    android:textColor="@color/text_field_light_text_color"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/et_dns_or_ip"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/text_field_holo_light_background"
+                    android:hint="@string/network_custom_peer_dns_or_ip_empty"
+                    android:imeOptions="flagNoExtractUi"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/network_custom_peer_port"
+                    android:textColor="@color/text_field_light_text_color"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/et_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/text_field_holo_light_background"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="number"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="3dp"
+                    android:text="@string/network_custom_peer_tips"
+                    android:textColor="@color/password_strength_weak"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/title_bar_below_margin"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_confirm"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_small_send_selector"
+                        android:padding="10dp"
+                        android:text="@string/OK"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <include layout="@layout/layout_dropdown_message" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_bar_height"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/title_bar_bg"
+        android:paddingBottom="3dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/tab_button_background"
+            android:duplicateParentState="true"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/ibtn_back"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:src="@drawable/title_bar_back" />
+
+            <ImageView
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/title_bar_seperator" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:shadowColor="@color/text_field_text_color"
+                android:shadowDx="1"
+                android:shadowDy="-1"
+                android:shadowRadius="0.5"
+                android:text="@string/network_custom_peer_title"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_option_line"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/title_bar_seperator"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/ibtn_option"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="match_parent"
+                android:background="@drawable/tab_button_background"
+                android:src="@drawable/title_bar_option_icon"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

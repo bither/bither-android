@@ -363,6 +363,17 @@
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
     <string name="network_monitor_clear_peer">Clear Peers</string>
 
+    <string name="network_custom_peer_title">Custom Peer</string>
+    <string name="network_custom_peer_clear">Clear Custom Peer</string>
+    <string name="network_custom_peer_used">Current custom peer</string>
+    <string name="network_custom_peer_tips">If you are using bitcoin core version 0.19.0.1 and above, please make sure the following parameters are configured:\npeerbloomfilters=1\nblockfilterindex=1\npeerblockfilters=1</string>
+    <string name="network_custom_peer_dns_or_ip">DNS Or IP</string>
+    <string name="network_custom_peer_port">Port</string>
+    <string name="network_custom_peer_port_hint">Default %d</string>
+    <string name="network_custom_peer_dns_or_ip_empty">Please enter the DNS or IP</string>
+    <string name="network_custom_peer_port_invalid">Invalid port</string>
+    <string name="network_custom_peer_success">Custom peer complete</string>
+
     <!-- fancy qr code -->
     <string name="fancy_qr_code_share">Share</string>
     <string name="fancy_qr_code_save">Save</string>

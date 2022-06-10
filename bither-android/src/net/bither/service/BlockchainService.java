@@ -40,6 +40,7 @@ import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.exception.BlockStoreException;
 import net.bither.bitherj.utils.BlockUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
+import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
@@ -340,10 +341,15 @@ public class BlockchainService extends android.app.Service {
                     return;
                 }
             }
+            PeerManager peerManager = PeerManager.instance();
+            String customPeerDnsOrIp = AppSharedPreference.getInstance().getNetworkCustomPeerDnsOrIp();
+            if (!Utils.isEmpty(customPeerDnsOrIp)) {
+                peerManager.setCustomPeer(customPeerDnsOrIp, AppSharedPreference.getInstance().getNetworkCustomPeerPort());
+            }
             if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
                 if (!AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()) {
-                    if (!PeerManager.instance().isConnected()) {
-                        PeerManager.instance().start();
+                    if (!peerManager.isConnected()) {
+                        peerManager.start();
                         if (!spvFinishedReceivered) {
                             final IntentFilter intentFilter = new IntentFilter();
                             intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_FROM_SPV_FINISHED);
@@ -357,7 +363,6 @@ public class BlockchainService extends android.app.Service {
                         TransactionsUtil.getMyTxFromBither();
                     }
                     startPeerManager();
-
                 }
             }
         } catch (Exception e) {
