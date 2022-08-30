@@ -530,21 +530,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void run() {
             List<Address> addressList = PrivateKeyUtil.getECKeysFromBackupString(content, password);
 
-            if (addressList == null || addressList.size() == 0) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dp != null && dp.isShowing()) {
-                            dp.setThread(null);
-                            dp.dismiss();
-                        }
-                        DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.clone_from_failed_content_empty);
-                    }
-                });
-                return;
-            }
-
             HDMKeychain hdmKeychain = PrivateKeyUtil.getHDMKeychain(PrivateKeyUtil.getCloneContent(), password);
 
             BitpieHDAccountCold bitpieHDAccountCold = null;
@@ -582,7 +567,7 @@ public class OptionColdFragment extends Fragment implements Selectable {
                             dp.dismiss();
                         }
                         DropdownMessage.showDropdownMessage(getActivity(),
-                                R.string.clone_from_failed);
+                                R.string.clone_from_failed_content_empty);
                     }
                 });
                 return;
