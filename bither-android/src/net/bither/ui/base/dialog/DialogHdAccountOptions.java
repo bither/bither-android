@@ -210,20 +210,6 @@ public class DialogHdAccountOptions extends DialogWithActions {
                         }).show();
                     }
                 }));
-        if (!isSegwitAddress) {
-            actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
-                @Override
-                public void run() {
-                    if (!account.isSyncComplete()) {
-                        DropdownMessage.showDropdownMessage(activity, R.string.no_sync_complete);
-                    } else {
-                        DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(activity);
-                        detectUtil.getBCCHDUnspentOutputs(account.getAddress(isSegwitAddress), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
-                                account.issuedExternalIndex(pathType) == 0 ? 0 : account.issuedExternalIndex(pathType) + 1, false);
-                    }
-                }
-            }));
-        }
         return actions;
     }
 }

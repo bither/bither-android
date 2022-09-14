@@ -130,21 +130,6 @@ public class HDAccountMonitoredDetailActivity extends AddressDetailActivity {
                         new DialogHdAccountOldAddresses(HDAccountMonitoredDetailActivity.this, hdAccount, pathType).show();
                     }
                 }));
-                if (!isSegwitAddress) {
-                    actions.add(new Action(R.string.detect_another_BCC_assets, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!address.isSyncComplete()) {
-                                DropdownMessage.showDropdownMessage(HDAccountMonitoredDetailActivity.this, R.string.no_sync_complete);
-                            } else {
-                                DetectAnotherAssetsUtil detectUtil = new DetectAnotherAssetsUtil(HDAccountMonitoredDetailActivity.this);
-                                AbstractHD.PathType pathType = AbstractHD.PathType.EXTERNAL_ROOT_PATH;
-                                detectUtil.getBCCHDUnspentOutputs(address.getAddress(), AbstractHD.PathType.EXTERNAL_ROOT_PATH,
-                                        ((HDAccount) address).issuedExternalIndex(pathType) == 0 ? 0 :  ((HDAccount) address).issuedExternalIndex(pathType) + 1,true);
-                            }
-                        }
-                    }));
-                }
                 return actions;
             }
         }.show();
