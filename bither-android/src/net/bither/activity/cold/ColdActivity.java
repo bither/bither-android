@@ -22,7 +22,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -78,7 +80,6 @@ import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,6 +176,12 @@ public class ColdActivity extends BaseFragmentActivity {
                 }
             }
             return;
+        } else if (requestCode == BitherSetting.REQUEST_CODE_PERMISSION_MANAGER) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    checkBackup();
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -400,22 +407,33 @@ public class ColdActivity extends BaseFragmentActivity {
                 if (strings != null && strings.length > 0) {
                     MnemonicCode firstMnemonicCode = getMnemonicCode(strings[0]);
                     int hdQrCodeFlagLength = firstMnemonicCode == null ? 0 : firstMnemonicCode.getMnemonicWordList().getHdQrCodeFlag().length();
-                    if (strings[0].indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || hdQrCodeFlagLength != 0) {
-                        String keychainString = strings[0].substring(hdQrCodeFlagLength);
+                    String firstStr = strings[0];
+                    if (firstStr.indexOf(QRCodeUtil.HDM_QR_CODE_FLAG) == 0 || hdQrCodeFlagLength != 0) {
+                        String keychainString;
+                        if (firstStr.contains(QRCodeUtil.ADD_MODE_QR_CODE_FLAG)) {
+                            keychainString = firstStr.substring(hdQrCodeFlagLength, firstStr.indexOf(QRCodeUtil.ADD_MODE_QR_CODE_FLAG));
+                        } else {
+                            keychainString = firstStr.substring(hdQrCodeFlagLength);
+                        }
                         try {
                             check = HDMKeychain.checkPassword(firstMnemonicCode, keychainString, password);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
-                        PasswordSeed passwordSeed = new PasswordSeed(strings[0]);
+                        String passwordSeedStr;
+                        if (firstStr.contains(QRCodeUtil.ADD_MODE_QR_CODE_FLAG)) {
+                            passwordSeedStr = firstStr.substring(0, firstStr.indexOf(QRCodeUtil.ADD_MODE_QR_CODE_FLAG));
+                        } else {
+                            passwordSeedStr = firstStr;
+                        }
+                        PasswordSeed passwordSeed = new PasswordSeed(passwordSeedStr);
                         check = passwordSeed.checkPassword(password);
                     }
                     if (!check) {
                         checkPasswordWrong();
                     } else {
-                        List<Address> addressList = new
-                                ArrayList<Address>();
+                        List<Address> addressList = new ArrayList<>();
                         for (String keyString : strings) {
                             String[] strs = QRCodeUtil.splitString(keyString);
                             if (strs.length != 4) {
@@ -426,8 +444,7 @@ public class ColdActivity extends BaseFragmentActivity {
                                 String encreyptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
 
                                 try {
-                                    hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString)
-                                            , password, null);
+                                    hdmKeychain = new HDMKeychain(new EncryptedData(encreyptString), password, null);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -437,10 +454,16 @@ public class ColdActivity extends BaseFragmentActivity {
                             MnemonicCode mnemonicCode = getMnemonicCode(keyString);
                             if (mnemonicCode != null && MnemonicWordList.getMnemonicWordListForHdSeed(keyString).equals(mnemonicCode.getMnemonicWordList())) {
                                 try {
+                                    Address.AddMode addMode = Address.AddMode.Other;
+                                    if (keyString.contains(QRCodeUtil.ADD_MODE_QR_CODE_FLAG)) {
+                                        int addModeFlagIndex = keyString.indexOf(QRCodeUtil.ADD_MODE_QR_CODE_FLAG);
+                                        addMode = Address.AddMode.fromValue(keyString.substring(addModeFlagIndex + 1));
+                                        keyString = keyString.substring(0, addModeFlagIndex);
+                                    }
                                     String[] passwordSeeds = QRCodeUtil.splitOfPasswordSeed(keyString);
                                     String encryptString = Utils.joinString(new String[]{passwordSeeds[1], passwordSeeds[2], passwordSeeds[3]}, QRCodeUtil.QR_CODE_SPLIT);
                                     if (MnemonicWordList.isHDQrCode(keyString)) {
-                                        new HDAccountCold(mnemonicCode, new EncryptedData(encryptString), password);
+                                        new HDAccountCold(mnemonicCode, new EncryptedData(encryptString), password, addMode);
                                         AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
                                         MnemonicCode.setInstance(mnemonicCode);
                                     } else if (MnemonicWordList.isBitpieColdQrCode(keyString)) {
@@ -452,11 +475,18 @@ public class ColdActivity extends BaseFragmentActivity {
                                 continue;
                             }
 
+                            Address.AddMode addMode = Address.AddMode.Other;
+                            if (keyString.contains(QRCodeUtil.ADD_MODE_QR_CODE_FLAG)) {
+                                int addModeFlagIndex = keyString.indexOf(QRCodeUtil.ADD_MODE_QR_CODE_FLAG);
+                                addMode = Address.AddMode.fromValue(keyString.substring(addModeFlagIndex + 1));
+                                keyString = keyString.substring(0, addModeFlagIndex);
+                            }
                             PasswordSeed passwordSeed = new PasswordSeed(keyString);
                             ECKey key = passwordSeed.getECKey(password);
                             if (key != null) {
                                 Address address = new Address(key.toAddress(), key.getPubKey(),
                                         PrivateKeyUtil.getEncryptedString(key), false, key.isFromXRandom());
+                                address.setAddMode(addMode);
                                 addressList.add(address);
                                 key.clearPrivateKey();
                             }
@@ -473,7 +503,6 @@ public class ColdActivity extends BaseFragmentActivity {
                 }
             }
         }).start();
-
     }
 
     private MnemonicCode getMnemonicCode(String string) {
@@ -542,6 +571,9 @@ public class ColdActivity extends BaseFragmentActivity {
             if (!PermissionUtil.isWriteExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
                 return;
             }
+            if (!PermissionUtil.isManagerPermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
+                return;
+            }
             checkBackup();
         }
     }
@@ -566,9 +598,13 @@ public class ColdActivity extends BaseFragmentActivity {
                         });
                         dialogConfirmTask.show();
                     } else {
+                        if (!PermissionUtil.isManagerPermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
+                            return;
+                        }
                         checkBackup();
                     }
                 }
+                break;
             default:
                 break;
         }

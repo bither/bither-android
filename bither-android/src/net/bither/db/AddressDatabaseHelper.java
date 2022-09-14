@@ -9,10 +9,8 @@ import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 
-import java.sql.SQLException;
-
 public class AddressDatabaseHelper extends SQLiteOpenHelper {
-    public static final int DB_VERSION = 9;
+    public static final int DB_VERSION = 10;
     private static final String DB_NAME = "address.db";
 
     public AddressDatabaseHelper(Context context) {
@@ -34,6 +32,7 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(AbstractDb.CREATE_MULTI_SIGN_SET);
         db.execSQL(AbstractDb.CREATE_HD_ACCOUNT_SEGWIT_PUB);
         db.execSQL(AbstractDb.CREATE_BITPIE_HD_ACCOUNT);
+        db.execSQL(AbstractDb.CREATE_ADDRESS_ADD_MODES_SQL);
     }
 
     @Override
@@ -66,7 +65,8 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
                 v7Tov8(db);
             case 8:
                 v8Tov9(db);
-
+            case 9:
+                v9Tov10(db);
         }
     }
 
@@ -153,5 +153,9 @@ public class AddressDatabaseHelper extends SQLiteOpenHelper {
 
     private void v8Tov9(SQLiteDatabase db) {
         db.execSQL(AbstractDb.CREATE_BITPIE_HD_ACCOUNT);
+    }
+
+    private void v9Tov10(SQLiteDatabase db) {
+        db.execSQL(AbstractDb.CREATE_ADDRESS_ADD_MODES_SQL);
     }
 }

@@ -230,6 +230,7 @@ public class RawPrivateKeyDiceFragment extends Fragment implements IDialogPasswo
                 password.wipe();
                 Address address = new Address(key.toAddress(), key.getPubKey(),
                         PrivateKeyUtil.getEncryptedString(key), false, false);
+                address.setAddMode(Address.AddMode.DiceCreate);
                 key.clearPrivateKey();
                 AddressManager.getInstance().addAddress(address);
 

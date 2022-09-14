@@ -33,7 +33,9 @@ import net.bither.bitherj.core.Address;
 import net.bither.bitherj.utils.Utils;
 import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogAddressWithShowPrivateKey;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
+import net.bither.util.AddressAddModeUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -48,6 +50,7 @@ public class ColdAddressFragmentListItemView extends FrameLayout implements Dial
     private ImageView ivType;
     private ImageButton ibtnXRandomLabel;
     private Button btnAlias;
+    private ImageView ivAddMode;
 
     public ColdAddressFragmentListItemView(Activity context) {
         super(context);
@@ -65,11 +68,13 @@ public class ColdAddressFragmentListItemView extends FrameLayout implements Dial
         ivType = (ImageView) findViewById(R.id.iv_type);
         btnAlias = (Button) findViewById(R.id.btn_address_alias);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
+        ivAddMode = findViewById(R.id.iv_add_mode);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         flAddress.setOnClickListener(copyClick);
         ivQr.setOnClickListener(qrClick);
         ivType.setOnLongClickListener(typeClick);
         btnAlias.setOnClickListener(aliasClick);
+        ivAddMode.setOnClickListener(addModeClick);
     }
 
     public void showAddress(final Address address) {
@@ -88,6 +93,8 @@ public class ColdAddressFragmentListItemView extends FrameLayout implements Dial
             btnAlias.setText("");
             btnAlias.setVisibility(View.INVISIBLE);
         }
+        ivAddMode.setImageResource(AddressAddModeUtil.getImgRes(address.getAddMode(), address.isFromXRandom()));
+        ivAddMode.setVisibility(VISIBLE);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
@@ -142,6 +149,19 @@ public class ColdAddressFragmentListItemView extends FrameLayout implements Dial
         public void onClick(View v) {
             new DialogAddressAlias(getContext(), address, ColdAddressFragmentListItemView.this)
                     .show();
+        }
+    };
+
+    private OnClickListener addModeClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask confirmTask = new DialogConfirmTask(getContext(), getContext().getString(AddressAddModeUtil.getDes(address.getAddMode(), address.isFromXRandom())), new Runnable() {
+                @Override
+                public void run() {
+                }
+            }, false);
+            confirmTask.setCancelable(false);
+            confirmTask.show();
         }
     };
 

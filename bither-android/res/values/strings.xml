@@ -853,6 +853,7 @@
     <string name="bitpie_cold_info" formatted="false">Bitpie Cold: it is a new efficient approach brought by us to manage more coins or tokens with cold storage solutions.\nBy using Bither Cold + Bitpie Cold, you are enabled to get access to more various types and categories of crypto assets management. However, the disadvantage of it hereof is that Bitpie (hot wallet side) is not open sourced despite the fact that both Bither and Bitpie are developed by Bither Team. Regardless that Bitpie is not 100% open sourced, the safety of Bither Cold+ Bitpie Cold solution is totally not affected since both Bither and the QR code specification of the Bitpie Cold protocol are 100% open source, viz., all the QR code data can be verified by the user themselves. More currency support is under development. You are free to choose the wallet solution provided by us.</string>
 
     <string name="permissions_no_grant">Please go to Phone Setting->Apps->Bither->Permission to switch on relevant permissions, otherwise the function cannot be used.</string>
+    <string name="permissions_file_manager_no_grant">Please grant the file management permission, otherwise the backup function cannot be used.</string>
 
     <string name="tip_sync_address_tx">%s\nthe Tx data of this address is being synced\nData by Blockchair.com</string>
     <string name="tip_no_peers_connected_scan">Searching connectable nodes</string>
@@ -865,5 +866,12 @@
     <string name="dynamic_miner_fee_title">Use Dynamic Miner Fee</string>
     <string name="dynamic_miner_fee_des">The system will caculate the miner fee automaticlly after switch on Dynamic Miner Fee function. The miner fee is determined by Bitcoin Blockchain.</string>
     <string name="dynamic_miner_fee_failure_title">Dynamic Miner Fee caculation failed, use the default Miner fee?</string>
+
+    <string name="address_add_mode_create_des">Added by creating</string>
+    <string name="address_add_mode_dice_create_des">Added by dice creation</string>
+    <string name="address_add_mode_binary_create_des">Added by binary creation</string>
+    <string name="address_add_mode_import_des">Added by import</string>
+    <string name="address_add_mode_clone_des">Added by cloning</string>
+    <string name="address_add_mode_other_des">Imported, cloned or not created in xrandom mode from an old version</string>
 
 </resources>

@@ -66,21 +66,29 @@
             android:background="#ffEEEEEE"
             android:orientation="horizontal"
             android:paddingBottom="7dp"
-            android:paddingLeft="@dimen/card_padding">
+            android:paddingLeft="@dimen/card_padding"
+            android:paddingRight="5dp">
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"/>
 
+            <ImageView
+                android:id="@+id/iv_add_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:src="@drawable/address_add_mode_bither_create_selector"
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/ibtn_xrandom_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:padding="5dp"
                 android:visibility="gone"
                 android:background="@drawable/transparent"
                 android:src="@drawable/xrandom_address_label_selector"/>
@@ -90,10 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:paddingRight="@dimen/card_padding"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
+                android:padding="5dp"
                 android:background="@drawable/transparent"
                 android:src="@drawable/address_type_hd_selector"/>
         </LinearLayout>

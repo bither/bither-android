@@ -32,11 +32,14 @@ import net.bither.R;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.dialog.DialogAddressAlias;
 import net.bither.ui.base.dialog.DialogAddressFull;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
+import net.bither.util.AddressAddModeUtil;
 import net.bither.util.UnitUtilWrapper;
 
 import java.math.BigInteger;
@@ -53,6 +56,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
     private BtcToMoneyTextView tvBalanceMoney;
     public ImageView ivType;
     private ImageButton ibtnXRandomLabel;
+    private ImageView ivAddMode;
     private TransactionImmutureSummeryListItemView vTransactionImmuture;
     private View llExtra;
     private TextView tvTransactionCount;
@@ -78,6 +82,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         llMonitorFailed = findViewById(R.id.ll_monitor_failed);
         tvBalanceMoney = (BtcToMoneyTextView) findViewById(R.id.tv_balance_money);
         ivType = (ImageView) findViewById(R.id.iv_type);
+        ivAddMode = (ImageView) findViewById(R.id.iv_add_mode);
         ibtnXRandomLabel = (ImageButton) findViewById(R.id.ibtn_xrandom_label);
         ibtnXRandomLabel.setOnLongClickListener(DialogXRandomInfo.InfoLongClick);
         findViewById(R.id.ibtn_address_full).setOnClickListener(addressFullClick);
@@ -85,6 +90,7 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         vTransactionImmuture = (TransactionImmutureSummeryListItemView) findViewById(R.id
                 .v_transaction_immuture);
         vTransactionImmuture.setActivity(activity);
+        ivAddMode.setOnClickListener(addModeClick);
     }
 
     private AddressFragmentListItemView(Context context, AttributeSet attrs) {
@@ -112,16 +118,27 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
         llExtra.setVisibility(View.VISIBLE);
         llMonitorFailed.setVisibility(View.GONE);
         tvTransactionCount.setVisibility(View.GONE);
+        boolean isWatch = false;
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSlimSymbol(tvBalance));
-        if (address.isHDAccount()) {
+        if (address instanceof  HDAccount) {
+            HDAccount hdAccount = (HDAccount) address;
+            isWatch = !AbstractDb.hdAccountProvider.hasMnemonicSeed(hdAccount.getHdSeedId());
             ivType.setImageResource(R.drawable.address_type_hd_selector);
         } else if (address.isHDM()) {
             ivType.setImageResource(R.drawable.address_type_hdm_selector);
-        }else if (address.hasPrivKey()) {
+        } else if (address.hasPrivKey()) {
             ivType.setImageResource(R.drawable.address_type_private_selector);
         } else {
+            isWatch = true;
             ivType.setImageResource(R.drawable.address_type_watchonly_selector);
         }
+        if (!isWatch) {
+            ivAddMode.setImageResource(AddressAddModeUtil.getImgRes(address.getAddMode(), address.isFromXRandom()));
+            ivAddMode.setVisibility(VISIBLE);
+        } else {
+            ivAddMode.setVisibility(GONE);
+        }
+
         if (this.address != null && this.address.isSyncComplete()) {
             tvBalance.setText(UnitUtilWrapper.formatValueWithBold(this.address.getBalance()));
             tvBalanceMoney.setBigInteger(BigInteger.valueOf(this.address.getBalance()));
@@ -211,6 +228,19 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
                 return;
             }
             new DialogAddressAlias(getContext(), address, AddressFragmentListItemView.this).show();
+        }
+    };
+
+    private OnClickListener addModeClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask confirmTask = new DialogConfirmTask(getContext(), getContext().getString(AddressAddModeUtil.getDes(address.getAddMode(), address.isFromXRandom())), new Runnable() {
+                @Override
+                public void run() {
+                }
+            }, false);
+            confirmTask.setCancelable(false);
+            confirmTask.show();
         }
     };
 

@@ -815,6 +815,7 @@
     <string name="bitpie_cold_info">Bitpie Cold：可以使比太钱包为更多币种提供冷钱包功能。\n如果您用比太冷钱包+bitpie cold 与比特派配合进行二维码扫描发币的功能，好处是可以让比太轻松的为很多币种提供冷钱包功能，缺点就是热钱包部分（比特派并不开源），当然，两款钱包也都由比太团队研发。但比特派是否开源与比太冷钱包+bitpie cold 的安全性无关，因为比太是完全开源的，而且，bitpie cold 协议的二维码规范也都是开源的，也就是所有的二维码数据用户都可自行验证，无需担心安全风险。更多币种支持陆续开发中，用户可自行选择使用钱包的方式。</string>
 
     <string name="permissions_no_grant">请前往设置->应用->比太->权限管理中打开相关权限，否则功能无法正常使用！</string>
+    <string name="permissions_file_manager_no_grant">请授予文件的管理权限，否则备份功能无法正常使用！</string>
 
     <string name="tip_sync_address_tx">%s\n正在同步该地址交易数据\n数据来自Blockchair.com</string>
     <string name="tip_no_peers_connected_scan">正在搜索可连接的节点</string>
@@ -827,5 +828,12 @@
     <string name="dynamic_miner_fee_title">使用动态矿工费</string>
     <string name="dynamic_miner_fee_des">开启动态矿工费后，软件将根据当前比特币的网络状态自动计算实时最优费用；矿工费由比特币网络收取。</string>
     <string name="dynamic_miner_fee_failure_title">计算动态矿工费失败，是否使用默认矿工费？</string>
+
+    <string name="address_add_mode_create_des">通过创建添加</string>
+    <string name="address_add_mode_dice_create_des">通过骰子创建添加</string>
+    <string name="address_add_mode_binary_create_des">通过二进制创建添加</string>
+    <string name="address_add_mode_import_des">通过导入添加</string>
+    <string name="address_add_mode_clone_des">通过克隆添加</string>
+    <string name="address_add_mode_other_des">通过旧版本导入、克隆或非极随机方式创建添加</string>
 
 </resources>

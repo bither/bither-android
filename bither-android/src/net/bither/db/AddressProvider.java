@@ -109,5 +109,10 @@ public class AddressProvider extends AbstractAddressProvider {
         cv.put(AbstractDb.AddressesColumns.IS_TRASH, address.isTrashed() ? 1 : 0);
         cv.put(AbstractDb.AddressesColumns.SORT_TIME, address.getSortTime());
         mdb.getSQLiteDatabase().insert(AbstractDb.Tables.Addresses, null, cv);
+
+        ContentValues modeCv = new ContentValues();
+        modeCv.put(AbstractDb.AddressAddModesColumns.ACCOUNT_ID, address.getAddress());
+        modeCv.put(AbstractDb.AddressAddModesColumns.ADD_MODE, address.getAddModeValue());
+        mdb.getSQLiteDatabase().insert(AbstractDb.Tables.ADDRESS_ADD_MODES, null, modeCv);
     }
 }

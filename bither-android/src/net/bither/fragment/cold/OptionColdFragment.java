@@ -210,7 +210,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
             startActivityForResult(intent, BitherSetting.INTENT_REF.CLONE_FROM_REQUEST_CODE);
         }
 
-        ;
     };
     private OnClickListener qrForAllClick = new OnClickListener() {
 
@@ -238,6 +237,9 @@ public class OptionColdFragment extends Fragment implements Selectable {
         public void onClick(View v) {
             if (FileUtil.existSdCardMounted()) {
                 if (!PermissionUtil.isWriteExternalStoragePermission(getActivity(), BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
+                    return;
+                }
+                if (!PermissionUtil.isManagerPermission(getActivity(), BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
                     return;
                 }
                 long backupTime = AppSharedPreference.getInstance().getLastBackupkeyTime().getTime();

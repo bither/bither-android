@@ -180,6 +180,7 @@ public class PrivateKeyUEntropyActivity extends UEntropyActivity {
                     ecKey = PrivateKeyUtil.encrypt(ecKey, password);
                     Address address = new Address(ecKey.toAddress(), ecKey.getPubKey(),
                             PrivateKeyUtil.getEncryptedString(ecKey), true, ecKey.isFromXRandom());
+                    address.setAddMode(Address.AddMode.Create);
                     ecKey.clearPrivateKey();
                     addressList.add(address);
                     addressStrs.add(address.getAddress());

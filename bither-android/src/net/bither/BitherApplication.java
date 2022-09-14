@@ -183,8 +183,8 @@ public class BitherApplication extends Application {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                AddressManager.getInstance();
                 initLogging();
+                AddressManager.getInstance();
             }
         }).start();
     }

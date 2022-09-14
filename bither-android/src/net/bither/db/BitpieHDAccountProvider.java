@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import net.bither.BitherApplication;
+import net.bither.bitherj.core.Address;
 import net.bither.bitherj.crypto.PasswordSeed;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.db.imp.AbstractBitpieHDAccountProvider;
@@ -28,7 +29,7 @@ public class BitpieHDAccountProvider extends AbstractBitpieHDAccountProvider {
     @Override
     protected int insertHDAccountToDb(IDb db, String encryptedMnemonicSeed, String encryptSeed,
                                       String firstAddress, boolean isXrandom,
-                                      byte[] externalPub, byte[] internalPub) {
+                                      byte[] externalPub, byte[] internalPub, Address.AddMode addMode) {
         AndroidDb mdb = (AndroidDb)db;
         ContentValues cv = new ContentValues();
         cv.put(AbstractDb.HDAccountColumns.ENCRYPT_SEED, encryptSeed);

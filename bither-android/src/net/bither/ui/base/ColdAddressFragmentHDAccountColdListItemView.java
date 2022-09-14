@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import net.bither.R;
 import net.bither.SignMessageAddressListActivity;
@@ -42,6 +43,7 @@ import net.bither.ui.base.dialog.DialogSimpleQr;
 import net.bither.ui.base.dialog.DialogWithActions;
 import net.bither.ui.base.dialog.DialogXRandomInfo;
 import net.bither.ui.base.listener.IDialogPasswordListener;
+import net.bither.util.AddressAddModeUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.WalletUtils;
 
@@ -64,6 +66,7 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
 
     private ImageButton ibtnXRandomLabel;
     private DialogProgress dp;
+    private ImageView ivAddMode;
 
     public ColdAddressFragmentHDAccountColdListItemView(Context context) {
         super(context);
@@ -98,6 +101,10 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
         findViewById(R.id.ibtn_qr_code_option).setOnClickListener(qrCodeOptionClick);
         dp = new DialogProgress(getContext(), R.string.please_wait);
         dp.setCancelable(false);
+        ivAddMode = findViewById(R.id.iv_add_mode);
+        ivAddMode.setOnClickListener(addModeClick);
+        ivAddMode.setImageResource(AddressAddModeUtil.getImgRes(hdAccountCold.getAddMode(), hdAccountCold.isFromXRandom()));
+        ivAddMode.setVisibility(VISIBLE);
     }
 
     private OnLongClickListener typeClick = new OnLongClickListener() {
@@ -246,6 +253,19 @@ public class ColdAddressFragmentHDAccountColdListItemView extends FrameLayout {
                 }
             }));
             return actions;
+        }
+    };
+
+    private OnClickListener addModeClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DialogConfirmTask confirmTask = new DialogConfirmTask(getContext(), getContext().getString(AddressAddModeUtil.getDes(hdAccountCold.getAddMode(), hdAccountCold.isFromXRandom())), new Runnable() {
+                @Override
+                public void run() {
+                }
+            }, false);
+            confirmTask.setCancelable(false);
+            confirmTask.show();
         }
     };
 

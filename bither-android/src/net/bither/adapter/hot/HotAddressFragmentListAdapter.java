@@ -254,7 +254,7 @@ public class HotAddressFragmentListAdapter extends BaseExpandableListAdapter imp
                     } else {
                         tvGroup.setText(R.string.address_group_hdm_hot);
                     }
-                    ivType.setVisibility(View.INVISIBLE);
+                    ivType.setVisibility(View.GONE);
                     llHDM.setVisibility(View.VISIBLE);
                     configureHDM(touch);
                     return;
