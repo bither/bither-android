@@ -174,7 +174,7 @@ public class HdmImportWordListActivity extends SwipeRightFragmentActivity implem
                 if (importHDSeedType == ImportHDSeed.ImportHDSeedType.HDSeedPhrase) {
                     isZhTw();
                     ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid
-                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password, mnemonic);
+                            (HdmImportWordListActivity.this, ImportHDSeed.ImportHDSeedType.HDSeedPhrase, dp, null, words, password, mnemonic, mnemonic);
                     importHDSeedAndroid.importHDSeed();
                 } else {
                     ImportHDSeedAndroid importHDSeedAndroid = new ImportHDSeedAndroid

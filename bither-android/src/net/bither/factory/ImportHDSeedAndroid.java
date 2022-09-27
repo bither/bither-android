@@ -56,10 +56,9 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
         this.dp = dp;
     }
 
-
     public ImportHDSeedAndroid(Activity activity, ImportHDSeedType importHDSeedType,
-                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password, MnemonicCode mnemonicCode) {
-        super(importHDSeedType, content, worlds, password, mnemonicCode);
+                               DialogProgress dp, String content, List<String> worlds, SecureCharSequence password, MnemonicCode mnemonicCode, MnemonicCode qrSelectMnemonicCode) {
+        super(importHDSeedType, content, worlds, password, mnemonicCode, qrSelectMnemonicCode);
         this.activity = activity;
         this.dp = dp;
     }
@@ -134,8 +133,8 @@ public class ImportHDSeedAndroid extends ImportHDSeed {
                     }
                 }
                 if (success) {
-                    AppSharedPreference.getInstance().setMnemonicWordList(mnemonicCode.getMnemonicWordList());
-                    MnemonicCode.setInstance(mnemonicCode);
+                    AppSharedPreference.getInstance().setMnemonicWordList(qrSelectMnemonicCode.getMnemonicWordList());
+                    MnemonicCode.setInstance(qrSelectMnemonicCode);
                     ThreadUtil.runOnMainThread(new Runnable() {
                         @Override
                         public void run() {

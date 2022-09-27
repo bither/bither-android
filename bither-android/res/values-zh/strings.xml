@@ -836,4 +836,9 @@
     <string name="address_add_mode_clone_des">通过克隆添加</string>
     <string name="address_add_mode_other_des">通过旧版本导入、克隆或非极随机方式创建添加</string>
 
+    <string name="hd_account_seed_language_select_title">选择HD账户种子语言</string>
+    <string name="hd_account_seed_language_select_en">英文</string>
+    <string name="hd_account_seed_language_select_zh_cn">中文简体</string>
+    <string name="hd_account_seed_language_select_zh_tw">中文繁体</string>
+
 </resources>

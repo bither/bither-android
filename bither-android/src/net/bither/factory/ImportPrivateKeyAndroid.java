@@ -17,6 +17,7 @@
 package net.bither.factory;
 
 import android.app.Activity;
+import android.os.Handler;
 
 import net.bither.R;
 import net.bither.activity.cold.ColdAdvanceActivity;
@@ -52,10 +53,6 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
-                if (dp != null && dp.isShowing()) {
-                    dp.setThread(null);
-                    dp.dismiss();
-                }
                 switch (errorCode) {
                     case PASSWORD_WRONG:
                         DropdownMessage.showDropdownMessage(activity, R.string.password_wrong);
@@ -87,7 +84,14 @@ public class ImportPrivateKeyAndroid extends ImportPrivateKey {
                         DropdownMessage.showDropdownMessage(activity, R.string.import_private_key_qr_code_failed);
                         break;
                 }
-
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dp != null && dp.isShowing()) {
+                            dp.dismiss();
+                        }
+                    }
+                }, 400);
             }
         });
 

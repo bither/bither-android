@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:minWidth="200dp"
+        android:text="@string/hd_account_seed_language_select_title"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="5dp"
+        android:background="#66ffffff"/>
+
+    <TextView
+        android:id="@+id/tv_en"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:text="@string/hd_account_seed_language_select_en"
+        android:background="@drawable/ui_touchable_bg"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#66ffffff"/>
+
+    <TextView
+        android:id="@+id/tv_zh_cn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:text="@string/hd_account_seed_language_select_zh_cn"
+        android:background="@drawable/ui_touchable_bg"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#66ffffff"/>
+
+    <TextView
+        android:id="@+id/tv_zh_tw"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:text="@string/hd_account_seed_language_select_zh_tw"
+        android:background="@drawable/ui_touchable_bg"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#66ffffff"/>
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:background="@drawable/ui_touchable_bg"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="14sp"/>
+
+
+</LinearLayout>

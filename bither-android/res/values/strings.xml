@@ -874,4 +874,9 @@
     <string name="address_add_mode_clone_des">Added by cloning</string>
     <string name="address_add_mode_other_des">Imported, cloned or not created in xrandom mode from an old version</string>
 
+    <string name="hd_account_seed_language_select_title">Select HD account seed language</string>
+    <string name="hd_account_seed_language_select_en">English</string>
+    <string name="hd_account_seed_language_select_zh_cn">Simplified Chinese</string>
+    <string name="hd_account_seed_language_select_zh_tw">Traditional Chinese</string>
+
 </resources>
