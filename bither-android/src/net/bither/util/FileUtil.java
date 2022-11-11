@@ -18,13 +18,16 @@ package net.bither.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 
 import net.bither.BitherApplication;
 import net.bither.bitherj.utils.Utils;
@@ -48,7 +51,6 @@ import java.util.List;
 
 public class FileUtil {
 
-
     // old tickerName file
     private static final String HUOBI_TICKER_NAME = "huobi.ticker";
     private static final String BITSTAMP_TICKER_NAME = "bitstamp.ticker";
@@ -57,12 +59,11 @@ public class FileUtil {
     private static final String CHBTC_TICKER_NAME = "chbtc.ticker";
     private static final String BTCCHINA_TICKER_NAME = "btcchina.ticker";
 
-
-    private static final String BITHER_BACKUP_SDCARD_DIR = "BitherBackup";
+    static final String BITHER_BACKUP_SDCARD_DIR = "BitherBackup";
+    static final String BITHER_BACKUP_SDCARD_DOCUMENTS_DIR = "Documents";
     private static final String BITHER_BACKUP_ROM_DIR = "backup";
 
     private static final String BITHER_BACKUP_HOT_FILE_NAME = "keys";
-
 
     private static final String EXCAHNGE_TICKER_NAME = "exchange.ticker";
     private static final String EXCHANGE_KLINE_NAME = "exchange.kline";
@@ -95,39 +96,80 @@ public class FileUtil {
         if (Utils.isEmpty(storageState)) {
             return false;
         }
-        return Utils.compareString(storageState,
-                android.os.Environment.MEDIA_MOUNTED);
+        return Utils.compareString(storageState, android.os.Environment.MEDIA_MOUNTED);
     }
 
-    public static File getSDPath() {
-        File sdDir = Environment.getExternalStorageDirectory();
-        return sdDir;
+    private static File getOldSDPath() {
+        return Environment.getExternalStorageDirectory();
+    }
+
+    private static File getSDPath() {
+        return new File(Environment.getExternalStorageDirectory(), BITHER_BACKUP_SDCARD_DOCUMENTS_DIR);
+    }
+
+    public static File geOldBackupSdCardDir() {
+        File backupDir = new File(getOldSDPath(), BITHER_BACKUP_SDCARD_DIR);
+        return backupDir;
     }
 
     public static File getBackupSdCardDir() {
         File backupDir = new File(getSDPath(), BITHER_BACKUP_SDCARD_DIR);
-        if (!backupDir.exists()) {
-            backupDir.mkdirs();
-        }
         return backupDir;
     }
 
+    public static File getLastBackupSdCardDir() {
+        File dir = getBackupSdCardDir();
+        File[] files = dir.listFiles();
+        if (files != null && files.length > 0) {
+            return dir;
+        }
+        File oldDir = geOldBackupSdCardDir();
+        File[] oldFiles = oldDir.listFiles();
+        if (oldFiles != null && oldFiles.length > 0) {
+            return oldDir;
+        }
+        return dir;
+    }
+
     public static File getBackupFileOfCold() {
-        File file = new File(getBackupSdCardDir(),
-                DateTimeUtil.getNameForFile(System.currentTimeMillis())
-                        + ".bak"
-        );
+        File backupDir = getBackupSdCardDir();
+        if (!backupDir.exists()) {
+            backupDir.mkdirs();
+        }
+        File file = new File(backupDir, DateTimeUtil.getNameForFile(System.currentTimeMillis()) + ".bak");
         return file;
     }
 
+    public static boolean isExistBackupSDCardDirOfCold(boolean isOld) {
+        File dir = isOld ? getOldSDPath() : getSDPath();
+        File[] files = dir.listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (file.getName().equals(BITHER_BACKUP_SDCARD_DIR)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static List<File> getBackupFileListOfCold() {
-        File dir = getBackupSdCardDir();
+        List<File> fileList = getBackupFileListOfCold(false);
+        List<File> oldFileList = getBackupFileListOfCold(true);
+        if (oldFileList.size() > 0) {
+            fileList.addAll(oldFileList);
+        }
+        return fileList;
+    }
+
+    public static List<File> getBackupFileListOfCold(boolean isOld) {
+        File dir = isOld ? geOldBackupSdCardDir() : getBackupSdCardDir();
         List<File> fileList = new ArrayList<File>();
         File[] files = dir.listFiles();
         if (files != null && files.length > 0) {
             files = orderByDateDesc(files);
             for (File file : files) {
-                if (StringUtil.checkBackupFileOfCold(file.getName())) {
+                if (file.isFile() && StringUtil.checkBackupFileOfCold(file.getName())) {
                     fileList.add(file);
                 }
             }
@@ -137,7 +179,6 @@ public class FileUtil {
 
     private static File getBackupRomDir() {
         File backupDir = new File(Utils.getWalletRomCache(), BITHER_BACKUP_ROM_DIR);
-
         if (!backupDir.exists()) {
             backupDir.mkdirs();
         }
@@ -471,17 +512,47 @@ public class FileUtil {
                     file = new File(img_path);
                 }
             } else {
-
                 file = new File(new URI(uri.toString()));
                 if (file.exists()) {
                     return file;
                 }
-
             }
         } catch (Exception e) {
         }
         return file;
+    }
 
+    public static File getBackupExternalFilesDir() {
+        File backupDir = new File(BitherApplication.mContext.getExternalFilesDir(null), BITHER_BACKUP_SDCARD_DIR);
+        if (!backupDir.exists()) {
+            backupDir.mkdirs();
+        }
+        return backupDir;
+    }
+
+    public static File uriToFileApiQ(Context context, Uri uri) {
+        File file = null;
+        if (uri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
+            file = new File(uri.getPath());
+        } else if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                try {
+                    InputStream is = contentResolver.openInputStream(uri);
+                    File cache = new File(getBackupExternalFilesDir(), displayName);
+                    FileOutputStream fos = new FileOutputStream(cache);
+                    FileUtils.copy(is, fos);
+                    file = cache;
+                    fos.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file;
     }
 
     public static int getOrientationOfFile(String fileName) {

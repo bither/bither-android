@@ -16,13 +16,16 @@
 
 package net.bither.util;
 
-
+import static net.bither.bitherj.qrcode.QRCodeUtil.ADD_MODE_QR_CODE_FLAG;
 import android.os.Handler;
 import android.os.Looper;
 
+import net.bither.BitherSetting;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.crypto.ECKey;
+import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
+import net.bither.bitherj.utils.Base58;
 import net.bither.bitherj.utils.PrivateKeyUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
@@ -30,9 +33,7 @@ import net.bither.runnable.BaseRunnable;
 import net.bither.runnable.HandlerMessage;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 // TODO : backup hot wallet's encrypted private keys & public keys in the rom
 public class BackupUtil {
@@ -47,11 +48,9 @@ public class BackupUtil {
             .getInstance();
     private static long ONE_WEEK_TIME = 7 * 24 * 60 * 60 * 1000;
 
-
     private BackupUtil() {
 
     }
-
 
     public static ECKey getEckeyFromBackup(String address, CharSequence password) {
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
@@ -59,27 +58,32 @@ public class BackupUtil {
         } else {
             return getEckeyFormBackupHot(address, password);
         }
-
     }
 
     private static ECKey getEckeyFormBackupHot(String address, CharSequence password) {
         File file = FileUtil.getBackupKeyOfHot();
         String str = Utils.readFile(file);
-        if (str.contains(address)) {
-            String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
-            for (String backupStr : backupStrArray) {
-                if (backupStr.contains(address)) {
-                    String[] strArray = QRCodeUtil.splitString(backupStr);
-                    if (strArray.length > 3) {
-                        String keyString = backupStr.substring(strArray[0]
-                                .length() + 1);
-                        return PrivateKeyUtil.getECKeyFromSingleString(
-                                keyString, password);
+        try {
+            String base58Address = Base58.bas58ToHexWithAddress(address);
+            if (str.contains(base58Address)) {
+                String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
+                for (String backupStr : backupStrArray) {
+                    if (backupStr.contains(base58Address)) {
+                        String[] strArray = QRCodeUtil.splitString(backupStr);
+                        if (strArray.length > 3) {
+                            String keyString = backupStr.substring(strArray[0].length() + 1);
+                            if (keyString.contains(ADD_MODE_QR_CODE_FLAG)) {
+                                return PrivateKeyUtil.getECKeyFromSingleString(
+                                        keyString.split(ADD_MODE_QR_CODE_FLAG)[0], password);
+                            }
+                        }
                     }
                 }
             }
+            return null;
+        } catch (AddressFormatException e) {
+            return null;
         }
-        return null;
     }
 
     private static ECKey getEckeyFormBackupCold(String address, CharSequence password) {
@@ -88,46 +92,63 @@ public class BackupUtil {
         }
         try {
             File[] files = FileUtil.getBackupSdCardDir().listFiles();
-            if (files == null) {
-                return null;
+            ECKey ecKey = null;
+            if (files != null && files.length > 0) {
+                ecKey = getEckeyFormBackupCold(files, address, password);
             }
+            if (ecKey == null && BitherSetting.IS_ANDROID11_OR_HIGHER) {
+                files = FileUtil.getBackupExternalFilesDir().listFiles();
+                if (files != null && files.length > 0) {
+                    return getEckeyFormBackupCold(files, address, password);
+                }
+            }
+            return ecKey;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static ECKey getEckeyFormBackupCold(File[] files, String address, CharSequence password) {
+        try {
             files = FileUtil.orderByDateDesc(files);
-            for (int i = files.length - 1;
-                 i >= 0;
-                 i++) {
-                File file = files[i];
-                String str = Utils.readFile(file);
-                if (str.contains(address)) {
-                    String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
-                    for (String backupStr : backupStrArray) {
-                        if (backupStr.contains(address)) {
-                            String[] strArray = QRCodeUtil.splitString(backupStr);
-                            if (strArray.length > 3) {
-                                String keyString = backupStr
-                                        .substring(strArray[0].length() + 1);
-                                return PrivateKeyUtil.getECKeyFromSingleString(
-                                        keyString, password);
+            for (int i = files.length - 1; i >= 0; i--) {
+                try {
+                    File file = files[i];
+                    String str = Utils.readFile(file);
+                    String base58Address = Base58.bas58ToHexWithAddress(address);
+                    if (str.contains(base58Address)) {
+                        String[] backupStrArray = str.split(PrivateKeyUtil.BACKUP_KEY_SPLIT_MUTILKEY_STRING);
+                        for (String backupStr : backupStrArray) {
+                            if (backupStr.contains(base58Address)) {
+                                String[] strArray = QRCodeUtil.splitString(backupStr);
+                                if (strArray.length > 3) {
+                                    String keyString = backupStr.substring(strArray[0].length() + 1);
+                                    if (keyString.contains(ADD_MODE_QR_CODE_FLAG)) {
+                                        return PrivateKeyUtil.getECKeyFromSingleString(
+                                                keyString.split(ADD_MODE_QR_CODE_FLAG)[0], password);
+                                    }
+                                }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
-
     }
 
     public static void backupColdKey(boolean checkTime) {
         backupColdKey(checkTime, null);
-
     }
 
     public static void backupColdKey(boolean checkTime,
                                      BackupListener backupListener) {
-        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD
-                ) {
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             if (backupListener != null) {
                 backupListener.backupError();
             }
@@ -136,12 +157,8 @@ public class BackupUtil {
         if (FileUtil.existSdCardMounted()) {
             boolean isBackup = false;
             if (checkTime) {
-                Date lastBackupTime = appSharedPreference
-                        .getLastBackupkeyTime();
-                List<File> files = FileUtil.getBackupFileListOfCold();
-                if (lastBackupTime == null
-                        || ((lastBackupTime.getTime() + ONE_WEEK_TIME) < System
-                        .currentTimeMillis()) || files.size() == 0) {
+                Date lastBackupTime = appSharedPreference.getLastBackupkeyTime();
+                if (lastBackupTime == null || ((lastBackupTime.getTime() + ONE_WEEK_TIME) < System.currentTimeMillis()) || FileUtil.getBackupFileListOfCold().size() == 0) {
                     isBackup = true;
                 }
             } else {
@@ -184,47 +201,45 @@ public class BackupUtil {
 
         public BackupPrivateKeyRunnable(BackupListener backupListener) {
             this.mBackupListener = backupListener;
-
         }
 
         @Override
         public void run() {
             obtainMessage(HandlerMessage.MSG_PREPARE);
-            backupPrivateKey();
+            final boolean result = backupPrivateKey();
             if (this.mBackupListener != null) {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
-
                     @Override
                     public void run() {
-                        mBackupListener.backupSuccess();
-
+                        if (result) {
+                            mBackupListener.backupSuccess();
+                        } else {
+                            mBackupListener.backupError();
+                        }
                     }
                 });
             }
             obtainMessage(HandlerMessage.MSG_SUCCESS);
-
         }
 
-
-        private void backupPrivateKey() {
-            File file;
-            if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                file = FileUtil.getBackupKeyOfHot();
-            } else {
-                file = FileUtil.getBackupFileOfCold();
-            }
+        private boolean backupPrivateKey() {
             String backupString = PrivateKeyUtil.getBackupPrivateKeyStr();
-
             if (!Utils.isEmpty(backupString)) {
                 try {
+                    File file;
+                    if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
+                        file = FileUtil.getBackupKeyOfHot();
+                    } else {
+                        file = FileUtil.getBackupFileOfCold();
+                    }
                     Utils.writeFile(backupString.getBytes(), file);
-                    AppSharedPreference.getInstance().setLastBackupKeyTime(
-                            new Date(System.currentTimeMillis()));
-                } catch (IOException e) {
+                    AppSharedPreference.getInstance().setLastBackupKeyTime(new Date(System.currentTimeMillis()));
+                    return true;
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
+            return false;
         }
 
     }

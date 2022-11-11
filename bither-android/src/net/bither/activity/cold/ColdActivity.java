@@ -16,15 +16,17 @@
 
 package net.bither.activity.cold;
 
+import static net.bither.BitherSetting.IS_ANDROID11_OR_HIGHER;
+import static net.bither.util.FileHandlePresenter.REQUEST_CODE_READ_FILE_FROM_EXTERNAL;
+
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -58,6 +60,7 @@ import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.mnemonic.MnemonicCodeAndroid;
+import net.bither.model.Check;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -70,6 +73,7 @@ import net.bither.ui.base.dialog.DialogPassword;
 import net.bither.ui.base.dialog.ProgressDialog;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 import net.bither.util.BackupUtil;
+import net.bither.util.FileHandlePresenter;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
@@ -83,7 +87,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ColdActivity extends BaseFragmentActivity {
 
     private TabButton tbtnMessage;
@@ -94,6 +97,7 @@ public class ColdActivity extends BaseFragmentActivity {
     private ViewPager mPager;
     private ProgressDialog pd;
     private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
+    private FileHandlePresenter fileHandlePresenter;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -101,6 +105,7 @@ public class ColdActivity extends BaseFragmentActivity {
         BitherApplication.coldActivity = this;
         setContentView(R.layout.activity_cold);
         initView();
+        fileHandlePresenter = new FileHandlePresenter(this);
         mPager.postDelayed(new Runnable() {
 
             @Override
@@ -113,7 +118,6 @@ public class ColdActivity extends BaseFragmentActivity {
                         if (f instanceof Selectable) {
                             ((Selectable) f).onSelected();
                         }
-
                         BackupUtil.backupColdKey(true);
                     }
                 }, 100);
@@ -176,14 +180,55 @@ public class ColdActivity extends BaseFragmentActivity {
                 }
             }
             return;
-        } else if (requestCode == BitherSetting.REQUEST_CODE_PERMISSION_MANAGER) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    checkBackup();
-                }
-            }
         }
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_READ_FILE_FROM_EXTERNAL && resultCode == Activity.RESULT_OK) {
+            try {
+                Uri fileUri = data.getData();
+                if (fileUri == null) {
+                    showApiQExportFailure();
+                    return;
+                }
+                File file = FileUtil.uriToFileApiQ(ColdActivity.this, fileUri);
+                if (file != null) {
+                    if (file.isFile() && StringUtil.checkBackupFileOfCold(file.getName())) {
+                        showDialogPassword(file);
+                    } else {
+                        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
+                                getString(R.string.recover_from_backup_no_supoprt_file_type),
+                                getString(R.string.recover_from_backup_reselect),
+                                getString(R.string.cancel),
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        fileHandlePresenter.requestReadExternalStorage();
+                                    }
+                                }
+                        );
+                        dialogConfirmTask.show();
+                    }
+                } else {
+                    showApiQExportFailure();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                showApiQExportFailure();
+            }
+        }
+    }
+
+    private void showApiQExportFailure() {
+        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
+                getString(R.string.recover_from_backup_error_alert),
+                getString(R.string.recover_from_backup_reselect),
+                getString(R.string.cancel),
+                new Runnable() {
+            @Override
+            public void run() {
+                fileHandlePresenter.requestReadExternalStorage();
+            }
+        });
+        dialogConfirmTask.show();
     }
 
     private void initClick() {
@@ -201,7 +246,6 @@ public class ColdActivity extends BaseFragmentActivity {
                 overridePendingTransition(R.anim.activity_in_drop, R.anim.activity_out_back);
             }
         });
-
     }
 
     private void initView() {
@@ -347,52 +391,71 @@ public class ColdActivity extends BaseFragmentActivity {
                 public void run() {
                     final List<File> files = FileUtil.getBackupFileListOfCold();
                     if (files != null && files.size() > 0) {
-                        showDialogOfColdBackup();
+                        showDialogOfColdBackup(files.get(0));
+                    } else if (IS_ANDROID11_OR_HIGHER) {
+                        if (FileUtil.isExistBackupSDCardDirOfCold(false) || FileUtil.isExistBackupSDCardDirOfCold(true)) {
+                            showDialogOfColdBackup(null);
+                        }
                     }
                 }
             }).start();
+
         }
     }
 
-    private void showDialogOfColdBackup() {
+    private void showDialogOfColdBackup(final File bcackupFile) {
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
-                        getString(R.string.recover_from_backup_of_cold), passwordRunnable);
+                DialogConfirmTask dialogConfirmTask;
+                if (bcackupFile == null) {
+                    dialogConfirmTask = new DialogConfirmTask(ColdActivity.this,
+                            getString(R.string.recover_from_backup_of_android11_or_higher_cold),
+                            getString(R.string.recover_from_backup_select),
+                            getString(R.string.cancel),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    ThreadUtil.runOnMainThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            fileHandlePresenter.requestReadExternalStorage();
+                                        }
+                                    });
+                                }
+                            }
+                    );
+                } else {
+                    dialogConfirmTask = new DialogConfirmTask(ColdActivity.this, getString(R.string.recover_from_backup_of_cold), new Runnable() {
+                        @Override
+                        public void run() {
+                            ThreadUtil.runOnMainThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showDialogPassword(bcackupFile);
+                                }
+                            });
+                        }
+                    });
+                }
                 dialogConfirmTask.show();
             }
         });
-
     }
 
-    Runnable passwordRunnable = new Runnable() {
-        @Override
-        public void run() {
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    showDialogPassword();
-                }
-            });
-        }
-    };
-
-    private void showDialogPassword() {
+    private void showDialogPassword(final File bcackupFile) {
         DialogPassword dialogPassword = new DialogPassword(ColdActivity.this,
                 new IDialogPasswordListener() {
                     @Override
                     public void onPasswordEntered(SecureCharSequence password) {
-                        importWalletFromBackup(password);
+                        importWalletFromBackup(bcackupFile, password);
                     }
                 });
         dialogPassword.setCheckPre(false);
         dialogPassword.show();
     }
 
-    private void importWalletFromBackup(final SecureCharSequence password) {
-        List<File> fileList = FileUtil.getBackupFileListOfCold();
-        final File file = fileList.get(0);
+    private void importWalletFromBackup(final File file, final SecureCharSequence password) {
         LogUtil.d("backup", file.getName());
         if (pd == null) {
             pd = new ProgressDialog(ColdActivity.this, getString(R.string.please_wait), null);
@@ -431,7 +494,7 @@ public class ColdActivity extends BaseFragmentActivity {
                         check = passwordSeed.checkPassword(password);
                     }
                     if (!check) {
-                        checkPasswordWrong();
+                        checkPasswordWrong(file);
                     } else {
                         List<Address> addressList = new ArrayList<>();
                         for (String keyString : strings) {
@@ -522,7 +585,7 @@ public class ColdActivity extends BaseFragmentActivity {
         return mnemonicCode;
     }
 
-    private void checkPasswordWrong() {
+    private void checkPasswordWrong(final File backupFile) {
         ThreadUtil.runOnMainThread(new Runnable() {
             @Override
             public void run() {
@@ -530,7 +593,7 @@ public class ColdActivity extends BaseFragmentActivity {
                     pd.dismiss();
                 }
                 DropdownMessage.showDropdownMessage(ColdActivity.this, R.string.password_wrong);
-                showDialogPassword();
+                showDialogPassword(backupFile);
             }
         });
     }
@@ -568,10 +631,7 @@ public class ColdActivity extends BaseFragmentActivity {
             if (fragment != null && fragment instanceof ColdAddressFragment) {
                 ((ColdAddressFragment) fragment).refresh();
             }
-            if (!PermissionUtil.isWriteExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
-            if (!PermissionUtil.isManagerPermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
+            if (!PermissionUtil.isWriteAndReadExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE)) {
                 return;
             }
             checkBackup();
@@ -584,8 +644,20 @@ public class ColdActivity extends BaseFragmentActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE:
+            case BitherSetting.REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE:
                 if (grantResults != null && grantResults.length > 0) {
-                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    boolean isResult = true;
+                    for (int grantResult: grantResults) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            isResult = false;
+                            break;
+                        }
+                    }
+                    if (isResult) {
+                        if (requestCode == BitherSetting.REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE) {
+                            checkBackup();
+                        }
+                    } else {
                         DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(
                                 this, getString(R.string.permissions_no_grant), new Runnable() {
                             @Override
@@ -597,11 +669,6 @@ public class ColdActivity extends BaseFragmentActivity {
                             }
                         });
                         dialogConfirmTask.show();
-                    } else {
-                        if (!PermissionUtil.isManagerPermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
-                            return;
-                        }
-                        checkBackup();
                     }
                 }
                 break;

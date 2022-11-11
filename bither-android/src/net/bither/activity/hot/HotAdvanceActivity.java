@@ -296,14 +296,12 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener exportAddressClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (FileUtil.existSdCardMounted()) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
-
                             String addressListString = "";
                             for (Address address : AddressManager.getInstance().getAllAddresses()) {
                                 addressListString = addressListString + address.getAddress() + "\n";
@@ -317,7 +315,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                                                     .getAbsolutePath());
                                 }
                             });
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }

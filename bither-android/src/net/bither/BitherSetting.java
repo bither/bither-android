@@ -16,6 +16,7 @@
 
 package net.bither;
 
+import android.os.Build;
 import android.text.format.DateUtils;
 
 import net.bither.bitherj.BitherjSettings;
@@ -50,10 +51,12 @@ public class BitherSetting {
     public static final int REQUEST_CODE_CROP_IMAGE = 1009;
     public static final int REQUEST_CODE_PERMISSION_CAMERA = 1010;
     public static final int REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 1011;
-    public static final int REQUEST_CODE_PERMISSION_MANAGER = 1012;
+    public static final int REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE = 1012;
 
     public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
     public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;
+
+    public static final boolean IS_ANDROID11_OR_HIGHER = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R;
 
     public class SwipeRightGesture {
         public static final int SCROLL_DELAY_HORIZONTAL = 75;

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="250dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="200dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginBottom="5dp"
+        android:text="@string/recover_from_backup_title"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_backup"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/ui_touchable_bg"
+        android:gravity="left|center_vertical"
+        android:maxLines="1"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:singleLine="true"
+        android:text="@string/recover_from_backup"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#757575" />
+
+    <TextView
+        android:id="@+id/tv_old_backup"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/ui_touchable_bg"
+        android:gravity="left|center_vertical"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="@string/recover_from_old_backup"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#757575" />
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/ui_touchable_bg"
+        android:gravity="left|center_vertical"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        android:textSize="15dp" />
+
+</LinearLayout>

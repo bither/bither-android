@@ -16,7 +16,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <!--  -->
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -65,6 +64,16 @@
         android:label="@string/app_name"
         android:theme="@style/BitherTheme"
         android:usesCleartextTraffic="true">
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="net.bither.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <uses-library
             android:name="org.apache.http.legacy"

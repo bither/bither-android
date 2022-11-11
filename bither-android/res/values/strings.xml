@@ -322,6 +322,14 @@
     <string name="watch_only_address_count_limit">Reached watch only address count limit</string>
     <string name="generate_address_count_label">How many private keys to generate?</string>
     <string name="recover_from_backup_of_cold">Find previous back up of Bither Cold on SD card. Recover from it?</string>
+    <string name="recover_from_backup_of_android11_or_higher_cold">It is detected that there may be a Bither Cold backup in the past on the SD card. Recover from it?</string>
+    <string name="recover_from_backup_title">Select Backup File</string>
+    <string name="recover_from_backup">v2.0.8 and later backup</string>
+    <string name="recover_from_old_backup">Backup before v2.0.8</string>
+    <string name="recover_from_backup_no_supoprt_file_type">File type error, please select ***_***.bak type file, do you want to select again?</string>
+    <string name="recover_from_backup_reselect">Reselect</string>
+    <string name="recover_from_backup_error_alert">An error has occurred. Do you want to reselect?</string>
+    <string name="recover_from_backup_select">To select</string>
     <string name="first_add_private_key_check_suggest">Would you check your private keys now?</string>
     <string name="no_backup">No Backup</string>
     <string name="backup_failed">Backup failed, please check if you have permission to open</string>

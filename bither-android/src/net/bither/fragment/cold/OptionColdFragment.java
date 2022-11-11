@@ -239,9 +239,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 if (!PermissionUtil.isWriteExternalStoragePermission(getActivity(), BitherSetting.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE)) {
                     return;
                 }
-                if (!PermissionUtil.isManagerPermission(getActivity(), BitherSetting.REQUEST_CODE_PERMISSION_MANAGER)) {
-                    return;
-                }
                 long backupTime = AppSharedPreference.getInstance().getLastBackupkeyTime().getTime();
                 if (backupTime + ONE_HOUR < System.currentTimeMillis()) {
                     backupPrivateKey();
@@ -393,12 +390,11 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 final List<File> files = FileUtil.getBackupFileListOfCold();
                 if (files != null && files.size() > 0) {
                     String relativeDate = DateTimeUtil.getRelativeDate(getActivity(), date).toString();
-                    tvBackupTime.setText(Utils.format(getString(R.string.last_time_of_back_up)
-                            + " ", relativeDate));
+                    tvBackupTime.setText(Utils.format(getString(R.string.last_time_of_back_up) + " ", relativeDate));
                 } else {
                     tvBackupTime.setText(R.string.no_backup);
                 }
-                tvBackupPath.setText(FileUtil.getBackupSdCardDir().getAbsolutePath());
+                tvBackupPath.setText(FileUtil.getLastBackupSdCardDir().getAbsolutePath());
             }
         } else {
             flBackTime.setVisibility(View.VISIBLE);
@@ -417,10 +413,10 @@ public class OptionColdFragment extends Fragment implements Selectable {
         pbBackTime.setLayoutParams(layoutParams);
     }
 
-    private void backupFinish() {
+    private void backupFinish(boolean isSuccess) {
         pbBackTime.setVisibility(View.INVISIBLE);
         final List<File> files = FileUtil.getBackupFileListOfCold();
-        if (files != null && files.size() > 0) {
+        if (isSuccess && files != null && files.size() > 0) {
             tvBackupTime.setText(R.string.backup_finish);
         } else {
             tvBackupTime.setText(R.string.backup_failed);
@@ -454,7 +450,6 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 tvBackupTime.setVisibility(View.INVISIBLE);
                 showBackupTime();
                 AnimationUtil.fadeOut(tvBackupTime);
-
             }
 
             @Override
@@ -474,15 +469,12 @@ public class OptionColdFragment extends Fragment implements Selectable {
             }
         });
         BackupUtil.backupColdKey(false, new BackupListener() {
-
             @Override
             public void backupSuccess() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
-                        backupFinish();
-
+                        backupFinish(true);
                     }
                 }, 1000);
             }
@@ -492,8 +484,8 @@ public class OptionColdFragment extends Fragment implements Selectable {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        pbBackTime.setVisibility(View.INVISIBLE);
-                        showBackupTime();
+                        backupFinish(false);
+
                     }
                 }, 1000);
 

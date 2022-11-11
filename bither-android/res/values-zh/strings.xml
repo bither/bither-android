@@ -311,6 +311,14 @@
     <string name="watch_only_address_count_limit">已达到监控地址上限</string>
     <string name="generate_address_count_label">生成多少个私钥?</string>
     <string name="recover_from_backup_of_cold">检测到sd卡上有过去的冷钱包备份，是否从备份中恢复？</string>
+    <string name="recover_from_backup_of_android11_or_higher_cold">检测到sd卡上可能有过去的冷钱包备份，是否从备份中恢复？</string>
+    <string name="recover_from_backup_title">选择备份文件</string>
+    <string name="recover_from_backup">v2.0.8及以后版本备份</string>
+    <string name="recover_from_old_backup">v2.0.8以前版本备份</string>
+    <string name="recover_from_backup_no_supoprt_file_type">文件格式错误，请选择***_***.bak格式的文件，是否去重新选择？</string>
+    <string name="recover_from_backup_reselect">重新选择</string>
+    <string name="recover_from_backup_error_alert">出现错误，是否去重新选择？</string>
+    <string name="recover_from_backup_select">去选择</string>
     <string name="backup_finish">备份成功 !</string>
     <string name="first_add_private_key_check_suggest">是否现在一键检测私钥?</string>
     <string name="no_backup">暂无备份</string>
