@@ -63,6 +63,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BitherTheme"
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
 
         <provider
