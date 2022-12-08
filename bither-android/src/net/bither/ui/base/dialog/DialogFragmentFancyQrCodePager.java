@@ -19,12 +19,10 @@ package net.bither.ui.base.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -50,11 +48,11 @@ import net.bither.R;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.Qr;
 import net.bither.ui.base.DropdownMessage;
-import net.bither.util.FileUtil;
 import net.bither.util.ImageFileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.PermissionUtil;
+import net.bither.util.ShareUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
@@ -169,7 +167,9 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
     }
 
     private void share() {
-        new ShareThread().start();
+        Bitmap bmp = getQrCode();
+        dismissInAnyThread();
+        ShareUtil.shareBitmap(activity, bmp);
     }
 
     private void save() {
@@ -254,39 +254,6 @@ public class DialogFragmentFancyQrCodePager extends DialogFragment implements Vi
             long time = System.currentTimeMillis();
             ImageFileUtil.saveImageToDcim(bmp, 0, time);
             DropdownMessage.showDropdownMessage(activity, R.string.fancy_qr_code_save_success);
-        }
-    }
-
-    private class ShareThread extends Thread {
-        @Override
-        public void run() {
-            Bitmap bmp = getQrCode();
-            dismissInAnyThread();
-            if (bmp == null) {
-                LogUtil.w("QR", "share qr code null");
-                DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                return;
-            }
-            final Uri uri = FileUtil.saveShareImage(bmp);
-            if (uri == null) {
-                DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                return;
-            }
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setType("image/jpg");
-                    try {
-                        activity.startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                    }
-                }
-            });
         }
     }
 

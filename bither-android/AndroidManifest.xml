@@ -100,6 +100,7 @@
         <activity
             android:name="ChooseModeActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/BitherTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -436,6 +437,7 @@
             android:name="net.bither.activity.hot.SelectAddressToSendActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/BitherTransparentBgTheme"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>

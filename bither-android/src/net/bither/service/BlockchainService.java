@@ -129,8 +129,12 @@ public class BlockchainService extends android.app.Service {
         }
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
                 .ALARM_SERVICE);
-        final PendingIntent alarmIntent = PendingIntent.getService(context, 0,
-                new Intent(context, BlockchainService.class), 0);
+        final PendingIntent alarmIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            alarmIntent = PendingIntent.getService(context, 0, new Intent(context, BlockchainService.class), PendingIntent.FLAG_IMMUTABLE|0);
+        } else {
+            alarmIntent = PendingIntent.getService(context, 0, new Intent(context, BlockchainService.class), 0);
+        }
         alarmManager.cancel(alarmIntent);
         final long now = System.currentTimeMillis();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)

@@ -35,6 +35,7 @@ import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.runnable.FancyQrCodeThread;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.util.FileUtil;
+import net.bither.util.ShareUtil;
 import net.bither.util.ThreadUtil;
 import net.bither.util.UIUtil;
 import net.bither.util.WalletUtils;
@@ -114,7 +115,7 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
 
     private void share() {
         if (qrCode != null) {
-            new ShareThread().start();
+            ShareUtil.shareBitmap(activity, qrCode);
         }
     }
 
@@ -125,29 +126,4 @@ public class DialogPrivateKeyQrCode extends Dialog implements View.OnClickListen
         ivQr.setImageBitmap(bmp);
     }
 
-    private class ShareThread extends Thread {
-        @Override
-        public void run() {
-            final Uri uri = FileUtil.saveShareImage(qrCode);
-            if (uri == null) {
-                DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                return;
-            }
-            ThreadUtil.runOnMainThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setType("image/jpg");
-                    try {
-                        getContext().startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        DropdownMessage.showDropdownMessage(activity, R.string.market_share_failed);
-                    }
-                }
-            });
-        }
-    }
 }

@@ -63,6 +63,7 @@ import net.bither.util.ExchangeUtil;
 import net.bither.util.FileUtil;
 import net.bither.util.ImageManageUtil;
 import net.bither.util.MarketUtil;
+import net.bither.util.ShareUtil;
 
 import java.util.Date;
 
@@ -351,33 +352,7 @@ public class MarketDetailActivity extends SwipeRightActivity implements OnChecke
             int width = bmpContent.getWidth();
             int height = bmpContent.getHeight() + tvMarketName.getHeight() * 2;
             Bitmap result = ImageManageUtil.getBitmapFromView(v, width, height);
-            final Uri uri = FileUtil.saveShareImage(result);
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (dp != null && dp.isShowing()) {
-                        dp.setThread(null);
-                        dp.dismiss();
-                    }
-                    if (uri != null) {
-                        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        intent.setType("image/jpg");
-                        try {
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            DropdownMessage.showDropdownMessage(MarketDetailActivity.this,
-                                    R.string.market_share_failed);
-                        }
-                    } else {
-                        DropdownMessage.showDropdownMessage(MarketDetailActivity.this,
-                                R.string.market_share_failed);
-                    }
-                }
-            });
+            ShareUtil.shareBitmap(MarketDetailActivity.this, result);
         }
     }
 

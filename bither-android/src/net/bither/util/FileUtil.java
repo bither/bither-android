@@ -215,6 +215,13 @@ public class FileUtil {
         return Uri.fromFile(jpg);
     }
 
+    public static File saveShareImageFile(Bitmap bmp) {
+        File dir = getDiskDir(IMAGE_CACHE_DIR, true);
+        File jpg = new File(dir, IMAGE_SHARE_FILE_NAME);
+        NativeUtil.compressBitmap(bmp, 85, jpg.getAbsolutePath(), true);
+        return jpg;
+    }
+
     public static File getExternalCacheDir(Context context) {
 //        if (SdkUtils.hasFroyo()) {
 //

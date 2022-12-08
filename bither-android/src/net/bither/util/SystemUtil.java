@@ -26,6 +26,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -78,8 +79,11 @@ public class SystemUtil {
         builder.setContentText(contentText);
         builder.setContentTitle(title);
 
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_CANCEL_CURRENT));
+        } else {
+            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        }
 
         builder.setWhen(System.currentTimeMillis());
         Notification notification = null;
@@ -114,8 +118,11 @@ public class SystemUtil {
         builder.setContentText(contentText);
         builder.setContentTitle(title);
 
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_CANCEL_CURRENT));
+        } else {
+            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        }
 
         builder.setWhen(System.currentTimeMillis());
         Notification notification = null;

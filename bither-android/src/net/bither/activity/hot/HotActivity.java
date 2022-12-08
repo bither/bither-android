@@ -151,6 +151,7 @@ public class HotActivity extends BaseFragmentActivity {
         unregisterReceiver(txAndBlockBroadcastReceiver);
         unregisterReceiver(addressIsLoadedReceiver);
         unregisterReceiver(addressIsLoadingReceiver);
+        unregisterReceiver(peerConnectedChangeReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
 
