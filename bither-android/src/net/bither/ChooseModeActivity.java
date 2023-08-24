@@ -701,11 +701,7 @@ public class ChooseModeActivity extends BaseActivity {
         Intent intent = new Intent(
                 BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
                 BitherApplication.mContext, BlockchainService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            BitherApplication.mContext.startForegroundService(intent);
-        } else {
             BitherApplication.mContext.startService(intent);
-        }
     }
 
     @Override
