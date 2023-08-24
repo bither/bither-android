@@ -17,6 +17,7 @@
 package net.bither.ui.base.dialog;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
@@ -36,15 +37,19 @@ import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.ui.base.DropdownMessage;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.ICheckPasswordListener;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
-public class DialogImportBip38KeyText extends CenterDialog implements DialogInterface
+public class DialogImportBip38KeyText extends Dialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         IDialogPasswordListener {
+
     private Activity activity;
+    private View container;
     private EditText et;
     private TextView tvError;
+    private PasswordEntryKeyboardView kv;
     private InputMethodManager imm;
 
     private String bip38KeyString;
@@ -53,10 +58,14 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
     private DialogProgress pd;
 
     public DialogImportBip38KeyText(Activity context) {
-        super(context);
+        super(context, R.style.password_dialog);
+        setCanceledOnTouchOutside(false);
+        setCancelable(false);
         this.activity = context;
         setContentView(R.layout.dialog_import_bip38_key_text);
+        container = findViewById(R.id.fl_container);
         et = (EditText) findViewById(R.id.et);
+        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         tvError = (TextView) findViewById(R.id.tv_error);
         et.addTextChangedListener(textWatcher);
         findViewById(R.id.btn_ok).setOnClickListener(this);
@@ -65,6 +74,7 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
         setOnDismissListener(this);
         pd = new DialogProgress(activity, R.string.please_wait);
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        kv.registerEditText(et);
     }
 
     @Override
@@ -102,7 +112,6 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
         }
     }
 
-
     @Override
     public void onShow(DialogInterface dialog) {
         imm.showSoftInput(et, 0);
@@ -114,7 +123,6 @@ public class DialogImportBip38KeyText extends CenterDialog implements DialogInte
             showBip38Password();
         }
         et.setText("");
-
     }
 
     private void showBip38Password() {

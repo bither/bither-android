@@ -17,6 +17,7 @@
 package net.bither.ui.base.dialog;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,16 +36,19 @@ import net.bither.bitherj.factory.ImportPrivateKey;
 import net.bither.bitherj.utils.Utils;
 import net.bither.factory.ImportPrivateKeyAndroid;
 import net.bither.qrcode.ScanActivity;
+import net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView;
 import net.bither.ui.base.listener.IDialogPasswordListener;
 
-public class DialogImportPrivateKeyText extends CenterDialog implements DialogInterface
+public class DialogImportPrivateKeyText extends Dialog implements DialogInterface
         .OnDismissListener, DialogInterface.OnShowListener, View.OnClickListener,
         IDialogPasswordListener {
     public static final int ScanPrivateKeyQRCodeRequestCode = 1603;
 
     private Activity activity;
+    private View container;
     private EditText et;
     private TextView tvError;
+    private PasswordEntryKeyboardView kv;
     private InputMethodManager imm;
 
     private String privateKeyString;
@@ -53,10 +57,14 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
     private int clickedId;
 
     public DialogImportPrivateKeyText(Activity context) {
-        super(context);
+        super(context, R.style.password_dialog);
+        setCanceledOnTouchOutside(false);
+        setCancelable(false);
         this.activity = context;
         setContentView(R.layout.dialog_import_private_key_text);
+        container = findViewById(R.id.fl_container);
         et = (EditText) findViewById(R.id.et);
+        kv = (PasswordEntryKeyboardView) findViewById(R.id.kv);
         tvError = (TextView) findViewById(R.id.tv_error);
         et.addTextChangedListener(textWatcher);
         findViewById(R.id.ibtn_scan).setOnClickListener(this);
@@ -65,6 +73,7 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
         setOnShowListener(this);
         setOnDismissListener(this);
         imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        kv.registerEditText(et);
     }
 
     @Override
@@ -91,15 +100,12 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 shake();
                 return;
             }
-
             privateKeyString = et.getText().toString();
             dismiss();
-
         } else {
             dismiss();
         }
     }
-
 
     @Override
     public void onShow(DialogInterface dialog) {
@@ -148,6 +154,5 @@ public class DialogImportPrivateKeyText extends CenterDialog implements DialogIn
                 ImportPrivateKey.ImportPrivateKeyType.Text, pd, privateKeyString, password);
         importPrivateKey.importPrivateKey();
     }
-
 
 }

@@ -1,55 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/et"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:minHeight="40dp"
-        android:background="@drawable/text_field_holo_dark_background"
-        android:hint="@string/import_bip38_key_text_hint"
-        android:imeOptions="flagNoExtractUi"
-        android:inputType="textNoSuggestions|textMultiLine"
-        android:textColor="@color/white"
-        android:textSize="18sp"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/tv_error"
+        <FrameLayout
+            android:id="@+id/fl_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/center_dialog_background">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/et"
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/text_field_holo_dark_background"
+                    android:hint="@string/import_bip38_key_text_hint"
+                    android:imeOptions="flagNoExtractUi"
+                    android:inputType="textNoSuggestions|textMultiLine"
+                    android:minHeight="40dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/import_bip38_key_text_format_erro"
+                    android:textColor="@color/red"
+                    android:textSize="18sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_cancel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/dialog_btn_bg_selector"
+                        android:text="@string/cancel"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/btn_ok"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/dialog_btn_bg_selector"
+                        android:text="@string/OK"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+    <net.bither.ui.base.keyboard.password.PasswordEntryKeyboardView
+        android:id="@+id/kv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/import_bip38_key_text_format_erro"
-        android:textColor="@color/red"
-        android:textSize="18sp"
-        android:visibility="gone"/>
+        android:background="@color/entry_keyboard_background_above_dark"
+        android:keyBackground="@drawable/entry_keyboard_key_btn_bg"
+        android:keyPreviewLayout="@layout/entry_keyboard_preview_layout"
+        android:keyPreviewOffset="@dimen/entry_keyboard_key_preview_offset"
+        android:keyTextSize="@dimen/entry_keyboard_key_text_size"
+        android:labelTextSize="@dimen/entry_keyboard_label_text_size"
+        android:paddingTop="5dp"
+        android:paddingBottom="3dp"
+        android:shadowColor="@color/entry_keyboard_normal_key_shadow"
+        android:shadowRadius="3"
+        android:textColor="@color/entry_keyboard_normal_key_text"
+        android:visibility="gone" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/dialog_btn_bg_selector"
-            android:text="@string/cancel"
-            android:textColor="@color/white"/>
-
-        <Button
-            android:id="@+id/btn_ok"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/dialog_btn_bg_selector"
-            android:text="@string/OK"
-            android:textColor="@color/white"/>
-    </LinearLayout>
 </LinearLayout>
