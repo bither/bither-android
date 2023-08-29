@@ -109,7 +109,11 @@ public class BitherApplication extends Application {
     }
 
     public static void startBlockchainService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mContext.startForegroundService(new Intent(mContext, BlockchainService.class));
+        } else {
             mContext.startService(new Intent(mContext, BlockchainService.class));
+        }
     }
 
 
