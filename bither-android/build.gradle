@@ -13,7 +13,7 @@ android {
 }
 
 configurations {
-    all {
+    configureEach {
         exclude module: 'httpclient'
         exclude module: 'commons-logging'
         exclude module: 'json'
@@ -23,6 +23,10 @@ dependencies {
     api 'com.google.protobuf:protobuf-java:2.5.0'
     api 'com.android.support:appcompat-v7:27.+'
     api 'com.google.zxing:core:3.1.0@jar'
+    api 'com.google.guava:guava:13.0.1@jar'
+    api 'com.google.code.findbugs:jsr305:2.0.1@jar'
+    api 'org.slf4j:slf4j-api:1.7.7'
+    api 'com.madgag.spongycastle:core:1.51.0.0'
     api 'com.android.support:multidex:1.0.3'
     api('com.github.tony19:logback-android-classic:1.1.1-6@jar') {
         // Work around for gradle 0.9 and 0.10
