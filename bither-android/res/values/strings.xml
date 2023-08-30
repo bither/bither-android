@@ -867,6 +867,7 @@
     <string name="tip_no_peers_connected_scan">Searching connectable nodes</string>
     <string name="tip_sync_block_height">Local block height is %d blocks behind the latest block height. Now syncing…</string>
     <string name="tip_network_error">Network is disconnected. Please check your network setting</string>
+    <string name="tip_network_connected_error">Please check your network setting</string>
     <string name="tip_no_peers_connected">No connectable node</string>
 
     <string name="cold_no_support_bc1_segwit_address">BITHD Cold wallet doesn’t support sending coins to Segwit addresses beginning with “bc”.</string>

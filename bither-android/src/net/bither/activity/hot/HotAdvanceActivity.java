@@ -44,6 +44,7 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
+import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
@@ -480,28 +481,27 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         public void onClick(View v) {
 
             if (BitherApplication.canReloadTx()) {
-                final Runnable confirmRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        BitherApplication.reloadTxTime = System.currentTimeMillis();
-                        PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
-                        if (passwordSeed == null) {
-                            // TODO: the dialog determine the web type
-                            // showSelectedDialog();
-
-                            resetTx();
-
-                        } else {
-                            callPassword();
+                if (PeerManager.instance().isConnected()) {
+                    final Runnable confirmRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
+                            if (passwordSeed == null) {
+                                // TODO: the dialog determine the web type
+                                // showSelectedDialog();
+                                resetTx();
+                            } else {
+                                callPassword();
+                            }
                         }
-                    }
-
-                };
-
-                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
-                        .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
-                dialogConfirmTask.show();
-
+                    };
+                    DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
+                            .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
+                    dialogConfirmTask.show();
+                } else {
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                            R.string.tip_network_connected_error);
+                }
             } else {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
                         R.string.tx_cannot_reloding);
@@ -628,6 +628,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                BitherApplication.reloadTxTime = System.currentTimeMillis();
                 if (dp == null) {
                     dp = new DialogProgress(HotAdvanceActivity.this, R.string.reload_tx_please_wait);
                 } else {

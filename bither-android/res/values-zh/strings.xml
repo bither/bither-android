@@ -829,6 +829,7 @@
     <string name="tip_no_peers_connected_scan">正在搜索可连接的节点</string>
     <string name="tip_sync_block_height">本地块高度落后于区块最新高度 %d 个块，正在同步</string>
     <string name="tip_network_error">网络已断开，请检查网络设置</string>
+    <string name="tip_network_connected_error">请检查网络设置</string>
     <string name="tip_no_peers_connected">暂无可连接的节点</string>
 
     <string name="cold_no_support_bc1_segwit_address">冷钱包暂不支持发往bc开头的隔离验证地址</string>
