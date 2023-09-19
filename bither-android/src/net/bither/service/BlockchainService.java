@@ -116,6 +116,8 @@ public class BlockchainService extends android.app.Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
         Notification notification = builder.setOngoing(true)
                 .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(getString(R.string.sync_block_data_title))
+                .setContentText(getString(R.string.sync_block_data_des))
                 .setPriority(PRIORITY_MIN)
                 .setCategory(CATEGORY_SERVICE)
                 .build();
@@ -191,6 +193,7 @@ public class BlockchainService extends android.app.Service {
     public void onDestroy() {
         log.info(".onDestroy()");
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
+            stopForeground(true);
             scheduleStartBlockchainService(this);
             PeerManager.instance().stop();
             PeerManager.instance().onDestroy();

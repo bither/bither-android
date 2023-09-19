@@ -851,4 +851,7 @@
     <string name="hd_account_seed_language_select_zh_cn">中文簡體</string>
     <string name="hd_account_seed_language_select_zh_tw">中文繁體</string>
 
+    <string name="sync_block_data_title">同步區塊數據服務</string>
+    <string name="sync_block_data_des">服務正在運行，請勿關閉</string>
+
 </resources>

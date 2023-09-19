@@ -888,4 +888,7 @@
     <string name="hd_account_seed_language_select_zh_cn">Simplified Chinese</string>
     <string name="hd_account_seed_language_select_zh_tw">Traditional Chinese</string>
 
+    <string name="sync_block_data_title">Sync Block Data Service</string>
+    <string name="sync_block_data_des">Service is running, please do not close</string>
+
 </resources>
