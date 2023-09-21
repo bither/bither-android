@@ -52,6 +52,7 @@ public class BitherSetting {
     public static final int REQUEST_CODE_PERMISSION_CAMERA = 1010;
     public static final int REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 1011;
     public static final int REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE = 1012;
+    public static final int REQUEST_CODE_PERMISSION_READ = 1013;
 
     public static final long LAST_USAGE_THRESHOLD_JUST_MS = DateUtils.HOUR_IN_MILLIS;
     public static final long LAST_USAGE_THRESHOLD_RECENTLY_MS = 2 * DateUtils.DAY_IN_MILLIS;

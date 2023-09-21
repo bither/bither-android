@@ -211,7 +211,7 @@ public class ChooseModeActivity extends BaseActivity {
         setContentView(R.layout.activity_choose_mode);
         BitherjSettings.AppMode appMode = AppSharedPreference.getInstance().getAppMode();
         if (appMode == null) {
-            BitherApplication.getBitherApplication().startBlockchainService();
+            BitherApplication.startBlockchainService();
             dowloadSpvBlock();
             initView();
         } else {
@@ -221,13 +221,12 @@ public class ChooseModeActivity extends BaseActivity {
                 if (vColdWalletInitCheck.check()) {
                     gotoActivity(appMode);
                     finish();
-                    return;
                 } else {
                     initView();
                     configureColdWait();
                 }
             } else if (appMode == BitherjSettings.AppMode.HOT) {
-                BitherApplication.getBitherApplication().startBlockchainService();
+                BitherApplication.startBlockchainService();
                 if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
                     initView();
                     dowloadSpvBlock();
@@ -235,7 +234,6 @@ public class ChooseModeActivity extends BaseActivity {
                 } else {
                     gotoActivity(appMode);
                     finish();
-                    return;
                 }
             }
         }
@@ -464,7 +462,6 @@ public class ChooseModeActivity extends BaseActivity {
             removeNetworkNotification();
             gotoActivity(mode);
             overridePendingTransition(0, R.anim.choose_mode_activity_exit);
-
             finish();
         }
 
@@ -616,7 +613,7 @@ public class ChooseModeActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private OnClickListener warmRetryClick = new OnClickListener() {
+    private final OnClickListener warmRetryClick = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -626,7 +623,7 @@ public class ChooseModeActivity extends BaseActivity {
         }
     };
 
-    private BroadcastReceiver warmDataReadyReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver warmDataReadyReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {

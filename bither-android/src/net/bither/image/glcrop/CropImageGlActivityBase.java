@@ -88,6 +88,7 @@ public abstract class CropImageGlActivityBase extends Activity {
     private Dialog pdSaving;
 
     private boolean isPaused = false;
+    public static final String FROM_FILE_NAME = "from_file_name";
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -110,6 +111,11 @@ public abstract class CropImageGlActivityBase extends Activity {
                     fromFileName = fromFile.getAbsolutePath();
                 }
 
+            } else {
+                String value = intent.getStringExtra(FROM_FILE_NAME);
+                if (!Utils.isEmpty(value)) {
+                    fromFileName = value;
+                }
             }
         }
         if (Utils.isEmpty(fromFileName)) {

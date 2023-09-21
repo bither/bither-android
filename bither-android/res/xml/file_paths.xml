@@ -2,5 +2,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <paths>
         <external-path path="/BitherBackup" name="external" />
+        <external-path path="DCIM/Camera" name="dcim" />
     </paths>
 </resources>

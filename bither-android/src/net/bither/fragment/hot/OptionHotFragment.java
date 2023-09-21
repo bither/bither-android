@@ -17,8 +17,8 @@
 package net.bither.fragment.hot;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,9 +29,14 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -49,6 +54,7 @@ import android.widget.TextView;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
+import net.bither.BuildConfig;
 import net.bither.ChooseModeActivity;
 import net.bither.R;
 import net.bither.activity.hot.CheckPrivateKeyActivity;
@@ -62,13 +68,13 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDAccount;
 import net.bither.bitherj.crypto.SecureCharSequence;
 import net.bither.bitherj.crypto.hd.DeterministicKey;
-import net.bither.bitherj.crypto.mnemonic.MnemonicException;
 import net.bither.bitherj.db.AbstractDb;
 import net.bither.bitherj.exception.AddressFormatException;
 import net.bither.bitherj.qrcode.QRCodeUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Selectable;
 import net.bither.image.glcrop.CropImageGlActivity;
+import net.bither.image.glcrop.CropImageGlActivityBase;
 import net.bither.model.Market;
 import net.bither.preference.AppSharedPreference;
 import net.bither.qrcode.ScanActivity;
@@ -105,7 +111,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         DialogSetAvatar.SetAvatarDelegate {
     private static final int MonitorCodeHDRequestCode = 1605;
 
-    private static Uri imageUri;
+    private static File imageFile;
     private SettingSelectorView ssvCurrency;
     private SettingSelectorView ssvMarket;
     private SettingSelectorView ssvTransactionFee;
@@ -391,11 +397,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
             }
         }
 
-        private  String getFeeStr(BitherjSettings.TransactionFeeMode transactionFeeMode) {
+        private String getFeeStr(BitherjSettings.TransactionFeeMode transactionFeeMode) {
             float dividend = 100000;
             String unit = "mBTC/kb";
-            float fee = (float)transactionFeeMode.getMinFeeSatoshi()/dividend;
-            return  String.valueOf(fee)+unit;
+            float fee = (float) transactionFeeMode.getMinFeeSatoshi() / dividend;
+            return String.valueOf(fee) + unit;
         }
 
         @Override
@@ -450,7 +456,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
         @Override
         public void onClick(View v) {
             if ((AddressManager.getInstance().getPrivKeyAddresses() == null
-                        || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
+                    || AddressManager.getInstance().getPrivKeyAddresses().size() == 0)
                     && !AddressManager.getInstance().hasHDMKeychain()
                     && !AddressManager.getInstance().hasHDAccountHot()) {
                 DropdownMessage.showDropdownMessage(getActivity(), R.string.private_key_is_empty);
@@ -607,19 +613,19 @@ public class OptionHotFragment extends Fragment implements Selectable,
         public void onClick(View v) {
             monitorUtil = new MonitorBitherColdUtil(OptionHotFragment.this, new
                     MonitorBitherColdUtil.MonitorBitherColdUtilDelegate() {
-                @Override
-                public void onAddressMonitored(ArrayList<String> addresses) {
-                    monitorUtil = null;
-                    if (getActivity() instanceof HotActivity) {
-                        HotActivity hot = (HotActivity) getActivity();
-                        Intent intent = new Intent();
-                        intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
-                                addresses);
-                        hot.onActivityResult(BitherSetting.INTENT_REF.SCAN_REQUEST_CODE, Activity
-                                .RESULT_OK, intent);
-                    }
-                }
-            });
+                        @Override
+                        public void onAddressMonitored(ArrayList<String> addresses) {
+                            monitorUtil = null;
+                            if (getActivity() instanceof HotActivity) {
+                                HotActivity hot = (HotActivity) getActivity();
+                                Intent intent = new Intent();
+                                intent.putExtra(BitherSetting.INTENT_REF.ADDRESS_POSITION_PASS_VALUE_TAG,
+                                        addresses);
+                                hot.onActivityResult(BitherSetting.INTENT_REF.SCAN_REQUEST_CODE, Activity
+                                        .RESULT_OK, intent);
+                            }
+                        }
+                    });
             monitorUtil.scan();
         }
     };
@@ -641,9 +647,17 @@ public class OptionHotFragment extends Fragment implements Selectable,
     @Override
     public void avatarFromCamera() {
         if (FileUtil.existSdCardMounted()) {
+            if (!PermissionUtil.isCameraPermission(this, BitherSetting.REQUEST_CODE_PERMISSION_CAMERA)) {
+                return;
+            }
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File file = ImageFileUtil.getImageForGallery(System.currentTimeMillis());
-            imageUri = Uri.fromFile(file);
+            imageFile = ImageFileUtil.getImageForGallery(System.currentTimeMillis());
+            Uri imageUri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                imageUri = FileProvider.getUriForFile(getContext(), BuildConfig.APPLICATION_ID + ".fileProvider", imageFile);
+            } else {
+                imageUri = Uri.fromFile(imageFile);
+            }
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             startActivityForResult(intent, BitherSetting.REQUEST_CODE_CAMERA);
         } else {
@@ -653,6 +667,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
     @Override
     public void avatarFromGallery() {
+        if (!PermissionUtil.isReadPermission(this, BitherSetting.REQUEST_CODE_PERMISSION_READ)) {
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media
                 .EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, BitherSetting.REQUEST_CODE_IMAGE);
@@ -678,9 +695,11 @@ public class OptionHotFragment extends Fragment implements Selectable,
                 }
                 break;
             case BitherSetting.REQUEST_CODE_CAMERA:
+                if (imageFile == null || !imageFile.exists()) {
+                    return;
+                }
                 Intent intent = new Intent(getActivity(), CropImageGlActivity.class);
-
-                intent.putExtra("android.intent.extra.STREAM", imageUri);
+                intent.putExtra(CropImageGlActivityBase.FROM_FILE_NAME, imageFile.getAbsolutePath());
                 intent.setAction(Intent.ACTION_SEND);
                 LogUtil.d("fragment", "REQUEST_CODE_CAMERA");
                 startActivityForResult(intent, BitherSetting.REQUEST_CODE_CROP_IMAGE);
@@ -742,7 +761,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                     try {
                         final DeterministicKey key = DeterministicKey.deserializeB58(normalC);
                         final String firstAddress = key.deriveSoftened(AbstractHD
-                                .PathType.EXTERNAL_ROOT_PATH.getValue())
+                                        .PathType.EXTERNAL_ROOT_PATH.getValue())
                                 .deriveSoftened(0).toAddress();
                         DeterministicKey p2shp2wpkhKey = null;
                         if (!Utils.isEmpty(p2shp2wpkhC)) {
@@ -790,7 +809,7 @@ public class OptionHotFragment extends Fragment implements Selectable,
                                                         }
                                                     });
                                                 } catch (HDAccount
-                                                        .DuplicatedHDAccountException
+                                                                 .DuplicatedHDAccountException
                                                         e) {
                                                     e.printStackTrace();
                                                     ThreadUtil.runOnMainThread(new Runnable() {
@@ -1030,4 +1049,45 @@ public class OptionHotFragment extends Fragment implements Selectable,
     public void onSelected() {
         configureSwitchToCold(null);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case BitherSetting.REQUEST_CODE_PERMISSION_CAMERA:
+            case BitherSetting.REQUEST_CODE_PERMISSION_READ:
+                if (grantResults.length > 0) {
+                    boolean isResult = true;
+                    for (int grantResult : grantResults) {
+                        if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                            isResult = false;
+                            break;
+                        }
+                    }
+                    if (isResult) {
+                        if (requestCode == BitherSetting.REQUEST_CODE_PERMISSION_CAMERA) {
+                            avatarFromCamera();
+                        } else {
+                            avatarFromGallery();
+                        }
+                    } else {
+                        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(
+                                getContext(), getString(R.string.permissions_no_grant), new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                                intent.setData(uri);
+                                startActivity(intent);
+                            }
+                        });
+                        dialogConfirmTask.show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 }

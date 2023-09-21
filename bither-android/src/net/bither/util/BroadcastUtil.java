@@ -60,7 +60,7 @@ public class BroadcastUtil {
     public static void sendBroadcastGetSpvBlockComplete(boolean isComplete) {
         final Intent intent = new Intent(ACTION_DOWLOAD_SPV_BLOCK);
         intent.putExtra(ACTION_DOWLOAD_SPV_BLOCK_STATE, isComplete);
-        BitherApplication.mContext.sendStickyBroadcast(intent);
+        BitherApplication.mContext.sendBroadcast(intent);
         // LogUtil.d("broadcase", "sendBroadcastAddressGetBlockComplete");
     }
 
