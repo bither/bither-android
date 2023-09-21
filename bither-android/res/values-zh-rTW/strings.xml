@@ -191,6 +191,7 @@
     <string name="reload_tx">重載交易數據</string>
     <string name="export_success">日志已導出到 :</string>
     <string name="export_address_success">地址已導出到 :</string>
+    <string name="export_address_empty">沒有可導出的地址</string>
     <string name="setting_name_import_private_key">導入私鑰</string>
     <string name="setting_name_import_bip38_key">導入BIP38私鑰</string>
     <string name="import_private_key_qr_code">來自比太私鑰二維碼</string>

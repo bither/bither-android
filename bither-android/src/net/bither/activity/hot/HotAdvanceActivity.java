@@ -302,26 +302,34 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     @Override
                     public void run() {
                         try {
-                            final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
                             String addressListString = "";
                             for (Address address : AddressManager.getInstance().getAllAddresses()) {
                                 addressListString = addressListString + address.getAddress() + "\n";
                             }
-                            Utils.writeFile(addressListString, addressFile);
-                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                            getString(R.string.export_address_success) + "\n" + addressFile
-                                                    .getAbsolutePath());
-                                }
-                            });
+                            if (Utils.isEmpty(addressListString)) {
+                                HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.export_address_empty);
+                                    }
+                                });
+                            } else {
+                                final File addressFile = new File(FileUtil.getDiskDir("", true), "address.txt");
+                                Utils.writeFile(addressListString, addressFile);
+                                HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                                getString(R.string.export_address_success) + "\n" + addressFile
+                                                        .getAbsolutePath());
+                                    }
+                                });
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }).start();
-
             } else {
                 DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sd_card);
             }
