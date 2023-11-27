@@ -123,7 +123,7 @@ public class ColdAdvanceActivity extends SwipeRightFragmentActivity {
         btnTrashCan.setOnClickListener(trashCanClick);
         ((SettingSelectorView) findViewById(R.id.ssv_message_signing)).setSelector
                 (messageSigningSelector);
-        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
+//        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         dp = new DialogProgress(this, R.string.please_wait);
         llSignHash = (LinearLayout) findViewById(R.id.ll_sign_hash);

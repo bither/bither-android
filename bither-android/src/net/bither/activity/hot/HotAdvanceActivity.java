@@ -192,7 +192,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         findViewById(R.id.btn_network_monitor).setOnClickListener(networkMonitorClick);
         findViewById(R.id.ll_bither_address).setOnClickListener(bitherAddressQrClick);
         findViewById(R.id.ibtn_bither_address_qr).setOnClickListener(bitherAddressQrClick);
-        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
+//        findViewById(R.id.iv_logo).setOnClickListener(rawPrivateKeyClick);
         tvVserion.setText(Version.name + " " + Version.version);
         hdmRecoveryUtil = new HDMKeychainRecoveryUtil(this, dp);
         configureHDMServerPasswordReset();
