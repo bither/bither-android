@@ -116,6 +116,8 @@
     <string name="send_confirm_address">將要發送給:</string>
     <string name="send_confirm_amount">金額:</string>
     <string name="send_confirm_fee">礦工費:</string>
+    <string name="send_confirm_fee_rate">礦工費率:</string>
+    <string name="send_confirm_fee_rate_symbol">sat/vB</string>
     <string name="send_confirm_low_priority_warn">交易中有小於0.01BTC的支出,\n礦工費較低.\n<b>確認時間可能很長</b>.</string>
     <string name="unsigned_transaction_exit_waring">放棄簽名嗎?\n此交易將不會被廣播</string>
 

@@ -123,6 +123,8 @@
     <string name="send_confirm_address">You will send to:</string>
     <string name="send_confirm_amount">Amount:</string>
     <string name="send_confirm_fee">Miner Fee:</string>
+    <string name="send_confirm_fee_rate">Miner Fee Rate:</string>
+    <string name="send_confirm_fee_rate_symbol">sat/vB</string>
     <string name="send_confirm_low_priority_warn">You have outputs lower than 0.01BTC,\nand transaction miner fee is low.\n<b>Confirmation may be very slow</b>.</string>
     <string name="unsigned_transaction_exit_waring">Give up signing?\nThis transaction will not get broadcasted.</string>
 

@@ -21,9 +21,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
+import net.bither.bitherj.core.Coin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
@@ -78,6 +80,12 @@ public class DialogSendConfirm extends CenterDialog implements OnDismissListener
         }
         tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(outAddress)));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
+        if (tx.getCoin() == Coin.BTC && tx.getEstimationTxSize() > 0) {
+            LinearLayout llFeeRate = findViewById(R.id.ll_fee_rate);
+            TextView tvFeeRate = findViewById(R.id.tv_fee_rate);
+            tvFeeRate.setText(String.format("%.2f", tx.getFee() / (float) (tx.getEstimationTxSize())).replaceAll("\\.0*$", ""));
+            llFeeRate.setVisibility(View.VISIBLE);
+        }
         // This warning is no longer needed. As more and more mining pool upgrade their
         // bitcoin client to 0.9.+, low fee transactions get confirmed soon enough.
 //		if (isLowPriority(tx)) {

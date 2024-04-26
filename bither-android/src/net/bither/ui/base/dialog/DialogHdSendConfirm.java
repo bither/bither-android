@@ -21,6 +21,7 @@ package net.bither.ui.base.dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.R;
@@ -84,6 +85,12 @@ public class DialogHdSendConfirm extends CenterDialog implements DialogInterface
         tvAddress.setText(WalletUtils.formatHash(toAddress, 4, 24));
         tvBtc.setText(UnitUtilWrapper.formatValueWithBold(tx.amountSentToAddress(toAddress)));
         tvFee.setText(UnitUtilWrapper.formatValueWithBold(tx.getFee()));
+        if (tx.getCoin() == Coin.BTC && tx.getEstimationTxSize() > 0) {
+            LinearLayout llFeeRate = findViewById(R.id.ll_fee_rate);
+            TextView tvFeeRate = findViewById(R.id.tv_fee_rate);
+            tvFeeRate.setText(String.format("≈ %.2f", tx.getFee() / (float) (tx.getEstimationTxSize())).replaceAll("\\.0*$", ""));
+            llFeeRate.setVisibility(View.VISIBLE);
+        }
     }
 
     public DialogHdSendConfirm(Context context, String toAddress, List<Tx> txs, SendConfirmListener listener, SplitCoin splitCoin) {
