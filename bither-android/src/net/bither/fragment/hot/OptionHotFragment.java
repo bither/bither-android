@@ -273,7 +273,18 @@ public class OptionHotFragment extends Fragment implements Selectable,
             return null;
         }
     };
+
+    public void transactionFeeModeRefresh() {
+        ssvTransactionFee.loadData();
+    }
+
     private SettingSelector transactionFeeModeSelector = new SettingSelector() {
+
+        private BitherjSettings.TransactionFeeMode[] showFeeModes = new BitherjSettings.TransactionFeeMode[] {
+                BitherjSettings.TransactionFeeMode.Higher,
+                BitherjSettings.TransactionFeeMode.High,
+                BitherjSettings.TransactionFeeMode.Normal,
+                BitherjSettings.TransactionFeeMode.Low};
 
         @Override
         public void onOptionIndexSelected(int index) {
@@ -330,71 +341,30 @@ public class OptionHotFragment extends Fragment implements Selectable,
 
         @Override
         public int getOptionCount() {
-            return BitherjSettings.TransactionFeeMode.values().length;
+            return showFeeModes.length;
         }
 
         @Override
         public int getCurrentOptionIndex() {
-            BitherjSettings.TransactionFeeMode mode = AppSharedPreference.getInstance()
-                    .getTransactionFeeMode();
-            switch (mode) {
-                case High:
-                    return 3;
-                case Higher:
-                    return 2;
-                case TenX:
-                    return 1;
-                case TwentyX:
-                    return 0;
-                case Low:
-                    return 5;
-                case Lower:
-                    return 6;
-                default:
-                    return 4;
+            BitherjSettings.TransactionFeeMode mode = AppSharedPreference.getInstance().getTransactionFeeMode();
+            for (int i = 0; i < showFeeModes.length; i++) {
+                if (mode == showFeeModes[i]) {
+                    return i;
+                }
             }
+            return 2;
         }
 
         private BitherjSettings.TransactionFeeMode getModeByIndex(int index) {
-            if (index >= 0 && index < BitherjSettings.TransactionFeeMode.values().length) {
-                switch (index) {
-                    case 5:
-                        return BitherjSettings.TransactionFeeMode.Low;
-                    case 4:
-                        return BitherjSettings.TransactionFeeMode.Normal;
-                    case 3:
-                        return BitherjSettings.TransactionFeeMode.High;
-                    case 2:
-                        return BitherjSettings.TransactionFeeMode.Higher;
-                    case 1:
-                        return BitherjSettings.TransactionFeeMode.TenX;
-                    case 0:
-                        return BitherjSettings.TransactionFeeMode.TwentyX;
-                    case 6:
-                        return BitherjSettings.TransactionFeeMode.Lower;
-                }
+            if (index >= 0 && index < showFeeModes.length) {
+                return showFeeModes[index];
             }
             return BitherjSettings.TransactionFeeMode.Normal;
         }
 
         @Override
         public String getOptionNote(int index) {
-            switch (getModeByIndex(index)) {
-                case Low:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.Low);
-                case TwentyX:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.TwentyX);
-                case TenX:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.TenX);
-                case Higher:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.Higher);
-                case High:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.High);
-                case Lower:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.Lower);
-                default:
-                    return getFeeStr(BitherjSettings.TransactionFeeMode.Normal);
-            }
+            return getFeeStr(showFeeModes[index]);
         }
 
         private String getFeeStr(BitherjSettings.TransactionFeeMode transactionFeeMode) {

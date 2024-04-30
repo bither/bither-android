@@ -39,9 +39,9 @@ public class DialogConfirmTask extends CenterDialog implements View.OnClickListe
         this(context, message, task, null);
     }
 
-    public DialogConfirmTask(Context context, CharSequence message, Object task, boolean isShowCancal) {
+    public DialogConfirmTask(Context context, CharSequence message, Object task, boolean isShowCancel) {
         this(context, message, task, null);
-        if (!isShowCancal) {
+        if (!isShowCancel) {
             tvCancel.setVisibility(View.GONE);
         }
     }

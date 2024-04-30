@@ -49,6 +49,7 @@ public class NotificationAndroidImpl implements NotificationService {
     public static final String ACTION_PROGRESS_INFO = "progress_info";
     public static final String ACTION_UNSYNC_BLOCK_NUMBER_INFO = "unsync_block_number_info";
     public static final String ACTION_ADDRESS_TX_LOADING_INFO = "address_tx_loading_info";
+    public static final String ACTION_MINER_FEE_CHANGE = "miner_fee_change";
 
     @Override
     public void sendBroadcastSyncSPVFinished(boolean isFinished) {
@@ -155,4 +156,9 @@ public class NotificationAndroidImpl implements NotificationService {
         BitherApplication.mContext.removeStickyBroadcast(new Intent(ACTION_ADDRESS_TX_LOADING_STATE));
     }
 
+    @Override
+    public void sendMinerFeeChange() {
+        final Intent broadcast = new Intent(ACTION_MINER_FEE_CHANGE);
+        BitherApplication.mContext.sendStickyBroadcast(broadcast);
+    }
 }

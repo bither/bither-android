@@ -163,7 +163,7 @@
     <string name="setting_name_wifi">网络设置</string>
     <string name="setting_name_wifi_yes">只在wifi下同步</string>
     <string name="setting_name_wifi_no">一直同步</string>
-    <string name="setting_name_transaction_fee">默认矿工费</string>
+    <string name="setting_name_transaction_fee">矿工费</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
@@ -171,6 +171,7 @@
     <string name="setting_name_transaction_fee_20x">20倍</string>
     <string name="setting_name_transaction_fee_low">低</string>
     <string name="setting_name_transaction_fee_lower">更低</string>
+    <string name="setting_name_transaction_fee_custom">自定义</string>
     <string name="setting_name_transaction_fee_normal_note">较快确认</string>
     <string name="setting_name_transaction_fee_low_note">较慢确认</string>
     <string name="setting_name_transaction_fee_high_note">高优先级</string>
@@ -182,6 +183,10 @@
     <string name="donate_button">捐赠</string>
     <string name="donate_thanks">谢谢您的捐赠</string>
     <string name="setting_name_transaction_fee_low_warn">确认默认使用低矿工费模式?\n这会导致较慢的交易确认</string>
+    <string name="setting_transaction_fee_custom_warn">请您合理自定义sat/vB，过低您的交易可能长时间不会被确认！</string>
+    <string name="setting_transaction_fee_custom_high">您的sat/vB设置过高，将造成矿工费浪费，请合理设置sat/vB</string>
+    <string name="setting_transaction_fee_custom_empty">请输入sat/vB</string>
+    <string name="setting_transaction_fee_custom_high_continue">仍要设置</string>
     <string name="backup_again">一个小时内刚刚进行过备份，确认要再次备份吗?</string>
     <string name="set_avatar">设置头像</string>
     <string name="set_avatar_camera">来自相机</string>
@@ -837,9 +842,9 @@
 
     <string name="cold_no_support_bc1_segwit_address">冷钱包暂不支持发往bc开头的隔离验证地址</string>
 
-    <string name="dynamic_miner_fee_title">使用动态矿工费</string>
+    <string name="dynamic_miner_fee_title">动态矿工费</string>
     <string name="dynamic_miner_fee_des">开启动态矿工费后，软件将根据当前比特币的网络状态自动计算实时最优费用；矿工费由比特币网络收取。</string>
-    <string name="dynamic_miner_fee_failure_title">计算动态矿工费失败，是否使用默认矿工费？</string>
+    <string name="dynamic_miner_fee_failure_title">计算动态矿工费失败，请重试或选择其它矿工费后重试。</string>
 
     <string name="address_add_mode_create_des">通过创建添加</string>
     <string name="address_add_mode_dice_create_des">通过骰子创建添加</string>

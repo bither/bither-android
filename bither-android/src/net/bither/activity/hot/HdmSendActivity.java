@@ -18,6 +18,9 @@
 
 package net.bither.activity.hot;
 
+import static net.bither.BitherSetting.INTENT_REF.MINER_FEE_BASE_KEY;
+import static net.bither.BitherSetting.INTENT_REF.MINER_FEE_MODE_KEY;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -39,10 +42,12 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.SendActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.BitherStatsDynamicFeeApi;
 import net.bither.bitherj.api.SignatureHDMApi;
@@ -110,7 +115,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private PasswordEntryKeyboardView kvPassword;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
-    private CheckBox cbxMinerFee;
+    private LinearLayout llMinerFee;
+    private TextView tvMinerFee;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
     private HDMResetServerPasswordUtil resetServerPasswordUtil;
@@ -118,6 +124,8 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     private boolean signWithCold = false;
     private boolean isInRecovery = false;
     private boolean isDonate = false;
+    private MinerFeeSettingActivity.MinerFeeMode minerFeeMode;
+    private long minerFeeBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +150,18 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         initView();
         processIntent();
         configureDonate();
+        if (AppSharedPreference.getInstance().isUseDynamicMinerFee()) {
+            minerFeeMode = MinerFeeSettingActivity.MinerFeeMode.Dynamic;
+        } else {
+            MinerFeeSettingActivity.MinerFeeMode mode = MinerFeeSettingActivity.MinerFeeMode.getMinerFeeMode(AppSharedPreference.getInstance().getTransactionFeeMode());
+            if (mode != null) {
+                minerFeeMode = mode;
+                minerFeeBase = mode.getFeeBase();
+            } else {
+                minerFeeMode = MinerFeeSettingActivity.MinerFeeMode.Dynamic;
+            }
+        }
+        showMinerFee();
     }
 
     private void initView() {
@@ -156,9 +176,9 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         kvPassword = (PasswordEntryKeyboardView) findViewById(R.id.kv_password);
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        cbxMinerFee = findViewById(R.id.cbx_miner_fee);
-        cbxMinerFee.setOnCheckedChangeListener(cbxMinerFeeCheckChangeListener);
-        cbxMinerFee.setChecked(AppSharedPreference.getInstance().isUseDynamicMinerFee());
+        llMinerFee = findViewById(R.id.ll_miner_fee);
+        llMinerFee.setOnClickListener(llMinerFeeListener);
+        tvMinerFee = findViewById(R.id.tv_miner_fee);
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
         dialogSelectChangeAddress = new DialogSelectChangeAddress(this, address);
         tvBalance.setText(UnitUtilWrapper.formatValue(address.getBalance()));
@@ -334,12 +354,13 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
         DropdownMessage.showDropdownMessage(HdmSendActivity.this, R.string.send_failed);
     }
 
-    private CompoundButton.OnCheckedChangeListener cbxMinerFeeCheckChangeListener = new CompoundButton
-            .OnCheckedChangeListener() {
-
+    private View.OnClickListener llMinerFeeListener = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            AppSharedPreference.getInstance().setIsUseDynamicMinerFee(isChecked);
+        public void onClick(View view) {
+            Intent intent = new Intent(HdmSendActivity.this, MinerFeeSettingActivity.class);
+            intent.putExtra(MINER_FEE_MODE_KEY, minerFeeMode);
+            intent.putExtra(MINER_FEE_BASE_KEY, minerFeeBase);
+            startActivityForResult(intent, BitherSetting.INTENT_REF.MINER_FEE_REQUEST_CODE);
         }
     };
 
@@ -353,7 +374,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
 
 
     private void baseSendClicked() {
-        if (cbxMinerFee.isChecked()) {
+        if (minerFeeMode == MinerFeeSettingActivity.MinerFeeMode.Dynamic) {
             if (!dp.isShowing()) {
                 dp.show();
             }
@@ -379,9 +400,9 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                                 DialogConfirmTask confirmTask = new DialogConfirmTask(HdmSendActivity.this, getString(R.string.dynamic_miner_fee_failure_title), new Runnable() {
                                     @Override
                                     public void run() {
-                                        sendClicked(null);
+
                                     }
-                                });
+                                }, false);
                                 confirmTask.setCancelable(false);
                                 confirmTask.show();
                             }
@@ -390,7 +411,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
                 }
             }).start();
         } else {
-            sendClicked(null);
+            sendClicked(minerFeeBase);
         }
     }
 
@@ -447,8 +468,7 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
     };
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
-                .RESULT_OK) {
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             new StringInputParser(input, null, false) {
                 @Override
@@ -472,6 +492,21 @@ public class HdmSendActivity extends SwipeRightActivity implements EntryKeyboard
             }.parse();
         } else if (!coldSignatureFetcher.onActivityResult(requestCode, resultCode, data) && !resetServerPasswordUtil.onActivityResult(requestCode, resultCode, data)) {
             super.onActivityResult(requestCode, resultCode, data);
+        }  else if (requestCode == BitherSetting.INTENT_REF.MINER_FEE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            final MinerFeeSettingActivity.MinerFeeMode feeMode = (MinerFeeSettingActivity.MinerFeeMode) data.getSerializableExtra(MINER_FEE_MODE_KEY);
+            final long feeBase = data.getLongExtra(MINER_FEE_BASE_KEY, 0);
+            minerFeeMode = feeMode;
+            minerFeeBase = feeBase;
+            showMinerFee();
+        }
+    }
+
+    private void showMinerFee() {
+        String displayName = getString(minerFeeMode.getDisplayNameRes());
+        if (minerFeeMode != MinerFeeSettingActivity.MinerFeeMode.Dynamic) {
+            tvMinerFee.setText(String.format("%s %d%s", displayName, minerFeeBase / 1000, getString(R.string.send_confirm_fee_rate_symbol)));
+        } else {
+            tvMinerFee.setText(displayName);
         }
     }
 

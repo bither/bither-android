@@ -52,6 +52,7 @@ import net.bither.fragment.Selectable;
 import net.bither.fragment.Unselectable;
 import net.bither.fragment.hot.HotAddressFragment;
 import net.bither.fragment.hot.MarketFragment;
+import net.bither.fragment.hot.OptionHotFragment;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
@@ -72,6 +73,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bither.NotificationAndroidImpl.ACTION_MINER_FEE_CHANGE;
 import static net.bither.NotificationAndroidImpl.ACTION_UNSYNC_BLOCK_NUMBER_INFO;
 import static net.bither.bitherj.core.PeerManager.ConnectedChangeBroadcast;
 
@@ -93,6 +95,7 @@ public class HotActivity extends BaseFragmentActivity {
     private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
     private final AddressTxLoadingReceiver addressIsLoadingReceiver = new AddressTxLoadingReceiver();
     private final PeerConnectedChangeReceiver peerConnectedChangeReceiver = new PeerConnectedChangeReceiver();
+    private final MinerFeeBroadcastReceiver minerFeeBroadcastReceiver = new MinerFeeBroadcastReceiver();
 
     protected void onCreate(Bundle savedInstanceState) {
         AbstractApp.notificationService.removeProgressState();
@@ -143,6 +146,7 @@ public class HotActivity extends BaseFragmentActivity {
                 new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
         registerReceiver(addressIsLoadingReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_STATE));
         registerReceiver(peerConnectedChangeReceiver, new IntentFilter(ConnectedChangeBroadcast));
+        registerReceiver(minerFeeBroadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_MINER_FEE_CHANGE));
     }
 
     @Override
@@ -152,6 +156,7 @@ public class HotActivity extends BaseFragmentActivity {
         unregisterReceiver(addressIsLoadedReceiver);
         unregisterReceiver(addressIsLoadingReceiver);
         unregisterReceiver(peerConnectedChangeReceiver);
+        unregisterReceiver(minerFeeBroadcastReceiver);
         super.onDestroy();
         BitherApplication.hotActivity = null;
 
@@ -566,6 +571,20 @@ public class HotActivity extends BaseFragmentActivity {
             }
             if (PeerManager.instance().getConnectedPeers().size() > 0 && llAlert.getVisibility() == View.VISIBLE && tvAlert.getText().toString().equals(getString(R.string.tip_no_peers_connected_scan))) {
                 llAlert.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private final class MinerFeeBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null || !Utils.compareString(intent.getAction(), ACTION_MINER_FEE_CHANGE)) {
+                return;
+            }
+            Fragment fragment = getFragmentAtIndex(2);
+            if (fragment instanceof OptionHotFragment) {
+                ((OptionHotFragment) fragment).transactionFeeModeRefresh();
             }
         }
     }

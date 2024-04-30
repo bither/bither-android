@@ -16,6 +16,9 @@
 
 package net.bither.activity.hot;
 
+import static net.bither.BitherSetting.INTENT_REF.MINER_FEE_BASE_KEY;
+import static net.bither.BitherSetting.INTENT_REF.MINER_FEE_MODE_KEY;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,10 +38,12 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.bither.BitherSetting;
 import net.bither.R;
+import net.bither.SendActivity;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.api.BitherStatsDynamicFeeApi;
 import net.bither.bitherj.core.Address;
@@ -90,7 +95,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     private ImageView ivBalanceSymbol;
     private AmountEntryKeyboardView kvAmount;
     private View vKeyboardContainer;
-    private CheckBox cbxMinerFee;
+    private LinearLayout llMinerFee;
+    private TextView tvMinerFee;
     private ImageView ivMinerFeeDes;
     private DialogSelectChangeAddress dialogSelectChangeAddress;
 
@@ -99,6 +105,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     private boolean needConfirm = true;
 
     private boolean isDonate = false;
+    private MinerFeeSettingActivity.MinerFeeMode minerFeeMode;
+    private long minerFeeBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +143,18 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         initView();
         processIntent();
         configureDonate();
+        if (AppSharedPreference.getInstance().isUseDynamicMinerFee()) {
+            minerFeeMode = MinerFeeSettingActivity.MinerFeeMode.Dynamic;
+        } else {
+            MinerFeeSettingActivity.MinerFeeMode mode = MinerFeeSettingActivity.MinerFeeMode.getMinerFeeMode(AppSharedPreference.getInstance().getTransactionFeeMode());
+            if (mode != null) {
+                minerFeeMode = mode;
+                minerFeeBase = mode.getFeeBase();
+            } else {
+                minerFeeMode = MinerFeeSettingActivity.MinerFeeMode.Dynamic;
+            }
+        }
+        showMinerFee();
     }
 
     private void initView() {
@@ -149,9 +169,9 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         ivBalanceSymbol.setImageBitmap(UnitUtilWrapper.getBtcSymbol(tvBalance));
         kvAmount = (AmountEntryKeyboardView) findViewById(R.id.kv_amount);
         vKeyboardContainer = findViewById(R.id.v_keyboard_container);
-        cbxMinerFee = findViewById(R.id.cbx_miner_fee);
-        cbxMinerFee.setOnCheckedChangeListener(cbxMinerFeeCheckChangeListener);
-        cbxMinerFee.setChecked(AppSharedPreference.getInstance().isUseDynamicMinerFee());
+        llMinerFee = findViewById(R.id.ll_miner_fee);
+        llMinerFee.setOnClickListener(llMinerFeeListener);
+        tvMinerFee = findViewById(R.id.tv_miner_fee);
         ivMinerFeeDes = findViewById(R.id.iv_miner_fee_des);
         ivMinerFeeDes.setOnClickListener(ivMinerFeeDesClick);
         findViewById(R.id.ibtn_option).setOnClickListener(optionClick);
@@ -316,12 +336,13 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
         }
     };
 
-    private CompoundButton.OnCheckedChangeListener cbxMinerFeeCheckChangeListener = new CompoundButton
-            .OnCheckedChangeListener() {
-
+    private View.OnClickListener llMinerFeeListener = new View.OnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            AppSharedPreference.getInstance().setIsUseDynamicMinerFee(isChecked);
+        public void onClick(View view) {
+            Intent intent = new Intent(GenerateUnsignedTxActivity.this, MinerFeeSettingActivity.class);
+            intent.putExtra(MINER_FEE_MODE_KEY, minerFeeMode);
+            intent.putExtra(MINER_FEE_BASE_KEY, minerFeeBase);
+            startActivityForResult(intent, BitherSetting.INTENT_REF.MINER_FEE_REQUEST_CODE);
         }
     };
 
@@ -334,7 +355,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     };
 
     private void baseSendClicked() {
-        if (cbxMinerFee.isChecked()) {
+        if (minerFeeMode == MinerFeeSettingActivity.MinerFeeMode.Dynamic) {
             if (!dp.isShowing()) {
                 dp.show();
             }
@@ -360,9 +381,9 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                                 DialogConfirmTask confirmTask = new DialogConfirmTask(GenerateUnsignedTxActivity.this, getString(R.string.dynamic_miner_fee_failure_title), new Runnable() {
                                     @Override
                                     public void run() {
-                                        sendClicked(null);
+
                                     }
-                                });
+                                }, false);
                                 confirmTask.setCancelable(false);
                                 confirmTask.show();
                             }
@@ -370,8 +391,8 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                     });
                 }
             }).start();
-        } else {
-            sendClicked(null);
+        } else if (minerFeeBase > 0) {
+            sendClicked(minerFeeBase);
         }
     }
 
@@ -404,8 +425,10 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE && resultCode == Activity
-                .RESULT_OK) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == BitherSetting.INTENT_REF.SCAN_REQUEST_CODE) {
             final String input = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             new StringInputParser(input, null, true) {
                 @Override
@@ -425,10 +448,7 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                             messageResId);
                 }
             }.parse();
-            return;
-        }
-        if (requestCode == BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE && resultCode ==
-                RESULT_OK) {
+        } else if (requestCode == BitherSetting.INTENT_REF.SIGN_TX_REQUEST_CODE) {
             final String qr = data.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             btnSend.setEnabled(false);
             btnSend.postDelayed(new Runnable() {
@@ -459,6 +479,21 @@ public class GenerateUnsignedTxActivity extends SwipeRightActivity implements En
                             R.string.unsigned_transaction_sign_failed);
                 }
             }, 500);
+        }  else if (requestCode == BitherSetting.INTENT_REF.MINER_FEE_REQUEST_CODE) {
+            final MinerFeeSettingActivity.MinerFeeMode feeMode = (MinerFeeSettingActivity.MinerFeeMode) data.getSerializableExtra(MINER_FEE_MODE_KEY);
+            final long feeBase = data.getLongExtra(MINER_FEE_BASE_KEY, 0);
+            minerFeeMode = feeMode;
+            minerFeeBase = feeBase;
+            showMinerFee();
+        }
+    }
+
+    private void showMinerFee() {
+        String displayName = getString(minerFeeMode.getDisplayNameRes());
+        if (minerFeeMode != MinerFeeSettingActivity.MinerFeeMode.Dynamic) {
+            tvMinerFee.setText(String.format("%s %d%s", displayName, minerFeeBase / 1000, getString(R.string.send_confirm_fee_rate_symbol)));
+        } else {
+            tvMinerFee.setText(displayName);
         }
     }
 

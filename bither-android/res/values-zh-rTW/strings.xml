@@ -161,7 +161,7 @@
     <string name="setting_name_wifi">網絡設置</string>
     <string name="setting_name_wifi_yes">只在wifi下同步</string>
     <string name="setting_name_wifi_no">一直同步</string>
-    <string name="setting_name_transaction_fee">默認礦工費</string>
+    <string name="setting_name_transaction_fee">礦工費</string>
     <string name="setting_name_transaction_fee_normal">正常</string>
     <string name="setting_name_transaction_fee_higher">更高</string>
     <string name="setting_name_transaction_fee_high">高</string>
@@ -169,6 +169,7 @@
     <string name="setting_name_transaction_fee_20x">20倍</string>
     <string name="setting_name_transaction_fee_low">低</string>
     <string name="setting_name_transaction_fee_lower">更低</string>
+    <string name="setting_name_transaction_fee_custom">自定義</string>
     <string name="setting_name_transaction_fee_normal_note">較快確認</string>
     <string name="setting_name_transaction_fee_low_note">較慢確認</string>
     <string name="setting_name_transaction_fee_high_note">高優先順序</string>
@@ -182,6 +183,10 @@
     <string name="buy_order">買單</string>
     <string name="sell_order">賣單</string>
     <string name="setting_name_transaction_fee_low_warn">確認默認使用低礦工費模式?\n這會導致較慢的交易確認</string>
+    <string name="setting_transaction_fee_custom_warn">請您合理自定義sat/vB，過低您的交易可能長時間不會被確認！</string>
+    <string name="setting_transaction_fee_custom_high">您的sat/vB設置過高，將造成礦工費浪費，請合理設置sat/vB</string>
+    <string name="setting_transaction_fee_custom_empty">請輸入sat/vB</string>
+    <string name="setting_transaction_fee_custom_high_continue">仍要設置</string>
     <string name="backup_again">一個小時內剛剛進行過備份，確認要再次備份嗎?</string>
     <string name="set_avatar">設置頭像</string>
     <string name="set_avatar_camera">來自相機</string>
@@ -838,9 +843,9 @@
 
     <string name="cold_no_support_bc1_segwit_address">冷錢包暫不支持發往bc開頭的隔離驗證地址</string>
 
-    <string name="dynamic_miner_fee_title">使用動態礦工費</string>
+    <string name="dynamic_miner_fee_title">動態礦工費</string>
     <string name="dynamic_miner_fee_des">開啓動態礦工費後，軟件將根據當前比特幣的網絡狀態自動計算實時最優費用；礦工費由比特幣網絡收取。</string>
-    <string name="dynamic_miner_fee_failure_title">計算動態礦工費失敗，是否使用默認礦工費？</string>
+    <string name="dynamic_miner_fee_failure_title">計算動態礦工費失敗，請重試或選擇其它礦工費後重試。</string>
 
     <string name="address_add_mode_create_des">通過創建添加</string>
     <string name="address_add_mode_dice_create_des">通過骰子創建添加</string>

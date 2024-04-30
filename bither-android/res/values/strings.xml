@@ -170,7 +170,7 @@
     <string name="setting_name_wifi">Network Setting</string>
     <string name="setting_name_wifi_yes">Sync over wifi only</string>
     <string name="setting_name_wifi_no">Sync always</string>
-    <string name="setting_name_transaction_fee">Default Transaction Miner Fee</string>
+    <string name="setting_name_transaction_fee">Miner Fee</string>
     <string name="setting_name_transaction_fee_normal">Normal</string>
     <string name="setting_name_transaction_fee_higher">Higher</string>
     <string name="setting_name_transaction_fee_high">High</string>
@@ -178,6 +178,7 @@
     <string name="setting_name_transaction_fee_20x">20x</string>
     <string name="setting_name_transaction_fee_low">Low</string>
     <string name="setting_name_transaction_fee_lower">Lower</string>
+    <string name="setting_name_transaction_fee_custom">Custom</string>
     <string name="setting_name_transaction_fee_normal_note">fast confirmation</string>
     <string name="setting_name_transaction_fee_low_note">slow confirmation</string>
     <string name="setting_name_transaction_fee_high_note">high priority</string>
@@ -189,6 +190,10 @@
     <string name="donate_button">Donate</string>
     <string name="donate_thanks">Thank you for donating.</string>
     <string name="setting_name_transaction_fee_low_warn">Sure to set low transaction miner fee as default?\nThis may cause slow confirmation.</string>
+    <string name="setting_transaction_fee_custom_warn">Please customize the sat/vB reasonably. If the sat/b is too low, your transaction may not be confirmed for a long time!</string>
+    <string name="setting_transaction_fee_custom_high">Your sat/vB setting is too high, which will cause waste of miner fees. Please set sat/vB reasonably</string>
+    <string name="setting_transaction_fee_custom_empty">Please enter sat/vB</string>
+    <string name="setting_transaction_fee_custom_high_continue">Continue</string>
     <string name="backup_again">The last backup is within 1 hour. Sure to backup again?</string>
     <string name="set_avatar">Set Avatar</string>
     <string name="set_avatar_camera">From Camera</string>
@@ -875,9 +880,9 @@
 
     <string name="cold_no_support_bc1_segwit_address">BITHD Cold wallet doesn’t support sending coins to Segwit addresses beginning with “bc”.</string>
 
-    <string name="dynamic_miner_fee_title">Use Dynamic Miner Fee</string>
-    <string name="dynamic_miner_fee_des">The system will caculate the miner fee automaticlly after switch on Dynamic Miner Fee function. The miner fee is determined by Bitcoin Blockchain.</string>
-    <string name="dynamic_miner_fee_failure_title">Dynamic Miner Fee caculation failed, use the default Miner fee?</string>
+    <string name="dynamic_miner_fee_title">Dynamic Miner Fee</string>
+    <string name="dynamic_miner_fee_des">The system will calculate the miner fee automatically after switch on Dynamic Miner Fee function. The miner fee is determined by Bitcoin Blockchain.</string>
+    <string name="dynamic_miner_fee_failure_title">Calculating dynamic miner fees failed. Please try again or select another miner fee and try again.</string>
 
     <string name="address_add_mode_create_des">Added by creating</string>
     <string name="address_add_mode_dice_create_des">Added by dice creation</string>

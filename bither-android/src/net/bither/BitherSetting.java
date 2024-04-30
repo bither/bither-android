@@ -99,6 +99,9 @@ public class BitherSetting {
         public static final String INTENT_FROM_NOTIF = "from_notif";
         public static final String IMPORT_HD_SEED_TYPE = "import_hd_seed_type";
         public static final String IMPORT_HDM_SEED_TYPE = "import_hdm_seed_type";
+        public static final int MINER_FEE_REQUEST_CODE = 1360;
+        public static final String MINER_FEE_MODE_KEY = "MINER_FEE_MODE_KEY";
+        public static final String MINER_FEE_BASE_KEY = "MINER_FEE_BASE_KEY";
     }
 
 
