@@ -368,9 +368,9 @@ public class OptionHotFragment extends Fragment implements Selectable,
         }
 
         private String getFeeStr(BitherjSettings.TransactionFeeMode transactionFeeMode) {
-            float dividend = 100000;
-            String unit = "mBTC/kb";
-            float fee = (float) transactionFeeMode.getMinFeeSatoshi() / dividend;
+            int dividend = 1000;
+            String unit = "sat/vB";
+            int fee = transactionFeeMode.getMinFeeSatoshi() / dividend;
             return String.valueOf(fee) + unit;
         }
 
