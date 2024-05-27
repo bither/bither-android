@@ -353,7 +353,6 @@ public class BlockchainService extends android.app.Service {
                 startPeer();
             }
         }).start();
-
     }
 
     private void callWekelock() {
@@ -404,16 +403,29 @@ public class BlockchainService extends android.app.Service {
                         }
                     }
                 } else {
-                    if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                        TransactionsUtil.getMyTxFromBither();
-                    }
-                    startPeerManager();
+                    validStartPeerManager();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void validStartPeerManager() {
+        if (!AddressManager.getInstance().addressIsSyncComplete()) {
+            if (TransactionsUtil.isReloading) {
+                return;
+            }
+            try {
+                TransactionsUtil.getMyTxFromBither();
+                validStartPeerManager();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+                AbstractApp.notificationService.sendBroadcastAddressTxLoadError();
+            }
+        } else {
+            startPeerManager();
+        }
     }
 
     private void startPeerManager() {
@@ -447,25 +459,34 @@ public class BlockchainService extends android.app.Service {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                            TransactionsUtil.getMyTxFromBither();
-                        }
-                        startPeerManager();
-                        AbstractApp.notificationService.removeBroadcastSyncSPVFinished();
-                        if (spvFinishedReceiver != null && spvFinishedReceivered) {
-                            unregisterReceiver(spvFinishedReceiver);
-                            spvFinishedReceivered = false;
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    spvFinishedReceiveValidStartPeerManager();
                 }
             }).start();
-
-
         }
     }
 
+    private void spvFinishedReceiveValidStartPeerManager() {
+        try {
+            if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                if (TransactionsUtil.isReloading) {
+                    return;
+                }
+                TransactionsUtil.getMyTxFromBither();
+                spvFinishedReceiveValidStartPeerManager();
+                return;
+            }
+            startPeerManager();
+            AbstractApp.notificationService.removeBroadcastSyncSPVFinished();
+            if (spvFinishedReceiver != null && spvFinishedReceivered) {
+                unregisterReceiver(spvFinishedReceiver);
+                spvFinishedReceivered = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                AbstractApp.notificationService.sendBroadcastAddressTxLoadError();
+            }
+        }
+    }
 
 }

@@ -44,7 +44,6 @@ import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.HDMBId;
-import net.bither.bitherj.core.PeerManager;
 import net.bither.bitherj.core.SplitCoin;
 import net.bither.bitherj.core.Tx;
 import net.bither.bitherj.core.Version;
@@ -100,7 +99,10 @@ import net.bither.util.FileUtil;
 import net.bither.util.HDMKeychainRecoveryUtil;
 import net.bither.util.HDMResetServerPasswordUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.NetworkUtil;
 import net.bither.util.ThreadUtil;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -487,35 +489,38 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener resetTxListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            if (AddressManager.getInstance().noAddress()) {
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_private_key);
+                return;
+            }
             if (BitherApplication.canReloadTx()) {
-                if (PeerManager.instance().isConnected()) {
-                    final Runnable confirmRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
-                            if (passwordSeed == null) {
-                                // TODO: the dialog determine the web type
-                                // showSelectedDialog();
-                                resetTx();
-                            } else {
-                                callPassword();
+                if (NetworkUtil.isConnected()) {
+                    if (!TransactionsUtil.isReloading) {
+                        final Runnable confirmRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                PasswordSeed passwordSeed = PasswordSeed.getPasswordSeed();
+                                if (passwordSeed == null) {
+                                    // TODO: the dialog determine the web type
+                                    // showSelectedDialog();
+                                    resetTx();
+                                } else {
+                                    callPassword();
+                                }
                             }
-                        }
-                    };
-                    DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
-                            .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
-                    dialogConfirmTask.show();
+                        };
+                        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity
+                                .this, getString(R.string.reload_tx_need_too_much_time), confirmRunnable);
+                        dialogConfirmTask.show();
+                    } else {
+                        DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.no_sync_complete);
+                    }
                 } else {
-                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                            R.string.tip_network_connected_error);
+                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.tip_network_error);
                 }
             } else {
-                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                        R.string.tx_cannot_reloding);
+                DropdownMessage.showDropdownMessage(HotAdvanceActivity.this, R.string.tx_cannot_reloding);
             }
-
-
         }
 
 
@@ -643,50 +648,61 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                     dp.setMessage(R.string.reload_tx_please_wait);
                 }
                 dp.show();
-                ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
-                    @Override
-                    public void runWithService(BlockchainService service) {
-                        service.stopAndUnregister();
-                        for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                            address.setSyncComplete(false);
-                            address.updateSyncComplete();
-                        }
-                        AbstractDb.hdAccountAddressProvider.setSyncedNotComplete();
-                        AbstractDb.txProvider.clearAllTx();
-                        for (Address address : AddressManager.getInstance().getAllAddresses()) {
-                            address.notificatTx(null, Tx.TxNotificationType.txFromApi);
-                        }
-                        try {
-                            if (!AddressManager.getInstance().addressIsSyncComplete()) {
-                                TransactionsUtil.getMyTxFromBither();
-                            }
-                            AbstractDb.peerProvider.recreate();
-                            service.startAndRegister();
-                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dp.dismiss();
-                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                            R.string.reload_tx_success);
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            HotAdvanceActivity.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dp.dismiss();
-                                    DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
-                                            R.string.network_or_connection_error);
-                                }
-                            });
-
-                        }
-                    }
-                };
-                threadNeedService.start();
+                resetTx(false);
             }
         });
+    }
+
+    private void resetTx(final boolean isRetry) {
+        ThreadNeedService threadNeedService = new ThreadNeedService(dp, HotAdvanceActivity.this) {
+            @Override
+            public void runWithService(BlockchainService service) {
+                service.stopAndUnregister();
+                if (!isRetry) {
+                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                        address.setSyncComplete(false);
+                        address.updateSyncComplete();
+                    }
+                    AbstractDb.hdAccountAddressProvider.setSyncedNotComplete();
+                    AbstractDb.txProvider.clearAllTx();
+                    for (Address address : AddressManager.getInstance().getAllAddresses()) {
+                        address.notificatTx(null, Tx.TxNotificationType.txFromApi);
+                    }
+                }
+                try {
+                    if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                        TransactionsUtil.getMyTxFromBither();
+                    }
+                    AbstractDb.peerProvider.recreate();
+                    service.startAndRegister();
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dp.dismiss();
+                            DropdownMessage.showDropdownMessage(HotAdvanceActivity.this,
+                                    R.string.reload_tx_success);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    TransactionsUtil.isReloading = false;
+                    HotAdvanceActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotAdvanceActivity.this, getString(R.string.reload_tx_failed), getString(R.string.choose_mode_warm_retry), new Runnable() {
+                                @Override
+                                public void run() {
+                                   resetTx(true);
+                                }
+                            }, false);
+                            dialogConfirmTask.setCanceledOnTouchOutside(false);
+                            dialogConfirmTask.show();
+                        }
+                    });
+                }
+            }
+        };
+        threadNeedService.start();
     }
 
     private SettingSelectorView.SettingSelector messageSigningSelector = new SettingSelectorView

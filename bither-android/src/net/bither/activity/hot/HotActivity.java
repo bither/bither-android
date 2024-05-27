@@ -46,6 +46,9 @@ import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.EnterpriseHDMAddress;
 import net.bither.bitherj.core.HDMAddress;
 import net.bither.bitherj.core.PeerManager;
+import net.bither.bitherj.core.Tx;
+import net.bither.bitherj.db.AbstractDb;
+import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.fragment.Refreshable;
 import net.bither.fragment.Selectable;
@@ -56,11 +59,14 @@ import net.bither.fragment.hot.OptionHotFragment;
 import net.bither.preference.AppSharedPreference;
 import net.bither.runnable.AddErrorMsgRunnable;
 import net.bither.runnable.DownloadAvatarRunnable;
+import net.bither.runnable.ThreadNeedService;
 import net.bither.runnable.UploadAvatarRunnable;
+import net.bither.service.BlockchainService;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
 import net.bither.ui.base.SyncProgressView;
 import net.bither.ui.base.TabButton;
+import net.bither.ui.base.dialog.DialogConfirmTask;
 import net.bither.ui.base.dialog.DialogFirstRunWarning;
 import net.bither.ui.base.dialog.DialogGenerateAddressFinalConfirm;
 import net.bither.util.LogUtil;
@@ -544,6 +550,11 @@ public class HotActivity extends BaseFragmentActivity {
             if (intent == null || !Utils.compareString(intent.getAction(), NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_STATE)) {
                 return;
             }
+            if (intent.getBooleanExtra(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOAD_ERROR_INFO, false)) {
+                TransactionsUtil.isReloading = false;
+                addressTxLoadError();
+                return;
+            }
             if (!intent.hasExtra(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_INFO)) {
                 return;
             }
@@ -558,6 +569,42 @@ public class HotActivity extends BaseFragmentActivity {
                 llAlert.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void addressTxLoadError() {
+        HotActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(HotActivity.this, getString(R.string.reload_tx_failed), getString(R.string.choose_mode_warm_retry), new Runnable() {
+                    @Override
+                    public void run() {
+                        addressTxLoadRetry();
+                    }
+                }, false);
+                dialogConfirmTask.setCanceledOnTouchOutside(false);
+                dialogConfirmTask.show();
+            }
+        });
+    }
+
+    private void addressTxLoadRetry() {
+        ThreadNeedService threadNeedService = new ThreadNeedService(null, HotActivity.this) {
+            @Override
+            public void runWithService(BlockchainService service) {
+                try {
+                    if (!AddressManager.getInstance().addressIsSyncComplete()) {
+                        TransactionsUtil.getMyTxFromBither();
+                    }
+                    AbstractDb.peerProvider.recreate();
+                    service.startAndRegister();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    TransactionsUtil.isReloading = false;
+                    addressTxLoadError();
+                }
+            }
+        };
+        threadNeedService.start();
     }
 
     private final class PeerConnectedChangeReceiver extends BroadcastReceiver {

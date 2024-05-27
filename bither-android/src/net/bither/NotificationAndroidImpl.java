@@ -49,6 +49,7 @@ public class NotificationAndroidImpl implements NotificationService {
     public static final String ACTION_PROGRESS_INFO = "progress_info";
     public static final String ACTION_UNSYNC_BLOCK_NUMBER_INFO = "unsync_block_number_info";
     public static final String ACTION_ADDRESS_TX_LOADING_INFO = "address_tx_loading_info";
+    public static final String ACTION_ADDRESS_TX_LOAD_ERROR_INFO = "address_tx_load_error";
     public static final String ACTION_MINER_FEE_CHANGE = "miner_fee_change";
 
     @Override
@@ -154,6 +155,13 @@ public class NotificationAndroidImpl implements NotificationService {
     @Override
     public void removeAddressTxLoading() {
         BitherApplication.mContext.removeStickyBroadcast(new Intent(ACTION_ADDRESS_TX_LOADING_STATE));
+    }
+
+    @Override
+    public void sendBroadcastAddressTxLoadError() {
+        final Intent broadcast = new Intent(ACTION_ADDRESS_TX_LOADING_STATE);
+        broadcast.putExtra(ACTION_ADDRESS_TX_LOAD_ERROR_INFO, true);
+        BitherApplication.mContext.sendStickyBroadcast(broadcast);
     }
 
     @Override
