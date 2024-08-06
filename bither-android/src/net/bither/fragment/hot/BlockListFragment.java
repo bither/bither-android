@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -110,8 +111,11 @@ public final class BlockListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         if (!isRegister) {
-            activity.registerReceiver(tickReceiver, new IntentFilter(
-                    Intent.ACTION_TIME_TICK));
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                activity.registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK), Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                activity.registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+            }
             isRegister = true;
         }
         loaderManager.initLoader(ID_TRANSACTION_LOADER, null,
@@ -319,16 +323,17 @@ public final class BlockListFragment extends ListFragment {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-
-            context.registerReceiver(broadcastReceiver, new IntentFilter(
-                    NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE));
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE), Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                context.registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE));
+            }
             forceLoad();
         }
 
         @Override
         protected void onStopLoading() {
             context.unregisterReceiver(broadcastReceiver);
-
             super.onStopLoading();
         }
 

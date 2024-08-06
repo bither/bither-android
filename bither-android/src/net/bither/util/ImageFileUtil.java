@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
@@ -28,6 +29,7 @@ import net.bither.bitherj.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class ImageFileUtil {
 
@@ -53,25 +55,13 @@ public class ImageFileUtil {
     }
 
 
-    public static final String saveImageToDcim(Bitmap bit, int orientation,
+    public static final void saveImageToDcim(Bitmap bit, int orientation,
                                                long timeMillis) {
-        String pictureName = getImageNameForGallery(
-                timeMillis);
-        File file = getImageForGallery(timeMillis);
-        try {
-            NativeUtil.compressBitmap(bit, 100, file.getAbsolutePath(), true);
-            saveExifInterface(file, orientation);
-            addPicutureToResolver(file, pictureName, orientation, timeMillis);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return file.getAbsolutePath();
-
+        String pictureName = getImageNameForGallery(timeMillis);
+        addPicutureToResolver(bit, pictureName, orientation, timeMillis);
     }
 
-    private static void addPicutureToResolver(File file, String pictureName,
-                                              int orientation, long timeInMillis) {
+    private static void addPicutureToResolver(Bitmap bitmap, String pictureName, int orientation, long timeInMillis) {
         ContentValues v = new ContentValues();
         v.put(MediaStore.MediaColumns.TITLE, pictureName);
         v.put(MediaStore.MediaColumns.DISPLAY_NAME, pictureName);
@@ -81,17 +71,18 @@ public class ImageFileUtil {
         v.put(MediaStore.MediaColumns.DATE_MODIFIED, timeInMillis);
         v.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
         v.put(MediaStore.Images.ImageColumns.ORIENTATION, orientation);
-        v.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-
-        File parent = file.getParentFile();
-        String path = parent.toString().toLowerCase();
-        String name = parent.getName().toLowerCase();
-        v.put(MediaStore.Images.ImageColumns.BUCKET_ID, path.hashCode());
-        v.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, name);
-        v.put(MediaStore.MediaColumns.SIZE, file.length());
+        v.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES); // 存储路径
         ContentResolver c = BitherApplication.mContext.getContentResolver();
         if (c != null) {
-            c.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
+            Uri uri = c.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
+            if (uri != null) {
+                try {
+                    OutputStream outputStream = c.openOutputStream(uri);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
         }
     }
 

@@ -141,7 +141,6 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.slide_in_right, 0);
         setContentView(R.layout.activity_hot_advance_options);
-        AbstractApp.notificationService.removeAddressTxLoading();
         initView();
         registerReceiver();
     }
@@ -242,7 +241,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
     private View.OnClickListener signHashClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            new DialogSignMessageSelectType(HotAdvanceActivity.this,false, true).show();
+            new DialogSignMessageSelectType(HotAdvanceActivity.this, true, true).show();
         }
     };
 

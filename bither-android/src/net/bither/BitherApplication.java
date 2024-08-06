@@ -89,7 +89,6 @@ public class BitherApplication extends Application {
         androidDb.construct();
         AndroidImplAbstractApp appAndroid = new AndroidImplAbstractApp();
         appAndroid.construct();
-        AbstractApp.notificationService.removeAddressLoadCompleteState();
         StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .permitDiskReads().permitDiskWrites().penaltyLog().build());
         Threading.throwOnLockCycles();

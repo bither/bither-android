@@ -18,6 +18,12 @@
 
 package net.bither.ui.base;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 
 import net.bither.pin.PinCodeUtil;
@@ -59,4 +65,14 @@ public class BaseFragmentActivity extends FragmentActivity {
             }
         }.start();
     }
+
+    @Override
+    public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+            return super.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            return super.registerReceiver(receiver, filter);
+        }
+    }
+
 }

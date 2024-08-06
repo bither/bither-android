@@ -55,9 +55,9 @@ public class NotificationAndroidImpl implements NotificationService {
     @Override
     public void sendBroadcastSyncSPVFinished(boolean isFinished) {
         if (isFinished) {
-            AbstractApp.bitherjSetting.setBitherjDoneSyncFromSpv(isFinished);
+            AbstractApp.bitherjSetting.setBitherjDoneSyncFromSpv(true);
             final Intent broadcast = new Intent(ACTION_SYNC_FROM_SPV_FINISHED);
-            BitherApplication.mContext.sendStickyBroadcast(broadcast);
+            sendBroadcast(broadcast);
         }
     }
 
@@ -67,16 +67,9 @@ public class NotificationAndroidImpl implements NotificationService {
     }
 
     @Override
-    public void removeBroadcastSyncSPVFinished() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(
-                ACTION_SYNC_FROM_SPV_FINISHED));
-    }
-
-    @Override
     public void sendLastBlockChange() {
         Intent broadcast = new Intent(ACTION_SYNC_LAST_BLOCK_CHANGE);
-        broadcast.setPackage(BitherApplication.mContext.getPackageName());
-        BitherApplication.mContext.sendBroadcast(broadcast);
+        sendBroadcast(broadcast);
     }
 
     @Override
@@ -88,8 +81,7 @@ public class NotificationAndroidImpl implements NotificationService {
             broadcast.putExtra(MESSAGE_TX, tx.getTxHash());
         }
         broadcast.putExtra(MESSAGE_TX_NOTIFICATION_TYPE, txNotificationType.getValue());
-        broadcast.setPackage(BitherApplication.mContext.getPackageName());
-        BitherApplication.mContext.sendBroadcast(broadcast);
+        sendBroadcast(broadcast);
         log.debug("address " + address
                 + " balance updated " + deltaBalance
                 + (tx != null ? " tx " + Utils.hashToString(tx.getTxHash()) : "")
@@ -100,34 +92,21 @@ public class NotificationAndroidImpl implements NotificationService {
     @Override
     public void sendBroadcastPeerState(final int numPeers) {
         final Intent broadcast = new Intent(ACTION_PEER_STATE);
-
         broadcast.putExtra(ACTION_PEER_STATE_NUM_PEERS, numPeers);
-        BitherApplication.mContext.sendStickyBroadcast(broadcast);
-    }
-
-    @Override
-    public void removeBroadcastPeerState() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(
-                ACTION_PEER_STATE));
+        sendBroadcast(broadcast);
     }
 
     @Override
     public void sendBroadcastAddressLoadCompleteState() {
         final Intent broadcast = new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE);
-        BitherApplication.mContext.sendStickyBroadcast(broadcast);
-    }
-
-    @Override
-    public void removeAddressLoadCompleteState() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+        sendBroadcast(broadcast);
     }
 
     @Override
     public void sendConnectedChangeBroadcast(String connectedChangeBroadcast, boolean isConnected) {
         Intent intent = new Intent(connectedChangeBroadcast);
         intent.putExtra(connectedChangeBroadcast, isConnected);
-        intent.setPackage(BitherApplication.mContext.getPackageName());
-        BitherApplication.mContext.sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
     @Override
@@ -135,38 +114,32 @@ public class NotificationAndroidImpl implements NotificationService {
         final Intent broadcast = new Intent(ACTION_SYNC_BLOCK_AND_WALLET_STATE);
         broadcast.putExtra(ACTION_PROGRESS_INFO, value);
         broadcast.putExtra(ACTION_UNSYNC_BLOCK_NUMBER_INFO, unsyncBlockNumber);
-        broadcast.setPackage(BitherApplication.mContext.getPackageName());
-        BitherApplication.mContext.sendBroadcast(broadcast);
-    }
-
-    @Override
-    public void removeProgressState() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent
-                (ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+        sendBroadcast(broadcast);
     }
 
     @Override
     public void sendBroadcastAddressTxLoading(String address) {
         final Intent broadcast = new Intent(ACTION_ADDRESS_TX_LOADING_STATE);
         broadcast.putExtra(ACTION_ADDRESS_TX_LOADING_INFO, address);
-        BitherApplication.mContext.sendStickyBroadcast(broadcast);
-    }
-
-    @Override
-    public void removeAddressTxLoading() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(ACTION_ADDRESS_TX_LOADING_STATE));
+        sendBroadcast(broadcast);
     }
 
     @Override
     public void sendBroadcastAddressTxLoadError() {
         final Intent broadcast = new Intent(ACTION_ADDRESS_TX_LOADING_STATE);
         broadcast.putExtra(ACTION_ADDRESS_TX_LOAD_ERROR_INFO, true);
-        BitherApplication.mContext.sendStickyBroadcast(broadcast);
+        sendBroadcast(broadcast);
     }
 
     @Override
     public void sendMinerFeeChange() {
         final Intent broadcast = new Intent(ACTION_MINER_FEE_CHANGE);
-        BitherApplication.mContext.sendStickyBroadcast(broadcast);
+        sendBroadcast(broadcast);
     }
+
+    static public void sendBroadcast(Intent intent) {
+        intent.setPackage(BitherApplication.mContext.getPackageName());
+        BitherApplication.mContext.sendBroadcast(intent);
+    }
+
 }

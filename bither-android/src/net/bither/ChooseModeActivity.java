@@ -229,6 +229,7 @@ public class ChooseModeActivity extends BaseActivity {
                 BitherApplication.startBlockchainService();
                 if (!AppSharedPreference.getInstance().getDownloadSpvFinish()) {
                     initView();
+                    checkWarmDataReady();
                     dowloadSpvBlock();
                     configureWarmWait();
                 } else {
@@ -486,7 +487,6 @@ public class ChooseModeActivity extends BaseActivity {
 
         }
         startActivity(intent);
-
     }
 
     private static class ShowHideView {
@@ -599,18 +599,24 @@ public class ChooseModeActivity extends BaseActivity {
     };
 
     private void checkWarmDataReady() {
+        if (receiverRegistered) {
+            return;
+        }
         receiverRegistered = true;
-        registerReceiver(warmDataReadyReceiver, new IntentFilter(BroadcastUtil
-                .ACTION_DOWLOAD_SPV_BLOCK));
+        registerReceiver(warmDataReadyReceiver, new IntentFilter(BroadcastUtil.ACTION_DOWLOAD_SPV_BLOCK));
     }
 
     @Override
     protected void onDestroy() {
+        unregisterWarmDataReadyReceiver();
+        super.onDestroy();
+    }
+
+    private void unregisterWarmDataReadyReceiver() {
         if (receiverRegistered) {
             unregisterReceiver(warmDataReadyReceiver);
             receiverRegistered = false;
         }
-        super.onDestroy();
     }
 
     private final OnClickListener warmRetryClick = new OnClickListener() {
@@ -619,6 +625,7 @@ public class ChooseModeActivity extends BaseActivity {
         public void onClick(View v) {
             llWarmExtraError.setVisibility(View.GONE);
             llWarmExtraWaiting.setVisibility(View.VISIBLE);
+            checkWarmDataReady();
             dowloadSpvBlock();
         }
     };
@@ -628,9 +635,8 @@ public class ChooseModeActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             LogUtil.d("broadcase", intent.getAction());
-            boolean completed = intent.getBooleanExtra(BroadcastUtil
-                    .ACTION_DOWLOAD_SPV_BLOCK_STATE, false);
-            BroadcastUtil.removeBroadcastGetSpvBlockCompelte();
+            boolean completed = intent.getBooleanExtra(BroadcastUtil.ACTION_DOWLOAD_SPV_BLOCK_STATE, false);
+            unregisterWarmDataReadyReceiver();
             if (AppSharedPreference.getInstance().getDownloadSpvFinish() && completed) {
                 llWarmExtraError.setVisibility(View.GONE);
                 llWarmExtraWaiting.setVisibility(View.VISIBLE);
@@ -659,7 +665,6 @@ public class ChooseModeActivity extends BaseActivity {
         new WrapLayoutParamsForAnimator(vWarmExtra).setLayoutWeight(1);
         new WrapLayoutParamsForAnimator(rlCold).setLayoutWeight(0);
         new WrapLayoutParamsForAnimator(vColdBg).setLayoutWeight(0);
-        checkWarmDataReady();
     }
 
     private void configureColdWait() {

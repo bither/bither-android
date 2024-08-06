@@ -29,12 +29,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 
@@ -98,8 +100,7 @@ public class BlockchainService extends android.app.Service {
             tickReceiver = new TickReceiver(BlockchainService.this);
             txReceiver = new TxReceiver(BlockchainService.this, tickReceiver);
             receiverConnectivity();
-            registerReceiver(tickReceiver, new IntentFilter(
-                    Intent.ACTION_TIME_TICK));
+            registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
             registerReceiver(txReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE));
             BroadcastUtil.sendBroadcastStartPeer();
         }
@@ -121,7 +122,11 @@ public class BlockchainService extends android.app.Service {
                 .setPriority(PRIORITY_MIN)
                 .setCategory(CATEGORY_SERVICE)
                 .build();
-        startForeground(1, notification);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
+            startForeground(1, notification);
+        }
     }
     
     @RequiresApi(Build.VERSION_CODES.O)
@@ -144,7 +149,15 @@ public class BlockchainService extends android.app.Service {
                 .addAction(BroadcastUtil.ACTION_START_PEER_MANAGER);
         registerReceiver(connectivityReceiver, intentFilter);
         connectivityReceivered = true;
+    }
 
+    @Override
+    public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+            return super.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            return super.registerReceiver(receiver, filter);
+        }
     }
 
     private void scheduleStartBlockchainService(@Nonnull final Context context) {
@@ -476,7 +489,6 @@ public class BlockchainService extends android.app.Service {
                 return;
             }
             startPeerManager();
-            AbstractApp.notificationService.removeBroadcastSyncSPVFinished();
             if (spvFinishedReceiver != null && spvFinishedReceivered) {
                 unregisterReceiver(spvFinishedReceiver);
                 spvFinishedReceivered = false;

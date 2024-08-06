@@ -19,6 +19,7 @@ package net.bither.util;
 import android.content.Intent;
 
 import net.bither.BitherApplication;
+import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.model.Ticker;
 
@@ -38,8 +39,7 @@ public class BroadcastUtil {
 
     public static void sendBroadcastStartPeer() {
         final Intent broadcast = new Intent(ACTION_START_PEER_MANAGER);
-        broadcast.setPackage(BitherApplication.mContext.getPackageName());
-        BitherApplication.mContext.sendBroadcast(broadcast);
+        NotificationAndroidImpl.sendBroadcast(broadcast);
     }
 
 
@@ -47,8 +47,7 @@ public class BroadcastUtil {
         if (tickers != null && tickers.size() > 0) {
             MarketUtil.setTickerList(tickers);
             final Intent broadcast = new Intent(ACTION_MARKET);
-            broadcast.setPackage(BitherApplication.mContext.getPackageName());
-            BitherApplication.mContext.sendBroadcast(broadcast);
+            NotificationAndroidImpl.sendBroadcast(broadcast);
         }
     }
 
@@ -60,14 +59,8 @@ public class BroadcastUtil {
     public static void sendBroadcastGetSpvBlockComplete(boolean isComplete) {
         final Intent intent = new Intent(ACTION_DOWLOAD_SPV_BLOCK);
         intent.putExtra(ACTION_DOWLOAD_SPV_BLOCK_STATE, isComplete);
-        BitherApplication.mContext.sendBroadcast(intent);
+        NotificationAndroidImpl.sendBroadcast(intent);
         // LogUtil.d("broadcase", "sendBroadcastAddressGetBlockComplete");
     }
-
-    public static void removeBroadcastGetSpvBlockCompelte() {
-        BitherApplication.mContext.removeStickyBroadcast(new Intent(
-                ACTION_DOWLOAD_SPV_BLOCK));
-    }
-
 
 }

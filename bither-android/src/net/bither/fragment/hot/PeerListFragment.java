@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ListFragment;
@@ -45,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -224,15 +226,16 @@ public final class PeerListFragment extends ListFragment {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-
-            context.registerReceiver(broadcastReceiver, new IntentFilter(
-                    NotificationAndroidImpl.ACTION_PEER_STATE));
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_PEER_STATE), Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                context.registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_PEER_STATE));
+            }
         }
 
         @Override
         protected void onStopLoading() {
             context.unregisterReceiver(broadcastReceiver);
-
             super.onStopLoading();
         }
 
@@ -276,8 +279,9 @@ public final class PeerListFragment extends ListFragment {
     };
 
     private void refreshPeer() {
-        if (peerCacheList != null) {
-            Collections.sort(peerCacheList, new Comparator<Peer>() {
+        if (peerCacheList != null && peerCacheList.size() > 0) {
+            ArrayList<Peer> peers = new ArrayList<>(peerCacheList);
+            Collections.sort(peers, new Comparator<Peer>() {
                 @Override
                 public int compare(Peer lhs, Peer rhs) {
                     if (lhs.getClientVersion() == 0 && rhs.getClientVersion() > 0) {
@@ -292,7 +296,7 @@ public final class PeerListFragment extends ListFragment {
 
                 }
             });
-            for (final Peer peer : peerCacheList) {
+            for (final Peer peer : peers) {
                 adapter.add(peer);
             }
         }

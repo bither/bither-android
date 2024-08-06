@@ -104,8 +104,6 @@ public class HotActivity extends BaseFragmentActivity {
     private final MinerFeeBroadcastReceiver minerFeeBroadcastReceiver = new MinerFeeBroadcastReceiver();
 
     protected void onCreate(Bundle savedInstanceState) {
-        AbstractApp.notificationService.removeProgressState();
-        AbstractApp.notificationService.removeAddressTxLoading();
         initAppState();
         super.onCreate(savedInstanceState);
         BitherApplication.hotActivity = this;
@@ -142,14 +140,12 @@ public class HotActivity extends BaseFragmentActivity {
     }
 
     private void registerReceiver() {
-        registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl
-                .ACTION_SYNC_BLOCK_AND_WALLET_STATE));
+        registerReceiver(broadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_SYNC_BLOCK_AND_WALLET_STATE));
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(NotificationAndroidImpl.ACTION_SYNC_LAST_BLOCK_CHANGE);
         intentFilter.addAction(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE);
         registerReceiver(txAndBlockBroadcastReceiver, intentFilter);
-        registerReceiver(addressIsLoadedReceiver,
-                new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+        registerReceiver(addressIsLoadedReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_LOAD_COMPLETE_STATE));
         registerReceiver(addressIsLoadingReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_TX_LOADING_STATE));
         registerReceiver(peerConnectedChangeReceiver, new IntentFilter(ConnectedChangeBroadcast));
         registerReceiver(minerFeeBroadcastReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_MINER_FEE_CHANGE));
