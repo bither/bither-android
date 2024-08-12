@@ -38,13 +38,12 @@ public class TickReceiver extends BroadcastReceiver {
 
     public TickReceiver(BlockchainService blockchainService) {
         this.blockchainService = blockchainService;
-
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
-            this.blockchainService.stopSelf();
+            this.blockchainService.onStop();
             return;
         }
         if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
@@ -102,7 +101,6 @@ public class TickReceiver extends BroadcastReceiver {
                 // if idling, shutdown service
                 if (isIdle && !AbstractApp.bitherjSetting.isApplicationRunInForeground()) {
                     log.info("idling detected, stopping service");
-                    this.blockchainService.stopSelf();
                 }
             }
 

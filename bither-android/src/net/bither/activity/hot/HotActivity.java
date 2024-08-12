@@ -16,15 +16,21 @@
 
 package net.bither.activity.hot;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
@@ -103,6 +109,8 @@ public class HotActivity extends BaseFragmentActivity {
     private final PeerConnectedChangeReceiver peerConnectedChangeReceiver = new PeerConnectedChangeReceiver();
     private final MinerFeeBroadcastReceiver minerFeeBroadcastReceiver = new MinerFeeBroadcastReceiver();
 
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 100;
+
     protected void onCreate(Bundle savedInstanceState) {
         initAppState();
         super.onCreate(savedInstanceState);
@@ -136,6 +144,16 @@ public class HotActivity extends BaseFragmentActivity {
             tvAlert.setText(R.string.tip_no_peers_connected_scan);
             pbAlert.setVisibility(View.VISIBLE);
             llAlert.setVisibility(View.VISIBLE);
+        }
+        checkNotificationPermission();
+
+    }
+
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIFICATION_PERMISSION);
+            }
         }
     }
 

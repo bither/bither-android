@@ -16,33 +16,21 @@
 
 package net.bither.service;
 
-import static android.support.v4.app.NotificationCompat.CATEGORY_SERVICE;
-import static android.support.v4.app.NotificationCompat.PRIORITY_MIN;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ServiceInfo;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.os.IBinder;
 import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
 
+import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
-import net.bither.R;
 import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
@@ -53,12 +41,12 @@ import net.bither.bitherj.utils.BlockUtil;
 import net.bither.bitherj.utils.TransactionsUtil;
 import net.bither.bitherj.utils.Utils;
 import net.bither.preference.AppSharedPreference;
+import net.bither.receiver.AutosyncReceiver;
 import net.bither.runnable.DownloadSpvRunnable;
 import net.bither.util.BitherTimer;
 import net.bither.util.BroadcastUtil;
 import net.bither.util.LogUtil;
 import net.bither.util.NetworkUtil;
-import net.bither.util.NetworkUtil.NetworkType;
 import net.bither.util.UpgradeUtil;
 
 import org.slf4j.Logger;
@@ -66,78 +54,60 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
-public class BlockchainService extends android.app.Service {
+public class BlockchainService {
 
-    public static final String ACTION_BEGIN_DOWLOAD_SPV_BLOCK = R.class
-            .getPackage().getName() + ".dowload_block_api_begin";
+    private static BlockchainService instance;
+
     private static final Logger log = LoggerFactory
             .getLogger(BlockchainService.class);
-    private WakeLock wakeLock;
-    private long serviceCreatedAt;
+    private PowerManager.WakeLock wakeLock;
     private BitherTimer mBitherTimer;
     private SPVFinishedReceiver spvFinishedReceiver = null;
     private TickReceiver tickReceiver = null;
     private TxReceiver txReceiver = null;
 
     private boolean connectivityReceivered = false;
-
-    private final IBinder mBinder = new LocalBinder(BlockchainService.this);
+    private boolean isRepeatingAlarmSet = false;
 
     private boolean peerCanNotRun = false;
+    private Context mContext;
 
-    @Override
-    public void onCreate() {
-        serviceCreatedAt = System.currentTimeMillis();
-        log.info(".onCreate()");
-        super.onCreate();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForeground();
+    public static BlockchainService getInstance() {
+        if (instance == null) {
+            instance = new BlockchainService();
         }
-        final String lockName = getPackageName() + " blockchain sync";
-        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        return instance;
+    }
+
+    public void onStart() {
+        if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.COLD) {
+            return;
+        }
+        if (mContext != null) {
+            if (AppSharedPreference.getInstance().getSyncInterval() != BitherSetting.SyncInterval.OnlyOpenApp && !AddressManager.getInstance().noAddress()) {
+                if (isRepeatingAlarmSet) {
+                   return;
+                }
+                scheduleSync();
+            } else {
+                if (!isRepeatingAlarmSet) {
+                    return;
+                }
+                scheduleSync();
+            }
+        }
+        mContext = BitherApplication.mContext;
+        final String lockName = mContext.getPackageName() + " blockchain sync";
+        final PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, lockName);
-        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
-            tickReceiver = new TickReceiver(BlockchainService.this);
-            txReceiver = new TxReceiver(BlockchainService.this, tickReceiver);
-            receiverConnectivity();
-            registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
-            registerReceiver(txReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE));
-            BroadcastUtil.sendBroadcastStartPeer();
-        }
+        tickReceiver = new TickReceiver(this);
+        txReceiver = new TxReceiver(mContext, tickReceiver);
+        receiverConnectivity();
+        registerReceiver(tickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        registerReceiver(txReceiver, new IntentFilter(NotificationAndroidImpl.ACTION_ADDRESS_BALANCE));
+        BroadcastUtil.sendBroadcastStartPeer();
         startMarkTimerTask();
-    }
-
-    private void startForeground() {
-        String channelId;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = createNotificationChannel("kim.hsl", "ForegroundService");
-        } else {
-            channelId = "";
-        }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
-        Notification notification = builder.setOngoing(true)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(getString(R.string.sync_block_data_title))
-                .setContentText(getString(R.string.sync_block_data_des))
-                .setPriority(PRIORITY_MIN)
-                .setCategory(CATEGORY_SERVICE)
-                .build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
-        } else {
-            startForeground(1, notification);
-        }
-    }
-    
-    @RequiresApi(Build.VERSION_CODES.O)
-    private String createNotificationChannel(String channelId, String channelName){
-        NotificationChannel chan = new NotificationChannel(channelId,
-                channelName, NotificationManager.IMPORTANCE_NONE);
-        chan.setLightColor(Color.BLUE);
-        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-        NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        service.createNotificationChannel(chan);
-        return channelId;
+        scheduleSync();
     }
 
     private void receiverConnectivity() {
@@ -145,69 +115,40 @@ public class BlockchainService extends android.app.Service {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         intentFilter.addAction(Intent.ACTION_DEVICE_STORAGE_LOW);
         intentFilter.addAction(Intent.ACTION_DEVICE_STORAGE_OK);
-        intentFilter
-                .addAction(BroadcastUtil.ACTION_START_PEER_MANAGER);
+        intentFilter.addAction(BroadcastUtil.ACTION_START_PEER_MANAGER);
         registerReceiver(connectivityReceiver, intentFilter);
         connectivityReceivered = true;
     }
 
-    @Override
-    public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
+    private void registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
-            return super.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            mContext.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
-            return super.registerReceiver(receiver, filter);
+            mContext.registerReceiver(receiver, filter);
         }
     }
 
-    private void scheduleStartBlockchainService(@Nonnull final Context context) {
+    private void unregisterReceiver(BroadcastReceiver receiver) {
+        mContext.unregisterReceiver(receiver);
+    }
+
+    public void scheduleSync() {
         BitherSetting.SyncInterval syncInterval = AppSharedPreference.getInstance().getSyncInterval();
-        if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp ||
-                AddressManager.getInstance().getAllAddresses().size() == 0) {
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(mContext, 0, new Intent(mContext, AutosyncReceiver.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(alarmIntent);
+        if (syncInterval == BitherSetting.SyncInterval.OnlyOpenApp || AddressManager.getInstance().noAddress()) {
+            isRepeatingAlarmSet = false;
             return;
         }
-        long interval = AlarmManager.INTERVAL_HOUR;
-        if (syncInterval == BitherSetting.SyncInterval.Normal) {
-            final long lastUsedAgo = AppSharedPreference.getInstance().getLastUsedAgo();
-            if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_JUST_MS) {
-                interval = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-                log.info("start INTERVAL_FIFTEEN_MINUTES");
-            } else if (lastUsedAgo < BitherSetting.LAST_USAGE_THRESHOLD_RECENTLY_MS) {
-                interval = AlarmManager.INTERVAL_HALF_DAY;
-                log.info("start INTERVAL_HALF_DAY");
-            } else {
-                interval = AlarmManager.INTERVAL_DAY;
-                log.info("start INTERVAL_DAY");
-            }
-        }
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context
-                .ALARM_SERVICE);
-        final PendingIntent alarmIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            alarmIntent = PendingIntent.getService(context, 0, new Intent(context, BlockchainService.class), PendingIntent.FLAG_IMMUTABLE|0);
-        } else {
-            alarmIntent = PendingIntent.getService(context, 0, new Intent(context, BlockchainService.class), 0);
-        }
-        alarmManager.cancel(alarmIntent);
+        long interval = 60 * 1000;
         final long now = System.currentTimeMillis();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-        // as of KitKat, set() is inexact
-        {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, now + interval, alarmIntent);
-        } else
-        // workaround for no inexact set() before KitKat
-        {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, now + interval,
-                    AlarmManager.INTERVAL_HOUR, alarmIntent);
-        }
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, now + interval, interval, alarmIntent);
+        isRepeatingAlarmSet = true;
     }
 
-    @Override
-    public void onDestroy() {
-        log.info(".onDestroy()");
-        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
-            stopForeground(true);
-            scheduleStartBlockchainService(this);
+    public void onStop() {
+        if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD && mContext != null) {
             PeerManager.instance().stop();
             PeerManager.instance().onDestroy();
             if (mBitherTimer != null) {
@@ -229,47 +170,12 @@ public class BlockchainService extends android.app.Service {
                 unregisterReceiver(txReceiver);
             }
             BroadcastUtil.removeMarketState();
+            mContext = null;
         }
-        super.onDestroy();
-
-        log.info("service was up for "
-                + ((System.currentTimeMillis() - serviceCreatedAt) / 1000 / 60)
-                + " minutes");
     }
 
-    @Override
-    public void onLowMemory() {
-        log.warn("low memory detected, stopping service");
-        stopSelf();
-    }
-
-    @Override
-    public int onStartCommand(final Intent intent, final int flags,
-                              final int startId) {
-        if (intent == null) {
-            return START_NOT_STICKY;
-        }
-        final String action = intent.getAction();
-        if (action != null) {
-            LogUtil.i("onStartCommand", "onStartCommand Service:" + action);
-        }
-        if (ACTION_BEGIN_DOWLOAD_SPV_BLOCK.equals(action)) {
-            new Thread(new DownloadSpvRunnable()).start();
-        }
-        return START_NOT_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(final Intent intent) {
-        log.debug(".onBind()");
-        return mBinder;
-    }
-
-    @Override
-    public boolean onUnbind(final Intent intent) {
-        log.debug(".onUnbind()");
-
-        return super.onUnbind(intent);
+    public void downloadSpvBlock() {
+        new Thread(new DownloadSpvRunnable()).start();
     }
 
     private final BroadcastReceiver connectivityReceiver = new BroadcastReceiver() {
@@ -324,9 +230,9 @@ public class BlockchainService extends android.app.Service {
                 return;
             }
             final boolean hasEverything = hasConnectivity && hasStorage;
-            NetworkType networkType = NetworkUtil.isConnectedType();
+            NetworkUtil.NetworkType networkType = NetworkUtil.isConnectedType();
             boolean networkIsAvailadble = (!AppSharedPreference.getInstance().getSyncBlockOnlyWifi())
-                    || (networkType == NetworkType.Wifi);
+                    || (networkType == NetworkUtil.NetworkType.Wifi);
 
             if (networkIsAvailadble) {
                 if (hasEverything) {
@@ -336,15 +242,11 @@ public class BlockchainService extends android.app.Service {
                         startPeer();
                     }
                 } else {
-
                     PeerManager.instance().stop();
                 }
             } else {
-
                 PeerManager.instance().stop();
             }
-
-
         }
     };
 
@@ -445,9 +347,9 @@ public class BlockchainService extends android.app.Service {
         if (AddressManager.getInstance().addressIsSyncComplete()
                 && AppSharedPreference.getInstance().getBitherjDoneSyncFromSpv()
                 && AppSharedPreference.getInstance().getDownloadSpvFinish()) {
-            NetworkType networkType = NetworkUtil.isConnectedType();
+            NetworkUtil.NetworkType networkType = NetworkUtil.isConnectedType();
             boolean networkIsAvailadble = (!AppSharedPreference.getInstance().getSyncBlockOnlyWifi())
-                    || (networkType == NetworkType.Wifi);
+                    || (networkType == NetworkUtil.NetworkType.Wifi);
             if (networkIsAvailadble && !PeerManager.instance().isConnected()) {
                 PeerManager.instance().start();
             }
@@ -458,7 +360,7 @@ public class BlockchainService extends android.app.Service {
     public void startMarkTimerTask() {
         if (AppSharedPreference.getInstance().getAppMode() != BitherjSettings.AppMode.COLD) {
             if (mBitherTimer == null) {
-                mBitherTimer = new BitherTimer(BlockchainService.this);
+                mBitherTimer = new BitherTimer(mContext);
                 mBitherTimer.startTimer();
             }
         }

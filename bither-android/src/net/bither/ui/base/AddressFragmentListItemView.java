@@ -152,8 +152,18 @@ public class AddressFragmentListItemView extends FrameLayout implements AddressI
                 }
             }
             if (lastTransaction != null && lastTransaction.getConfirmationCount() < 6) {
-                vTransactionImmuture.setVisibility(View.VISIBLE);
-                vTransactionImmuture.setTransaction(lastTransaction, address);
+                long value = 0;
+                try {
+                    value = lastTransaction.deltaAmountFrom(address);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (value != 0) {
+                    vTransactionImmuture.setVisibility(View.VISIBLE);
+                    vTransactionImmuture.setTransaction(lastTransaction, address, value);
+                } else {
+                    vTransactionImmuture.setVisibility(View.GONE);
+                }
             } else {
                 vTransactionImmuture.setVisibility(View.GONE);
             }

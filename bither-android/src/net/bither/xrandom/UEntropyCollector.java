@@ -28,6 +28,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -86,7 +87,13 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     public void onError(Exception e, IUEntropySource source) {
         if (sources.contains(source)) {
             source.onPause();
-            sources.remove(source);
+            Iterator<IUEntropySource> iterator = sources.iterator();
+            while (iterator.hasNext()) {
+                IUEntropySource item = iterator.next();
+                if (item.equals(source)) {
+                    iterator.remove();
+                }
+            }
         }
         if (listener != null) {
             listener.onUEntropySourceError(e, source);
@@ -213,7 +220,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     @Override
     public void onResume() {
         paused = false;
-        for (IUEntropySource source : sources) {
+        for (IUEntropySource source : sources()) {
             source.onResume();
         }
     }
@@ -221,7 +228,7 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     @Override
     public void onPause() {
         paused = true;
-        for (IUEntropySource source : sources) {
+        for (IUEntropySource source : sources()) {
             source.onPause();
         }
     }
@@ -232,6 +239,6 @@ public class UEntropyCollector implements IUEntropy, IUEntropySource {
     }
 
     public HashSet<IUEntropySource> sources() {
-        return sources;
+        return new HashSet<>(sources);
     }
 }

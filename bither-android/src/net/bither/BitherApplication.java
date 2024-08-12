@@ -20,18 +20,14 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
 import net.bither.activity.cold.ColdActivity;
 import net.bither.activity.hot.HotActivity;
-import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.BitherjSettings;
 import net.bither.bitherj.core.AddressManager;
-import net.bither.bitherj.crypto.mnemonic.MnemonicCode;
 import net.bither.bitherj.utils.Threading;
 import net.bither.db.AddressDatabaseHelper;
 import net.bither.db.AndroidDbImpl;
@@ -108,13 +104,8 @@ public class BitherApplication extends Application {
     }
 
     public static void startBlockchainService() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mContext.startForegroundService(new Intent(mContext, BlockchainService.class));
-        } else {
-            mContext.startService(new Intent(mContext, BlockchainService.class));
-        }
+        BlockchainService.getInstance().onStart();
     }
-
 
     public static boolean canReloadTx() {
         if (reloadTxTime == -1) {

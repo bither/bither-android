@@ -18,6 +18,7 @@ package net.bither.util;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -28,14 +29,14 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 
 public class SystemUtil {
     private static PackageInfo packageInfo;
+    private static final String NotificationChannelId = "Notification_bither_channel_id";
+    private static final String NotificationChannelName = "Notification_bither_channel_name";
 
     public synchronized static PackageInfo packageInfo() {
         if (packageInfo == null) {
@@ -50,11 +51,6 @@ public class SystemUtil {
         return packageInfo;
     }
 
-    public static String getIMEI() {
-        return ((TelephonyManager) BitherApplication.mContext
-                .getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-    }
-
     public static int getAppVersionCode() {
         try {
             // ---get the package info---
@@ -63,7 +59,6 @@ public class SystemUtil {
                     BitherApplication.mContext.getPackageName(), 0);
             return pi.versionCode;
         } catch (Exception e) {
-            Log.e("VersionInfo", "Exception", e);
             return 0;
         }
 
@@ -78,11 +73,12 @@ public class SystemUtil {
         builder.setSmallIcon(iconId);
         builder.setContentText(contentText);
         builder.setContentTitle(title);
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_CANCEL_CURRENT));
-        } else {
-            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(NotificationChannelId, NotificationChannelName, NotificationManager.IMPORTANCE_HIGH);
+            builder.setChannelId(NotificationChannelId);
+            nm.createNotificationChannel(mChannel);
         }
 
         builder.setWhen(System.currentTimeMillis());
@@ -105,7 +101,6 @@ public class SystemUtil {
         }
 
         nm.notify(notifyId, notification);
-
     }
 
     public static void nmNotifyDefault(NotificationManager nm, Context context,
@@ -118,11 +113,13 @@ public class SystemUtil {
         builder.setContentText(contentText);
         builder.setContentTitle(title);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_CANCEL_CURRENT));
-        } else {
-            builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(NotificationChannelId, NotificationChannelName, NotificationManager.IMPORTANCE_HIGH);
+            builder.setChannelId(NotificationChannelId);
+            nm.createNotificationChannel(mChannel);
         }
+
+        builder.setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE|PendingIntent.FLAG_CANCEL_CURRENT));
 
         builder.setWhen(System.currentTimeMillis());
         Notification notification = null;
@@ -136,7 +133,6 @@ public class SystemUtil {
         notification.ledOnMS = 3000;
         notification.ledOffMS = 2000;
         nm.notify(notifyId, notification);
-
     }
 
     public static void gotoWirelessSetting(Activity activity) {

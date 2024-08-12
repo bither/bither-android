@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
@@ -283,7 +282,7 @@ public class ChooseModeActivity extends BaseActivity {
                     new Runnable() {
                         @Override
                         public void run() {
-                            stopService(new Intent(ChooseModeActivity.this, BlockchainService.class));
+                            BlockchainService.getInstance().onStop();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -327,7 +326,7 @@ public class ChooseModeActivity extends BaseActivity {
                     new Runnable() {
                         @Override
                         public void run() {
-                            stopService(new Intent(ChooseModeActivity.this, BlockchainService.class));
+                            BlockchainService.getInstance().onStop();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -700,14 +699,7 @@ public class ChooseModeActivity extends BaseActivity {
     }
 
     private void dowloadSpvBlock() {
-        Intent intent = new Intent(
-                BlockchainService.ACTION_BEGIN_DOWLOAD_SPV_BLOCK, null,
-                BitherApplication.mContext, BlockchainService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            BitherApplication.mContext.startForegroundService(intent);
-        } else {
-            BitherApplication.mContext.startService(intent);
-        }
+        BlockchainService.getInstance().downloadSpvBlock();
     }
 
     @Override

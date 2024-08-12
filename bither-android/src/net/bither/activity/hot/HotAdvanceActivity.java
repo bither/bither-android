@@ -1125,7 +1125,7 @@ public class HotAdvanceActivity extends SwipeRightFragmentActivity {
                             .OnlyOpenApp);
                     break;
             }
-
+            BlockchainService.getInstance().scheduleSync();
         }
     };
 

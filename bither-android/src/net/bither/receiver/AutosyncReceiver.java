@@ -30,7 +30,7 @@ public class AutosyncReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if (intent == null) {
+        if (intent == null || intent.getAction() == null) {
             return;
         }
         LogUtil.d("receiver", intent.getAction());
@@ -38,8 +38,7 @@ public class AutosyncReceiver extends BroadcastReceiver {
         if (!Intent.ACTION_PACKAGE_REPLACED.equals(intent.getAction())
                 || (Utils.compareString(intent.getDataString(), "package:" + context.getPackageName()))) {
             if (AppSharedPreference.getInstance().getAppMode() == BitherjSettings.AppMode.HOT) {
-                BitherApplication.getBitherApplication()
-                        .startBlockchainService();
+                BitherApplication.startBlockchainService();
             }
         }
     }

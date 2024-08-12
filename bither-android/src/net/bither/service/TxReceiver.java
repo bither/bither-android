@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import net.bither.BitherApplication;
 import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
 import net.bither.R;
@@ -20,14 +19,14 @@ import net.bither.util.UnitUtilWrapper;
 
 public class TxReceiver extends BroadcastReceiver {
 
-    private BlockchainService blockchainService;
+    private Context mContext;
     private NotificationManager nm;
     private TickReceiver tickReceiver;
 
-    public TxReceiver(BlockchainService service, TickReceiver tickReceiver) {
-        this.blockchainService = service;
+    public TxReceiver(Context context, TickReceiver tickReceiver) {
+        this.mContext = context;
         this.tickReceiver = tickReceiver;
-        nm = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class TxReceiver extends BroadcastReceiver {
         String address = intent.getStringExtra(NotificationAndroidImpl.MESSAGE_ADDRESS);
         long amount = intent.getLongExtra(NotificationAndroidImpl.MESSAGE_DELTA_BALANCE, 0);
         int txNotificationType = intent.getIntExtra(NotificationAndroidImpl.MESSAGE_TX_NOTIFICATION_TYPE, 0);
-        if (txNotificationType == Tx.TxNotificationType.txReceive.getValue()) {
+        if (txNotificationType == Tx.TxNotificationType.txReceive.getValue() && amount != 0) {
             boolean isReceived = amount > 0;
             amount = Math.abs(amount);
             notifyCoins(address, amount, isReceived);
@@ -53,19 +52,19 @@ public class TxReceiver extends BroadcastReceiver {
                              boolean isReceived) {
         String contentText = address;
         if (Utils.compareString(address, HDAccount.HDAccountPlaceHolder)) {
-            contentText = BitherApplication.mContext.getString(R.string.address_group_hd);
+            contentText = mContext.getString(R.string.address_group_hd);
         } else if (Utils.compareString(address, HDAccount.HDAccountMonitoredPlaceHolder)) {
-            contentText = BitherApplication.mContext.getString(R.string.address_group_hd_monitored);
+            contentText = mContext.getString(R.string.address_group_hd_monitored);
         }
         String title = UnitUtilWrapper.formatValue(amount) + " " + AppSharedPreference.getInstance().getBitcoinUnit().name();
         if (isReceived) {
-            title = blockchainService.getString(R.string.feed_received_btc) + " " + title;
+            title = mContext.getString(R.string.feed_received_btc) + " " + title;
         } else {
-            title = blockchainService.getString(R.string.feed_send_btc) + " " + title;
+            title = mContext.getString(R.string.feed_send_btc) + " " + title;
         }
-        Intent intent = new Intent(blockchainService, HotActivity.class);
+        Intent intent = new Intent(mContext, HotActivity.class);
         intent.putExtra(BitherSetting.INTENT_REF.NOTIFICATION_ADDRESS, address);
-        SystemUtil.nmNotifyOfWallet(nm, blockchainService,
+        SystemUtil.nmNotifyOfWallet(nm, mContext,
                 BitherSetting.NOTIFICATION_ID_COINS_RECEIVED, intent, title,
                 contentText, R.drawable.ic_launcher, R.raw.coins_received);
 

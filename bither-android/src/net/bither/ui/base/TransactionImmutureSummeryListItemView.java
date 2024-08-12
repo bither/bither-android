@@ -72,21 +72,14 @@ public class TransactionImmutureSummeryListItemView extends FrameLayout {
         btnBtc = (BtcToMoneyButton) findViewById(R.id.btn_btc);
     }
 
-    public void setTransaction(Tx transaction, Address address) {
+    public void setTransaction(Tx transaction, Address address, long value) {
         this.transaction = transaction;
         this.address = address;
-        showTransaction();
+        showTransaction(value);
     }
 
-    private void showTransaction() {
+    private void showTransaction(long value) {
         if (this.transaction == null || address == null) {
-            return;
-        }
-        long value = 0;
-
-        try {
-            value = transaction.deltaAmountFrom(address);
-        } catch (Exception e) {
             return;
         }
         icon.setTx(transaction);
