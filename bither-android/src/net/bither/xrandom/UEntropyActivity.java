@@ -113,8 +113,7 @@ public abstract class UEntropyActivity extends BaseFragmentActivity implements U
         vOverlay.postDelayed(new Runnable() {
             @Override
             public void run() {
-                DialogPassword dialogPassword = new DialogPassword(UEntropyActivity.this,
-                        UEntropyActivity.this);
+                DialogPassword dialogPassword = new DialogPassword(UEntropyActivity.this, true, UEntropyActivity.this);
                 dialogPassword.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                         WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 dialogPassword.setNeedCancelEvent(true);

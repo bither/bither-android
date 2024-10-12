@@ -95,12 +95,13 @@
     <string name="add_address_already_watched">This address is already monitored</string>
     <string name="addresses_already_monitored">This Bither Cold is already monitored.</string>
     <string name="add_address_generate_address_with_private_key">Generate</string>
-    <string name="add_address_generate_address_password_label">Enter password of wallet</string>
+    <string name="add_address_generate_address_password_label">Enter the private keys encrypt password</string>
     <string name="add_address_generate_address_password_lengh_note">Length: 6&#8211;43</string>
-    <string name="add_address_generate_address_password_set_label">Set password of wallet</string>
+    <string name="add_address_generate_address_password_set_label">Set private keys encrypt password</string>
     <string name="add_address_generate_address_password_hint">Password</string>
     <string name="add_address_generate_address_password_confirm_hint">Confirm Password</string>
     <string name="add_address_generate_address_password_not_same">Passwords not same</string>
+    <string name="password_des">This password will only be used to encrypt local private keys. Bither is a decentralized wallet, it does not require login credentials.</string>
     <string name="password_checking">Checking password</string>
     <string name="password_wrong">Wrong Password</string>
     <string name="decrypt_failed">Decryption Failed</string>
@@ -198,7 +199,7 @@
     <string name="set_avatar">Set Avatar</string>
     <string name="set_avatar_camera">From Camera</string>
     <string name="set_avatar_gallery">From Gallery</string>
-    <string name="edit_password_button">Change Password</string>
+    <string name="edit_password_button">Change private keys encrypt password</string>
     <string name="export_log">Export Log</string>
     <string name="export_address">Export Address</string>
     <string name="export_log_prompt">Confirm to export logs to sdcard ?</string>
@@ -405,7 +406,7 @@
     <string name="fancy_qr_code_theme_name_black">Black</string>
 
     <!-- edit password -->
-    <string name="edit_password_title">Change Password</string>
+    <string name="edit_password_title">Change private keys encrypt password</string>
     <string name="edit_password_old_password">Old Password</string>
     <string name="edit_password_new_password">New Password</string>
     <string name="edit_password_confirm_new_password">Confirm New Password</string>

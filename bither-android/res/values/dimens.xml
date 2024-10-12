@@ -17,4 +17,7 @@
     <dimen name="entry_keyboard_label_text_size">16sp</dimen>
     <dimen name="entry_keyboard_key_preview_offset">11dp</dimen>
 
+    <dimen name="spacing_normal_huge">18dp</dimen>
+    <dimen name="spacing_normal_larger">15dp</dimen>
+
 </resources>

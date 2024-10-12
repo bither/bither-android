@@ -87,12 +87,13 @@
     <string name="add_address_already_watched">這個地址已經被監控了</string>
     <string name="addresses_already_monitored">這個冷錢包已經被監控了</string>
     <string name="add_address_generate_address_with_private_key">生成</string>
-    <string name="add_address_generate_address_password_label">請輸入錢包密碼</string>
+    <string name="add_address_generate_address_password_label">請輸入私鑰加密密碼</string>
     <string name="add_address_generate_address_password_lengh_note">長度: 6&#8211;43</string>
-    <string name="add_address_generate_address_password_set_label">請設置錢包密碼</string>
+    <string name="add_address_generate_address_password_set_label">請設置私鑰加密密碼</string>
     <string name="add_address_generate_address_password_hint">密碼</string>
     <string name="add_address_generate_address_password_confirm_hint">確認密碼</string>
     <string name="add_address_generate_address_password_not_same">兩次輸入的密碼不符</string>
+    <string name="password_des">此密碼僅用來加密本地私鑰。比太是去中心化錢包，並不需要登錄密碼。</string>
     <string name="password_checking">正在檢查密碼</string>
     <string name="password_wrong">密碼錯誤</string>
     <string name="decrypt_failed">解密失敗</string>
@@ -191,7 +192,7 @@
     <string name="set_avatar">設置頭像</string>
     <string name="set_avatar_camera">來自相機</string>
     <string name="set_avatar_gallery">來自圖庫</string>
-    <string name="edit_password_button">修改密碼</string>
+    <string name="edit_password_button">修改私鑰加密密碼</string>
     <string name="export_log">導出日志</string>
     <string name="export_address">導出地址</string>
     <string name="export_log_prompt">確認導出日志到sd卡？</string>
@@ -388,7 +389,7 @@
     <string name="fancy_qr_code_theme_name_black">黑</string>
 
     <!-- edit password -->
-    <string name="edit_password_title">修改密碼</string>
+    <string name="edit_password_title">修改私鑰加密密碼</string>
     <string name="edit_password_old_password">原密碼</string>
     <string name="edit_password_new_password">新密碼</string>
     <string name="edit_password_confirm_new_password">確認新密碼</string>

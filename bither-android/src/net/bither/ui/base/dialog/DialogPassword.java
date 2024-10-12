@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Rect;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -84,8 +85,12 @@ public class DialogPassword extends Dialog implements OnDismissListener,
     private ExecutorService executor;
 
     public DialogPassword(Context context, IDialogPasswordListener listener) {
+        this(context, false, listener);
+    }
+
+    public DialogPassword(Context context, boolean isDarkBg, IDialogPasswordListener listener) {
         super(context, R.style.password_dialog);
-        setContentView(R.layout.dialog_password);
+        setContentView(isDarkBg ? R.layout.dialog_password_dark_background : R.layout.dialog_password);
         this.listener = listener;
         setOnDismissListener(this);
         passwordSeed = getPasswordSeed();
