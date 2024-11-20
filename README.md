@@ -27,3 +27,7 @@ Donate : 1BitherUnNvB2NsfxMnbS35kS3DTPr7PW5
 ## Website
 
 [Bither.net](http://bither.net)
+
+## Support Email
+
+support@bither.net
