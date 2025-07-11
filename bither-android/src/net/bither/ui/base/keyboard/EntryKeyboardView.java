@@ -22,6 +22,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
@@ -635,15 +636,20 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             LogUtil.e(TAG, "can not use different text color");
         }
 
-        setPreviewEnabled(!isActionKey);
-        if (isActionKey) {
-            try {
-                getPreviewText().setVisibility(INVISIBLE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LogUtil.e(TAG, "can not hide preview");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            setPreviewEnabled(false);
+        } else {
+            setPreviewEnabled(!isActionKey);
+            if (isActionKey) {
+                try {
+                    getPreviewText().setVisibility(INVISIBLE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LogUtil.e(TAG, "can not hide preview");
+                }
             }
         }
+
         return states;
     }
 
