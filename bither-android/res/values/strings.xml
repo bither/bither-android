@@ -289,6 +289,7 @@
     <string name="wifi_not_close">WIFI Not Off</string>
     <string name="threeg_not_close">Cellular Data Not Off</string>
     <string name="bluetooth_not_close">Bluetooth Not Off</string>
+    <string name="bluetooth_not_close_alert">Detected that Bluetooth is not turned off. Bither doesn\'t use Bluetooth functionality. Would you like to turn it off?</string>
     <string name="wifi_is_close_checking">Checking WIFI…</string>
     <string name="threeg_is_close_checking">Checking Cellular Data…</string>
     <string name="bluetooth_is_close_checking">Checking Bluetooth…</string>

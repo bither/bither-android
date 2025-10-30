@@ -61,7 +61,6 @@ import net.bither.fragment.Unselectable;
 import net.bither.fragment.cold.CheckFragment;
 import net.bither.fragment.cold.ColdAddressFragment;
 import net.bither.mnemonic.MnemonicCodeAndroid;
-import net.bither.model.Check;
 import net.bither.preference.AppSharedPreference;
 import net.bither.ui.base.BaseFragmentActivity;
 import net.bither.ui.base.DropdownMessage;
@@ -78,6 +77,7 @@ import net.bither.util.FileHandlePresenter;
 import net.bither.util.FileUtil;
 import net.bither.util.KeyUtil;
 import net.bither.util.LogUtil;
+import net.bither.util.NetworkUtil;
 import net.bither.util.PermissionUtil;
 import net.bither.util.StringUtil;
 import net.bither.util.ThreadUtil;
@@ -134,6 +134,24 @@ public class ColdActivity extends BaseFragmentActivity {
                     .ACTION_ADDRESS_LOAD_COMPLETE_STATE));
             isAddressIsLoadedReceiverRegistered = true;
         }
+        checkBluetooth();
+    }
+
+    private void checkBluetooth() {
+        AppSharedPreference appSharedPreference = AppSharedPreference.getInstance();
+        if (appSharedPreference.getBluetoothOnDialogShown() || !NetworkUtil.BluetoothIsConnected()) {
+            return;
+        }
+        DialogConfirmTask dialogConfirmTask = new DialogConfirmTask(ColdActivity.this, getString(R.string.bluetooth_not_close_alert), (Runnable) () ->
+                ThreadUtil.runOnMainThread(() -> {
+                    appSharedPreference.setBluetoothOnDialogShown();
+                    Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    BitherApplication.mContext.startActivity(intent);
+                })
+                , (Runnable) appSharedPreference::setBluetoothOnDialogShown);
+        dialogConfirmTask.setCanceledOnTouchOutside(false);
+        dialogConfirmTask.show();
     }
 
     @Override
@@ -448,6 +466,7 @@ public class ColdActivity extends BaseFragmentActivity {
                         }
                     });
                 }
+                dialogConfirmTask.setCanceledOnTouchOutside(false);
                 dialogConfirmTask.show();
             }
         });

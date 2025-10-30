@@ -60,6 +60,7 @@ public class AppSharedPreference {
     private static final String USER_AVATAR = "user_avatar";
     private static final String FANCY_QR_CODE_THEME = "fancy_qr_code_theme";
     private static final String FIRST_RUN_DIALOG_SHOWN = "first_run_dialog_shown";
+    private static final String BLUETOOTH_ON_DIALOG_SHOWN = "bluetooth_on_dialog_shown";
 
     private static final String APP_MODE = "app_mode";
     private static final String TRANSACTION_FEE_MODE = "transaction_fee_mode";
@@ -343,6 +344,14 @@ public class AppSharedPreference {
 
     public void setFirstRunDialogShown(boolean shown) {
         mPreferences.edit().putBoolean(FIRST_RUN_DIALOG_SHOWN, shown).commit();
+    }
+
+    public boolean getBluetoothOnDialogShown() {
+        return mPreferences.getBoolean(BLUETOOTH_ON_DIALOG_SHOWN, false);
+    }
+
+    public void setBluetoothOnDialogShown() {
+        mPreferences.edit().putBoolean(BLUETOOTH_ON_DIALOG_SHOWN, true).commit();
     }
 
     public BitherSetting.SyncInterval getSyncInterval() {

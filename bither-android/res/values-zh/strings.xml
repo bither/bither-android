@@ -280,6 +280,7 @@
     <string name="wifi_not_close">WIFI未关闭</string>
     <string name="threeg_not_close">数据网络未关闭</string>
     <string name="bluetooth_not_close">蓝牙未关闭</string>
+    <string name="bluetooth_not_close_alert">检测到蓝牙未关闭，比太不会使用蓝牙功能，是否关闭？</string>
     <string name="wifi_is_close_checking">正在检查WIFI…</string>
     <string name="threeg_is_close_checking">正在检查数据网络…</string>
     <string name="bluetooth_is_close_checking">正在检查蓝牙…</string>

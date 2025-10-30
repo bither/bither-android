@@ -280,6 +280,7 @@
     <string name="wifi_not_close">WIFI未關閉</string>
     <string name="threeg_not_close">數據網絡未關閉</string>
     <string name="bluetooth_not_close">藍牙未關閉</string>
+    <string name="bluetooth_not_close_alert">檢測到藍牙未關閉，比太不會使用藍牙功能，是否關閉？</string>
     <string name="wifi_is_close_checking">正在檢查WIFI…</string>
     <string name="threeg_is_close_checking">正在檢查數據網絡…</string>
     <string name="bluetooth_is_close_checking">正在檢查藍牙…</string>

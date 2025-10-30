@@ -58,7 +58,6 @@ public class ColdWalletInitCheckView extends LinearLayout {
 		ArrayList<Check> checks = new ArrayList<Check>();
 		checks.add(CheckUtil.initCheckOfWifi());
 		checks.add(CheckUtil.initCheckOf3G());
-		checks.add(CheckUtil.initCheckOfBluetooth());
 		for (int i = 0; i < checks.size(); i++) {
 			addView(new ColdWalletInitCheckItemView(checks.get(i)),
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
