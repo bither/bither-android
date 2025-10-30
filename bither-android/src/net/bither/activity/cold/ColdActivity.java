@@ -40,6 +40,7 @@ import net.bither.BitherSetting;
 import net.bither.NotificationAndroidImpl;
 import net.bither.R;
 import net.bither.adapter.cold.ColdFragmentPagerAdapter;
+import net.bither.bitherj.AbstractApp;
 import net.bither.bitherj.core.Address;
 import net.bither.bitherj.core.AddressManager;
 import net.bither.bitherj.core.BitpieHDAccountCold;
@@ -97,6 +98,7 @@ public class ColdActivity extends BaseFragmentActivity {
     private ViewPager mPager;
     private ProgressDialog pd;
     private final AddressIsLoadedReceiver addressIsLoadedReceiver = new AddressIsLoadedReceiver();
+    private boolean isAddressIsLoadedReceiverRegistered = false;
     private FileHandlePresenter fileHandlePresenter;
 
     @Override
@@ -125,8 +127,13 @@ public class ColdActivity extends BaseFragmentActivity {
             }
         }, 500);
         DialogFirstRunWarning.show(this);
-        registerReceiver(addressIsLoadedReceiver, new IntentFilter(NotificationAndroidImpl
-                .ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+        if (AbstractApp.addressIsReady) {
+            checkBackup();
+        } else if (!isAddressIsLoadedReceiverRegistered) {
+            registerReceiver(addressIsLoadedReceiver, new IntentFilter(NotificationAndroidImpl
+                    .ACTION_ADDRESS_LOAD_COMPLETE_STATE));
+            isAddressIsLoadedReceiverRegistered = true;
+        }
     }
 
     @Override
@@ -381,6 +388,9 @@ public class ColdActivity extends BaseFragmentActivity {
     }
 
     private void checkBackup() {
+        if (!PermissionUtil.isWriteAndReadExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE)) {
+            return;
+        }
         if (AddressManager.getInstance().getPrivKeyAddresses() != null && AddressManager
                 .getInstance().getPrivKeyAddresses().size() == 0 && AddressManager
                 .getInstance().getHdmKeychain() == null
@@ -618,6 +628,15 @@ public class ColdActivity extends BaseFragmentActivity {
     protected void onDestroy() {
         BitherApplication.coldActivity = null;
         unregisterReceiver(addressIsLoadedReceiver);
+        if (isAddressIsLoadedReceiverRegistered) {
+            try {
+                unregisterReceiver(addressIsLoadedReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } finally {
+                isAddressIsLoadedReceiverRegistered = false;
+            }
+        }
         super.onDestroy();
     }
 
@@ -630,9 +649,6 @@ public class ColdActivity extends BaseFragmentActivity {
             Fragment fragment = getFragmentAtIndex(1);
             if (fragment != null && fragment instanceof ColdAddressFragment) {
                 ((ColdAddressFragment) fragment).refresh();
-            }
-            if (!PermissionUtil.isWriteAndReadExternalStoragePermission(ColdActivity.this, BitherSetting.REQUEST_CODE_PERMISSION_WRITE_AND_READ_EXTERNAL_STORAGE)) {
-                return;
             }
             checkBackup();
         }
