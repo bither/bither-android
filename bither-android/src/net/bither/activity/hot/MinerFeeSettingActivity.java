@@ -220,6 +220,7 @@ public class MinerFeeSettingActivity extends BaseFragmentActivity {
                 if (isCustom) {
                     if (curMinerFeeBase > 0) {
                         h.etCustom.setText(String.valueOf(curMinerFeeBase / 1000));
+                        curMinerFeeBase = 0;
                     }
                     final ViewHolder fH = h;
                     h.btnConfirm.setOnClickListener(new View.OnClickListener() {
