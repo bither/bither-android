@@ -7,6 +7,4 @@
           android:textColor="@color/entry_keyboard_normal_key_text"
           android:textSize="36sp"
           android:textStyle="bold"
-          android:shadowColor="@color/entry_keyboard_normal_key_shadow"
-          android:shadowRadius="3"
           android:gravity="center"/>

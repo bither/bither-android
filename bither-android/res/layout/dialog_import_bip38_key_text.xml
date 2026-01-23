@@ -88,8 +88,6 @@
         android:labelTextSize="@dimen/entry_keyboard_label_text_size"
         android:paddingTop="5dp"
         android:paddingBottom="3dp"
-        android:shadowColor="@color/entry_keyboard_normal_key_shadow"
-        android:shadowRadius="3"
         android:textColor="@color/entry_keyboard_normal_key_text"
         android:visibility="gone" />
 

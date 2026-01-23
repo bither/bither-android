@@ -621,15 +621,9 @@ public abstract class EntryKeyboardView extends KeyboardView implements Keyboard
             if (isActionKey) {
                 paint.setColor(getContext().getResources().getColor(R.color
                         .entry_keyboard_action_key_text));
-                setShadowColor(getContext().getResources().getColor(R.color
-                        .entry_keyboard_action_key_shadow));
-                setShadowRadius(ActionKeyShadowRadius);
             } else {
                 paint.setColor(getContext().getResources().getColor(R.color
                         .entry_keyboard_normal_key_text));
-                setShadowColor(getContext().getResources().getColor(R.color
-                        .entry_keyboard_normal_key_shadow));
-                setShadowRadius(NormalKeyShadowRadius);
             }
         } catch (Exception e) {
             e.printStackTrace();

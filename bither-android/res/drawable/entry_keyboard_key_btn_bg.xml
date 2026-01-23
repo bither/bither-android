@@ -3,9 +3,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_single="true" android:state_pressed="true"
-          android:drawable="@drawable/btn_keyboard_key_white_pressed"/>
+          android:drawable="@drawable/btn_keyboard_key_gray_pressed"/>
     <item android:state_single="true"
-          android:drawable="@drawable/btn_keyboard_key_white_normal"/>
+          android:drawable="@drawable/btn_keyboard_key_gray_normal"/>
 
     <!-- Toggle keys. Use checkable/checked state. -->
     <item android:state_checkable="true" android:state_checked="true" android:state_pressed="true"
@@ -29,6 +29,6 @@
 
     <!-- Normal keys. -->
     <item android:state_pressed="true"
-          android:drawable="@drawable/btn_keyboard_key_white_pressed"/>
-    <item android:drawable="@drawable/btn_keyboard_key_white_normal"/>
+          android:drawable="@drawable/btn_keyboard_key_gray_pressed"/>
+    <item android:drawable="@drawable/btn_keyboard_key_gray_normal"/>
 </selector>
